@@ -15,7 +15,7 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <directory>src/main/jnlp</directory>
+            <directory>${pom.basedir}/src/main/jnlp</directory>
             <outputDirectory>.</outputDirectory>
             <filtered>true</filtered>
         </fileSet>
