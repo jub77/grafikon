@@ -1,0 +1,12 @@
+  <tr style="height: 5mm">
+    <td class="tc-d3-1 tc-m-1">%1$s</td>
+    <td class="tc-d3-2 tc-m-2">%2$s</td>
+    <td class="tc-d3-2a tc-m-2a">%9$s</td>
+    <td class="tc-d3-3 tc-m-3"><b>%3$s</b></td>
+    <td class="tc-d3-4 tc-m-4"><b>%4$s</b>&nbsp;</td>
+    <td class="tc-d3-5 tc-m-5">%5$s</td>
+    <td class="tc-d3-6 tc-m-6"><b>%6$s</b>&nbsp;</td>
+    <td class="tc-d3-7 tc-m-7"><b>%7$s</b></td>
+    <td class="tc-d3-8 tc-m-8">%8$s</td>
+    <td class="tc-d3-9 tc-m-9">%10$s</td>
+  </tr>

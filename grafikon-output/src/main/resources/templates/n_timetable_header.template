@@ -1,0 +1,19 @@
+<table style="page-break-after: always; font-family: arial, sans-serif; font-size: 3mm; width: 270mm; border-color: black; border-style: solid; border-width: 0.2mm;" align="center" cellspacing=0>
+<thead>
+  <tr style="height: 8mm" align="center">
+    <td colspan="9" style="font-size: 5mm"><b>%1$s</b></td>
+  </tr>
+  <tr style="font-weight:bold ;font-size: 3.4mm; height: 5mm">
+    <td align="center" style="width: 5mm">X</td>
+    <td style="width: 22mm">%2$s</td>
+    <td style="width: 10mm">%3$s</td>
+    <td style="width: 10mm">%4$s</td>
+    <td style="width: 5mm">%5$s</td>
+    <td style="width: 10mm">%6$s</td>
+    <td style="width: 10mm">%7$s</td>
+    <td style="width: 10mm">%9$s</td>
+    <td style="width: 188mm">%8$s</td>
+  </tr>
+</thead>
+<tbody>
+

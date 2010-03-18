@@ -1,0 +1,30 @@
+<div style="page-break-inside: avoid;">
+<table style="font-family: arial, sans-serif; font-size: 3mm; height: 96mm; width: 138mm; border-color: black; border-style: solid; border-width: 0.2mm; page-break-inside: avoid;" align="center" cellspacing=0>
+  <tr style="height: 12mm">
+    <td align="center" style="width: 25mm; font-size: 7mm"><b>%3$s</b></td>
+    <td style="width: 20mm;">
+     <table  cellpadding=0 cellspacing=0 >
+        <tr>
+          <td style="border-width: 0mm; font-size:3mm">%4$s:</td></tr>
+        <tr>
+          <td style="border-width: 0mm; font-size:5mm"><b>%2$s</b></td></tr>
+        </table>
+    </td>
+    <td style="width: 93mm;">
+      <table style="page-break-inside: avoid;" cellpadding=0 cellspacing=0 >
+        <tr>
+          <td style="border-width: 0mm; font-size:3mm">%5$s:</td></tr>
+        <tr>
+          <td style="border-width: 0mm; font-size:5mm"><b>%1$s</b></td></tr>
+        </table>
+     </td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top" style="padding: 1mm 1mm 1mm 1mm; ">
+    <table  align="center"style="font-family: arial, sans-serif; font-size: 3mm;  width: 135mm; border-color: black; border-style: solid; border-width: 0.2mm;"  cellspacing=0>
+  <tr align="center" style="height: 6mm; font-weight:bold ;font-size: 3mm; height: 5mm">
+    <td style="width: 20mm">%6$s</td>
+    <td style="width: 13mm">%7$s</td>
+    <td style="width: 17mm">%8$s</td>
+    <td style="width: 85mm">%9$s</td>
+  </tr>

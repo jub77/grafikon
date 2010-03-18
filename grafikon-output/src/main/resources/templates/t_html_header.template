@@ -1,0 +1,120 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>%1$s</title>
+  <style type="text/css" media="all">
+    table.index {
+        font-family: arial, sans-serif;
+        font-size: 3mm;
+        border-color: black;
+        border-style: solid;
+        border-width: 0.7mm ;
+    }
+    table.index tr {
+        height: 4mm;
+    }
+    table.index tr td {
+        width: 21mm;
+        text-align: center;
+    }
+    td.column-1 {
+        border-color: black;
+        border-style: solid;
+        border-width: 0mm 0.2mm 0mm 0mm;
+    }
+    td.column-2 {
+        border-color: black;
+        border-style: solid;
+        border-width: 0mm 0.7mm 0mm 0mm;
+    }
+    td.column-1-delim {
+        border-color: black;
+        border-style: solid;
+        border-width: 0.2mm 0.2mm 0.4mm 0mm;
+    }
+    td.column-2-delim {
+        border-color: black;
+        border-style: solid;
+        border-width: 0.2mm 0.7mm 0.4mm 0mm;
+    }
+    td.column-3-delim {
+        border-color: black;
+        border-style: solid;
+        border-width: 0.2mm 0mm 0.4mm 0mm;
+    }
+    table.two-pages {
+        page-break-after: always;
+        width: 274mm;
+        font-size: 3mm;
+        font-family: arial, sans-serif;
+        border-width: 0mm;
+    }
+    table.tt {
+        margin: 0mm;
+        padding: 0mm;
+        font-family: arial, sans-serif;
+        font-size: 3mm;
+        width: 125mm;
+        border-color: black;
+        border-style: solid;
+        border-width: 0mm;
+    }
+
+    table.tt tr td {
+        border-color: black;
+        border-style: solid;
+        border-width: 0mm;
+        padding: 0.3mm;
+    }
+
+    table.wl {
+    }
+
+    table.wl tr {
+    }
+
+    table.wl tr td {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 3mm;
+    }
+
+    table.tt tr td.tc-d3-1 { width: 39mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-2 { width: 7mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-2a { width: 4mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-3 { width: 7mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-4 { width: 13mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-5 { width: 7mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-6 { width: 13mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-7 { width: 7mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-8 { width: 7mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-9 { width: 20mm; }
+
+    table.tt tr td.tc-1 { width: 39mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-2 { width: 8mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-3 { width: 8mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-4 { width: 16mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-5 { width: 8mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-6 { width: 16mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-7 { width: 8mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-8 { width: 21mm; }
+
+    table.tt tr td.tc-m-1 {font-size: 3.5mm; }
+    table.tt tr td.tc-m-2 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-2a { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-3 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-4 { text-align: right; font-size: 4mm; }
+    table.tt tr td.tc-m-5 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-6 { text-align: right; font-size: 4mm; }
+    table.tt tr td.tc-m-7 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-8 { font-size: 3mm; padding-left: 1mm;}
+    table.tt tr td.tc-m-9 { font-size: 3mm; padding-left: 1mm;}
+
+    table.tt tr td.tc-delim-1 {
+        border-top-width: 0.7mm;
+        border-bottom-width: 0.4mm;
+    }
+  </style>
+</head>
+<body>

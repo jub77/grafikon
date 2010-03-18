@@ -1,0 +1,8 @@
+  <tr>
+    <td class="column-1">%s</td>
+    <td class="column-2">%s</td>
+    <td class="column-1">%s</td>
+    <td class="column-2">%s</td>
+    <td class="column-1">%s</td>
+    <td>%s</td>
+  </tr>

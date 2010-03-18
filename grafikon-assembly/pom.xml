@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.parostroj</groupId>
+        <artifactId>grafikon</artifactId>
+        <version>1</version>
+    </parent>
+    <groupId>net.parostroj</groupId>
+    <artifactId>grafikon-assembly</artifactId>
+    <version>${grafikon.version}</version>
+    <packaging>pom</packaging>
+    <name>grafikon-assembly</name>
+
+    <properties>
+        <assembly.name>grafikon-${grafikon.version}</assembly.name>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>snapshot</id>
+            <activation>
+                <property>
+                    <name>snapshot</name>
+                </property>
+            </activation>
+            <properties>
+                <assembly.name>grafikon-${grafikon.version}-${maven.build.timestamp}</assembly.name>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <finalName>${assembly.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>grafikon-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>directory-single</goal>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-gui</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+    </dependencies>
+</project>

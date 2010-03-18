@@ -1,0 +1,11 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>%1$s</title>
+  <style>
+    td {padding: .1mm .8mm .1mm .8mm; border-color: black; border-style: solid; border-width: 0.2mm;}
+    tr.row td {vertical-align: top;}
+  </style>
+</head>
+
+<body>

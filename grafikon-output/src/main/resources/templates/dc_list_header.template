@@ -1,0 +1,21 @@
+<table style="page-break-after: always; height: 185mm; width: 274mm; font-size: 3mm; font-family: arial, sans-serif;" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td width="25%%" align="left" style="height: 4mm; padding-left: 0mm;">&nbsp;</td>
+    <td width="25%%" align="right" style="padding-right: 12mm;">&nbsp;</td>
+    <td width="25%%" align="left" style="padding-left: 12mm;">&nbsp;</td>
+    <td width="25%%" align="right" style="padding-right: 0mm;">&nbsp;</td>
+</tr>
+<tr>
+<td width="50%%" valign="top" colspan="2" style="padding-left:0mm;"></td>
+<td width="50%%" valign="top" colspan="2" style="padding-left:0mm;">
+  <table align="right" style="width: 130mm" border="0" cellspacing="0">
+    <tr><td align="center" style="height: 20mm; font-size: 4mm"><b>%5$s<br>%6$s<b></td></tr>
+    <tr><td align="center" style="height: 15mm; font-size: 4mm"></td></tr>
+    <tr><td align="center" style="height: 15mm; font-size: 8mm"><b>%7$s</b></td></tr>
+    <tr><td align="center" style="height: 15mm; font-size: 12mm"><b>%2$s</b></td></tr>
+    <tr><td align="center" style="height: 5mm; font-size: 4mm">%10$s</td></tr>
+    <tr><td align="center" style="height: 15mm; font-size: 4mm"><b>%3$s</b></td></tr>
+    <tr><td align="center" style="height: 20mm; font-size: 4mm"><b>%8$s %4$s</b></td></tr>
+    <tr><td valign="top" align="center" style="height: 8mm; font-size: 5mm"><b>%9$s: %1$s</b>
+    <tr><td valign="top" align="center" style="height: 58mm; font-size: 5mm">
+      &nbsp;

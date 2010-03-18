@@ -1,0 +1,13 @@
+<table style="font-family: arial, sans-serif; font-size: 3mm; width: 50mm; border-color: black; border-style: solid; border-width: 0mm;" align="center" cellspacing=0>
+  <tr style="height: 3mm" align="center">
+    <td colspan="3" style="font-size: 2mm" align="left">%3$s:</td>
+  </tr>
+  <tr style="height: 6mm" align="center">
+    <td style="font-size: 5mm"><b>%1$s</b></td>
+    <td colspan="2" style="font-size: 4mm"><b>%2$s</b></td>
+  </tr>
+  <tr style="height: 3mm" align="center">
+    <td style="border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 20mm">%4$s</td>
+    <td style="border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 13mm">%5$s</td>
+    <td style="border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 17mm">%6$s</td>
+  </tr>

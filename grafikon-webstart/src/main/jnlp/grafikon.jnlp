@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon" href="grafikon.jnlp">
+    <information>
+        <title>grafikon</title>
+        <vendor>jub</vendor>
+        <description>grafikon</description>
+        <description kind="short">grafikon</description>
+        <homepage href="http://jub.parostroj.net/grafikon/"/>
+        <icon href="grafikon.gif"/>
+        <icon href="splashscreen.png" kind="splash"/>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.6+"/>
+        <jar href="grafikon-gui-${grafikon.version}.jar" main="true" download="eager"/>
+        <jar href="batik-awt-util-${batik.version}.jar" download="eager"/>
+        <jar href="batik-dom-${batik.version}.jar" download="eager"/>
+        <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
+        <jar href="batik-util-${batik.version}.jar" download="eager"/>
+        <jar href="batik-xml-${batik.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-components-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-ls-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-net-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-ls4-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-model-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-output-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-save-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-templates-${grafikon.version}.jar" download="eager"/>
+        <jar href="jgraph-${jgraph.version}.jar" download="eager"/>
+        <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
+        <jar href="jgrapht-jdk1.5-${jgrapht.version}.jar" download="eager"/>
+        <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
+    </resources>
+    <application-desc main-class="net.parostroj.timetable.gui.Main">
+    </application-desc>
+</jnlp>

@@ -1,0 +1,6 @@
+        <tr>
+          <td valign="bottom">%1$s</td>
+          <td align="center" valign="bottom"><b>%2$s</b></td>
+          <td align="center" valign="bottom">%3$s - %4$s</td>
+          <td style="font-size: 3mm; padding-left: 2mm" valign="bottom">%5$s</td>
+        </tr>
