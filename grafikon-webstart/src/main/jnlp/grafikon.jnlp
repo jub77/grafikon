@@ -15,7 +15,8 @@
     </security>
     <resources>
         <j2se version="1.6+"/>
-        <jar href="grafikon-gui-${grafikon.version}.jar" main="true" download="eager"/>
+        <jar href="grafikon.jar" main="true" download="eager"/>
+        <jar href="grafikon-gui-${grafikon.version}.jar" download="eager"/>
         <jar href="batik-awt-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-dom-${batik.version}.jar" download="eager"/>
         <jar href="batik-svggen-${batik.version}.jar" download="eager"/>

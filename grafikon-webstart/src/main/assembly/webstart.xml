@@ -8,9 +8,19 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <outputFileNameMapping>grafikon.jar</outputFileNameMapping>
             <unpack>false</unpack>
             <scope>runtime</scope>
             <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+        </dependencySet>
+        <dependencySet>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <useProjectArtifact>false</useProjectArtifact>
+            <excludes>
+                <exclude>grafikon-start*</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
     <fileSets>

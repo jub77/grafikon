@@ -114,5 +114,6 @@
         <module>grafikon-gui-components</module>
         <module>grafikon-net</module>
         <module>grafikon-gui</module>
+        <module>grafikon-start</module>
     </modules>
 </project>

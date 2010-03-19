@@ -9,6 +9,7 @@ grafikon-net/target/*
 grafikon-output/target/*
 grafikon-output2/target/*
 grafikon-save/target/*
+grafikon-start/target/*
 grafikon-templates/target/*
 grafikon-webstart/target/*
 grafikon-webstart/src/main/keystore/grafikon.ks

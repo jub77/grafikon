@@ -57,7 +57,7 @@
     <dependencies>
         <dependency>
             <groupId>net.parostroj</groupId>
-            <artifactId>grafikon-gui</artifactId>
+            <artifactId>grafikon-start</artifactId>
             <version>${grafikon.version}</version>
         </dependency>
     </dependencies>
