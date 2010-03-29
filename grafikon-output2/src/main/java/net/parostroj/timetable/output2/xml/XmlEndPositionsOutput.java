@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputWithCharset;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 
@@ -18,7 +19,7 @@ import net.parostroj.timetable.output2.impl.PositionsExtractor;
  *
  * @author jub
  */
-class XmlEndPositionsOutput extends OutputWithDiagramAndStream {
+class XmlEndPositionsOutput extends OutputWithCharset {
 
     public XmlEndPositionsOutput(Charset charset) {
         super(charset);

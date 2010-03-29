@@ -1,18 +1,17 @@
-package net.parostroj.timetable.output2.xml;
+package net.parostroj.timetable.output2;
 
 import java.nio.charset.Charset;
-import net.parostroj.timetable.output2.AbstractOutput;
 
 /**
  * Abstract output - with charset.
  *
  * @author jub
  */
-abstract class OutputWithCharset extends AbstractOutput {
+abstract public class OutputWithCharset extends OutputWithDiagramStream {
 
     private Charset charset;
 
-    OutputWithCharset(Charset charset) {
+    public OutputWithCharset(Charset charset) {
         this.charset = charset;
     }
 

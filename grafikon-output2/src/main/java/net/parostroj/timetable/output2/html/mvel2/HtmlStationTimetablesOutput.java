@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.html;
+package net.parostroj.timetable.output2.html.mvel2;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,6 +12,7 @@ import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.StationTimetable;
 import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -22,7 +23,7 @@ import org.mvel2.templates.TemplateRuntime;
  *
  * @author jub
  */
-public class HtmlStationTimetablesOutput extends OutputWithDiagramAndStream {
+public class HtmlStationTimetablesOutput extends OutputWithLocale {
 
     HtmlStationTimetablesOutput(Locale locale) {
         super(locale);
@@ -39,7 +40,7 @@ public class HtmlStationTimetablesOutput extends OutputWithDiagramAndStream {
         map.put("stations", timetables);
         ResourceHelper.addTextsToMap(map, "stations_", this.getLocale(), "texts/html_texts");
 
-        String template = ResourceHelper.readResource("/templates/stations.html");
+        String template = ResourceHelper.readResource("/templates/mvel2/stations.html");
         String ret = (String) TemplateRuntime.eval(template, map);
 
         Writer writer = new OutputStreamWriter(stream, "utf-8");

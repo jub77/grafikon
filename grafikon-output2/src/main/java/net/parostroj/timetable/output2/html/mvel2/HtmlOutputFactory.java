@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.html;
+package net.parostroj.timetable.output2.html.mvel2;
 
 import java.util.Locale;
 import net.parostroj.timetable.output2.Output;

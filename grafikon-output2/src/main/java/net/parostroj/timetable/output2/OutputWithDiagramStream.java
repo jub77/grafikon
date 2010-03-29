@@ -1,12 +1,8 @@
-package net.parostroj.timetable.output2.html;
+package net.parostroj.timetable.output2;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Locale;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.DefaultOutputParam;
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.util.OutputParamsUtil;
 
 /**
@@ -14,11 +10,7 @@ import net.parostroj.timetable.output2.util.OutputParamsUtil;
  *
  * @author jub
  */
-abstract class OutputWithDiagramAndStream extends OutputWithLocale {
-
-    public OutputWithDiagramAndStream(Locale locale) {
-        super(locale);
-    }
+abstract public class OutputWithDiagramStream extends AbstractOutput {
 
     @Override
     public void write(OutputParams params) throws OutputException {

@@ -1,18 +1,17 @@
-package net.parostroj.timetable.output2.html;
+package net.parostroj.timetable.output2;
 
 import java.util.Locale;
-import net.parostroj.timetable.output2.AbstractOutput;
 
 /**
  * Output with locale parameter.
  *
  * @author jub
  */
-abstract class OutputWithLocale extends AbstractOutput {
+abstract public class OutputWithLocale extends OutputWithDiagramStream {
 
     private Locale locale;
 
-    OutputWithLocale(Locale locale) {
+    public OutputWithLocale(Locale locale) {
         this.locale = locale;
     }
 
