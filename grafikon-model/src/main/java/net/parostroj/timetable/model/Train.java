@@ -424,7 +424,7 @@ public class Train implements AttributesHolder, ObjectWithId {
                     firstInterval.getStart() - length, firstInterval.getStart() - 1,
                     firstInterval.getTrack());
             if (isAttached())
-                timeBefore.addToOwner();
+                timeBefore.addToOwnerWithoutCheck();
         } else if (length != 0 && timeBefore != null) {
             TimeInterval firstInterval = this.getFirstInterval();
             // recalculate time
@@ -455,7 +455,7 @@ public class Train implements AttributesHolder, ObjectWithId {
                     lastInterval.getEnd() + 1, lastInterval.getEnd() + length,
                     lastInterval.getTrack());
             if (isAttached())
-                timeAfter.addToOwner();
+                timeAfter.addToOwnerWithoutCheck();
         } else if (length != 0 && timeAfter != null) {
             TimeInterval lastInterval = this.getLastInterval();
             // recalculate time

@@ -324,6 +324,10 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         owner.addTimeInterval(this);
     }
 
+    public void addToOwnerWithoutCheck() {
+        owner.addTimeInterval(this);
+    }
+
     public void updateInOwner() {
         if (!isAttached())
             throw new IllegalStateException("Time interval is not attached.");
