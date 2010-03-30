@@ -227,9 +227,13 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="actionMenu">
           <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="outputAction" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="gt_texts.properties" key="menu.action" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="actionCommand" type="java.lang.String" value="stations_select"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
@@ -248,13 +252,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="nodeTimetableListMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.nodetimetableslist" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="stations"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeTimetableListMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ecListMenuItem">
               <Properties>
@@ -350,13 +355,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="nodeTimetableListSelectMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.nodetimetableslist.select" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="stations_select"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeTimetableListSelectMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ecListSelectMenuItem">
               <Properties>

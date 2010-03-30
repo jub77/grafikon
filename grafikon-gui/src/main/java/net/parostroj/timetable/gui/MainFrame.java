@@ -15,8 +15,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import net.parostroj.timetable.actions.TrainSortByNodeFilter;
+import net.parostroj.timetable.gui.actions.FileChooserFactory;
+import net.parostroj.timetable.gui.actions.HtmlAction;
+import net.parostroj.timetable.gui.actions.OutputAction;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -35,7 +37,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
     private static final Logger LOG = Logger.getLogger(MainFrame.class.getName());
-    private static final String FILE_EXTENSION = "gtm";
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -49,100 +50,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private EngineClassesDialog engineClassesDialog;
     private ImportDialog importDialog;
     private Locale locale;
+    private OutputAction outputAction;
     
-    private static JFileChooser outputFileChooserInstance;
-    private static JFileChooser xmlFileChooserInstance;
-    private static JFileChooser allHtmlFileChooserInstance;
-    
-    private enum FileChooserType {
-        OUTPUT, XML, ALL_HTML;
-    }
-    
-    private static synchronized JFileChooser getFileChooser(FileChooserType type) {
-        switch (type) {
-            case ALL_HTML:
-                if (allHtmlFileChooserInstance == null) {
-                    allHtmlFileChooserInstance = new JFileChooser();
-                    allHtmlFileChooserInstance.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    // last directory
-                    try {
-                        String lastDir = AppPreferences.getPreferences().getString("last.directory.html.dir", null);
-                        if (lastDir != null) {
-                            allHtmlFileChooserInstance.setCurrentDirectory(new File(lastDir));
-                        }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Cannot get last directory from preferences.", e);
-                    }
-                }
-                return allHtmlFileChooserInstance;
-            case OUTPUT:
-                if (outputFileChooserInstance == null) {
-                    outputFileChooserInstance = new JFileChooser() {
-                        @Override
-                        public void approveSelection() {
-                            if (getDialogType() == JFileChooser.SAVE_DIALOG)
-                                if (!this.getSelectedFile().getName().toLowerCase().endsWith(".html"))
-                                    this.setSelectedFile(new File(this.getSelectedFile().getAbsolutePath() + ".html"));
-                            if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
-                                int result = JOptionPane.showConfirmDialog(this, 
-                                        String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()), 
-                                        ResourceLoader.getString("savedialog.overwrite.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE); 
-                                if(result != JOptionPane.YES_OPTION) {
-                                    return;
-                                }
-                            }
-                            super.approveSelection();
-                        }
-                    };
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter(ResourceLoader.getString("output.html"), "html");
-                    outputFileChooserInstance.setFileFilter(filter);
-                    // last directory
-                    try {
-                        String lastDir = AppPreferences.getPreferences().getString("last.directory.output", null);
-                        if (lastDir != null) {
-                            outputFileChooserInstance.setCurrentDirectory(new File(lastDir));
-                        }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Cannot get last directory from preferences.", e);
-                    }
-                }
-                return outputFileChooserInstance;
-            case XML:
-                if (xmlFileChooserInstance == null) {
-                    xmlFileChooserInstance = new JFileChooser() {
-                        @Override
-                        public void approveSelection() {
-                            if (getDialogType() == JFileChooser.SAVE_DIALOG)
-                                if (!this.getSelectedFile().getName().toLowerCase().endsWith("." + FILE_EXTENSION))
-                                    this.setSelectedFile(new File(this.getSelectedFile().getAbsolutePath()+"." + FILE_EXTENSION));
-                            if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
-                                int result = JOptionPane.showConfirmDialog(this, 
-                                        String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()), 
-                                        ResourceLoader.getString("savedialog.overwrite.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE); 
-                                if(result != JOptionPane.YES_OPTION) {
-                                    return;
-                                }
-                            }
-                            super.approveSelection();
-                        }
-                    };
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter(ResourceLoader.getString("files.description"), FILE_EXTENSION);
-                    xmlFileChooserInstance.setFileFilter(filter);
-                    // last directory
-                    try {
-                        String lastDir = AppPreferences.getPreferences().getString("last.directory.model", null);
-                        if (lastDir != null) {
-                            xmlFileChooserInstance.setCurrentDirectory(new File(lastDir));
-                        }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Cannot get last directory from preferences.", e);
-                    }
-                }
-                return xmlFileChooserInstance;
-        }
-        return null;
-    }
-
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion();
         // remove hg revision if it is SNAPSHOT
@@ -181,10 +90,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Cannot load preferences.", e);
         }
-        
-        initComponents();
 
         model = new ApplicationModel();
+        outputAction = new OutputAction(model, this);
+
+        initComponents();
         
         this.addWindowListener(new WindowAdapter() {
 
@@ -327,9 +237,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.setSelectedTemplateLocale();
         
         // preload file dialogs
-        getFileChooser(MainFrame.FileChooserType.ALL_HTML);
-        getFileChooser(MainFrame.FileChooserType.OUTPUT);
-        getFileChooser(MainFrame.FileChooserType.XML);
+        FileChooserFactory fcf = FileChooserFactory.getInstance();
+        fcf.getFileChooser(FileChooserFactory.Type.ALL_HTML);
+        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
+        fcf.getFileChooser(FileChooserFactory.Type.XML);
     }
 
     @Override
@@ -373,7 +284,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         else {
             int result = JOptionPane.showConfirmDialog(this, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
-                JFileChooser xmlFileChooser = getFileChooser(MainFrame.FileChooserType.XML);
+                JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
                 int retVal = xmlFileChooser.showSaveDialog(this);
                 if (retVal == JFileChooser.APPROVE_OPTION)
                     model.setOpenedFile(xmlFileChooser.getSelectedFile());
@@ -645,7 +556,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         menuBar.add(fileMenu);
 
+        actionMenu.setAction(outputAction);
         actionMenu.setText(ResourceLoader.getString("menu.action")); // NOI18N
+        actionMenu.setActionCommand("stations_select");
 
         trainTimetableListMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslist")); // NOI18N
         trainTimetableListMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -655,12 +568,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(trainTimetableListMenuItem);
 
+        nodeTimetableListMenuItem.setAction(outputAction);
         nodeTimetableListMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist")); // NOI18N
-        nodeTimetableListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nodeTimetableListMenuItemActionPerformed(evt);
-            }
-        });
+        nodeTimetableListMenuItem.setActionCommand("stations");
         actionMenu.add(nodeTimetableListMenuItem);
 
         ecListMenuItem.setText(ResourceLoader.getString("menu.action.eclist")); // NOI18N
@@ -729,12 +639,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
 
+        nodeTimetableListSelectMenuItem.setAction(outputAction);
         nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
-        nodeTimetableListSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nodeTimetableListSelectMenuItemActionPerformed(evt);
-            }
-        });
+        nodeTimetableListSelectMenuItem.setActionCommand("stations_select");
         actionMenu.add(nodeTimetableListSelectMenuItem);
 
         ecListSelectMenuItem.setText(ResourceLoader.getString("menu.action.eclist.select")); // NOI18N
@@ -872,12 +779,6 @@ private void ecListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
     this.engineCyclesList(list);
 }//GEN-LAST:event_ecListMenuItemActionPerformed
 
-private void nodeTimetableListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeTimetableListMenuItemActionPerformed
-    // write
-    final NodeTimetablesList list = new NodeTimetablesList(model.getDiagram().getNet().getNodes(), model.getDiagram());
-    this.nodeTimetablesList(list);
-}//GEN-LAST:event_nodeTimetableListMenuItemActionPerformed
-
 private void recalculateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalculateMenuItemActionPerformed
     ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.recalculate"), new SwingWorker<Void, Train>() {
 
@@ -1005,7 +906,7 @@ private void fileOpenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     if (result == JOptionPane.CANCEL_OPTION)
         return;
     // loading train diagram
-    final JFileChooser xmlFileChooser = getFileChooser(MainFrame.FileChooserType.XML);
+    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
     final int retVal = xmlFileChooser.showOpenDialog(this);
     ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.loadmodel"), new ModelAction() {
 
@@ -1135,7 +1036,7 @@ private void dcListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
 }//GEN-LAST:event_dcListMenuItemActionPerformed
 
 private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allHtmlMenuItemActionPerformed
-    final JFileChooser allHtmlFileChooser = getFileChooser(MainFrame.FileChooserType.ALL_HTML);
+    final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML);
     int result = allHtmlFileChooser.showSaveDialog(this);
     if (result == JFileChooser.APPROVE_OPTION) {
         final File directory = allHtmlFileChooser.getSelectedFile();
@@ -1249,7 +1150,7 @@ private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         return;
     }
     // saving train diagram
-    JFileChooser xmlFileChooser = getFileChooser(MainFrame.FileChooserType.XML);
+    JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
     int retVal = xmlFileChooser.showSaveDialog(this);
     if (retVal == JFileChooser.APPROVE_OPTION) {
         model.setOpenedFile(xmlFileChooser.getSelectedFile());
@@ -1442,7 +1343,7 @@ private void trainTimetableListByTimeFilteredMenuItemActionPerformed(java.awt.ev
 
 private void fileImportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileImportMenuItemActionPerformed
     // select imported model
-    final JFileChooser xmlFileChooser = getFileChooser(MainFrame.FileChooserType.XML);
+    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
     final int retVal = xmlFileChooser.showOpenDialog(this);
     String errorMessage = null;
     TrainDiagram diagram = null;
@@ -1519,16 +1420,6 @@ private void ecListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 }//GEN-LAST:event_ecListSelectMenuItemActionPerformed
 
-private void nodeTimetableListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeTimetableListSelectMenuItemActionPerformed
-    ElementSelectionDialog<Node> selDialog = new ElementSelectionDialog<Node>(this, true);
-    selDialog.setLocationRelativeTo(this);
-    List<Node> selection = selDialog.selectElements(new ArrayList<Node>(model.getDiagram().getNet().getNodes()));
-    if (selection != null) {
-        final NodeTimetablesList list = new NodeTimetablesList(selection, model.getDiagram());
-        this.nodeTimetablesList(list);
-    }
-}//GEN-LAST:event_nodeTimetableListSelectMenuItemActionPerformed
-
 private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
     TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
     dialog.setTrainDiagram(model.getDiagram());
@@ -1548,7 +1439,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
-        final JFileChooser allHtmlFileChooser = getFileChooser(MainFrame.FileChooserType.ALL_HTML);
+        final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML);
         int result = allHtmlFileChooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             final File directory = allHtmlFileChooser.getSelectedFile();
@@ -1594,21 +1485,6 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
 
     private void driverCyclesList(final DriverCyclesList list) {
-        HtmlAction action = new HtmlAction() {
-                @Override
-                public void write(Writer writer) throws Exception {
-                    list.writeTo(writer);
-                }
-
-                @Override
-                public void writeToDirectory(File directory) throws Exception {
-                    // do nothing
-                }
-        };
-        this.saveHtml(action);
-    }
-
-    private void nodeTimetablesList(final NodeTimetablesList list) {
         HtmlAction action = new HtmlAction() {
                 @Override
                 public void write(Writer writer) throws Exception {
@@ -1713,7 +1589,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
 
     private void saveHtml(final HtmlAction action) {
-        final JFileChooser outputFileChooser = getFileChooser(MainFrame.FileChooserType.OUTPUT);
+        final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT);
         int retVal = outputFileChooser.showSaveDialog(this);
         if (retVal == JFileChooser.APPROVE_OPTION) {
             ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
@@ -1762,9 +1638,12 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
         
         // save to preferences last file chooser directories
-        prefs.setString("last.directory.model", getFileChooser(MainFrame.FileChooserType.XML).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.output", getFileChooser(MainFrame.FileChooserType.OUTPUT).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.html.dir", getFileChooser(MainFrame.FileChooserType.ALL_HTML).getCurrentDirectory().getAbsolutePath());
+        prefs.setString("last.directory.model", 
+                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML).getCurrentDirectory().getAbsolutePath());
+        prefs.setString("last.directory.output",
+                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
+        prefs.setString("last.directory.html.dir",
+                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML).getCurrentDirectory().getAbsolutePath());
         
         // save locales
         if (locale != null)
@@ -1849,10 +1728,4 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JMenu viewsMenu;
     private javax.swing.JMenuItem weightTablesMenuItem;
     // End of variables declaration//GEN-END:variables
-}
-
-interface HtmlAction {
-    public void write(Writer writer) throws Exception;
-    
-    public void writeToDirectory(File directory) throws Exception;
 }

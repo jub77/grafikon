@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.gui.helpers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Dialog for selecting elements.
