@@ -84,9 +84,9 @@
     <td style="width: 10mm">${column_arrival}</td>
     <td style="width: 5mm">${column_track}</td>
     <td style="width: 10mm">${column_departure}</td>
-    <td style=" width: 10mm">${column_to}</td>
-    <td style=" width: 10mm">${column_end}</td>
-    <td style=" width: 188mm">${column_notes}</td>
+    <td style="width: 10mm">${column_to}</td>
+    <td style="width: 10mm">${column_end}</td>
+    <td style="width: 188mm">${column_notes}</td>
 </tr>
 </thead>
 <tbody>
