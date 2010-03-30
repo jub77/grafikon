@@ -1,10 +1,13 @@
 package net.parostroj.timetable.output2.impl;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Length info for station row.
  *
  * @author jub
  */
+@XmlType(propOrder = {"length", "lengthInAxles", "lengthUnit", "stationAbbr"})
 public class LengthInfo {
 
     private int length;

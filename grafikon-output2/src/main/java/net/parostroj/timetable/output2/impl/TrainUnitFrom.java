@@ -1,10 +1,13 @@
 package net.parostroj.timetable.output2.impl;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Train unit from.
  *
  * @author jub
  */
+@XmlType(propOrder = {"cycleName", "cycleDescription"})
 class TrainUnitFrom {
 
     private String cycleName;

@@ -2,20 +2,23 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Row for station timetable.
  *
  * @author jub
  */
+@XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "track", "technologicalTime", "occupied", "comment",
+    "engineTo", "engineFrom", "trainUnitTo", "trainUnitFrom", "length"})
 class StationTimetableRow {
 
     private String trainName;
     private String from;
     private String arrival;
     private String to;
-    private String end;
     private String departure;
+    private String end;
     private String track;
     private boolean technologicalTime;
     private boolean occupied;

@@ -60,7 +60,7 @@ public class StationTimetablesExtractor {
 
         String fromNodeName = TransformUtil.getFromAbbr(interval);
         String toNodeName = TransformUtil.getToAbbr(interval);
-        String endNodeName = interval.getTrain().getEndNode().getAbbr();
+        String endNodeName = !interval.isLast() ? interval.getTrain().getEndNode().getAbbr() : null;
 
         String fromTime = (from == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getStart());
         String toTime = (to == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getEnd());

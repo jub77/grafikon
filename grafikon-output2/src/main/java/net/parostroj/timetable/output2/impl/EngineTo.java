@@ -1,10 +1,13 @@
 package net.parostroj.timetable.output2.impl;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Engine to.
  *
  * @author jub
  */
+@XmlType(propOrder = {"cycleName", "trainName", "time"})
 class EngineTo {
     private String cycleName;
     private String trainName;
