@@ -1,8 +1,6 @@
 package net.parostroj.timetable.output2;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,9 +46,11 @@ public abstract class OutputFactory {
         throw new IllegalArgumentException("Unknown output factory type: " + type);
     }
 
-    public abstract Output createOutput(String type);
+    public abstract Output createOutput(String type) throws OutputException;
 
     public abstract String getType();
+
+    public abstract Set<String> getOutputTypes();
 
     public void setParameter(String key, Object value) {
         this.parameters.put(key, value);

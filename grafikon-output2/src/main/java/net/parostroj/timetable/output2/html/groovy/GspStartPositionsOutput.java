@@ -26,7 +26,7 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
  */
 public class GspStartPositionsOutput extends OutputWithLocale {
 
-    GspStartPositionsOutput(Locale locale) {
+    public GspStartPositionsOutput(Locale locale) {
         super(locale);
     }
 

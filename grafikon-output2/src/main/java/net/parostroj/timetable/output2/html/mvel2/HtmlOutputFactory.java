@@ -1,7 +1,9 @@
 package net.parostroj.timetable.output2.html.mvel2;
 
-import java.util.Locale;
+import java.lang.reflect.Constructor;
+import java.util.*;
 import net.parostroj.timetable.output2.Output;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputFactory;
 
 /**
@@ -12,6 +14,13 @@ import net.parostroj.timetable.output2.OutputFactory;
 public class HtmlOutputFactory extends OutputFactory {
 
     private static final String TYPE = "mvel2";
+    private static Map<String, Class<? extends Output>> OUTPUT_TYPES;
+
+    static {
+        OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES.put("starts", HtmlStartPositionsOutput.class);
+        OUTPUT_TYPES.put("ends", HtmlEndPositionsOutput.class);
+    }
 
     public HtmlOutputFactory() {
     }
@@ -24,13 +33,21 @@ public class HtmlOutputFactory extends OutputFactory {
     }
 
     @Override
-    public Output createOutput(String type) {
-        if ("starts".equals(type))
-            return new HtmlStartPositionsOutput(this.getLocale());
-        else if ("ends".equals(type))
-            return new HtmlEndPositionsOutput(this.getLocale());
-        else
-            throw new RuntimeException("Unknown type.");
+    public Set<String> getOutputTypes() {
+        return OUTPUT_TYPES.keySet();
+    }
+
+    @Override
+    public Output createOutput(String type) throws OutputException {
+        Class<? extends Output> outputClass = OUTPUT_TYPES.get(type);
+        if (outputClass == null)
+            throw new OutputException("Unknown type.");
+        try {
+            Constructor<? extends Output> constructor = outputClass.getConstructor(Locale.class);
+            return constructor.newInstance(this.getLocale());
+        } catch (Exception e) {
+            throw new OutputException(e);
+        }
     }
 
     @Override

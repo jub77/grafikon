@@ -1,7 +1,12 @@
 package net.parostroj.timetable.output2.html.groovy;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import net.parostroj.timetable.output2.Output;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputFactory;
 
 /**
@@ -12,6 +17,14 @@ import net.parostroj.timetable.output2.OutputFactory;
 public class GspOutputFactory extends OutputFactory {
 
     private static final String TYPE = "groovy";
+    private static Map<String, Class<? extends Output>> OUTPUT_TYPES;
+
+    static {
+        OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES.put("starts", GspStartPositionsOutput.class);
+        OUTPUT_TYPES.put("ends", GspEndPositionsOutput.class);
+        OUTPUT_TYPES.put("stations", GspStationTimetablesOutput.class);
+    }
 
     public GspOutputFactory() {
     }
@@ -24,15 +37,21 @@ public class GspOutputFactory extends OutputFactory {
     }
 
     @Override
-    public Output createOutput(String type) {
-        if ("starts".equals(type))
-            return new GspStartPositionsOutput(this.getLocale());
-        else if ("ends".equals(type))
-            return new GspEndPositionsOutput(this.getLocale());
-        else if ("stations".equals(type))
-            return new GspStationTimetablesOutput(this.getLocale());
-        else
-            throw new RuntimeException("Unknown type.");
+    public Set<String> getOutputTypes() {
+        return OUTPUT_TYPES.keySet();
+    }
+
+    @Override
+    public Output createOutput(String type) throws OutputException {
+        Class<? extends Output> outputClass = OUTPUT_TYPES.get(type);
+        if (outputClass == null)
+            throw new OutputException("Unknown type.");
+        try {
+            Constructor<? extends Output> constructor = outputClass.getConstructor(Locale.class);
+            return constructor.newInstance(this.getLocale());
+        } catch (Exception e) {
+            throw new OutputException(e);
+        }
     }
 
     @Override

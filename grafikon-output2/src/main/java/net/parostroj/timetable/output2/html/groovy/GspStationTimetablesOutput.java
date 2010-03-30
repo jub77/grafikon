@@ -23,7 +23,7 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
  */
 public class GspStationTimetablesOutput extends OutputWithLocale {
 
-    GspStationTimetablesOutput(Locale locale) {
+    public GspStationTimetablesOutput(Locale locale) {
         super(locale);
     }
 

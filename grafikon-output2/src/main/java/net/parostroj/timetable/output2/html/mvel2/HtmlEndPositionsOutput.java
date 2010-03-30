@@ -23,7 +23,7 @@ import org.mvel2.templates.TemplateRuntime;
  */
 public class HtmlEndPositionsOutput extends OutputWithLocale {
 
-    HtmlEndPositionsOutput(Locale locale) {
+    public HtmlEndPositionsOutput(Locale locale) {
         super(locale);
     }
 

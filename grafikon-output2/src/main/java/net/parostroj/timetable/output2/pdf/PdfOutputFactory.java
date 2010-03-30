@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.pdf;
 
+import java.util.Set;
 import net.parostroj.timetable.output2.Output;
 import net.parostroj.timetable.output2.OutputFactory;
 
@@ -13,6 +14,11 @@ public class PdfOutputFactory extends OutputFactory {
     private static final String TYPE = "pdf";
 
     public PdfOutputFactory() {
+    }
+
+    @Override
+    public Set<String> getOutputTypes() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

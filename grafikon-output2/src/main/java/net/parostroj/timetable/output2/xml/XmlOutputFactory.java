@@ -1,7 +1,12 @@
 package net.parostroj.timetable.output2.xml;
 
+import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import net.parostroj.timetable.output2.Output;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputFactory;
 
 /**
@@ -12,6 +17,14 @@ import net.parostroj.timetable.output2.OutputFactory;
 public class XmlOutputFactory extends OutputFactory {
 
     private static final String TYPE = "xml";
+    private static Map<String, Class<? extends Output>> OUTPUT_TYPES;
+
+    static {
+        OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES.put("starts", XmlStartPositionsOutput.class);
+        OUTPUT_TYPES.put("ends", XmlEndPositionsOutput.class);
+        OUTPUT_TYPES.put("stations", XmlStationTimetablesOutput.class);
+    }
 
     private Charset getCharset() {
         Charset charset = (Charset) this.getParameter("charset");
@@ -22,15 +35,21 @@ public class XmlOutputFactory extends OutputFactory {
     }
 
     @Override
-    public Output createOutput(String type) {
-        if ("starts".equals(type))
-            return new XmlStartPositionsOutput(this.getCharset());
-        else if ("ends".equals(type))
-            return new XmlEndPositionsOutput(this.getCharset());
-        else if ("stations".equals(type))
-            return new XmlStationTimetablesOutput(this.getCharset());
-        else
-            throw new RuntimeException("Unknown type.");
+    public Set<String> getOutputTypes() {
+        return OUTPUT_TYPES.keySet();
+    }
+
+    @Override
+    public Output createOutput(String type) throws OutputException {
+        Class<? extends Output> outputClass = OUTPUT_TYPES.get(type);
+        if (outputClass == null)
+            throw new OutputException("Unknown type.");
+        try {
+            Constructor<? extends Output> constructor = outputClass.getConstructor(Charset.class);
+            return constructor.newInstance(this.getCharset());
+        } catch (Exception e) {
+            throw new OutputException(e);
+        }
     }
 
     @Override
