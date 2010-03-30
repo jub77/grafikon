@@ -14,10 +14,60 @@
 </head>
 <%
   def print_out(str, variant) {
-    if (str == null || str.equals(""))
-      print variant
+    print get_out(str, variant)
+  }
+
+  def get_out(str, variant) {
+    if (str == null || str == "")
+      return variant
     else
-      print str
+      return str
+  }
+
+  def get_note(row) {
+    if (row.technologicalTime)
+      return technological_time
+
+    note_parts = []
+    // length
+    if (row.length != null) {
+      length_unit_s = row.length.lengthInAxles ? " ${length_axles}" : row.length.lengthUnit
+      note_parts << "[${row.length.length}${length_unit_s} (${row.length.stationAbbr})]"
+    }
+    // engine to
+    if (row.engineTo != null)
+      for (engine_t in row.engineTo)
+        note_parts << "${engine_to} ${engine_t.trainName} (${engine_t.time})"
+    // engine from
+    if (row.engineFrom != null)
+      for (engine_f in row.engineFrom)
+        note_parts << "${engine}: ${engine_f.cycleName} (${engine_f.cycleDescription})"
+    // train unit to
+    if (row.trainUnitTo != null)
+      for (train_unit_t in row.trainUnitTo)
+        note_parts << "${train_unit} ${move_to} ${train_unit_t.trainName} (${train_unit_t.time})"
+    // train unit from
+    if (row.trainUnitFrom != null)
+      for (train_unit_f in row.trainUnitFrom)
+        note_parts << "${train_unit}: ${train_unit_f.cycleName} (${train_unit_f.cycleDescription})"
+    // comment
+    if (row.comment != null)
+      note_parts << row.comment
+    // occupied track
+    if (row.occupied)
+      note_parts << occupied
+
+    return create_note_str(note_parts)
+  }
+
+  def create_note_str(note_parts) {
+    result = note_parts.inject("") {
+      str, item ->
+        if (str != "")
+          str += ", "
+        str + item
+    }
+    return result
   }
 %>
 <body>
@@ -50,7 +100,7 @@
     <td align="right"><% print_out(row.departure,"&nbsp;") %>&nbsp;</td>
     <td><% print_out(row.to,"&nbsp;") %></td>
     <td><% print_out(row.end,"&nbsp;") %></td>
-    <td><% (row.length != null) ? print("["+row.length.length+" ("+row.length.stationAbbr+")]") : print("&nbsp;") %></td>
+    <td><% note = get_note(row); note != "" ? print(note) : print("&nbsp;") %></td>
 </tr>
 <% } %>
 </tbody>
