@@ -1,36 +1,34 @@
-package net.parostroj.timetable.output2.html.mvel2;
+package net.parostroj.timetable.output2.html.groovy;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import groovy.lang.Writable;
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.StationTimetable;
 import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
-import org.mvel2.templates.TemplateRuntime;
 
 /**
  * Implements html output for station timetable.
  *
  * @author jub
  */
-public class HtmlStationTimetablesOutput extends OutputWithLocale {
+public class GspStationTimetablesOutput extends OutputWithLocale {
 
-    HtmlStationTimetablesOutput(Locale locale) {
+    GspStationTimetablesOutput(Locale locale) {
         super(locale);
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws IOException {
+    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
         StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(diagram));
         List<StationTimetable> timetables = se.getStationTimetables();
@@ -40,13 +38,17 @@ public class HtmlStationTimetablesOutput extends OutputWithLocale {
         map.put("stations", timetables);
         ResourceHelper.addTextsToMap(map, "stations_", this.getLocale(), "texts/html_texts");
 
-        String template = ResourceHelper.readResource("/templates/mvel2/stations.html");
-        String ret = (String) TemplateRuntime.eval(template, map);
-
-        Writer writer = new OutputStreamWriter(stream, "utf-8");
-
-        writer.write(ret);
-        writer.flush();
+        SimpleTemplateEngine ste = new SimpleTemplateEngine();
+        try {
+            URL url = getClass().getResource("/templates/groovy/stations.gsp");
+            Template template = ste.createTemplate(new InputStreamReader(url.openStream(), "utf-8"));
+            Writable result = template.make(map);
+            Writer writer = new OutputStreamWriter(stream, "utf-8");
+            result.writeTo(writer);
+            writer.flush();
+        } catch (Exception e) {
+            throw new OutputException(e);
+        }
     }
 
     private List<Node> getNodes(TrainDiagram diagram) {

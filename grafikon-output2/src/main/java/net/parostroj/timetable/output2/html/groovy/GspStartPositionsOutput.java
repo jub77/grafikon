@@ -1,9 +1,13 @@
-package net.parostroj.timetable.output2.html.mvel2;
+package net.parostroj.timetable.output2.html.groovy;
 
-import java.io.IOException;
+import groovy.lang.Writable;
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -14,16 +18,15 @@ import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
-import org.mvel2.templates.TemplateRuntime;
 
 /**
  * Starting positions output to html.
  *
  * @author jub
  */
-public class HtmlStartPositionsOutput extends OutputWithLocale {
+public class GspStartPositionsOutput extends OutputWithLocale {
 
-    HtmlStartPositionsOutput(Locale locale) {
+    GspStartPositionsOutput(Locale locale) {
         super(locale);
     }
 
@@ -40,15 +43,15 @@ public class HtmlStartPositionsOutput extends OutputWithLocale {
         map.put("train_units", trainUnits);
         ResourceHelper.addTextsToMap(map, "start_positions_", this.getLocale(), "texts/html_texts");
 
-        String template = ResourceHelper.readResource("/templates/mvel2/start_positions.html");
-        String ret = (String) TemplateRuntime.eval(template, map);
-
+        SimpleTemplateEngine ste = new SimpleTemplateEngine();
         try {
+            URL url = getClass().getResource("/templates/groovy/start_positions.gsp");
+            Template template = ste.createTemplate(new InputStreamReader(url.openStream(), "utf-8"));
+            Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
-
-            writer.write(ret);
+            result.writeTo(writer);
             writer.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new OutputException(e);
         }
     }

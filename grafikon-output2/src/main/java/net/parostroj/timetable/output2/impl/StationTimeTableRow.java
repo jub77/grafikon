@@ -14,6 +14,7 @@ class StationTimetableRow {
     private String from;
     private String arrival;
     private String to;
+    private String end;
     private String departure;
     private String track;
     private boolean technologicalTime;
@@ -28,11 +29,12 @@ class StationTimetableRow {
     public StationTimetableRow() {
     }
 
-    public StationTimetableRow(String trainName, String from, String fromTime, String to, String toTime, String track) {
+    public StationTimetableRow(String trainName, String from, String fromTime, String to, String toTime, String end, String track) {
         this.trainName = trainName;
         this.from = from;
         this.arrival = fromTime;
         this.to = to;
+        this.end = end;
         this.departure = toTime;
         this.track = track;
     }
@@ -59,6 +61,14 @@ class StationTimetableRow {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
     }
 
     public String getDeparture() {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
@@ -27,7 +28,7 @@ public class HtmlEndPositionsOutput extends OutputWithLocale {
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws IOException {
+    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
         List<Position> engines = pe.getEndPositionsEngines();
@@ -42,9 +43,13 @@ public class HtmlEndPositionsOutput extends OutputWithLocale {
         String template = ResourceHelper.readResource("/templates/mvel2/end_positions.html");
         String ret = (String) TemplateRuntime.eval(template, map);
 
-        Writer writer = new OutputStreamWriter(stream, "utf-8");
+        try {
+            Writer writer = new OutputStreamWriter(stream, "utf-8");
 
-        writer.write(ret);
-        writer.flush();
+            writer.write(ret);
+            writer.flush();
+        } catch (IOException e) {
+            throw new OutputException(e);
+        }
     }
 }

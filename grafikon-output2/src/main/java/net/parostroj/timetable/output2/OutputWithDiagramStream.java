@@ -1,6 +1,5 @@
 package net.parostroj.timetable.output2;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.util.OutputParamsUtil;
@@ -20,11 +19,7 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
         if (diagram == null || stream == null) {
             throw new OutputException("Parameter cannot be null");
         }
-        try {
-            this.writeTo(stream, diagram);
-        } catch (IOException e) {
-            throw new OutputException(e);
-        }
+        this.writeTo(stream, diagram);
     }
 
     @Override
@@ -32,5 +27,5 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
         return OutputParamsUtil.createParams(DefaultOutputParam.OUTPUT_STREAM, DefaultOutputParam.TRAIN_DIAGRAM);
     }
 
-    protected abstract void writeTo(OutputStream stream, TrainDiagram diagram) throws IOException;
+    protected abstract void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException;
 }

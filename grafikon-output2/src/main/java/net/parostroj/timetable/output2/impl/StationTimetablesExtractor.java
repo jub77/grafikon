@@ -60,10 +60,11 @@ public class StationTimetablesExtractor {
 
         String fromNodeName = TransformUtil.getFromAbbr(interval);
         String toNodeName = TransformUtil.getToAbbr(interval);
+        String endNodeName = interval.getTrain().getEndNode().getAbbr();
 
         String fromTime = (from == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getStart());
         String toTime = (to == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getEnd());
-        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, interval.getTrack().getNumber());
+        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         this.addOtherData(interval, row);
         return row;
     }

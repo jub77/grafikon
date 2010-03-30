@@ -1,6 +1,5 @@
 package net.parostroj.timetable.output2.xml;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -10,6 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputWithCharset;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
@@ -26,7 +26,7 @@ class XmlEndPositionsOutput extends OutputWithCharset {
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws IOException {
+    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
@@ -46,7 +46,7 @@ class XmlEndPositionsOutput extends OutputWithCharset {
 
             m.marshal(ep, writer);
         } catch (JAXBException e) {
-            throw new IOException(e);
+            throw new OutputException(e);
         }
     }
 }
