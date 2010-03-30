@@ -28,6 +28,7 @@
         <jar href="grafikon-ls4-${grafikon.version}.jar" download="eager"/>
         <jar href="grafikon-model-${grafikon.version}.jar" download="eager"/>
         <jar href="grafikon-output-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-output2-${grafikon.version}.jar" download="eager"/>
         <jar href="grafikon-save-${grafikon.version}.jar" download="eager"/>
         <jar href="grafikon-templates-${grafikon.version}.jar" download="eager"/>
         <jar href="jgraph-${jgraph.version}.jar" download="eager"/>
