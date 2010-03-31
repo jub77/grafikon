@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.output.NodeTimetablesList;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -37,10 +37,15 @@ public class OutputAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("stations"))
-            this.stations();
-        else if (e.getActionCommand().equals("stations_select"))
-            this.stationsSelect();
+        try {
+            if (e.getActionCommand().equals("stations"))
+                this.stations();
+            else if (e.getActionCommand().equals("stations_select"))
+                this.stationsSelect();
+        } catch (OutputException ex) {
+            String errorMessage = ResourceLoader.getString("dialog.error.saving");
+            showError(errorMessage, parent);
+        }
     }
 
     private Frame getFrame() {
@@ -50,27 +55,34 @@ public class OutputAction extends AbstractAction {
             return null;
     }
 
-    private void stationsSelect() {
+    private void stationsSelect() throws OutputException {
         ElementSelectionDialog<Node> selDialog = new ElementSelectionDialog<Node>(getFrame(), true);
         selDialog.setLocationRelativeTo(parent);
         List<Node> selection = selDialog.selectElements(new ArrayList<Node>(model.getDiagram().getNet().getNodes()));
         if (selection != null) {
-            final NodeTimetablesList list = new NodeTimetablesList(selection, model.getDiagram());
-            this.stationsImpl(list);
+            OutputFactory of = OutputFactory.newInstance("groovy");
+            Output output = of.createOutput("stations");
+            OutputParams params = output.getAvailableParams();
+            params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).setValue(model.getDiagram());
+            params.setParam("stations", selection);
+            this.singleHtmlOutputImpl(output, params);
         }
-
     }
 
-    private void stations() {
-        NodeTimetablesList list = new NodeTimetablesList(model.getDiagram().getNet().getNodes(), model.getDiagram());
-        this.stationsImpl(list);
+    private void stations() throws OutputException {
+        OutputFactory of = OutputFactory.newInstance("groovy");
+        Output output = of.createOutput("stations");
+        OutputParams params = output.getAvailableParams();
+        params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).setValue(model.getDiagram());
+        this.singleHtmlOutputImpl(output, params);
     }
 
-    private void stationsImpl(final NodeTimetablesList list) {
-        HtmlAction action = new HtmlAction() {
+    private void singleHtmlOutputImpl(final Output output, final OutputParams params) {
+        HtmlOutputAction action = new HtmlOutputAction() {
                 @Override
-                public void write(Writer writer) throws Exception {
-                    list.writeTo(writer);
+                public void write(OutputStream stream) throws Exception {
+                    params.getParam(DefaultOutputParam.OUTPUT_STREAM).setValue(stream);
+                    output.write(params);
                 }
 
                 @Override
@@ -81,7 +93,7 @@ public class OutputAction extends AbstractAction {
         this.saveHtml(action);
     }
 
-    private void saveHtml(final HtmlAction action) {
+    private void saveHtml(final HtmlOutputAction action) {
         final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT);
         int retVal = outputFileChooser.showSaveDialog(parent);
         if (retVal == JFileChooser.APPROVE_OPTION) {
@@ -91,9 +103,9 @@ public class OutputAction extends AbstractAction {
                 @Override
                 public void run() {
                     try {
-                        Writer writer = new OutputStreamWriter(new FileOutputStream(outputFileChooser.getSelectedFile()), "utf-8");
-                        action.write(writer);
-                        writer.close();
+                        FileOutputStream stream = new FileOutputStream(outputFileChooser.getSelectedFile());
+                        action.write(stream);
+                        stream.close();
                         action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
                     } catch (IOException e) {
                         LOG.log(Level.WARNING, e.getMessage(), e);
