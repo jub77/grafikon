@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
@@ -31,7 +32,7 @@ public class GspEndPositionsOutput extends OutputWithLocale {
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
+    protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
         List<Position> engines = pe.getEndPositionsEngines();

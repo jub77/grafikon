@@ -10,8 +10,7 @@ import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputWithLocale;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.impl.StationTimetable;
 import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -28,9 +27,9 @@ public class GspStationTimetablesOutput extends OutputWithLocale {
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
+    protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
-        StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(diagram));
+        StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(params, diagram));
         List<StationTimetable> timetables = se.getStationTimetables();
 
         // call template
@@ -51,7 +50,11 @@ public class GspStationTimetablesOutput extends OutputWithLocale {
         }
     }
 
-    private List<Node> getNodes(TrainDiagram diagram) {
+    private List<Node> getNodes(OutputParams params, TrainDiagram diagram) {
+        OutputParam param = params.getParam("stations");
+        if (param != null && param.getValue() != null) {
+            return (List<Node>) param.getValue();
+        }
         NodeSort s = new NodeSort(NodeSort.Type.ASC);
         return s.sort(diagram.getNet().getNodes(), new NodeFilter() {
 

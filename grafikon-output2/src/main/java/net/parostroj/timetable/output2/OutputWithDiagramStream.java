@@ -19,13 +19,13 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
         if (diagram == null || stream == null) {
             throw new OutputException("Parameter cannot be null");
         }
-        this.writeTo(stream, diagram);
+        this.writeTo(params, stream, diagram);
     }
 
     @Override
-    public OutputParams getParams() {
+    public OutputParams getAvailableParams() {
         return OutputParamsUtil.createParams(DefaultOutputParam.OUTPUT_STREAM, DefaultOutputParam.TRAIN_DIAGRAM);
     }
 
-    protected abstract void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException;
+    protected abstract void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException;
 }

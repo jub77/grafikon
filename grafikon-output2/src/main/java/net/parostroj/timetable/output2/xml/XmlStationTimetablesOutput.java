@@ -13,6 +13,7 @@ import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
 import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
 
@@ -28,7 +29,7 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
     }
 
     @Override
-    protected void writeTo(OutputStream stream, TrainDiagram diagram) throws OutputException {
+    protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract positions
             StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(diagram));

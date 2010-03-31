@@ -15,5 +15,5 @@ public interface Output {
 
     public void write(OutputParams params) throws OutputException;
 
-    public OutputParams getParams();
+    public OutputParams getAvailableParams();
 }
