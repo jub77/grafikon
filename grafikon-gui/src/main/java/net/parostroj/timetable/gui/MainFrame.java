@@ -91,44 +91,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         initComponents();
         
-        this.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                final int result = ModelUtils.checkModelChangedContinue(model, MainFrame.this);
-                if (result != JOptionPane.CANCEL_OPTION)
-                    ActionHandler.getInstance().executeAction(MainFrame.this, ResourceLoader.getString("wait.message.programclose"), 0, new ModelAction() {
-                        private String errorMessage;
-                        @Override
-                        public void run() {
-                            try {
-                                if (result == JOptionPane.YES_OPTION)
-                                    ModelUtils.saveModelData(model, model.getOpenedFile());
-                                MainFrame.this.cleanUpBeforeApplicationEnd();
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Error saving model.", e);
-                                errorMessage = ResourceLoader.getString("dialog.error.saving");
-                            }
-                        }
-
-                        @Override
-                        public void afterRun() {
-                            if (errorMessage != null) {
-                                showError(errorMessage);
-                                return;
-                            }
-                            dispose();
-                        }
-                        });
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-                super.windowClosed(e);
-                System.exit(0);
-            }
-        });
+        this.addWindowListener(new MainFrameWindowListener(model, this));
         
         trainsPane.setModel(model);
         engineCyclesPane.setModel(model, new EngineCycleDelegate(),new TrainColorChooser() {
@@ -764,7 +727,7 @@ private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         return;
     }
     if (model.getDiagram() == null) {
-        this.showError(ResourceLoader.getString("dialog.error.nodiagram"));
+        ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
         return;
     }
     this.saveModel(model.getOpenedFile());
@@ -772,7 +735,7 @@ private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
 
     private void saveModel(final File file) {
         if (model.getDiagram() == null) {
-            this.showError(ResourceLoader.getString("dialog.error.nodiagram"));
+            ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
             return;
         }
 
@@ -795,7 +758,7 @@ private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             @Override
             public void afterRun() {
                 if (errorMessage != null) {
-                    showError(errorMessage + " " + file.getName());
+                    ActionUtils.showError(errorMessage + " " + file.getName(), MainFrame.this);
                 } else {
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
                 }
@@ -824,7 +787,7 @@ private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             @Override
             public void afterRun() {
                 if (errorMessage != null) {
-                    showError(errorMessage);
+                    ActionUtils.showError(errorMessage, MainFrame.this);
                     return;
                 }
                 // dispose main window - it should close application
@@ -834,17 +797,6 @@ private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             }
             });
 }//GEN-LAST:event_exitMenuItemActionPerformed
-
-private void cleanUpBeforeApplicationEnd() {
-    try {
-        // save preferences
-        AppPreferences prefs = AppPreferences.getPreferences();
-        this.saveToPreferences(prefs);
-        prefs.save();
-    } catch (IOException ex) {
-        LOG.log(Level.SEVERE, "Error saving preferences.", ex);
-    }
-}
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
     settingsDialog.setLocationRelativeTo(this);
@@ -924,7 +876,7 @@ private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//G
             @Override
             public void afterRun() {
                 if (errorMessage != null)
-                    showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName());
+                    ActionUtils.showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName(), MainFrame.this);
             }
             });
 
@@ -952,7 +904,7 @@ private void fileNewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//G
             @Override
             public void afterRun() {
                 if (errorMessage != null) {
-                    showError(errorMessage);
+                    ActionUtils.showError(errorMessage, MainFrame.this);
                     return;
                 }
                 if (result == JOptionPane.YES_OPTION) {
@@ -978,7 +930,7 @@ private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveAsMenuItemActionPerformed
     if (model.getDiagram() == null) {
-        this.showError(ResourceLoader.getString("dialog.error.nodiagram"));
+        ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
         return;
     }
     // saving train diagram
@@ -1100,7 +1052,7 @@ private void fileImportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 
     if (errorMessage != null) {
         String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-        showError(text);
+        ActionUtils.showError(text, this);
         return;
     }
 
@@ -1208,7 +1160,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 @Override
                 public void afterRun() {
                     if (errorMessage != null) {
-                        showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName());
+                        ActionUtils.showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName(), MainFrame.this);
                     }
                 }
                 });
@@ -1345,16 +1297,23 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 @Override
                 public void afterRun() {
                     if (errorMessage != null)
-                        showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName());
+                        ActionUtils.showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), MainFrame.this);
                 }
             });
         }
     }
 
-    private void showError(String text) {
-        JOptionPane.showMessageDialog(this, text, ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+    protected void cleanUpBeforeApplicationEnd() {
+        try {
+            // save preferences
+            AppPreferences prefs = AppPreferences.getPreferences();
+            this.saveToPreferences(prefs);
+            prefs.save();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Error saving preferences.", ex);
+        }
     }
-    
+
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
