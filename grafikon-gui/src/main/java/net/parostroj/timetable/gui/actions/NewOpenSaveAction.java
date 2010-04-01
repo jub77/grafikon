@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.dialogs.NewModelDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -30,16 +32,30 @@ public class NewOpenSaveAction extends AbstractAction {
     private static final Logger LOG = Logger.getLogger(NewOpenSaveAction.class.getName());
     private ApplicationModel model;
     private Component parent;
+    private NewModelDialog newModelDialog;
 
-    public NewOpenSaveAction(ApplicationModel model) {
+    /**
+     * creates a new instance
+     *
+     * @param model application model
+     * @param owner frame
+     */
+    public NewOpenSaveAction(ApplicationModel model, Frame owner, boolean createNewDialog) {
         this.model = model;
+        if (createNewDialog) {
+            newModelDialog = new NewModelDialog(owner, true);
+            newModelDialog.setModel(model);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         parent = ActionUtils.getTopLevelComponent(e.getSource());
-        if (e.getActionCommand().equals("open"))
+        if (e.getActionCommand().equals("open")) {
             this.open();
+        } else if (e.getActionCommand().equals("new")) {
+            this.create();
+        }
     }
 
     private void open() {
@@ -113,5 +129,44 @@ public class NewOpenSaveAction extends AbstractAction {
                 }
             }
         });
+    }
+
+    private void create() {
+        // check changes
+        final int result = ModelUtils.checkModelChangedContinue(model, parent);
+        if (result == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.newmodel"), new ModelAction() {
+
+            private String errorMessage;
+
+            @Override
+            public void run() {
+                try {
+                    if (result == JOptionPane.YES_OPTION) {
+                        ModelUtils.saveModelData(model, model.getOpenedFile());
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Error saving model.", e);
+                    errorMessage = ResourceLoader.getString("dialog.error.saving");
+                }
+            }
+
+            @Override
+            public void afterRun() {
+                if (errorMessage != null) {
+                    ActionUtils.showError(errorMessage, parent);
+                    return;
+                }
+                if (result == JOptionPane.YES_OPTION) {
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
+                }
+                // create new model
+                newModelDialog.setLocationRelativeTo(parent);
+                newModelDialog.setVisible(true);
+            }
+        });
+
     }
 }

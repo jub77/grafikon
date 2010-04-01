@@ -38,7 +38,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private SettingsDialog settingsDialog;
     private EditImagesDialog imagesDialog;
     private EditInfoDialog infoDialog;
-    private NewModelDialog newModelDialog;
     private FloatingDialogsList floatingDialogsList;
     private TrainTypesDialog trainTypesDialog;
     private LineClassesDialog lineClassesDialog;
@@ -162,9 +161,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         floatingDialogsList = FloatingDialogsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
-        
-        newModelDialog = new NewModelDialog(this, true);
-        newModelDialog.setModel(model);
         
         trainTypesDialog = new TrainTypesDialog(this, true);
         trainTypesDialog.setModel(model);
@@ -369,16 +365,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
+        fileNewMenuItem.setAction(new NewOpenSaveAction(model, this, true));
         fileNewMenuItem.setText(ResourceLoader.getString("menu.file.new")); // NOI18N
-        fileNewMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileNewMenuItemActionPerformed(evt);
-            }
-        });
+        fileNewMenuItem.setActionCommand("new");
         fileMenu.add(fileNewMenuItem);
         fileMenu.add(separator3);
 
-        fileOpenMenuItem.setAction(new NewOpenSaveAction(model));
+        fileOpenMenuItem.setAction(new NewOpenSaveAction(model, this, false));
         fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
         fileOpenMenuItem.setActionCommand("open");
@@ -882,40 +875,6 @@ private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//G
 
     }
 }//GEN-LAST:event_allHtmlMenuItemActionPerformed
-
-private void fileNewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNewMenuItemActionPerformed
-    // check changes
-    final int result = ModelUtils.checkModelChangedContinue(model, this);
-    if (result == JOptionPane.CANCEL_OPTION)
-        return;
-    ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.newmodel"), new ModelAction() {
-            private String errorMessage;
-            @Override
-            public void run() {
-                try {
-                    if (result == JOptionPane.YES_OPTION)
-                        ModelUtils.saveModelData(model, model.getOpenedFile());
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                }
-            }
-
-            @Override
-            public void afterRun() {
-                if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage, MainFrame.this);
-                    return;
-                }
-                if (result == JOptionPane.YES_OPTION) {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
-                }
-                // create new model
-                newModelDialog.setLocationRelativeTo(MainFrame.this);
-                newModelDialog.setVisible(true);
-            }
-    });
-}//GEN-LAST:event_fileNewMenuItemActionPerformed
 
 private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
     imagesDialog.setLocationRelativeTo(this);
