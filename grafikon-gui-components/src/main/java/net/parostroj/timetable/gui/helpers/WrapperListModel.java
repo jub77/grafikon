@@ -96,6 +96,7 @@ public class WrapperListModel<T> extends AbstractListModel {
             this.fireIntervalRemoved(this, 0, list.size() - 1);
         this.list = list;
         this.set = null;
+        this.sort(list);
         if (list.size() > 0)
             this.fireIntervalAdded(this, 0, list.size() - 1);
     }
