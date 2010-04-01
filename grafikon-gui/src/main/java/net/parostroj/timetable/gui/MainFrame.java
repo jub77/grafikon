@@ -233,7 +233,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         
         // preload file dialogs
         FileChooserFactory fcf = FileChooserFactory.getInstance();
-        fcf.getFileChooser(FileChooserFactory.Type.ALL_HTML);
+        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
         fcf.getFileChooser(FileChooserFactory.Type.XML);
     }
@@ -964,7 +964,7 @@ private void dcListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
 }//GEN-LAST:event_dcListMenuItemActionPerformed
 
 private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allHtmlMenuItemActionPerformed
-    final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML);
+    final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
     int result = allHtmlFileChooser.showSaveDialog(this);
     if (result == JFileChooser.APPROVE_OPTION) {
         final File directory = allHtmlFileChooser.getSelectedFile();
@@ -1266,7 +1266,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
-        final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML);
+        final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         int result = allHtmlFileChooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             final File directory = allHtmlFileChooser.getSelectedFile();
@@ -1470,7 +1470,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         prefs.setString("last.directory.output",
                 FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
         prefs.setString("last.directory.html.dir",
-                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.ALL_HTML).getCurrentDirectory().getAbsolutePath());
+                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY).getCurrentDirectory().getAbsolutePath());
         
         // save locales
         if (locale != null)

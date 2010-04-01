@@ -18,7 +18,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class FileChooserFactory {
 
     public enum Type {
-        OUTPUT, XML, ALL_HTML;
+        OUTPUT, XML, OUTPUT_DIRECTORY;
     }
 
     public static final String FILE_EXTENSION = "gtm";
@@ -28,7 +28,7 @@ public class FileChooserFactory {
 
     private JFileChooser outputFileChooserInstance;
     private JFileChooser xmlFileChooserInstance;
-    private JFileChooser allHtmlFileChooserInstance;
+    private JFileChooser outputDirectoryFileChooserInstance;
 
     public static FileChooserFactory getInstance() {
         return INSTANCE;
@@ -36,21 +36,21 @@ public class FileChooserFactory {
 
     public synchronized JFileChooser getFileChooser(Type type) {
         switch (type) {
-            case ALL_HTML:
-                if (allHtmlFileChooserInstance == null) {
-                    allHtmlFileChooserInstance = new JFileChooser();
-                    allHtmlFileChooserInstance.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            case OUTPUT_DIRECTORY:
+                if (outputDirectoryFileChooserInstance == null) {
+                    outputDirectoryFileChooserInstance = new JFileChooser();
+                    outputDirectoryFileChooserInstance.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     // last directory
                     try {
                         String lastDir = AppPreferences.getPreferences().getString("last.directory.html.dir", null);
                         if (lastDir != null) {
-                            allHtmlFileChooserInstance.setCurrentDirectory(new File(lastDir));
+                            outputDirectoryFileChooserInstance.setCurrentDirectory(new File(lastDir));
                         }
                     } catch (IOException e) {
                         LOG.log(Level.WARNING, "Cannot get last directory from preferences.", e);
                     }
                 }
-                return allHtmlFileChooserInstance;
+                return outputDirectoryFileChooserInstance;
             case OUTPUT:
                 if (outputFileChooserInstance == null) {
                     outputFileChooserInstance = new JFileChooser() {

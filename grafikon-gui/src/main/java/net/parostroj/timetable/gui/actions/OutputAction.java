@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.output.ImageSaver;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -39,14 +41,15 @@ public class OutputAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         parent = ActionUtils.getTopLevelComponent(e.getSource());
         try {
-            if (e.getActionCommand().equals("stations"))
-                this.stations();
-            else if (e.getActionCommand().equals("stations_select"))
+            if (e.getActionCommand().equals("stations")) {
+                this.singleOutput("stations");
+            } else if (e.getActionCommand().equals("stations_select")) {
                 this.stationsSelect();
-            else if (e.getActionCommand().equals("ends"))
-                this.endPositions();
-            else if (e.getActionCommand().equals("starts"))
-                this.startPositions();
+            } else if (e.getActionCommand().equals("ends")) {
+                this.singleOutput("ends");
+            } else if (e.getActionCommand().equals("starts")) {
+                this.singleOutput("starts");
+            }
         } catch (OutputException ex) {
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             showError(errorMessage + ": " + ex.getMessage(), parent);
@@ -54,10 +57,11 @@ public class OutputAction extends AbstractAction {
     }
 
     private Frame getFrame() {
-        if (parent instanceof Frame)
-            return (Frame)parent;
-        else
+        if (parent instanceof Frame) {
+            return (Frame) parent;
+        } else {
             return null;
+        }
     }
 
     private void stationsSelect() throws OutputException {
@@ -68,23 +72,17 @@ public class OutputAction extends AbstractAction {
             Output output = this.createOutput("stations");
             OutputParams params = this.createParams(output);
             params.setParam("stations", selection);
-            this.singleHtmlOutputImpl(output, params);
+            this.saveHtml(this.createSingleHtmlOutputImpl(
+                    new ExecutableOutput(output, this.createParams(output)),
+                    false, false));
         }
     }
 
-    private void stations() throws OutputException {
-        Output output = this.createOutput("stations");
-        this.singleHtmlOutputImpl(output, this.createParams(output));
-    }
-
-    private void endPositions() throws OutputException {
-        Output output = this.createOutput("ends");
-        this.singleHtmlOutputImpl(output, this.createParams(output));
-    }
-
-    private void startPositions() throws OutputException {
-        Output output = this.createOutput("starts");
-        this.singleHtmlOutputImpl(output, this.createParams(output));
+    private void singleOutput(String outputType) throws OutputException {
+        Output output = this.createOutput(outputType);
+        this.saveHtml(this.createSingleHtmlOutputImpl(
+                new ExecutableOutput(output, this.createParams(output)),
+                false, false));
     }
 
     private Output createOutput(String outputType) throws OutputException {
@@ -95,40 +93,56 @@ public class OutputAction extends AbstractAction {
 
     private OutputParams createParams(Output output) {
         OutputParams params = output.getAvailableParams();
-        params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).setValue(model.getDiagram());
+        params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
         return params;
     }
 
-    private void singleHtmlOutputImpl(final Output output, final OutputParams params) {
+    private HtmlOutputAction createSingleHtmlOutputImpl(final ExecutableOutput output, final boolean saveImages, final boolean saveTDImages) {
         HtmlOutputAction action = new HtmlOutputAction() {
-                @Override
-                public void write(OutputStream stream) throws Exception {
-                    params.getParam(DefaultOutputParam.OUTPUT_STREAM).setValue(stream);
-                    output.write(params);
-                }
 
-                @Override
-                public void writeToDirectory(File directory) throws Exception {
-                    // do nothing
+            @Override
+            public void write(OutputStream stream) throws Exception {
+                output.getParams().setParam(DefaultOutputParam.OUTPUT_STREAM, stream);
+                output.execute();
+            }
+
+            @Override
+            public void writeToDirectory(File directory) throws Exception {
+                if (saveImages) {
+                    new ImageSaver().saveTrainTimetableImages(directory);
                 }
+                if (saveTDImages) // TODO missing implementation
+                ;
+            }
         };
-        this.saveHtml(action);
+        return action;
     }
 
     private void saveHtml(final HtmlOutputAction action) {
-        final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT);
+        this.saveHtml(Collections.singletonList(action), FileChooserFactory.Type.OUTPUT);
+    }
+
+    private void saveHtml(final List<HtmlOutputAction> actions, final FileChooserFactory.Type fType) {
+        final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(fType);
         int retVal = outputFileChooser.showSaveDialog(parent);
         if (retVal == JFileChooser.APPROVE_OPTION) {
             ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
+
                 private String errorMessage;
 
                 @Override
                 public void run() {
                     try {
-                        FileOutputStream stream = new FileOutputStream(outputFileChooser.getSelectedFile());
-                        action.write(stream);
-                        stream.close();
-                        action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
+                        for (HtmlOutputAction action : actions) {
+                            if (fType == FileChooserFactory.Type.OUTPUT) {
+                                FileOutputStream stream = new FileOutputStream(outputFileChooser.getSelectedFile());
+                                action.write(stream);
+                                stream.close();
+                                action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
+                            } else if (fType == FileChooserFactory.Type.OUTPUT_DIRECTORY) {
+                                action.writeToDirectory(outputFileChooser.getSelectedFile());
+                            }
+                        }
                     } catch (IOException e) {
                         LOG.log(Level.WARNING, e.getMessage(), e);
                         errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -140,8 +154,9 @@ public class OutputAction extends AbstractAction {
 
                 @Override
                 public void afterRun() {
-                    if (errorMessage != null)
+                    if (errorMessage != null) {
                         showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), parent);
+                    }
                 }
             });
         }
