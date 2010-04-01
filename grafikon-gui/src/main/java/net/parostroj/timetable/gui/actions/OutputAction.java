@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
@@ -52,7 +51,7 @@ public class OutputAction extends AbstractAction {
             }
         } catch (OutputException ex) {
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
-            showError(errorMessage + ": " + ex.getMessage(), parent);
+            ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
         }
     }
 
@@ -155,14 +154,10 @@ public class OutputAction extends AbstractAction {
                 @Override
                 public void afterRun() {
                     if (errorMessage != null) {
-                        showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), parent);
+                        ActionUtils.showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), parent);
                     }
                 }
             });
         }
-    }
-
-    private void showError(String text, Component parent) {
-        JOptionPane.showMessageDialog(parent, text, ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.awt.Window;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Utility class.
@@ -28,5 +30,9 @@ public class ActionUtils {
             }
         }
         return (Window) comp;
+    }
+
+    public static void showError(String text, Component parent) {
+        JOptionPane.showMessageDialog(parent, text, ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 }
