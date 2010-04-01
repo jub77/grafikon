@@ -96,7 +96,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                final int result = checkModelChangedContinue();
+                final int result = ModelUtils.checkModelChangedContinue(model, MainFrame.this);
                 if (result != JOptionPane.CANCEL_OPTION)
                     ActionHandler.getInstance().executeAction(MainFrame.this, ResourceLoader.getString("wait.message.programclose"), 0, new ModelAction() {
                         private String errorMessage;
@@ -104,7 +104,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                         public void run() {
                             try {
                                 if (result == JOptionPane.YES_OPTION)
-                                    saveModelData(model.getOpenedFile());
+                                    ModelUtils.saveModelData(model, model.getOpenedFile());
                                 MainFrame.this.cleanUpBeforeApplicationEnd();
                             } catch (Exception e) {
                                 LOG.log(Level.WARNING, "Error saving model.", e);
@@ -272,24 +272,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
         return title;
     }
-    
-    private int checkModelChangedContinue() {
-        if (!model.isModelChanged())
-            return JOptionPane.NO_OPTION;
-        else {
-            int result = JOptionPane.showConfirmDialog(this, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
-            if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
-                JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
-                int retVal = xmlFileChooser.showSaveDialog(this);
-                if (retVal == JFileChooser.APPROVE_OPTION)
-                    model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                else
-                    result = JOptionPane.CANCEL_OPTION;
-            }
-            return result;
-        }
-    }
-    
+   
     private void updateView() {
         fileSaveMenuItem.setEnabled(model.getDiagram() != null);
         fileSaveAsMenuItem.setEnabled(model.getDiagram() != null);
@@ -432,13 +415,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(fileNewMenuItem);
         fileMenu.add(separator3);
 
+        fileOpenMenuItem.setAction(new NewOpenSaveAction(model));
         fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
-        fileOpenMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileOpenMenuItemActionPerformed(evt);
-            }
-        });
+        fileOpenMenuItem.setActionCommand("open");
         fileMenu.add(fileOpenMenuItem);
 
         fileSaveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
@@ -802,7 +782,7 @@ private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             @Override
             public void run() {
                 try {
-                    saveModelData(file);
+                    ModelUtils.saveModelData(model, file);
                 } catch (LSException e) {
                     LOG.log(Level.WARNING, "Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -822,86 +802,10 @@ private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             }
         });
     }
-
-    private void saveModelData(File file) throws LSException {
-        FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();
-        ls.save(model.getDiagram(), file);
-    }
-    
-private void fileOpenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenMenuItemActionPerformed
-    // check changes
-    final int result = this.checkModelChangedContinue();
-    if (result == JOptionPane.CANCEL_OPTION)
-        return;
-    // loading train diagram
-    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
-    final int retVal = xmlFileChooser.showOpenDialog(this);
-    ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.loadmodel"), new ModelAction() {
-
-        private TrainDiagram diagram;
-        private String errorMessage;
-        private String errorSaveMessage;
-        private Exception errorException;
-
-        @Override
-        public void run() {
-            try {
-                if (result == JOptionPane.YES_OPTION) {
-                    saveModelData(model.getOpenedFile());
-                }
-                try {
-                    if (retVal == JFileChooser.APPROVE_OPTION) {
-                        model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                        FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
-                        diagram = ls.load(xmlFileChooser.getSelectedFile());
-                    }
-                } catch (LSException e) {
-                    LOG.log(Level.WARNING, "Error loading model.", e);
-                    if (e.getCause() instanceof FileNotFoundException)
-                        errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
-                    else if (e.getCause() instanceof IOException)
-                        errorMessage = ResourceLoader.getString("dialog.error.loading");
-                    else {
-                        errorMessage = ResourceLoader.getString("dialog.error.loading");
-                        errorException = e;
-                    }
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error loading model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.loading");
-                }
-            } catch (Exception e) {
-                LOG.log(Level.WARNING, "Error saving model.", e);
-                errorSaveMessage = ResourceLoader.getString("dialog.error.saving");
-            }
-        }
-
-        @Override
-        public void afterRun() {
-            if (errorSaveMessage != null) {
-                showError(errorSaveMessage);
-                return;
-            }
-            if (result == JOptionPane.YES_OPTION) {
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
-            }
-            if (retVal == JFileChooser.APPROVE_OPTION) {
-                if (diagram != null)
-                    model.setDiagram(diagram);
-                else {
-                    String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-                    if (errorException != null)
-                        text = text + "\n(" + errorException.getMessage() + ")";
-                    showError(text);
-                    model.setDiagram(null);
-                }
-            }
-        }
-        });
-}//GEN-LAST:event_fileOpenMenuItemActionPerformed
-
+   
 private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
     // exiting application
-    final int result = this.checkModelChangedContinue();
+    final int result = ModelUtils.checkModelChangedContinue(model, this);
     if (result != JOptionPane.CANCEL_OPTION)
         ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.programclose"), 0, new AbstractModelAction() {
             private String errorMessage;
@@ -909,7 +813,7 @@ private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             public void run() {
                 try {
                     if (result == JOptionPane.YES_OPTION)
-                        saveModelData(model.getOpenedFile());
+                        ModelUtils.saveModelData(model, model.getOpenedFile());
                     MainFrame.this.cleanUpBeforeApplicationEnd();
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Error saving model.", e);
@@ -1029,7 +933,7 @@ private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//G
 
 private void fileNewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNewMenuItemActionPerformed
     // check changes
-    final int result = this.checkModelChangedContinue();
+    final int result = ModelUtils.checkModelChangedContinue(model, this);
     if (result == JOptionPane.CANCEL_OPTION)
         return;
     ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.newmodel"), new ModelAction() {
@@ -1038,7 +942,7 @@ private void fileNewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//G
             public void run() {
                 try {
                     if (result == JOptionPane.YES_OPTION)
-                        saveModelData(model.getOpenedFile());
+                        ModelUtils.saveModelData(model, model.getOpenedFile());
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
