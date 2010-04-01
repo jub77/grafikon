@@ -13,8 +13,10 @@ public class OutputParams extends HashMap<String, OutputParam> {
         OutputParam param = this.get(name);
         if (param == null) {
             param = new OutputParam(name, value);
+            this.put(name, param);
+        } else {
+            param.setValue(value);
         }
-        this.put(name, param);
         return this;
     }
 
