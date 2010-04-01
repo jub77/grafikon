@@ -9,16 +9,11 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import net.parostroj.timetable.actions.TrainSortByNodeFilter;
-import net.parostroj.timetable.gui.actions.FileChooserFactory;
-import net.parostroj.timetable.gui.actions.HtmlAction;
-import net.parostroj.timetable.gui.actions.OutputAction;
+import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -92,7 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
 
         model = new ApplicationModel();
-        outputAction = new OutputAction(model, this);
+        outputAction = new OutputAction(model);
 
         initComponents();
         
@@ -693,20 +688,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         specialMenu.setText(ResourceLoader.getString("menu.special")); // NOI18N
 
+        recalculateMenuItem.setAction(new RecalculateAction(model));
         recalculateMenuItem.setText(ResourceLoader.getString("menu.special.recalculate")); // NOI18N
-        recalculateMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                recalculateMenuItemActionPerformed(evt);
-            }
-        });
         specialMenu.add(recalculateMenuItem);
 
+        recalculateStopsMenuItem.setAction(new RecalculateStopsAction(model));
         recalculateStopsMenuItem.setText(ResourceLoader.getString("menu.special.recalculate.stops")); // NOI18N
-        recalculateStopsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                recalculateStopsMenuItemActionPerformed(evt);
-            }
-        });
         specialMenu.add(recalculateStopsMenuItem);
 
         menuBar.add(specialMenu);
@@ -772,59 +759,6 @@ private void ecListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
     final EngineCyclesList list = new EngineCyclesList(model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE));
     this.engineCyclesList(list);
 }//GEN-LAST:event_ecListMenuItemActionPerformed
-
-private void recalculateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalculateMenuItemActionPerformed
-    ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.recalculate"), new SwingWorker<Void, Train>() {
-
-        private Lock lock = new ReentrantLock();
-        private Condition condition = lock.newCondition();
-        private boolean chunksFinished = false;
-        private static final int CHUNK_SIZE = 10;
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            // recalculate all trains
-            lock.lock();
-            try {
-                int cnt = 0;
-                for (Train train : model.getDiagram().getTrains()) {
-                    publish(train);
-                    if (++cnt >= CHUNK_SIZE) {
-                        chunksFinished = false;
-                        while(!chunksFinished)
-                            condition.await();
-                        cnt = 0;
-                    }
-                }
-            } finally {
-                lock.unlock();
-            }
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
-            // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
-            model.setModelChanged(true);
-        }
-
-        @Override
-        protected void process(List<Train> chunks) {
-            LOG.finest("Recalculate chunk of trains. Size: " + chunks.size());
-            lock.lock();
-            try {
-                for (Train train : chunks) {
-                    train.recalculate();
-                }
-                chunksFinished = true;
-                condition.signalAll();
-            } finally {
-                lock.unlock();
-            }
-        }
-    });
-}//GEN-LAST:event_recalculateMenuItemActionPerformed
 
 private void trainTimetableListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListMenuItemActionPerformed
     // write
@@ -1201,75 +1135,6 @@ private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) 
 private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
     trainsPane.resizeColumns();
 }//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
-
-private void recalculateStopsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalculateStopsMenuItemActionPerformed
-    // get ratio
-    String ratioStr = JOptionPane.showInputDialog(this, ResourceLoader.getString("recalculate.stops.ratio"), "0.5");
-
-    if (ratioStr == null)
-        return;
-
-    // convert do double
-    double cRatio = 1.0d;
-    try {
-        cRatio = Double.parseDouble(ratioStr);
-    } catch (NumberFormatException e) {
-        LOG.warning("Cannot convert to double: " + ratioStr);
-        return;
-    }
-
-    final double ratio = cRatio;
-
-    ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.recalculate"), new ModelAction() {
-
-        @Override
-        public void run() {
-            // recalculate all trains
-            for (Train train : model.getDiagram().getTrains()) {
-                // convert stops ...
-                for (TimeInterval interval : train.getTimeIntervalList()) {
-                    if (interval.isInnerStop()) {
-                        // recalculate time ...
-                        int time = interval.getLength();
-                        time = this.convertTime(time, ratio);
-                        // change stop time
-                        train.changeStopTime(interval, time);
-                    }
-                }
-                int time = 0;
-                // convert time before
-                if (train.getTimeBefore() != 0) {
-                    time = train.getTimeBefore();
-                    time = this.convertTime(time, ratio);
-                    train.setTimeBefore(time);
-                }
-                // convert time after
-                if (train.getTimeAfter() != 0) {
-                    time = train.getTimeAfter();
-                    time = this.convertTime(time, ratio);
-                    train.setTimeAfter(time);
-                }
-            }
-        }
-
-        private int convertTime(int time, double convertRatio) {
-            // recalculate
-            time = (int)(convertRatio * time);
-            // round to minutes
-            time = ((time + 40) / 60) * 60;
-            // do not change stop to 0
-            time = (time == 0) ? 1 : time;
-            return time;
-        }
-
-        @Override
-        public void afterRun() {
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
-            // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
-            model.setModelChanged(true);
-        }
-    });
-}//GEN-LAST:event_recalculateStopsMenuItemActionPerformed
 
 private void trainTimetableListByTimeFilteredMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByTimeFilteredMenuItemActionPerformed
     // choose nodes

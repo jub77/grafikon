@@ -16,7 +16,6 @@ import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -32,13 +31,13 @@ public class OutputAction extends AbstractAction {
     private ApplicationModel model;
     private Component parent;
 
-    public OutputAction(ApplicationModel model, Component parent) {
+    public OutputAction(ApplicationModel model) {
         this.model = model;
-        this.parent = parent;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        parent = ActionUtils.getTopLevelComponent(e.getSource());
         try {
             if (e.getActionCommand().equals("stations"))
                 this.stations();
