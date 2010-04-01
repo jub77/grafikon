@@ -597,12 +597,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(dcListMenuItem);
 
+        spListMenuItem.setAction(outputAction);
         spListMenuItem.setText(ResourceLoader.getString("menu.acion.splist")); // NOI18N
-        spListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spListMenuItemActionPerformed(evt);
-            }
-        });
+        spListMenuItem.setActionCommand("starts");
         actionMenu.add(spListMenuItem);
         actionMenu.add(jSeparator1);
 
@@ -622,12 +619,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(trainTimetableListByTimeFilteredMenuItem);
 
+        epListMenuItem.setAction(outputAction);
         epListMenuItem.setText(ResourceLoader.getString("menu.acion.eplist")); // NOI18N
-        epListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                epListMenuItemActionPerformed(evt);
-            }
-        });
+        epListMenuItem.setActionCommand("ends");
         actionMenu.add(epListMenuItem);
         actionMenu.add(jSeparator2);
 
@@ -1178,22 +1172,6 @@ private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.Act
     }
 }//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
 
-private void spListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spListMenuItemActionPerformed
-    final StartingPositionsList list = new StartingPositionsList(model.getDiagram());
-    HtmlAction action = new HtmlAction() {
-            @Override
-            public void write(Writer writer) throws Exception {
-                list.writeTo(writer);
-            }
-
-            @Override
-            public void writeToDirectory(File directory) throws Exception {
-                // do nothing
-            }
-    };
-    this.saveHtml(action);
-}//GEN-LAST:event_spListMenuItemActionPerformed
-
 private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
     trainTypesDialog.updateValues();
     trainTypesDialog.setLocationRelativeTo(this);
@@ -1211,22 +1189,6 @@ private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     engineClassesDialog.setLocationRelativeTo(this);
     engineClassesDialog.setVisible(true);
 }//GEN-LAST:event_weightTablesMenuItemActionPerformed
-
-private void epListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_epListMenuItemActionPerformed
-    final EndPositionsList list = new EndPositionsList(model.getDiagram());
-    HtmlAction action = new HtmlAction() {
-            @Override
-            public void write(Writer writer) throws Exception {
-                list.writeTo(writer);
-            }
-
-            @Override
-            public void writeToDirectory(File directory) throws Exception {
-                // do nothing
-            }
-    };
-    this.saveHtml(action);
-}//GEN-LAST:event_epListMenuItemActionPerformed
 
 private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
     trainsPane.editColumns();

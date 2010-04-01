@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -26,6 +27,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class OutputAction extends AbstractAction {
 
+    private static final String FACTORY = "groovy";
     private static final Logger LOG = Logger.getLogger(OutputAction.class.getName());
     private ApplicationModel model;
     private Component parent;
@@ -42,9 +44,13 @@ public class OutputAction extends AbstractAction {
                 this.stations();
             else if (e.getActionCommand().equals("stations_select"))
                 this.stationsSelect();
+            else if (e.getActionCommand().equals("ends"))
+                this.endPositions();
+            else if (e.getActionCommand().equals("starts"))
+                this.startPositions();
         } catch (OutputException ex) {
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
-            showError(errorMessage, parent);
+            showError(errorMessage + ": " + ex.getMessage(), parent);
         }
     }
 
@@ -60,21 +66,38 @@ public class OutputAction extends AbstractAction {
         selDialog.setLocationRelativeTo(parent);
         List<Node> selection = selDialog.selectElements(new ArrayList<Node>(model.getDiagram().getNet().getNodes()));
         if (selection != null) {
-            OutputFactory of = OutputFactory.newInstance("groovy");
-            Output output = of.createOutput("stations");
-            OutputParams params = output.getAvailableParams();
-            params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).setValue(model.getDiagram());
+            Output output = this.createOutput("stations");
+            OutputParams params = this.createParams(output);
             params.setParam("stations", selection);
             this.singleHtmlOutputImpl(output, params);
         }
     }
 
     private void stations() throws OutputException {
-        OutputFactory of = OutputFactory.newInstance("groovy");
-        Output output = of.createOutput("stations");
+        Output output = this.createOutput("stations");
+        this.singleHtmlOutputImpl(output, this.createParams(output));
+    }
+
+    private void endPositions() throws OutputException {
+        Output output = this.createOutput("ends");
+        this.singleHtmlOutputImpl(output, this.createParams(output));
+    }
+
+    private void startPositions() throws OutputException {
+        Output output = this.createOutput("starts");
+        this.singleHtmlOutputImpl(output, this.createParams(output));
+    }
+
+    private Output createOutput(String outputType) throws OutputException {
+        OutputFactory of = OutputFactory.newInstance(FACTORY);
+        Output output = of.createOutput(outputType);
+        return output;
+    }
+
+    private OutputParams createParams(Output output) {
         OutputParams params = output.getAvailableParams();
         params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).setValue(model.getDiagram());
-        this.singleHtmlOutputImpl(output, params);
+        return params;
     }
 
     private void singleHtmlOutputImpl(final Output output, final OutputParams params) {
