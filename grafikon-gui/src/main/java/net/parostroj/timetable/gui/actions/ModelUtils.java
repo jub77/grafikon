@@ -28,7 +28,7 @@ public class ModelUtils {
         else {
             int result = JOptionPane.showConfirmDialog(parent, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
-                JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
+                JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
                 int retVal = xmlFileChooser.showSaveDialog(parent);
                 if (retVal == JFileChooser.APPROVE_OPTION)
                     model.setOpenedFile(xmlFileChooser.getSelectedFile());

@@ -27,7 +27,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class OutputAction extends AbstractAction {
 
-    private static final String FACTORY = "groovy";
     private static final Logger LOG = Logger.getLogger(OutputAction.class.getName());
     private ApplicationModel model;
     private Component parent;
@@ -85,7 +84,7 @@ public class OutputAction extends AbstractAction {
     }
 
     private Output createOutput(String outputType) throws OutputException {
-        OutputFactory of = OutputFactory.newInstance(FACTORY);
+        OutputFactory of = OutputFactory.newInstance(model.getOutputType().getOutputFactoryType());
         Output output = of.createOutput(outputType);
         return output;
     }
@@ -118,11 +117,12 @@ public class OutputAction extends AbstractAction {
     }
 
     private void saveHtml(final HtmlOutputAction action) {
-        this.saveHtml(Collections.singletonList(action), FileChooserFactory.Type.OUTPUT);
+        OutputType type = model.getOutputType();
+        JFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT, type.getSuffix(), ResourceLoader.getString("output." + type.getSuffix()));
+        this.saveHtml(Collections.singletonList(action), chooser, false);
     }
 
-    private void saveHtml(final List<HtmlOutputAction> actions, final FileChooserFactory.Type fType) {
-        final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(fType);
+    private void saveHtml(final List<HtmlOutputAction> actions, final JFileChooser outputFileChooser, final boolean directory) {
         int retVal = outputFileChooser.showSaveDialog(parent);
         if (retVal == JFileChooser.APPROVE_OPTION) {
             ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
@@ -133,12 +133,12 @@ public class OutputAction extends AbstractAction {
                 public void run() {
                     try {
                         for (HtmlOutputAction action : actions) {
-                            if (fType == FileChooserFactory.Type.OUTPUT) {
+                            if (!directory) {
                                 FileOutputStream stream = new FileOutputStream(outputFileChooser.getSelectedFile());
                                 action.write(stream);
                                 stream.close();
                                 action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
-                            } else if (fType == FileChooserFactory.Type.OUTPUT_DIRECTORY) {
+                            } else {
                                 action.writeToDirectory(outputFileChooser.getSelectedFile());
                             }
                         }

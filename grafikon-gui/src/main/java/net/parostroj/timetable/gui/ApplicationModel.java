@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import net.parostroj.timetable.gui.actions.OutputType;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;
@@ -31,6 +32,7 @@ public class ApplicationModel {
     private File openedFile;
     private Mediator mediator;
     private TrainDiagramCollegue collegue;
+    private OutputType outputType;
     
     /**
      * Default constructor.
@@ -62,6 +64,14 @@ public class ApplicationModel {
 
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_TRAIN_CHANGED,this,selectedTrain));
         }
+    }
+
+    public OutputType getOutputType() {
+        return outputType;
+    }
+
+    public void setOutputType(OutputType outputType) {
+        this.outputType = outputType;
     }
 
     public TrainsCycle getSelectedEngineCycle() {

@@ -65,7 +65,7 @@ public class NewOpenSaveAction extends AbstractAction {
             return;
         }
         // loading train diagram
-        final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
+        final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
         final int retVal = xmlFileChooser.showOpenDialog(parent);
         ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.loadmodel"), new ModelAction() {
 

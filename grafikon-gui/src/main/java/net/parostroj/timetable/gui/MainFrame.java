@@ -189,12 +189,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         
         this.setSelectedLocale();
         this.setSelectedTemplateLocale();
-        
+
         // preload file dialogs
         FileChooserFactory fcf = FileChooserFactory.getInstance();
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
-        fcf.getFileChooser(FileChooserFactory.Type.XML);
+        fcf.getFileChooser(FileChooserFactory.Type.GTM);
     }
 
     @Override
@@ -272,6 +272,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         languageButtonGroup = new javax.swing.ButtonGroup();
         outputLbuttonGroup = new javax.swing.ButtonGroup();
+        outputTypeButtonGroup = new javax.swing.ButtonGroup();
         applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
@@ -324,6 +325,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator jSeparator3 = new javax.swing.JSeparator();
         oLanguageMenu = new javax.swing.JMenu();
         oSystemLRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JPopupMenu.Separator jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
+        javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
@@ -616,6 +622,42 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         oLanguageMenu.add(oSystemLRadioButtonMenuItem);
 
         actionMenu.add(oLanguageMenu);
+        actionMenu.add(jSeparator5);
+
+        outputTypeMenu.setText(ResourceLoader.getString("menu.output.type") + "..."); // NOI18N
+
+        outputTypeButtonGroup.add(htmlRadioButtonMenuItem);
+        htmlRadioButtonMenuItem.setSelected(true);
+        htmlRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.html")); // NOI18N
+        htmlRadioButtonMenuItem.setActionCommand("html");
+        htmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputTypeActionPerformed(evt);
+            }
+        });
+        outputTypeMenu.add(htmlRadioButtonMenuItem);
+
+        outputTypeButtonGroup.add(htmlSelectRadioButtonMenuItem);
+        htmlSelectRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.htmlselect")); // NOI18N
+        htmlSelectRadioButtonMenuItem.setActionCommand("html.select");
+        htmlSelectRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputTypeActionPerformed(evt);
+            }
+        });
+        outputTypeMenu.add(htmlSelectRadioButtonMenuItem);
+
+        outputTypeButtonGroup.add(xmlRadioButtonMenuItem);
+        xmlRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.xml")); // NOI18N
+        xmlRadioButtonMenuItem.setActionCommand("xml");
+        xmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputTypeActionPerformed(evt);
+            }
+        });
+        outputTypeMenu.add(xmlRadioButtonMenuItem);
+
+        actionMenu.add(outputTypeMenu);
 
         menuBar.add(actionMenu);
 
@@ -893,7 +935,7 @@ private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         return;
     }
     // saving train diagram
-    JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
+    JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
     int retVal = xmlFileChooser.showSaveDialog(this);
     if (retVal == JFileChooser.APPROVE_OPTION) {
         model.setOpenedFile(xmlFileChooser.getSelectedFile());
@@ -985,7 +1027,7 @@ private void trainTimetableListByTimeFilteredMenuItemActionPerformed(java.awt.ev
 
 private void fileImportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileImportMenuItemActionPerformed
     // select imported model
-    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML);
+    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
     final int retVal = xmlFileChooser.showOpenDialog(this);
     String errorMessage = null;
     TrainDiagram diagram = null;
@@ -1079,6 +1121,12 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
 }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
+    // get output type
+    OutputType type = OutputType.fromString(evt.getActionCommand());
+    model.setOutputType(type);
+}//GEN-LAST:event_outputTypeActionPerformed
 
     private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
         final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
@@ -1287,12 +1335,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
         
         // save to preferences last file chooser directories
-        prefs.setString("last.directory.model", 
-                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.XML).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.output",
-                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.html.dir",
-                FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY).getCurrentDirectory().getAbsolutePath());
+        FileChooserFactory.getInstance().saveToPreferences(prefs);
         
         // save locales
         if (locale != null)
@@ -1303,6 +1346,9 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             prefs.setString("locale.output", Templates.getLocale().toString());
         else
             prefs.remove("locale.output");
+
+        // save output type
+        prefs.setString("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
         
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -1320,6 +1366,19 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             // set position
             GuiUtils.setPosition(prefs.getString("main.position", null), this);
         }
+
+        // load output type
+        String aC = prefs.getString("output.type", "html");
+        Enumeration<AbstractButton> e = outputTypeButtonGroup.getElements();
+        while (e.hasMoreElements()) {
+            AbstractButton button = e.nextElement();
+            if (button.getActionCommand().equals(aC)) {
+                button.setSelected(true);
+                model.setOutputType(OutputType.fromString(button.getActionCommand()));
+                break;
+            }
+        }
+
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
     }
@@ -1357,6 +1416,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JMenu oLanguageMenu;
     private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
     private javax.swing.ButtonGroup outputLbuttonGroup;
+    private javax.swing.ButtonGroup outputTypeButtonGroup;
     private javax.swing.JMenuItem penaltyTableMenuItem;
     private javax.swing.JMenuItem recalculateMenuItem;
     private javax.swing.JMenuItem recalculateStopsMenuItem;
