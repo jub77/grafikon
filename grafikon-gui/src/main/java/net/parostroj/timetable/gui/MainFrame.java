@@ -1352,6 +1352,7 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
+        model.saveToPreferences(prefs);
     }
     
     @Override
@@ -1381,6 +1382,7 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
+        model.loadFromPreferences(prefs);
     }
 
     @Override

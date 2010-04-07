@@ -1,8 +1,10 @@
 package net.parostroj.timetable.gui;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import net.parostroj.timetable.gui.actions.OutputType;
@@ -19,7 +21,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class ApplicationModel {
+public class ApplicationModel implements StorableGuiData {
     
     private Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
@@ -33,6 +35,7 @@ public class ApplicationModel {
     private Mediator mediator;
     private TrainDiagramCollegue collegue;
     private OutputType outputType;
+    private Map<String, File> outputTemplates;
     
     /**
      * Default constructor.
@@ -44,6 +47,7 @@ public class ApplicationModel {
         collegue = new TrainDiagramCollegue();
         mediator.addColleague(collegue);
         mediator.addColleague(new ApplicationModelColleague(this));
+        outputTemplates = new HashMap<String, File>();
     }
 
     /**
@@ -226,5 +230,41 @@ public class ApplicationModel {
 
     public void setOpenedFile(File openedFile) {
         this.openedFile = openedFile;
+    }
+
+    public Map<String, File> getOutputTemplates() {
+        return outputTemplates;
+    }
+
+    @Override
+    public void saveToPreferences(AppPreferences prefs) {
+        prefs.setString("output.templates", getSerializedOutputTemplates());
+    }
+
+    @Override
+    public void loadFromPreferences(AppPreferences prefs) {
+        deserializeOutputTemplates(prefs.getString("output.templates", ""));
+    }
+
+    private String getSerializedOutputTemplates() {
+        StringBuilder b = new StringBuilder();
+        for (Map.Entry<String, File> entry : outputTemplates.entrySet()) {
+            if (b.length() != 0)
+                b.append('|');
+            b.append(entry.getKey());
+            b.append(',');
+            b.append(entry.getValue().getPath());
+        }
+        return b.toString();
+    }
+
+    private void deserializeOutputTemplates(String string) {
+        String entries[] = string.split("|");
+        for (String entry : entries) {
+            if (entry.equals(""))
+                continue;
+            String[] parts = entry.split(",");
+            outputTemplates.put(parts[0], new File(parts[1]));
+        }
     }
 }
