@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.html.groovy;
 import groovy.lang.Writable;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -15,7 +16,6 @@ import java.util.Map;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
-import net.parostroj.timetable.output2.OutputWithLocale;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -25,7 +25,7 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
  *
  * @author jub
  */
-public class GspEndPositionsOutput extends OutputWithLocale {
+public class GspEndPositionsOutput extends GspOutput {
 
     public GspEndPositionsOutput(Locale locale) {
         super(locale);
@@ -46,8 +46,8 @@ public class GspEndPositionsOutput extends OutputWithLocale {
 
         SimpleTemplateEngine ste = new SimpleTemplateEngine();
         try {
-            URL url = getClass().getResource("/templates/groovy/end_positions.gsp");
-            Template template = ste.createTemplate(new InputStreamReader(url.openStream(), "utf-8"));
+            InputStream is = this.getTemplateStream(params, "/templates/groovy/end_positions.gsp");
+            Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);

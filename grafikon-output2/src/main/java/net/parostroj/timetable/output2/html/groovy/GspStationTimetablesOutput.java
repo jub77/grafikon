@@ -4,7 +4,6 @@ import groovy.lang.Writable;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
@@ -20,7 +19,7 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
  *
  * @author jub
  */
-public class GspStationTimetablesOutput extends OutputWithLocale {
+public class GspStationTimetablesOutput extends GspOutput {
 
     public GspStationTimetablesOutput(Locale locale) {
         super(locale);
@@ -39,8 +38,8 @@ public class GspStationTimetablesOutput extends OutputWithLocale {
 
         SimpleTemplateEngine ste = new SimpleTemplateEngine();
         try {
-            URL url = getClass().getResource("/templates/groovy/stations.gsp");
-            Template template = ste.createTemplate(new InputStreamReader(url.openStream(), "utf-8"));
+            InputStream is = this.getTemplateStream(params, "/templates/groovy/stations.gsp");
+            Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);
