@@ -2,7 +2,6 @@ package net.parostroj.timetable.output2.html.groovy;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Locale;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputParams;
