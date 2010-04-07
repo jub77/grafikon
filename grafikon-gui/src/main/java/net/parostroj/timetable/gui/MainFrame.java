@@ -86,7 +86,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
 
         model = new ApplicationModel();
-        outputAction = new OutputAction(model);
+        outputAction = new OutputAction(model, this);
 
         initComponents();
         
@@ -325,7 +325,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator jSeparator3 = new javax.swing.JSeparator();
         oLanguageMenu = new javax.swing.JMenu();
         oSystemLRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        javax.swing.JPopupMenu.Separator jSeparator5 = new javax.swing.JPopupMenu.Separator();
         javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
         javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -622,7 +621,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         oLanguageMenu.add(oSystemLRadioButtonMenuItem);
 
         actionMenu.add(oLanguageMenu);
-        actionMenu.add(jSeparator5);
 
         outputTypeMenu.setText(ResourceLoader.getString("menu.output.type") + "..."); // NOI18N
 
@@ -1124,8 +1122,8 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
     // get output type
-    OutputType type = OutputType.fromString(evt.getActionCommand());
-    model.setOutputType(type);
+    OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
+    model.setOutputCategory(type);
 }//GEN-LAST:event_outputTypeActionPerformed
 
     private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
@@ -1375,7 +1373,7 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             AbstractButton button = e.nextElement();
             if (button.getActionCommand().equals(aC)) {
                 button.setSelected(true);
-                model.setOutputType(OutputType.fromString(button.getActionCommand()));
+                model.setOutputCategory(OutputCategory.fromString(button.getActionCommand()));
                 break;
             }
         }

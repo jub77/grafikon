@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import net.parostroj.timetable.gui.actions.OutputType;
+import net.parostroj.timetable.gui.actions.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;
@@ -34,7 +34,7 @@ public class ApplicationModel implements StorableGuiData {
     private File openedFile;
     private Mediator mediator;
     private TrainDiagramCollegue collegue;
-    private OutputType outputType;
+    private OutputCategory outputCategory;
     private Map<String, File> outputTemplates;
     
     /**
@@ -70,12 +70,12 @@ public class ApplicationModel implements StorableGuiData {
         }
     }
 
-    public OutputType getOutputType() {
-        return outputType;
+    public OutputCategory getOutputCategory() {
+        return outputCategory;
     }
 
-    public void setOutputType(OutputType outputType) {
-        this.outputType = outputType;
+    public void setOutputCategory(OutputCategory outputCategory) {
+        this.outputCategory = outputCategory;
     }
 
     public TrainsCycle getSelectedEngineCycle() {

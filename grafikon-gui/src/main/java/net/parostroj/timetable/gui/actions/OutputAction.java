@@ -13,6 +13,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
+import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.Node;
@@ -30,27 +31,77 @@ public class OutputAction extends AbstractAction {
     private static final Logger LOG = Logger.getLogger(OutputAction.class.getName());
     private ApplicationModel model;
     private Component parent;
+    private TemplateSelectDialog templateSelectDialog;
 
-    public OutputAction(ApplicationModel model) {
+    // selection variables
+    private File outputFile;
+    private File templateFile;
+    private String actionCommand;
+    private String outputType;
+
+    public OutputAction(ApplicationModel model, Frame frame) {
         this.model = model;
+        this.templateSelectDialog = new TemplateSelectDialog(frame, true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         parent = ActionUtils.getTopLevelComponent(e.getSource());
+        outputFile = null;
+        templateFile = null;
+        actionCommand = e.getActionCommand();
+        if (!selectTemplate())
+            return;
+        if (!selectOutput())
+            return;
+        setOutputType();
         try {
-            if (e.getActionCommand().equals("stations")) {
-                this.singleOutput("stations");
-            } else if (e.getActionCommand().equals("stations_select")) {
+            if (actionCommand.equals("stations_select")) {
                 this.stationsSelect();
-            } else if (e.getActionCommand().equals("ends")) {
-                this.singleOutput("ends");
-            } else if (e.getActionCommand().equals("starts")) {
-                this.singleOutput("starts");
+            } else if (outputType != null) {
+                this.singleOutput();
             }
         } catch (OutputException ex) {
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
+        }
+    }
+
+    private boolean selectTemplate() {
+        OutputCategory category = model.getOutputCategory();
+        if (category.isTemplateSelect()) {
+            if (templateSelectDialog.selectTemplate(
+                    FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.TEMPLATE),
+                    null)) {
+                templateFile = templateSelectDialog.getTemplate();
+            }
+            return templateFile != null && templateFile.canRead();
+        }
+        return true;
+    }
+
+    private boolean selectOutput() {
+        OutputCategory category = model.getOutputCategory();
+        JFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT, category.getSuffix(), ResourceLoader.getString("output." + category.getSuffix()));
+        int retVal = chooser.showSaveDialog(parent);
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+            outputFile = chooser.getSelectedFile();
+            return outputFile != null;
+        } else {
+            return false;
+        }
+    }
+
+    private void setOutputType() {
+        outputType = null;
+        if (actionCommand.equals("stations")) {
+            outputType = "stations";
+        } else if (actionCommand.equals("stations_select")) {
+            outputType = "stations";
+        } else if (actionCommand.equals("ends")) {
+            outputType = "ends";
+        } else if (actionCommand.equals("starts")) {
+            outputType = "starts";
         }
     }
 
@@ -67,7 +118,7 @@ public class OutputAction extends AbstractAction {
         selDialog.setLocationRelativeTo(parent);
         List<Node> selection = selDialog.selectElements(new ArrayList<Node>(model.getDiagram().getNet().getNodes()));
         if (selection != null) {
-            Output output = this.createOutput("stations");
+            Output output = this.createOutput();
             OutputParams params = this.createParams(output);
             params.setParam("stations", selection);
             this.saveHtml(this.createSingleHtmlOutputImpl(
@@ -76,15 +127,15 @@ public class OutputAction extends AbstractAction {
         }
     }
 
-    private void singleOutput(String outputType) throws OutputException {
-        Output output = this.createOutput(outputType);
+    private void singleOutput() throws OutputException {
+        Output output = this.createOutput();
         this.saveHtml(this.createSingleHtmlOutputImpl(
                 new ExecutableOutput(output, this.createParams(output)),
                 false, false));
     }
 
-    private Output createOutput(String outputType) throws OutputException {
-        OutputFactory of = OutputFactory.newInstance(model.getOutputType().getOutputFactoryType());
+    private Output createOutput() throws OutputException {
+        OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
         Output output = of.createOutput(outputType);
         return output;
     }
@@ -117,47 +168,42 @@ public class OutputAction extends AbstractAction {
     }
 
     private void saveHtml(final HtmlOutputAction action) {
-        OutputType type = model.getOutputType();
-        JFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT, type.getSuffix(), ResourceLoader.getString("output." + type.getSuffix()));
-        this.saveHtml(Collections.singletonList(action), chooser, false);
+        this.saveHtml(Collections.singletonList(action), false);
     }
 
-    private void saveHtml(final List<HtmlOutputAction> actions, final JFileChooser outputFileChooser, final boolean directory) {
-        int retVal = outputFileChooser.showSaveDialog(parent);
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
+    private void saveHtml(final List<HtmlOutputAction> actions, final boolean directory) {
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
 
-                private String errorMessage;
+            private String errorMessage;
 
-                @Override
-                public void run() {
-                    try {
-                        for (HtmlOutputAction action : actions) {
-                            if (!directory) {
-                                FileOutputStream stream = new FileOutputStream(outputFileChooser.getSelectedFile());
-                                action.write(stream);
-                                stream.close();
-                                action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
-                            } else {
-                                action.writeToDirectory(outputFileChooser.getSelectedFile());
-                            }
+            @Override
+            public void run() {
+                try {
+                    for (HtmlOutputAction action : actions) {
+                        if (!directory) {
+                            FileOutputStream stream = new FileOutputStream(outputFile);
+                            action.write(stream);
+                            stream.close();
+                            action.writeToDirectory(outputFile.getParentFile());
+                        } else {
+                            action.writeToDirectory(outputFile);
                         }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, e.getMessage(), e);
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
-                    } catch (Exception e) {
-                        LOG.log(Level.WARNING, e.getMessage(), e);
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
                     }
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, e.getMessage(), e);
+                    errorMessage = ResourceLoader.getString("dialog.error.saving");
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, e.getMessage(), e);
+                    errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
+            }
 
-                @Override
-                public void afterRun() {
-                    if (errorMessage != null) {
-                        ActionUtils.showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), parent);
-                    }
+            @Override
+            public void afterRun() {
+                if (errorMessage != null) {
+                    ActionUtils.showError(errorMessage + " " + outputFile.getName(), parent);
                 }
-            });
-        }
+            }
+        });
     }
 }
