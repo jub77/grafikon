@@ -104,7 +104,7 @@ public class OutputAction extends AbstractAction {
         if (outputType.isSelection()) {
             ElementSelectionDialog<Object> selDialog = new ElementSelectionDialog<Object>(getFrame(), true);
             selDialog.setLocationRelativeTo(parent);
-            selection = selDialog.selectElements((List<Object>)ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionClass()));
+            selection = selDialog.selectElements((List<Object>)ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
             if (selection == null)
                 return false;
         }

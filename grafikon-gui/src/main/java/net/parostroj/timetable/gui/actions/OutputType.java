@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.actions;
 
-import net.parostroj.timetable.model.Node;
-
 /**
  * Output type. For each menu item there is enum item with information.
  *
@@ -10,11 +8,13 @@ import net.parostroj.timetable.model.Node;
 public enum OutputType {
 
     STARTS("starts", "starts", true), ENDS("ends", "ends", true), STATIONS("stations", "stations", true),
-    STATIONS_SELECT("stations_select", "stations", true, Node.class, "stations");
+    STATIONS_SELECT("stations_select", "stations", true, ElementType.NODE, "stations"),
+    TRAIN_UNIT_CYCLES("train_unit_cycles", "train_unit_cycles", true),
+    TRAIN_UNIT_CYCLES_SELECT("train_unit_cycles_select", "train_unit_cycles", true, ElementType.TRAIN_UNIT_CYCLE, "cycles");
 
     private String actionCommand;
     private String outputType;
-    private Class<?> selectionClass;
+    private ElementType selectionElement;
     private String selectionParam;
     private boolean outputFile;
     
@@ -24,9 +24,9 @@ public enum OutputType {
         this.outputFile = outputFile;
     }
 
-    private OutputType(String actionCommand, String outputType, boolean outputFile, Class<?> selectionClass, String selectionParam) {
+    private OutputType(String actionCommand, String outputType, boolean outputFile, ElementType selectionElement, String selectionParam) {
         this(actionCommand, outputType, outputFile);
-        this.selectionClass = selectionClass;
+        this.selectionElement = selectionElement;
         this.selectionParam = selectionParam;
     }
 
@@ -39,11 +39,11 @@ public enum OutputType {
     }
 
     public boolean isSelection() {
-        return selectionClass != null;
+        return selectionElement != null;
     }
 
-    public Class<?> getSelectionClass() {
-        return selectionClass;
+    public ElementType getSelectionElement() {
+        return selectionElement;
     }
 
     public String getSelectionParam() {

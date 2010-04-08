@@ -10,6 +10,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
@@ -44,11 +45,14 @@ public class ModelUtils {
         }
     }
 
-    public static List<? extends Object> selectAllElements(TrainDiagram diagram, Class<?> clazz) {
-        if (Node.class.equals(clazz)) {
-            return new ArrayList<Node>(diagram.getNet().getNodes());
-        } else if (Line.class.equals(clazz)) {
-            return new ArrayList<Line>(diagram.getNet().getLines());
+    public static List<? extends Object> selectAllElements(TrainDiagram diagram, ElementType type) {
+        switch (type) {
+            case NODE:
+                return new ArrayList<Node>(diagram.getNet().getNodes());
+            case LINE:
+                return new ArrayList<Line>(diagram.getNet().getLines());
+            case TRAIN_UNIT_CYCLE:
+                return diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE);
         }
         return null;
     }
