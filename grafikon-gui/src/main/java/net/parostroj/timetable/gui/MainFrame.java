@@ -19,7 +19,6 @@ import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.views.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.*;
 import net.parostroj.timetable.output.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -42,7 +41,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private TrainTypesDialog trainTypesDialog;
     private LineClassesDialog lineClassesDialog;
     private EngineClassesDialog engineClassesDialog;
-    private ImportDialog importDialog;
     private Locale locale;
     private OutputAction outputAction;
     
@@ -171,8 +169,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         engineClassesDialog = new EngineClassesDialog(this, true);
         engineClassesDialog.setModel(model);
 
-        importDialog = new ImportDialog(this, true);
-        
         netPane.setModel(model);
         
         this.updateView();
@@ -395,12 +391,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(fileSaveAsMenuItem);
         fileMenu.add(separator1);
 
+        fileImportMenuItem.setAction(new ImportAction(model, this));
         fileImportMenuItem.setText(ResourceLoader.getString("menu.file.exportimport")); // NOI18N
-        fileImportMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileImportMenuItemActionPerformed(evt);
-            }
-        });
         fileMenu.add(fileImportMenuItem);
         fileMenu.add(separator5);
 
@@ -922,45 +914,6 @@ private void trainTimetableListByTimeFilteredMenuItemActionPerformed(java.awt.ev
     this.saveHtml(action);
 }//GEN-LAST:event_trainTimetableListByTimeFilteredMenuItemActionPerformed
 
-private void fileImportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileImportMenuItemActionPerformed
-    // select imported model
-    final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-    final int retVal = xmlFileChooser.showOpenDialog(this);
-    String errorMessage = null;
-    TrainDiagram diagram = null;
-
-    try {
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
-            diagram = ls.load(xmlFileChooser.getSelectedFile());
-        } else {
-            // skip the rest
-            return;
-        }
-    } catch (LSException e) {
-        LOG.log(Level.WARNING, "Error loading model.", e);
-        if (e.getCause() instanceof FileNotFoundException)
-            errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
-        else
-            errorMessage = ResourceLoader.getString("dialog.error.loading");
-    } catch (Exception e) {
-        LOG.log(Level.WARNING, "Error loading model.", e);
-        errorMessage = ResourceLoader.getString("dialog.error.loading");
-    }
-
-    if (errorMessage != null) {
-        String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-        ActionUtils.showError(text, this);
-        return;
-    }
-
-    importDialog.setTrainDiagrams(model.getDiagram(), diagram);
-    importDialog.setLocationRelativeTo(this);
-    importDialog.setVisible(true);
-
-    this.processImportedObjects(importDialog.getImportedObjects());
-}//GEN-LAST:event_fileImportMenuItemActionPerformed
-
 private void trainTimetableListByDcSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByDcSelectMenuItemActionPerformed
     ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
     selDialog.setLocationRelativeTo(this);
@@ -1114,23 +1067,6 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 }
         };
         this.saveHtml(action);
-    }
-
-    private void processImportedObjects(Set<ObjectWithId> objects) {
-        boolean trainTypesEvent = false;
-        for (ObjectWithId o : objects) {
-            // process new trains
-            if (o instanceof Train) {
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, o));
-            } else if (o instanceof Node) {
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE, model, o));
-            } else if (o instanceof TrainType) {
-                trainTypesEvent = true;
-            }
-        }
-        if (trainTypesEvent) {
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.TRAIN_TYPES_CHANGED, model));
-        }
     }
 
     private void setSelectedLocale() {
