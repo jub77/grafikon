@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,8 +113,8 @@ public class OutputAction extends AbstractAction {
 
     private void singleOutput() throws OutputException {
         Output output = this.createOutput();
-        this.saveHtml(this.createSingleHtmlOutputImpl(
-                new ExecutableOutput(output, this.createParams(output))));
+        OutputParams params = this.createParams(output, outputFile);
+        this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
     }
 
     private Output createOutput() throws OutputException {
@@ -121,7 +123,7 @@ public class OutputAction extends AbstractAction {
         return output;
     }
 
-    private OutputParams createParams(Output output) throws OutputException {
+    private OutputParams createParams(Output output, File file) throws OutputException {
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
@@ -137,31 +139,15 @@ public class OutputAction extends AbstractAction {
         if (outputType.isSelection()) {
             params.setParam(outputType.getSelectionParam(), selection);
         }
+        try {
+            params.setParam(DefaultOutputParam.OUTPUT_STREAM, new FileOutputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new OutputException(e);
+        }
         return params;
     }
 
-    private HtmlOutputAction createSingleHtmlOutputImpl(final ExecutableOutput output) {
-        HtmlOutputAction action = new HtmlOutputAction() {
-
-            @Override
-            public void write(OutputStream stream) throws Exception {
-                output.getParams().setParam(DefaultOutputParam.OUTPUT_STREAM, stream);
-                output.execute();
-            }
-
-            @Override
-            public void writeToDirectory(File directory) throws Exception {
-//                if (outputType == TRAINS_TIMETABLE) {
-//                    new ImageSaver().saveTrainTimetableImages(directory);
-//                }
-//                if (saveTDImages) // TODO missing implementation
-//                ;
-            }
-        };
-        return action;
-    }
-
-    private void saveHtml(final HtmlOutputAction action) {
+    private void saveOutputs(final Collection<ExecutableOutput> outputs) {
         ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
 
             private String errorMessage;
@@ -169,18 +155,10 @@ public class OutputAction extends AbstractAction {
             @Override
             public void run() {
                 try {
-                    if (outputType.isOutputFile()) {
-                        FileOutputStream stream = new FileOutputStream(outputFile);
-                        action.write(stream);
-                        stream.close();
-                        action.writeToDirectory(outputFile.getParentFile());
-                    } else {
-                        action.writeToDirectory(outputFile);
+                    for (ExecutableOutput output : outputs) {
+                        output.execute();
                     }
-                } catch (IOException e) {
-                    LOG.log(Level.WARNING, e.getMessage(), e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                } catch (Exception e) {
+                } catch (OutputException e) {
                     LOG.log(Level.WARNING, e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
