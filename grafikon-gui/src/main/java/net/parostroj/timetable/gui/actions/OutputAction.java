@@ -158,6 +158,14 @@ public class OutputAction extends AbstractAction {
                 try {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
+                        OutputParam param = output.getParams().getParam(DefaultOutputParam.OUTPUT_STREAM);
+                        if (param != null) {
+                            try {
+                                ((OutputStream)param.getValue()).close();
+                            } catch (IOException e) {
+                                throw new OutputException(e);
+                            }
+                        }
                     }
                 } catch (OutputException e) {
                     LOG.log(Level.WARNING, e.getMessage(), e);
