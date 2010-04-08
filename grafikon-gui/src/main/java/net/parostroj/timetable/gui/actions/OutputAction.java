@@ -67,8 +67,11 @@ public class OutputAction extends AbstractAction {
         if (category.isTemplateSelect()) {
             if (templateSelectDialog.selectTemplate(
                     FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.TEMPLATE),
-                    null)) {
+                    model.getOutputTemplates().get(outputType.getOutputType()))) {
                 templateFile = templateSelectDialog.getTemplate();
+                if (templateFile != null && templateFile.canRead()) {
+                    model.getOutputTemplates().put(outputType.getOutputType(), templateFile);
+                }
             }
             return templateFile != null && templateFile.canRead();
         }

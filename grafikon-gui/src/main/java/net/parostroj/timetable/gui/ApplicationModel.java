@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -259,7 +260,7 @@ public class ApplicationModel implements StorableGuiData {
     }
 
     private void deserializeOutputTemplates(String string) {
-        String entries[] = string.split("|");
+        String entries[] = string.split("\\|");
         for (String entry : entries) {
             if (entry.equals(""))
                 continue;
