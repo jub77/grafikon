@@ -370,34 +370,28 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        fileNewMenuItem.setAction(new NewOpenAction(model, this, true));
+        fileNewMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this, true));
         fileNewMenuItem.setText(ResourceLoader.getString("menu.file.new")); // NOI18N
         fileNewMenuItem.setActionCommand("new");
         fileMenu.add(fileNewMenuItem);
         fileMenu.add(separator3);
 
-        fileOpenMenuItem.setAction(new NewOpenAction(model, this, false));
+        fileOpenMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this, false));
         fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
         fileOpenMenuItem.setActionCommand("open");
         fileMenu.add(fileOpenMenuItem);
 
+        fileSaveMenuItem.setAction(new SaveAction(model));
         fileSaveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         fileSaveMenuItem.setText(ResourceLoader.getString("menu.file.save")); // NOI18N
-        fileSaveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveMenuItemActionPerformed(evt);
-            }
-        });
+        fileSaveMenuItem.setActionCommand("save");
         fileMenu.add(fileSaveMenuItem);
 
+        fileSaveAsMenuItem.setAction(new SaveAction(model));
         fileSaveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         fileSaveAsMenuItem.setText(ResourceLoader.getString("menu.file.saveas")); // NOI18N
-        fileSaveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveAsMenuItemActionPerformed(evt);
-            }
-        });
+        fileSaveAsMenuItem.setActionCommand("save_as");
         fileMenu.add(fileSaveAsMenuItem);
         fileMenu.add(separator1);
 
@@ -754,51 +748,6 @@ private void trainTimetableListMenuItemActionPerformed(java.awt.event.ActionEven
     this.saveHtml(action);
 }//GEN-LAST:event_trainTimetableListMenuItemActionPerformed
 
-private void fileSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveMenuItemActionPerformed
-    if (model.getOpenedFile() == null) {
-        this.fileSaveAsMenuItemActionPerformed(evt);
-        return;
-    }
-    if (model.getDiagram() == null) {
-        ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
-        return;
-    }
-    this.saveModel(model.getOpenedFile());
-}//GEN-LAST:event_fileSaveMenuItemActionPerformed
-
-    private void saveModel(final File file) {
-        if (model.getDiagram() == null) {
-            ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
-            return;
-        }
-
-        ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.savemodel"), new ModelAction() {
-            private String errorMessage = null;
-
-            @Override
-            public void run() {
-                try {
-                    ModelUtils.saveModelData(model, file);
-                } catch (LSException e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                }
-            }
-
-            @Override
-            public void afterRun() {
-                if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage + " " + file.getName(), MainFrame.this);
-                } else {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
-                }
-            }
-        });
-    }
-   
 private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
     // exiting application
     final int result = ModelUtils.checkModelChangedContinue(model, this);
@@ -926,20 +875,6 @@ private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     infoDialog.updateValues();
     infoDialog.setVisible(true);
 }//GEN-LAST:event_infoMenuItemActionPerformed
-
-private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveAsMenuItemActionPerformed
-    if (model.getDiagram() == null) {
-        ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), this);
-        return;
-    }
-    // saving train diagram
-    JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-    int retVal = xmlFileChooser.showSaveDialog(this);
-    if (retVal == JFileChooser.APPROVE_OPTION) {
-        model.setOpenedFile(xmlFileChooser.getSelectedFile());
-        this.saveModel(xmlFileChooser.getSelectedFile());
-    }
-}//GEN-LAST:event_fileSaveAsMenuItemActionPerformed
 
 private void trainTimetableListByDcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByDcMenuItemActionPerformed
     trainTimetableListByDc(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE));

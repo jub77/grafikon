@@ -31,7 +31,6 @@ public class NewOpenAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(NewOpenAction.class.getName());
     private ApplicationModel model;
-    private Component parent;
     private NewModelDialog newModelDialog;
 
     /**
@@ -50,15 +49,15 @@ public class NewOpenAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        parent = ActionUtils.getTopLevelComponent(e.getSource());
+        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
         if (e.getActionCommand().equals("open")) {
-            this.open();
+            this.open(parent);
         } else if (e.getActionCommand().equals("new")) {
-            this.create();
+            this.create(parent);
         }
     }
 
-    private void open() {
+    private void open(final Component parent) {
         // check changes
         final int result = ModelUtils.checkModelChangedContinue(model, parent);
         if (result == JOptionPane.CANCEL_OPTION) {
@@ -131,7 +130,7 @@ public class NewOpenAction extends AbstractAction {
         });
     }
 
-    private void create() {
+    private void create(final Component parent) {
         // check changes
         final int result = ModelUtils.checkModelChangedContinue(model, parent);
         if (result == JOptionPane.CANCEL_OPTION) {
