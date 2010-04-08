@@ -1,7 +1,6 @@
 package net.parostroj.timetable.output2.html.groovy;
 
 import groovy.lang.Writable;
-import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 import java.io.*;
 import java.util.HashMap;
