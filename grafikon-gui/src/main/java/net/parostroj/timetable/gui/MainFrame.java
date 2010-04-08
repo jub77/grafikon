@@ -476,12 +476,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(languageMenu);
         fileMenu.add(separator4);
 
+        exitMenuItem.setAction(new ExitAction(model, this));
         exitMenuItem.setText(ResourceLoader.getString("menu.file.exit")); // NOI18N
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
-            }
-        });
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
@@ -747,38 +743,6 @@ private void trainTimetableListMenuItemActionPerformed(java.awt.event.ActionEven
     };
     this.saveHtml(action);
 }//GEN-LAST:event_trainTimetableListMenuItemActionPerformed
-
-private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-    // exiting application
-    final int result = ModelUtils.checkModelChangedContinue(model, this);
-    if (result != JOptionPane.CANCEL_OPTION)
-        ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.programclose"), 0, new AbstractModelAction() {
-            private String errorMessage;
-            @Override
-            public void run() {
-                try {
-                    if (result == JOptionPane.YES_OPTION)
-                        ModelUtils.saveModelData(model, model.getOpenedFile());
-                    MainFrame.this.cleanUpBeforeApplicationEnd();
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                }
-            }
-
-            @Override
-            public void afterRun() {
-                if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage, MainFrame.this);
-                    return;
-                }
-                // dispose main window - it should close application
-                dispose();
-                // close application by force (possible problems with web start)
-                System.exit(0);
-            }
-            });
-}//GEN-LAST:event_exitMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
     settingsDialog.setLocationRelativeTo(this);
@@ -1243,7 +1207,7 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }
     }
 
-    protected void cleanUpBeforeApplicationEnd() {
+    public void cleanUpBeforeApplicationEnd() {
         try {
             // save preferences
             AppPreferences prefs = AppPreferences.getPreferences();
