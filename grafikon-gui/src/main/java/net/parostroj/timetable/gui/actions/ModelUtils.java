@@ -2,9 +2,14 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
@@ -37,5 +42,14 @@ public class ModelUtils {
             }
             return result;
         }
+    }
+
+    public static List<? extends Object> selectAllElements(TrainDiagram diagram, Class<?> clazz) {
+        if (Node.class.equals(clazz)) {
+            return new ArrayList<Node>(diagram.getNet().getNodes());
+        } else if (Line.class.equals(clazz)) {
+            return new ArrayList<Line>(diagram.getNet().getLines());
+        }
+        return null;
     }
 }
