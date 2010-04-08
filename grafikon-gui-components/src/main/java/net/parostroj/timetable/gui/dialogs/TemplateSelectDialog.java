@@ -57,6 +57,7 @@ public class TemplateSelectDialog extends javax.swing.JDialog {
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle(ResourceLoader.getString("templateselectdialog.title")); // NOI18N
 
         templateTextField.setColumns(35);
         templateTextField.setEditable(false);
