@@ -32,7 +32,6 @@ class XmlTrainUnitCyclesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            // extract positions
             TrainUnitCycleCardsExtractor tuce = new TrainUnitCycleCardsExtractor(diagram, getCycles(params, diagram));
             TrainUnitCycleCards cards = new TrainUnitCycleCards(tuce.getTrainUnitCycleCards());
 

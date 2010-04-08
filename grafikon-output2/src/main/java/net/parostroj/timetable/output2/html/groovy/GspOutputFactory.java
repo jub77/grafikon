@@ -24,6 +24,7 @@ public class GspOutputFactory extends OutputFactory {
         OUTPUT_TYPES.put("starts", GspStartPositionsOutput.class);
         OUTPUT_TYPES.put("ends", GspEndPositionsOutput.class);
         OUTPUT_TYPES.put("stations", GspStationTimetablesOutput.class);
+        OUTPUT_TYPES.put("train_unit_cycles", GspTrainUnitCyclesOutput.class);
     }
 
     public GspOutputFactory() {
