@@ -14,6 +14,9 @@ public class TrainUnitCycleCards {
 
     private List<TrainUnitCycleCard> card;
 
+    public TrainUnitCycleCards() {
+    }
+
     public TrainUnitCycleCards(List<TrainUnitCycleCard> card) {
         this.card = card;
     }

@@ -24,6 +24,7 @@ public class XmlOutputFactory extends OutputFactory {
         OUTPUT_TYPES.put("starts", XmlStartPositionsOutput.class);
         OUTPUT_TYPES.put("ends", XmlEndPositionsOutput.class);
         OUTPUT_TYPES.put("stations", XmlStationTimetablesOutput.class);
+        OUTPUT_TYPES.put("train_unit_cycles", XmlTrainUnitCyclesOutput.class);
     }
 
     private Charset getCharset() {
@@ -43,7 +44,7 @@ public class XmlOutputFactory extends OutputFactory {
     public Output createOutput(String type) throws OutputException {
         Class<? extends Output> outputClass = OUTPUT_TYPES.get(type);
         if (outputClass == null)
-            throw new OutputException("Unknown type.");
+            throw new OutputException("Unknown type: " + type);
         try {
             Constructor<? extends Output> constructor = outputClass.getConstructor(Charset.class);
             return constructor.newInstance(this.getCharset());
