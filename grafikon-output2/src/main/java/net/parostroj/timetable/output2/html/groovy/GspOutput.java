@@ -1,7 +1,10 @@
 package net.parostroj.timetable.output2.html.groovy;
 
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Locale;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputParams;
@@ -24,5 +27,13 @@ public abstract class GspOutput extends OutputWithLocale {
         } else {
             return getClass().getResource(defaultTemplate).openStream();
         }
+    }
+
+    protected Template createTemplate(OutputParams params, String defaultTemplate) throws IOException {
+        SimpleTemplateEngine ste = new SimpleTemplateEngine();
+        InputStream is = getTemplateStream(params, defaultTemplate);
+        Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
+        is.close();
+        return template;
     }
 }
