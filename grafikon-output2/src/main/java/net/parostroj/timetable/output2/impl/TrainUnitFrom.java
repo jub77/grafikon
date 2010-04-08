@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlType(propOrder = {"cycleName", "cycleDescription"})
-class TrainUnitFrom {
+public class TrainUnitFrom {
 
     private String cycleName;
     private String cycleDescription;

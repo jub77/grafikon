@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "track", "technologicalTime", "occupied", "comment",
     "engineTo", "engineFrom", "trainUnitTo", "trainUnitFrom", "length"})
-class StationTimetableRow {
+public class StationTimetableRow2 {
 
     private String trainName;
     private String from;
@@ -29,10 +29,10 @@ class StationTimetableRow {
     private List<TrainUnitFrom> trainUnitFrom;
     private LengthInfo length;
 
-    public StationTimetableRow() {
+    public StationTimetableRow2() {
     }
 
-    public StationTimetableRow(String trainName, String from, String fromTime, String to, String toTime, String end, String track) {
+    public StationTimetableRow2(String trainName, String from, String fromTime, String to, String toTime, String end, String track) {
         this.trainName = trainName;
         this.from = from;
         this.arrival = fromTime;

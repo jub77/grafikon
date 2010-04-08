@@ -54,7 +54,7 @@ public class StationTimetablesExtractor {
         return list;
     }
 
-    private StationTimetableRow createRow(TimeInterval interval) {
+    private StationTimetableRow2 createRow(TimeInterval interval) {
         TimeInterval from = interval.getTrain().getIntervalBefore(interval);
         TimeInterval to = interval.getTrain().getIntervalAfter(interval);
 
@@ -64,12 +64,12 @@ public class StationTimetablesExtractor {
 
         String fromTime = (from == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getStart());
         String toTime = (to == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getEnd());
-        StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
+        StationTimetableRow2 row = new StationTimetableRow2(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         this.addOtherData(interval, row);
         return row;
     }
 
-    private void addOtherData(TimeInterval interval, StationTimetableRow row) {
+    private void addOtherData(TimeInterval interval, StationTimetableRow2 row) {
         // technological time handle differently
         row.setTechnologicalTime(interval.isTechnological());
         if (row.isTechnologicalTime())
@@ -82,7 +82,7 @@ public class StationTimetablesExtractor {
         row.setOccupied(Boolean.TRUE.equals(interval.getAttribute("occupied")));
     }
 
-    private void addEngines(TimeInterval interval, StationTimetableRow row) {
+    private void addEngines(TimeInterval interval, StationTimetableRow2 row) {
         Train train = interval.getTrain();
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
             if (item.getToInterval() == interval) {
@@ -99,7 +99,7 @@ public class StationTimetablesExtractor {
         }
     }
 
-    private void addTrainUnits(TimeInterval interval, StationTimetableRow row) {
+    private void addTrainUnits(TimeInterval interval, StationTimetableRow2 row) {
         Train train = interval.getTrain();
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE)) {
             // end

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 public class StationTimetable {
 
     private String name;
-    private List<StationTimetableRow> rows;
+    private List<StationTimetableRow2> rows;
 
     public StationTimetable() {
     }
@@ -34,14 +34,14 @@ public class StationTimetable {
 
     @XmlElementWrapper
     @XmlElement(name = "row")
-    public List<StationTimetableRow> getRows() {
+    public List<StationTimetableRow2> getRows() {
         if (rows == null) {
-            rows = new LinkedList<StationTimetableRow>();
+            rows = new LinkedList<StationTimetableRow2>();
         }
         return rows;
     }
 
-    public void setRows(List<StationTimetableRow> rows) {
+    public void setRows(List<StationTimetableRow2> rows) {
         this.rows = rows;
     }
 }
