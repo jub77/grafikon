@@ -370,13 +370,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        fileNewMenuItem.setAction(new NewOpenSaveAction(model, this, true));
+        fileNewMenuItem.setAction(new NewOpenAction(model, this, true));
         fileNewMenuItem.setText(ResourceLoader.getString("menu.file.new")); // NOI18N
         fileNewMenuItem.setActionCommand("new");
         fileMenu.add(fileNewMenuItem);
         fileMenu.add(separator3);
 
-        fileOpenMenuItem.setAction(new NewOpenSaveAction(model, this, false));
+        fileOpenMenuItem.setAction(new NewOpenAction(model, this, false));
         fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
         fileOpenMenuItem.setActionCommand("open");

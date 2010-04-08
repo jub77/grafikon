@@ -23,13 +23,13 @@ import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
- * Combined new/open/save action.
+ * Combined new/open action.
  *
  * @author jub
  */
-public class NewOpenSaveAction extends AbstractAction {
+public class NewOpenAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(NewOpenSaveAction.class.getName());
+    private static final Logger LOG = Logger.getLogger(NewOpenAction.class.getName());
     private ApplicationModel model;
     private Component parent;
     private NewModelDialog newModelDialog;
@@ -40,7 +40,7 @@ public class NewOpenSaveAction extends AbstractAction {
      * @param model application model
      * @param owner frame
      */
-    public NewOpenSaveAction(ApplicationModel model, Frame owner, boolean createNewDialog) {
+    public NewOpenAction(ApplicationModel model, Frame owner, boolean createNewDialog) {
         this.model = model;
         if (createNewDialog) {
             newModelDialog = new NewModelDialog(owner, true);
