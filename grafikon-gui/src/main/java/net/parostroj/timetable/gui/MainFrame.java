@@ -499,12 +499,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(ecListMenuItem);
 
+        tucListMenuItem.setAction(outputAction);
         tucListMenuItem.setText(ResourceLoader.getString("menu.action.tuclist")); // NOI18N
-        tucListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tucListMenuItemActionPerformed(evt);
-            }
-        });
+        tucListMenuItem.setActionCommand("train_unit_cycles");
         actionMenu.add(tucListMenuItem);
 
         dcListMenuItem.setText(ResourceLoader.getString("menu.acion.dclist")); // NOI18N
@@ -564,12 +561,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(ecListSelectMenuItem);
 
+        tucListSelectMenuItem.setAction(outputAction);
         tucListSelectMenuItem.setText(ResourceLoader.getString("menu.action.tuclist.select")); // NOI18N
-        tucListSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tucListSelectMenuItemActionPerformed(evt);
-            }
-        });
+        tucListSelectMenuItem.setActionCommand("train_unit_cycles_select");
         actionMenu.add(tucListSelectMenuItem);
 
         dcListSelectMenuItem.setText(ResourceLoader.getString("menu.acion.dclist.select")); // NOI18N
@@ -746,11 +740,6 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         model.setModelChanged(true);
     }
 }//GEN-LAST:event_settingsMenuItemActionPerformed
-
-private void tucListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tucListMenuItemActionPerformed
-    final TrainUnitCyclesList list = new TrainUnitCyclesList(model.getDiagram().getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE));
-    this.trainUnitCyclesList(list);
-}//GEN-LAST:event_tucListMenuItemActionPerformed
 
 private void dcListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dcListMenuItemActionPerformed
     DriverCyclesList list = new DriverCyclesList(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE),model.getDiagram().getAttributes());
@@ -933,16 +922,6 @@ private void dcListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 }//GEN-LAST:event_dcListSelectMenuItemActionPerformed
 
-private void tucListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tucListSelectMenuItemActionPerformed
-    ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
-    selDialog.setLocationRelativeTo(this);
-    List<TrainsCycle> selection = selDialog.selectElements(model.getDiagram().getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE));
-    if (selection != null) {
-        TrainUnitCyclesList list = new TrainUnitCyclesList(selection);
-        this.trainUnitCyclesList(list);
-    }
-}//GEN-LAST:event_tucListSelectMenuItemActionPerformed
-
 private void ecListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ecListSelectMenuItemActionPerformed
     ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
     selDialog.setLocationRelativeTo(this);
@@ -1025,21 +1004,6 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     }
 
     private void driverCyclesList(final DriverCyclesList list) {
-        HtmlAction action = new HtmlAction() {
-                @Override
-                public void write(Writer writer) throws Exception {
-                    list.writeTo(writer);
-                }
-
-                @Override
-                public void writeToDirectory(File directory) throws Exception {
-                    // do nothing
-                }
-        };
-        this.saveHtml(action);
-    }
-
-    private void trainUnitCyclesList(final TrainUnitCyclesList list) {
         HtmlAction action = new HtmlAction() {
                 @Override
                 public void write(Writer writer) throws Exception {
