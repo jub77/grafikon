@@ -32,7 +32,6 @@ public class StationTimetable {
         this.name = name;
     }
 
-    @XmlElementWrapper
     @XmlElement(name = "row")
     public List<StationTimetableRow> getRows() {
         if (rows == null) {

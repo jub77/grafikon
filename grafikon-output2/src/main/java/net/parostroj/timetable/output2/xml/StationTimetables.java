@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.xml;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.parostroj.timetable.output2.impl.StationTimetable;
 
@@ -9,23 +10,24 @@ import net.parostroj.timetable.output2.impl.StationTimetable;
  *
  * @author jub
  */
-@XmlRootElement
+@XmlRootElement(name="stations")
 public class StationTimetables {
 
-    private List<StationTimetable> stationTimetable;
+    private List<StationTimetable> stationTimetables;
 
     public StationTimetables() {
     }
 
-    public StationTimetables(List<StationTimetable> stationTimetable) {
-        this.stationTimetable = stationTimetable;
+    public StationTimetables(List<StationTimetable> stationTimetables) {
+        this.stationTimetables = stationTimetables;
     }
 
-    public List<StationTimetable> getStationTimetable() {
-        return stationTimetable;
+    @XmlElement(name="station")
+    public List<StationTimetable> getStationTimetables() {
+        return stationTimetables;
     }
 
-    public void setStationTimetable(List<StationTimetable> stationTimetable) {
-        this.stationTimetable = stationTimetable;
+    public void setStationTimetables(List<StationTimetable> stationTimetables) {
+        this.stationTimetables = stationTimetables;
     }
 }
