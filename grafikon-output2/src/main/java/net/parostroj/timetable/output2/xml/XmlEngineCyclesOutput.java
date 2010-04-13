@@ -32,7 +32,7 @@ class XmlEngineCyclesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            EngineCyclesExtractor tuce = new EngineCyclesExtractor(diagram, getCycles(params, diagram));
+            EngineCyclesExtractor tuce = new EngineCyclesExtractor(getCycles(params, diagram));
             EngineCycles cycles = new EngineCycles(tuce.getEngineCycles());
 
             JAXBContext context = JAXBContext.newInstance(EngineCycles.class);

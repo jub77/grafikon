@@ -2,7 +2,6 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.TimeConverter;
@@ -16,7 +15,7 @@ public class TrainUnitCyclesExtractor {
 
     private List<TrainsCycle> cycles;
 
-    public TrainUnitCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles) {
+    public TrainUnitCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
 
@@ -42,6 +41,7 @@ public class TrainUnitCyclesExtractor {
         TrainUnitCycleRow row = new TrainUnitCycleRow();
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(TimeConverter.convertFromIntToText(item.getStartTime()));
+        row.setToTime(TimeConverter.convertFromIntToText(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setComment((item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment());

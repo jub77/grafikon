@@ -27,7 +27,7 @@ public class GspTrainUnitCyclesOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
-        TrainUnitCyclesExtractor tuce = new TrainUnitCyclesExtractor(diagram, getCycles(params, diagram));
+        TrainUnitCyclesExtractor tuce = new TrainUnitCyclesExtractor(getCycles(params, diagram));
         List<TrainUnitCycle> cycles = tuce.getTrainUnitCycles();
 
         // call template

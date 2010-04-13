@@ -3,27 +3,19 @@ package net.parostroj.timetable.output2.impl;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Train unit cycle row.
+ * Engine cycle row.
  *
  * @author jub
  */
-@XmlType(propOrder={"trainName", "fromTime", "toTime", "fromAbbr", "toAbbr", "comment"})
-public class TrainUnitCycleRow {
+@XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "toTime", "toAbbr", "wait"})
+public class EngineCycleRow {
 
     private String trainName;
     private String fromTime;
     private String fromAbbr;
     private String toTime;
     private String toAbbr;
-    private String comment;
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+    private Integer wait;
 
     public String getFromAbbr() {
         return fromAbbr;
@@ -55,6 +47,14 @@ public class TrainUnitCycleRow {
 
     public void setTrainName(String trainName) {
         this.trainName = trainName;
+    }
+
+    public Integer getWait() {
+        return wait;
+    }
+
+    public void setWait(Integer wait) {
+        this.wait = wait;
     }
 
     public String getToTime() {
