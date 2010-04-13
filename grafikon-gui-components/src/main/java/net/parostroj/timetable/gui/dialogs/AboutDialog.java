@@ -64,10 +64,6 @@ public class AboutDialog extends javax.swing.JDialog {
         pack();
     }
 
-    //    private Image rotateImage(Image image, int quadrants) {
-//        BufferedImageFilter ic = new BufferedImageFilter(new AffineTransformOp(AffineTransform.getQuadrantRotateInstance(quadrants), AffineTransformOp.TYPE_NEAREST_NEIGHBOR));
-//        ic.getBufferedImageOp().
-//    }
     public void setText(String text) {
         textArea.setText(text);
     }
