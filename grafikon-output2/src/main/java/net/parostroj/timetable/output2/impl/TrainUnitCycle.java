@@ -3,20 +3,19 @@ package net.parostroj.timetable.output2.impl;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Train unit cycle card.
+ * Train unit cycle.
  *
  * @author jub
  */
 @XmlType(propOrder = {"name", "description", "rows"})
-public class TrainUnitCycleCard {
+public class TrainUnitCycle {
 
     private String name;
     private String description;
-    private List<TrainUnitCycleCardRow> rows;
+    private List<TrainUnitCycleRow> rows;
 
     public String getDescription() {
         return description;
@@ -34,15 +33,14 @@ public class TrainUnitCycleCard {
         this.name = name;
     }
 
-    @XmlElementWrapper
     @XmlElement(name = "row")
-    public List<TrainUnitCycleCardRow> getRows() {
+    public List<TrainUnitCycleRow> getRows() {
         if (rows == null)
-            rows = new LinkedList<TrainUnitCycleCardRow>();
+            rows = new LinkedList<TrainUnitCycleRow>();
         return rows;
     }
 
-    public void setRows(List<TrainUnitCycleCardRow> rows) {
+    public void setRows(List<TrainUnitCycleRow> rows) {
         this.rows = rows;
     }
 }

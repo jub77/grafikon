@@ -8,40 +8,38 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.TimeConverter;
 
 /**
- * Extracts information for train unit cycles cards.
+ * Extracts information for train unit cycles.
  *
  * @author jub
  */
-public class TrainUnitCycleCardsExtractor {
+public class TrainUnitCyclesExtractor {
 
-    private TrainDiagram diagram;
     private List<TrainsCycle> cycles;
 
-    public TrainUnitCycleCardsExtractor(TrainDiagram diagram, List<TrainsCycle> cycles) {
-        this.diagram = diagram;
+    public TrainUnitCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
 
-    public List<TrainUnitCycleCard> getTrainUnitCycleCards() {
-        List<TrainUnitCycleCard> cards = new LinkedList<TrainUnitCycleCard>();
+    public List<TrainUnitCycle> getTrainUnitCycles() {
+        List<TrainUnitCycle> outputCycles = new LinkedList<TrainUnitCycle>();
         for (TrainsCycle cycle : cycles) {
-            cards.add(createCard(cycle));
+            outputCycles.add(createCycle(cycle));
         }
-        return cards;
+        return outputCycles;
     }
 
-    private TrainUnitCycleCard createCard(TrainsCycle cycle) {
-        TrainUnitCycleCard card = new TrainUnitCycleCard();
-        card.setName(cycle.getName());
-        card.setDescription(cycle.getDescription());
+    private TrainUnitCycle createCycle(TrainsCycle cycle) {
+        TrainUnitCycle outputCycle = new TrainUnitCycle();
+        outputCycle.setName(cycle.getName());
+        outputCycle.setDescription(cycle.getDescription());
         for (TrainsCycleItem item : cycle.getItems()) {
-            card.getRows().add(createRow(item));
+            outputCycle.getRows().add(createRow(item));
         }
-        return card;
+        return outputCycle;
     }
 
-    private TrainUnitCycleCardRow createRow(TrainsCycleItem item) {
-        TrainUnitCycleCardRow row = new TrainUnitCycleCardRow();
+    private TrainUnitCycleRow createRow(TrainsCycleItem item) {
+        TrainUnitCycleRow row = new TrainUnitCycleRow();
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(TimeConverter.convertFromIntToText(item.getStartTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());

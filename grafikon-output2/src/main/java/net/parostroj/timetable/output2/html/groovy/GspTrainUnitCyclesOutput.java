@@ -9,8 +9,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.impl.TrainUnitCycleCard;
-import net.parostroj.timetable.output2.impl.TrainUnitCycleCardsExtractor;
+import net.parostroj.timetable.output2.impl.TrainUnitCycle;
+import net.parostroj.timetable.output2.impl.TrainUnitCyclesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**
@@ -27,12 +27,12 @@ public class GspTrainUnitCyclesOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
-        TrainUnitCycleCardsExtractor tuce = new TrainUnitCycleCardsExtractor(diagram, getCycles(params, diagram));
-        List<TrainUnitCycleCard> cards = tuce.getTrainUnitCycleCards();
+        TrainUnitCyclesExtractor tuce = new TrainUnitCyclesExtractor(diagram, getCycles(params, diagram));
+        List<TrainUnitCycle> cycles = tuce.getTrainUnitCycles();
 
         // call template
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("cycles", cards);
+        map.put("cycles", cycles);
         ResourceHelper.addTextsToMap(map, "tuc_", this.getLocale(), "texts/html_texts");
 
         try {

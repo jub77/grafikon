@@ -3,12 +3,12 @@ package net.parostroj.timetable.output2.impl;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Train unit cycle card row.
+ * Train unit cycle row.
  *
  * @author jub
  */
 @XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "toAbbr", "comment"})
-public class TrainUnitCycleCardRow {
+public class TrainUnitCycleRow {
 
     private String trainName;
     private String fromTime;
