@@ -944,9 +944,10 @@ private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
     // show about dialog
-    AboutDialog dialog = new AboutDialog(this, true, "Author:\n  jub\n" +
-            "Version:\n  " + getVersion() + "\n",
-            getClass().getResource("/images/splashscreen.png"), true);
+    ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
+    AboutDialog dialog = new AboutDialog(this, true,
+            String.format(aboutBundle.getString("text"), getVersion()),
+            getClass().getResource(aboutBundle.getString("image")), true);
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
 }//GEN-LAST:event_aboutMenuItemActionPerformed
