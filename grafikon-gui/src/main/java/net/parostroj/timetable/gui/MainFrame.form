@@ -269,13 +269,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ecListMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.eclist" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="engine_cycles"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ecListMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="tucListMenuItem">
               <Properties>
@@ -375,13 +376,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ecListSelectMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.eclist.select" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="engine_cycles_select"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ecListSelectMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="tucListSelectMenuItem">
               <Properties>

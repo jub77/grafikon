@@ -491,12 +491,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         nodeTimetableListMenuItem.setActionCommand("stations");
         actionMenu.add(nodeTimetableListMenuItem);
 
+        ecListMenuItem.setAction(outputAction);
         ecListMenuItem.setText(ResourceLoader.getString("menu.action.eclist")); // NOI18N
-        ecListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ecListMenuItemActionPerformed(evt);
-            }
-        });
+        ecListMenuItem.setActionCommand("engine_cycles");
         actionMenu.add(ecListMenuItem);
 
         tucListMenuItem.setAction(outputAction);
@@ -553,12 +550,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         nodeTimetableListSelectMenuItem.setActionCommand("stations_select");
         actionMenu.add(nodeTimetableListSelectMenuItem);
 
+        ecListSelectMenuItem.setAction(outputAction);
         ecListSelectMenuItem.setText(ResourceLoader.getString("menu.action.eclist.select")); // NOI18N
-        ecListSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ecListSelectMenuItemActionPerformed(evt);
-            }
-        });
+        ecListSelectMenuItem.setActionCommand("engine_cycles_select");
         actionMenu.add(ecListSelectMenuItem);
 
         tucListSelectMenuItem.setAction(outputAction);
@@ -705,12 +699,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-private void ecListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ecListMenuItemActionPerformed
-    // write
-    final EngineCyclesList list = new EngineCyclesList(model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE));
-    this.engineCyclesList(list);
-}//GEN-LAST:event_ecListMenuItemActionPerformed
 
 private void trainTimetableListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListMenuItemActionPerformed
     // write
@@ -922,17 +910,6 @@ private void dcListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 }//GEN-LAST:event_dcListSelectMenuItemActionPerformed
 
-private void ecListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ecListSelectMenuItemActionPerformed
-    ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
-    selDialog.setLocationRelativeTo(this);
-    List<TrainsCycle> selection = selDialog.selectElements(model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE));
-    if (selection != null) {
-        final EngineCyclesList list = new EngineCyclesList(selection);
-        this.engineCyclesList(list);
-    }
-
-}//GEN-LAST:event_ecListSelectMenuItemActionPerformed
-
 private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
     TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
     dialog.setTrainDiagram(model.getDiagram());
@@ -1005,21 +982,6 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     }
 
     private void driverCyclesList(final DriverCyclesList list) {
-        HtmlAction action = new HtmlAction() {
-                @Override
-                public void write(Writer writer) throws Exception {
-                    list.writeTo(writer);
-                }
-
-                @Override
-                public void writeToDirectory(File directory) throws Exception {
-                    // do nothing
-                }
-        };
-        this.saveHtml(action);
-    }
-
-    private void engineCyclesList(final EngineCyclesList list) {
         HtmlAction action = new HtmlAction() {
                 @Override
                 public void write(Writer writer) throws Exception {

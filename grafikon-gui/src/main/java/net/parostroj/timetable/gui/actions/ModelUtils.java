@@ -53,6 +53,10 @@ public class ModelUtils {
                 return new ArrayList<Line>(diagram.getNet().getLines());
             case TRAIN_UNIT_CYCLE:
                 return diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE);
+            case ENGINE_CYCLE:
+                return diagram.getCycles(TrainsCycleType.ENGINE_CYCLE);
+            case DRIVER_CYCLE:
+                return diagram.getCycles(TrainsCycleType.DRIVER_CYCLE);
         }
         return null;
     }

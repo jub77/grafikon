@@ -10,7 +10,9 @@ public enum OutputType {
     STARTS("starts", "starts", true), ENDS("ends", "ends", true), STATIONS("stations", "stations", true),
     STATIONS_SELECT("stations_select", "stations", true, ElementType.NODE, "stations"),
     TRAIN_UNIT_CYCLES("train_unit_cycles", "train_unit_cycles", true),
-    TRAIN_UNIT_CYCLES_SELECT("train_unit_cycles_select", "train_unit_cycles", true, ElementType.TRAIN_UNIT_CYCLE, "cycles");
+    TRAIN_UNIT_CYCLES_SELECT("train_unit_cycles_select", "train_unit_cycles", true, ElementType.TRAIN_UNIT_CYCLE, "cycles"),
+    ENGINE_CYCLES("engine_cycles", "engine_cycles", true),
+    ENGINE_CYCLES_SELECT("engine_cycles_select", "engine_cycles", true, ElementType.ENGINE_CYCLE, "cycles");
 
     private String actionCommand;
     private String outputType;
