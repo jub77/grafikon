@@ -46,7 +46,7 @@ public class GspOutputFactory extends OutputFactory {
     public Output createOutput(String type) throws OutputException {
         Class<? extends Output> outputClass = OUTPUT_TYPES.get(type);
         if (outputClass == null)
-            throw new OutputException("Unknown type.");
+            throw new OutputException("Unknown type: " + type);
         try {
             Constructor<? extends Output> constructor = outputClass.getConstructor(Locale.class);
             return constructor.newInstance(this.getLocale());
