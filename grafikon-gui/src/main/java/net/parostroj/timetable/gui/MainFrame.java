@@ -256,6 +256,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         nodeTimetableListSelectMenuItem.setEnabled(model.getDiagram() != null);
         ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
         tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
+        editRoutesMenuItem.setEnabled(model.getDiagram() != null);
     }
     
     /** This method is called from within the constructor to
@@ -288,6 +289,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileImportMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator5 = new javax.swing.JSeparator();
         settingsMenuItem = new javax.swing.JMenuItem();
+        editRoutesMenuItem = new javax.swing.JMenuItem();
         imagesMenuItem = new javax.swing.JMenuItem();
         infoMenuItem = new javax.swing.JMenuItem();
         trainTypesMenuItem = new javax.swing.JMenuItem();
@@ -403,6 +405,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         fileMenu.add(settingsMenuItem);
+
+        editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
+        editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editRoutesMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(editRoutesMenuItem);
 
         imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
         imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -913,6 +923,12 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     model.setOutputCategory(type);
 }//GEN-LAST:event_outputTypeActionPerformed
 
+private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
+    EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
+    editRoutesDialog.setLocationRelativeTo(this);
+    editRoutesDialog.showDialog(model.getDiagram());
+}//GEN-LAST:event_editRoutesMenuItemActionPerformed
+
     private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
         final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         int result = allHtmlFileChooser.showSaveDialog(this);
@@ -1124,6 +1140,7 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
     private javax.swing.JMenuItem ecListMenuItem;
     private javax.swing.JMenuItem ecListSelectMenuItem;
+    private javax.swing.JMenuItem editRoutesMenuItem;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenuItem epListMenuItem;
     private javax.swing.JMenuItem fileImportMenuItem;
