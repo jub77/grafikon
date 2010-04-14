@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.xml;
+package net.parostroj.timetable.output2.impl;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;

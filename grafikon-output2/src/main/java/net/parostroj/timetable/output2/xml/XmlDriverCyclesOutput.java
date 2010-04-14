@@ -1,6 +1,6 @@
 package net.parostroj.timetable.output2.xml;
 
-import net.parostroj.timetable.output2.impl.EngineCycles;
+import net.parostroj.timetable.output2.impl.DriverCycles;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -17,26 +17,26 @@ import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
-import net.parostroj.timetable.output2.impl.EngineCyclesExtractor;
+import net.parostroj.timetable.output2.impl.DriverCyclesExtractor;
 
 /**
- * Xml output for engine cycles.
+ * Xml output for driver cycles.
  *
  * @author jub
  */
-class XmlEngineCyclesOutput extends OutputWithCharset {
+class XmlDriverCyclesOutput extends OutputWithCharset {
 
-    public XmlEngineCyclesOutput(Charset charset) {
+    public XmlDriverCyclesOutput(Charset charset) {
         super(charset);
     }
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            EngineCyclesExtractor tuce = new EngineCyclesExtractor(getCycles(params, diagram));
-            EngineCycles cycles = new EngineCycles(tuce.getEngineCycles());
+            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, getCycles(params, diagram));
+            DriverCycles cycles = dce.getDriverCycles();
 
-            JAXBContext context = JAXBContext.newInstance(EngineCycles.class);
+            JAXBContext context = JAXBContext.newInstance(DriverCycles.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_ENCODING, this.getCharset().name());
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -54,6 +54,6 @@ class XmlEngineCyclesOutput extends OutputWithCharset {
             return (List<TrainsCycle>) param.getValue();
         }
         TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
-        return s.sort(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE));
+        return s.sort(diagram.getCycles(TrainsCycleType.DRIVER_CYCLE));
     }
 }

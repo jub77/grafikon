@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.xml;
+package net.parostroj.timetable.output2.impl;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.parostroj.timetable.output2.impl.Position;
 
 /**
- * Root element for start positions.
+ * Root element for end positions.
  *
  * @author jub
  */
 @XmlRootElement
-public class StartPositions {
+public class EndPositions {
 
     private List<Position> enginesPositions;
     private List<Position> trainUnitsPositions;
 
-    public StartPositions() {
+    public EndPositions() {
     }
 
     @XmlElementWrapper

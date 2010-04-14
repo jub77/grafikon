@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.xml;
 
+import net.parostroj.timetable.output2.impl.StartPositions;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;

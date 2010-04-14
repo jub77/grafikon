@@ -9,7 +9,7 @@ import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
 
 /**
- * Extracts information for train unit cycles.
+ * Extracts information for engine cycles.
  *
  * @author jub
  */
