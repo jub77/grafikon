@@ -54,6 +54,7 @@ public class DriverCyclesExtractor {
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
+        row.setComment((item.getComment() != null && !item.getComment().trim().equals("")) ? item.getComment() : null);
         return row;
     }
 }
