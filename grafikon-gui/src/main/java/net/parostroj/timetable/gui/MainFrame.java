@@ -501,12 +501,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         tucListMenuItem.setActionCommand("train_unit_cycles");
         actionMenu.add(tucListMenuItem);
 
+        dcListMenuItem.setAction(outputAction);
         dcListMenuItem.setText(ResourceLoader.getString("menu.acion.dclist")); // NOI18N
-        dcListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dcListMenuItemActionPerformed(evt);
-            }
-        });
+        dcListMenuItem.setActionCommand("driver_cycles");
         actionMenu.add(dcListMenuItem);
 
         spListMenuItem.setAction(outputAction);
@@ -560,12 +557,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         tucListSelectMenuItem.setActionCommand("train_unit_cycles_select");
         actionMenu.add(tucListSelectMenuItem);
 
+        dcListSelectMenuItem.setAction(outputAction);
         dcListSelectMenuItem.setText(ResourceLoader.getString("menu.acion.dclist.select")); // NOI18N
-        dcListSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dcListSelectMenuItemActionPerformed(evt);
-            }
-        });
+        dcListSelectMenuItem.setActionCommand("driver_cycles_select");
         actionMenu.add(dcListSelectMenuItem);
         actionMenu.add(jSeparator4);
 
@@ -728,11 +722,6 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         model.setModelChanged(true);
     }
 }//GEN-LAST:event_settingsMenuItemActionPerformed
-
-private void dcListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dcListMenuItemActionPerformed
-    DriverCyclesList list = new DriverCyclesList(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE),model.getDiagram().getAttributes());
-    this.driverCyclesList(list);
-}//GEN-LAST:event_dcListMenuItemActionPerformed
 
 private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allHtmlMenuItemActionPerformed
     final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
@@ -899,17 +888,6 @@ private void trainTimetableListByDcSelectMenuItemActionPerformed(java.awt.event.
         this.trainTimetableListByDc(selection);
 }//GEN-LAST:event_trainTimetableListByDcSelectMenuItemActionPerformed
 
-private void dcListSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dcListSelectMenuItemActionPerformed
-    ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
-    selDialog.setLocationRelativeTo(this);
-    List<TrainsCycle> selection = selDialog.selectElements(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE));
-    if (selection != null) {
-        DriverCyclesList list = new DriverCyclesList(selection, model.getDiagram().getAttributes());
-        this.driverCyclesList(list);
-    }
-
-}//GEN-LAST:event_dcListSelectMenuItemActionPerformed
-
 private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
     TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
     dialog.setTrainDiagram(model.getDiagram());
@@ -979,21 +957,6 @@ private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 }
                 });
         }
-    }
-
-    private void driverCyclesList(final DriverCyclesList list) {
-        HtmlAction action = new HtmlAction() {
-                @Override
-                public void write(Writer writer) throws Exception {
-                    list.writeTo(writer);
-                }
-
-                @Override
-                public void writeToDirectory(File directory) throws Exception {
-                    // do nothing
-                }
-        };
-        this.saveHtml(action);
     }
 
     private void setSelectedLocale() {
