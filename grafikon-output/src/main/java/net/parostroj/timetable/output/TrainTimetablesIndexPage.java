@@ -44,14 +44,17 @@ public class TrainTimetablesIndexPage implements Page {
         }
     }
 
+    @Override
     public int getNumber() {
         return number;
     }
     
+    @Override
     public void setNumber(int number) {
         this.number = number;
     }
 
+    @Override
     public void writeTo(Writer writer) throws IOException {
         Formatter f = new Formatter(writer);
 
