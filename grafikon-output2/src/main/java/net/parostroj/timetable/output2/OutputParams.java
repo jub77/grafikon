@@ -37,4 +37,8 @@ public class OutputParams extends HashMap<String, OutputParam> {
     public boolean paramExist(String name) {
         return this.containsKey(name);
     }
+
+    public boolean paramExistWithValue(String name) {
+        return this.paramExist(name) && this.getParam(name).getValue() != null;
+    }
 }
