@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JRadioButtonMenuItem;
-import net.parostroj.timetable.output.Templates;
+import net.parostroj.timetable.gui.actions.ModelUtils;
 
 /**
  * Creates menu with languages.
@@ -46,7 +46,7 @@ public class LanguageMenuBuilder {
                 stream.close();
             }
             for (Map.Entry<Object,Object> entry : langProps.entrySet()) {
-                Locale language = Templates.parseLocale((String)entry.getKey());
+                Locale language = ModelUtils.parseLocale((String)entry.getKey());
                 String text = (String)entry.getValue();
                 languages.add(new LanguageMenuItem(text, language));
             }
