@@ -110,7 +110,6 @@
         <module>grafikon-ls</module>
         <module>grafikon-ls4</module>
         <module>grafikon-templates</module>
-        <module>grafikon-output</module>
         <module>grafikon-output2</module>
         <module>grafikon-gui-components</module>
         <module>grafikon-net</module>

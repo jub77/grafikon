@@ -30,11 +30,6 @@
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
-            <artifactId>grafikon-output</artifactId>
-            <version>${grafikon.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-output2</artifactId>
             <version>${grafikon.version}</version>
         </dependency>
