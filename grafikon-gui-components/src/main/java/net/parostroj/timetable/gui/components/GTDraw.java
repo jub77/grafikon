@@ -112,6 +112,11 @@ abstract public class GTDraw {
         preferences.put(key, Boolean.valueOf(value));
     }
 
+    public boolean getPreference(GTDrawPreference key) {
+        Boolean value = preferences.get(key);
+        return Boolean.TRUE.equals(value);
+    }
+
     public void setGapStationX(int gapStationX) {
         this.gapStationX = gapStationX;
     }

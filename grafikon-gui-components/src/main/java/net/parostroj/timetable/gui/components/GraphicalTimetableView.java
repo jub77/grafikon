@@ -303,6 +303,48 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         }
     }
 
+    public GTViewSettings getSettings() {
+        GTViewSettings settings = new GTViewSettings();
+        settings.setSize(currentSize);
+        settings.setType(type);
+        settings.setOption(GTDrawPreference.TRAIN_NAMES, trainNamesCheckBoxMenuItem.isSelected());
+        settings.setOption(GTDrawPreference.ARRIVAL_DEPARTURE_DIGITS, addigitsCheckBoxMenuItem.isSelected());
+        settings.setOption(GTDrawPreference.TECHNOLOGICAL_TIME, techTimeCheckBoxMenuItem.isSelected());
+        settings.setOption(GTDrawPreference.EXTENDED_LINES, extendedLinesCheckBoxMenuItem.isSelected());
+        return settings;
+    }
+
+    public void setSettings(GTViewSettings settings) {
+        if (settings == null)
+            settings = GTViewSettings.parseStorageString("CLASSIC,4,true,false,false,false");
+
+        switch (settings.getType()) {
+            case CLASSIC:
+                classicMenuItem.setSelected(true);
+                break;
+            case WITH_TRACKS:
+                withTracksMenuItem.setSelected(true);
+                break;
+        }
+        this.setType(settings.getType());
+        String sizeStr = Integer.toString(settings.getSize());
+        for (Object elem : sizesMenu.getMenuComponents()) {
+            if (elem instanceof JRadioButtonMenuItem) {
+                JRadioButtonMenuItem item = (JRadioButtonMenuItem)elem;
+                if (item.getActionCommand().equals(sizeStr)) {
+                    item.setSelected(true);
+                    break;
+                }
+            }
+        }
+        this.setGTSize(settings.getSize());
+        trainNamesCheckBoxMenuItem.setSelected(settings.getOption(GTDrawPreference.TRAIN_NAMES));
+        addigitsCheckBoxMenuItem.setSelected(settings.getOption(GTDrawPreference.ARRIVAL_DEPARTURE_DIGITS));
+        techTimeCheckBoxMenuItem.setSelected(settings.getOption(GTDrawPreference.TECHNOLOGICAL_TIME));
+        extendedLinesCheckBoxMenuItem.setSelected(settings.getOption(GTDrawPreference.EXTENDED_LINES));
+        this.recreateDraw(this.getRoute());
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

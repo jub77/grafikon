@@ -8,12 +8,14 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Logger;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.model.TimeInterval;
@@ -26,7 +28,8 @@ import net.parostroj.timetable.model.Train;
  * @author jub
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
-    
+
+    private static final Logger LOG = Logger.getLogger(TrainsPane.class.getName());
     private ApplicationModel model;
     
     /** Creates new form TrainsPane */
@@ -119,6 +122,14 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
+        GTViewSettings gtvs = null;
+        try {
+            gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
+        } catch (Exception e) {
+            // use default values
+            LOG.warning("Wrong GTView settings - using default values.");
+        }
+        graphicalTimetableView.setSettings(gtvs);
         splitPane.setDividerLocation(dividerLoc);
         trainView.loadFromPreferences(prefs);
     }
@@ -126,6 +137,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setInt("trains.divider", splitPane.getDividerLocation());
+        prefs.setString("trains.gtv", graphicalTimetableView.getSettings().getStorageString());
         trainView.saveToPreferences(prefs);
     }
 
