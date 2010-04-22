@@ -18,7 +18,6 @@ import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.views.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 
@@ -66,23 +65,24 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
      * initializes frame.
      */
     private void initializeFrame() {
+        model = new ApplicationModel();
+
         // set local before anything else
         String loadedLocale = null;
         try {
             loadedLocale = AppPreferences.getPreferences().getString("locale.program", null);
             String templateLocale = AppPreferences.getPreferences().getString("locale.output", null);
             if (loadedLocale != null) {
-                locale = Templates.parseLocale(loadedLocale);
+                locale = ModelUtils.parseLocale(loadedLocale);
                 Locale.setDefault(locale);
             }
             if (templateLocale != null) {
-                Templates.setLocale(Templates.parseLocale(templateLocale));
+                model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Cannot load preferences.", e);
         }
 
-        model = new ApplicationModel();
         outputAction = new OutputAction(model, this);
 
         initComponents();
@@ -560,12 +560,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(dcListSelectMenuItem);
         actionMenu.add(jSeparator4);
 
+        allHtmlMenuItem.setAction(outputAction);
         allHtmlMenuItem.setText(ResourceLoader.getString("menu.action.all.html")); // NOI18N
-        allHtmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allHtmlMenuItemActionPerformed(evt);
-            }
-        });
+        allHtmlMenuItem.setActionCommand("all");
         actionMenu.add(allHtmlMenuItem);
         actionMenu.add(jSeparator3);
 
@@ -702,70 +699,6 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     }
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
-private void allHtmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allHtmlMenuItemActionPerformed
-    final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
-    int result = allHtmlFileChooser.showSaveDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-        final File directory = allHtmlFileChooser.getSelectedFile();
-
-        ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
-            private String errorMessage = null;
-            
-            @Override
-            public void run() {
-                try {
-                    // node timetable
-                    NodeTimetablesList ll = new NodeTimetablesList((model.getDiagram().getNet().getNodes()), model.getDiagram());
-                    Writer out = openFile(directory, ResourceLoader.getString("out.nodes") + ".html");
-                    ll.writeTo(out);
-                    out.close();
-                    // trains timetable
-                    TrainTimetablesList tl = new TrainTimetablesList(model.getDiagram(), model.getDiagram().getTrains(), model.getDiagram().getImages(), TrainTimetablesList.Binding.BOOK, false);
-                    out = openFile(directory, ResourceLoader.getString("out.trains") + ".html");
-                    tl.writeTo(out);
-                    tl.saveImages(model.getDiagram().getImages(), directory);
-                    out.close();
-                    // engine cycles
-                    EngineCyclesList el = new EngineCyclesList(model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE));
-                    out = openFile(directory, ResourceLoader.getString("out.ec") + ".html");
-                    el.writeTo(out);
-                    out.close();
-                    // train unit cycles
-                    TrainUnitCyclesList tul = new TrainUnitCyclesList(model.getDiagram().getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE));
-                    out = openFile(directory, ResourceLoader.getString("out.tuc") + ".html");
-                    tul.writeTo(out);
-                    out.close();
-                    // driver cycles
-                    DriverCyclesList dl = new DriverCyclesList(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE), model.getDiagram().getAttributes());
-                    out = openFile(directory, ResourceLoader.getString("out.dc") + ".html");
-                    dl.writeTo(out);
-                    out.close();
-                    // starting positions
-                    StartingPositionsList spl = new StartingPositionsList(model.getDiagram());
-                    out = openFile(directory, ResourceLoader.getString("out.sp") + ".html");
-                    spl.writeTo(out);
-                    out.close();
-
-                    new ImageSaver().saveTrainTimetableImages(directory);
-                } catch (IOException e) {
-                    LOG.log(Level.WARNING, e.getMessage());
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, e.getMessage());
-                    errorMessage = ResourceLoader.getString("dialog.error.saving");
-                }
-            }
-
-            @Override
-            public void afterRun() {
-                if (errorMessage != null)
-                    ActionUtils.showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName(), MainFrame.this);
-            }
-            });
-
-    }
-}//GEN-LAST:event_allHtmlMenuItemActionPerformed
-
 private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
     imagesDialog.setLocationRelativeTo(this);
     imagesDialog.setVisible(true);
@@ -787,9 +720,9 @@ private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEve
 
 private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
     if (oSystemLRadioButtonMenuItem.isSelected())
-        Templates.setLocale(null);
+        model.setOutputLocale(null);
     else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        Templates.setLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
+        model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
     }
 }//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
 
@@ -873,14 +806,14 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     private void setSelectedTemplateLocale() {
-        if (Templates.getLocale() == null)
+        if (model.getOutputLocale() == null)
             oSystemLRadioButtonMenuItem.setSelected(true);
         else {
             for (Enumeration<AbstractButton> en = outputLbuttonGroup.getElements(); en.hasMoreElements();) {
                 AbstractButton e = en.nextElement();
                 if (e instanceof LanguageMenuBuilder.LanguageMenuItem) {
                     LanguageMenuBuilder.LanguageMenuItem item = (LanguageMenuBuilder.LanguageMenuItem)e;
-                    if (Templates.getLocale().equals(item.getLanguage())) {
+                    if (model.getOutputLocale().equals(item.getLanguage())) {
                         item.setSelected(true);
                         return;
                     }
@@ -888,12 +821,6 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
             oSystemLRadioButtonMenuItem.setSelected(true);
         }
-    }
-
-    private Writer openFile(File directory,String name) throws FileNotFoundException, UnsupportedEncodingException {
-        File f = new File(directory, name);
-        Writer writer = new OutputStreamWriter(new FileOutputStream(f),"utf-8");
-        return writer;
     }
 
     public void cleanUpBeforeApplicationEnd() {
@@ -928,8 +855,8 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             prefs.setString("locale.program", locale.toString());
         else
             prefs.remove("locale.program");
-        if (Templates.getLocale() != null)
-            prefs.setString("locale.output", Templates.getLocale().toString());
+        if (model.getOutputLocale() != null)
+            prefs.setString("locale.output", model.getOutputLocale().toString());
         else
             prefs.remove("locale.output");
 

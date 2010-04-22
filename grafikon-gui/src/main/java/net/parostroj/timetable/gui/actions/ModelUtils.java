@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -61,5 +62,20 @@ public class ModelUtils {
                 return diagram.getTrains();
         }
         return null;
+    }
+
+    public static Locale parseLocale(String localeString) {
+        Locale returnedLocale = null;
+        if (localeString != null) {
+            String parts[] = localeString.split("_");
+            if (parts.length == 1) {
+                returnedLocale = new Locale(parts[0]);
+            } else if (parts.length == 2) {
+                returnedLocale = new Locale(parts[0],parts[1]);
+            } else if (parts.length == 3) {
+                returnedLocale = new Locale(parts[0], parts[1], parts[2]);
+            }
+        }
+        return returnedLocale;
     }
 }

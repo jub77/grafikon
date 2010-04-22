@@ -74,7 +74,7 @@ public class OutputAction extends AbstractAction {
 
     private boolean selectTemplate() {
         OutputCategory category = model.getOutputCategory();
-        if (category.isTemplateSelect()) {
+        if (category.isTemplateSelect() && outputType != OutputType.ALL) {
             if (templateSelectDialog.selectTemplate(
                     FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.TEMPLATE),
                     model.getOutputTemplates().get(outputType.getOutputType()))) {
@@ -156,8 +156,35 @@ public class OutputAction extends AbstractAction {
                     eOutputs.add(new ExecutableOutput(output, params));
                 }
             }
-        } else {
+        } else if (outputType == OutputType.ALL) {
             // save all
+            String suffix = model.getOutputCategory().getSuffix();
+            OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
+            of.setParameter("locale", model.getOutputLocale());
+            // stations
+            Output output = of.createOutput("stations");
+            File oFile = new File(outputFile, ResourceLoader.getString("out.nodes") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            // trains
+            output = of.createOutput("trains");
+            oFile = new File(outputFile, ResourceLoader.getString("out.trains") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            // engine cycles
+            output = of.createOutput("engine_cycles");
+            oFile = new File(outputFile, ResourceLoader.getString("out.ec") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            // train unit cycles
+            output = of.createOutput("train_unit_cycles");
+            oFile = new File(outputFile, ResourceLoader.getString("out.tuc") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            // driver cycles
+            output = of.createOutput("driver_cycles");
+            oFile = new File(outputFile, ResourceLoader.getString("out.dc") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            // starting positions
+            output = of.createOutput("starts");
+            oFile = new File(outputFile, ResourceLoader.getString("out.sp") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
         }
 
         this.saveOutputs(eOutputs);
@@ -173,6 +200,7 @@ public class OutputAction extends AbstractAction {
 
     private Output createOutput() throws OutputException {
         OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
+        of.setParameter("locale", model.getOutputLocale());
         Output output = of.createOutput(outputType.getOutputType());
         return output;
     }

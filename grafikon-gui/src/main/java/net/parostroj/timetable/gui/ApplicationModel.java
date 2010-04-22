@@ -1,10 +1,10 @@
 package net.parostroj.timetable.gui;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -37,6 +37,7 @@ public class ApplicationModel implements StorableGuiData {
     private TrainDiagramCollegue collegue;
     private OutputCategory outputCategory;
     private Map<String, File> outputTemplates;
+    private Locale outputLocale;
     
     /**
      * Default constructor.
@@ -235,6 +236,14 @@ public class ApplicationModel implements StorableGuiData {
 
     public Map<String, File> getOutputTemplates() {
         return outputTemplates;
+    }
+
+    public Locale getOutputLocale() {
+        return outputLocale;
+    }
+
+    public void setOutputLocale(Locale outputLocale) {
+        this.outputLocale = outputLocale;
     }
 
     @Override
