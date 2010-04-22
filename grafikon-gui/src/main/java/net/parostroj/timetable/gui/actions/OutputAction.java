@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,9 +14,12 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
+import net.parostroj.timetable.gui.dialogs.SelectNodesDialog;
 import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -57,7 +61,10 @@ public class OutputAction extends AbstractAction {
         if (!selectOutput())
             return;
         try {
-            this.singleOutput();
+            if (outputType.isOutputFile())
+                this.singleOutput();
+            else
+                this.multipleOutputs();
         } catch (OutputException ex) {
             LOG.log(Level.WARNING, ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -82,8 +89,13 @@ public class OutputAction extends AbstractAction {
     }
 
     private boolean selectOutput() {
-        OutputCategory category = model.getOutputCategory();
-        JFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT, category.getSuffix(), ResourceLoader.getString("output." + category.getSuffix()));
+        JFileChooser chooser = null;
+        if (outputType.isOutputFile()) {
+            OutputCategory category = model.getOutputCategory();
+            chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT, category.getSuffix(), ResourceLoader.getString("output." + category.getSuffix()));
+        } else {
+            chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
+        }
         int retVal = chooser.showSaveDialog(parent);
         if (retVal == JFileChooser.APPROVE_OPTION) {
             outputFile = chooser.getSelectedFile();
@@ -108,14 +120,55 @@ public class OutputAction extends AbstractAction {
             selection = selDialog.selectElements((List<Object>)ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
             if (selection == null)
                 return false;
+        } else if (outputType == OutputType.TRAINS_SELECT_STATION) {
+            SelectNodesDialog dialog = new SelectNodesDialog(getFrame(), true);
+            dialog.setNodes(model.getDiagram().getNet().getNodes());
+            dialog.setLocationRelativeTo(parent);
+            dialog.setVisible(true);
+            selection = dialog.getSelectedNode();
+
+            if (selection == null)
+                return false;
+        } else if (outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
+            selection = model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE);
         }
         return true;
     }
 
     private void singleOutput() throws OutputException {
         Output output = this.createOutput();
-        OutputParams params = this.createParams(output, outputFile);
+        Object select = null;
+        if (outputType.isSelection() || outputType.getSelectionParam() != null) {
+            select = selection;
+        }
+        OutputParams params = this.createParams(output, outputFile, select);
         this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
+    }
+
+    private void multipleOutputs() throws OutputException {
+        List<ExecutableOutput> eOutputs = new LinkedList<ExecutableOutput>();
+        if (outputType.getOutputType() != null) {
+            Output output = this.createOutput();
+            if (selection instanceof Collection) {
+                Collection<Object> c = (Collection<Object>)selection;
+                for (Object item : c) {
+                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile), item);
+                    eOutputs.add(new ExecutableOutput(output, params));
+                }
+            }
+        } else {
+            // save all
+        }
+
+        this.saveOutputs(eOutputs);
+    }
+
+    private File createUniqueOutputFile(Object item, File directory) throws OutputException {
+        if (outputType == OutputType.TRAINS_SELECT_DRIVER_CYCLES || outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
+            TrainsCycle cycle = (TrainsCycle)item;
+            return new File(directory, ResourceLoader.getString("out.trains") + "_" + cycle.getName() + "." + model.getOutputCategory().getSuffix());
+        }
+        throw new OutputException("Error creating filenames of output files.");
     }
 
     private Output createOutput() throws OutputException {
@@ -124,7 +177,7 @@ public class OutputAction extends AbstractAction {
         return output;
     }
 
-    private OutputParams createParams(Output output, File file) throws OutputException {
+    private OutputParams createParams(Output output, File file, Object select) throws OutputException {
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
@@ -137,14 +190,11 @@ public class OutputAction extends AbstractAction {
             }
         }
         // selections
-        if (outputType.isSelection()) {
-            params.setParam(outputType.getSelectionParam(), selection);
+        if (select != null) {
+            params.setParam(outputType.getSelectionParam(), select);
         }
-        try {
-            params.setParam(DefaultOutputParam.OUTPUT_STREAM, new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new OutputException(e);
-        }
+        params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
+
         return params;
     }
 
@@ -158,14 +208,6 @@ public class OutputAction extends AbstractAction {
                 try {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
-                        OutputParam param = output.getParams().getParam(DefaultOutputParam.OUTPUT_STREAM);
-                        if (param != null) {
-                            try {
-                                ((OutputStream)param.getValue()).close();
-                            } catch (IOException e) {
-                                throw new OutputException(e);
-                            }
-                        }
                     }
                 } catch (OutputException e) {
                     LOG.log(Level.WARNING, e.getMessage(), e);

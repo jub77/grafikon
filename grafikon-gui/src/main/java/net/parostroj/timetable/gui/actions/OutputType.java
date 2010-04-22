@@ -14,7 +14,11 @@ public enum OutputType {
     ENGINE_CYCLES("engine_cycles", "engine_cycles", true),
     ENGINE_CYCLES_SELECT("engine_cycles_select", "engine_cycles", true, ElementType.ENGINE_CYCLE, "cycles"),
     DRIVER_CYCLES("driver_cycles", "driver_cycles", true),
-    DRIVER_CYCLES_SELECT("driver_cycles_select", "driver_cycles", true, ElementType.DRIVER_CYCLE, "cycles");
+    DRIVER_CYCLES_SELECT("driver_cycles_select", "driver_cycles", true, ElementType.DRIVER_CYCLE, "cycles"),
+    TRAINS("trains", "trains", true),
+    TRAINS_SELECT_DRIVER_CYCLES("trains_select_driver_cycles", "trains", false, ElementType.DRIVER_CYCLE, "driver_cycle"),
+    TRAINS_SELECT_STATION("trains_select_station", "trains", true, null, "station"),
+    TRAINS_BY_DRIVER_CYCLES("trains_by_driver_cycles", "trains", false, null, "driver_cycle");
 
     private String actionCommand;
     private String outputType;

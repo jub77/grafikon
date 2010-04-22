@@ -57,6 +57,8 @@ public class ModelUtils {
                 return diagram.getCycles(TrainsCycleType.ENGINE_CYCLE);
             case DRIVER_CYCLE:
                 return diagram.getCycles(TrainsCycleType.DRIVER_CYCLE);
+            case TRAIN:
+                return diagram.getTrains();
         }
         return null;
     }

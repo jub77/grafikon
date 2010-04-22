@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import net.parostroj.timetable.actions.TrainSortByNodeFilter;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
@@ -488,12 +487,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.setText(ResourceLoader.getString("menu.action")); // NOI18N
         actionMenu.setActionCommand("stations_select");
 
+        trainTimetableListMenuItem.setAction(outputAction);
         trainTimetableListMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslist")); // NOI18N
-        trainTimetableListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTimetableListMenuItemActionPerformed(evt);
-            }
-        });
+        trainTimetableListMenuItem.setActionCommand("trains");
         actionMenu.add(trainTimetableListMenuItem);
 
         nodeTimetableListMenuItem.setAction(outputAction);
@@ -522,20 +518,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(spListMenuItem);
         actionMenu.add(jSeparator1);
 
+        trainTimetableListByDcMenuItem.setAction(outputAction);
         trainTimetableListByDcMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc")); // NOI18N
-        trainTimetableListByDcMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTimetableListByDcMenuItemActionPerformed(evt);
-            }
-        });
+        trainTimetableListByDcMenuItem.setActionCommand("trains_by_driver_cycles");
         actionMenu.add(trainTimetableListByDcMenuItem);
 
+        trainTimetableListByTimeFilteredMenuItem.setAction(outputAction);
         trainTimetableListByTimeFilteredMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbytimefiltered")); // NOI18N
-        trainTimetableListByTimeFilteredMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTimetableListByTimeFilteredMenuItemActionPerformed(evt);
-            }
-        });
+        trainTimetableListByTimeFilteredMenuItem.setActionCommand("trains_select_station");
         actionMenu.add(trainTimetableListByTimeFilteredMenuItem);
 
         epListMenuItem.setAction(outputAction);
@@ -544,12 +534,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(epListMenuItem);
         actionMenu.add(jSeparator2);
 
+        trainTimetableListByDcSelectMenuItem.setAction(outputAction);
         trainTimetableListByDcSelectMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc.select")); // NOI18N
-        trainTimetableListByDcSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTimetableListByDcSelectMenuItemActionPerformed(evt);
-            }
-        });
+        trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
 
         nodeTimetableListSelectMenuItem.setAction(outputAction);
@@ -704,24 +691,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void trainTimetableListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListMenuItemActionPerformed
-    // write
-    final TrainTimetablesList list = new TrainTimetablesList(model.getDiagram(), model.getDiagram().getTrains(),model.getDiagram().getImages(),TrainTimetablesList.Binding.BOOK, false);
-    HtmlAction action = new HtmlAction() {
-            @Override
-            public void write(Writer writer) throws Exception {
-                list.writeTo(writer);
-            }
-
-            @Override
-            public void writeToDirectory(File directory) throws Exception {
-                list.saveImages(model.getDiagram().getImages(), directory);
-                new ImageSaver().saveTrainTimetableImages(directory);
-            }
-    };
-    this.saveHtml(action);
-}//GEN-LAST:event_trainTimetableListMenuItemActionPerformed
-
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
     settingsDialog.setLocationRelativeTo(this);
     settingsDialog.setTrainDiagram(model.getDiagram());
@@ -808,10 +777,6 @@ private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     infoDialog.setVisible(true);
 }//GEN-LAST:event_infoMenuItemActionPerformed
 
-private void trainTimetableListByDcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByDcMenuItemActionPerformed
-    trainTimetableListByDc(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE));
-}//GEN-LAST:event_trainTimetableListByDcMenuItemActionPerformed
-
 private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
     if (systemLanguageRadioButtonMenuItem.isSelected())
         locale = null;
@@ -858,46 +823,6 @@ private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt
     trainsPane.resizeColumns();
 }//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
 
-private void trainTimetableListByTimeFilteredMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByTimeFilteredMenuItemActionPerformed
-    // choose nodes
-    SelectNodesDialog dialog = new SelectNodesDialog(this, true);
-    dialog.setNodes(model.getDiagram().getNet().getNodes());
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-
-    if (dialog.getSelectedNode() == null)
-        return;
-
-    List<Train> trains = (new TrainSortByNodeFilter()).sortAndFilter(model.getDiagram().getTrains(), dialog.getSelectedNode());
-
-    // write
-    final TrainTimetablesList list = new TrainTimetablesList(
-            model.getDiagram(), trains,
-            Collections.<TimetableImage>emptyList(), TrainTimetablesList.Binding.BOOK,
-            true);
-    HtmlAction action = new HtmlAction() {
-
-        @Override
-        public void write(Writer writer) throws Exception {
-            list.writeTo(writer);
-        }
-
-        @Override
-        public void writeToDirectory(File directory) throws Exception {
-            new ImageSaver().saveTrainTimetableImages(directory);
-        }
-    };
-    this.saveHtml(action);
-}//GEN-LAST:event_trainTimetableListByTimeFilteredMenuItemActionPerformed
-
-private void trainTimetableListByDcSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTimetableListByDcSelectMenuItemActionPerformed
-    ElementSelectionDialog<TrainsCycle> selDialog = new ElementSelectionDialog<TrainsCycle>(this, true);
-    selDialog.setLocationRelativeTo(this);
-    List<TrainsCycle> selection = selDialog.selectElements(model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE));
-    if (selection != null)
-        this.trainTimetableListByDc(selection);
-}//GEN-LAST:event_trainTimetableListByDcSelectMenuItemActionPerformed
-
 private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
     TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
     dialog.setTrainDiagram(model.getDiagram());
@@ -928,52 +853,6 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     editRoutesDialog.setLocationRelativeTo(this);
     editRoutesDialog.showDialog(model.getDiagram());
 }//GEN-LAST:event_editRoutesMenuItemActionPerformed
-
-    private void trainTimetableListByDc(final List<TrainsCycle> cycles) {
-        final JFileChooser allHtmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
-        int result = allHtmlFileChooser.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            final File directory = allHtmlFileChooser.getSelectedFile();
-
-            ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
-                private String errorMessage = null;
-
-                @Override
-                public void run() {
-                    try {
-                        Writer out = null;
-                        // trains timetable - for each DC
-                        for (TrainsCycle dc : cycles) {
-                            // get list of trains
-                            List<Train> trains = new LinkedList<Train>();
-                            for (TrainsCycleItem item : dc) {
-                                trains.add(item.getTrain());
-                            }
-                            TrainTimetablesList tl = new TrainTimetablesList(model.getDiagram(), trains, Collections.<TimetableImage>emptyList(), TrainTimetablesList.Binding.BOOK, true);
-                            out = openFile(directory, ResourceLoader.getString("out.trains") + "_" + dc.getName() + ".html");
-                            tl.writeTo(out);
-                            out.close();
-                        }
-
-                        new ImageSaver().saveTrainTimetableImages(directory);
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, e.getMessage());
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
-                    } catch (Exception e) {
-                        LOG.log(Level.WARNING, e.getMessage());
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
-                    }
-                }
-
-                @Override
-                public void afterRun() {
-                    if (errorMessage != null) {
-                        ActionUtils.showError(errorMessage + " " + allHtmlFileChooser.getSelectedFile().getName(), MainFrame.this);
-                    }
-                }
-                });
-        }
-    }
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -1015,38 +894,6 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         File f = new File(directory, name);
         Writer writer = new OutputStreamWriter(new FileOutputStream(f),"utf-8");
         return writer;
-    }
-
-    private void saveHtml(final HtmlAction action) {
-        final JFileChooser outputFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT);
-        int retVal = outputFileChooser.showSaveDialog(this);
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            ActionHandler.getInstance().executeAction(this, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
-                private String errorMessage;
-                
-                @Override
-                public void run() {
-                    try {
-                        Writer writer = new OutputStreamWriter(new FileOutputStream(outputFileChooser.getSelectedFile()), "utf-8");
-                        action.write(writer);
-                        writer.close();
-                        action.writeToDirectory(outputFileChooser.getSelectedFile().getParentFile());
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, e.getMessage(), e);
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
-                    } catch (Exception e) {
-                        LOG.log(Level.WARNING, e.getMessage(), e);
-                        errorMessage = ResourceLoader.getString("dialog.error.saving");
-                    }
-                }
-
-                @Override
-                public void afterRun() {
-                    if (errorMessage != null)
-                        ActionUtils.showError(errorMessage + " " + outputFileChooser.getSelectedFile().getName(), MainFrame.this);
-                }
-            });
-        }
     }
 
     public void cleanUpBeforeApplicationEnd() {

@@ -258,13 +258,14 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="trainTimetableListMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.traintimetableslist" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="trains"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trainTimetableListMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="nodeTimetableListMenuItem">
               <Properties>
@@ -329,23 +330,25 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="trainTimetableListByDcMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.traintimetableslistbydc" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="trains_by_driver_cycles"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trainTimetableListByDcMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="trainTimetableListByTimeFilteredMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.traintimetableslistbytimefiltered" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="trains_select_station"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trainTimetableListByTimeFilteredMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="epListMenuItem">
               <Properties>
@@ -366,13 +369,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="trainTimetableListByDcSelectMenuItem">
               <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="outputAction" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.action.traintimetableslistbydc.select" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="actionCommand" type="java.lang.String" value="trains_select_driver_cycles"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trainTimetableListByDcSelectMenuItemActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="nodeTimetableListSelectMenuItem">
               <Properties>
