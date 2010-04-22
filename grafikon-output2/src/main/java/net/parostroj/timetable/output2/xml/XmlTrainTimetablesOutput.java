@@ -4,14 +4,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
+import net.parostroj.timetable.actions.TrainSortByNodeFilter;
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
@@ -47,13 +52,24 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
     }
 
     private List<Train> getTrains(OutputParams params, TrainDiagram diagram) {
-        OutputParam param = params.getParam("trains");
-        if (param != null && param.getValue() != null) {
+        if (params.paramExistWithValue("trains")) {
+            OutputParam param = params.getParam("trains");
             return (List<Train>) param.getValue();
+        } else if (params.paramExistWithValue("station")) {
+            Node station = (Node)params.getParam("station").getValue();
+            return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
+        } else if (params.paramExistWithValue("driver_cycle")) {
+            TrainsCycle cycle = (TrainsCycle)params.getParam("driver_cycle").getValue();
+            List<Train> trains = new LinkedList<Train>();
+            for (TrainsCycleItem item : cycle) {
+                trains.add(item.getTrain());
+            }
+            return trains;
+        } else {
+            TrainSort s = new TrainSort(
+                    new TrainComparator(TrainComparator.Type.ASC,
+                    diagram.getTrainsData().getTrainSortPattern()));
+            return s.sort(diagram.getTrains());
         }
-        TrainSort s = new TrainSort(
-                new TrainComparator(TrainComparator.Type.ASC,
-                diagram.getTrainsData().getTrainSortPattern()));
-        return s.sort(diagram.getTrains());
     }
 }
