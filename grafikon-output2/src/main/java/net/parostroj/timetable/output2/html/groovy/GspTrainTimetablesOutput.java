@@ -43,7 +43,19 @@ public class GspTrainTimetablesOutput extends GspOutput {
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);
             writer.flush();
-        } catch (Exception e) {
+
+            // write images if possible
+            if (params.paramExist(DefaultOutputParam.OUTPUT_FILE)) {
+                File file = (File)params.getParam(DefaultOutputParam.OUTPUT_FILE).getValue();
+                file = file.getParentFile();
+                // for all images ...
+                ImageSaver saver = new ImageSaver(diagram);
+                for (String image : images) {
+                    saver.saveImage(image, file);
+                }
+            }
+
+        } catch (IOException e) {
             throw new OutputException(e);
         }
     }
