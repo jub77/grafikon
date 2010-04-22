@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import net.parostroj.timetable.gui.dialogs.SaveGTDialog;
@@ -22,6 +24,7 @@ import org.w3c.dom.Document;
  */
 public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
+    private static final Logger LOG = Logger.getLogger(GraphicalTimetableViewWithSave.class.getName());
     private SaveGTDialog dialog;
 
     public GraphicalTimetableViewWithSave() {
@@ -71,6 +74,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
             try {
                 ImageIO.write(img, "png", dialog.getSaveFile());
             } catch (IOException e) {
+                LOG.log(Level.WARNING, "Error saving file: " + dialog.getSaveFile(), e);
                 JOptionPane.showMessageDialog(this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
             }
         } else if (dialog.getType() == SaveGTDialog.Type.SVG) {
@@ -94,7 +98,8 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                 Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
                 g2d.stream(out, useCSS);
             } catch (IOException e) {
-                // do nothing for this moment
+                LOG.log(Level.WARNING, "Error saving file: " + dialog.getSaveFile(), e);
+                JOptionPane.showMessageDialog(this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
