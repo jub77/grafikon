@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
- * Implementation of FileLoadSave for model versions 3.x.
+ * Implementation of FileLoadSave for model versions 4.x.
  *
  * @author jub
  */
@@ -20,13 +21,14 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    private static final ModelVersion METADATA_MODEL_VERSION = new ModelVersion(4, 0);
+    private static final ModelVersion METADATA_MODEL_VERSION = new ModelVersion(4, 1);
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
     private static final String DATA_ROUTES = "routes/";
     private static final String DATA_TRAIN_TYPES = "train_types/";
     private static final String DATA_TRAINS = "trains/";
+    private static final String DATA_TEXT_ITEMS = "text_items/";
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
@@ -34,7 +36,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final List<ModelVersion> VERSIONS;
 
     static {
-        VERSIONS = Collections.singletonList(new ModelVersion(4, 0));
+        List<ModelVersion> versions = Arrays.asList(new ModelVersion(4, 0), new ModelVersion(4, 1));
+        VERSIONS = Collections.unmodifiableList(versions);
     }
 
     public FileLoadSaveImpl() throws LSException {
@@ -110,6 +113,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder.setRoute(lss.load(zipInput, LSRoute.class));
                 } else if (entry.getName().startsWith(DATA_TRAIN_TYPES)) {
                     builder.setTrainType(lss.load(zipInput, LSTrainType.class));
+                } else if (entry.getName().startsWith(DATA_TEXT_ITEMS)) {
+                    builder.setTextItem(lss.load(zipInput, LSTextItem.class));
                 } else if (entry.getName().startsWith(DATA_TRAINS)) {
                     builder.setTrain(lss.load(zipInput, LSTrain.class));
                 } else if (entry.getName().startsWith(DATA_ENGINE_CLASSES)) {
@@ -168,6 +173,11 @@ public class FileLoadSaveImpl implements FileLoadSave {
             // save engine classes
             for (EngineClass engineClass : diagram.getEngineClasses()) {
                 this.save(zipOutput, this.createEntryName(DATA_ENGINE_CLASSES, "xml", cnt++), new LSEngineClass(engineClass));
+            }
+            cnt = 0;
+            // save text items
+            for (TextItem item : diagram.getTextItems()) {
+                this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, "xml", cnt++), new LSTextItem(item));
             }
             cnt = 0;
             // save trains cycles

@@ -80,6 +80,11 @@ public class TrainDiagramBuilder {
         diagram.addTrainType(type);
     }
     
+    public void setTextItem(LSTextItem lsTextItem) {
+        TextItem item = lsTextItem.createTextItem(diagram);
+        diagram.addTextItem(item);
+    }
+
     public void setTrain(LSTrain lsTrain) {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
