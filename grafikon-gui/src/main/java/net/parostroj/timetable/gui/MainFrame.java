@@ -241,6 +241,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         settingsMenuItem.setEnabled(model.getDiagram() != null);
         allHtmlMenuItem.setEnabled(model.getDiagram() != null);
         imagesMenuItem.setEnabled(model.getDiagram() != null);
+        textItemsMenuItem.setEnabled(model.getDiagram() != null);
         infoMenuItem.setEnabled(model.getDiagram() != null);
         spListMenuItem.setEnabled(model.getDiagram() != null);
         epListMenuItem.setEnabled(model.getDiagram() != null);
@@ -290,6 +291,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         settingsMenuItem = new javax.swing.JMenuItem();
         editRoutesMenuItem = new javax.swing.JMenuItem();
         imagesMenuItem = new javax.swing.JMenuItem();
+        textItemsMenuItem = new javax.swing.JMenuItem();
         infoMenuItem = new javax.swing.JMenuItem();
         trainTypesMenuItem = new javax.swing.JMenuItem();
         lineClassesMenuItem = new javax.swing.JMenuItem();
@@ -420,6 +422,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         fileMenu.add(imagesMenuItem);
+
+        textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
+        textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textItemsMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(textItemsMenuItem);
 
         infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
         infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -787,6 +797,13 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     editRoutesDialog.showDialog(model.getDiagram());
 }//GEN-LAST:event_editRoutesMenuItemActionPerformed
 
+private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
+    TextItemsDialog dialog = new TextItemsDialog(this, true);
+    dialog.setLocationRelativeTo(this);
+    dialog.showDialog(model.getDiagram());
+    dialog.dispose();
+}//GEN-LAST:event_textItemsMenuItemActionPerformed
+
     private void setSelectedLocale() {
         if (locale == null)
             systemLanguageRadioButtonMenuItem.setSelected(true);
@@ -941,6 +958,7 @@ private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private net.parostroj.timetable.gui.StatusBar statusBar;
     private javax.swing.JRadioButtonMenuItem systemLanguageRadioButtonMenuItem;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JMenuItem textItemsMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
