@@ -38,6 +38,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     private TrainsData trainsData;
     /** List of engine classes. */
     private List<EngineClass> engineClasses;
+    /** List of text items. */
+    private List<TextItem> textItems;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
 
@@ -55,6 +57,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         this.cycles = new EnumMap<TrainsCycleType, List<TrainsCycle>>(TrainsCycleType.class);
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
+        this.textItems = new LinkedList<TextItem>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.net = new Net(IdGenerator.getInstance().getId());
         this.trainTypes = new LinkedList<TrainType>();
@@ -293,6 +296,28 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         engineClasses.remove(engineClass);
     }
 
+    public List<TextItem> getTextItems() {
+        return Collections.unmodifiableList(textItems);
+    }
+
+    public void addTextItem(TextItem item) {
+        textItems.add(item);
+    }
+
+    public void addTextItem(TextItem item, int position) {
+        textItems.add(position, item);
+    }
+
+    public void removeTextItem(TextItem item) {
+        textItems.remove(item);
+    }
+
+    public void moveTextItem(int from, int to) {
+        TextItem moved = textItems.remove(from);
+        if (moved != null)
+            textItems.add(to, moved);
+    }
+
     public EngineClass getEngineClassById(String id) {
         for (EngineClass ec : engineClasses) {
             if (ec.getId().equals(id))
@@ -424,6 +449,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         }
         for (EngineClass clazz : engineClasses) {
             clazz.accept(visitor);
+        }
+        for (TextItem item : textItems) {
+            item.accept(visitor);
         }
         for(Train train : trains) {
             train.accept(visitor);

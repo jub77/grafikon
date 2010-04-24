@@ -30,4 +30,6 @@ public interface TrainDiagramVisitor {
     public void visit(EngineClass engineClass);
 
     public void visit(TrainsCycle cycle);
+
+    public void visit(TextItem item);
 }

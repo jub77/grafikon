@@ -53,4 +53,8 @@ public abstract class AbstractTrainDiagramVisitor implements TrainDiagramVisitor
     @Override
     public void visit(TrainsCycle cycle) {
     }
+
+    @Override
+    public void visit(TextItem item) {
+    }
 }
