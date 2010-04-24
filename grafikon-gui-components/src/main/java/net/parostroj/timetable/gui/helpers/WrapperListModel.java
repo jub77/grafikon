@@ -19,8 +19,13 @@ public class WrapperListModel<T> extends AbstractListModel {
     private boolean sorted;
 
     public WrapperListModel() {
-        list = new ArrayList<Wrapper<T>>();
-        sorted = true;
+        this.list = new ArrayList<Wrapper<T>>();
+        this.sorted = true;
+    }
+
+    public WrapperListModel(boolean sorted) {
+        this.list = new ArrayList<Wrapper<T>>();
+        this.sorted = sorted;
     }
 
     public WrapperListModel(List<Wrapper<T>> list) {
@@ -65,6 +70,12 @@ public class WrapperListModel<T> extends AbstractListModel {
         this.removeWrapper(wrapper);
     }
 
+    public Wrapper<T> removeIndex(int index) {
+        Wrapper<T> wrapper = list.get(index);
+        this.removeWrapper(wrapper);
+        return wrapper;
+    }
+
     public void addWrapper(Wrapper<T> w) {
         // add to set
         if (set != null)
@@ -73,6 +84,15 @@ public class WrapperListModel<T> extends AbstractListModel {
         list.add(w);
         this.sort(list);
         int index = list.indexOf(w);
+        this.fireIntervalAdded(this, index, index);
+    }
+
+    public void addWrapper(Wrapper<T> w, int index) {
+        if (this.sorted)
+            throw new IllegalStateException("Cannot insert in specific place in sorted list.");
+        if (set != null)
+            set.add(w.getElement());
+        list.add(index, w);
         this.fireIntervalAdded(this, index, index);
     }
 
