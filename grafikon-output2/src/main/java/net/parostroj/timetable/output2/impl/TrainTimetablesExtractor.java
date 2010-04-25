@@ -28,12 +28,22 @@ public class TrainTimetablesExtractor {
 
     public TrainTimetables getTrainTimetables() {
         List<TrainTimetable> result = new LinkedList<TrainTimetable>();
+        List<Text> texts = null;
 
+        // trains
         for (Train train : trains) {
             result.add(this.createTimetable(train));
         }
 
-        return new TrainTimetables(result);
+        // texts
+        for (TextItem item : diagram.getTextItems()) {
+            if (texts == null)
+                texts = new LinkedList<Text>();
+            texts.add(this.createText(item));
+        }
+        TrainTimetables timetables = new TrainTimetables(result);
+        timetables.setTexts(texts);
+        return timetables;
     }
 
     private TrainTimetable createTimetable(Train train) {
@@ -219,5 +229,10 @@ public class TrainTimetablesExtractor {
             }
             return result;
         }
+    }
+
+    private Text createText(TextItem item) {
+        Text t = new Text(item.getName(), item.getType(), item.getText());
+        return t;
     }
 }

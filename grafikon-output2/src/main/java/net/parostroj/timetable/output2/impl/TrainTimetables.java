@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Root element for train timetables.
@@ -10,9 +11,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author jub
  */
 @XmlRootElement(name="train")
+@XmlType(propOrder={"trainTimetables", "texts"})
 public class TrainTimetables {
 
     private List<TrainTimetable> trainTimetables;
+    private List<Text> texts;
 
     public TrainTimetables() {
     }
@@ -28,5 +31,14 @@ public class TrainTimetables {
 
     public void setTrainTimetables(List<TrainTimetable> trainTimetables) {
         this.trainTimetables = trainTimetables;
+    }
+
+    @XmlElement(name="text")
+    public List<Text> getTexts() {
+        return texts;
+    }
+
+    public void setTexts(List<Text> texts) {
+        this.texts = texts;
     }
 }
