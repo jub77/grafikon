@@ -72,4 +72,9 @@ public class TrackedCheckVisitor implements EventVisitor {
     public void visit(TrainsCycleEvent event) {
         tracked = true;
     }
+
+    @Override
+    public void visit(TextItemEvent event) {
+        tracked = true;
+    }
 }
