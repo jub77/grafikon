@@ -57,10 +57,10 @@ public class FloatingDialogsFactory {
             public void processTrainDiagramEvent(TrainDiagramEvent event) {
                 switch (event.getType()) {
                     case TRAIN_ADDED:
-                        panel.updateTrain(event.getTrain());
+                        panel.updateTrain((Train)event.getObject());
                         break;
                     case TRAIN_REMOVED:
-                        panel.removeTrain(event.getTrain());
+                        panel.removeTrain((Train)event.getObject());
                         break;
                 }
             }

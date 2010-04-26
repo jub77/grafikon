@@ -1,10 +1,6 @@
 package net.parostroj.timetable.model.events;
 
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
@@ -14,10 +10,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
  */
 public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
 
-    private Route route;
-    private Train train;
-    private TrainType trainType;
-    private TextItem textItem;
+    private Object object;
 
     public TrainDiagramEvent(TrainDiagram diagram, GTEventType type) {
         super(diagram, type);
@@ -27,45 +20,19 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
         super(diagram, event);
     }
 
-    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, Route route) {
+    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, Object object) {
         super(diagram, type);
-        this.route = route;
+        this.object = object;
     }
 
-    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, Train train) {
-        super(diagram, type);
-        this.train = train;
-    }
-
-    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, TrainType trainType) {
-        super(diagram, type);
-        this.trainType = trainType;
-    }
-
-    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, TextItem textItem) {
-        super(diagram, type);
-        this.textItem = textItem;
-    }
 
     public TrainDiagramEvent(TrainDiagram diagram, AttributeChange attributeChange) {
         super(diagram, GTEventType.ATTRIBUTE);
         setAttributeChange(attributeChange);
     }
 
-    public Route getRoute() {
-        return route;
-    }
-
-    public Train getTrain() {
-        return train;
-    }
-
-    public TrainType getTrainType() {
-        return trainType;
-    }
-
-    public TextItem getTextItem() {
-        return textItem;
+    public Object getObject() {
+        return object;
     }
 
     @Override

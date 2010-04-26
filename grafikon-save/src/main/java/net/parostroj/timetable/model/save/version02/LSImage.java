@@ -24,7 +24,6 @@ public class LSImage {
     private String filename;
     
     public LSImage(TimetableImage image) {
-        this.height = image.getHeight();
         this.imageWidth = image.getImageWidth();
         this.imageHeight = image.getImageHeight();
         this.filename = image.getFilename();

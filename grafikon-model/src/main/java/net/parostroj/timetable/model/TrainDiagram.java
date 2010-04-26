@@ -205,14 +205,17 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
 
     public void addImage(TimetableImage image) {
         this.images.add(image);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_ADDED, image));
     }
 
     public void addImage(TimetableImage image, int position) {
         this.images.add(position, image);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_ADDED, image));
     }
 
     public void removeImage(TimetableImage image) {
         this.images.remove(image);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_REMOVED, image));
     }
 
     public List<TrainType> getTrainTypes() {

@@ -101,12 +101,12 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                             break;
                         case TRAIN_ADDED:
                             if (trainRegionCollector != null)
-                                trainRegionCollector.newTrain(event.getTrain());
+                                trainRegionCollector.newTrain((Train)event.getObject());
                             repaint();
                             break;
                         case TRAIN_REMOVED:
                             if (trainRegionCollector != null)
-                                trainRegionCollector.deleteTrain(event.getTrain());
+                                trainRegionCollector.deleteTrain((Train)event.getObject());
                             repaint();
                             break;
                     }
@@ -141,14 +141,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         // changed list of routes
         this.createMenuForRoutes(diagram.getRoutes());
         // check current route
-        if (event.getType() == GTEventType.ROUTE_REMOVED && event.getRoute().equals(this.getRoute())) {
+        if (event.getType() == GTEventType.ROUTE_REMOVED && event.getObject().equals(this.getRoute())) {
             if (diagram.getRoutes().size() != 0)
                 this.setRoute(diagram.getRoutes().get(0));
             else
                 this.setRoute(null);
         }
         if (event.getType() == GTEventType.ROUTE_ADDED && this.getRoute() == null) {
-            this.setRoute(event.getRoute());
+            this.setRoute((Route)event.getObject());
         }
     }
 

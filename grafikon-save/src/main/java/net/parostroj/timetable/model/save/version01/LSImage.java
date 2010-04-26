@@ -3,7 +3,6 @@
  * 
  * Created on 23.9.2007, 9:18:21
  */
-
 package net.parostroj.timetable.model.save.version01;
 
 import net.parostroj.timetable.model.TimetableImage;
@@ -20,7 +19,6 @@ public class LSImage {
     private String filename;
     
     public LSImage(TimetableImage image) {
-        this.height = image.getHeight();
         this.filename = image.getFilename();
     }
 

@@ -8,52 +8,33 @@ package net.parostroj.timetable.model;
 import java.io.File;
 
 /**
- * Pair with name of the image and its height.
+ * Image information.
  * 
  * @author jub
  */
 public class TimetableImage {
 
-    private int height;
-    private int imageHeight;
-    private int imageWidth;
-    private String filename;
+    private final int imageHeight;
+    private final int imageWidth;
+    private final String filename;
     private File imageFile;
 
-    public TimetableImage(String filename) {
+    public TimetableImage(String filename, int width, int height) {
         this.filename = filename;
+        this.imageWidth = width;
+        this.imageHeight = height;
     }
 
     public String getFilename() {
         return filename;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public int getImageHeight() {
         return imageHeight;
     }
 
-    public void setImageHeight(int imageHeight) {
-        this.imageHeight = imageHeight;
-    }
-
     public int getImageWidth() {
         return imageWidth;
-    }
-
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
     }
 
     public File getImageFile() {
@@ -66,7 +47,7 @@ public class TimetableImage {
 
     @Override
     public String toString() {
-        return String.format("%s (%d - %d x %d)", filename, height, imageWidth, imageHeight);
+        return String.format("%s (%d x %d)", filename, imageWidth, imageHeight);
     }
 
     @Override

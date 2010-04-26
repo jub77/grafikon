@@ -72,20 +72,6 @@ public class TrainTimetablesList {
             Page indexPage = new TrainTimetablesIndexPage(A5_PAGE_LENGTH,index,templates);
             pages.add(position++, indexPage);
         }
-        
-        NodesDescriptionPage ndp = new NodesDescriptionPage(A5_PAGE_LENGTH);
-        // add pages with images
-        for (TimetableImage image : images) {
-            if (!ndp.addImage(image)) {
-                pages.add(ndp);
-                ndp = new NodesDescriptionPage(A5_PAGE_LENGTH);
-                ndp.addImage(image);
-            }
-        }
-        
-        if (ndp.getActualLength() > 0) {
-            pages.add(ndp);
-        }
 
         // add empty pages
         for (int i = 0; i < (pages.size() % 4); i++) {

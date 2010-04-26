@@ -3,6 +3,11 @@ package net.parostroj.timetable.gui.components;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TimetableImage;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.visitors.EventVisitor;
@@ -35,14 +40,16 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
-                if (event.getTrain() != null)
-                    str.append("    Train: ").append(event.getTrain().getName()).append('\n');
-                if (event.getRoute() != null)
-                    str.append("    Route: ").append(event.getRoute().toString()).append('\n');
-                if (event.getTrainType() != null)
-                    str.append("    Train type: ").append(event.getTrainType().toString()).append('\n');
-                if (event.getTextItem() != null)
-                    str.append("    Text item: ").append(event.getTextItem().toString()).append('\n');
+                if (event.getObject() instanceof Train)
+                    str.append("    Train: ").append(((Train)event.getObject()).getName()).append('\n');
+                if (event.getObject() instanceof Route)
+                    str.append("    Route: ").append(event.getObject().toString()).append('\n');
+                if (event.getObject() instanceof TrainType)
+                    str.append("    Train type: ").append(event.getObject().toString()).append('\n');
+                if (event.getObject() instanceof TextItem)
+                    str.append("    Text item: ").append(event.getObject().toString()).append('\n');
+                if (event.getObject() instanceof TimetableImage)
+                    str.append("    Image: ").append(event.getObject().toString()).append('\n');
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, e.getMessage(), e);

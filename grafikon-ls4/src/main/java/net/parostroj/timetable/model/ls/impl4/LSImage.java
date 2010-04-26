@@ -11,16 +11,14 @@ import net.parostroj.timetable.model.TimetableImage;
  * @author jub
  */
 @XmlRootElement(name = "image")
-@XmlType(propOrder = {"filename", "height", "imageWidth", "imageHeight"})
+@XmlType(propOrder = {"filename", "imageWidth", "imageHeight"})
 public class LSImage {
 
-    private int height;
     private String filename;
     private int imageWidth;
     private int imageHeight;
 
     public LSImage(TimetableImage image) {
-        this.height = image.getHeight();
         this.filename = image.getFilename();
         this.imageHeight = image.getImageHeight();
         this.imageWidth = image.getImageWidth();
@@ -35,14 +33,6 @@ public class LSImage {
 
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     @XmlElement(name = "image_height")
@@ -64,10 +54,7 @@ public class LSImage {
     }
     
     public TimetableImage createTimetableImage() {
-        TimetableImage image = new TimetableImage(filename);
-        image.setHeight(height);
-        image.setImageHeight(imageHeight);
-        image.setImageWidth(imageWidth);
+        TimetableImage image = new TimetableImage(filename, imageWidth, imageHeight);
         return image;
     }
 }

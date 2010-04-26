@@ -11,13 +11,14 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.helpers.TimetableImageWrapper;
+import net.parostroj.timetable.gui.helpers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -29,10 +30,10 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class EditImagesDialog extends javax.swing.JDialog implements ApplicationModelListener {
     
     private static final Logger LOG = Logger.getLogger(EditImagesDialog.class.getName());
-    
-    private ApplicationModel model;
-    
     private static JFileChooser fileChooserInstance;
+
+    private ApplicationModel model;
+    private WrapperListModel<TimetableImage> listModel;
     
     private synchronized static JFileChooser getFileChooser() {
         if (fileChooserInstance == null) {
@@ -69,12 +70,22 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }
     
     private void updateValues() {
-        DefaultListModel listModel = new DefaultListModel();
+        listModel = new WrapperListModel<TimetableImage>();
         imagesList.setModel(listModel);
         if (this.model.getDiagram() != null) {
             for (TimetableImage item : this.model.getDiagram().getImages())
-            listModel.addElement(item);
+                listModel.addWrapper(new TimetableImageWrapper(item));
         }
+    }
+
+    private boolean checkExistence(String filename, TimetableImage ignore) {
+        for (TimetableImage image : model.getDiagram().getImages()) {
+            if (image != ignore) {
+                if (image.getFilename().equals(filename))
+                    return true;
+            }
+        }
+        return false;
     }
     
     /** This method is called from within the constructor to
@@ -88,12 +99,9 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         scrollPane = new javax.swing.JScrollPane();
         imagesList = new javax.swing.JList();
         newButton = new javax.swing.JButton();
+        renameButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
-        heightTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
 
         FormListener formListener = new FormListener();
 
@@ -106,25 +114,16 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         newButton.setText(ResourceLoader.getString("button.new") + " ..."); // NOI18N
         newButton.addActionListener(formListener);
 
+        renameButton.setText(ResourceLoader.getString("button.rename")); // NOI18N
+        renameButton.setEnabled(false);
+        renameButton.addActionListener(formListener);
+
         deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.setEnabled(false);
         deleteButton.addActionListener(formListener);
 
-        upButton.setText(ResourceLoader.getString("images.edit.up")); // NOI18N
-        upButton.setEnabled(false);
-        upButton.addActionListener(formListener);
-
-        downButton.setText(ResourceLoader.getString("images.edit.down")); // NOI18N
-        downButton.setEnabled(false);
-        downButton.addActionListener(formListener);
-
         exitButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         exitButton.addActionListener(formListener);
-
-        heightTextField.setEnabled(false);
-        heightTextField.addCaretListener(formListener);
-
-        jLabel2.setText(ResourceLoader.getString("images.edit.height")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -132,18 +131,13 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(heightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                    .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                    .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(renameButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -152,19 +146,13 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(heightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(newButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(renameButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(upButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
                         .addComponent(exitButton)))
                 .addContainerGap())
         );
@@ -174,29 +162,20 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
 
     // Code for dispatching events from components to event handlers.
 
-    private class FormListener implements java.awt.event.ActionListener, javax.swing.event.CaretListener, javax.swing.event.ListSelectionListener {
+    private class FormListener implements java.awt.event.ActionListener, javax.swing.event.ListSelectionListener {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == newButton) {
                 EditImagesDialog.this.newButtonActionPerformed(evt);
             }
+            else if (evt.getSource() == renameButton) {
+                EditImagesDialog.this.renameButtonActionPerformed(evt);
+            }
             else if (evt.getSource() == deleteButton) {
                 EditImagesDialog.this.deleteButtonActionPerformed(evt);
             }
-            else if (evt.getSource() == upButton) {
-                EditImagesDialog.this.upButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == downButton) {
-                EditImagesDialog.this.downButtonActionPerformed(evt);
-            }
             else if (evt.getSource() == exitButton) {
                 EditImagesDialog.this.exitButtonActionPerformed(evt);
-            }
-        }
-
-        public void caretUpdate(javax.swing.event.CaretEvent evt) {
-            if (evt.getSource() == heightTextField) {
-                EditImagesDialog.this.heightTextFieldCaretUpdate(evt);
             }
         }
 
@@ -219,11 +198,8 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         
         if (result == JFileChooser.APPROVE_OPTION) {
             String fileName = chooser.getSelectedFile().getName();
-            
-            TimetableImage image = new TimetableImage(fileName);
-            DefaultListModel listModel = (DefaultListModel)imagesList.getModel();
-            
-            if (model.getDiagram().getImages().contains(image)) {
+
+            if (checkExistence(fileName, null)) {
                 // show error message and return
                 JOptionPane.showMessageDialog(this,
                         ResourceLoader.getString("dialog.error.duplicatefile"),
@@ -235,11 +211,8 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             try {
                 // get size of the image
                 BufferedImage img = ImageIO.read(chooser.getSelectedFile());
-                image.setImageWidth(img.getWidth());
-                image.setImageHeight(img.getHeight());
+                TimetableImage image = new TimetableImage(fileName, img.getWidth(), img.getHeight());
 
-                this.adjustHeight(image, null);
-                
                 File tempFile = File.createTempFile("gt_", ".temp");
                 FileChannel ic = new FileInputStream(chooser.getSelectedFile()).getChannel();
                 FileChannel oc = new FileOutputStream(tempFile).getChannel();
@@ -248,133 +221,68 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 oc.close();
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
+                model.getDiagram().addImage(image);
+                listModel.addWrapper(new TimetableImageWrapper(image));
             } catch (IOException e) {
                 LOG.log(Level.WARNING,"Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
                         ResourceLoader.getString("dialog.error.temporaryfile"),
                         ResourceLoader.getString("dialog.error.title"),
                         JOptionPane.ERROR_MESSAGE);
-                return;
             }
-
-            model.getDiagram().addImage(image);
-            listModel.addElement(image);
         }
     }//GEN-LAST:event_newButtonActionPerformed
 
-    private boolean adjustHeight(TimetableImage image, String field) {
-        if (field == null) {
-            double ratio = (double)image.getImageWidth()/image.getImageHeight();
-            double ratioPage = (double)120/180;
-            int height = 0;
-            if (ratio > ratioPage) {
-                height = (int)(120 / ratio);
-            } else {
-                height = 180;
+    private void renameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameButtonActionPerformed
+        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        // ask for a new name
+        String newName = JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),selected.getFilename());
+        if (newName != null && !newName.equals(selected.getFilename())) {
+            TimetableImage newImage = new TimetableImage(newName, selected.getImageWidth(), selected.getImageHeight());
+            if (checkExistence(newName, selected)) {
+                // show error message and return
+                JOptionPane.showMessageDialog(this,
+                        ResourceLoader.getString("dialog.error.duplicatefile"),
+                        ResourceLoader.getString("dialog.error.title"),
+                        JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            image.setHeight(height);
-            return true;
-        } else {
-            int height = 0;
-            try {
-                height = Integer.parseInt(field);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-            if (height > 180)
-                height = 180;
-            double ratio = (double)image.getImageWidth()/image.getImageHeight();
-            double ratioPage = (double)120/180;
-            if (ratio > ratioPage) {
-                int maxHeight = (int)(120 / ratio);
-                if (height > maxHeight)
-                    height = maxHeight;
-            }
-            image.setHeight(height);
-            return true;
+            // train diagram
+            model.getDiagram().removeImage(selected);
+            model.getDiagram().addImage(newImage);
+            // list model
+            listModel.removeObject(selected);
+            TimetableImageWrapper newWrapper = new TimetableImageWrapper(newImage);
+            listModel.addWrapper(newWrapper);
+            // set selected
+            imagesList.setSelectedValue(newWrapper, true);
         }
-    }
-    
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        DefaultListModel listModel = (DefaultListModel)imagesList.getModel();
-        model.getDiagram().removeImage((TimetableImage)imagesList.getSelectedValue());
-        listModel.removeElementAt(imagesList.getSelectedIndex());
-    }//GEN-LAST:event_deleteButtonActionPerformed
+    }//GEN-LAST:event_renameButtonActionPerformed
 
     private void imagesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_imagesListValueChanged
         if (!evt.getValueIsAdjusting()) {
+            renameButton.setEnabled(imagesList.getSelectedIndex() != -1);
             deleteButton.setEnabled(imagesList.getSelectedIndex() != -1);
-            upButton.setEnabled(imagesList.getSelectedIndex() != -1);
-            downButton.setEnabled(imagesList.getSelectedIndex() != -1);
-            heightTextField.setEnabled(imagesList.getSelectedIndex() != -1);
-            
-            if (imagesList.getSelectedIndex() != -1) {
-                heightTextField.setText(Integer.toString(((TimetableImage)imagesList.getSelectedValue()).getHeight()));
-            } else {
-                heightTextField.setText("");
-            }
+            renameButton.setEnabled(imagesList.getSelectedIndex() != -1);
         }
     }//GEN-LAST:event_imagesListValueChanged
 
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-        // move one position up
-        int position = imagesList.getSelectedIndex();
-        
-        int newPosition = position - 1;
-        if (newPosition < 0)
-            return;
-        
-        // jlist move up
-        DefaultListModel listModel = (DefaultListModel)imagesList.getModel();
-        Object o = listModel.remove(position);
-        listModel.add(newPosition, o);
-        
-        // images move up
-        TimetableImage image = model.getDiagram().getImages().get(position);
-        model.getDiagram().removeImage(image);
-        model.getDiagram().addImage(image, newPosition);
-        
-        imagesList.setSelectedIndex(newPosition);
-        upButton.requestFocus();
-    }//GEN-LAST:event_upButtonActionPerformed
-
-    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
-        // move one position up
-        int position = imagesList.getSelectedIndex();
-        
-        int newPosition = position + 1;
-        if (newPosition > (imagesList.getModel().getSize() - 1))
-            return;
-        
-        // jlist move up
-        DefaultListModel listModel = (DefaultListModel)imagesList.getModel();
-        Object o = listModel.remove(position);
-        listModel.add(newPosition, o);
-        
-        // images move up
-        TimetableImage image = model.getDiagram().getImages().get(position);
-        model.getDiagram().removeImage(image);
-        model.getDiagram().addImage(image, newPosition);
-        
-        imagesList.setSelectedIndex(newPosition);
-        downButton.requestFocus();
-    }//GEN-LAST:event_downButtonActionPerformed
-
-    private void heightTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_heightTextFieldCaretUpdate
-        if (imagesList.getSelectedIndex() != -1 && adjustHeight((TimetableImage)imagesList.getSelectedValue(), heightTextField.getText())) {
-            imagesList.repaint();
-        }
-    }//GEN-LAST:event_heightTextFieldCaretUpdate
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        model.getDiagram().removeImage(selected);
+        listModel.removeIndex(imagesList.getSelectedIndex());
+        // remove temp file
+        if (!selected.getImageFile().delete())
+            LOG.finer("Cannot remove temporary file: " + selected.getImageFile().getPath());
+    }//GEN-LAST:event_deleteButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
-    private javax.swing.JButton downButton;
     private javax.swing.JButton exitButton;
-    private javax.swing.JTextField heightTextField;
     private javax.swing.JList imagesList;
     private javax.swing.JButton newButton;
+    private javax.swing.JButton renameButton;
     private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
     
 }

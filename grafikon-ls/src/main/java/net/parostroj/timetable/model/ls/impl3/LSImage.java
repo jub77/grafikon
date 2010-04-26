@@ -20,7 +20,6 @@ public class LSImage {
     private int imageHeight;
 
     public LSImage(TimetableImage image) {
-        this.height = image.getHeight();
         this.filename = image.getFilename();
         this.imageHeight = image.getImageHeight();
         this.imageWidth = image.getImageWidth();
@@ -64,10 +63,7 @@ public class LSImage {
     }
     
     public TimetableImage createTimetableImage() {
-        TimetableImage image = new TimetableImage(filename);
-        image.setHeight(height);
-        image.setImageHeight(imageHeight);
-        image.setImageWidth(imageWidth);
+        TimetableImage image = new TimetableImage(filename, imageWidth, imageHeight);
         return image;
     }
 }

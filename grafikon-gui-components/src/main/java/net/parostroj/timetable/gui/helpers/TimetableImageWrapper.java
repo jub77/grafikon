@@ -1,15 +1,15 @@
 package net.parostroj.timetable.gui.helpers;
 
-import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TimetableImage;
 
 /**
- * Wrapper for text item.
+ * Wrapper for timetable image.
  *
  * @author jub
  */
-public class TextItemWrapper extends Wrapper<TextItem> {
+public class TimetableImageWrapper extends Wrapper<TimetableImage> {
 
-    public TextItemWrapper(TextItem element) {
+    public TimetableImageWrapper(TimetableImage element) {
         super(element);
     }
 
@@ -30,8 +30,12 @@ public class TextItemWrapper extends Wrapper<TextItem> {
     }
 
     @Override
+    public int compareTo(Wrapper<TimetableImage> o) {
+        return getElement().getFilename().compareTo(o.getElement().getFilename());
+    }
+
+    @Override
     public String toString() {
-        return new StringBuilder(getElement().getName()).append(" (").
-                append(getElement().getType()).append(')').toString();
+        return getElement().toString();
     }
 }

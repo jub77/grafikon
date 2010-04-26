@@ -25,7 +25,8 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
         if (message instanceof TrainDiagramEvent) {
             TrainDiagramEvent tde = (TrainDiagramEvent)message;
             if (tde.getType() == GTEventType.TEXT_ITEM_ADDED || tde.getType() == GTEventType.TEXT_ITEM_REMOVED ||
-                    tde.getType() == GTEventType.TEXT_ITEM_MOVED)
+                    tde.getType() == GTEventType.TEXT_ITEM_MOVED || tde.getType() == GTEventType.IMAGE_ADDED ||
+                    tde.getType() == GTEventType.IMAGE_REMOVED)
                 model.setModelChanged(true);
             if (tde.getType() == GTEventType.NESTED && tde.getLastNestedEvent() instanceof TextItemEvent)
                 model.setModelChanged(true);
