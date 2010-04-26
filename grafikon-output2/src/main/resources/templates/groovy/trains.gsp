@@ -83,6 +83,8 @@
     img.control {height: 2.5mm; vertical-align: baseline;}
     img.signal {height: 3.5mm;}
     img.trapezoid {height: 3.5mm; vertical-align: middle;}
+
+    div.text-page {font-family: "times new roman", serif; font-size: 3.8mm;}
   </style>
 </head>
 <%
@@ -103,6 +105,7 @@
 <%
   trainPages = createTrainPages(trains.trainTimetables)
   pages = addIndexPages(trainPages)
+  addTextPages(trains.texts, pages)
   printPages(pages)
 %>
 </body>
@@ -111,7 +114,9 @@
     def number = 0
     def index = false
     def empty = false
+    def text = false
     def trains = []
+    def textStr
 
     static def emptyPage() {
       def aPage = new Page()
@@ -192,6 +197,24 @@
     return pages
   }
 
+  def addTextPages(texts, pages) {
+    for (text in texts) {
+      if (text.type == "bbcode" || text.type == "html") {
+        def str = text.text
+        if (text.type == "bbcode") {
+          // transform bbcode to html
+          str = transformBBCode(str)
+        }
+        def page = new Page()
+        page.text = true
+        page.textStr = str
+        pages << page
+      } else {
+        // ignore all other typess
+      }
+    }
+  }
+
   // reorder pages
   def reorderPages(pages) {
     def result = []
@@ -270,9 +293,11 @@
 
   // print page
   def printPage(page) {
-    if (page.empty == true) {
+    if (page.empty) {
       // do nothing
-    } else if (page.index == true) {
+    } else if (page.text) {
+      show_text(page)
+    } else if (page.index) {
 %>
 <div class="index-title">${train_list}</div>
 <div class="spacer4">&nbsp;</div>
@@ -586,5 +611,21 @@
       }
     }
     return list
+  }
+
+  def show_text(page) {
+    %>
+<div class="text-page"><%
+    print page.textStr %>
+</div><%
+    // collect images
+    for (i in (page.textStr =~ /src="(.*?)"/)) {
+      images.add(i[1])
+    }
+  }
+
+  def transformBBCode(str) {
+    // TODO implementation missing
+    return str
   }
 %>
