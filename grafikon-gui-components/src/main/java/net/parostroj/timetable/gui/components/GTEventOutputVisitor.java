@@ -41,6 +41,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Route: ").append(event.getRoute().toString()).append('\n');
                 if (event.getTrainType() != null)
                     str.append("    Train type: ").append(event.getTrainType().toString()).append('\n');
+                if (event.getTextItem() != null)
+                    str.append("    Text item: ").append(event.getTextItem().toString()).append('\n');
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, e.getMessage(), e);
@@ -194,6 +196,23 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Cycle item: ").append(event.getNewCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(event.getNewCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
                 }
+            }
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visit(TextItemEvent event) {
+        try {
+            str.append("TextItemEvent[");
+            str.append(event.getSource().getName());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, e.getMessage(), e);

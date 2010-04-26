@@ -225,6 +225,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
                 textArea.setText("");
                 selectedItem = null;
             }
+            this.changed = false;
         }
         this.updateButtons();
     }//GEN-LAST:event_itemListValueChanged
