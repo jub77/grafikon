@@ -22,4 +22,6 @@ public interface EventVisitor {
     public void visit(TrainTypeEvent event);
 
     public void visit(TrainsCycleEvent event);
+
+    public void visit(TextItemEvent event);
 }

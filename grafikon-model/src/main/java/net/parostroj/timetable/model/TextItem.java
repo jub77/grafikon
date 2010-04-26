@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.TextItemEvent;
+import net.parostroj.timetable.model.events.TextItemListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 
 /**
@@ -16,11 +19,19 @@ public class TextItem implements ObjectWithId, AttributesHolder {
     private String name;
     private String type;
     private Attributes attributes;
+    private GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
 
     public TextItem(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
         this.attributes = new Attributes();
+        listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(new GTEventSender<TextItemListener, TextItemEvent>() {
+
+            @Override
+            public void fireEvent(TextItemListener listener, TextItemEvent event) {
+                listener.textItemChanged(event);
+            }
+        });
     }
 
     @Override
@@ -37,7 +48,9 @@ public class TextItem implements ObjectWithId, AttributesHolder {
     }
 
     public void setText(String text) {
+        String oldText = this.text;
         this.text = text;
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("text", oldText, text)));
     }
 
     public String getType() {
@@ -45,7 +58,9 @@ public class TextItem implements ObjectWithId, AttributesHolder {
     }
 
     public void setType(String type) {
+        String oldType = this.type;
         this.type = type;
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("type", oldType, type)));
     }
 
     public String getName() {
@@ -53,7 +68,9 @@ public class TextItem implements ObjectWithId, AttributesHolder {
     }
 
     public void setName(String name) {
+        String oldName = this.name;
         this.name = name;
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("name", oldName, name)));
     }
 
     void accept(TrainDiagramVisitor visitor) {
@@ -67,7 +84,9 @@ public class TextItem implements ObjectWithId, AttributesHolder {
 
     @Override
     public void setAttribute(String key, Object value) {
+        Object oldValue = attributes.get(key);
         attributes.put(key, value);
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
     @Override
@@ -81,5 +100,26 @@ public class TextItem implements ObjectWithId, AttributesHolder {
 
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
+    }
+
+    /**
+     * adds listener to train.
+     * @param listener listener
+     */
+    public void addListener(TextItemListener listener) {
+        listenerSupport.addListener(listener);
+    }
+
+    /**
+     * removes listener from train.
+     * @param listener listener
+     */
+    public void removeListener(TextItemListener listener) {
+        listenerSupport.removeListener(listener);
+    }
+
+    @Override
+    public String toString() {
+        return name + "(" + type + ")";
     }
 }

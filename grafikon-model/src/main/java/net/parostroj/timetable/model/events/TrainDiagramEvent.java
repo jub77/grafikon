@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.events;
 
 import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
@@ -16,6 +17,7 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
     private Route route;
     private Train train;
     private TrainType trainType;
+    private TextItem textItem;
 
     public TrainDiagramEvent(TrainDiagram diagram, GTEventType type) {
         super(diagram, type);
@@ -40,6 +42,11 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
         this.trainType = trainType;
     }
 
+    public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, TextItem textItem) {
+        super(diagram, type);
+        this.textItem = textItem;
+    }
+
     public TrainDiagramEvent(TrainDiagram diagram, AttributeChange attributeChange) {
         super(diagram, GTEventType.ATTRIBUTE);
         setAttributeChange(attributeChange);
@@ -55,6 +62,10 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
 
     public TrainType getTrainType() {
         return trainType;
+    }
+
+    public TextItem getTextItem() {
+        return textItem;
     }
 
     @Override

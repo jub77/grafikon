@@ -3,6 +3,8 @@ package net.parostroj.timetable.model;
 import java.util.logging.Logger;
 import net.parostroj.timetable.model.events.NetEvent;
 import net.parostroj.timetable.model.events.NetListener;
+import net.parostroj.timetable.model.events.TextItemEvent;
+import net.parostroj.timetable.model.events.TextItemListener;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.model.events.TrainListener;
 import net.parostroj.timetable.model.events.TrainTypeEvent;
@@ -15,7 +17,7 @@ import net.parostroj.timetable.model.events.TrainsCycleListener;
  * 
  * @author jub
  */
-class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, NetListener, TrainTypeListener {
+class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, NetListener, TrainTypeListener, TextItemListener {
 
     private static final Logger LOG = Logger.getLogger(GTListenerTrainDiagramImpl.class.getName());
     private TrainDiagram diagram;
@@ -41,6 +43,11 @@ class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, 
 
     @Override
     public void trainTypeChanged(TrainTypeEvent event) {
+        diagram.fireNestedEvent(event);
+    }
+
+    @Override
+    public void textItemChanged(TextItemEvent event) {
         diagram.fireNestedEvent(event);
     }
 }

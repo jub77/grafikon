@@ -301,21 +301,27 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     }
 
     public void addTextItem(TextItem item) {
-        textItems.add(item);
+        this.addTextItem(item, textItems.size());
     }
 
     public void addTextItem(TextItem item, int position) {
+        item.addListener(listener);
         textItems.add(position, item);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_ADDED, item));
     }
 
     public void removeTextItem(TextItem item) {
         textItems.remove(item);
+        item.removeListener(listener);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_REMOVED, item));
     }
 
     public void moveTextItem(int from, int to) {
         TextItem moved = textItems.remove(from);
-        if (moved != null)
+        if (moved != null) {
             textItems.add(to, moved);
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_MOVED, moved));
+        }
     }
 
     public EngineClass getEngineClassById(String id) {
