@@ -59,7 +59,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new OutputException(e);
         }
     }
