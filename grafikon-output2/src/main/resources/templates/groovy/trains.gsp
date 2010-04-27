@@ -85,6 +85,11 @@
     img.trapezoid {height: 3.5mm; vertical-align: middle;}
 
     div.text-page {font-family: "times new roman", serif; font-size: 3.8mm;}
+    div.text-page span.bold {font-weight: bold;}
+    div.text-page span.italic {font-style: italic;}
+    div.text-page span.underline {text-decoration: underline;}
+    div.text-page div.center {text-align: center;}
+    div.text-page img {max-width: 125mm; max-height: 180mm;}
   </style>
 </head>
 <%
@@ -624,8 +629,28 @@
     }
   }
 
+  // not a nice or efficient way how to implement this, but it works (mostly)
   def transformBBCode(str) {
-    // TODO implementation missing
+    // escape
+    str = str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+    // bold, italic, underline
+    str = str.replaceAll(/(?s)\[b\](.*?)\[\/b\]/, "<span class=\"bold\">\$1</span>")
+    str = str.replaceAll(/(?s)\[i\](.*?)\[\/i\]/, "<span class=\"italic\">\$1</span>")
+    str = str.replaceAll(/(?s)\[u\](.*?)\[\/u\]/, "<span class=\"underline\">\$1</span>")
+    // images
+    str = str.replaceAll(/\[img\](.*?)\[\/img\]/, "<img src=\"\$1\">")
+    str = str.replaceAll(/\[img=(.*?)\](.*?)\[\/img\]/, "<img style=\"width: \$1\" src=\"\$2\">")
+    // align
+    str = str.replaceAll(/(?s)\[center\](.*?)\[\/center\]/, "<div class=\"center\">\$1</div>")
+    // list (ul)
+    str = str.replaceAll(/(?s)\[list\](.*?)\[\*\](.*?)\[\/list\]/, "<ul><li>\$2</li></ul>")
+    str = str.replaceAll(/(?s)\[list=\](.*?)\[\*\](.*?)\[\/list\]/, "<ol><li>\$2</li></ol>")
+    str = str.replaceAll(/\[\*\]/, "</li><li>")
+    // remove empty lines after lists
+    str = str.replaceAll("(</[ou]l>)\n", "\$1")
+    // end lines
+    str = str.replaceAll("\n", "<br>\n")
+    // replace end lines with <br>
     return str
   }
 %>
