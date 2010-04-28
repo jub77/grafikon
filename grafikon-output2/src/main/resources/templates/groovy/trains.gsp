@@ -13,7 +13,8 @@
     td.column-2-delim {border-color: black; border-style: solid; border-width: 0.2mm 0.7mm 0.4mm 0mm;}
     td.column-3-delim {border-color: black; border-style: solid; border-width: 0.2mm 0mm 0.4mm 0mm;}
 
-    table.two-pages {page-break-after: always; width: 274mm; font-size: 3mm; font-family: arial, sans-serif; border-width: 0mm;}
+    table.two-pages {width: 274mm; font-size: 3mm; font-family: arial, sans-serif; border-width: 0mm;}
+    table.page-break {page-break-after: always;}
     table.tt {margin: 0mm; padding: 0mm; font-family: arial, sans-serif; font-size: 3mm; width: 125mm; border-color: black; border-style: solid; border-width: 0mm; }
     table.tt tr td {border-color: black; border-style: solid; border-width: 0mm; padding: 0.3mm;}
     table.tt tr.hline {height: 4mm; text-align: center;}
@@ -88,6 +89,7 @@
     div.text-page span.bold {font-weight: bold;}
     div.text-page span.italic {font-style: italic;}
     div.text-page span.underline {text-decoration: underline;}
+    div.text-page span.strike {text-decoration: line-through;}
     div.text-page div.center {text-align: center;}
     div.text-page img {max-width: 125mm; max-height: 180mm;}
   </style>
@@ -271,14 +273,14 @@
     while (i.hasNext()) {
       def left = i.next()
       def right = i.next()
-      printTwoPages(left, right)
+      printTwoPages(left, right, i.hasNext())
     }
   }
 
   // print two A5 pages on one A4
-  def printTwoPages(pageLeft, pageRight) {
+  def printTwoPages(pageLeft, pageRight, hasNext) {
     %>
-<table class="two-pages" cellspacing="0" cellpadding="0">
+<table class="two-pages${hasNext ? " page-break" :""}" cellspacing="0" cellpadding="0">
 <tr>
     <td class="header-l-l">${pageLeft.number}</td>
     <td class="header-l-r">OstraMo</td>
@@ -637,20 +639,41 @@
     str = str.replaceAll(/(?s)\[b\](.*?)\[\/b\]/, "<span class=\"bold\">\$1</span>")
     str = str.replaceAll(/(?s)\[i\](.*?)\[\/i\]/, "<span class=\"italic\">\$1</span>")
     str = str.replaceAll(/(?s)\[u\](.*?)\[\/u\]/, "<span class=\"underline\">\$1</span>")
+    str = str.replaceAll(/(?s)\[s\](.*?)\[\/s\]/, "<span class=\"strike\">\$1</span>")
+    // quote
+    str = str.replaceAll(/(?s)\[quote\](.*?)\[\/quote\](?:\n?)/, "<blockquote>\$1</blockquote>")
+    // code - preformatted text
+    str = str.replaceAll(/(?s)\[code\](.*?)\[\/code\](?:\n?)/, "<pre>\$1</pre>")
+    // font
+    str = str.replaceAll(/\[size=(.*?)\](.*?)\[\/size\]/, "<span style=\"font-size: \$1mm\">\$2</span>")
+    str = str.replaceAll(/\[color=(.*?)\](.*?)\[\/color\]/, "<span style=\"color: \$1\">\$2</span>")
+    str = str.replaceAll(/\[font=(.*?)\](.*?)\[\/font\]/, "<span style=\"font-family: \$1\">\$2</span>")
     // images
     str = str.replaceAll(/\[img\](.*?)\[\/img\]/, "<img src=\"\$1\">")
-    str = str.replaceAll(/\[img=(.*?)\](.*?)\[\/img\]/, "<img style=\"width: \$1\" src=\"\$2\">")
+    str = str.replaceAll(/\[img=(.*?)\](.*?)\[\/img\]/, "<img style=\"width: \$1mm\" src=\"\$2\">")
     // align
     str = str.replaceAll(/(?s)\[center\](.*?)\[\/center\]/, "<div class=\"center\">\$1</div>")
     // list (ul)
-    str = str.replaceAll(/(?s)\[list\](.*?)\[\*\](.*?)\[\/list\]/, "<ul><li>\$2</li></ul>")
-    str = str.replaceAll(/(?s)\[list=\](.*?)\[\*\](.*?)\[\/list\]/, "<ol><li>\$2</li></ol>")
+    str = str.replaceAll(/(?s)\[list\](.*?)\[\*\](.*?)\[\/list\](?:\n?)/, "<ul><li>\$2</li></ul>")
+    str = str.replaceAll(/(?s)\[list=\](.*?)\[\*\](.*?)\[\/list\](?:\n?)/, "<ol><li>\$2</li></ol>")
     str = str.replaceAll(/\[\*\]/, "</li><li>")
-    // remove empty lines after lists
-    str = str.replaceAll("(</[ou]l>)\n", "\$1")
     // end lines
     str = str.replaceAll("\n", "<br>\n")
-    // replace end lines with <br>
+    // remove <br> from <pre>
+    str = removeBrFromPre(str)
     return str
+  }
+
+  // a bit convoluted way to remove <br> from <pred> (the <br>s were of course added in a previous step :) )
+  def removeBrFromPre(str) {
+    def m = str =~ /(?s)<pre>(.*?)<\/pre>/
+    def result = new StringBuffer()
+    while (m.find()) {
+      def i = m.group(1)
+      i = i.replaceAll("<br>", "")
+      m.appendReplacement(result, "<pre>${i}</pre>")
+    }
+    m.appendTail(result)
+    return result.toString()
   }
 %>
