@@ -33,6 +33,7 @@ public class EditLineDialog extends javax.swing.JDialog {
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
     private boolean modified;
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
+    private List<LineTrack> removed;
     
     /** Creates new form EditLineDialog */
     public EditLineDialog(java.awt.Frame parent, boolean modal) {
@@ -59,6 +60,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         // update track for from and to (direct)
         Node from = line.getFrom();
         Node to = line.getTo();
+        fromToLabel.setText(from.getName() + " - " + to.getName());
                 
         fromDirectTrackComboBox.removeAllItems();
         toDirectTrackComboBox.removeAllItems();
@@ -105,6 +107,7 @@ public class EditLineDialog extends javax.swing.JDialog {
     }
     
     private void updateTracks(LineTrack selected) {
+        removed = new LinkedList<LineTrack>();
         connections.clear();
         DefaultListModel listModel = new DefaultListModel();
         for (LineTrack track : line.getTracks()) {
@@ -142,60 +145,78 @@ public class EditLineDialog extends javax.swing.JDialog {
     }
     
     private void writeValuesBack() {
-        // length
+        // recalculate flag
+        boolean recalculate = false;
+        modified = true;
+        int length = line.getLength();
         try {
-            boolean recalculate = false;
-            modified = true;
-            int length = Integer.parseInt(lengthTextField.getText());
-            int speed = Line.UNLIMITED_SPEED;
+            length = Integer.parseInt(lengthTextField.getText());
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Cannot convert string to int (length).", e);
+        }
+        int speed = line.getTopSpeed();
+        try {
             if (!unlimitedSpeedCheckBox.isSelected())
                 speed = Integer.parseInt(speedTextField.getText());
-            if (line.getLength() != length) {
-                line.setLength(length);
-                recalculate = true;
-            }
-            
-            if (line.getTopSpeed() != speed) {
-                line.setTopSpeed(speed);
-                recalculate = true;
-            }
-            
-            // update line tracks back
-            line.removeAllTracks();
-            Object[] els = ((DefaultListModel)trackList.getModel()).toArray();
-            for (Object el : els) {
-                LineTrack track = (LineTrack)el;
-                line.addTrack(track);
-                track.setFromStraightTrack(connections.get(track).first);
-                track.setToStraightTrack(connections.get(track).second);
-            }
-            
-            line.setAttribute("line.controlled", controlledCheckBox.isSelected());
-            
-            // set line class
-            if (lineClassComboBox.getSelectedItem() == noneLineClass)
-                line.removeAttribute("line.class");
             else
-                line.setAttribute("line.class", lineClassComboBox.getSelectedItem());
-            
-            if (recalculate) {
-                // collect trains
-                Set<Train> trains = new HashSet<Train>();
-                for (Track track : line.getTracks()) {
-                    for (TimeInterval interval : track.getTimeIntervalList()) {
-                        trains.add(interval.getTrain());
-                    }
-                }
-                // recalculate collected trains
-                for (Train train : trains) {
-                    train.recalculate();
-                    // event
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-                }
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_LINE, model, line));
-            }
+                speed = Line.UNLIMITED_SPEED;
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "Cannot convert string to int.", e);
+            LOGGER.log(Level.WARNING, "Cannot convert string to int (speed).", e);
+        }
+        if (line.getLength() != length) {
+            line.setLength(length);
+            recalculate = true;
+        }
+
+        if (line.getTopSpeed() != speed) {
+            line.setTopSpeed(speed);
+            recalculate = true;
+        }
+
+        // update line tracks back - remove
+        for (LineTrack tbr : removed) {
+            if (line.getTracks().contains(tbr))
+                line.removeTrack(tbr);
+        }
+        Object[] els = ((DefaultListModel)trackList.getModel()).toArray();
+        for (Object el : els) {
+            LineTrack track = (LineTrack)el;
+            NodeTrack fromT = connections.get(track).first;
+            NodeTrack toT = connections.get(track).second;
+            if (fromT != track.getFromStraightTrack())
+                track.setFromStraightTrack(fromT);
+            if (toT != track.getToStraightTrack())
+                track.setToStraightTrack(toT);
+            if (!line.getTracks().contains(track))
+                line.addTrack(track);
+        }
+
+        Boolean bool = (Boolean) line.getAttribute("line.controlled");
+        if (bool == null || controlledCheckBox.isSelected() != bool.booleanValue())
+            line.setAttribute("line.controlled", controlledCheckBox.isSelected());
+
+        // set line class
+        if (lineClassComboBox.getSelectedItem() == noneLineClass)
+            line.removeAttribute("line.class");
+        else {
+            if (lineClassComboBox.getSelectedItem() != line.getAttribute("line.class"))
+                line.setAttribute("line.class", lineClassComboBox.getSelectedItem());
+        }
+
+        if (recalculate) {
+            // collect trains
+            Set<Train> trains = new HashSet<Train>();
+            for (Track track : line.getTracks()) {
+                for (TimeInterval interval : track.getTimeIntervalList()) {
+                    trains.add(interval.getTrain());
+                }
+            }
+            // recalculate collected trains
+            for (Train train : trains) {
+                train.recalculate();
+                // event
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+            }
         }
     }
     
@@ -228,6 +249,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         lineClassComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
+        fromToLabel = new javax.swing.JLabel();
 
         setTitle(ResourceLoader.getString("editline.title")); // NOI18N
         setResizable(false);
@@ -302,6 +324,8 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         jLabel8.setText(ResourceLoader.getString("editline.speed.unlimited") + ": "); // NOI18N
 
+        fromToLabel.setText(" ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -309,6 +333,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fromToLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -324,17 +349,17 @@ public class EditLineDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(controlledCheckBox)
                             .addComponent(unlimitedSpeedCheckBox)
-                            .addComponent(lengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                            .addComponent(speedTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                            .addComponent(fromDirectTrackComboBox, 0, 178, Short.MAX_VALUE)
-                            .addComponent(toDirectTrackComboBox, 0, 178, Short.MAX_VALUE)
+                            .addComponent(lengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(speedTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(fromDirectTrackComboBox, 0, 204, Short.MAX_VALUE)
+                            .addComponent(toDirectTrackComboBox, 0, 204, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(deleteTrackButton, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                                    .addComponent(deleteTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, Short.MAX_VALUE)
                                     .addComponent(newTrackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(lineClassComboBox, 0, 178, Short.MAX_VALUE)))
+                            .addComponent(lineClassComboBox, 0, 204, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -345,6 +370,8 @@ public class EditLineDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(fromToLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(lengthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -376,7 +403,7 @@ public class EditLineDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(newTrackButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -431,6 +458,7 @@ public class EditLineDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, ResourceLoader.getString("nl.error.notempty"),null,JOptionPane.ERROR_MESSAGE);
             } else {
                 ((DefaultListModel)trackList.getModel()).removeElement(deleted);
+                removed.add(deleted);
             }
         }
     }//GEN-LAST:event_deleteTrackButtonActionPerformed
@@ -469,6 +497,7 @@ public class EditLineDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox controlledCheckBox;
     private javax.swing.JButton deleteTrackButton;
     private javax.swing.JComboBox fromDirectTrackComboBox;
+    private javax.swing.JLabel fromToLabel;
     private javax.swing.JTextField lengthTextField;
     private javax.swing.JComboBox lineClassComboBox;
     private javax.swing.JButton newTrackButton;
