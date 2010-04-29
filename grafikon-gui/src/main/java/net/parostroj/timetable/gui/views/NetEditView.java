@@ -67,7 +67,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         newLineButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         netView = new net.parostroj.timetable.gui.views.NetView();
 
         newNodeButton.setText(ResourceLoader.getString("net.edit.new.node") + " ..."); // NOI18N
@@ -111,7 +111,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(newNodeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -236,7 +236,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private net.parostroj.timetable.gui.views.NetView netView;
     private javax.swing.JButton newLineButton;
     private javax.swing.JButton newNodeButton;
-    private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 
     @Override
