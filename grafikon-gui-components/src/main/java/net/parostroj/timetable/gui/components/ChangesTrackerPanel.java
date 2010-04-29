@@ -1,17 +1,30 @@
 package net.parostroj.timetable.gui.components;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.net.ChangesTracker;
+import net.parostroj.timetable.net.ChangesTrackerListener;
+import net.parostroj.timetable.net.DiagramChange;
 
 /**
  * Changes tracker panel.
  *
  * @author jub
  */
-public class ChangesTrackerPanel extends javax.swing.JPanel {
+public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTrackerListener {
 
     /** Creates new form ChangesTrackerPanel */
-    public ChangesTrackerPanel() {
+    public ChangesTrackerPanel(ChangesTracker tracker) {
         initComponents();
+        tracker.addListener(this);
+    }
+
+    @Override
+    public void changeReceived(DiagramChange change) {
+        // TODO testing - final version should add events depending on the remote gtm status
+        if (this.isVisible()) {
+            changesTextArea.append(change.toString());
+            changesTextArea.append("\n");
+        }
     }
 
     /** This method is called from within the constructor to
@@ -24,29 +37,39 @@ public class ChangesTrackerPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        eventsTextArea = new javax.swing.JTextArea();
+        changesTextArea = new javax.swing.JTextArea();
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
         javax.swing.JButton clearButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        eventsTextArea.setColumns(20);
-        eventsTextArea.setRows(5);
-        scrollPane.setViewportView(eventsTextArea);
+        changesTextArea.setColumns(20);
+        changesTextArea.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        changesTextArea.setRows(5);
+        scrollPane.setViewportView(changesTextArea);
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
 
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         clearButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
         buttonsPanel.add(clearButton);
 
         add(buttonsPanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        changesTextArea.setText("");
+    }//GEN-LAST:event_clearButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea eventsTextArea;
+    private javax.swing.JTextArea changesTextArea;
     // End of variables declaration//GEN-END:variables
 
 }

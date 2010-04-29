@@ -12,12 +12,10 @@ public class TrackedCheckVisitor implements EventVisitor {
 
     private boolean tracked = false;
 
-    public void clear() {
-        tracked = false;
-    }
-
     public boolean isTracked() {
-        return tracked;
+        boolean t = tracked;
+        tracked = false;
+        return t;
     }
 
     @Override

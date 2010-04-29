@@ -18,6 +18,11 @@
             <version>${grafikon.version}</version>
         </dependency>
         <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-net</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+        <dependency>
             <groupId>batik</groupId>
             <artifactId>batik-svggen</artifactId>
             <version>1.6-1</version>

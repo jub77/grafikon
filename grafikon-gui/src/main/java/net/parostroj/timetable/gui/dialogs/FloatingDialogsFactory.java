@@ -135,8 +135,8 @@ public class FloatingDialogsFactory {
     }
 
     public static FloatingDialog createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
-        ChangesTrackerPanel panel = new ChangesTrackerPanel();
         ChangesTracker tracker = new ChangesTracker();
+        ChangesTrackerPanel panel = new ChangesTrackerPanel(tracker);
         mediator.addColleague(tracker, GTEvent.class);
         FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker");
         return dialog;

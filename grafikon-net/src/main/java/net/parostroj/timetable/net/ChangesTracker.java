@@ -1,11 +1,10 @@
 package net.parostroj.timetable.net;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import net.parostroj.timetable.mediator.AbstractColleague;
-import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.events.GTEvent;
 
 /**
@@ -16,12 +15,16 @@ import net.parostroj.timetable.model.events.GTEvent;
  */
 public class ChangesTracker extends AbstractColleague {
 
-    private Map<String, List<GTEvent<?>>> changes;
+    private List<DiagramChange> changes;
     private TrackedCheckVisitor trackedVisitor;
+    private TransformVisitor transformVisitor;
+    private Set<ChangesTrackerListener> listeners;
 
     public ChangesTracker() {
-        changes = new HashMap<String, List<GTEvent<?>>>();
+        changes = new LinkedList<DiagramChange>();
         trackedVisitor = new TrackedCheckVisitor();
+        transformVisitor = new TransformVisitor();
+        listeners = new HashSet<ChangesTrackerListener>();
     }
 
     @Override
@@ -38,18 +41,30 @@ public class ChangesTracker extends AbstractColleague {
             return;
 
         // add to changes
-        ObjectWithId source = (ObjectWithId)event.getSource();
-        List<GTEvent<?>> list = changes.get(source.getId());
-        if (list == null) {
-            list = new LinkedList<GTEvent<?>>();
-            changes.put(source.getId(), list);
+        event.accept(transformVisitor);
+        DiagramChange change = transformVisitor.getChange();
+        changes.add(change);
+
+        // inform listeners
+        for (ChangesTrackerListener l : this.listeners) {
+            l.changeReceived(change);
         }
-        list.add(event);
     }
 
     private boolean isTracked(GTEvent<?> event) {
-        trackedVisitor.clear();
         event.accept(trackedVisitor);
         return trackedVisitor.isTracked();
+    }
+
+    public void addListener(ChangesTrackerListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(ChangesTrackerListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    public void removeAllListeners() {
+        this.listeners.clear();
     }
 }
