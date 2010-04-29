@@ -222,7 +222,8 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId {
     @Override
     public Object removeAttribute(String key) {
         Object returnValue = this.attributes.remove(key);
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(key, returnValue, null)));
+        if (returnValue != null)
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(key, returnValue, null)));
         return returnValue;
     }
 

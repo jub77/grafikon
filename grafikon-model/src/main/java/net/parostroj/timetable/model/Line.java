@@ -358,7 +358,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId {
     @Override
     public Object removeAttribute(String key) {
         Object returnValue = attributes.remove(key);
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(key, returnValue, null)));
+        if (returnValue != null)
+            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(key, returnValue, null)));
         return returnValue;
     }
 
