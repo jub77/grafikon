@@ -198,18 +198,18 @@ public class EditNodeDialog extends javax.swing.JDialog {
         typeComboBox = new javax.swing.JComboBox();
         signalsCheckBox = new javax.swing.JCheckBox();
         controlCheckBox = new javax.swing.JCheckBox();
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         trackList = new javax.swing.JList();
         newTrackButton = new javax.swing.JButton();
         renameTrackButton = new javax.swing.JButton();
         deleteTrackButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         trapezoidCheckBox = new javax.swing.JCheckBox();
         platformCheckBox = new javax.swing.JCheckBox();
         lineEndCheckBox = new javax.swing.JCheckBox();
         lengthTextField = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
@@ -466,18 +466,14 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_lineEndCheckBoxItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField abbrTextField;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox controlCheckBox;
     private javax.swing.JButton deleteTrackButton;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField lengthTextField;
     private javax.swing.JCheckBox lineEndCheckBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newTrackButton;
-    private javax.swing.JButton okButton;
     private javax.swing.JCheckBox platformCheckBox;
     private javax.swing.JButton renameTrackButton;
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JCheckBox signalsCheckBox;
     private javax.swing.JList trackList;
     private javax.swing.JCheckBox trapezoidCheckBox;
