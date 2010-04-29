@@ -92,7 +92,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     }
 
     public void setNet(Net net) {
+        if (this.net != null) {
+            this.net.removeListener(listener);
+        }
         this.net = net;
+        this.net.addListener(listener);
     }
 
     /**
