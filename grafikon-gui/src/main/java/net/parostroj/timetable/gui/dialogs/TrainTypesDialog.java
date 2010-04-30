@@ -510,10 +510,7 @@ class TrainTypesModel extends AbstractListModel {
         // check limits
         if (index1 < 0 || index1 >= diagram.getTrainTypes().size() || index2 < 0 || index2 >= diagram.getTrainTypes().size())
             return index1;
-        TrainType t1 = diagram.getTrainTypes().get(index1);
-        TrainType t2 = diagram.getTrainTypes().get(index2);
-        diagram.setTrainType(t1, index2);
-        diagram.setTrainType(t2, index1);
+        diagram.moveTrainType(index1, index2);
         // inform listeners
         this.fireContentsChanged(this, index1, index1);
         this.fireContentsChanged(this, index2, index2);

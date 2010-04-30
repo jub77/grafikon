@@ -244,8 +244,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_ADDED, type));
     }
 
-    public void setTrainType(TrainType type, int position) {
-        trainTypes.set(position, type);
+    public void moveTrainType(int from, int to) {
+        TrainType moved = trainTypes.remove(from);
+        if (moved != null) {
+            trainTypes.add(to, moved);
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_MOVED, moved));
+        }
+        
     }
 
     public TrainType getTrainTypeById(String id) {
