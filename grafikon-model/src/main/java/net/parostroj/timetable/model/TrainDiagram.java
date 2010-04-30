@@ -299,15 +299,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     }
 
     public void addEngineClass(EngineClass engineClass) {
-        engineClasses.add(engineClass);
+        this.addEngineClass(engineClass, engineClasses.size());
     }
 
     public void addEngineClass(EngineClass engineClass, int position) {
         engineClasses.add(position, engineClass);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_ADDED, engineClass));
     }
 
     public void removeEngineClass(EngineClass engineClass) {
         engineClasses.remove(engineClass);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_REMOVED, engineClass));
+    }
+
+    public void moveEngineClass(int from, int to) {
+        EngineClass eClass = engineClasses.remove(from);
+        if (eClass != null) {
+            engineClasses.add(to, eClass);
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_MOVED, eClass));
+        }
     }
 
     public List<TextItem> getTextItems() {

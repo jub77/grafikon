@@ -60,9 +60,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         }
 
         public void moveEngineClass(int index1, int index2) {
-            EngineClass clazz = model.getDiagram().getEngineClasses().get(index1);
-            model.getDiagram().removeEngineClass(clazz);
-            model.getDiagram().addEngineClass(clazz, index2);
+            model.getDiagram().moveEngineClass(index1, index2);
             this.fireContentsChanged(this, index1, index1);
             this.fireContentsChanged(this, index2, index2);
         }
