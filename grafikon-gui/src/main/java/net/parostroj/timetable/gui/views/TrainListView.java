@@ -254,8 +254,6 @@ private Set<Train> getSelectedTrains() {
 }
 
 private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
-    diagram.removeTrain(deletedTrain);    // remove from list of trains
-
     // remove train from engine cycle
     if (!deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
         this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE), ApplicationModelEventType.MODIFIED_ENGINE_CYCLE);
@@ -267,6 +265,7 @@ private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
         this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE), ApplicationModelEventType.MODIFIED_DRIVER_CYCLE);
     }
 
+    diagram.removeTrain(deletedTrain);    // remove from list of trains
     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
 
 }
