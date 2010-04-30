@@ -12,13 +12,32 @@ import java.util.logging.Logger;
  */
 public class DiagramChange {
 
-    public static enum DiagramChangeType {
+    public static enum Type {
         DIAGRAM("diagram"), NET("net"), TRAIN("train"), TRAIN_TYPE("train_type"),
         NODE("node"), LINE("line"), TEXT_ITEM("text_item"), TRAINS_CYCLE("trains_cycle");
 
         private String key;
 
-        private DiagramChangeType(String key) {
+        private Type(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        @Override
+        public String toString() {
+            return getString(key);
+        }
+    }
+
+    public static enum SubType {
+        ADDED("added"), REMOVED("removed"), MODIFIED("modified");
+
+        private String key;
+
+        private SubType(String key) {
             this.key = key;
         }
 
@@ -34,32 +53,27 @@ public class DiagramChange {
 
     private static final Logger LOG = Logger.getLogger(DiagramChange.class.getName());
 
-    private DiagramChangeType type;
+    private Type type;
+    private SubType subType;
     private String objectId;
-    private String description;
     private String object;
+    private String description;
 
     public DiagramChange() {}
 
-    public DiagramChange(DiagramChangeType type, String objectId) {
+    public DiagramChange(Type type, String objectId) {
         this.type = type;
         this.objectId = objectId;
     }
 
+    public DiagramChange(Type type, SubType subType, String objectId) {
+        this.type = type;
+        this.objectId = objectId;
+        this.subType = subType;
+    }
+
     public String getDescription() {
         return description;
-    }
-
-    public String getObject() {
-        return object;
-    }
-
-    public void setObjectKey(String object) {
-        this.object = getString(object);
-    }
-
-    public void setObject(String object) {
-        this.object = object;
     }
 
     public void setDescriptionKey(String description) {
@@ -74,7 +88,7 @@ public class DiagramChange {
         return objectId;
     }
 
-    public DiagramChangeType getType() {
+    public Type getType() {
         return type;
     }
 
@@ -82,16 +96,36 @@ public class DiagramChange {
         this.objectId = objectId;
     }
 
-    public void setType(DiagramChangeType type) {
+    public void setType(Type type) {
         this.type = type;
+    }
+
+    public SubType getSubType() {
+        return subType;
+    }
+
+    public void setSubType(SubType subType) {
+        this.subType = subType;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObjectKey(String object) {
+        this.object = getString(object);
+    }
+
+    public void setObject(String object) {
+        this.object = object;
     }
 
     @Override
     public String toString() {
-        return String.format("Change(%s,%s,%s,%s)", type.toString(), objectId, object, description);
+        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, subType != null ? subType.toString() : "<null>", object, description);
     }
 
-    private static String getString(String key) {
+    static String getString(String key) {
         try {
             return ResourceBundle.getBundle("net.parostroj.timetable.net.diagram_change_texts").getString(key);
         } catch (MissingResourceException e) {
