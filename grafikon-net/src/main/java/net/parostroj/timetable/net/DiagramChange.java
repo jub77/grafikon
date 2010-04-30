@@ -33,7 +33,7 @@ public class DiagramChange {
     }
 
     public static enum SubType {
-        ADDED("added"), REMOVED("removed"), MODIFIED("modified");
+        ADDED("added"), REMOVED("removed"), MODIFIED("modified"), MOVED("moved");
 
         private String key;
 

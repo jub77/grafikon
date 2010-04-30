@@ -1,10 +1,10 @@
 package net.parostroj.timetable.net;
 
 import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
 
@@ -19,12 +19,29 @@ public class TransformVisitor implements EventVisitor {
 
     @Override
     public void visit(TrainDiagramEvent event) {
-        if (event.getType() == GTEventType.TRAIN_ADDED || event.getType() == GTEventType.TRAIN_REMOVED) {
-            change = new DiagramChange(DiagramChange.Type.TRAIN,
-                    event.getType() == GTEventType.TRAIN_ADDED ? DiagramChange.SubType.ADDED : DiagramChange.SubType.REMOVED,
-                    ((ObjectWithId)event.getObject()).getId());
-        } else {
-            change = new DiagramChange(DiagramChange.Type.DIAGRAM, event.getSource().getId());
+        switch (event.getType()) {
+            case TRAIN_ADDED: case TRAIN_REMOVED:
+                change = new DiagramChange(DiagramChange.Type.TRAIN,
+                        event.getType() == GTEventType.TRAIN_ADDED ? DiagramChange.SubType.ADDED : DiagramChange.SubType.REMOVED,
+                        ((ObjectWithId)event.getObject()).getId());
+                change.setObject(((Train)event.getObject()).getName());
+                break;
+            case TRAINS_CYCLE_ADDED: case TRAINS_CYCLE_REMOVED:
+                change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE,
+                        event.getType() == GTEventType.TRAINS_CYCLE_ADDED ? DiagramChange.SubType.ADDED : DiagramChange.SubType.REMOVED,
+                        ((ObjectWithId)event.getObject()).getId());
+                change.setObject(((TrainsCycle)event.getObject()).getName());
+                break;
+            case TRAIN_TYPE_ADDED: case TRAIN_TYPE_REMOVED: case TRAIN_TYPE_MOVED:
+                DiagramChange.SubType st = event.getType() == GTEventType.TRAIN_TYPE_ADDED ?
+                    DiagramChange.SubType.ADDED :
+                    (event.getType() == GTEventType.TRAIN_TYPE_REMOVED ? DiagramChange.SubType.REMOVED : DiagramChange.SubType.MOVED);
+                change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, st,
+                        ((ObjectWithId)event.getObject()).getId());
+                change.setObject(getTrainTypeStr((TrainType)event.getObject()));
+                break;
+            default:
+                change = new DiagramChange(DiagramChange.Type.DIAGRAM, event.getSource().getId());
         }
     }
 
@@ -55,8 +72,7 @@ public class TransformVisitor implements EventVisitor {
     @Override
     public void visit(TrainTypeEvent event) {
         change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, event.getSource().getId());
-        TrainType type = event.getSource();
-        change.setObject(type.getAbbr() + " - " + type.getDesc());
+        change.setObject(getTrainTypeStr(event.getSource()));
     }
 
     @Override
@@ -75,5 +91,9 @@ public class TransformVisitor implements EventVisitor {
         DiagramChange c = this.change;
         this.change = null;
         return c;
+    }
+
+    private String getTrainTypeStr(TrainType type) {
+        return type.getAbbr() + " - " + type.getDesc();
     }
 }
