@@ -199,4 +199,17 @@ public class Net implements ObjectWithId {
         }
         visitor.visitAfter(this);
     }
+
+    public ObjectWithId getObjectById(String id) {
+        if (getId().equals(id))
+            return this;
+        ObjectWithId object = getLineById(id);
+        if (object != null)
+            return object;
+        object = getNodeById(id);
+        if (object != null)
+            return object;
+        object = getLineClassById(id);
+        return object;
+    }
 }

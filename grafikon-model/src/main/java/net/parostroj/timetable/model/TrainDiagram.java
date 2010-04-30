@@ -339,6 +339,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         return null;
     }
 
+    public TextItem getTextItemById(String id) {
+        for (TextItem item : textItems) {
+            if (item.getId().equals(id))
+                return item;
+        }
+        return null;
+    }
+
     public TrainsData getTrainsData() {
         return trainsData;
     }
@@ -475,5 +483,30 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
             }
         }
         visitor.visitAfter(this);
+    }
+
+    public ObjectWithId getObjectById(String id) {
+        if (getId().equals(id))
+            return this;
+        ObjectWithId object = getTrainById(id);
+        if (object != null)
+            return object;
+        object = getTrainTypeById(id);
+        if (object != null)
+            return object;
+        object = getNet().getObjectById(id);
+        if (object != null)
+            return object;
+        object = getCycleById(id);
+        if (object != null)
+            return object;
+        object = getEngineClassById(id);
+        if (object != null)
+            return object;
+        object = getRouteById(id);
+        if (object != null)
+            return object;
+        object = getTextItemById(id);
+        return object;
     }
 }
