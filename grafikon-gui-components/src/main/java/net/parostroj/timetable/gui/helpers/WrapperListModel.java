@@ -54,6 +54,8 @@ public class WrapperListModel<T> extends AbstractListModel {
     }
 
     public void removeWrapper(Wrapper<T> w) {
+        if (w == null)
+            return;
         // remove from set
         if (set != null)
             set.remove(w.getElement());
