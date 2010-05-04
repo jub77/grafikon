@@ -11,12 +11,13 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 @XmlRootElement(name = "train_diagram")
-@XmlType(propOrder = {"id", "trainsData", "attributes"})
+@XmlType(propOrder = {"id", "trainsData", "attributes", "changesTrackingEnabled"})
 public class LSTrainDiagram {
     
     private String id;
     private LSTrainsData trainsData;
     private LSAttributes attributes;
+    private boolean changesTrackingEnabled;
     
     public LSTrainDiagram() {
     }
@@ -25,6 +26,7 @@ public class LSTrainDiagram {
         id = diagram.getId();
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
+        changesTrackingEnabled = diagram.getChangesTracker() != null;
     }
 
     public LSAttributes getAttributes() {
@@ -50,5 +52,13 @@ public class LSTrainDiagram {
 
     public void setTrainsData(LSTrainsData trainsData) {
         this.trainsData = trainsData;
+    }
+
+    public boolean isChangesTrackingEnabled() {
+        return changesTrackingEnabled;
+    }
+
+    public void setChangesTrackingEnabled(boolean changesTrackingEnabled) {
+        this.changesTrackingEnabled = changesTrackingEnabled;
     }
 }

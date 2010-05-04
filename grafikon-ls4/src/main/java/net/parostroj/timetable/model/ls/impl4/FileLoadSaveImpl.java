@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
@@ -21,7 +22,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    private static final ModelVersion METADATA_MODEL_VERSION = new ModelVersion(4, 1);
+    private static final ModelVersion METADATA_MODEL_VERSION = new ModelVersion(4, 2);
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
@@ -32,11 +33,15 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
+    private static final String DATA_CHANGES = "changes/";
     private LSSerializer lss;
     private static final List<ModelVersion> VERSIONS;
 
     static {
-        List<ModelVersion> versions = Arrays.asList(new ModelVersion(4, 0), new ModelVersion(4, 1));
+        List<ModelVersion> versions = Arrays.asList(
+                new ModelVersion(4, 0),
+                new ModelVersion(4, 1),
+                new ModelVersion(4, 2));
         VERSIONS = Collections.unmodifiableList(versions);
     }
 
@@ -121,6 +126,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder.setEngineClass(lss.load(zipInput, LSEngineClass.class));
                 } else if (entry.getName().startsWith(DATA_TRAINS_CYCLES)) {
                     builder.setTrainsCycle(lss.load(zipInput, LSTrainsCycle.class));
+                } else if (entry.getName().startsWith(DATA_CHANGES)) {
+                    builder.setDiagramChangeSet(lss.load(zipInput, LSDiagramChangeSet.class));
                 } else if (entry.getName().startsWith(DATA_IMAGES)) {
                     if (entry.getName().endsWith(".xml"))
                         builder.addImage(lss.load(zipInput, LSImage.class));
@@ -178,6 +185,12 @@ public class FileLoadSaveImpl implements FileLoadSave {
             // save text items
             for (TextItem item : diagram.getTextItems()) {
                 this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, "xml", cnt++), new LSTextItem(item));
+            }
+            cnt = 0;
+            // save diagram change sets
+            for (String version : diagram.getChangesTracker().getVersions()) {
+                DiagramChangeSet set = diagram.getChangesTracker().getChangeSet(version);
+                this.save(zipOutput, this.createEntryName(DATA_CHANGES, "xml", cnt++), new LSDiagramChangeSet(set));
             }
             cnt = 0;
             // save trains cycles

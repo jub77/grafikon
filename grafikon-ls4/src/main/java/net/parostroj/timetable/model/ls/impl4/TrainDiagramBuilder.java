@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -12,6 +13,7 @@ import net.parostroj.timetable.model.ls.LSException;
 public class TrainDiagramBuilder {
     
     private TrainDiagram diagram;
+    private boolean trackChanges;
 
     public TrainDiagramBuilder(TrainDiagram diagram) {
         this.diagram = diagram;
@@ -26,6 +28,7 @@ public class TrainDiagramBuilder {
             this.diagram = new TrainDiagram(lsDiagram.getId(), null);
         this.diagram.setTrainsData(data);
         this.diagram.setAttributes(attributes);
+        trackChanges = lsDiagram.isChangesTrackingEnabled();
     }
     
     public void setTrainsData(LSTrainsData lsData) {
@@ -85,6 +88,13 @@ public class TrainDiagramBuilder {
         diagram.addTextItem(item);
     }
 
+    public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {
+        DiagramChangeSet set = diagram.getChangesTracker().addVersion(lsChangeSet.getVersion());
+        for (LSDiagramChange change : lsChangeSet.getChanges()) {
+            set.addChange(change.createDiagramChange());
+        }
+    }
+
     public void setTrain(LSTrain lsTrain) {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
@@ -127,6 +137,9 @@ public class TrainDiagramBuilder {
     }
     
     public TrainDiagram getTrainDiagram() {
+        // tracking of changes has to be enabled at the end, otherwise
+        // it would also track changes caused by loading of the diagram
+        diagram.getChangesTracker().setTrackingEnabled(trackChanges);
         return diagram;
     }
 }

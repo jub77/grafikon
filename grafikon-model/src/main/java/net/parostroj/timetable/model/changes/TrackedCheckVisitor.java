@@ -1,4 +1,4 @@
-package net.parostroj.timetable.net;
+package net.parostroj.timetable.model.changes;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
@@ -21,7 +21,7 @@ public class TrackedCheckVisitor implements EventVisitor {
     @Override
     public void visit(TrainDiagramEvent event) {
         switch (event.getType()) {
-            case TRAIN_TYPE_MOVED: case TEXT_ITEM_MOVED:
+            case TRAIN_TYPE_MOVED: case TEXT_ITEM_MOVED: case ENGINE_CLASS_MOVED:
                 tracked = false;
                 break;
             default:

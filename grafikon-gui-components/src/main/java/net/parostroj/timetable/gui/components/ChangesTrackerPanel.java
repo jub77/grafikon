@@ -1,9 +1,9 @@
 package net.parostroj.timetable.gui.components;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.net.ChangesTracker;
-import net.parostroj.timetable.net.ChangesTrackerListener;
-import net.parostroj.timetable.net.DiagramChange;
+import net.parostroj.timetable.model.changes.ChangesTrackerListener;
+import net.parostroj.timetable.model.changes.DiagramChange;
+import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Changes tracker panel.
@@ -12,10 +12,19 @@ import net.parostroj.timetable.net.DiagramChange;
  */
 public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTrackerListener {
 
+    private TrainDiagram diagram;
+
     /** Creates new form ChangesTrackerPanel */
-    public ChangesTrackerPanel(ChangesTracker tracker) {
+    public ChangesTrackerPanel() {
         initComponents();
-        tracker.addListener(this);
+    }
+
+    public void setTrainDiagram(TrainDiagram diagram) {
+        enabledCheckBox.setSelected(diagram != null && diagram.getChangesTracker().isTrackingEnabled());
+        if (diagram != null) {
+            diagram.getChangesTracker().addListener(this);
+        }
+        this.diagram = diagram;
     }
 
     @Override
@@ -39,18 +48,27 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         changesTextArea = new javax.swing.JTextArea();
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
+        enabledCheckBox = new javax.swing.JCheckBox();
         javax.swing.JButton clearButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
         changesTextArea.setColumns(20);
-        changesTextArea.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        changesTextArea.setFont(new java.awt.Font("SansSerif", 0, 11));
         changesTextArea.setRows(5);
         scrollPane.setViewportView(changesTextArea);
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
 
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        enabledCheckBox.setText("Enable");
+        enabledCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                enabledCheckBoxActionPerformed(evt);
+            }
+        });
+        buttonsPanel.add(enabledCheckBox);
 
         clearButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         clearButton.addActionListener(new java.awt.event.ActionListener() {
@@ -67,9 +85,19 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         changesTextArea.setText("");
     }//GEN-LAST:event_clearButtonActionPerformed
 
+    private void enabledCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enabledCheckBoxActionPerformed
+        if (diagram != null) {
+            diagram.getChangesTracker().setTrackingEnabled(enabledCheckBox.isSelected());
+            if (!enabledCheckBox.isSelected())
+                diagram.getChangesTracker().removeCurrentChangeSet();
+            else
+                diagram.getChangesTracker().addVersion(null);
+        }
+    }//GEN-LAST:event_enabledCheckBoxActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea changesTextArea;
+    private javax.swing.JCheckBox enabledCheckBox;
     // End of variables declaration//GEN-END:variables
-
 }

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.net;
+package net.parostroj.timetable.model.changes;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -14,7 +14,8 @@ public class DiagramChange {
 
     public static enum Type {
         DIAGRAM("diagram"), NET("net"), TRAIN("train"), TRAIN_TYPE("train_type"),
-        NODE("node"), LINE("line"), TEXT_ITEM("text_item"), TRAINS_CYCLE("trains_cycle");
+        NODE("node"), LINE("line"), TEXT_ITEM("text_item"), TRAINS_CYCLE("trains_cycle"),
+        ENGINE_CLASS("engine_class");
 
         private String key;
 
@@ -58,6 +59,7 @@ public class DiagramChange {
     private String objectId;
     private String object;
     private String description;
+    private Object[] params;
 
     public DiagramChange() {}
 
@@ -76,12 +78,13 @@ public class DiagramChange {
         return description;
     }
 
-    public void setDescriptionKey(String description) {
-        this.description = getString(description);
-    }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setDescription(String description, Object... params) {
+        this.description = description;
+        this.params = params;
     }
 
     public String getObjectId() {
@@ -112,12 +115,16 @@ public class DiagramChange {
         return object;
     }
 
-    public void setObjectKey(String object) {
-        this.object = getString(object);
-    }
-
     public void setObject(String object) {
         this.object = object;
+    }
+
+    public Object[] getParams() {
+        return params;
+    }
+
+    public void setParams(Object[] params) {
+        this.params = params;
     }
 
     @Override

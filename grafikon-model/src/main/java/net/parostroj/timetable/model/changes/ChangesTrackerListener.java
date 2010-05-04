@@ -1,4 +1,6 @@
-package net.parostroj.timetable.net;
+package net.parostroj.timetable.model.changes;
+
+import net.parostroj.timetable.model.changes.DiagramChange;
 
 /**
  * Listener.

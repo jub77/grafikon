@@ -14,7 +14,6 @@ import net.parostroj.timetable.gui.helpers.TrainWrapper;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.net.ChangesTracker;
 
 /**
  * Factory for creation of floating dialogs.
@@ -135,9 +134,14 @@ public class FloatingDialogsFactory {
     }
 
     public static FloatingDialog createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
-        ChangesTracker tracker = new ChangesTracker();
-        ChangesTrackerPanel panel = new ChangesTrackerPanel(tracker);
-        mediator.addColleague(tracker, GTEvent.class);
+        final ChangesTrackerPanel panel = new ChangesTrackerPanel();
+        model.addListener(new ApplicationModelListener() {
+            @Override
+            public void modelChanged(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
+                    panel.setTrainDiagram(event.getModel().getDiagram());
+            }
+        });
         FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker");
         return dialog;
     }

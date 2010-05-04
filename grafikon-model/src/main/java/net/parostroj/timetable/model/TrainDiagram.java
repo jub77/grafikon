@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.GTEventType;
@@ -44,6 +45,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     private PenaltyTable penaltyTable;
 
     private GTListenerTrainDiagramImpl listener;
+    private ChangesTrackerImpl changesTracker;
     private GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
     private GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent> listenerSupportAll;
 
@@ -82,6 +84,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
             }
         });
         this.net.addListener(listener);
+        this.changesTracker = new ChangesTrackerImpl();
+        this.addListenerWithNested(changesTracker);
     }
 
     /**
@@ -97,6 +101,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         }
         this.net = net;
         this.net.addListener(listener);
+    }
+
+    public ChangesTracker getChangesTracker() {
+        return changesTracker;
     }
 
     /**

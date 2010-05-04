@@ -1,5 +1,6 @@
-package net.parostroj.timetable.net;
+package net.parostroj.timetable.model.changes;
 
+import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Train;
@@ -19,6 +20,7 @@ public class TransformVisitor implements EventVisitor {
 
     @Override
     public void visit(TrainDiagramEvent event) {
+        DiagramChange.SubType st = null;
         switch (event.getType()) {
             case TRAIN_ADDED: case TRAIN_REMOVED:
                 change = new DiagramChange(DiagramChange.Type.TRAIN,
@@ -33,12 +35,20 @@ public class TransformVisitor implements EventVisitor {
                 change.setObject(((TrainsCycle)event.getObject()).getName());
                 break;
             case TRAIN_TYPE_ADDED: case TRAIN_TYPE_REMOVED: case TRAIN_TYPE_MOVED:
-                DiagramChange.SubType st = event.getType() == GTEventType.TRAIN_TYPE_ADDED ?
+                st = event.getType() == GTEventType.TRAIN_TYPE_ADDED ?
                     DiagramChange.SubType.ADDED :
                     (event.getType() == GTEventType.TRAIN_TYPE_REMOVED ? DiagramChange.SubType.REMOVED : DiagramChange.SubType.MOVED);
                 change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, st,
                         ((ObjectWithId)event.getObject()).getId());
                 change.setObject(getTrainTypeStr((TrainType)event.getObject()));
+                break;
+            case ENGINE_CLASS_ADDED: case ENGINE_CLASS_MOVED: case ENGINE_CLASS_REMOVED:
+                st = event.getType() == GTEventType.ENGINE_CLASS_ADDED ?
+                    DiagramChange.SubType.ADDED :
+                    (event.getType() == GTEventType.ENGINE_CLASS_REMOVED ? DiagramChange.SubType.REMOVED : DiagramChange.SubType.MOVED);
+                change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, st,
+                        ((ObjectWithId)event.getObject()).getId());
+                change.setObject(((EngineClass)event.getObject()).getName());
                 break;
             default:
                 change = new DiagramChange(DiagramChange.Type.DIAGRAM, event.getSource().getId());
@@ -54,6 +64,7 @@ public class TransformVisitor implements EventVisitor {
     public void visit(NodeEvent event) {
         change = new DiagramChange(DiagramChange.Type.NODE, event.getSource().getId());
         change.setObject(event.getSource().getName());
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     @Override
@@ -61,30 +72,35 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.LINE, event.getSource().getId());
         Line line = event.getSource();
         change.setObject(line.getFrom().getName() + " - " + line.getTo().getName());
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     @Override
     public void visit(TrainEvent event) {
         change = new DiagramChange(DiagramChange.Type.TRAIN, event.getSource().getId());
         change.setObject(event.getSource().getName());
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     @Override
     public void visit(TrainTypeEvent event) {
         change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, event.getSource().getId());
         change.setObject(getTrainTypeStr(event.getSource()));
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     @Override
     public void visit(TrainsCycleEvent event) {
         change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE, event.getSource().getId());
         change.setObject(event.getSource().getName());
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     @Override
     public void visit(TextItemEvent event) {
         change = new DiagramChange(DiagramChange.Type.TEXT_ITEM, event.getSource().getId());
         change.setObject(event.getSource().getName());
+        change.setSubType(DiagramChange.SubType.MODIFIED);
     }
 
     public DiagramChange getChange() {
