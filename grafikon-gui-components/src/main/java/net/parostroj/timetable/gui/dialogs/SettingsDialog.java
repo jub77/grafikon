@@ -366,6 +366,9 @@ public class SettingsDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        boolean recalculate = false;
+        boolean clear = false;
+
         // get templates values
         TrainsData trainsData = diagram.getTrainsData();
         String completeName = completeNameTemplateTextField.getText();
@@ -390,13 +393,24 @@ public class SettingsDialog extends javax.swing.JDialog {
             LOG.log(Level.FINE, "Cannot covert ratio.", ex);
             return;
         }
-        if (s != null)
+        if (s != null && !s.equals(diagram.getAttribute("scale"))) {
             diagram.setAttribute("scale", s);
-        diagram.setAttribute("time.scale", sp);
+            recalculate = true;
+        }
+        if (sp != ((Double)diagram.getAttribute("time.scale")).doubleValue()) {
+            diagram.setAttribute("time.scale", sp);
+            recalculate = true;
+        }
 
         // set templates
-        trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
-        trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
+        if (!completeName.equals(trainsData.getTrainCompleteNameTemplate().getTemplate())) {
+            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
+            clear = true;
+        }
+        if (!name.equals(trainsData.getTrainNameTemplate().getTemplate())) {
+            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
+            clear = true;
+        }
 
         // set sorting
         SortPattern sPattern = null;
@@ -408,56 +422,70 @@ public class SettingsDialog extends javax.swing.JDialog {
             sPattern = new SortPattern("(.*)");
             sPattern.getGroups().add(new SortPatternGroup(1, SortPatternGroup.Type.STRING));
         }
-        trainsData.setTrainSortPattern(sPattern);
+        if (!sPattern.getPattern().equals(trainsData.getTrainSortPattern().getPattern()))
+            trainsData.setTrainSortPattern(sPattern);
 
         // set transfer time
         try {
             Integer difference = Integer.valueOf(stationTransferTextField.getText());
-            if (difference != null)
+            if (difference != null && !difference.equals(diagram.getAttribute("station.transfer.time")))
                 diagram.setAttribute("station.transfer.time", difference);
         } catch (NumberFormatException e) {
             LOG.log(Level.WARNING, "Cannot parse station transfer time: {0}", stationTransferTextField.getText());
         }
 
         // get back values for stations lengths
-        diagram.setAttribute("station.length.in.axles", Boolean.valueOf(lengthInAxlesCheckBox.isSelected()));
-        if (lengthInAxlesCheckBox.isSelected())
+        Boolean lia = Boolean.valueOf(lengthInAxlesCheckBox.isSelected());
+        if (!lia.equals(diagram.getAttribute("station.length.in.axles")))
+            diagram.setAttribute("station.length.in.axles", lia);
+        if (lia.booleanValue())
             diagram.removeAttribute("station.length.unit");
-        else
-            diagram.setAttribute("station.length.unit", stationLengthUnitTextField.getText());
+        else {
+            if (!stationLengthUnitTextField.getText().equals(diagram.getAttribute("station.length.unit")))
+                diagram.setAttribute("station.length.unit", stationLengthUnitTextField.getText());
+        }
 
         // weight ratios
         try {
             Double emptyRatio = Double.valueOf(emptyRatioTextField.getText());
             Double loadedRatio = Double.valueOf(loadedRatioTextField.getText());
 
-            diagram.setAttribute("weight.ratio.empty", emptyRatio);
-            diagram.setAttribute("weight.ratio.loaded", loadedRatio);
+            if (!emptyRatio.equals(diagram.getAttribute("weight.ratio.empty")))
+                diagram.setAttribute("weight.ratio.empty", emptyRatio);
+            if (!loadedRatio.equals(diagram.getAttribute("weight.ratio.loaded")))
+                diagram.setAttribute("weight.ratio.loaded", loadedRatio);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot convert weight ratios to doubles: {0}", e.getMessage());
+            LOG.log(Level.WARNING, "Cannot convert weight ratios to doubles.", e);
         }
 
         // changes tracking
-        if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled() &&
-                diagram.getChangesTracker().getCurrentChangeSet() == null) {
-            diagram.getChangesTracker().addVersion(null);
-            diagram.getChangesTracker().setLastAsCurrent();
+        if (changesTrackingCheckBox.isSelected() != diagram.getChangesTracker().isTrackingEnabled()) {
+            if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled() &&
+                    diagram.getChangesTracker().getCurrentChangeSet() == null) {
+                diagram.getChangesTracker().addVersion(null);
+                diagram.getChangesTracker().setLastAsCurrent();
+            }
+            diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
         }
-        diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
 
         // set running time script
-        if (scriptTextArea.getText() != null && !scriptTextArea.getText().equals(""))
+        if (scriptTextArea.getText() != null && !scriptTextArea.getText().equals("") &&
+                !scriptTextArea.getText().equals(diagram.getTrainsData().getRunningTimeScript().getSourceCode())) {
             diagram.getTrainsData().setRunningTimeScript(
                     Script.createScript(scriptTextArea.getText(),
                     diagram.getTrainsData().getRunningTimeScript().getLanguage()));
+            recalculate = true;
+        }
 
         // update model
-        for (Train train : diagram.getTrains()) {
-            train.recalculate();
-        }
+        if (recalculate)
+            for (Train train : diagram.getTrains()) {
+                train.recalculate();
+            }
         // clear cached information for train names
-        for (Train train : diagram.getTrains())
-            train.clearCachedData();
+        if (clear)
+            for (Train train : diagram.getTrains())
+                train.clearCachedData();
 
         this.updateValues();
 
