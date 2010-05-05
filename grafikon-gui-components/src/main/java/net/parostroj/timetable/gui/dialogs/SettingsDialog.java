@@ -88,6 +88,9 @@ public class SettingsDialog extends javax.swing.JDialog {
             String stationLengthUnit = (String)diagram.getAttribute("station.length.unit");
             stationLengthUnitTextField.setText(stationLengthUnit == null ? "" : stationLengthUnit);
 
+            // changes tracking
+            changesTrackingCheckBox.setSelected(diagram.getChangesTracker().isTrackingEnabled());
+
             // weight ratios
             Double emptyRatio = (Double)diagram.getAttribute("weight.ratio.empty");
             Double loadedRatio = (Double)diagram.getAttribute("weight.ratio.loaded");
@@ -132,6 +135,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         stationTransferTextField = new javax.swing.JTextField();
         lengthInAxlesCheckBox = new javax.swing.JCheckBox();
+        changesTrackingCheckBox = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
         stationLengthUnitTextField = new javax.swing.JTextField();
         ratioPanel = new javax.swing.JPanel();
@@ -193,7 +197,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
@@ -281,17 +285,27 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
         getContentPane().add(lengthInAxlesCheckBox, gridBagConstraints);
 
-        jLabel7.setText(ResourceLoader.getString("modelinfo.station.length.unit")); // NOI18N
+        changesTrackingCheckBox.setText(ResourceLoader.getString("modelinfo.tracking.changes")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        getContentPane().add(changesTrackingCheckBox, gridBagConstraints);
+
+        jLabel7.setText(ResourceLoader.getString("modelinfo.station.length.unit")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
         getContentPane().add(jLabel7, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -317,7 +331,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -327,20 +341,20 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel11.setText(ResourceLoader.getString("modelinfo.running.time.script")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         getContentPane().add(jLabel11, gridBagConstraints);
 
         scriptTextArea.setColumns(20);
-        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
         scriptTextArea.setRows(5);
         scrollPane.setViewportView(scriptTextArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -402,7 +416,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (difference != null)
                 diagram.setAttribute("station.transfer.time", difference);
         } catch (NumberFormatException e) {
-            LOG.warning("Cannot parse station transfer time: " + stationTransferTextField.getText());
+            LOG.log(Level.WARNING, "Cannot parse station transfer time: {0}", stationTransferTextField.getText());
         }
 
         // get back values for stations lengths
@@ -420,8 +434,16 @@ public class SettingsDialog extends javax.swing.JDialog {
             diagram.setAttribute("weight.ratio.empty", emptyRatio);
             diagram.setAttribute("weight.ratio.loaded", loadedRatio);
         } catch (NumberFormatException e) {
-            LOG.warning("Cannot convert weight ratios to doubles: " + e.getMessage());
+            LOG.log(Level.WARNING, "Cannot convert weight ratios to doubles: {0}", e.getMessage());
         }
+
+        // changes tracking
+        if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled()) {
+            diagram.getChangesTracker().addVersion(null);
+        } else if (!changesTrackingCheckBox.isSelected() && diagram.getChangesTracker().isTrackingEnabled()) {
+            diagram.getChangesTracker().removeCurrentChangeSet(true);
+        }
+        diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
 
         // set running time script
         if (scriptTextArea.getText() != null && !scriptTextArea.getText().equals(""))
@@ -457,6 +479,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox changesTrackingCheckBox;
     private javax.swing.JTextField completeNameTemplateTextField;
     private javax.swing.JTextField emptyRatioTextField;
     private javax.swing.JLabel jLabel6;

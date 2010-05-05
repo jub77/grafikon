@@ -84,9 +84,6 @@ public class NewOpenAction extends AbstractAction {
                             model.setOpenedFile(xmlFileChooser.getSelectedFile());
                             FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
                             diagram = ls.load(xmlFileChooser.getSelectedFile());
-                            if (diagram.getChangesTracker().isTrackingEnabled())
-                                // add new version after load if the tracking is enabled
-                                diagram.getChangesTracker().addVersion(null);
                         }
                     } catch (LSException e) {
                         LOG.log(Level.WARNING, "Error loading model.", e);

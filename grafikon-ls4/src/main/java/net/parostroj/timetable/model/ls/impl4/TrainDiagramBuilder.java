@@ -140,6 +140,11 @@ public class TrainDiagramBuilder {
         // tracking of changes has to be enabled at the end, otherwise
         // it would also track changes caused by loading of the diagram
         diagram.getChangesTracker().setTrackingEnabled(trackChanges);
+        if (trackChanges) {
+            diagram.getChangesTracker().addVersion(null);
+            diagram.getChangesTracker().setLastAsCurrent();
+        }
+
         return diagram;
     }
 }

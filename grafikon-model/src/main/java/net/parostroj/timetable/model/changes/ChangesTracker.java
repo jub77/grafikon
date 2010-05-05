@@ -25,7 +25,9 @@ public interface ChangesTracker {
 
     public DiagramChangeSet getCurrentChangeSet();
 
-    public void removeCurrentChangeSet();
+    public DiagramChangeSet setLastAsCurrent();
+
+    public void removeCurrentChangeSet(boolean delete);
 
     public void setTrackingEnabled(boolean enabled);
 

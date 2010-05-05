@@ -140,8 +140,8 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     }
 
     @Override
-    public void removeCurrentChangeSet() {
-        if (_currentChangeSet != null) {
+    public void removeCurrentChangeSet(boolean delete) {
+        if (_currentChangeSet != null && delete) {
             changes.remove(_currentChangeSet);
         }
         _currentChangeSet = null;
@@ -160,9 +160,17 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             ilv++;
             lastVersion = Integer.toString(ilv);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot parse version string: " + lastVersion + " (" + e.getMessage() + ")");
+            LOG.log(Level.WARNING, "Cannot parse version string: {0} ({1})", new Object[]{lastVersion, e.getMessage()});
             lastVersion = "1";
         }
         return lastVersion;
+    }
+
+    @Override
+    public DiagramChangeSet setLastAsCurrent() {
+        if (changes.isEmpty())
+            return null;
+        else
+            return changes.get(changes.size() - 1);
     }
 }
