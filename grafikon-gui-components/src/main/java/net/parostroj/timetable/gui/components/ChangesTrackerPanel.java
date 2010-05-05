@@ -1,9 +1,10 @@
 package net.parostroj.timetable.gui.components;
 
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+import javax.swing.DefaultListModel;
 import net.parostroj.timetable.model.changes.ChangesTrackerListener;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.changes.DiagramChangeSet;
 
 /**
  * Changes tracker panel.
@@ -11,6 +12,22 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTrackerListener {
+
+    private static class ChangeSetWrapper {
+
+        public DiagramChangeSet set;
+        public boolean current;
+
+        public ChangeSetWrapper(DiagramChangeSet set, String currentVersion) {
+            this.set = set;
+            current = set.getVersion().equals(currentVersion);
+        }
+
+        @Override
+        public String toString() {
+            return current ? String.format(">%s<", set.getVersion()) : set.getVersion();
+        }
+    }
 
     private TrainDiagram diagram;
 
@@ -24,15 +41,23 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
             diagram.getChangesTracker().addListener(this);
         }
         this.diagram = diagram;
+        this.fillVersions();
+    }
+
+    private void fillVersions() {
+        // fill list of versions
+        DefaultListModel model = new DefaultListModel();
+        if (diagram != null) {
+            String currentVersion = diagram.getChangesTracker().getCurrentVersion();
+            for (DiagramChangeSet set : diagram.getChangesTracker().getChangeSets()) {
+                model.addElement(new ChangeSetWrapper(set, currentVersion));
+            }
+        }
+        versionsList.setModel(model);
     }
 
     @Override
     public void changeReceived(DiagramChange change) {
-        // TODO testing - final version should add events depending on the remote gtm status
-        if (this.isVisible()) {
-            changesTextArea.append(change.toString());
-            changesTextArea.append("\n");
-        }
     }
 
     /** This method is called from within the constructor to
@@ -44,39 +69,39 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        changesTextArea = new javax.swing.JTextArea();
-        javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
-        javax.swing.JButton clearButton = new javax.swing.JButton();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
+        detailsTextArea = new javax.swing.JTextArea();
+        splitPane = new javax.swing.JSplitPane();
+        javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
+        versionsList = new javax.swing.JList();
+        javax.swing.JScrollPane scrollPane3 = new javax.swing.JScrollPane();
+        changesList = new javax.swing.JList();
 
         setLayout(new java.awt.BorderLayout());
 
-        changesTextArea.setColumns(20);
-        changesTextArea.setFont(new java.awt.Font("SansSerif", 0, 11));
-        changesTextArea.setRows(5);
-        scrollPane.setViewportView(changesTextArea);
+        detailsTextArea.setColumns(20);
+        detailsTextArea.setRows(5);
+        scrollPane1.setViewportView(detailsTextArea);
 
-        add(scrollPane, java.awt.BorderLayout.CENTER);
+        add(scrollPane1, java.awt.BorderLayout.SOUTH);
 
-        buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        versionsList.setPrototypeCellValue("mmmmmmm");
+        scrollPane2.setViewportView(versionsList);
 
-        clearButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
-        buttonsPanel.add(clearButton);
+        splitPane.setLeftComponent(scrollPane2);
 
-        add(buttonsPanel, java.awt.BorderLayout.PAGE_END);
+        scrollPane3.setViewportView(changesList);
+
+        splitPane.setRightComponent(scrollPane3);
+
+        add(splitPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
-        changesTextArea.setText("");
-    }//GEN-LAST:event_clearButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea changesTextArea;
+    private javax.swing.JList changesList;
+    private javax.swing.JTextArea detailsTextArea;
+    private javax.swing.JSplitPane splitPane;
+    private javax.swing.JList versionsList;
     // End of variables declaration//GEN-END:variables
 }

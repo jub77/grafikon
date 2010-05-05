@@ -17,6 +17,8 @@ public interface ChangesTracker {
 
     public List<String> getVersions();
 
+    public List<DiagramChangeSet> getChangeSets();
+
     public DiagramChangeSet getChangeSet(String version);
 
     public DiagramChangeSet addVersion(String version);

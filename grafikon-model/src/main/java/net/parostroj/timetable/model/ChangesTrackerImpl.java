@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +32,6 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     private TrackedCheckVisitor trackedVisitor;
     private TransformVisitor transformVisitor;
     private Set<ChangesTrackerListener> listeners;
-    private String currentVersion;
     private DiagramChangeSet _currentChangeSet;
     private boolean enabled;
 
@@ -121,7 +121,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public String getCurrentVersion() {
-        return this.currentVersion;
+        return _currentChangeSet != null ? _currentChangeSet.getVersion() : null;
     }
 
     @Override
@@ -168,9 +168,16 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public DiagramChangeSet setLastAsCurrent() {
-        if (changes.isEmpty())
-            return null;
-        else
-            return changes.get(changes.size() - 1);
+        if (changes.isEmpty()) {
+            _currentChangeSet = null;
+        } else {
+            _currentChangeSet = changes.get(changes.size() - 1);
+        }
+        return _currentChangeSet;
+    }
+
+    @Override
+    public List<DiagramChangeSet> getChangeSets() {
+        return Collections.unmodifiableList(changes);
     }
 }
