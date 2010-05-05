@@ -438,10 +438,10 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // changes tracking
-        if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled()) {
+        if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled() &&
+                diagram.getChangesTracker().getCurrentChangeSet() == null) {
             diagram.getChangesTracker().addVersion(null);
-        } else if (!changesTrackingCheckBox.isSelected() && diagram.getChangesTracker().isTrackingEnabled()) {
-            diagram.getChangesTracker().removeCurrentChangeSet(true);
+            diagram.getChangesTracker().setLastAsCurrent();
         }
         diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());
 
