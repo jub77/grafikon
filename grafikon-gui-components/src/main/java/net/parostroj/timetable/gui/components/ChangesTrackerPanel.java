@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import javax.swing.DefaultListModel;
+import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
 import net.parostroj.timetable.model.changes.ChangesTrackerListener;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -14,7 +15,6 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
 public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTrackerListener {
 
     private static class ChangeSetWrapper {
-
         public DiagramChangeSet set;
         public boolean current;
 
@@ -25,11 +25,69 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return current ? String.format(">%s<", set.getVersion()) : set.getVersion();
+            return current ? String.format("%s*", set.getVersion()) : set.getVersion();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ChangeSetWrapper other = (ChangeSetWrapper) obj;
+            if (this.set != other.set && (this.set == null || !this.set.equals(other.set))) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 53 * hash + (this.set != null ? this.set.hashCode() : 0);
+            return hash;
+        }
+    }
+
+    private static class ChangeWrapper {
+        public DiagramChange change;
+
+        public ChangeWrapper(DiagramChange change) {
+            this.change = change;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s, %s, %s", change.getType(), change.getObject(), change.getSubType());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ChangeWrapper other = (ChangeWrapper) obj;
+            if (this.change != other.change && (this.change == null || !this.change.equals(other.change))) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 83 * hash + (this.change != null ? this.change.hashCode() : 0);
+            return hash;
         }
     }
 
     private TrainDiagram diagram;
+    private DiagramChangeSet current;
 
     /** Creates new form ChangesTrackerPanel */
     public ChangesTrackerPanel() {
@@ -48,16 +106,39 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         // fill list of versions
         DefaultListModel model = new DefaultListModel();
         if (diagram != null) {
-            String currentVersion = diagram.getChangesTracker().getCurrentVersion();
+            String currentVersion = diagram.getChangesTracker().isTrackingEnabled() ?
+                diagram.getChangesTracker().getCurrentVersion() :
+                null;
             for (DiagramChangeSet set : diagram.getChangesTracker().getChangeSets()) {
                 model.addElement(new ChangeSetWrapper(set, currentVersion));
             }
         }
         versionsList.setModel(model);
+        versionsList.setSelectedIndex(model.getSize() - 1);
+    }
+
+    private void fillChanges(DiagramChangeSet set) {
+        DefaultListModel model = new DefaultListModel();
+        if (set != null) {
+            for (DiagramChange change : set.getChanges()) {
+                model.addElement(new ChangeWrapper(change));
+            }
+        }
+        changesList.setModel(model);
     }
 
     @Override
-    public void changeReceived(DiagramChange change) {
+    public void trackerChanged(ChangesTrackerEvent event) {
+        switch (event.getType()) {
+            case CHANGE_ADDED:
+                if (event.getSet() == current)
+                    ((DefaultListModel)changesList.getModel()).addElement(new ChangeWrapper(event.getChange()));
+                break;
+            case CHANGE_REMOVED:
+                if (event.getSet() == current)
+                    ((DefaultListModel)changesList.getModel()).removeElement(new ChangeWrapper(event.getChange()));
+                break;
+        }
     }
 
     /** This method is called from within the constructor to
@@ -80,22 +161,57 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         setLayout(new java.awt.BorderLayout());
 
         detailsTextArea.setColumns(20);
-        detailsTextArea.setRows(5);
+        detailsTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        detailsTextArea.setLineWrap(true);
+        detailsTextArea.setRows(6);
+        detailsTextArea.setWrapStyleWord(true);
         scrollPane1.setViewportView(detailsTextArea);
 
         add(scrollPane1, java.awt.BorderLayout.SOUTH);
 
+        versionsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         versionsList.setPrototypeCellValue("mmmmmmm");
+        versionsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                versionsListValueChanged(evt);
+            }
+        });
         scrollPane2.setViewportView(versionsList);
 
         splitPane.setLeftComponent(scrollPane2);
 
+        changesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        changesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                changesListValueChanged(evt);
+            }
+        });
         scrollPane3.setViewportView(changesList);
 
         splitPane.setRightComponent(scrollPane3);
 
         add(splitPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void versionsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_versionsListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            // fill list
+            ChangeSetWrapper w = (ChangeSetWrapper)versionsList.getSelectedValue();
+            this.fillChanges(w != null ? w.set : null);
+            current = w != null ? w.set : null;
+        }
+    }//GEN-LAST:event_versionsListValueChanged
+
+    private void changesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_changesListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            // show change
+            ChangeWrapper w = (ChangeWrapper)changesList.getSelectedValue();
+            if (w == null)
+                detailsTextArea.setText("");
+            else
+                detailsTextArea.setText(w.change.toString());
+        }
+    }//GEN-LAST:event_changesListValueChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

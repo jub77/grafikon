@@ -19,10 +19,11 @@ public class DiagramChangeSet {
         this.changes = new LinkedList<DiagramChange>();
     }
 
-    public void addChange(DiagramChange change) {
+    public List<DiagramChange> addChange(DiagramChange change) {
         // add change
         // TODO implementation of logic missing
         changes.add(change);
+        return Collections.emptyList();
     }
 
     public List<DiagramChange> getChanges() {

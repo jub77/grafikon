@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.parostroj.timetable.model.changes.ChangesTracker;
+import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
 import net.parostroj.timetable.model.changes.ChangesTrackerListener;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
@@ -54,12 +55,24 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
         // add to changes
         event.accept(transformVisitor);
         DiagramChange change = transformVisitor.getChange();
-        if (_currentChangeSet != null)
-            _currentChangeSet.addChange(change);
+        if (_currentChangeSet == null) {
+            String message = "Current change set is empty.";
+            LOG.log(Level.WARNING, message);
+            throw new IllegalStateException(message);
+        }
+        List<DiagramChange> removedChanges = _currentChangeSet.addChange(change);
+        if (!removedChanges.contains(change))
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_ADDED, _currentChangeSet, change));
+        for (DiagramChange removedChange : removedChanges) {
+            if (removedChange != change)
+                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_REMOVED, _currentChangeSet, removedChange));
+        }
+    }
 
+    private void fireEvent(ChangesTrackerEvent event) {
         // inform listeners
         for (ChangesTrackerListener l : this.listeners) {
-            l.changeReceived(change);
+            l.trackerChanged(event);
         }
     }
 
