@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+
 /**
  * Data about trains names creation a sorting, computing of times.
  *
@@ -11,6 +14,7 @@ public class TrainsData {
     private TextTemplate trainNameTemplate;
     private TextTemplate trainCompleteNameTemplate;
     private Script runningTimeScript;
+    private TrainDiagram diagram;
 
     public TrainsData(TextTemplate trainNameTemplate, TextTemplate trainCompleteNameTemplate, SortPattern trainSortPattern, Script runningTimeScript) {
         this.trainNameTemplate = trainNameTemplate;
@@ -24,7 +28,9 @@ public class TrainsData {
     }
 
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
+        TextTemplate oldValue = this.trainNameTemplate;
         this.trainNameTemplate = trainNameTemplate;
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.name.template", oldValue, this.trainNameTemplate)));
     }
 
     public TextTemplate getTrainCompleteNameTemplate() {
@@ -32,7 +38,9 @@ public class TrainsData {
     }
 
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
+        TextTemplate oldValue = this.trainCompleteNameTemplate;
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.complete.name.template", oldValue, this.trainCompleteNameTemplate)));
     }
 
     public SortPattern getTrainSortPattern() {
@@ -40,7 +48,9 @@ public class TrainsData {
     }
 
     public void setTrainSortPattern(SortPattern trainSortPattern) {
+        SortPattern oldValue = this.trainSortPattern;
         this.trainSortPattern = trainSortPattern;
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.sort.pattern", oldValue, this.trainSortPattern)));
     }
 
     public Script getRunningTimeScript() {
@@ -48,6 +58,12 @@ public class TrainsData {
     }
 
     public void setRunningTimeScript(Script runningTimeScript) {
+        Script oldValue = this.runningTimeScript;
         this.runningTimeScript = runningTimeScript;
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("running.script", oldValue, this.runningTimeScript)));
+    }
+
+    void setDiagram(TrainDiagram diagram) {
+        this.diagram = diagram;
     }
 }

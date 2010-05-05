@@ -64,7 +64,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         this.net = new Net(IdGenerator.getInstance().getId());
         this.trainTypes = new LinkedList<TrainType>();
         this.attributes = new Attributes();
-        this.trainsData = data;
+        this.setTrainsData(data);
         this.listener = new GTListenerTrainDiagramImpl(this);
         this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(new GTEventSender<TrainDiagramListener, TrainDiagramEvent>() {
 
@@ -378,6 +378,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     }
 
     public void setTrainsData(TrainsData trainsData) {
+        if (trainsData != null)
+            trainsData.setDiagram(this);
         this.trainsData = trainsData;
     }
 
