@@ -138,6 +138,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
                 if (event.getSet() == current)
                     ((DefaultListModel)changesList.getModel()).removeElement(new ChangeWrapper(event.getChange()));
                 break;
+            // may be executed more time than it is necessary
+            case CURRENT_SET_CHANGED: case SET_ADDED: case SET_REMOVED: case TRACKING_DISABLED: case TRACKING_ENABLED:
+                this.setTrainDiagram(diagram);
+                break;
         }
     }
 
