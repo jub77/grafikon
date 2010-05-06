@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.changes.DiagramChange;
 
 /**
@@ -7,6 +8,7 @@ import net.parostroj.timetable.model.changes.DiagramChange;
  *
  * @author jub
  */
+@XmlType(propOrder={"type", "action", "objectId", "object"})
 public class LSDiagramChange {
 
     private String type;

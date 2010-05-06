@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 
@@ -13,6 +14,7 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
  * @author jub
  */
 @XmlRootElement(name="change_set")
+@XmlType(propOrder={"version", "changes"})
 public class LSDiagramChangeSet {
 
     private String version;
