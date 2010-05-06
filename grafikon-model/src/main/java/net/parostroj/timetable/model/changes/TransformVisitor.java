@@ -52,12 +52,14 @@ public class TransformVisitor implements EventVisitor {
                 break;
             default:
                 change = new DiagramChange(DiagramChange.Type.DIAGRAM, event.getSource().getId());
+                change.setAction(DiagramChange.Action.MODIFIED);
         }
     }
 
     @Override
     public void visit(NetEvent event) {
         change = new DiagramChange(DiagramChange.Type.NET, event.getSource().getId());
+        change.setAction(DiagramChange.Action.MODIFIED);
     }
 
     @Override

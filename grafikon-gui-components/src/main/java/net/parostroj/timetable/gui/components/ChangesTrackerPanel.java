@@ -60,7 +60,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return String.format("%s, %s, %s", change.getType(), change.getObject(), change.getAction());
+            return String.format("%s, %s, %s", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction());
         }
 
         @Override
@@ -213,10 +213,20 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
             if (w == null)
                 detailsTextArea.setText("");
             else
-                detailsTextArea.setText(w.change.toString());
+                detailsTextArea.setText(this.transformChange(w.change));
         }
     }//GEN-LAST:event_changesListValueChanged
 
+    private String transformChange(DiagramChange change) {
+        StringBuilder b = new StringBuilder();
+        b.append(change.getType()).append(":\n");
+        b.append("  ").append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
+        if (change.getAction() != null)
+            b.append("Akce:\n  ").append(change.getAction()).append('\n');
+        if (change.getDescription() != null)
+            b.append("Popis:\n").append(change.getFormattedDescription());
+        return b.toString();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList changesList;
