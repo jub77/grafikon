@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.changes.DiagramChange;
 
@@ -8,13 +9,15 @@ import net.parostroj.timetable.model.changes.DiagramChange;
  *
  * @author jub
  */
-@XmlType(propOrder={"type", "action", "objectId", "object"})
+@XmlType(propOrder={"type", "action", "objectId", "object", "desc", "params"})
 public class LSDiagramChange {
 
     private String type;
     private String action;
     private String objectId;
     private String object;
+    private String desc;
+    private String[] params;
 
     public LSDiagramChange() {}
 
@@ -23,6 +26,8 @@ public class LSDiagramChange {
         this.action = change.getAction() != null ? change.getAction().name() : null;
         this.objectId = change.getObjectId();
         this.object = change.getObject();
+        this.desc = change.getDescription();
+        this.params = change.getParams();
     }
 
     public String getObject() {
@@ -57,12 +62,30 @@ public class LSDiagramChange {
         this.type = type;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    @XmlElement(name="param")
+    public String[] getParams() {
+        return params;
+    }
+
+    public void setParams(String[] params) {
+        this.params = params;
+    }
+
     public DiagramChange createDiagramChange() {
         DiagramChange change = new DiagramChange();
         change.setType(DiagramChange.Type.valueOf(type));
         if (action != null) change.setAction(DiagramChange.Action.valueOf(action));
         change.setObjectId(objectId);
         change.setObject(object);
+        change.setDescription(desc, params);
         return change;
     }
 }

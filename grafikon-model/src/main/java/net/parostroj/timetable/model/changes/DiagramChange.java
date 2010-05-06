@@ -59,7 +59,7 @@ public class DiagramChange {
     private String objectId;
     private String object;
     private String description;
-    private Object[] params;
+    private String[] params;
 
     public DiagramChange() {}
 
@@ -82,7 +82,7 @@ public class DiagramChange {
         this.description = description;
     }
 
-    public void setDescription(String description, Object... params) {
+    public void setDescription(String description, String... params) {
         this.description = description;
         this.params = params;
     }
@@ -119,12 +119,16 @@ public class DiagramChange {
         this.object = object;
     }
 
-    public Object[] getParams() {
+    public String[] getParams() {
         return params;
     }
 
-    public void setParams(Object[] params) {
+    public void setParams(String[] params) {
         this.params = params;
+    }
+
+    public String getFormattedDescription() {
+        return String.format(getString(description), (Object[])params);
     }
 
     @Override
