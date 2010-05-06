@@ -25,8 +25,63 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
     List<Pair<DiagramChange,Boolean>> addChange(DiagramChange change) {
         // add change
         // TODO implementation of logic missing
-        changes.add(change);
-        return Collections.singletonList(new Pair<DiagramChange, Boolean>(change,Boolean.TRUE));
+        // look for existing changes
+        List<DiagramChange> existing = getChangesForId(change.getObjectId());
+        List<Pair<DiagramChange, Boolean>> returning = new LinkedList<Pair<DiagramChange, Boolean>>();
+        boolean shouldAdd = true;
+        if (existing != null) {
+            for (DiagramChange ex : existing) {
+                // logic
+                shouldAdd &= shouldAdd(change.getSubType(), ex.getSubType());
+                if (shouldRemove(change.getSubType(), ex.getSubType())) {
+                    changes.remove(ex);
+                    returning.add(new Pair<DiagramChange, Boolean>(ex, Boolean.FALSE));
+                }
+            }
+        }
+        if (shouldAdd) {
+            changes.add(change);
+            returning.add(new Pair<DiagramChange, Boolean>(change, Boolean.TRUE));
+        }
+        return returning;
+    }
+
+    private boolean shouldAdd(DiagramChange.SubType added, DiagramChange.SubType existing) {
+        switch (added) {
+            case ADDED:
+                return true;
+            case MODIFIED:
+                return existing != DiagramChange.SubType.ADDED && existing != DiagramChange.SubType.MODIFIED;
+            case MOVED:
+                return existing != DiagramChange.SubType.ADDED && existing != DiagramChange.SubType.MOVED;
+            case REMOVED:
+                return true;
+        }
+        return false;
+    }
+
+    private boolean shouldRemove(DiagramChange.SubType added, DiagramChange.SubType existing) {
+        switch (existing) {
+            case ADDED:
+                return added == DiagramChange.SubType.REMOVED;
+            case MODIFIED:
+                return added == DiagramChange.SubType.REMOVED;
+            case MOVED:
+                return added == DiagramChange.SubType.REMOVED;
+        }
+        return false;
+    }
+
+    private List<DiagramChange> getChangesForId(String id) {
+        List<DiagramChange> result = null;
+        for (DiagramChange change : changes) {
+            if (change.getObjectId().equals(id)) {
+                if (result == null)
+                    result = new LinkedList<DiagramChange>();
+                result.add(change);
+            }
+        }
+        return result;
     }
 
     @Override
