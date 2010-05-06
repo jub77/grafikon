@@ -129,6 +129,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             version = createVersion();
         _currentChangeSet = new DiagramChangeSet(version);
         this.changes.add(_currentChangeSet);
+        this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, _currentChangeSet));
         return _currentChangeSet;
     }
 
@@ -139,7 +140,10 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public void setTrackingEnabled(boolean enabled) {
-        this.enabled = enabled;
+        if (this.enabled != enabled) {
+            this.enabled = enabled;
+            this.fireEvent(new ChangesTrackerEvent(enabled ? ChangesTrackerEvent.Type.TRACKING_ENABLED : ChangesTrackerEvent.Type.TRACKING_DISABLED));
+        }
     }
 
     @Override
@@ -156,8 +160,12 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     public void removeCurrentChangeSet(boolean delete) {
         if (_currentChangeSet != null && delete) {
             changes.remove(_currentChangeSet);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_REMOVED, _currentChangeSet));
         }
-        _currentChangeSet = null;
+        if (_currentChangeSet != null) {
+            _currentChangeSet = null;
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
+        }
     }
 
     private String createVersion() {
@@ -183,8 +191,10 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     public DiagramChangeSet setLastAsCurrent() {
         if (changes.isEmpty()) {
             _currentChangeSet = null;
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         } else {
             _currentChangeSet = changes.get(changes.size() - 1);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED, _currentChangeSet));
         }
         return _currentChangeSet;
     }
