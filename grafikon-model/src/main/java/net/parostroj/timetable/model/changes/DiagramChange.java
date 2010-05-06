@@ -33,12 +33,12 @@ public class DiagramChange {
         }
     }
 
-    public static enum SubType {
+    public static enum Action {
         ADDED("added"), REMOVED("removed"), MODIFIED("modified"), MOVED("moved");
 
         private String key;
 
-        private SubType(String key) {
+        private Action(String key) {
             this.key = key;
         }
 
@@ -55,7 +55,7 @@ public class DiagramChange {
     private static final Logger LOG = Logger.getLogger(DiagramChange.class.getName());
 
     private Type type;
-    private SubType subType;
+    private Action action;
     private String objectId;
     private String object;
     private String description;
@@ -68,10 +68,10 @@ public class DiagramChange {
         this.objectId = objectId;
     }
 
-    public DiagramChange(Type type, SubType subType, String objectId) {
+    public DiagramChange(Type type, Action action, String objectId) {
         this.type = type;
         this.objectId = objectId;
-        this.subType = subType;
+        this.action = action;
     }
 
     public String getDescription() {
@@ -103,12 +103,12 @@ public class DiagramChange {
         this.type = type;
     }
 
-    public SubType getSubType() {
-        return subType;
+    public Action getAction() {
+        return action;
     }
 
-    public void setSubType(SubType subType) {
-        this.subType = subType;
+    public void setAction(Action action) {
+        this.action = action;
     }
 
     public String getObject() {
@@ -129,7 +129,7 @@ public class DiagramChange {
 
     @Override
     public String toString() {
-        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, subType != null ? subType.toString() : "<null>", object, description);
+        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object, description);
     }
 
     static String getString(String key) {

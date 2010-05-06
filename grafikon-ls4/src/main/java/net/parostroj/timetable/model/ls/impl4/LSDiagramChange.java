@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.changes.DiagramChange;
 public class LSDiagramChange {
 
     private String type;
-    private String subType;
+    private String action;
     private String objectId;
     private String object;
 
@@ -18,7 +18,7 @@ public class LSDiagramChange {
 
     public LSDiagramChange(DiagramChange change) {
         this.type = change.getType().name();
-        this.subType = change.getSubType() != null ? change.getSubType().name() : null;
+        this.action = change.getAction() != null ? change.getAction().name() : null;
         this.objectId = change.getObjectId();
         this.object = change.getObject();
     }
@@ -39,12 +39,12 @@ public class LSDiagramChange {
         this.objectId = objectId;
     }
 
-    public String getSubType() {
-        return subType;
+    public String getAction() {
+        return action;
     }
 
-    public void setSubType(String subType) {
-        this.subType = subType;
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public String getType() {
@@ -58,7 +58,7 @@ public class LSDiagramChange {
     public DiagramChange createDiagramChange() {
         DiagramChange change = new DiagramChange();
         change.setType(DiagramChange.Type.valueOf(type));
-        if (subType != null) change.setSubType(DiagramChange.SubType.valueOf(subType));
+        if (action != null) change.setAction(DiagramChange.Action.valueOf(action));
         change.setObjectId(objectId);
         change.setObject(object);
         return change;

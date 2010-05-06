@@ -32,8 +32,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         if (existing != null) {
             for (DiagramChange ex : existing) {
                 // logic
-                shouldAdd &= shouldAdd(change.getSubType(), ex.getSubType());
-                if (shouldRemove(change.getSubType(), ex.getSubType())) {
+                shouldAdd &= shouldAdd(change.getAction(), ex.getAction());
+                if (shouldRemove(change.getAction(), ex.getAction())) {
                     changes.remove(ex);
                     returning.add(new Pair<DiagramChange, Boolean>(ex, Boolean.FALSE));
                 }
@@ -46,28 +46,28 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         return returning;
     }
 
-    private boolean shouldAdd(DiagramChange.SubType added, DiagramChange.SubType existing) {
+    private boolean shouldAdd(DiagramChange.Action added, DiagramChange.Action existing) {
         switch (added) {
             case ADDED:
                 return true;
             case MODIFIED:
-                return existing != DiagramChange.SubType.ADDED && existing != DiagramChange.SubType.MODIFIED;
+                return existing != DiagramChange.Action.ADDED && existing != DiagramChange.Action.MODIFIED;
             case MOVED:
-                return existing != DiagramChange.SubType.ADDED && existing != DiagramChange.SubType.MOVED;
+                return existing != DiagramChange.Action.ADDED && existing != DiagramChange.Action.MOVED;
             case REMOVED:
                 return true;
         }
         return false;
     }
 
-    private boolean shouldRemove(DiagramChange.SubType added, DiagramChange.SubType existing) {
+    private boolean shouldRemove(DiagramChange.Action added, DiagramChange.Action existing) {
         switch (existing) {
             case ADDED:
-                return added == DiagramChange.SubType.REMOVED;
+                return added == DiagramChange.Action.REMOVED;
             case MODIFIED:
-                return added == DiagramChange.SubType.REMOVED;
+                return added == DiagramChange.Action.REMOVED;
             case MOVED:
-                return added == DiagramChange.SubType.REMOVED;
+                return added == DiagramChange.Action.REMOVED;
         }
         return false;
     }
