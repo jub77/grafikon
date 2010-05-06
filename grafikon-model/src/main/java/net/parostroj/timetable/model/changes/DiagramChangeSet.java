@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model.changes;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -9,28 +7,10 @@ import java.util.List;
  *
  * @author jub
  */
-public class DiagramChangeSet {
+public interface DiagramChangeSet {
 
-    private String version;
-    private List<DiagramChange> changes;
+    List<DiagramChange> getChanges();
 
-    public DiagramChangeSet(String version) {
-        this.version = version;
-        this.changes = new LinkedList<DiagramChange>();
-    }
+    String getVersion();
 
-    public List<DiagramChange> addChange(DiagramChange change) {
-        // add change
-        // TODO implementation of logic missing
-        changes.add(change);
-        return Collections.emptyList();
-    }
-
-    public List<DiagramChange> getChanges() {
-        return Collections.unmodifiableList(changes);
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
 }

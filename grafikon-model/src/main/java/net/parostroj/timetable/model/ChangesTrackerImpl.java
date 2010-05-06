@@ -8,16 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.parostroj.timetable.model.changes.ChangesTracker;
-import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
-import net.parostroj.timetable.model.changes.ChangesTrackerListener;
-import net.parostroj.timetable.model.changes.DiagramChange;
-import net.parostroj.timetable.model.changes.DiagramChangeSet;
-import net.parostroj.timetable.model.changes.TrackedCheckVisitor;
-import net.parostroj.timetable.model.changes.TransformVisitor;
+import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * This class tracks changes in the model in order to provides a list
@@ -29,15 +24,15 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     private static final Logger LOG = Logger.getLogger(ChangesTrackerImpl.class.getName());
 
-    private List<DiagramChangeSet> changes;
+    private List<DiagramChangeSetImpl> sets;
     private TrackedCheckVisitor trackedVisitor;
     private TransformVisitor transformVisitor;
     private Set<ChangesTrackerListener> listeners;
-    private DiagramChangeSet _currentChangeSet;
+    private DiagramChangeSetImpl _currentChangeSet;
     private boolean enabled;
 
     ChangesTrackerImpl() {
-        changes = new LinkedList<DiagramChangeSet>();
+        sets = new LinkedList<DiagramChangeSetImpl>();
         trackedVisitor = new TrackedCheckVisitor();
         transformVisitor = new TransformVisitor();
         listeners = new HashSet<ChangesTrackerListener>();
@@ -55,17 +50,22 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
         // add to changes
         event.accept(transformVisitor);
         DiagramChange change = transformVisitor.getChange();
+        this.addChange(change);
+    }
+
+    @Override
+    public void addChange(DiagramChange change) {
         if (_currentChangeSet == null) {
             String message = "Current change set is empty.";
             LOG.log(Level.WARNING, message);
             throw new IllegalStateException(message);
         }
-        List<DiagramChange> removedChanges = _currentChangeSet.addChange(change);
-        if (!removedChanges.contains(change))
-            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_ADDED, _currentChangeSet, change));
-        for (DiagramChange removedChange : removedChanges) {
-            if (removedChange != change)
-                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_REMOVED, _currentChangeSet, removedChange));
+        List<Pair<DiagramChange, Boolean>> arChanges = _currentChangeSet.addChange(change);
+        for (Pair<DiagramChange, Boolean> pair : arChanges) {
+            if (pair.second.booleanValue())
+                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_ADDED, _currentChangeSet, pair.first));
+            else
+                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_REMOVED, _currentChangeSet, pair.first));
         }
     }
 
@@ -108,15 +108,15 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public List<String> getVersions() {
-        List<String> versions = new ArrayList<String>(changes.size());
-        for (DiagramChangeSet set : changes)
+        List<String> versions = new ArrayList<String>(sets.size());
+        for (DiagramChangeSet set : sets)
             versions.add(set.getVersion());
         return versions;
     }
 
     @Override
     public DiagramChangeSet getChangeSet(String version) {
-        for (DiagramChangeSet set : changes) {
+        for (DiagramChangeSet set : sets) {
             if (set.getVersion().equals(version))
                 return set;
         }
@@ -127,8 +127,8 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     public DiagramChangeSet addVersion(String version) {
         if (version == null)
             version = createVersion();
-        _currentChangeSet = new DiagramChangeSet(version);
-        this.changes.add(_currentChangeSet);
+        _currentChangeSet = new DiagramChangeSetImpl(version);
+        this.sets.add(_currentChangeSet);
         this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, _currentChangeSet));
         return _currentChangeSet;
     }
@@ -159,7 +159,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     @Override
     public void removeCurrentChangeSet(boolean delete) {
         if (_currentChangeSet != null && delete) {
-            changes.remove(_currentChangeSet);
+            sets.remove(_currentChangeSet);
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_REMOVED, _currentChangeSet));
         }
         if (_currentChangeSet != null) {
@@ -189,11 +189,11 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public DiagramChangeSet setLastAsCurrent() {
-        if (changes.isEmpty()) {
+        if (sets.isEmpty()) {
             _currentChangeSet = null;
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         } else {
-            _currentChangeSet = changes.get(changes.size() - 1);
+            _currentChangeSet = sets.get(sets.size() - 1);
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED, _currentChangeSet));
         }
         return _currentChangeSet;
@@ -201,6 +201,6 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
 
     @Override
     public List<DiagramChangeSet> getChangeSets() {
-        return Collections.unmodifiableList(changes);
+        return Collections.<DiagramChangeSet>unmodifiableList(sets);
     }
 }
