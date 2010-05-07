@@ -192,7 +192,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         }
 
         Boolean bool = (Boolean) line.getAttribute("line.controlled");
-        if (bool == null || controlledCheckBox.isSelected() != bool.booleanValue())
+        if ((bool == null && controlledCheckBox.isSelected()) || (bool != null && controlledCheckBox.isSelected() != bool.booleanValue()))
             line.setAttribute("line.controlled", controlledCheckBox.isSelected());
 
         // set line class
