@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.model.changes.DiagramChange;
+import net.parostroj.timetable.model.changes.DiagramChange.Action;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.utils.Pair;
 
@@ -32,8 +33,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         if (existing != null) {
             for (DiagramChange ex : existing) {
                 // logic
-                shouldAdd &= shouldAdd(change.getAction(), ex.getAction());
-                if (shouldRemove(change.getAction(), ex.getAction())) {
+                shouldAdd &= shouldAdd(change, ex);
+                if (shouldRemove(change, ex)) {
                     changes.remove(ex);
                     returning.add(new Pair<DiagramChange, Boolean>(ex, Boolean.FALSE));
                 }
@@ -46,28 +47,30 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         return returning;
     }
 
-    private boolean shouldAdd(DiagramChange.Action added, DiagramChange.Action existing) {
-        switch (added) {
+    private boolean shouldAdd(DiagramChange added, DiagramChange existing) {
+        Action existingAction = existing.getAction();
+        switch (added.getAction()) {
             case ADDED:
                 return true;
             case MODIFIED:
-                return existing != DiagramChange.Action.ADDED && existing != DiagramChange.Action.MODIFIED;
+                return existingAction != DiagramChange.Action.ADDED && existingAction != DiagramChange.Action.MODIFIED;
             case MOVED:
-                return existing != DiagramChange.Action.ADDED && existing != DiagramChange.Action.MOVED;
+                return existingAction != DiagramChange.Action.ADDED && existingAction != DiagramChange.Action.MOVED;
             case REMOVED:
                 return true;
         }
         return false;
     }
 
-    private boolean shouldRemove(DiagramChange.Action added, DiagramChange.Action existing) {
-        switch (existing) {
+    private boolean shouldRemove(DiagramChange added, DiagramChange existing) {
+        Action addedAction = added.getAction();
+        switch (existing.getAction()) {
             case ADDED:
-                return added == DiagramChange.Action.REMOVED;
+                return addedAction == DiagramChange.Action.REMOVED;
             case MODIFIED:
-                return added == DiagramChange.Action.REMOVED;
+                return addedAction == DiagramChange.Action.REMOVED;
             case MOVED:
-                return added == DiagramChange.Action.REMOVED;
+                return addedAction == DiagramChange.Action.REMOVED;
         }
         return false;
     }
