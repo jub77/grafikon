@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.event.ItemEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -144,10 +145,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (node.getType() != newType)
             node.setType(newType);
         Boolean bool = (Boolean) node.getAttribute("control.station");
-        if (bool == null || controlCheckBox.isSelected() != bool.booleanValue())
+        if ((bool == null && controlCheckBox.isSelected()) || (bool != null && controlCheckBox.isSelected() != bool.booleanValue()))
             node.setAttribute("control.station", controlCheckBox.isSelected());
         bool = (Boolean) node.getAttribute("trapezoid.sign");
-        if (bool == null || trapezoidCheckBox.isSelected() != bool.booleanValue())
+        if ((bool == null && trapezoidCheckBox.isSelected()) || (bool != null && trapezoidCheckBox.isSelected() != bool.booleanValue()))
             node.setAttribute("trapezoid.sign", trapezoidCheckBox.isSelected());
 
         // length
@@ -159,7 +160,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 if (!length.equals(oldLength))
                     node.setAttribute("length", length);
             } catch (NumberFormatException e) {
-                LOG.warning("Cannot convert length to integer: " + lengthStr);
+                LOG.log(Level.WARNING, "Cannot convert length to integer: {0}", lengthStr);
             }
         } else {
             node.removeAttribute("length");
