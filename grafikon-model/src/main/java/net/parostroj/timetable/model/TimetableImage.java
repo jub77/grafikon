@@ -12,17 +12,24 @@ import java.io.File;
  * 
  * @author jub
  */
-public class TimetableImage {
+public class TimetableImage implements ObjectWithId {
 
+    private final String id;
     private final int imageHeight;
     private final int imageWidth;
     private final String filename;
     private File imageFile;
 
-    public TimetableImage(String filename, int width, int height) {
+    TimetableImage(String id, String filename, int width, int height) {
         this.filename = filename;
         this.imageWidth = width;
         this.imageHeight = height;
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     public String getFilename() {

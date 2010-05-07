@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TimetableImage;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Storage for information about images.
@@ -62,8 +64,8 @@ public class LSImage {
         this.imageWidth = imageWidth;
     }
     
-    public TimetableImage createTimetableImage() {
-        TimetableImage image = new TimetableImage(filename, imageWidth, imageHeight);
+    public TimetableImage createTimetableImage(TrainDiagram diagram) {
+        TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), filename, imageWidth, imageHeight);
         return image;
     }
 }

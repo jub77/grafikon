@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TimetableImage;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Storage for information about images.
@@ -11,14 +13,16 @@ import net.parostroj.timetable.model.TimetableImage;
  * @author jub
  */
 @XmlRootElement(name = "image")
-@XmlType(propOrder = {"filename", "imageWidth", "imageHeight"})
+@XmlType(propOrder = {"id", "filename", "imageWidth", "imageHeight"})
 public class LSImage {
 
+    private String id;
     private String filename;
     private int imageWidth;
     private int imageHeight;
 
     public LSImage(TimetableImage image) {
+        this.id = image.getId();
         this.filename = image.getFilename();
         this.imageHeight = image.getImageHeight();
         this.imageWidth = image.getImageWidth();
@@ -52,9 +56,19 @@ public class LSImage {
     public void setImageWidth(int imageWidth) {
         this.imageWidth = imageWidth;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     
-    public TimetableImage createTimetableImage() {
-        TimetableImage image = new TimetableImage(filename, imageWidth, imageHeight);
+    public TimetableImage createTimetableImage(TrainDiagram diagram) {
+        String newId = this.id != null ? this.id : IdGenerator.getInstance().getId();
+
+        TimetableImage image = diagram.createImage(newId, filename, imageWidth, imageHeight);
         return image;
     }
 }

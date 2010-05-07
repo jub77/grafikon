@@ -54,10 +54,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
                 return true;
             case MODIFIED:
                 return existingAction != DiagramChange.Action.ADDED && existingAction != DiagramChange.Action.MODIFIED;
-            case MOVED:
-                return existingAction != DiagramChange.Action.ADDED && existingAction != DiagramChange.Action.MOVED;
             case REMOVED:
-                return true;
+                return false;
         }
         return false;
     }
@@ -68,8 +66,6 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
             case ADDED:
                 return addedAction == DiagramChange.Action.REMOVED;
             case MODIFIED:
-                return addedAction == DiagramChange.Action.REMOVED;
-            case MOVED:
                 return addedAction == DiagramChange.Action.REMOVED;
         }
         return false;

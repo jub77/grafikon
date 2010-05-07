@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model.changes;
 
+import java.util.Set;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -14,8 +17,9 @@ public class DiagramChange {
 
     public static enum Type {
         DIAGRAM("diagram"), NET("net"), TRAIN("train"), TRAIN_TYPE("train_type"),
-        NODE("node"), LINE("line"), TEXT_ITEM("text_item"), TRAINS_CYCLE("trains_cycle"),
-        ENGINE_CLASS("engine_class");
+        NODE("node"), LINE("line"), TEXT_ITEM("text_item"), IMAGE("image"),
+        TRAINS_CYCLE("trains_cycle"), ENGINE_CLASS("engine_class"),
+        LINE_CLASS("line_class"), ROUTE("route");
 
         private String key;
 
@@ -34,7 +38,7 @@ public class DiagramChange {
     }
 
     public static enum Action {
-        ADDED("added"), REMOVED("removed"), MODIFIED("modified"), MOVED("moved");
+        ADDED("added"), REMOVED("removed"), MODIFIED("modified");
 
         private String key;
 
@@ -138,7 +142,7 @@ public class DiagramChange {
 
     static String getString(String key) {
         try {
-            return ResourceBundle.getBundle("net.parostroj.timetable.net.diagram_change_texts").getString(key);
+            return ResourceBundle.getBundle("net.parostroj.timetable.model.changes.diagram_change_texts").getString(key);
         } catch (MissingResourceException e) {
             LOG.log(Level.WARNING, "Error getting text for key: " + key, e);
             return "MISSING STRING FOR KEY: " + key;

@@ -122,7 +122,7 @@ public class TrainDiagramBuilder {
     }
     
     public void addImage(LSImage lsImage) {
-        TimetableImage image = lsImage.createTimetableImage();
+        TimetableImage image = lsImage.createTimetableImage(diagram);
         diagram.addImage(image);
     }
     

@@ -8,6 +8,7 @@ import java.util.UUID;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
+import net.parostroj.timetable.utils.IdGenerator;
 
 public class LSVisitorBuilder implements LSVisitor {
 
@@ -187,7 +188,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSImage lsImage) {
-        TimetableImage image = new TimetableImage(lsImage.getFilename(), lsImage.getImageWidth(), lsImage.getImageHeight());
+        TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), lsImage.getFilename(), lsImage.getImageWidth(), lsImage.getImageHeight());
         diagram.addImage(image);
     }
 }

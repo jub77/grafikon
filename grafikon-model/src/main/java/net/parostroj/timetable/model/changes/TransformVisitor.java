@@ -2,7 +2,10 @@ package net.parostroj.timetable.model.changes;
 
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -17,49 +20,32 @@ import net.parostroj.timetable.visitors.EventVisitor;
 public class TransformVisitor implements EventVisitor {
 
     private DiagramChange change;
+    private EventToChangeConvert converter = new EventToChangeConvert();
 
     @Override
     public void visit(TrainDiagramEvent event) {
-        DiagramChange.Action st = null;
-        switch (event.getType()) {
-            case TRAIN_ADDED: case TRAIN_REMOVED:
-                change = new DiagramChange(DiagramChange.Type.TRAIN,
-                        event.getType() == GTEventType.TRAIN_ADDED ? DiagramChange.Action.ADDED : DiagramChange.Action.REMOVED,
-                        ((ObjectWithId)event.getObject()).getId());
-                change.setObject(((Train)event.getObject()).getName());
-                break;
-            case TRAINS_CYCLE_ADDED: case TRAINS_CYCLE_REMOVED:
-                change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE,
-                        event.getType() == GTEventType.TRAINS_CYCLE_ADDED ? DiagramChange.Action.ADDED : DiagramChange.Action.REMOVED,
-                        ((ObjectWithId)event.getObject()).getId());
-                change.setObject(((TrainsCycle)event.getObject()).getName());
-                break;
-            case TRAIN_TYPE_ADDED: case TRAIN_TYPE_REMOVED: case TRAIN_TYPE_MOVED:
-                st = event.getType() == GTEventType.TRAIN_TYPE_ADDED ?
-                    DiagramChange.Action.ADDED :
-                    (event.getType() == GTEventType.TRAIN_TYPE_REMOVED ? DiagramChange.Action.REMOVED : DiagramChange.Action.MOVED);
-                change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, st,
-                        ((ObjectWithId)event.getObject()).getId());
-                change.setObject(getTrainTypeStr((TrainType)event.getObject()));
-                break;
-            case ENGINE_CLASS_ADDED: case ENGINE_CLASS_MOVED: case ENGINE_CLASS_REMOVED:
-                st = event.getType() == GTEventType.ENGINE_CLASS_ADDED ?
-                    DiagramChange.Action.ADDED :
-                    (event.getType() == GTEventType.ENGINE_CLASS_REMOVED ? DiagramChange.Action.REMOVED : DiagramChange.Action.MOVED);
-                change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, st,
-                        ((ObjectWithId)event.getObject()).getId());
-                change.setObject(((EngineClass)event.getObject()).getName());
-                break;
-            default:
-                change = new DiagramChange(DiagramChange.Type.DIAGRAM, event.getSource().getId());
-                change.setAction(DiagramChange.Action.MODIFIED);
+        DiagramChange.Type type = converter.getType(event.getType());
+        DiagramChange.Action action = converter.getAction(event.getType());
+        if (type != null) {
+            if (action == null)
+                throw new IllegalArgumentException("Action missing: " + event.getType());
+            change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
+            // get name
+            change.setObject(this.getObjectStr(event.getObject()));
         }
     }
 
     @Override
     public void visit(NetEvent event) {
-        change = new DiagramChange(DiagramChange.Type.NET, event.getSource().getId());
-        change.setAction(DiagramChange.Action.MODIFIED);
+        DiagramChange.Type type = converter.getType(event.getType());
+        DiagramChange.Action action = converter.getAction(event.getType());
+        if (type != null) {
+            if (action == null)
+                throw new IllegalArgumentException("Action missing: " + event.getType());
+            change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
+            // get name
+            change.setObject(this.getObjectStr(event.getObject()));
+        }
     }
 
     @Override
@@ -113,5 +99,29 @@ public class TransformVisitor implements EventVisitor {
 
     private String getTrainTypeStr(TrainType type) {
         return type.getAbbr() + " - " + type.getDesc();
+    }
+
+    private String getObjectStr(Object object) {
+        if (object instanceof Train) {
+            return ((Train)object).getCompleteName();
+        } else if (object instanceof TrainsCycle) {
+            return ((TrainsCycle)object).getName();
+        } else if (object instanceof TrainType) {
+            return this.getTrainTypeStr((TrainType)object);
+        } else if (object instanceof EngineClass) {
+            return ((EngineClass)object).getName();
+        } else if (object instanceof TextItem) {
+            return ((TextItem)object).getName();
+        } else if (object instanceof Line) {
+            Line line = (Line)object;
+            return line.getFrom().getAbbr() + " - " + line.getTo().getAbbr();
+        } else if (object instanceof Node) {
+            return ((Node)object).getName();
+        } else if (object instanceof TimetableImage) {
+            return ((TimetableImage)object).getFilename();
+        } else {
+            throw new IllegalArgumentException("Not known class: " + object.getClass());
+        }
+        
     }
 }

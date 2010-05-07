@@ -3,6 +3,9 @@ package net.parostroj.timetable.gui.components;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TimetableImage;
@@ -65,13 +68,13 @@ public class GTEventOutputVisitor implements EventVisitor {
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
-                if (event.getNode() != null)
-                    str.append("    Node: ").append(event.getNode().getName()).append('\n');
-                if (event.getLineClass() != null)
-                    str.append("    Line class: ").append(event.getLineClass().getName()).append('\n');
-                if (event.getLine() != null) {
-                    str.append("    Line: ").append(event.getLine().getFrom().getName()).append('-');
-                    str.append(event.getLine().getTo().getName()).append('\n');
+                if (event.getObject() instanceof Node)
+                    str.append("    Node: ").append(((Node)event.getObject()).getName()).append('\n');
+                if (event.getObject() instanceof LineClass)
+                    str.append("    Line class: ").append(((LineClass)event.getObject()).getName()).append('\n');
+                if (event.getObject() instanceof Line) {
+                    str.append("    Line: ").append(((Line)event.getObject()).getFrom().getName()).append('-');
+                    str.append(((Line)event.getObject()).getTo().getName()).append('\n');
                 }
                 if (event.getFromIndex() != 0 || event.getToIndex() != 0) {
                     str.append("    From index: ").append(Integer.toString(event.getFromIndex())).append('\n');

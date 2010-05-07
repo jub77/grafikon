@@ -20,6 +20,7 @@ import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.helpers.TimetableImageWrapper;
 import net.parostroj.timetable.gui.helpers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
+import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -211,7 +212,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             try {
                 // get size of the image
                 BufferedImage img = ImageIO.read(chooser.getSelectedFile());
-                TimetableImage image = new TimetableImage(fileName, img.getWidth(), img.getHeight());
+                TimetableImage image = model.getDiagram().createImage(IdGenerator.getInstance().getId(), fileName, img.getWidth(), img.getHeight());
 
                 File tempFile = File.createTempFile("gt_", ".temp");
                 FileChannel ic = new FileInputStream(chooser.getSelectedFile()).getChannel();
@@ -238,7 +239,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         // ask for a new name
         String newName = JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),selected.getFilename());
         if (newName != null && !newName.equals(selected.getFilename())) {
-            TimetableImage newImage = new TimetableImage(newName, selected.getImageWidth(), selected.getImageHeight());
+            TimetableImage newImage = model.getDiagram().createImage(IdGenerator.getInstance().getId(), newName, selected.getImageWidth(), selected.getImageHeight());
             if (checkExistence(newName, selected)) {
                 // show error message and return
                 JOptionPane.showMessageDialog(this,
@@ -247,6 +248,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            newImage.setImageFile(selected.getImageFile());
             // train diagram
             model.getDiagram().removeImage(selected);
             model.getDiagram().addImage(newImage);
@@ -273,7 +275,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
         if (!selected.getImageFile().delete())
-            LOG.finer("Cannot remove temporary file: " + selected.getImageFile().getPath());
+            LOG.log(Level.FINER, "Cannot remove temporary file: {0}", selected.getImageFile().getPath());
     }//GEN-LAST:event_deleteButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

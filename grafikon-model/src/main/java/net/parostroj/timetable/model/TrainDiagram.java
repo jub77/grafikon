@@ -373,6 +373,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         return null;
     }
 
+    public TimetableImage getImageById(String id) {
+        for (TimetableImage image : images) {
+            if (image.getId().equals(id))
+                return image;
+        }
+        return null;
+    }
+
     public TrainsData getTrainsData() {
         return trainsData;
     }
@@ -453,7 +461,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
     /**
      * create new node.
      *
-     * @param id ide
+     * @param id id
      * @param type node type
      * @param name name
      * @param abbr abbreviation
@@ -471,6 +479,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
      */
     public TrainType createTrainType(String id) {
         return new TrainType(id, this);
+    }
+
+    /**
+     * creates new image.
+     *
+     * @param id id
+     * @param filename filename
+     * @param width width of the image in pixels
+     * @param height height of the image in pixels
+     * @return a new image
+     */
+    public TimetableImage createImage(String id, String filename, int width, int height) {
+        return new TimetableImage(id, filename, width, height);
     }
 
     /**
@@ -535,6 +556,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
         if (object != null)
             return object;
         object = getTextItemById(id);
+        if (object != null)
+            return object;
+        object = getImageById(id);
         return object;
     }
 }

@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.events;
 
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
@@ -13,29 +10,17 @@ import net.parostroj.timetable.visitors.EventVisitor;
  */
 public class NetEvent extends GTEvent<Net> {
 
-    private Node node;
-    private Line line;
-    private LineClass lineClass;
+    private Object object;
     private int fromIndex;
     private int toIndex;
 
-    public NetEvent(Net net, GTEventType type, Node node) {
+    public NetEvent(Net net, GTEventType type, Object object) {
         super(net, type);
+        this.object = object;
     }
 
-    public NetEvent(Net net, GTEventType type, Line line) {
-        super(net, type);
-        this.line = line;
-    }
-
-    public NetEvent(Net net, GTEventType type, LineClass lineClass) {
-        super(net, type);
-        this.lineClass = lineClass;
-    }
-
-    public NetEvent(Net net, GTEventType type, LineClass lineClass, int fromIndex, int toIndex) {
-        super(net, type);
-        this.lineClass = lineClass;
+    public NetEvent(Net net, GTEventType type, Object object, int fromIndex, int toIndex) {
+        this(net, type, object);
         this.fromIndex = fromIndex;
         this.toIndex = toIndex;
     }
@@ -44,16 +29,8 @@ public class NetEvent extends GTEvent<Net> {
         super(net, event);
     }
 
-    public Line getLine() {
-        return line;
-    }
-
-    public LineClass getLineClass() {
-        return lineClass;
-    }
-
-    public Node getNode() {
-        return node;
+    public Object getObject() {
+        return object;
     }
 
     public int getFromIndex() {
