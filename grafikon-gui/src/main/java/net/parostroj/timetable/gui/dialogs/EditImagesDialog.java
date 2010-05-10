@@ -263,9 +263,10 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
 
     private void imagesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_imagesListValueChanged
         if (!evt.getValueIsAdjusting()) {
-            renameButton.setEnabled(imagesList.getSelectedIndex() != -1);
-            deleteButton.setEnabled(imagesList.getSelectedIndex() != -1);
-            renameButton.setEnabled(imagesList.getSelectedIndex() != -1);
+            boolean selected = imagesList.getSelectedIndex() != -1;
+            renameButton.setEnabled(selected);
+            deleteButton.setEnabled(selected);
+            renameButton.setEnabled(selected);
         }
     }//GEN-LAST:event_imagesListValueChanged
 
