@@ -111,7 +111,10 @@ public class TimeConverter {
      */
     public static int getHours(int time) {
         time = adjustTimeForRounding(time);
-        return time / 3600;
+        time = time / 3600;
+        if (time == 24)
+            time = 0;
+        return time;
     }
     
     /**
