@@ -81,4 +81,9 @@ public class TrackedCheckVisitor implements EventVisitor {
     public void visit(TextItemEvent event) {
         tracked = true;
     }
+
+    @Override
+    public void visit(EngineClassEvent event) {
+        tracked = true;
+    }
 }

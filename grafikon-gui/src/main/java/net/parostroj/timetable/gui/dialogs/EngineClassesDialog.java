@@ -146,8 +146,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         }
 
         public void addWeightTableRowForSpeed(int speed) {
-            WeightTableRow row = new WeightTableRow(speed);
             EngineClass clazz = getCurrentEngineClass();
+            WeightTableRow row = clazz.createWeightTableRow(speed);
             clazz.addWeightTableRow(row);
             int index = clazz.getWeightTable().indexOf(row);
             this.fireTableRowsInserted(index, index);

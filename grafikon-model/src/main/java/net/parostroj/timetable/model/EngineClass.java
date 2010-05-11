@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import net.parostroj.timetable.model.events.EngineClassEvent;
+import net.parostroj.timetable.model.events.EngineClassListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 
 /**
@@ -14,7 +16,7 @@ public class EngineClass implements ObjectWithId {
     private static final class EmptyWeightTableRow extends WeightTableRow {
 
         public EmptyWeightTableRow() {
-            super(Line.UNLIMITED_SPEED);
+            super(null, Line.UNLIMITED_SPEED);
         }
 
         @Override
@@ -32,15 +34,24 @@ public class EngineClass implements ObjectWithId {
             throw new UnsupportedOperationException();
         }
     }
+
     private static final WeightTableRow EMPTY_ROW = new EmptyWeightTableRow();
     private final String id;
     private String name;
     private List<WeightTableRow> weightTable;
+    private GTListenerSupport<EngineClassListener, EngineClassEvent> listenerSupport;
 
     public EngineClass(String id, String name) {
         this.name = name;
         this.id = id;
         this.weightTable = new LinkedList<WeightTableRow>();
+        this.listenerSupport = new GTListenerSupport<EngineClassListener, EngineClassEvent>(new GTEventSender<EngineClassListener, EngineClassEvent>() {
+
+            @Override
+            public void fireEvent(EngineClassListener listener, EngineClassEvent event) {
+                listener.engineClassChanged(event);
+            }
+        });
     }
 
     public String getName() {
@@ -54,6 +65,10 @@ public class EngineClass implements ObjectWithId {
     @Override
     public String getId() {
         return id;
+    }
+
+    public WeightTableRow createWeightTableRow(int speed) {
+        return new WeightTableRow(this, speed);
     }
 
     public void addWeightTableRow(WeightTableRow row) {
@@ -121,5 +136,26 @@ public class EngineClass implements ObjectWithId {
      */
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    /**
+     * fires event.
+     *
+     * @param event event
+     */
+    protected void fireEvent(EngineClassEvent event) {
+        listenerSupport.fireEvent(event);
+    }
+
+    public void addListener(EngineClassListener listener) {
+        listenerSupport.addListener(listener);
+    }
+
+    public void removeListener(EngineClassListener listener) {
+        listenerSupport.removeListener(listener);
+    }
+
+    public void removeAllListeners() {
+        listenerSupport.removeAllListeners();
     }
 }

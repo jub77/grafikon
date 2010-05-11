@@ -906,7 +906,7 @@ public class Train implements AttributesHolder, ObjectWithId {
      */
     public Tuple<TimeInterval> getFirstUncoveredPart(TrainsCycleType type) {
         List<Tuple<TimeInterval>> tuples = TrainsCycleHelper.getHelper().getAllUncoveredParts(this.getTimeIntervalList(), this.getCyclesIntern(type));
-        return tuples.size() == 0 ? null : tuples.get(0);
+        return tuples.isEmpty() ? null : tuples.get(0);
     }
 
     /**

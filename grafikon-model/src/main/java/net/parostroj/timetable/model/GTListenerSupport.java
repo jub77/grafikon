@@ -27,6 +27,10 @@ class GTListenerSupport<T extends GTListener, E extends GTEvent> {
         this.listeners.remove(listener);
     }
 
+    public void removeAllListeners() {
+        this.listeners.clear();
+    }
+
     public void fireEvent(E event) {
         for (T listener : listeners) {
             sender.fireEvent(listener, event);

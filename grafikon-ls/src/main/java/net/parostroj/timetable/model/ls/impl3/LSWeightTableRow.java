@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.WeightTableRow;
@@ -48,8 +49,8 @@ public class LSWeightTableRow {
         this.weights = weights;
     }
     
-    public WeightTableRow createWeightTableRow(Net net) {
-        WeightTableRow row = new WeightTableRow(speed);
+    public WeightTableRow createWeightTableRow(Net net, EngineClass engineClass) {
+        WeightTableRow row = engineClass.createWeightTableRow(speed);
         if (weights != null)
             for (LSWeightLimit limit : weights) {
                 row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());

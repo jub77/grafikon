@@ -11,10 +11,12 @@ import java.util.Map;
  */
 public class WeightTableRow {
 
+    private final EngineClass engineClass;
     private int speed;
     private Map<LineClass, Integer> weights;
 
-    public WeightTableRow(int speed) {
+    WeightTableRow(EngineClass engineClass, int speed) {
+        this.engineClass = engineClass;
         this.speed = speed;
         weights = new HashMap<LineClass, Integer>();
     }

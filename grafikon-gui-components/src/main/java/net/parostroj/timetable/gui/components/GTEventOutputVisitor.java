@@ -3,14 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TimetableImage;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.visitors.EventVisitor;
@@ -216,6 +209,23 @@ public class GTEventOutputVisitor implements EventVisitor {
     public void visit(TextItemEvent event) {
         try {
             str.append("TextItemEvent[");
+            str.append(event.getSource().getName());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+            }
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visit(EngineClassEvent event) {
+        try {
+            str.append("EngineClassEvent[");
             str.append(event.getSource().getName());
             str.append(']');
             if (full) {
