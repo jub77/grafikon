@@ -140,10 +140,18 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
                 Interval normalized = interval.getInterval().normalize();
                 Line2D line = this.createTrainLineInStation(interval, normalized, timeStep);
+
+                // add shape to collector
+                boolean isCollected = this.isCollectorCollecting(interval.getTrain());
+                if (isCollected)
+                    this.addShapeToCollector(interval, line);
+
                 g.draw(line);
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
                 if (overMidnight != null) {
                     line = this.createTrainLineInStation(interval, overMidnight, timeStep);
+                    if (isCollected)
+                        this.addShapeToCollector(interval, line);
                     g.draw(line);
                 }
             }
