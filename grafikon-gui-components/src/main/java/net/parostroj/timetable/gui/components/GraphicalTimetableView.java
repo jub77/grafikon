@@ -142,7 +142,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         this.createMenuForRoutes(diagram.getRoutes());
         // check current route
         if (event.getType() == GTEventType.ROUTE_REMOVED && event.getObject().equals(this.getRoute())) {
-            if (diagram.getRoutes().size() != 0)
+            if (!diagram.getRoutes().isEmpty())
                 this.setRoute(diagram.getRoutes().get(0));
             else
                 this.setRoute(null);
@@ -474,7 +474,7 @@ private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     if (trainRegionCollector != null) {
         List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());
         if (trainSelector != null) {
-            if (selectedIntervals.size() == 0)
+            if (selectedIntervals.isEmpty())
                 trainSelector.selectTrainInterval(null);
             else {
                 TimeInterval oldInterval = trainSelector.getSelectedTrainInterval();
