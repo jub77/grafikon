@@ -313,11 +313,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
 
     public void addEngineClass(EngineClass engineClass, int position) {
         engineClasses.add(position, engineClass);
+        engineClass.addListener(listener);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_ADDED, engineClass));
     }
 
     public void removeEngineClass(EngineClass engineClass) {
         engineClasses.remove(engineClass);
+        engineClass.removeListener(listener);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_REMOVED, engineClass));
     }
 
