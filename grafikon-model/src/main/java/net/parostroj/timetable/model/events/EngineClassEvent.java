@@ -42,6 +42,6 @@ public class EngineClassEvent extends GTEvent<EngineClass> {
 
     @Override
     public void accept(EventVisitor visitor) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        visitor.visit(this);
     }
 }
