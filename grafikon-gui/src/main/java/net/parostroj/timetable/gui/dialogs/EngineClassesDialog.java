@@ -420,7 +420,6 @@ private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         }
         tableModel.addWeightTableRowForSpeed(speed);
         speedTextField.setText("");
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
 
     } catch (NumberFormatException e) {
         LOG.log(Level.FINEST, "Cannot convert speed string to int.", e);
