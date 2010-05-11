@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.EngineClassEvent;
 import net.parostroj.timetable.model.events.EngineClassListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -21,11 +22,6 @@ public class EngineClass implements ObjectWithId {
 
         @Override
         public void removeWeightInfo(LineClass lineClass) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setSpeed(int speed) {
             throw new UnsupportedOperationException();
         }
 
@@ -59,7 +55,9 @@ public class EngineClass implements ObjectWithId {
     }
 
     public void setName(String name) {
+        String oldName = this.name;
         this.name = name;
+        this.fireEvent(new EngineClassEvent(this, new AttributeChange("name", oldName, name)));
     }
 
     @Override
@@ -78,10 +76,15 @@ public class EngineClass implements ObjectWithId {
             if (row.getSpeed() < currentRow.getSpeed()) {
                 i.previous();
                 i.add(row);
+                this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_ADDED));
                 return;
             }
+            if (row.getSpeed() == currentRow.getSpeed())
+                // do not add duplicate row
+                return;
         }
         weightTable.add(row);
+        this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_ADDED));
     }
 
     public void removeWeightTableRowForSpeed(int speed) {
@@ -89,12 +92,17 @@ public class EngineClass implements ObjectWithId {
             WeightTableRow row = i.next();
             if (row.getSpeed() == speed) {
                 i.remove();
+                this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_REMOVED));
+                return;
             }
         }
     }
 
     public void removeWeightTableRow(int position) {
-        weightTable.remove(position);
+        WeightTableRow removed = weightTable.remove(position);
+        if (removed != null) {
+            this.fireEvent(new EngineClassEvent(this, removed, EngineClassEvent.Type.ROW_REMOVED));
+        }
     }
 
     public WeightTableRow getWeightTableRowForSpeed(int speed) {

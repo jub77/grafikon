@@ -28,6 +28,11 @@ public abstract class GTEvent<T> implements Iterable<GTEvent<?>>{
         this.type = GTEventType.NESTED;
     }
 
+    public GTEvent(T source, AttributeChange change) {
+        this(source, GTEventType.ATTRIBUTE);
+        this.attributeChange = change;
+    }
+
     public T getSource() {
         return source;
     }

@@ -78,6 +78,7 @@ class EventToChangeConvert {
         map.put(GTEventType.TRAIN_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.TRAIN_TYPE_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TRAIN_TYPE_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.WEIGHT_TABLE_MODIFIED, DiagramChange.Action.MODIFIED);
         return map;
     }
 
@@ -134,4 +135,5 @@ class EventToChangeConvert {
     map.put(GTEventType.TRAIN_TYPE_ADDED, null);
     map.put(GTEventType.TRAIN_TYPE_MOVED, null);
     map.put(GTEventType.TRAIN_TYPE_REMOVED, null);
+    map.put(GTEventType.WEIGHT_TABLE_MODIFIED, null);
  */

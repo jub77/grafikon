@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import net.parostroj.timetable.model.events.EngineClassEvent;
 
 /**
  * Weight information row.
@@ -32,18 +33,16 @@ public class WeightTableRow {
     
     public void setWeightInfo(LineClass lineClass, Integer weight) {
         weights.put(lineClass, weight);
+        engineClass.fireEvent(new EngineClassEvent(engineClass, this, EngineClassEvent.Type.ROW_MODIFIED));
     }
     
     public void removeWeightInfo(LineClass lineClass) {
         weights.remove(lineClass);
+        engineClass.fireEvent(new EngineClassEvent(engineClass, this, EngineClassEvent.Type.ROW_MODIFIED));
     }
 
     public int getSpeed() {
         return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 
     @Override
