@@ -279,7 +279,13 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                     ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
+        // get start time
+        int start = TimeConverter.convertFromTextToInt(startTimeTextField.getText());
+        if (start == -1)
+            // midnight if cannot be parsed
+            start = 0;
+
         // create command ...
         CreateTrainCommand createCommand = new CreateTrainCommand(
                 nameTextField.getText(),
@@ -288,7 +294,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                 (Node)fromComboBox.getSelectedItem(),
                 (Node)toComboBox.getSelectedItem(),
                 throughNodes,
-                TimeConverter.convertFromTextToInt(startTimeTextField.getText()),
+                start,
                 (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
                 commentTextField.getText(),
                 dieselCheckBox.isSelected(),

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.3" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
@@ -136,7 +136,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="from.node" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="from.node" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -154,7 +154,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="to.node" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="to.node" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -198,7 +198,7 @@
     <Component class="javax.swing.JButton" name="cancelButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="button.cancel" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="button.cancel" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -208,7 +208,7 @@
     <Component class="javax.swing.JButton" name="okButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="button.ok" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="button.ok" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
