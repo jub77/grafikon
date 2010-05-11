@@ -233,6 +233,10 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                if (event.getTableActionType() != null && event.getWeightTableRow() != null) {
+                    str.append("    Table action type: ").append(event.getTableActionType().toString()).append('\n');
+                    str.append("    Weight table row speed: ").append(Integer.toString(event.getWeightTableRow().getSpeed()));
+                }
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, e.getMessage(), e);
