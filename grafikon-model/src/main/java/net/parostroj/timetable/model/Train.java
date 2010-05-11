@@ -296,7 +296,8 @@ public class Train implements AttributesHolder, ObjectWithId {
     @Override
     public Object removeAttribute(String key) {
         Object o = attributes.remove(key);
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, o, null)));
+        if (o != null)
+            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, o, null)));
         return o;
     }
 
