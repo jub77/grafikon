@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import javax.swing.DefaultListModel;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
 import net.parostroj.timetable.model.changes.ChangesTrackerListener;
 import net.parostroj.timetable.model.changes.DiagramChange;
@@ -60,7 +61,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return String.format("%s, %s, %s", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction());
+            return String.format("%s: %s, %s", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction());
         }
 
         @Override
@@ -222,9 +223,9 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         b.append(change.getType()).append(":\n");
         b.append("  ").append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
         if (change.getAction() != null)
-            b.append("Akce:\n  ").append(change.getAction()).append('\n');
+            b.append(ResourceLoader.getString("tracker.action")).append(":\n  ").append(change.getAction()).append('\n');
         if (change.getDescription() != null)
-            b.append("Popis:\n").append(change.getFormattedDescription());
+            b.append(ResourceLoader.getString("tracker.description")).append(":\n").append(change.getFormattedDescription());
         return b.toString();
     }
 
