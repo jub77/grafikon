@@ -45,7 +45,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private final static int MAX_WIDTH = 10000;
     private final static int WIDTH_STEPS = 10;
     private final static int INITIAL_WIDTH = 4;
-    private final static int SELECTION_RADIUS = 7;
+    private final static int SELECTION_RADIUS = 5;
     private int currentSize;
     private TrainColors trainColors = TrainColors.BY_TYPE;
 
