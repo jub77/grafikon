@@ -131,6 +131,9 @@ public class CopyTrainDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // create copy of the train
         int time = TimeConverter.convertFromTextToInt(timeTextField.getText());
+        if (time == -1)
+            // select midnight if the time is not correct
+            time = 0;
         TrainBuilder builder = new TrainBuilder();
         Train newTrain = builder.createTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train);
 
