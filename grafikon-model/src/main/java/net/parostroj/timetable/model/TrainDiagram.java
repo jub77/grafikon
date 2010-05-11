@@ -142,9 +142,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
 
     public void addTrain(Train train) {
         train.addListener(listener);
-        train.attach();
         this.trains.add(train);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_ADDED, train));
+        train.attach();
     }
 
     public void removeTrain(Train train) {
