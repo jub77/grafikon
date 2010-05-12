@@ -3,8 +3,10 @@ package net.parostroj.timetable.model;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.changes.DiagramChange.Action;
+import net.parostroj.timetable.model.changes.DiagramChangeDescription;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.utils.Pair;
 
@@ -23,26 +25,41 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         this.changes = new LinkedList<DiagramChange>();
     }
 
-    List<Pair<DiagramChange,Boolean>> addChange(DiagramChange change) {
+    List<Pair<DiagramChange, ChangesTrackerEvent.Type>> addChange(DiagramChange change) {
         // add change
         // TODO implementation of logic missing
         // look for existing changes
         List<DiagramChange> existing = getChangesForId(change.getObjectId());
-        List<Pair<DiagramChange, Boolean>> returning = new LinkedList<Pair<DiagramChange, Boolean>>();
+        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> returning = new LinkedList<Pair<DiagramChange, ChangesTrackerEvent.Type>>();
         boolean shouldAdd = true;
+        DiagramChange addTo = null;
         if (existing != null) {
             for (DiagramChange ex : existing) {
                 // logic
-                shouldAdd &= shouldAdd(change, ex);
+                boolean add = shouldAdd(change, ex);
+                if (add) {
+                    if (ex.getAction() == Action.MODIFIED && change.getAction() == Action.MODIFIED)
+                        addTo = ex;
+                }
+                shouldAdd &= add;
                 if (shouldRemove(change, ex)) {
                     changes.remove(ex);
-                    returning.add(new Pair<DiagramChange, Boolean>(ex, Boolean.FALSE));
+                    returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(ex, ChangesTrackerEvent.Type.CHANGE_REMOVED));
                 }
             }
         }
         if (shouldAdd) {
-            changes.add(change);
-            returning.add(new Pair<DiagramChange, Boolean>(change, Boolean.TRUE));
+            if (addTo == null) {
+                changes.add(change);
+                returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(change, ChangesTrackerEvent.Type.CHANGE_ADDED));
+            } else {
+                if (change.getDescriptions() != null) {
+                    for (DiagramChangeDescription d : change.getDescriptions()) {
+                        addTo.addDescription(d);
+                    }
+                    returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(addTo, ChangesTrackerEvent.Type.CHANGE_MODIFIED));
+                }
+            }
         }
         return returning;
     }
@@ -53,9 +70,9 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
             case ADDED:
                 return true;
             case MODIFIED:
-                return existingAction != DiagramChange.Action.ADDED && existingAction != DiagramChange.Action.MODIFIED;
+                return existingAction != DiagramChange.Action.ADDED;
             case REMOVED:
-                return false;
+                return existingAction != DiagramChange.Action.ADDED;
         }
         return false;
     }

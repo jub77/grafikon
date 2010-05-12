@@ -60,12 +60,9 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             LOG.log(Level.WARNING, message);
             throw new IllegalStateException(message);
         }
-        List<Pair<DiagramChange, Boolean>> arChanges = _currentChangeSet.addChange(change);
-        for (Pair<DiagramChange, Boolean> pair : arChanges) {
-            if (pair.second.booleanValue())
-                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_ADDED, _currentChangeSet, pair.first));
-            else
-                this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CHANGE_REMOVED, _currentChangeSet, pair.first));
+        List<Pair<DiagramChange, ChangesTrackerEvent.Type>> arChanges = _currentChangeSet.addChange(change);
+        for (Pair<DiagramChange, ChangesTrackerEvent.Type> pair : arChanges) {
+            this.fireEvent(new ChangesTrackerEvent(pair.second, _currentChangeSet, pair.first));
         }
     }
 
