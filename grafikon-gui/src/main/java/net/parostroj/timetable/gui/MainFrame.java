@@ -18,6 +18,9 @@ import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.views.*;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 
@@ -778,8 +781,15 @@ private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
     // show about dialog
     ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
+    LSFileFactory f = LSFileFactory.getInstance();
+    FileLoadSave fls = null;
+    try {
+        fls = f.createLatestForSave();
+    } catch (LSException e) {
+        LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
+    }
     AboutDialog dialog = new AboutDialog(this, true,
-            String.format(aboutBundle.getString("text"), getVersion()),
+            String.format(aboutBundle.getString("text"), getVersion(), fls == null ? "-" : fls.getSaveVersion()),
             getClass().getResource(aboutBundle.getString("image")), true);
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
