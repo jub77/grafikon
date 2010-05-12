@@ -116,7 +116,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
             }
         }
         versionsList.setModel(model);
-        versionsList.setSelectedIndex(model.getSize() - 1);
+        if (!model.isEmpty()) {
+            Object object = model.getElementAt(model.getSize() - 1);
+            versionsList.setSelectedValue(object, true);
+        }
     }
 
     private void fillChanges(DiagramChangeSet set) {
@@ -173,6 +176,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         setLayout(new java.awt.BorderLayout());
 
         detailsTextArea.setColumns(20);
+        detailsTextArea.setEditable(false);
         detailsTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         detailsTextArea.setLineWrap(true);
         detailsTextArea.setRows(6);
