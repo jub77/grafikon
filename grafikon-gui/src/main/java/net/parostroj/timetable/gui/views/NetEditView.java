@@ -33,20 +33,24 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     /** Creates new form NetEditView */
     public NetEditView() {
         initComponents();
-        // initialize dialogs
-        editNodeDialog = new EditNodeDialog((Frame)this.getTopLevelAncestor());
-        editLineDialog = new EditLineDialog((Frame)this.getTopLevelAncestor(), true);
-        createLineDialog = new CreateLineDialog((Frame)this.getTopLevelAncestor(), true);
         netEditModel = new NetSelectionModel();
         // add net edit model to net view
         netView.setNetEditModel(netEditModel);
         netEditModel.addNetSelectionListener(this);
     }
 
+    private void initializeDialogs() {
+        // initialize dialogs
+        editNodeDialog = new EditNodeDialog((Frame)this.getTopLevelAncestor());
+        editLineDialog = new EditLineDialog((Frame)this.getTopLevelAncestor(), true);
+        createLineDialog = new CreateLineDialog((Frame)this.getTopLevelAncestor(), true);
+    }
+
     /**
      * @param model model to be set
      */
     public void setModel(ApplicationModel model) {
+        this.initializeDialogs();
         this.model = model;
         netView.setModel(model);
         createLineDialog.setModel(model);
