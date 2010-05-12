@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -24,11 +25,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
     private static final Logger LOG = Logger.getLogger(TrainView.class.getName());
-
     private ApplicationModel model;
-
     private Train train;
-
     private EditTrainDialog editDialog;
 
     /**
@@ -37,7 +35,13 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     public TrainView() {
         initComponents();
 
-        editDialog = new EditTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true);
+    }
+
+    private EditTrainDialog getEditTrainDialog() {
+        if (editDialog == null) {
+            editDialog = new EditTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true);
+        }
+        return editDialog;
     }
 
     public void editColumns() {
@@ -87,7 +91,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.updateView();
         this.model.addListener(this);
         ((TrainTableModel)trainTable.getModel()).setModel(model);
-        editDialog.setModel(model);
+        getEditTrainDialog().setModel(model);
     }
 
 
@@ -252,9 +256,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     }// </editor-fold>//GEN-END:initComponents
 
 private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-    editDialog.getSelectedTrainData();
-    editDialog.setLocationRelativeTo(this);
-    editDialog.setVisible(true);
+    getEditTrainDialog().getSelectedTrainData();
+    getEditTrainDialog().setLocationRelativeTo(this);
+    getEditTrainDialog().setVisible(true);
 }//GEN-LAST:event_editButtonActionPerformed
 
 private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
@@ -320,7 +324,7 @@ private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                     }
                     shownColumns.add(ac);
                 } catch (NumberFormatException e) {
-                    LOG.warning("Cannot load columns order for train view: " + cStr);
+                    LOG.log(Level.WARNING, "Cannot load columns order for train view: {0}", cStr);
                 }
             }
         }
