@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
+import java.awt.Frame;
 import java.awt.event.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -70,10 +71,15 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
             }
         });
 
-        editRoutesDialog = new EditRoutesDialog(null, true);
         trainRegionCollector = new TrainRegionCollector(SELECTION_RADIUS);
 
         this.addSizesToMenu();
+    }
+
+    private EditRoutesDialog getRouteDialog() {
+        if (editRoutesDialog == null)
+            editRoutesDialog = new EditRoutesDialog((Frame)this.getTopLevelAncestor(), true);
+        return editRoutesDialog;
     }
 
     private TrainDiagramListenerWithNested currentListener;
@@ -465,8 +471,8 @@ private void routesEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     if (diagram == null) {
         return;
     }
-    editRoutesDialog.setLocationRelativeTo(this.getParent());
-    editRoutesDialog.showDialog(diagram);
+    getRouteDialog().setLocationRelativeTo(this.getParent());
+    getRouteDialog().showDialog(diagram);
 }//GEN-LAST:event_routesEditMenuItemActionPerformed
 
 private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
