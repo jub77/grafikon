@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -29,7 +30,6 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
     public GraphicalTimetableViewWithSave() {
         super();
-        dialog = new SaveGTDialog(null, true);
         
         // extend context menu
         JMenuItem saveMenuItem = new JMenuItem(ResourceLoader.getString("gt.save"));
@@ -49,6 +49,8 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         if (this.getRoute() == null) {
             return;
         }
+        if (dialog == null)
+            dialog = new SaveGTDialog((Frame)this.getTopLevelAncestor(), true);
         dialog.setLocationRelativeTo(this.getParent());
         dialog.setVisible(true);
 
