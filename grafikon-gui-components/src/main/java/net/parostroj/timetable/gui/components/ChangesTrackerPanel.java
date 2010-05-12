@@ -140,6 +140,12 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
                 if (event.getSet() == current)
                     ((DefaultListModel)changesList.getModel()).removeElement(new ChangeWrapper(event.getChange()));
                 break;
+            case CHANGE_MODIFIED:
+                ChangeWrapper w = (ChangeWrapper)changesList.getSelectedValue();
+                if (w != null && w.change == event.getChange()) {
+                    detailsTextArea.setText(this.transformChange(event.getChange()));
+                }
+                break;
             // may be executed more time than it is necessary
             case CURRENT_SET_CHANGED: case SET_ADDED: case SET_REMOVED: case TRACKING_DISABLED: case TRACKING_ENABLED:
                 this.setTrainDiagram(diagram);
@@ -225,10 +231,12 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         b.append("  ").append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
         if (change.getAction() != null)
             b.append(ResourceLoader.getString("tracker.action")).append(":\n  ").append(change.getAction()).append('\n');
-        if (change.getDescriptions() != null)
+        if (change.getDescriptions() != null) {
+            b.append(ResourceLoader.getString("tracker.description")).append(":");
             for (DiagramChangeDescription d : change.getDescriptions()) {
-                b.append(ResourceLoader.getString("tracker.description")).append(":\n").append(d.getFormattedDescription());
+                b.append('\n').append(d.getFormattedDescription());
             }
+        }
         return b.toString();
     }
 
