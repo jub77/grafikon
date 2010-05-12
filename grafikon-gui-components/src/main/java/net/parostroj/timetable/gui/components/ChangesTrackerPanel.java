@@ -6,6 +6,7 @@ import net.parostroj.timetable.model.changes.ChangesTrackerEvent;
 import net.parostroj.timetable.model.changes.ChangesTrackerListener;
 import net.parostroj.timetable.model.changes.DiagramChange;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.changes.DiagramChangeDescription;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 
 /**
@@ -224,8 +225,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         b.append("  ").append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
         if (change.getAction() != null)
             b.append(ResourceLoader.getString("tracker.action")).append(":\n  ").append(change.getAction()).append('\n');
-        if (change.getDescription() != null)
-            b.append(ResourceLoader.getString("tracker.description")).append(":\n").append(change.getFormattedDescription());
+        if (change.getDescriptions() != null)
+            for (DiagramChangeDescription d : change.getDescriptions()) {
+                b.append(ResourceLoader.getString("tracker.description")).append(":\n").append(d.getFormattedDescription());
+            }
         return b.toString();
     }
 

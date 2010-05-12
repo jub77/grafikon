@@ -1,8 +1,7 @@
 package net.parostroj.timetable.model.changes;
 
-import java.util.Set;
-import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -62,8 +61,7 @@ public class DiagramChange {
     private Action action;
     private String objectId;
     private String object;
-    private String description;
-    private String[] params;
+    private List<DiagramChangeDescription> descriptions;
 
     public DiagramChange() {}
 
@@ -76,19 +74,6 @@ public class DiagramChange {
         this.type = type;
         this.objectId = objectId;
         this.action = action;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setDescription(String description, String... params) {
-        this.description = description;
-        this.params = params;
     }
 
     public String getObjectId() {
@@ -123,21 +108,23 @@ public class DiagramChange {
         this.object = object;
     }
 
-    public String[] getParams() {
-        return params;
+    public List<DiagramChangeDescription> getDescriptions() {
+        return descriptions;
     }
 
-    public void setParams(String[] params) {
-        this.params = params;
+    public void setDescriptions(List<DiagramChangeDescription> descriptions) {
+        this.descriptions = descriptions;
     }
 
-    public String getFormattedDescription() {
-        return String.format(getString(description), (Object[])params);
+    public void addDescription(DiagramChangeDescription description) {
+        if (descriptions == null)
+            descriptions = new LinkedList<DiagramChangeDescription>();
+        descriptions.add(description);
     }
 
     @Override
     public String toString() {
-        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object, description);
+        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object);
     }
 
     static String getString(String key) {

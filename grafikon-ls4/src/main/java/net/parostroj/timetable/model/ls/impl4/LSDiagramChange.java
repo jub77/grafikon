@@ -1,23 +1,25 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.changes.DiagramChange;
+import net.parostroj.timetable.model.changes.DiagramChangeDescription;
 
 /**
  * Storage for diagram change.
  *
  * @author jub
  */
-@XmlType(propOrder={"type", "action", "objectId", "object", "desc", "params"})
+@XmlType(propOrder={"type", "action", "objectId", "object", "descs"})
 public class LSDiagramChange {
 
     private String type;
     private String action;
     private String objectId;
     private String object;
-    private String desc;
-    private String[] params;
+    private List<LSDiagramChangeDescription> descs;
 
     public LSDiagramChange() {}
 
@@ -26,8 +28,12 @@ public class LSDiagramChange {
         this.action = change.getAction() != null ? change.getAction().name() : null;
         this.objectId = change.getObjectId();
         this.object = change.getObject();
-        this.desc = change.getDescription();
-        this.params = change.getParams();
+        if (change.getDescriptions() != null) {
+            this.descs = new LinkedList<LSDiagramChangeDescription>();
+            for (DiagramChangeDescription d : change.getDescriptions()) {
+                this.descs.add(new LSDiagramChangeDescription(d));
+            }
+        }
     }
 
     public String getObject() {
@@ -62,21 +68,13 @@ public class LSDiagramChange {
         this.type = type;
     }
 
-    public String getDesc() {
-        return desc;
+    public List<LSDiagramChangeDescription> getDescs() {
+        return descs;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    @XmlElement(name="param")
-    public String[] getParams() {
-        return params;
-    }
-
-    public void setParams(String[] params) {
-        this.params = params;
+    @XmlElement(name="desc")
+    public void setDescs(List<LSDiagramChangeDescription> descs) {
+        this.descs = descs;
     }
 
     public DiagramChange createDiagramChange() {
@@ -85,7 +83,13 @@ public class LSDiagramChange {
         if (action != null) change.setAction(DiagramChange.Action.valueOf(action));
         change.setObjectId(objectId);
         change.setObject(object);
-        change.setDescription(desc, params);
+        if (this.descs != null) {
+            List<DiagramChangeDescription> ds = new LinkedList<DiagramChangeDescription>();
+            for (LSDiagramChangeDescription d : this.descs) {
+                ds.add(d.createDiagramChangeDescription());
+            }
+            change.setDescriptions(ds);
+        }
         return change;
     }
 }

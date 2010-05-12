@@ -1,14 +1,6 @@
 package net.parostroj.timetable.model.changes;
 
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TimetableImage;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
 
@@ -32,6 +24,11 @@ public class TransformVisitor implements EventVisitor {
             change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
+        } else {
+            change = new DiagramChange(DiagramChange.Type.DIAGRAM, action, event.getSource().getId());
+            if (action == null)
+                throw new IllegalArgumentException("Action missing: " + event.getType());
+            this.addDescription(event);
         }
     }
 
@@ -68,6 +65,7 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TRAIN, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
     }
 
     @Override
@@ -129,6 +127,17 @@ public class TransformVisitor implements EventVisitor {
         } else {
             throw new IllegalArgumentException("Not known class: " + object.getClass());
         }
-        
+    }
+
+    private void addDescription(GTEvent<?> event) {
+        String desc = converter.getDesc(event.getType());
+        switch (event.getType()) {
+            case ATTRIBUTE:
+                AttributeChange aC = event.getAttributeChange();
+                String oldValue = aC.getOldValue() != null ? aC.getOldValue().toString() : DiagramChange.getString("empty_attribute");
+                String newValue = aC.getNewValue() != null ? aC.getNewValue().toString() : DiagramChange.getString("empty_attribute");
+                change.addDescription(new DiagramChangeDescription(desc, aC.getName(), oldValue, newValue));
+                break;
+        }
     }
 }
