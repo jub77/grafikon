@@ -24,6 +24,8 @@ public interface ChangesTracker {
 
     public DiagramChangeSet addVersion(String version, String author, Calendar date);
 
+    public DiagramChangeSet updateCurrentChangeSet(String version, String author, Calendar date);
+
     public String getCurrentVersion();
 
     public DiagramChangeSet getCurrentChangeSet();
@@ -32,7 +34,7 @@ public interface ChangesTracker {
 
     public void addChange(DiagramChange change);
 
-    public void removeCurrentChangeSet(boolean delete);
+    public DiagramChangeSet removeCurrentChangeSet(boolean delete);
 
     public void setTrackingEnabled(boolean enabled);
 

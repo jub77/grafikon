@@ -14,13 +14,7 @@ public interface DiagramChangeSet {
 
     String getVersion();
 
-    void setVersion(String version);
-
     String getAuthor();
     
-    void setAuthor(String author);
-
     Calendar getDate();
-
-    void setDate(Calendar date);
 }

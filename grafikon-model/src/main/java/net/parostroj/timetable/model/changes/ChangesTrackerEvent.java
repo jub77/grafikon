@@ -7,7 +7,7 @@ package net.parostroj.timetable.model.changes;
  */
 public class ChangesTrackerEvent {
     public static enum Type {
-        CHANGE_MODIFIED, CHANGE_ADDED, CHANGE_REMOVED, SET_ADDED, SET_REMOVED, CURRENT_SET_CHANGED, TRACKING_ENABLED, TRACKING_DISABLED;
+        CHANGE_MODIFIED, CHANGE_ADDED, CHANGE_REMOVED, SET_ADDED, SET_REMOVED, CURRENT_SET_CHANGED, TRACKING_ENABLED, TRACKING_DISABLED, SET_CHANGED;
     }
 
     private Type type;

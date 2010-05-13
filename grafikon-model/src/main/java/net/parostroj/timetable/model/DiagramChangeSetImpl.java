@@ -117,18 +117,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
     }
 
     @Override
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    @Override
     public String getAuthor() {
         return this.author;
-    }
-
-    @Override
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     @Override
@@ -136,8 +126,15 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
         return this.date;
     }
 
-    @Override
-    public void setDate(Calendar date) {
+    void setAuthor(String author) {
+        this.author = author;
+    }
+
+    void setDate(Calendar date) {
         this.date = date;
+    }
+
+    void setVersion(String version) {
+        this.version = version;
     }
 }

@@ -155,7 +155,8 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     }
 
     @Override
-    public void removeCurrentChangeSet(boolean delete) {
+    public DiagramChangeSet removeCurrentChangeSet(boolean delete) {
+        DiagramChangeSet returned = _currentChangeSet;
         if (_currentChangeSet != null && delete) {
             sets.remove(_currentChangeSet);
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_REMOVED, _currentChangeSet));
@@ -164,6 +165,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             _currentChangeSet = null;
             this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.CURRENT_SET_CHANGED));
         }
+        return returned;
     }
 
     private String createVersion() {
@@ -200,5 +202,15 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     @Override
     public List<DiagramChangeSet> getChangeSets() {
         return Collections.<DiagramChangeSet>unmodifiableList(sets);
+    }
+
+    @Override
+    public DiagramChangeSet updateCurrentChangeSet(String version, String author, Calendar date) {
+        if (_currentChangeSet != null) {
+            _currentChangeSet.setAuthor(author);
+            _currentChangeSet.setDate(date);
+            _currentChangeSet.setVersion(version);
+        }
+        return _currentChangeSet;
     }
 }

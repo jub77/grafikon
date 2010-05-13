@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.JFileChooser;
@@ -12,6 +13,8 @@ import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.changes.ChangesTracker;
+import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
@@ -25,6 +28,14 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class ModelUtils {
 
     public static void saveModelData(ApplicationModel model, File file) throws LSException {
+        // update author and date before save
+        ChangesTracker tracker = model.getDiagram().getChangesTracker();
+        DiagramChangeSet set = tracker.getCurrentChangeSet();
+        if (set != null && tracker.isTrackingEnabled()) {
+            tracker.updateCurrentChangeSet(set.getVersion(),
+                    model.getProgramSettings().getUserNameOrSystemUser(),
+                    Calendar.getInstance());
+        }
         FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();
         ls.save(model.getDiagram(), file);
     }
