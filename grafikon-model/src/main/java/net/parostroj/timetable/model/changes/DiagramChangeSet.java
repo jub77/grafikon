@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.changes;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -13,4 +14,13 @@ public interface DiagramChangeSet {
 
     String getVersion();
 
+    void setVersion(String version);
+
+    String getAuthor();
+    
+    void setAuthor(String author);
+
+    Calendar getDate();
+
+    void setDate(Calendar date);
 }

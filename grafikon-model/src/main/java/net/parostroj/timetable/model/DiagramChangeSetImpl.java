@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,8 @@ import net.parostroj.timetable.utils.Pair;
 class DiagramChangeSetImpl implements DiagramChangeSet {
 
     private String version;
+    private String author;
+    private Calendar date;
     private List<DiagramChange> changes;
 
     public DiagramChangeSetImpl(String version) {
@@ -109,5 +112,30 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
     @Override
     public String getVersion() {
         return this.version;
+    }
+
+    @Override
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getAuthor() {
+        return this.author;
+    }
+
+    @Override
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    @Override
+    public Calendar getDate() {
+        return this.date;
+    }
+
+    @Override
+    public void setDate(Calendar date) {
+        this.date = date;
     }
 }

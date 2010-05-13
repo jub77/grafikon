@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -89,6 +90,9 @@ public class TrainDiagramBuilder {
 
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {
         diagram.getChangesTracker().addVersion(lsChangeSet.getVersion());
+        DiagramChangeSet set = diagram.getChangesTracker().getCurrentChangeSet();
+        set.setAuthor(lsChangeSet.getAuthor());
+        set.setDate(lsChangeSet.getDate());
         for (LSDiagramChange change : lsChangeSet.getChanges()) {
             diagram.getChangesTracker().addChange(change.createDiagramChange());
         }
