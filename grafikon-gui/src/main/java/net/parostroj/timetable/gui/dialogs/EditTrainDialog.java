@@ -290,7 +290,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         train.setType((TrainType)typeComboBox.getSelectedItem());
     if (!train.getAttribute("diesel").equals(dieselCheckBox.isSelected()))
         train.setAttribute("diesel", dieselCheckBox.isSelected());
-    if (!train.getAttribute("electric").equals(dieselCheckBox.isSelected()))
+    if (!train.getAttribute("electric").equals(electricCheckBox.isSelected()))
         train.setAttribute("electric", electricCheckBox.isSelected());
     if (showLengthCheckBox.isSelected() && !Boolean.TRUE.equals(train.getAttribute("show.station.length")))
         train.setAttribute("show.station.length", Boolean.TRUE);
