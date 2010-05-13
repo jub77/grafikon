@@ -303,6 +303,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
@@ -488,6 +489,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         languageMenu.add(systemLanguageRadioButtonMenuItem);
 
         fileMenu.add(languageMenu);
+
+        jMenuItem1.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMenuItem1);
         fileMenu.add(separator4);
 
         exitMenuItem.setAction(new ExitAction(model, this));
@@ -814,6 +823,14 @@ private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
     dialog.dispose();
 }//GEN-LAST:event_textItemsMenuItemActionPerformed
 
+private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    // program settings
+    ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
+    dialog.setLocationRelativeTo(this);
+    dialog.showDialog(model);
+    dialog.dispose();
+}//GEN-LAST:event_jMenuItem1ActionPerformed
+
     private void setSelectedLocale() {
         if (locale == null)
             systemLanguageRadioButtonMenuItem.setSelected(true);
@@ -950,6 +967,7 @@ private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JMenuItem fileSaveMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenuItem lineClassesMenuItem;

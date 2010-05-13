@@ -38,6 +38,7 @@ public class ApplicationModel implements StorableGuiData {
     private OutputCategory outputCategory;
     private Map<String, File> outputTemplates;
     private Locale outputLocale;
+    private ProgramSettings programSettings;
     
     /**
      * Default constructor.
@@ -50,6 +51,7 @@ public class ApplicationModel implements StorableGuiData {
         mediator.addColleague(collegue);
         mediator.addColleague(new ApplicationModelColleague(this));
         outputTemplates = new HashMap<String, File>();
+        programSettings = new ProgramSettings();
     }
 
     /**
@@ -249,11 +251,16 @@ public class ApplicationModel implements StorableGuiData {
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setString("output.templates", getSerializedOutputTemplates());
+        if (programSettings.getUserName() != null)
+            prefs.setString("user.name", programSettings.getUserName());
+        else
+            prefs.remove("user.name");
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         deserializeOutputTemplates(prefs.getString("output.templates", ""));
+        programSettings.setUserName(prefs.getString("user.name", null));
     }
 
     private String getSerializedOutputTemplates() {
@@ -276,5 +283,13 @@ public class ApplicationModel implements StorableGuiData {
             String[] parts = entry.split(",");
             outputTemplates.put(parts[0], new File(parts[1]));
         }
+    }
+
+    public ProgramSettings getProgramSettings() {
+        return programSettings;
+    }
+
+    public void setProgramSettings(ProgramSettings programSettings) {
+        this.programSettings = programSettings;
     }
 }
