@@ -462,7 +462,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         if (changesTrackingCheckBox.isSelected() != diagram.getChangesTracker().isTrackingEnabled()) {
             if (changesTrackingCheckBox.isSelected() && !diagram.getChangesTracker().isTrackingEnabled() &&
                     diagram.getChangesTracker().getCurrentChangeSet() == null) {
-                diagram.getChangesTracker().addVersion(null);
+                diagram.getChangesTracker().addVersion(null, null, null);
                 diagram.getChangesTracker().setLastAsCurrent();
             }
             diagram.getChangesTracker().setTrackingEnabled(changesTrackingCheckBox.isSelected());

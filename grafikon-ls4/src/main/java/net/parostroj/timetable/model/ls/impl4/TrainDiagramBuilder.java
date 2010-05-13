@@ -89,10 +89,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {
-        diagram.getChangesTracker().addVersion(lsChangeSet.getVersion());
-        DiagramChangeSet set = diagram.getChangesTracker().getCurrentChangeSet();
-        set.setAuthor(lsChangeSet.getAuthor());
-        set.setDate(lsChangeSet.getDate());
+        diagram.getChangesTracker().addVersion(lsChangeSet.getVersion(), lsChangeSet.getAuthor(), lsChangeSet.getDate());
         for (LSDiagramChange change : lsChangeSet.getChanges()) {
             diagram.getChangesTracker().addChange(change.createDiagramChange());
         }
@@ -144,7 +141,7 @@ public class TrainDiagramBuilder {
         // it would also track changes caused by loading of the diagram
         diagram.getChangesTracker().setTrackingEnabled(trackChanges);
         if (trackChanges) {
-            diagram.getChangesTracker().addVersion(null);
+            diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
 

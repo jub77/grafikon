@@ -23,8 +23,10 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
     private Calendar date;
     private List<DiagramChange> changes;
 
-    public DiagramChangeSetImpl(String version) {
+    public DiagramChangeSetImpl(String version, String author, Calendar date) {
         this.version = version;
+        this.author = author;
+        this.date = date;
         this.changes = new LinkedList<DiagramChange>();
     }
 

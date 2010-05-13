@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.changes;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public interface ChangesTracker {
 
     public DiagramChangeSet getChangeSet(String version);
 
-    public DiagramChangeSet addVersion(String version);
+    public DiagramChangeSet addVersion(String version, String author, Calendar date);
 
     public String getCurrentVersion();
 

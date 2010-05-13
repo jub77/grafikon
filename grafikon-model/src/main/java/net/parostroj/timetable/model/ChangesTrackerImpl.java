@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -121,10 +122,10 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     }
 
     @Override
-    public DiagramChangeSet addVersion(String version) {
+    public DiagramChangeSet addVersion(String version, String author, Calendar date) {
         if (version == null)
             version = createVersion();
-        _currentChangeSet = new DiagramChangeSetImpl(version);
+        _currentChangeSet = new DiagramChangeSetImpl(version, author, date);
         this.sets.add(_currentChangeSet);
         this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_ADDED, _currentChangeSet));
         return _currentChangeSet;
