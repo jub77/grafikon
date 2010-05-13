@@ -190,7 +190,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
             // save diagram change sets
             for (String version : diagram.getChangesTracker().getVersions()) {
                 DiagramChangeSet set = diagram.getChangesTracker().getChangeSet(version);
-                this.save(zipOutput, this.createEntryName(DATA_CHANGES, "xml", cnt++), new LSDiagramChangeSet(set));
+                if (!set.getChanges().isEmpty())
+                    this.save(zipOutput, this.createEntryName(DATA_CHANGES, "xml", cnt++), new LSDiagramChangeSet(set));
             }
             cnt = 0;
             // save trains cycles
