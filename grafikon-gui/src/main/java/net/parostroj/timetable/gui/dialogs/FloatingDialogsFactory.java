@@ -142,7 +142,21 @@ public class FloatingDialogsFactory {
                     panel.setTrainDiagram(event.getModel().getDiagram());
             }
         });
-        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker");
+        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
+
+            @Override
+            public void saveToPreferences(AppPreferences prefs) {
+                super.saveToPreferences(prefs);
+                prefs.setInt(createStorageKey("divider"), panel.getDividerLocation());
+            }
+
+            @Override
+            public void loadFromPreferences(AppPreferences prefs) {
+                super.loadFromPreferences(prefs);
+                int divider = prefs.getInt(createStorageKey("divider"), panel.getDividerLocation());
+                panel.setDividerLocation(divider);
+            }
+        };
         return dialog;
     }
 

@@ -27,7 +27,9 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return current ? String.format("%s*", set.getVersion()) : set.getVersion();
+            return String.format("%s%s(%s,%s)", current ? "*" : "",
+                    set.getVersion(), set.getAuthor() != null ? set.getAuthor() : "-",
+                    set.getDate() != null ? set.getDate().toString() : "-");
         }
 
         @Override
@@ -185,8 +187,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         add(scrollPane1, java.awt.BorderLayout.SOUTH);
 
+        scrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         versionsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        versionsList.setPrototypeCellValue("mmmmmmm");
+        versionsList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmm");
         versionsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 versionsListValueChanged(evt);
@@ -195,6 +199,8 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         scrollPane2.setViewportView(versionsList);
 
         splitPane.setLeftComponent(scrollPane2);
+
+        scrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         changesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         changesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -242,6 +248,14 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
             }
         }
         return b.toString();
+    }
+
+    public Integer getDividerLocation() {
+        return splitPane.getDividerLocation();
+    }
+
+    public void setDividerLocation(int divider) {
+        splitPane.setDividerLocation(divider);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
