@@ -2,6 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.TrainEvent;
 
 /**
  * Time interval.
@@ -349,12 +351,21 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     @Override
     public void setAttribute(String key, Object value) {
+        Object oldValue = attributes.get(key);
         attributes.put(key, value);
+        train.fireEvent(new TrainEvent(train,
+                new AttributeChange(key, oldValue, value),
+                train.getTimeIntervalList().indexOf(this)));
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        Object oldValue = attributes.remove(key);
+        if (oldValue != null)
+            train.fireEvent(new TrainEvent(train,
+                    new AttributeChange(key, oldValue, null),
+                    train.getTimeIntervalList().indexOf(this)));
+        return oldValue;
     }
     
     public boolean isNodeOwner() {

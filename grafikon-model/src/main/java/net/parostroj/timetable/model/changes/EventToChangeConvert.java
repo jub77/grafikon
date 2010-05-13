@@ -68,6 +68,7 @@ class EventToChangeConvert {
         map.put(GTEventType.TECHNOLOGICAL, DiagramChange.Action.MODIFIED);
         map.put(GTEventType.TEXT_ITEM_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TEXT_ITEM_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.TIME_INTERVAL_ATTRIBUTE, DiagramChange.Action.MODIFIED);
         map.put(GTEventType.TIME_INTERVAL_LIST, DiagramChange.Action.MODIFIED);
         map.put(GTEventType.TRACK_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TRACK_ATTRIBUTE, DiagramChange.Action.MODIFIED);
@@ -108,6 +109,7 @@ class EventToChangeConvert {
         map.put(GTEventType.TEXT_ITEM_MOVED, null);
         map.put(GTEventType.TEXT_ITEM_REMOVED, null);
         map.put(GTEventType.TIME_INTERVAL_ADDED, null);
+        map.put(GTEventType.TIME_INTERVAL_ATTRIBUTE, null);
         map.put(GTEventType.TIME_INTERVAL_LIST, null);
         map.put(GTEventType.TIME_INTERVAL_REMOVED, null);
         map.put(GTEventType.TIME_INTERVAL_UPDATED, null);
@@ -164,6 +166,7 @@ class EventToChangeConvert {
     map.put(GTEventType.TEXT_ITEM_MOVED, null);
     map.put(GTEventType.TEXT_ITEM_REMOVED, null);
     map.put(GTEventType.TIME_INTERVAL_ADDED, null);
+    map.put(GTEventType.TIME_INTERVAL_ATTRIBUTE, null);
     map.put(GTEventType.TIME_INTERVAL_LIST, null);
     map.put(GTEventType.TIME_INTERVAL_REMOVED, null);
     map.put(GTEventType.TIME_INTERVAL_UPDATED, null);

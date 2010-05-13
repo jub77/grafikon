@@ -59,7 +59,7 @@ public class TrackedCheckVisitor implements EventVisitor {
     @Override
     public void visit(TrainEvent event) {
         switch(event.getType()) {
-            case ATTRIBUTE: case TECHNOLOGICAL: case TIME_INTERVAL_LIST:
+            case ATTRIBUTE: case TECHNOLOGICAL: case TIME_INTERVAL_LIST: case TIME_INTERVAL_ATTRIBUTE:
                 tracked = true;
                 break;
             default:

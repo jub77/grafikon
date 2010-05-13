@@ -34,6 +34,12 @@ public class TrainEvent extends GTEvent<Train> {
         this.cycleItem = cycleItem;
     }
 
+    public TrainEvent(Train train, AttributeChange attributeChange, int changedInterval) {
+        this(train, GTEventType.TIME_INTERVAL_ATTRIBUTE);
+        setAttributeChange(attributeChange);
+        this.changedInterval = changedInterval;
+    }
+
     public TrainEvent(Train train, TimeIntervalListType type, int changedInterval, int intervalChangeStart) {
         this(train, GTEventType.TIME_INTERVAL_LIST);
         this.timeIntervalListType = type;
