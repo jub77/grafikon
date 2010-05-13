@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model.changes;
 
-import java.util.Calendar;
-
 /**
  * Details of diagram change.
  *
@@ -11,7 +9,6 @@ public class DiagramChangeDescription {
 
     private String description;
     private String[] params;
-    private Calendar date;
 
     public DiagramChangeDescription(String description) {
         this.description = description;
@@ -20,14 +17,6 @@ public class DiagramChangeDescription {
     public DiagramChangeDescription(String description, String... params) {
         this.description = description;
         this.params = params;
-    }
-
-    public Calendar getDate() {
-        return date;
-    }
-
-    public void setDate(Calendar date) {
-        this.date = date;
     }
 
     public String getDescription() {
