@@ -148,6 +148,7 @@ public class FloatingDialogsFactory {
             public void saveToPreferences(AppPreferences prefs) {
                 super.saveToPreferences(prefs);
                 prefs.setInt(createStorageKey("divider"), panel.getDividerLocation());
+                prefs.setInt(createStorageKey("divider2"), panel.getDivider2Location());
             }
 
             @Override
@@ -155,6 +156,8 @@ public class FloatingDialogsFactory {
                 super.loadFromPreferences(prefs);
                 int divider = prefs.getInt(createStorageKey("divider"), panel.getDividerLocation());
                 panel.setDividerLocation(divider);
+                divider = prefs.getInt(createStorageKey("divider2"), panel.getDivider2Location());
+                panel.setDivider2Location(divider);
             }
         };
         return dialog;

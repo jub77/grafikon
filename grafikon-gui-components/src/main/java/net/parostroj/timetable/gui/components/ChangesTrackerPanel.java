@@ -179,25 +179,19 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        detailsTextArea = new javax.swing.JTextArea();
+        splitPane2 = new javax.swing.JSplitPane();
         splitPane = new javax.swing.JSplitPane();
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         versionsList = new javax.swing.JList();
         javax.swing.JScrollPane scrollPane3 = new javax.swing.JScrollPane();
         changesList = new javax.swing.JList();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
+        detailsTextArea = new javax.swing.JTextArea();
 
         setLayout(new java.awt.BorderLayout());
 
-        detailsTextArea.setColumns(20);
-        detailsTextArea.setEditable(false);
-        detailsTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
-        detailsTextArea.setLineWrap(true);
-        detailsTextArea.setRows(6);
-        detailsTextArea.setWrapStyleWord(true);
-        scrollPane1.setViewportView(detailsTextArea);
-
-        add(scrollPane1, java.awt.BorderLayout.SOUTH);
+        splitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        splitPane2.setResizeWeight(0.75);
 
         scrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -224,7 +218,19 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         splitPane.setRightComponent(scrollPane3);
 
-        add(splitPane, java.awt.BorderLayout.CENTER);
+        splitPane2.setLeftComponent(splitPane);
+
+        detailsTextArea.setColumns(20);
+        detailsTextArea.setEditable(false);
+        detailsTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
+        detailsTextArea.setLineWrap(true);
+        detailsTextArea.setRows(6);
+        detailsTextArea.setWrapStyleWord(true);
+        scrollPane1.setViewportView(detailsTextArea);
+
+        splitPane2.setRightComponent(scrollPane1);
+
+        add(splitPane2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void versionsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_versionsListValueChanged
@@ -249,14 +255,18 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
     private String transformChange(DiagramChange change) {
         StringBuilder b = new StringBuilder();
-        b.append(change.getType()).append(":\n");
-        b.append("  ").append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
+        b.append(change.getType()).append(": ");
+        b.append(change.getObject() != null ? change.getObject() : change.getType()).append('\n');
         if (change.getAction() != null)
-            b.append(ResourceLoader.getString("tracker.action")).append(":\n  ").append(change.getAction()).append('\n');
+            b.append(ResourceLoader.getString("tracker.action")).append(": ").append(change.getAction()).append('\n');
         if (change.getDescriptions() != null) {
-            b.append(ResourceLoader.getString("tracker.description")).append(":");
+            boolean endl = false;
             for (DiagramChangeDescription d : change.getDescriptions()) {
-                b.append('\n').append(d.getFormattedDescription());
+                if (endl)
+                    b.append('\n');
+                else
+                    endl = true;
+                b.append(d.getFormattedDescription());
             }
         }
         return b.toString();
@@ -270,10 +280,19 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         splitPane.setDividerLocation(divider);
     }
 
+    public Integer getDivider2Location() {
+        return splitPane2.getDividerLocation();
+    }
+
+    public void setDivider2Location(int divider) {
+        splitPane2.setDividerLocation(divider);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList changesList;
     private javax.swing.JTextArea detailsTextArea;
     private javax.swing.JSplitPane splitPane;
+    private javax.swing.JSplitPane splitPane2;
     private javax.swing.JList versionsList;
     // End of variables declaration//GEN-END:variables
 }
