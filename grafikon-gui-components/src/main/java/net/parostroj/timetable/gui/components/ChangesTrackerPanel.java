@@ -27,9 +27,13 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return String.format("%s%s(%s,%s)", current ? "*" : "",
+            String date = "-";
+            if (set.getDate() != null) {
+                date = String.format("%1$td.%1$tm.%1$tY %1$tH:%1$tM", set.getDate());
+            }
+            return String.format("%s%s (%s,%s)", current ? "*" : "",
                     set.getVersion(), set.getAuthor() != null ? set.getAuthor() : "-",
-                    set.getDate() != null ? set.getDate().toString() : "-");
+                    date);
         }
 
         @Override
@@ -149,6 +153,14 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
                 ChangeWrapper w = (ChangeWrapper)changesList.getSelectedValue();
                 if (w != null && w.change == event.getChange()) {
                     detailsTextArea.setText(this.transformChange(event.getChange()));
+                }
+                break;
+            case SET_MODIFIED:
+                ChangeSetWrapper sw = new ChangeSetWrapper(event.getSet(), null);
+                DefaultListModel dlm = (DefaultListModel)versionsList.getModel();
+                int index = dlm.indexOf(sw);
+                if (index != -1) {
+                    dlm.setElementAt(dlm.getElementAt(index), index);
                 }
                 break;
             // may be executed more time than it is necessary

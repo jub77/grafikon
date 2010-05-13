@@ -210,6 +210,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             _currentChangeSet.setAuthor(author);
             _currentChangeSet.setDate(date);
             _currentChangeSet.setVersion(version);
+            this.fireEvent(new ChangesTrackerEvent(ChangesTrackerEvent.Type.SET_MODIFIED, _currentChangeSet));
         }
         return _currentChangeSet;
     }

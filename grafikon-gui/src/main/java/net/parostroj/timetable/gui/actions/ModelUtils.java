@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
@@ -27,14 +30,26 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ModelUtils {
 
-    public static void saveModelData(ApplicationModel model, File file) throws LSException {
+    private static final Logger LOG = Logger.getLogger(ModelUtils.class.getName());
+
+    public static void saveModelData(final ApplicationModel model, File file) throws LSException {
         // update author and date before save
-        ChangesTracker tracker = model.getDiagram().getChangesTracker();
-        DiagramChangeSet set = tracker.getCurrentChangeSet();
+        final ChangesTracker tracker = model.getDiagram().getChangesTracker();
+        final DiagramChangeSet set = tracker.getCurrentChangeSet();
         if (set != null && tracker.isTrackingEnabled()) {
-            tracker.updateCurrentChangeSet(set.getVersion(),
-                    model.getProgramSettings().getUserNameOrSystemUser(),
-                    Calendar.getInstance());
+            try {
+                // do the update in event dispatch thread (because of events)
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        tracker.updateCurrentChangeSet(set.getVersion(),
+                                model.getProgramSettings().getUserNameOrSystemUser(),
+                                Calendar.getInstance());
+                    }
+                });
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Error updating values for current diagram change set.", e);
+            }
         }
         FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();
         ls.save(model.getDiagram(), file);
