@@ -137,10 +137,14 @@ public class DiagramChange {
 
     static String getString(String key) {
         try {
-            return ResourceBundle.getBundle("net.parostroj.timetable.model.changes.diagram_change_texts").getString(key);
+            return getStringWithException(key);
         } catch (MissingResourceException e) {
-            LOG.log(Level.WARNING, "Error getting text for key: " + key, e);
+            LOG.log(Level.WARNING, "Error getting text for key: {0}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
+    }
+
+    static String getStringWithException(String key) {
+        return ResourceBundle.getBundle("net.parostroj.timetable.model.changes.diagram_change_texts").getString(key);
     }
 }
