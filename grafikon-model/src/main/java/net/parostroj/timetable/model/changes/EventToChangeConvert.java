@@ -85,7 +85,7 @@ class EventToChangeConvert {
 
     private static Map<GTEventType, String> getDescs() {
         Map<GTEventType, String> map = new EnumMap<GTEventType, String>(GTEventType.class);
-        map.put(GTEventType.ATTRIBUTE, "attribute_change");
+        map.put(GTEventType.ATTRIBUTE, "attribute");
         map.put(GTEventType.CYCLE_ITEM_ADDED, null);
         map.put(GTEventType.CYCLE_ITEM_REMOVED, null);
         map.put(GTEventType.CYCLE_ITEM_UPDATED, null);
@@ -104,7 +104,7 @@ class EventToChangeConvert {
         map.put(GTEventType.NODE_REMOVED, null);
         map.put(GTEventType.ROUTE_ADDED, null);
         map.put(GTEventType.ROUTE_REMOVED, null);
-        map.put(GTEventType.TECHNOLOGICAL, null);
+        map.put(GTEventType.TECHNOLOGICAL, "technological");
         map.put(GTEventType.TEXT_ITEM_ADDED, null);
         map.put(GTEventType.TEXT_ITEM_MOVED, null);
         map.put(GTEventType.TEXT_ITEM_REMOVED, null);
@@ -114,7 +114,7 @@ class EventToChangeConvert {
         map.put(GTEventType.TIME_INTERVAL_REMOVED, null);
         map.put(GTEventType.TIME_INTERVAL_UPDATED, null);
         map.put(GTEventType.TRACK_ADDED, null);
-        map.put(GTEventType.TRACK_ATTRIBUTE, null);
+        map.put(GTEventType.TRACK_ATTRIBUTE, "track_attribute");
         map.put(GTEventType.TRACK_MOVED, null);
         map.put(GTEventType.TRACK_REMOVED, null);
         map.put(GTEventType.TRAINS_CYCLE_ADDED, null);

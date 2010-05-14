@@ -50,6 +50,7 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.NODE, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class TransformVisitor implements EventVisitor {
         Line line = event.getSource();
         change.setObject(line.getFrom().getName() + " - " + line.getTo().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
     }
 
     @Override
@@ -131,12 +133,20 @@ public class TransformVisitor implements EventVisitor {
 
     private void addDescription(GTEvent<?> event) {
         String desc = converter.getDesc(event.getType());
+        AttributeChange aC = null;
         switch (event.getType()) {
             case ATTRIBUTE:
-                AttributeChange aC = event.getAttributeChange();
-                String oldValue = aC.getOldValue() != null ? aC.getOldValue().toString() : DiagramChange.getString("empty_attribute");
-                String newValue = aC.getNewValue() != null ? aC.getNewValue().toString() : DiagramChange.getString("empty_attribute");
-                change.addDescription(new DiagramChangeDescription(desc, aC.getName(), oldValue, newValue));
+                // TODO transformation of attribute name? transformation table?
+                aC = event.getAttributeChange();
+                change.addDescription(new DiagramChangeDescription(desc, aC.getName()));
+                break;
+            case TRACK_ATTRIBUTE:
+                aC = event.getAttributeChange();
+                RouteSegmentEvent<?,Track> rse = (RouteSegmentEvent<?, Track>)event;
+                change.addDescription(new DiagramChangeDescription(desc, aC.getName(), rse.getTrack().getNumber()));
+                break;
+            case TECHNOLOGICAL:
+                change.addDescription(new DiagramChangeDescription(desc));
                 break;
         }
     }

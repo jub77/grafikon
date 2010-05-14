@@ -122,6 +122,14 @@ public class DiagramChange {
         descriptions.add(description);
     }
 
+    public void addDescriptionUnique(DiagramChangeDescription description) {
+        boolean add = true;
+        if (descriptions != null)
+            add = !descriptions.contains(description);
+        if (add)
+            this.addDescription(description);
+    }
+
     @Override
     public String toString() {
         return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object);

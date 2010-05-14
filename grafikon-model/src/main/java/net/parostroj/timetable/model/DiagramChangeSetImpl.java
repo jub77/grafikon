@@ -61,7 +61,7 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
                 addTo.setObject(change.getObject());
                 if (change.getDescriptions() != null) {
                     for (DiagramChangeDescription d : change.getDescriptions()) {
-                        addTo.addDescription(d);
+                        addTo.addDescriptionUnique(d);
                     }
                     returning.add(new Pair<DiagramChange, ChangesTrackerEvent.Type>(addTo, ChangesTrackerEvent.Type.CHANGE_MODIFIED));
                 }
