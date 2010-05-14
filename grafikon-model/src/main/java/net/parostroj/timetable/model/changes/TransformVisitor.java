@@ -67,7 +67,31 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TRAIN, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
-        this.addDescription(event);
+        String desc = this.addDescription(event);
+        switch (event.getType()) {
+            case TECHNOLOGICAL:
+                change.addDescription(new DiagramChangeDescription(desc));
+                break;
+            case TIME_INTERVAL_ATTRIBUTE:
+                TimeInterval ti = event.getSource().getTimeIntervalList().get(event.getChangedInterval());
+                change.addDescription(new DiagramChangeDescription(desc, event.getAttributeChange().getName(),
+                        this.getSegmentDescription(ti)));
+                break;
+            case TIME_INTERVAL_LIST:
+                desc = converter.getTilDesc(event.getTimeIntervalListType());
+                DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
+                switch (event.getTimeIntervalListType()) {
+                    case SPEED: case STOP_TIME: case TRACK:
+                        dcd.setParams(getSegmentDescription(getChangedInterval(event)));
+                        break;
+                }
+                change.addDescription(dcd);
+                break;
+        }
+    }
+
+    private TimeInterval getChangedInterval(TrainEvent event) {
+        return event.getSource().getTimeIntervalList().get(event.getChangedInterval());
     }
 
     @Override
@@ -131,7 +155,7 @@ public class TransformVisitor implements EventVisitor {
         }
     }
 
-    private void addDescription(GTEvent<?> event) {
+    private String addDescription(GTEvent<?> event) {
         String desc = converter.getDesc(event.getType());
         AttributeChange aC = null;
         switch (event.getType()) {
@@ -145,16 +169,8 @@ public class TransformVisitor implements EventVisitor {
                 RouteSegmentEvent<?,Track> rse = (RouteSegmentEvent<?, Track>)event;
                 change.addDescription(new DiagramChangeDescription(desc, aC.getName(), rse.getTrack().getNumber()));
                 break;
-            case TECHNOLOGICAL:
-                change.addDescription(new DiagramChangeDescription(desc));
-                break;
-            case TIME_INTERVAL_ATTRIBUTE:
-                TrainEvent te = (TrainEvent)event;
-                TimeInterval ti = te.getSource().getTimeIntervalList().get(te.getChangedInterval());
-                change.addDescription(new DiagramChangeDescription(desc, event.getAttributeChange().getName(),
-                        this.getSegmentDescription(ti)));
-                break;
         }
+        return desc;
     }
 
     private String getSegmentDescription(TimeInterval interval) {

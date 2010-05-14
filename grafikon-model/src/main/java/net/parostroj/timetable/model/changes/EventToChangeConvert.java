@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainEvent;
 
 /**
  * Converts types and other things from GTEventType to DiagramChange.
@@ -15,11 +16,13 @@ class EventToChangeConvert {
     private static Map<GTEventType, DiagramChange.Type> TYPES;
     private static Map<GTEventType, DiagramChange.Action> ACTIONS;
     private static Map<GTEventType, String> DESCS;
+    private static Map<TrainEvent.TimeIntervalListType, String> TIL_DESCS;
 
     static {
         TYPES = Collections.unmodifiableMap(getTypes());
         ACTIONS = Collections.unmodifiableMap(getActions());
         DESCS = Collections.unmodifiableMap(getDescs());
+        TIL_DESCS = Collections.unmodifiableMap(getTilDescs());
     }
 
     private static Map<GTEventType, DiagramChange.Type> getTypes() {
@@ -128,6 +131,17 @@ class EventToChangeConvert {
         return map;
     }
 
+    private static Map<TrainEvent.TimeIntervalListType, String> getTilDescs() {
+        Map<TrainEvent.TimeIntervalListType, String> map = new EnumMap<TrainEvent.TimeIntervalListType, String>(TrainEvent.TimeIntervalListType.class);
+        map.put(TrainEvent.TimeIntervalListType.ADDED, null); // NO
+        map.put(TrainEvent.TimeIntervalListType.MOVED, "train_moved");
+        map.put(TrainEvent.TimeIntervalListType.RECALCULATE, "train_recalculated");
+        map.put(TrainEvent.TimeIntervalListType.SPEED, "train_speed");
+        map.put(TrainEvent.TimeIntervalListType.STOP_TIME, "train_stop_time");
+        map.put(TrainEvent.TimeIntervalListType.TRACK, "train_track");
+        return map;
+    }
+
     public DiagramChange.Type getType(GTEventType eventType) {
         return TYPES.get(eventType);
     }
@@ -138,6 +152,10 @@ class EventToChangeConvert {
 
     public String getDesc(GTEventType eventType) {
         return DESCS.get(eventType);
+    }
+
+    public String getTilDesc(TrainEvent.TimeIntervalListType type) {
+        return TIL_DESCS.get(type);
     }
 }
 
