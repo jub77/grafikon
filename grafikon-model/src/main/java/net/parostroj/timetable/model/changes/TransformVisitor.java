@@ -148,6 +148,20 @@ public class TransformVisitor implements EventVisitor {
             case TECHNOLOGICAL:
                 change.addDescription(new DiagramChangeDescription(desc));
                 break;
+            case TIME_INTERVAL_ATTRIBUTE:
+                TrainEvent te = (TrainEvent)event;
+                TimeInterval ti = te.getSource().getTimeIntervalList().get(te.getChangedInterval());
+                change.addDescription(new DiagramChangeDescription(desc, event.getAttributeChange().getName(),
+                        this.getSegmentDescription(ti)));
+                break;
+        }
+    }
+
+    private String getSegmentDescription(TimeInterval interval) {
+        if (interval.isLineOwner()) {
+            return interval.getFrom().getAbbr() + "-" + interval.getTo().getAbbr();
+        } else {
+            return interval.getOwnerAsNode().getName();
         }
     }
 }

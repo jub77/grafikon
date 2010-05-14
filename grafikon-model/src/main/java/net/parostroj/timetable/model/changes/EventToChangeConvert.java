@@ -109,7 +109,7 @@ class EventToChangeConvert {
         map.put(GTEventType.TEXT_ITEM_MOVED, null);
         map.put(GTEventType.TEXT_ITEM_REMOVED, null);
         map.put(GTEventType.TIME_INTERVAL_ADDED, null);
-        map.put(GTEventType.TIME_INTERVAL_ATTRIBUTE, null);
+        map.put(GTEventType.TIME_INTERVAL_ATTRIBUTE, "interval_attribute");
         map.put(GTEventType.TIME_INTERVAL_LIST, null);
         map.put(GTEventType.TIME_INTERVAL_REMOVED, null);
         map.put(GTEventType.TIME_INTERVAL_UPDATED, null);
