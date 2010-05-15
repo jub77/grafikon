@@ -74,15 +74,16 @@ public class TransformVisitor implements EventVisitor {
                 break;
             case TIME_INTERVAL_ATTRIBUTE:
                 TimeInterval ti = event.getSource().getTimeIntervalList().get(event.getChangedInterval());
-                change.addDescription(new DiagramChangeDescription(desc, event.getAttributeChange().getName(),
-                        this.getSegmentDescription(ti)));
+                change.addDescription(new DiagramChangeDescription(desc,
+                        new Parameter(event.getAttributeChange().getName(), true),
+                        new Parameter(this.getSegmentDescription(ti))));
                 break;
             case TIME_INTERVAL_LIST:
                 desc = converter.getTilDesc(event.getTimeIntervalListType());
                 DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
                 switch (event.getTimeIntervalListType()) {
                     case SPEED: case STOP_TIME: case TRACK:
-                        dcd.setParams(getSegmentDescription(getChangedInterval(event)));
+                        dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event))));
                         break;
                 }
                 change.addDescription(dcd);
@@ -162,12 +163,15 @@ public class TransformVisitor implements EventVisitor {
             case ATTRIBUTE:
                 // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();
-                change.addDescription(new DiagramChangeDescription(desc, aC.getName()));
+                change.addDescription(new DiagramChangeDescription(desc,
+                        new Parameter(aC.getName())));
                 break;
             case TRACK_ATTRIBUTE:
                 aC = event.getAttributeChange();
                 RouteSegmentEvent<?,Track> rse = (RouteSegmentEvent<?, Track>)event;
-                change.addDescription(new DiagramChangeDescription(desc, aC.getName(), rse.getTrack().getNumber()));
+                change.addDescription(new DiagramChangeDescription(desc,
+                        new Parameter(aC.getName(), true),
+                        new Parameter(rse.getTrack().getNumber())));
                 break;
         }
         return desc;

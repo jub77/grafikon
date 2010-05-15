@@ -15,14 +15,14 @@ public class DiagramChangeDescription {
     private static final Logger LOG = Logger.getLogger(DiagramChangeDescription.class.getName());
 
     private String description;
-    private String[] params;
+    private Parameter[] params;
     private String _cachedOutput;
 
     public DiagramChangeDescription(String description) {
         this.description = description;
     }
 
-    public DiagramChangeDescription(String description, String... params) {
+    public DiagramChangeDescription(String description, Parameter... params) {
         this.description = description;
         this.params = params;
     }
@@ -36,16 +36,16 @@ public class DiagramChangeDescription {
         this.description = description;
     }
 
-    public String[] getParams() {
+    public Parameter[] getParams() {
         return params;
     }
 
-    public void setParams(String... params) {
+    public void setParams(Parameter... params) {
         clearCached();
         this.params = params;
     }
 
-    public void setDescription(String description, String... params) {
+    public void setDescription(String description, Parameter... params) {
         clearCached();
         this.description = description;
         this.params = params;
@@ -55,7 +55,7 @@ public class DiagramChangeDescription {
         if (_cachedOutput == null) {
             try {
                 String desc = DiagramChange.getStringWithException(description);
-                _cachedOutput = String.format(desc, (Object[])params);
+                _cachedOutput = String.format(desc, (Object[])this.convertParams());
             } catch (MissingResourceException e) {
                 _cachedOutput = DiagramChange.getString("not_found");
             } catch (Exception e) {
@@ -94,5 +94,14 @@ public class DiagramChangeDescription {
 
     private void clearCached() {
         _cachedOutput = null;
+    }
+
+    private String[] convertParams() {
+        if (params == null)
+            return null;
+        String[] result = new String[params.length];
+        for (int i = 0; i < params.length; i++)
+            result[i] = params[i].getTranslatedValue();
+        return result;
     }
 }
