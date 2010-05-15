@@ -57,6 +57,7 @@ public class DiagramChangeDescription {
                 String desc = DiagramChange.getStringWithException(description);
                 _cachedOutput = String.format(desc, (Object[])this.convertParams());
             } catch (MissingResourceException e) {
+                LOG.log(Level.WARNING, "Key not found: {0}", e.getKey());
                 _cachedOutput = DiagramChange.getString("not_found");
             } catch (Exception e) {
                 LOG.log(Level.WARNING, "Not enough parameters for key: {0}", description);

@@ -164,7 +164,7 @@ public class TransformVisitor implements EventVisitor {
                 // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();
                 change.addDescription(new DiagramChangeDescription(desc,
-                        new Parameter(aC.getName())));
+                        new Parameter(aC.getName(), true)));
                 break;
             case TRACK_ATTRIBUTE:
                 aC = event.getAttributeChange();
