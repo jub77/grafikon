@@ -474,7 +474,10 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     if (ecTrainsList.getSelectedIndex() != -1) {
         TrainsCycleItem item = ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem();
         Train train = item.getTrain();
-        item.setComment("".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText());
+        // check if the comment changed ...
+        String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
+        if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
+            item.setComment(newComment);
         TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getInterval();
         TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getInterval();
         // new trains cycle item
