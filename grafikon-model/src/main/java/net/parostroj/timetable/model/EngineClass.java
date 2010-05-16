@@ -5,6 +5,7 @@ import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.EngineClassEvent;
 import net.parostroj.timetable.model.events.EngineClassListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Engine class. It contains table with weight information for each
@@ -12,7 +13,7 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
  * 
  * @author jub
  */
-public class EngineClass implements ObjectWithId {
+public class EngineClass implements ObjectWithId, Visitable {
 
     private static final class EmptyWeightTableRow extends WeightTableRow {
 
@@ -142,6 +143,7 @@ public class EngineClass implements ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }

@@ -12,7 +12,7 @@ import java.util.List;
  * 
  * @author jub
  */
-public interface RouteSegment {
+public interface RouteSegment extends ObjectWithId {
 
     public Line asLine();
 
@@ -28,6 +28,7 @@ public interface RouteSegment {
 
     public boolean isEmpty();
 
+    @Override
     public String getId();
 
     public Track findTrackById(String id);

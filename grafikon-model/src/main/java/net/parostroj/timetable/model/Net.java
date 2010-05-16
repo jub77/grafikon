@@ -11,6 +11,7 @@ import net.parostroj.timetable.model.events.NetListener;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.ListenableUndirectedGraph;
@@ -20,7 +21,7 @@ import org.jgrapht.graph.ListenableUndirectedGraph;
  *
  * @author jub
  */
-public class Net implements ObjectWithId {
+public class Net implements ObjectWithId, Visitable {
     
     private final String id;
     private List<LineClass> lineClasses;
@@ -180,6 +181,7 @@ public class Net implements ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
@@ -196,6 +198,9 @@ public class Net implements ObjectWithId {
         }
         for (Node node : getNodes()) {
             node.accept(visitor);
+        }
+        for (LineClass lineClass : lineClasses) {
+            lineClass.accept(visitor);
         }
         visitor.visitAfter(this);
     }

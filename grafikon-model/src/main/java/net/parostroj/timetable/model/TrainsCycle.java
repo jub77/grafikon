@@ -12,13 +12,14 @@ import net.parostroj.timetable.model.events.TrainsCycleEvent;
 import net.parostroj.timetable.model.events.TrainsCycleListener;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Trains cycle.
  * 
  * @author jub
  */
-public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem> {
+public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable {
 
     private final String id;
     private String name;
@@ -252,7 +253,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
      *
      * @param visitor visitor
      */
-    void accept(TrainDiagramVisitor visitor) {
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
 }

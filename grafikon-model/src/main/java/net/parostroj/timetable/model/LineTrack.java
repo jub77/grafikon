@@ -1,13 +1,14 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Line track.
  * 
  * @author jub
  */
-public class LineTrack extends Track {
+public class LineTrack extends Track implements Visitable {
 
     private NodeTrack fromStraightTrack;
     private NodeTrack toStraightTrack;
@@ -73,7 +74,8 @@ public class LineTrack extends Track {
      *
      * @param visitor visitor
      */
-    void accept(TrainDiagramVisitor visitor) {
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
 }

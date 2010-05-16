@@ -5,13 +5,14 @@ import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.TrainTypeEvent;
 import net.parostroj.timetable.model.events.TrainTypeListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Train type.
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId {
+public class TrainType implements ObjectWithId, Visitable {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */
@@ -226,6 +227,7 @@ public class TrainType implements ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }

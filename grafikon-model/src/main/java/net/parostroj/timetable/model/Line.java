@@ -11,13 +11,14 @@ import net.parostroj.timetable.model.events.LineEvent;
 import net.parostroj.timetable.model.events.LineListener;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Track between two route points.
  *
  * @author jub
  */
-public class Line implements RouteSegment, AttributesHolder, ObjectWithId {
+public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -390,6 +391,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }

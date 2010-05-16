@@ -11,13 +11,14 @@ import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Collection of all parts of graphical timetable.
  *
  * @author jub
  */
-public class TrainDiagram implements AttributesHolder, ObjectWithId {
+public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable {
 
     /** Id. */
     private final String id;
@@ -501,6 +502,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
@@ -532,6 +534,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId {
             for (TrainsCycle cycle : list) {
                 cycle.accept(visitor);
             }
+        }
+        for (TimetableImage image : images) {
+            image.accept(visitor);
         }
         visitor.visitAfter(this);
     }

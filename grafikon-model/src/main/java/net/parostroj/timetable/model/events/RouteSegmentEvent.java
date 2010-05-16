@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.events;
 
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Track;
 
@@ -8,7 +9,7 @@ import net.parostroj.timetable.model.Track;
  * 
  * @author jub
  */
-public abstract class RouteSegmentEvent<T, U extends Track> extends GTEvent<T> {
+public abstract class RouteSegmentEvent<T extends ObjectWithId, U extends Track> extends GTEvent<T> {
 
     private U track;
     private TimeInterval interval;

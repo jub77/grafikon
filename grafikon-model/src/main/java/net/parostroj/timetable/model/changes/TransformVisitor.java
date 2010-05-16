@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.changes;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Transforms diagram event into DiagramChange.
@@ -13,6 +14,7 @@ public class TransformVisitor implements EventVisitor {
 
     private DiagramChange change;
     private EventToChangeConvert converter = new EventToChangeConvert();
+    private NamesVisitor names = new NamesVisitor();
 
     @Override
     public void visit(TrainDiagramEvent event) {
@@ -98,7 +100,7 @@ public class TransformVisitor implements EventVisitor {
     @Override
     public void visit(TrainTypeEvent event) {
         change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, event.getSource().getId());
-        change.setObject(getTrainTypeStr(event.getSource()));
+        change.setObject(this.getObjectStr(event.getSource()));
         change.setAction(DiagramChange.Action.MODIFIED);
     }
 
@@ -129,28 +131,10 @@ public class TransformVisitor implements EventVisitor {
         return c;
     }
 
-    private String getTrainTypeStr(TrainType type) {
-        return type.getAbbr() + " - " + type.getDesc();
-    }
-
     private String getObjectStr(Object object) {
-        if (object instanceof Train) {
-            return ((Train)object).getCompleteName();
-        } else if (object instanceof TrainsCycle) {
-            return ((TrainsCycle)object).getName();
-        } else if (object instanceof TrainType) {
-            return this.getTrainTypeStr((TrainType)object);
-        } else if (object instanceof EngineClass) {
-            return ((EngineClass)object).getName();
-        } else if (object instanceof TextItem) {
-            return ((TextItem)object).getName();
-        } else if (object instanceof Line) {
-            Line line = (Line)object;
-            return line.getFrom().getAbbr() + " - " + line.getTo().getAbbr();
-        } else if (object instanceof Node) {
-            return ((Node)object).getName();
-        } else if (object instanceof TimetableImage) {
-            return ((TimetableImage)object).getFilename();
+        if (object instanceof Visitable) {
+            ((Visitable)object).accept(names);
+            return names.getName();
         } else {
             throw new IllegalArgumentException("Not known class: " + object.getClass());
         }

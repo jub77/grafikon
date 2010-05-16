@@ -4,13 +4,14 @@ import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.TextItemEvent;
 import net.parostroj.timetable.model.events.TextItemListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Text item.
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -73,7 +74,8 @@ public class TextItem implements ObjectWithId, AttributesHolder {
         this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("name", oldName, name)));
     }
 
-    void accept(TrainDiagramVisitor visitor) {
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
 

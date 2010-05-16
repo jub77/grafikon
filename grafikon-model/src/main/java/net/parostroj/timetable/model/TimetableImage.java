@@ -6,13 +6,15 @@
 package net.parostroj.timetable.model;
 
 import java.io.File;
+import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Image information.
  * 
  * @author jub
  */
-public class TimetableImage implements ObjectWithId {
+public class TimetableImage implements ObjectWithId, Visitable {
 
     private final String id;
     private final int imageHeight;
@@ -50,6 +52,11 @@ public class TimetableImage implements ObjectWithId {
 
     public void setImageFile(File imageFile) {
         this.imageFile = imageFile;
+    }
+
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

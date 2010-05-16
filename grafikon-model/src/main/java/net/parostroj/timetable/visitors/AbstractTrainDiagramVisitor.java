@@ -57,4 +57,12 @@ public abstract class AbstractTrainDiagramVisitor implements TrainDiagramVisitor
     @Override
     public void visit(TextItem item) {
     }
+
+    @Override
+    public void visit(TimetableImage image) {
+    }
+
+    @Override
+    public void visit(LineClass lineClass) {
+    }
 }

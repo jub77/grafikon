@@ -2,13 +2,14 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Route (consists of route parts - tracks, stations, ...).
  *
  * @author jub
  */
-public class Route implements ObjectWithId {
+public class Route implements ObjectWithId, Visitable {
 
     /** Route parts. */
     private List<RouteSegment> segments;
@@ -65,9 +66,7 @@ public class Route implements ObjectWithId {
      */
     public Route(String id, RouteSegment... segments) {
         this.id = id;
-        for (RouteSegment segment : segments) {
-            this.segments.add(segment);
-        }
+        this.segments.addAll(Arrays.asList(segments));
     }
 
     /**
@@ -125,7 +124,7 @@ public class Route implements ObjectWithId {
         if ((segments.size() > 0) && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
         }
-        ListIterator<RouteSegment> i = addSegments.listIterator((segments.size() == 0) ? 0 : 1);
+        ListIterator<RouteSegment> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
         while (i.hasNext()) {
             segments.add(i.next());
         }
@@ -178,6 +177,7 @@ public class Route implements ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }

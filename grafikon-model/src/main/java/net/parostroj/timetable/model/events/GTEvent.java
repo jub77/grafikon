@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.events;
 
 import java.util.Iterator;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
@@ -8,7 +9,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
  * 
  * @author jub
  */
-public abstract class GTEvent<T> implements Iterable<GTEvent<?>>{
+public abstract class GTEvent<T extends ObjectWithId> implements Iterable<GTEvent<?>>{
 
     private final T source;
     private final GTEvent<?> nestedEvent;

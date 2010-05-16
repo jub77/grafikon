@@ -9,13 +9,14 @@ import net.parostroj.timetable.model.events.TrainEvent.TimeIntervalListType;
 import net.parostroj.timetable.model.events.TrainListener;
 import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Train.
  *
  * @author jub
  */
-public class Train implements AttributesHolder, ObjectWithId {
+public class Train implements AttributesHolder, ObjectWithId, Visitable {
 
     /** No top speed constant. */
     public static final int NO_TOP_SPEED = 0;
@@ -1026,7 +1027,8 @@ public class Train implements AttributesHolder, ObjectWithId {
      *
      * @param visitor visitor
      */
-    void accept(TrainDiagramVisitor visitor) {
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
 }

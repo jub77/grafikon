@@ -32,4 +32,8 @@ public interface TrainDiagramVisitor {
     public void visit(TrainsCycle cycle);
 
     public void visit(TextItem item);
+
+    public void visit(TimetableImage image);
+
+    public void visit(LineClass lineClass);
 }

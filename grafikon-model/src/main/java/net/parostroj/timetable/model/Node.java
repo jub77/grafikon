@@ -7,6 +7,7 @@ import net.parostroj.timetable.model.events.NodeEvent;
 import net.parostroj.timetable.model.events.NodeListener;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Node that can consist of several tracks. Each tracks provides its own list
@@ -14,7 +15,7 @@ import net.parostroj.timetable.visitors.TrainDiagramVisitor;
  *
  * @author jub
  */
-public class Node implements RouteSegment, AttributesHolder, ObjectWithId {
+public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -354,6 +355,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId {
      *
      * @param visitor visitor
      */
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }

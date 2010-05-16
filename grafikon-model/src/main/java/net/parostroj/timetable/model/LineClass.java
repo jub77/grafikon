@@ -1,11 +1,14 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
+
 /**
  * Line class
  * 
  * @author jub
  */
-public class LineClass implements ObjectWithId {
+public class LineClass implements ObjectWithId, Visitable {
 
     private final String id;
     private String name;
@@ -31,5 +34,10 @@ public class LineClass implements ObjectWithId {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
+        visitor.visit(this);
     }
 }
