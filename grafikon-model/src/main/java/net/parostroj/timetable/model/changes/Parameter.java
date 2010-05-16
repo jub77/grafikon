@@ -38,4 +38,30 @@ public class Parameter {
     public String getTranslatedValue() {
         return translated ? DiagramChange.getStringWithException(value) : value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Parameter other = (Parameter) obj;
+        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+            return false;
+        }
+        if (this.translated != other.translated) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 37 * hash + (this.translated ? 1 : 0);
+        return hash;
+    }
 }
