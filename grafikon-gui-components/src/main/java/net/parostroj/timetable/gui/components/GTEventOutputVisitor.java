@@ -194,7 +194,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Cycle type: ").append(event.getSource().getType().toString()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(event.getAttributeChange().getName()).append('\n');
                 if (event.getNewCycleItem() != null) {
                     str.append("    Cycle item: ").append(event.getNewCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(event.getNewCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
