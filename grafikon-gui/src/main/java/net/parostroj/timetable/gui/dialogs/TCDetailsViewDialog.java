@@ -46,8 +46,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         descTextField = new javax.swing.JTextField();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
@@ -92,8 +92,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nameTextField)
-                            .addComponent(descTextField))))
+                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -120,14 +120,16 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
     // write values back and close
     TrainsCycle cycle = delegate.getSelectedCycle(model);
-    if (nameTextField.getText() != null && !"".equals(nameTextField.getText().trim()))
+    if (nameTextField.getText() != null && !"".equals(nameTextField.getText().trim())
+            && !nameTextField.getText().equals(cycle.getName()))
         cycle.setName(nameTextField.getText());
-    else
-        return;
-    if (descTextField.getText() == null || "".equals(descTextField.getText().trim()))
-        cycle.setDescription(null);
-    else
-        cycle.setDescription(descTextField.getText().trim());
+    if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
+        if (cycle.getDescription() != null)
+            cycle.setDescription(null);
+    } else {
+        if (!descTextField.getText().equals(cycle.getDescription()))
+            cycle.setDescription(descTextField.getText().trim());
+    }
     
     // event
     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
@@ -141,9 +143,7 @@ private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField descTextField;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 }

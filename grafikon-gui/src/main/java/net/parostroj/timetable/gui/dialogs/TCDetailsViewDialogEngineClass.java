@@ -56,8 +56,8 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         descTextField = new javax.swing.JTextField();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         engineClassComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
 
@@ -107,9 +107,9 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                            .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                            .addComponent(engineClassComboBox, 0, 123, Short.MAX_VALUE))))
+                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .addComponent(engineClassComboBox, 0, 183, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -140,20 +140,26 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
 private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
     // write values back and close
     TrainsCycle cycle = delegate.getSelectedCycle(model);
-    if (nameTextField.getText() != null && !"".equals(nameTextField.getText()))
+    if (nameTextField.getText() != null && !"".equals(nameTextField.getText())
+            && !nameTextField.getText().equals(cycle.getName()))
         cycle.setName(nameTextField.getText().trim());
-    else
-        return;
-    if (descTextField.getText() == null || "".equals(descTextField.getText().trim()))
-        cycle.setDescription(null);
-    else
-        cycle.setDescription(descTextField.getText().trim());
+    if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
+        if (cycle.getDescription() != null)
+            cycle.setDescription(null);
+    } else {
+        if (!descTextField.getText().equals(cycle.getDescription()))
+            cycle.setDescription(descTextField.getText().trim());
+    }
     
     // write back engine class
-    if (engineClassComboBox.getSelectedItem() == noneEngineClass)
+    if (engineClassComboBox.getSelectedItem() == noneEngineClass) {
+        // another check is not needed because remove attribute doesn't send
+        // event for removing non-existent attribute
         cycle.removeAttribute("engine.class");
-    else
-        cycle.setAttribute("engine.class", engineClassComboBox.getSelectedItem());
+    } else {
+        if (engineClassComboBox.getSelectedItem() != cycle.getAttribute("engine.class"))
+            cycle.setAttribute("engine.class", engineClassComboBox.getSelectedItem());
+    }
     
     // event
     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
@@ -167,10 +173,8 @@ private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField descTextField;
     private javax.swing.JComboBox engineClassComboBox;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 }
