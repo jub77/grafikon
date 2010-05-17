@@ -207,7 +207,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     @Override
     public Object removeAttribute(String key) {
         Object o = attributes.remove(key);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(key, o, null)));
+        if (o != null)
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(key, o, null)));
         return o;
     }
 
