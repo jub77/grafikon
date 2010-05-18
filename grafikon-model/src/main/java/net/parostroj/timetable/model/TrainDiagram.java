@@ -283,9 +283,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable {
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
-        attributes.put(key, value);
-        this.fireEvent(new TrainDiagramEvent(this, new AttributeChange(key, oldValue, value)));
+        if (value == null)
+            this.removeAttribute(key);
+        else {
+            Object oldValue = attributes.get(key);
+            attributes.put(key, value);
+            this.fireEvent(new TrainDiagramEvent(this, new AttributeChange(key, oldValue, value)));
+        }
     }
 
     @Override

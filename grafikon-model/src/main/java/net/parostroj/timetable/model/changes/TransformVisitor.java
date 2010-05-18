@@ -102,6 +102,7 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, event.getSource().getId());
         change.setObject(this.getObjectStr(event.getSource()));
         change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
     }
 
     @Override
@@ -126,6 +127,7 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TEXT_ITEM, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
     }
 
     @Override
@@ -133,6 +135,9 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        String desc = this.addDescription(event);
+        if (event.getType() == GTEventType.WEIGHT_TABLE_MODIFIED)
+            change.addDescription(new DiagramChangeDescription(desc));
     }
 
     public DiagramChange getChange() {
