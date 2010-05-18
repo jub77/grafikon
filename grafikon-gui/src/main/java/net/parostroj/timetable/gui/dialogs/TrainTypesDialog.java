@@ -70,7 +70,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
         trainTypesList = new javax.swing.JList();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         abbrTextField = new javax.swing.JTextField();
@@ -352,19 +352,31 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 this.showErrorDialog("dialog.error.missingvalues");
                 return;
             }
-            type.setAbbr(abbr);
-            type.setDesc(desc);
-            type.setColor(Conversions.convertTextToColor(colorLabel.getText()));
-            type.setCategory(((TrainsTypeCategoryWrapper)brakeComboBox.getSelectedItem()).getElement());
+            if (!abbr.equals(type.getAbbr()))
+                type.setAbbr(abbr);
+            if (!desc.equals(type.getDesc()))
+                type.setDesc(desc);
+            Color c = Conversions.convertTextToColor(colorLabel.getText());
+            if (!c.equals(type.getColor()))
+                type.setColor(c);
+            TrainTypeCategory category = ((TrainsTypeCategoryWrapper)brakeComboBox.getSelectedItem()).getElement();
+            if (!category.equals(type.getCategory()))
+                type.setCategory(category);
             if (nameTemplateCheckBox.isSelected()) {
-                type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+                if (type.getTrainNameTemplate() == null ||
+                        !nameTemplateTextField.getText().trim().equals(type.getTrainNameTemplate().getTemplate()))
+                    type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
             } else {
-                type.setTrainNameTemplate(null);
+                if (type.getTrainNameTemplate() != null)
+                    type.setTrainNameTemplate(null);
             }
             if (completeNameTemplateCheckBox.isSelected()) {
-                type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+                if (type.getTrainCompleteNameTemplate() == null ||
+                        !completeNameTemplateTextField.getText().trim().equals(type.getTrainCompleteNameTemplate().getTemplate()))
+                    type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
             } else {
-                type.setTrainCompleteNameTemplate(null);
+                if (type.getTrainCompleteNameTemplate() != null)
+                    type.setTrainCompleteNameTemplate(null);
             }
             typesModel.updated(trainTypesList.getSelectedIndex());
             
@@ -461,7 +473,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField descTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editColorButton;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox nameTemplateCheckBox;
     private javax.swing.JTextField nameTemplateTextField;
     private javax.swing.JButton newButton;
