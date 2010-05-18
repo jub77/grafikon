@@ -53,9 +53,6 @@ class EventToChangeConvert {
     private static Map<GTEventType, DiagramChange.Action> getActions() {
         Map<GTEventType, DiagramChange.Action> map = new EnumMap<GTEventType, DiagramChange.Action>(GTEventType.class);
         map.put(GTEventType.ATTRIBUTE, DiagramChange.Action.MODIFIED);
-        map.put(GTEventType.CYCLE_ITEM_ADDED, DiagramChange.Action.ADDED);
-        map.put(GTEventType.CYCLE_ITEM_REMOVED, DiagramChange.Action.REMOVED);
-        map.put(GTEventType.CYCLE_ITEM_UPDATED, DiagramChange.Action.MODIFIED);
         map.put(GTEventType.ENGINE_CLASS_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.ENGINE_CLASS_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.IMAGE_ADDED, DiagramChange.Action.ADDED);
@@ -89,9 +86,10 @@ class EventToChangeConvert {
     private static Map<GTEventType, String> getDescs() {
         Map<GTEventType, String> map = new EnumMap<GTEventType, String>(GTEventType.class);
         map.put(GTEventType.ATTRIBUTE, "attribute");
-        map.put(GTEventType.CYCLE_ITEM_ADDED, null);
-        map.put(GTEventType.CYCLE_ITEM_REMOVED, null);
-        map.put(GTEventType.CYCLE_ITEM_UPDATED, null);
+        map.put(GTEventType.CYCLE_ITEM_ADDED, "item_added");
+        map.put(GTEventType.CYCLE_ITEM_MOVED, "item_moved");
+        map.put(GTEventType.CYCLE_ITEM_REMOVED, "item_removed");
+        map.put(GTEventType.CYCLE_ITEM_UPDATED, "item_updated");
         map.put(GTEventType.ENGINE_CLASS_ADDED, null);
         map.put(GTEventType.ENGINE_CLASS_MOVED, null);
         map.put(GTEventType.ENGINE_CLASS_REMOVED, null);
@@ -162,6 +160,7 @@ class EventToChangeConvert {
 /* ALL TYPES
     map.put(GTEventType.ATTRIBUTE, null);
     map.put(GTEventType.CYCLE_ITEM_ADDED, null);
+    map.put(GTEventType.CYCLE_ITEM_MOVED, null);
     map.put(GTEventType.CYCLE_ITEM_REMOVED, null);
     map.put(GTEventType.CYCLE_ITEM_UPDATED, null);
     map.put(GTEventType.ENGINE_CLASS_ADDED, null);

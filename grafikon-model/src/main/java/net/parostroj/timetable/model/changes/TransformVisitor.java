@@ -109,6 +109,16 @@ public class TransformVisitor implements EventVisitor {
         change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE, event.getSource().getId());
         change.setObject(event.getSource().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
+        String desc = this.addDescription(event);
+        switch (event.getType()) {
+            case CYCLE_ITEM_ADDED:
+            case CYCLE_ITEM_MOVED:
+            case CYCLE_ITEM_REMOVED:
+            case CYCLE_ITEM_UPDATED:
+                Train t = event.getNewCycleItem() != null ? event.getNewCycleItem().getTrain() : event.getOldCycleItem().getTrain();
+                change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
+                break;
+        }
     }
 
     @Override
