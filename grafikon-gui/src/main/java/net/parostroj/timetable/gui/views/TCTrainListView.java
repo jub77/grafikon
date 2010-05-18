@@ -171,7 +171,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         filterbuttonGroup = new javax.swing.ButtonGroup();
         scrollPane1 = new javax.swing.JScrollPane();
         allTrainsList = new javax.swing.JList();
-        scrollPane2 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         ecTrainsList = new javax.swing.JList();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
@@ -237,6 +237,8 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         });
         filterMenu.add(overlappingCheckBoxMenuItem);
 
+        scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         allTrainsList.setComponentPopupMenu(filterMenu);
         allTrainsList.setPrototypeCellValue("mmmmmmmmmmmmm");
         allTrainsList.setVisibleRowCount(5);
@@ -246,6 +248,8 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
             }
         });
         scrollPane1.setViewportView(allTrainsList);
+
+        scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         ecTrainsList.setPrototypeCellValue("mmmmmmmmmmmmm");
         ecTrainsList.setVisibleRowCount(5);
@@ -323,7 +327,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(scrollPane1)
+                .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(upButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -331,7 +335,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                     .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPane2))
+                .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -387,10 +391,9 @@ private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             // remove ...
             DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
             m.remove(selectedIndex);
-            item.getCycle().removeItem(selectedIndex);
             // move to new place
             m.add(newIndex, selected);
-            delegate.getSelectedCycle(model).addItem(item, newIndex);
+            item.getCycle().moveItem(selectedIndex, newIndex);
             this.updateErrors();
             ecTrainsList.setSelectedValue(selected, true);
             ecTrainsList.repaint();
@@ -410,10 +413,9 @@ private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             // remove ...
             DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
             m.remove(selectedIndex);
-            item.getCycle().removeItem(selectedIndex);
             // move to new place
             m.add(newIndex, selected);
-            item.getCycle().addItem(item, newIndex);
+            item.getCycle().moveItem(selectedIndex, newIndex);
             this.updateErrors();
             ecTrainsList.setSelectedValue(selected, true);
             ecTrainsList.repaint();
@@ -626,7 +628,6 @@ private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane1;
-    private javax.swing.JScrollPane scrollPane2;
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
