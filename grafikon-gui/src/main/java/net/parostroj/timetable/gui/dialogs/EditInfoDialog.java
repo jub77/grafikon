@@ -9,6 +9,7 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -55,14 +56,14 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
 
         dataPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        scrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         routeNumberTextArea = new javax.swing.JTextArea();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        scrollPane2 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         routesTextArea = new javax.swing.JTextArea();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         validityTextField = new javax.swing.JTextField();
-        buttonsPanel = new javax.swing.JPanel();
+        javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
@@ -173,9 +174,16 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // save values
-        model.getDiagram().setAttribute("route.numbers", routeNumberTextArea.getText());
-        model.getDiagram().setAttribute("route.nodes", routesTextArea.getText());
-        model.getDiagram().setAttribute("route.validity", validityTextField.getText());
+        TrainDiagram diagram = model.getDiagram();
+        String number = routeNumberTextArea.getText().trim(); if (number.equals("")) number = null;
+        String nodes = routesTextArea.getText().trim(); if (nodes.equals("")) nodes = null;
+        String validity = validityTextField.getText().trim(); if (validity.equals("")) validity = null;
+        if (number == null || !number.equals(diagram.getAttribute("route.numbers")))
+            diagram.setAttribute("route.numbers", number);
+        if (nodes == null || !nodes.equals(diagram.getAttribute("route.nodes")))
+            diagram.setAttribute("route.nodes", nodes);
+        if (validity == null || !validity.equals(diagram.getAttribute("route.validity")))
+            diagram.setAttribute("route.validity", validity);
         
         this.setVisible(false);
 }//GEN-LAST:event_okButtonActionPerformed
@@ -185,14 +193,11 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
     }//GEN-LAST:event_cancelButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel dataPanel;
     private javax.swing.JButton okButton;
     private javax.swing.JTextArea routeNumberTextArea;
     private javax.swing.JTextArea routesTextArea;
-    private javax.swing.JScrollPane scrollPane1;
-    private javax.swing.JScrollPane scrollPane2;
     private javax.swing.JTextField validityTextField;
     // End of variables declaration//GEN-END:variables
     
