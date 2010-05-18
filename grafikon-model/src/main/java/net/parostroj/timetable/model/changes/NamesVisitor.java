@@ -37,7 +37,7 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(Train train) {
-        name = train.getCompleteName();
+        name = train.getName();
     }
 
     @Override
