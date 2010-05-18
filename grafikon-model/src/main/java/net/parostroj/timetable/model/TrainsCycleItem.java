@@ -8,6 +8,7 @@ package net.parostroj.timetable.model;
 import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainsCycleEvent;
 
 /**
@@ -65,9 +66,10 @@ public class TrainsCycleItem {
     public void setComment(String comment) {
         String oldComment = this.comment;
         this.comment = comment;
-        TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), new AttributeChange("comment", oldComment, comment));
+        TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
         event.setNewCycleItem(this);
         event.setOldCycleItem(this);
+        event.setAttributeChange(new AttributeChange("comment", oldComment, comment));
         getCycle().fireEvent(event);
     }
 

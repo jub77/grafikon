@@ -169,6 +169,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
         return item;
     }
+
+    public void moveItem(int from, int to) {
+        TrainsCycleItem moved = items.remove(from);
+        if (moved != null) {
+            items.add(to, moved);
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_MOVED, moved, moved));
+        }
+    }
     
     public void replaceItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
         if (newItem.getTrain() != oldItem.getTrain() || newItem.getCycle() != this || oldItem.getCycle() != this)
