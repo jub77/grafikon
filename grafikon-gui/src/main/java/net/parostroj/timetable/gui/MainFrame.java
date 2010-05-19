@@ -602,7 +602,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(oLanguageMenu);
 
-        outputTypeMenu.setText(ResourceLoader.getString("menu.output.type") + "..."); // NOI18N
+        outputTypeMenu.setText(ResourceLoader.getString("menu.output.type")); // NOI18N
 
         outputTypeButtonGroup.add(htmlRadioButtonMenuItem);
         htmlRadioButtonMenuItem.setSelected(true);
