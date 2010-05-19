@@ -97,6 +97,18 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         }
     }
 
+    private static class ChangesTrackerListModel extends DefaultListModel {
+        public void fireUpdated(int index) {
+            if (index != -1)
+                this.fireContentsChanged(this, index, index);
+        }
+
+        public void fireUpdated(Object element) {
+            int index = indexOf(element);
+            this.fireUpdated(index);
+        }
+    }
+
     private TrainDiagram diagram;
     private DiagramChangeSet current;
 
@@ -115,7 +127,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
     private void fillVersions() {
         // fill list of versions
-        DefaultListModel model = new DefaultListModel();
+        ChangesTrackerListModel model = new ChangesTrackerListModel();
         if (diagram != null) {
             String currentVersion = diagram.getChangesTracker().isTrackingEnabled() ?
                 diagram.getChangesTracker().getCurrentVersion() :
@@ -132,7 +144,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
     }
 
     private void fillChanges(DiagramChangeSet set) {
-        DefaultListModel model = new DefaultListModel();
+        ChangesTrackerListModel model = new ChangesTrackerListModel();
         if (set != null) {
             for (DiagramChange change : set.getChanges()) {
                 model.addElement(new ChangeWrapper(change));
@@ -157,14 +169,13 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
                 if (w != null && w.change == event.getChange()) {
                     detailsTextArea.setText(this.transformChange(event.getChange()));
                 }
+                ChangesTrackerListModel cl = (ChangesTrackerListModel)changesList.getModel();
+                cl.fireUpdated(new ChangeWrapper(event.getChange()));
                 break;
             case SET_MODIFIED:
                 ChangeSetWrapper sw = new ChangeSetWrapper(event.getSet(), null);
-                DefaultListModel dlm = (DefaultListModel)versionsList.getModel();
-                int index = dlm.indexOf(sw);
-                if (index != -1) {
-                    dlm.setElementAt(dlm.getElementAt(index), index);
-                }
+                ChangesTrackerListModel dlm = (ChangesTrackerListModel)versionsList.getModel();
+                dlm.fireUpdated(sw);
                 break;
             // may be executed more time than it is necessary
             case CURRENT_SET_CHANGED: case SET_ADDED: case SET_REMOVED: case TRACKING_DISABLED: case TRACKING_ENABLED:
