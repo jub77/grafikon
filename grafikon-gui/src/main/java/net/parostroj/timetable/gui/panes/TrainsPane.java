@@ -30,7 +30,6 @@ import net.parostroj.timetable.model.Train;
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
     private static final Logger LOG = Logger.getLogger(TrainsPane.class.getName());
-    private ApplicationModel model;
     
     /** Creates new form TrainsPane */
     public TrainsPane() {
@@ -55,7 +54,6 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
      * @param model application model
      */
     public void setModel(final ApplicationModel model) {
-        this.model = model;
         trainListView.setModel(model);
         trainView.setModel(model);
 
@@ -130,13 +128,20 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             LOG.warning("Wrong GTView settings - using default values.");
         }
         graphicalTimetableView.setSettings(gtvs);
-        splitPane.setDividerLocation(dividerLoc);
+        scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));
+        if (scrollPane.isVisible())
+            splitPane.setDividerLocation(dividerLoc);
+        else
+            splitPane.setLastDividerLocation(dividerLoc);
+
         trainView.loadFromPreferences(prefs);
     }
     
     @Override
     public void saveToPreferences(AppPreferences prefs) {
-        prefs.setInt("trains.divider", splitPane.getDividerLocation());
+        prefs.setInt("trains.divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
+        // save if the gtview in trains pane is visible
+        prefs.setBoolean("trains.show.gtview", scrollPane.isVisible());
         prefs.setString("trains.gtv", graphicalTimetableView.getSettings().getStorageString());
         trainView.saveToPreferences(prefs);
     }
@@ -206,8 +211,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave graphicalTimetableView;
     private javax.swing.JPanel panel;
@@ -216,5 +220,12 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     private net.parostroj.timetable.gui.views.TrainListView trainListView;
     private net.parostroj.timetable.gui.views.TrainView trainView;
     // End of variables declaration//GEN-END:variables
-    
+
+    public void setVisibilityOfGTView(boolean state) {
+        if (state)
+            splitPane.setDividerLocation(splitPane.getLastDividerLocation());
+        else
+            splitPane.setLastDividerLocation(splitPane.getDividerLocation());
+        scrollPane.setVisible(state);
+    }
 }

@@ -303,7 +303,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
@@ -340,6 +340,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem resizeColumnsMenuItem = new javax.swing.JMenuItem();
+        showGTViewMenuItem = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -490,13 +491,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(languageMenu);
 
-        jMenuItem1.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
+        programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                programSettingsMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(jMenuItem1);
+        fileMenu.add(programSettingsMenuItem);
         fileMenu.add(separator4);
 
         exitMenuItem.setAction(new ExitAction(model, this));
@@ -680,6 +681,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         settingsMenu.add(resizeColumnsMenuItem);
 
+        showGTViewMenuItem.setSelected(true);
+        showGTViewMenuItem.setText(ResourceLoader.getString("menu.settings.show.gtview")); // NOI18N
+        showGTViewMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showGTViewMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(showGTViewMenuItem);
+
         menuBar.add(settingsMenu);
 
         helpMenu.setText(ResourceLoader.getString("menu.help")); // NOI18N
@@ -823,13 +833,18 @@ private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
     dialog.dispose();
 }//GEN-LAST:event_textItemsMenuItemActionPerformed
 
-private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
     // program settings
     ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
     dialog.setLocationRelativeTo(this);
     dialog.showDialog(model);
     dialog.dispose();
-}//GEN-LAST:event_jMenuItem1ActionPerformed
+}//GEN-LAST:event_programSettingsMenuItemActionPerformed
+
+private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
+    boolean state = ((JCheckBoxMenuItem) evt.getSource()).getState();
+    trainsPane.setVisibilityOfGTView(state);
+}//GEN-LAST:event_showGTViewMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -937,6 +952,8 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             }
         }
 
+        showGTViewMenuItem.setState(prefs.getBoolean("trains.show.gtview", true));
+
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
         model.loadFromPreferences(prefs);
@@ -967,7 +984,6 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JMenuItem fileSaveMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenuItem lineClassesMenuItem;
@@ -979,9 +995,11 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.ButtonGroup outputLbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
     private javax.swing.JMenuItem penaltyTableMenuItem;
+    private javax.swing.JMenuItem programSettingsMenuItem;
     private javax.swing.JMenuItem recalculateMenuItem;
     private javax.swing.JMenuItem recalculateStopsMenuItem;
     private javax.swing.JMenuItem settingsMenuItem;
+    private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.JMenuItem spListMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
     private javax.swing.JRadioButtonMenuItem systemLanguageRadioButtonMenuItem;
