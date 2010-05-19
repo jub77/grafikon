@@ -1,19 +1,6 @@
 package net.parostroj.timetable.model.changes;
 
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TimetableImage;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 
 /**
