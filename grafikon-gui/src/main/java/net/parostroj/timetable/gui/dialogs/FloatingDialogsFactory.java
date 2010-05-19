@@ -1,7 +1,9 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
@@ -9,6 +11,7 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.ChangesTrackerPanel;
 import net.parostroj.timetable.gui.components.EventsViewerPanel;
 import net.parostroj.timetable.gui.components.GTEventTypeConverter;
+import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.TrainsWithConflictsPanel;
 import net.parostroj.timetable.gui.helpers.TrainWrapper;
 import net.parostroj.timetable.mediator.Mediator;
@@ -22,7 +25,7 @@ import net.parostroj.timetable.model.events.*;
  */
 public class FloatingDialogsFactory {
 
-    public static FloatingDialog createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingDialog createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
         panel.addTrainSelectionListener(new ListSelectionListener() {
 
@@ -83,7 +86,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    public static FloatingDialog createEventsViewerDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingDialog createEventsViewerDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final EventsViewerPanel panel = new EventsViewerPanel();
         panel.addConverter(new GTEventTypeConverter());
         panel.addConverter(new ApplicationEventTypeConverter());
@@ -133,7 +136,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    public static FloatingDialog createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingDialog createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final ChangesTrackerPanel panel = new ChangesTrackerPanel();
         model.addListener(new ApplicationModelListener() {
             @Override
@@ -163,11 +166,30 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingDialog createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+        final GraphicalTimetableView gtView = new GraphicalTimetableView();
+        model.addListener(new ApplicationModelListener() {
+
+            @Override
+            public void modelChanged(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
+                    gtView.setTrainDiagram(event.getModel().getDiagram());
+            }
+        });
+        JScrollPane scrollPane = new JScrollPane(gtView);
+        scrollPane.getViewport().addChangeListener(gtView);
+
+        FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview");
+        dialog.setSize(new Dimension(400, 300)); // initial size
+        return dialog;
+    }
+
+        public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
         FloatingDialogsList list = new FloatingDialogsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
         list.add(createEventsViewerDialog(frame, mediator, model));
         list.add(createChangesTrackedDialog(frame, mediator, model));
+        list.add(createGTViewDialog(frame, mediator, model));
         return list;
     }
 }

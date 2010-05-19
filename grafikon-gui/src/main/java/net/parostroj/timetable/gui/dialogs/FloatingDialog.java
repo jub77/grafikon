@@ -1,7 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Frame;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiUtils;
@@ -23,7 +23,7 @@ public class FloatingDialog extends javax.swing.JDialog implements StorableGuiDa
         initComponents();
     }
 
-    public FloatingDialog(Frame parent, JPanel panel, String titleKey, String storageKeyPrefix) {
+    public FloatingDialog(Frame parent, JComponent panel, String titleKey, String storageKeyPrefix) {
         this(parent, false);
         if (titleKey != null)
             this.setTitle(ResourceLoader.getString(titleKey));
