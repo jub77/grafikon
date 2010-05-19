@@ -68,7 +68,10 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
 
         @Override
         public String toString() {
-            return String.format("%s: %s, %s", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction());
+            if (change.getDescriptions() != null && !change.getDescriptions().isEmpty())
+                return String.format("%s: %s, %s (%d)", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction(), change.getDescriptions().size());
+            else
+                return String.format("%s: %s, %s", change.getType(), change.getObject() != null ? change.getObject() : change.getType(), change.getAction());
         }
 
         @Override
