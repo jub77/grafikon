@@ -773,7 +773,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="net.parostroj.timetable.gui.panes.TCP" name="engineCyclesPane">
+            <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="engineCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Ob&#x11b;hy HV">
@@ -784,7 +784,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="net.parostroj.timetable.gui.panes.TCP" name="trainUnitCyclesPane">
+            <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="trainUnitCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Ob&#x11b;hy souprav">
@@ -795,7 +795,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="net.parostroj.timetable.gui.panes.TCP" name="driverCyclesPane">
+            <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="driverCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Turnusy">

@@ -1,5 +1,5 @@
 /*
- * TCP.java
+ * TrainsCyclesPane.java
  *
  * Created on 20.5.2010, 20:24:43
  */
@@ -25,7 +25,7 @@ import net.parostroj.timetable.model.TrainsCycle;
  *
  * @author jub
  */
-public class TCP extends javax.swing.JPanel {
+public class TrainsCyclesPane extends javax.swing.JPanel {
 
     private TCDelegate delegate;
 
@@ -86,8 +86,8 @@ public class TCP extends javax.swing.JPanel {
         }
     }
 
-    /** Creates new form TCP */
-    public TCP() {
+    /** Creates new form TrainsCyclesPane */
+    public TrainsCyclesPane() {
         initComponents();
         graphicalTimetableView = new GraphicalTimetableView();
         JScrollPane scrollPane = new GTViewScrollPane(graphicalTimetableView);
