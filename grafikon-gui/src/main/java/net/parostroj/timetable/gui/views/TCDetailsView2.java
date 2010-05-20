@@ -99,9 +99,9 @@ public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationMod
                     .addComponent(nameLabel)
                     .addComponent(descriptionLabel))
                 .addContainerGap(75, Short.MAX_VALUE))
-            .addComponent(descriptionTextField)
-            .addComponent(nameTextField)
-            .addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(descriptionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+            .addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

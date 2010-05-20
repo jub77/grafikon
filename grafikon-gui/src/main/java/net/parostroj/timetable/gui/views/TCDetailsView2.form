@@ -23,9 +23,9 @@
               </Group>
               <EmptySpace pref="75" max="32767" attributes="0"/>
           </Group>
-          <Component id="descriptionTextField" alignment="0" max="32767" attributes="0"/>
-          <Component id="nameTextField" alignment="0" max="32767" attributes="0"/>
-          <Component id="editButton" alignment="0" max="32767" attributes="0"/>
+          <Component id="descriptionTextField" alignment="0" pref="105" max="32767" attributes="0"/>
+          <Component id="nameTextField" alignment="0" pref="105" max="32767" attributes="0"/>
+          <Component id="editButton" alignment="0" pref="105" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -82,7 +82,7 @@
     <Component class="javax.swing.JButton" name="editButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="button.edit" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;) + &quot; ...&quot;"/>
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="button.edit" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;) + &quot; ...&quot;"/>
         </Property>
       </Properties>
       <Events>

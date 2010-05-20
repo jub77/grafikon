@@ -80,6 +80,8 @@ public class DriverCycleDelegate implements TCDelegate {
         List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
         for (Tuple<TrainsCycleItem> item : conflicts) {
             if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
+                if (result.length() != 0)
+                    result.append('\n');
                 // get time difference
                 int difference = item.second.getStartTime() - item.first.getEndTime();
                 Integer okDifference = (Integer)diagram.getAttribute("station.transfer.time");
@@ -91,11 +93,11 @@ public class DriverCycleDelegate implements TCDelegate {
                         template = ResourceLoader.getString("ec.move.nodes.time.problem");
                 }
                 result.append(String.format(template,item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
-                result.append("\n");
             }
             if (item.first.getEndTime() >= item.second.getStartTime()) {
+                if (result.length() != 0)
+                    result.append('\n');
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(),TimeConverter.convertFromIntToText(item.first.getEndTime()),item.second.getTrain().getName(),TimeConverter.convertFromIntToText(item.second.getStartTime())));
-                result.append("\n");
             }
         }
         return result.toString();

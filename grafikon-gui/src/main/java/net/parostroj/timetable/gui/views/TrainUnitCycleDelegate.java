@@ -79,10 +79,15 @@ public class TrainUnitCycleDelegate implements TCDelegate {
         StringBuilder result = new StringBuilder();
         List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
         for (Tuple<TrainsCycleItem> item : conflicts) {
-            if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode())
-                result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName())).append("\n");
-            else if (item.first.getEndTime() >= item.second.getStartTime())
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(),TimeConverter.convertFromIntToText(item.first.getEndTime()),item.second.getTrain().getName(),TimeConverter.convertFromIntToText(item.second.getStartTime()))).append("\n");
+            if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
+                if (result.length() != 0)
+                    result.append('\n');
+                result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
+            } else if (item.first.getEndTime() >= item.second.getStartTime()) {
+                if (result.length() != 0)
+                    result.append('\n');
+                result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(),TimeConverter.convertFromIntToText(item.first.getEndTime()),item.second.getTrain().getName(),TimeConverter.convertFromIntToText(item.second.getStartTime())));
+            }
         }
         return result.toString();
     }
