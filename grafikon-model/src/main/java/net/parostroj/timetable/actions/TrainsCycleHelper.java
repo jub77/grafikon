@@ -84,7 +84,11 @@ public class TrainsCycleHelper {
         Map<TimeInterval, Boolean> map = this.getTimeIntervalListMapCoverage(timeIntervalList, items);
         Boolean result = map.get(interval);
         if (result == null)
-            throw new IllegalArgumentException("Time interval is not in list.");
+            // ignore technological intervals
+            if (interval.isTechnological())
+                result = Boolean.FALSE;
+            else
+                throw new IllegalArgumentException("Time interval is not in list.");
         return result.booleanValue();
     }
 
