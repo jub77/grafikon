@@ -925,6 +925,9 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
         model.saveToPreferences(prefs);
+        trainUnitCyclesPane.saveToPreferences(prefs);
+        driverCyclesPane.saveToPreferences(prefs);
+        engineCyclesPane.saveToPreferences(prefs);
     }
     
     @Override
@@ -957,6 +960,9 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
         model.loadFromPreferences(prefs);
+        trainUnitCyclesPane.loadFromPreferences(prefs);
+        driverCyclesPane.loadFromPreferences(prefs);
+        engineCyclesPane.loadFromPreferences(prefs);
     }
 
     @Override

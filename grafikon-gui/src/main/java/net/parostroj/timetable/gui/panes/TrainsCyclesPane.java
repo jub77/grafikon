@@ -7,9 +7,11 @@ package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
 import javax.swing.JScrollPane;
+import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewScrollPane;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
@@ -25,7 +27,7 @@ import net.parostroj.timetable.model.TrainsCycle;
  *
  * @author jub
  */
-public class TrainsCyclesPane extends javax.swing.JPanel {
+public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData {
 
     private TCDelegate delegate;
 
@@ -118,6 +120,29 @@ public class TrainsCyclesPane extends javax.swing.JPanel {
         model.addListener(hts);
         graphicalTimetableView.setHTrains(hts);
         graphicalTimetableView.setTrainSelector(hts);
+    }
+
+    private String getKey(String suffix) {
+        String prefix = null;
+        switch(delegate.getType()) {
+            case DRIVER_CYCLE:
+                prefix = "driver"; break;
+            case ENGINE_CYCLE:
+                prefix = "engine"; break;
+            case TRAIN_UNIT_CYCLE:
+                prefix = "trainunit"; break;
+        }
+        return String.format("cycles.%s.%s", prefix, suffix);
+    }
+
+    @Override
+    public void saveToPreferences(AppPreferences prefs) {
+        prefs.setInt(getKey("divider"), splitPane.getDividerLocation());
+    }
+
+    @Override
+    public void loadFromPreferences(AppPreferences prefs) {
+        splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
     }
 
     /** This method is called from within the constructor to
