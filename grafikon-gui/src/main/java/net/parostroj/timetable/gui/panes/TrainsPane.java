@@ -6,8 +6,6 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
-import java.util.Collections;
-import java.util.Set;
 import java.util.logging.Logger;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -17,9 +15,8 @@ import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
-import net.parostroj.timetable.gui.components.TrainSelector;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.gui.utils.NormalHighlightedTrains;
+import net.parostroj.timetable.gui.utils.NormalTrainSelector;
 
 
 /**
@@ -67,54 +64,9 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             }
         });
 
-        HighlightedTrains ht = new HighlightedTrains() {
-
-            Set<Train> set = Collections.emptySet();
-
-
-            {
-                model.addListener(new ApplicationModelListener() {
-
-                    @Override
-                    public void modelChanged(ApplicationModelEvent event) {
-                        if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
-                            set = Collections.singleton(model.getSelectedTrain());
-                            graphicalTimetableView.repaint();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public boolean isHighlighedInterval(TimeInterval interval) {
-                return set.contains(interval.getTrain());
-            }
-
-            @Override
-            public Color getColor() {
-                return Color.GREEN;
-            }
-        };
+        HighlightedTrains ht = new NormalHighlightedTrains(model, Color.GREEN, graphicalTimetableView);
         graphicalTimetableView.setHTrains(ht);
-        graphicalTimetableView.setTrainSelector(new TrainSelector() {
-            
-            private TimeInterval selectedTimeInterval;
-            
-            @Override
-            public void selectTrainInterval(TimeInterval interval) {
-                // set selected train
-                Train selected = null;
-                if (interval != null)
-                    selected = interval.getTrain();
-                model.setSelectedTrain(selected);
-                selectedTimeInterval = interval;
-            }
-
-            @Override
-            public TimeInterval getSelectedTrainInterval() {
-                return selectedTimeInterval;
-            }
-        });
+        graphicalTimetableView.setTrainSelector(new NormalTrainSelector(model));
     }
     
     @Override
