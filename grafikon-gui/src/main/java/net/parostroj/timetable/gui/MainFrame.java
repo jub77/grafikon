@@ -276,9 +276,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
-        engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
-        trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
-        driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
+        engineCyclesPane = new net.parostroj.timetable.gui.panes.TCP();
+        trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TCP();
+        driverCyclesPane = new net.parostroj.timetable.gui.panes.TCP();
         netPane = new net.parostroj.timetable.gui.panes.NetPane();
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
@@ -972,11 +972,11 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JPanel applicationPanel;
     private javax.swing.JMenuItem dcListMenuItem;
     private javax.swing.JMenuItem dcListSelectMenuItem;
-    private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
+    private net.parostroj.timetable.gui.panes.TCP driverCyclesPane;
     private javax.swing.JMenuItem ecListMenuItem;
     private javax.swing.JMenuItem ecListSelectMenuItem;
     private javax.swing.JMenuItem editRoutesMenuItem;
-    private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
+    private net.parostroj.timetable.gui.panes.TCP engineCyclesPane;
     private javax.swing.JMenuItem epListMenuItem;
     private javax.swing.JMenuItem fileImportMenuItem;
     private javax.swing.JMenuItem fileOpenMenuItem;
@@ -1010,7 +1010,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
     private javax.swing.JMenuItem trainTimetableListMenuItem;
     private javax.swing.JMenuItem trainTypesMenuItem;
-    private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
+    private net.parostroj.timetable.gui.panes.TCP trainUnitCyclesPane;
     private net.parostroj.timetable.gui.panes.TrainsPane trainsPane;
     private javax.swing.JMenuItem tucListMenuItem;
     private javax.swing.JMenuItem tucListSelectMenuItem;
