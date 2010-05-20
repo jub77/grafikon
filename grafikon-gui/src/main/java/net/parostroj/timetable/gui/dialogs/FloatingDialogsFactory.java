@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.logging.Logger;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
@@ -13,6 +14,7 @@ import net.parostroj.timetable.gui.components.ChangesTrackerPanel;
 import net.parostroj.timetable.gui.components.EventsViewerPanel;
 import net.parostroj.timetable.gui.components.GTEventTypeConverter;
 import net.parostroj.timetable.gui.components.GTViewScrollPane;
+import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.TrainsWithConflictsPanel;
 import net.parostroj.timetable.gui.helpers.TrainWrapper;
@@ -28,6 +30,8 @@ import net.parostroj.timetable.model.events.*;
  * @author jub
  */
 public class FloatingDialogsFactory {
+
+    private static final Logger LOG = Logger.getLogger(FloatingDialogsFactory.class.getName());
 
     private static FloatingDialog createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
@@ -184,7 +188,24 @@ public class FloatingDialogsFactory {
         gtView.setHTrains(new NormalHighlightedTrains(model, Color.GREEN, gtView));
         gtView.setTrainSelector(new NormalTrainSelector(model));
 
-        FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview");
+        FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview") {
+
+            @Override
+            public void saveToPreferences(AppPreferences prefs) {
+                super.saveToPreferences(prefs);
+                prefs.setString(createStorageKey("gtv"), gtView.getSettings().getStorageString());
+            }
+
+            @Override
+            public void loadFromPreferences(AppPreferences prefs) {
+                super.loadFromPreferences(prefs);
+                try {
+                    gtView.setSettings(GTViewSettings.parseStorageString(prefs.getString(createStorageKey("gtv"), null)));
+                } catch (Exception e) {
+                    LOG.warning("Wrong GTView settings - using default values.");
+                }
+            }
+        };
         dialog.setSize(new Dimension(400, 300)); // initial size
         return dialog;
     }
