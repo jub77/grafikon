@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import javax.swing.JList;
@@ -11,9 +12,12 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.ChangesTrackerPanel;
 import net.parostroj.timetable.gui.components.EventsViewerPanel;
 import net.parostroj.timetable.gui.components.GTEventTypeConverter;
+import net.parostroj.timetable.gui.components.GTViewScrollPane;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.TrainsWithConflictsPanel;
 import net.parostroj.timetable.gui.helpers.TrainWrapper;
+import net.parostroj.timetable.gui.utils.NormalHighlightedTrains;
+import net.parostroj.timetable.gui.utils.NormalTrainSelector;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
@@ -176,8 +180,9 @@ public class FloatingDialogsFactory {
                     gtView.setTrainDiagram(event.getModel().getDiagram());
             }
         });
-        JScrollPane scrollPane = new JScrollPane(gtView);
-        scrollPane.getViewport().addChangeListener(gtView);
+        JScrollPane scrollPane = new GTViewScrollPane(gtView);
+        gtView.setHTrains(new NormalHighlightedTrains(model, Color.GREEN, gtView));
+        gtView.setTrainSelector(new NormalTrainSelector(model));
 
         FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview");
         dialog.setSize(new Dimension(400, 300)); // initial size
