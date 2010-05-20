@@ -102,7 +102,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="scrollPane1" pref="268" max="32767" attributes="0"/>
+              <Component id="scrollPane1" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="upButton" alignment="1" max="32767" attributes="1"/>
@@ -111,16 +111,16 @@
                   <Component id="addButton" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="scrollPane2" pref="252" max="32767" attributes="0"/>
+              <Component id="scrollPane2" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="detailsTextField" pref="491" max="32767" attributes="0"/>
+              <Component id="detailsTextField" max="32767" attributes="0"/>
           </Group>
-          <Component id="errorsScrollPane" alignment="0" pref="583" max="32767" attributes="0"/>
+          <Component id="errorsScrollPane" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
-              <Component id="coverageScrollPane" pref="446" max="32767" attributes="0"/>
+              <Component id="coverageScrollPane" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="fromComboBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -144,8 +144,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="downButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="scrollPane2" alignment="0" pref="167" max="32767" attributes="2"/>
-                  <Component id="scrollPane1" alignment="0" pref="167" max="32767" attributes="2"/>
+                  <Component id="scrollPane2" alignment="0" max="32767" attributes="2"/>
+                  <Component id="scrollPane1" alignment="0" max="32767" attributes="2"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -157,10 +157,10 @@
                   <Component id="fromComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="toComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="changeButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="coverageScrollPane" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="coverageScrollPane" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="errorsScrollPane" min="-2" pref="62" max="-2" attributes="0"/>
+              <Component id="errorsScrollPane" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -259,7 +259,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection component="addButton" name="font" type="property"/>
             </Property>
-            <Property name="rows" type="int" value="3"/>
+            <Property name="rows" type="int" value="2"/>
           </Properties>
         </Component>
       </SubComponents>
