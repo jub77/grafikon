@@ -9,6 +9,7 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
+import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 
@@ -17,12 +18,15 @@ import net.parostroj.timetable.model.Train;
  *
  * @author jub
  */
-public class NormalHighlightedTrains implements HighlightedTrains {
+public class NormalHTS implements HighlightedTrains, TrainSelector, ApplicationModelListener {
 
     private Set<Train> set = Collections.emptySet();
     private final Color selectionColor;
+    private TimeInterval selectedTimeInterval;
+    private final ApplicationModel model;
+    private final GraphicalTimetableView view;
 
-    public NormalHighlightedTrains(final ApplicationModel model, Color selectionColor,
+    public NormalHTS(final ApplicationModel model, Color selectionColor,
             final GraphicalTimetableView view) {
         model.addListener(new ApplicationModelListener() {
 
@@ -35,6 +39,9 @@ public class NormalHighlightedTrains implements HighlightedTrains {
             }
         });
         this.selectionColor = selectionColor;
+        this.model = model;
+        this.view = view;
+        this.model.addListener(this);
     }
 
     @Override
@@ -47,4 +54,24 @@ public class NormalHighlightedTrains implements HighlightedTrains {
         return this.selectionColor;
     }
 
+    @Override
+    public void selectTrainInterval(TimeInterval interval) {
+        // set selected train
+        Train selected = null;
+        if (interval != null)
+            selected = interval.getTrain();
+        model.setSelectedTrain(selected);
+        selectedTimeInterval = interval;
+    }
+
+    @Override
+    public TimeInterval getSelectedTrainInterval() {
+        return selectedTimeInterval;
+    }
+
+    @Override
+    public void modelChanged(ApplicationModelEvent event) {
+        if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
+            view.setTrainDiagram(event.getModel().getDiagram());
+    }
 }

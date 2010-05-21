@@ -10,16 +10,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.components.ChangesTrackerPanel;
-import net.parostroj.timetable.gui.components.EventsViewerPanel;
-import net.parostroj.timetable.gui.components.GTEventTypeConverter;
-import net.parostroj.timetable.gui.components.GTViewScrollPane;
-import net.parostroj.timetable.gui.components.GTViewSettings;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
-import net.parostroj.timetable.gui.components.TrainsWithConflictsPanel;
+import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.helpers.TrainWrapper;
-import net.parostroj.timetable.gui.utils.NormalHighlightedTrains;
-import net.parostroj.timetable.gui.utils.NormalTrainSelector;
+import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
@@ -176,17 +169,10 @@ public class FloatingDialogsFactory {
 
     private static FloatingDialog createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
-        model.addListener(new ApplicationModelListener() {
-
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
-                    gtView.setTrainDiagram(event.getModel().getDiagram());
-            }
-        });
         JScrollPane scrollPane = new GTViewScrollPane(gtView);
-        gtView.setHTrains(new NormalHighlightedTrains(model, Color.GREEN, gtView));
-        gtView.setTrainSelector(new NormalTrainSelector(model));
+        NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
+        gtView.setHTrains(hts);
+        gtView.setTrainSelector(hts);
 
         FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview") {
 

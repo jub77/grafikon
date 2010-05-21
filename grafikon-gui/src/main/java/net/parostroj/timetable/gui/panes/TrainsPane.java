@@ -9,15 +9,9 @@ import java.awt.Color;
 import java.util.logging.Logger;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewSettings;
-import net.parostroj.timetable.gui.components.HighlightedTrains;
-import net.parostroj.timetable.gui.utils.NormalHighlightedTrains;
-import net.parostroj.timetable.gui.utils.NormalTrainSelector;
-
+import net.parostroj.timetable.gui.utils.NormalHTS;
 
 /**
  * Trains pane.
@@ -53,20 +47,9 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public void setModel(final ApplicationModel model) {
         trainListView.setModel(model);
         trainView.setModel(model);
-
-        model.addListener(new ApplicationModelListener() {
-
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    graphicalTimetableView.setTrainDiagram(model.getDiagram());
-                }
-            }
-        });
-
-        HighlightedTrains ht = new NormalHighlightedTrains(model, Color.GREEN, graphicalTimetableView);
-        graphicalTimetableView.setHTrains(ht);
-        graphicalTimetableView.setTrainSelector(new NormalTrainSelector(model));
+        NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
+        graphicalTimetableView.setHTrains(hts);
+        graphicalTimetableView.setTrainSelector(hts);
     }
     
     @Override
