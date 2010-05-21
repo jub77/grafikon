@@ -6,26 +6,13 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import javax.swing.tree.*;
+import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -37,7 +24,7 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
     
     private ApplicationModel model;
     
-    private static enum TreeType { FLAT, TYPES }
+    public static enum TreeType { FLAT, TYPES }
     
     private TreeType treeType = TreeType.TYPES;
     private boolean selecting = false;
@@ -148,6 +135,18 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         }
         deleteButton.setEnabled(!trainTree.isSelectionEmpty());
         selecting = false;
+    }
+
+    public TreeType getTreeType() {
+        return treeType;
+    }
+
+    public void setTreeType(TreeType treeType) {
+        if (treeType != this.treeType) {
+            this.treeType = treeType;
+            // update list
+            this.updateViewDiagramChanged();
+        }
     }
     
     /** This method is called from within the constructor to

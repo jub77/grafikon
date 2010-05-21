@@ -12,6 +12,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
+import net.parostroj.timetable.gui.views.TrainListView.TreeType;
 
 /**
  * Trains pane.
@@ -68,6 +69,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             splitPane.setDividerLocation(dividerLoc);
         else
             splitPane.setLastDividerLocation(dividerLoc);
+        String treeType = prefs.getString("trains.listtype", "TYPES");
+        trainListView.setTreeType(TreeType.valueOf(treeType));
 
         trainView.loadFromPreferences(prefs);
     }
@@ -78,6 +81,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         // save if the gtview in trains pane is visible
         prefs.setBoolean("trains.show.gtview", scrollPane.isVisible());
         prefs.setString("trains.gtv", graphicalTimetableView.getSettings().getStorageString());
+        prefs.setString("trains.listtype", trainListView.getTreeType().name());
         trainView.saveToPreferences(prefs);
     }
 
