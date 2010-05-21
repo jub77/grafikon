@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -13,6 +14,7 @@ import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewScrollPane;
+import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
@@ -29,6 +31,7 @@ import net.parostroj.timetable.model.TrainsCycle;
  */
 public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData {
 
+    private static final Logger LOG = Logger.getLogger(TrainsCyclesPane.class.getName());
     private TCDelegate delegate;
 
     private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, ApplicationModelListener {
@@ -138,11 +141,17 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setInt(getKey("divider"), splitPane.getDividerLocation());
+        prefs.setString(getKey("gtv"), graphicalTimetableView.getSettings().getStorageString());
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
+        try {
+            graphicalTimetableView.setSettings(GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null)));
+        } catch (Exception e) {
+            LOG.warning("Wrong GTView settings - using default values.");
+        }
     }
 
     /** This method is called from within the constructor to
