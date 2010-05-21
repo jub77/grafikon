@@ -46,17 +46,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private OutputAction outputAction;
     
     public MainFrame(SplashScreenInfo info) {
-        String version = getVersion();
+        String version = getVersion(false);
         // remove hg revision if it is SNAPSHOT
-        if (version.contains("SNAPSHOT"))
-            version = version.replaceFirst("SNAPSHOT-.*", "SNAPSHOT");
         info.setText("Starting Grafikon ...\n" + version);
         this.initializeFrame();
     }
 
-    private String getVersion() {
+    private String getVersion(boolean complete) {
         ResourceBundle bundle = ResourceBundle.getBundle("grafikon_version");
-        String version = bundle.getString("grafikon.version");
+        String version = bundle.getString(complete ? "grafikon.version" : "grafikon.version.show");
         return version;
     }
 
@@ -216,7 +214,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = getVersion();
+        String version = getVersion(false);
         if (version != null)
             title += " (" + version + ")";
         if (model != null && model.getDiagram() != null) {
@@ -808,7 +806,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
     }
     AboutDialog dialog = new AboutDialog(this, true,
-            String.format(aboutBundle.getString("text"), getVersion(), fls == null ? "-" : fls.getSaveVersion()),
+            String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
             getClass().getResource(aboutBundle.getString("image")), true);
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
