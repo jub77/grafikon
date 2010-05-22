@@ -13,7 +13,7 @@ import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 
 /**
  * Class with main method.
- * 
+ *
  * @author jub
  */
 public class Main {
@@ -23,7 +23,7 @@ public class Main {
     static {
         netParostrojLogger.setLevel(Level.FINE);
         Logger.getLogger("").getHandlers()[0].setLevel(Level.ALL);
-        
+
         // add file output to logging
         try {
             File file = new File(System.getProperty("java.io.tmpdir"), "grafikon.log");
@@ -39,7 +39,7 @@ public class Main {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         if (AppPreferences.getPreferences().getBoolean("debug", false))
             setDebug();
-        ApplicationStarter starter = new ApplicationStarter(MainFrame.class, 296, 103, Main.class.getResource("/images/splashscreen.png"));
+        ApplicationStarter starter = new ApplicationStarter(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
         starter.start();
     }
 

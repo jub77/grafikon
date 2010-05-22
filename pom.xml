@@ -9,6 +9,7 @@
 
     <properties>
         <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+        <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
 
     <profiles>
@@ -25,66 +26,17 @@
             </properties>
         </profile>
         <profile>
-            <id>snapshot</id>
+            <id>versioned</id>
             <activation>
                 <property>
-                    <name>snapshot</name>
+                    <name>versioned</name>
                 </property>
             </activation>
             <properties>
-                <grafikon.version>0.10-SNAPSHOT</grafikon.version>
-                <grafikon.version.build>${grafikon.version}-${changeSet}</grafikon.version.build>
-                <grafikon.version.show>${grafikon.version}</grafikon.version.show>
+                <grafikon.version>not-specified</grafikon.version>
+                <grafikon.version.build>not-specified</grafikon.version.build>
+                <grafikon.version.show>not-specified</grafikon.version.show>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>hgchangeset</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release</id>
-            <activation>
-                <property>
-                    <name>release</name>
-                </property>
-            </activation>
-            <properties>
-                <grafikon.version>0.10</grafikon.version>
-                <grafikon.version.build>${grafikon.version}-${changeSet}</grafikon.version.build>
-                <grafikon.version.show>${grafikon.version}</grafikon.version.show>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>buildnumber-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>hgchangeset</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 
@@ -115,7 +67,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Build>${grafikon.version}-${changeSet}</Implementation-Build>
+                            <Implementation-Build>${grafikon.version.build}</Implementation-Build>
                             <Built-Date>${maven.build.timestamp}</Built-Date>
                         </manifestEntries>
                     </archive>
