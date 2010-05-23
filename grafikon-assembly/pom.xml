@@ -13,22 +13,8 @@
     <name>grafikon-assembly</name>
 
     <properties>
-        <assembly.name>grafikon-${grafikon.version}</assembly.name>
+        <assembly.name>grafikon-${grafikon.version}-${maven.build.timestamp}</assembly.name>
     </properties>
-
-    <profiles>
-        <profile>
-            <id>snapshot</id>
-            <activation>
-                <property>
-                    <name>snapshot</name>
-                </property>
-            </activation>
-            <properties>
-                <assembly.name>grafikon-${grafikon.version}-${maven.build.timestamp}</assembly.name>
-            </properties>
-        </profile>
-    </profiles>
 
     <build>
         <finalName>${assembly.name}</finalName>
