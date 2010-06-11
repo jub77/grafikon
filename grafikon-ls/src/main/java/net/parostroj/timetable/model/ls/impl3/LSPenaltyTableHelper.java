@@ -1,14 +1,14 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import net.parostroj.timetable.model.PenaltyTable;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class holds usefull information for computation of running time.
@@ -17,7 +17,7 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public class LSPenaltyTableHelper {
 
-    private static final Logger LOG = Logger.getLogger(LSPenaltyTableHelper.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSPenaltyTableHelper.class.getName());
     /** Filename of the file with information. */
     private static final String SPEEDING_BRAKING_PENALTIES_FILENAME = "/speeding_braking_penalties.xml";
     
@@ -33,10 +33,10 @@ public class LSPenaltyTableHelper {
                 throw new RuntimeException("Cannot find speeding braking table to load.");
             }
             LSPenaltyTable t = u.unmarshal(new javax.xml.transform.stream.StreamSource(url.openStream()), LSPenaltyTable.class).getValue();
-            LOG.finer("Penalty table loaded.");
+            LOG.trace("Penalty table loaded.");
             return t;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error loading penalty table.", e);
+            LOG.error("Error loading penalty table.", e);
             return null;
         }
     }
