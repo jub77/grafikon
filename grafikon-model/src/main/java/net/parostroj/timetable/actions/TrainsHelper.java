@@ -3,11 +3,12 @@ package net.parostroj.timetable.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper actions for trains.
@@ -16,7 +17,7 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class TrainsHelper {
 
-    private static final Logger LOG = Logger.getLogger(TrainsHelper.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainsHelper.class.getName());
 
     /**
      * returns weight for specified time interval based on line and engine class.
@@ -25,7 +26,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return weight
      */
-    public static final Integer getWeight(TimeInterval interval) {
+    public static Integer getWeight(TimeInterval interval) {
         Pair<Integer, TrainsCycleItem> weightAndCycle = getWeightAndCycle(interval);
         if (weightAndCycle == null || weightAndCycle.first == null)
             return null;
@@ -40,7 +41,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return weight
      */
-    public static final Integer getWeightWithAttribute(TimeInterval interval) {
+    public static Integer getWeightWithAttribute(TimeInterval interval) {
         Integer weight = getWeight(interval);
         if (weight == null) {
             weight = getWeightFromAttribute(interval.getTrain());
@@ -57,7 +58,7 @@ public class TrainsHelper {
      * @param train train
      * @return weight
      */
-    public static final Integer getWeightFromAttribute(Train train) {
+    public static Integer getWeightFromAttribute(Train train) {
         Integer weight = null;
         String weightStr = (String) train.getAttribute("weight.info");
         // try to convert weight string to number
@@ -69,7 +70,7 @@ public class TrainsHelper {
                     weight = Integer.valueOf(number);
                 }
             } catch (NumberFormatException e) {
-                LOG.fine("Cannot convert weight to number: " + weightStr);
+                LOG.debug("Cannot convert weight to number: {}", weightStr);
             }
         }
         return weight;
@@ -83,7 +84,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return weight and train cycle item
      */
-    public static final Pair<Integer, TrainsCycleItem> getWeightAndCycle(TimeInterval interval) {
+    public static Pair<Integer, TrainsCycleItem> getWeightAndCycle(TimeInterval interval) {
         if (!interval.isLineOwner()) {
             throw new IllegalArgumentException("Weight can be returned only for line interval.");
         }
@@ -104,7 +105,7 @@ public class TrainsHelper {
      * @param weight weight
      * @return length
      */
-    public static final Integer convertWeightToLength(Train train, TrainDiagram diagram, Integer weight) {
+    public static Integer convertWeightToLength(Train train, TrainDiagram diagram, Integer weight) {
         Double ratio = Boolean.TRUE.equals(train.getAttribute("empty")) ?
             (Double)diagram.getAttribute("weight.ratio.empty") :
             (Double)diagram.getAttribute("weight.ratio.loaded");
@@ -125,7 +126,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return engine class and train cycle item
      */
-    public static final Pair<EngineClass, TrainsCycleItem> getEngineClassAndCycle(TimeInterval interval) {
+    public static Pair<EngineClass, TrainsCycleItem> getEngineClassAndCycle(TimeInterval interval) {
         Train train = interval.getTrain();
         TrainsCycleItem item = train.getCycleItemForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
         if (item != null) {
@@ -141,7 +142,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return
      */
-    public static final EngineClass getEngineClass(TimeInterval interval) {
+    public static EngineClass getEngineClass(TimeInterval interval) {
         Pair<EngineClass, TrainsCycleItem> pair = getEngineClassAndCycle(interval);
         if (pair != null)
             return pair.first;
@@ -156,7 +157,7 @@ public class TrainsHelper {
      * @param train train
      * @return list with weights
      */
-    public static final List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getWeightList(Train train) {
+    public static List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getWeightList(Train train) {
         // if the train is not coverred return null
         if (!train.isCovered(TrainsCycleType.ENGINE_CYCLE))
             return null;
@@ -185,7 +186,7 @@ public class TrainsHelper {
      * @param diagram trains diagram
      * @return list of lengths
      */
-    public static final List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getLengthList(Train train, TrainDiagram diagram) {
+    public static List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getLengthList(Train train, TrainDiagram diagram) {
         List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> result = getWeightList(train);
         convertWeightToLength(result, diagram);
         return result;
@@ -197,7 +198,7 @@ public class TrainsHelper {
      * @param list list of weights
      * @param diagram trains diagram
      */
-    public static final void convertWeightToLength(List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> list, TrainDiagram diagram) {
+    public static void convertWeightToLength(List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> list, TrainDiagram diagram) {
         for (Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> pair : list) {
             convertWeightToLength(pair.first.getTrain(), diagram, pair.second.first);
         }
@@ -212,7 +213,7 @@ public class TrainsHelper {
      * @param train train
      * @return next node and available weight
      */
-    public static final Pair<Node, Integer> getNextWeight(Node node, Train train) {
+    public static Pair<Node, Integer> getNextWeight(Node node, Train train) {
         List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> weightList = getWeightList(train);
         Integer retValue = null;
         Node retNode = null;
@@ -251,7 +252,7 @@ public class TrainsHelper {
      * @param train train
      * @return next node and available weight
      */
-    public static final Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram) {
+    public static Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram) {
         Pair<Node, Integer> result = getNextWeight(node, train);
         if (result != null) {
             result.second = convertWeightToLength(train, diagram, result.second);
@@ -269,7 +270,7 @@ public class TrainsHelper {
      * @param length precalculated length
      * @return updated length
      */
-    public static final Integer updateNextLengthWithStationLengths(Node node, Train train, Integer length) {
+    public static Integer updateNextLengthWithStationLengths(Node node, Train train, Integer length) {
         Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
         // look for current node
         while (i.hasNext()) {
@@ -306,7 +307,7 @@ public class TrainsHelper {
      * @param length precalculated length
      * @return updated length
      */
-    public static final Integer updateWithStationLength(Node node, Integer length) {
+    public static Integer updateWithStationLength(Node node, Integer length) {
         Integer nodeLength = (Integer)node.getAttribute("length");
         if (nodeLength != null && nodeLength < length)
             return nodeLength;
@@ -322,7 +323,7 @@ public class TrainsHelper {
      * @param train train
      * @return if the length should be taken into account
      */
-    public static final boolean shouldCheckLength(Node node, Train train) {
+    public static boolean shouldCheckLength(Node node, Train train) {
         return node.getType().isStation() || (node.getType().isStop() && train.getType().isPlatform());
     }
 }

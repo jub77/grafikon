@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.events.*;
 
 /**
@@ -10,7 +9,6 @@ import net.parostroj.timetable.model.events.*;
  */
 class GTListenerNetImpl implements NodeListener, LineListener {
 
-    private static final Logger LOG = Logger.getLogger(GTListenerNetImpl.class.getName());
     private Net net;
     
     public GTListenerNetImpl(Net net) {
