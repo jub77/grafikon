@@ -76,6 +76,13 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>JavaNet</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+    </repositories>
+
     <modules>
         <module>grafikon-model</module>
         <module>grafikon-save</module>
