@@ -5,8 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
@@ -14,6 +12,8 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for editation of train properties.
@@ -22,7 +22,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class EditTrainDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = Logger.getLogger(EditTrainDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EditTrainDialog.class.getName());
 
     public ApplicationModel model;
 
@@ -329,7 +329,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             changed = true;
         }
     } catch (NumberFormatException e) {
-        LOG.log(Level.WARNING, "Cannot convert speed to number: {0}", speedTextField.getText());
+        LOG.warn("Cannot convert speed to number: {}", speedTextField.getText());
     }
 
     // technological times
@@ -345,7 +345,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             changed = true;
         }
     } catch (NumberFormatException e) {
-        LOG.log(Level.WARNING, "Cannot convert technological time: {0}, {1}", new Object[]{timeBeforeTextField.getText(), timeAfterTextField.getText()});
+        LOG.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
     }
 
     // fire changed event

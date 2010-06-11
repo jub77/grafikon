@@ -9,8 +9,6 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
@@ -22,6 +20,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,7 +31,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
-    private static final Logger LOG = Logger.getLogger(MainFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class.getName());
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -81,7 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "Cannot load preferences.", e);
+            LOG.warn("Cannot load preferences.", e);
         }
 
         outputAction = new OutputAction(model, this);
@@ -180,7 +180,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             AppPreferences.getPreferences().load();
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error loading preferences.", e);
+            LOG.error("Error loading preferences.", e);
         }
         
         this.setSelectedLocale();
@@ -803,7 +803,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     try {
         fls = f.createLatestForSave();
     } catch (LSException e) {
-        LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
+        LOG.warn("Cannot create FileLoadSave", e);
     }
     AboutDialog dialog = new AboutDialog(this, true,
             String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
@@ -887,7 +887,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             this.saveToPreferences(prefs);
             prefs.save();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error saving preferences.", ex);
+            LOG.error("Error saving preferences.", ex);
         }
     }
 

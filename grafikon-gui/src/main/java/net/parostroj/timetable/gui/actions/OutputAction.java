@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -22,6 +20,8 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Output action.
@@ -30,7 +30,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class OutputAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(OutputAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(OutputAction.class.getName());
     private ApplicationModel model;
     private Component parent;
     private TemplateSelectDialog templateSelectDialog;
@@ -66,7 +66,7 @@ public class OutputAction extends AbstractAction {
             else
                 this.multipleOutputs();
         } catch (OutputException ex) {
-            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            LOG.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
         }
@@ -238,7 +238,7 @@ public class OutputAction extends AbstractAction {
                         output.execute();
                     }
                 } catch (OutputException e) {
-                    LOG.log(Level.WARNING, e.getMessage(), e);
+                    LOG.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
             }
