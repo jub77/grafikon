@@ -3,7 +3,8 @@ package net.parostroj.timetable.gui.components;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * GTDraw with translation and clipping.
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class TransformedGTDraw {
 
-    private static final Logger LOG = Logger.getLogger(TransformedGTDraw.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TransformedGTDraw.class.getName());
     private GTDraw draw;
     private Rectangle clipping;
     private boolean moveStationName;
@@ -27,7 +28,7 @@ public class TransformedGTDraw {
         this.applyTranslation(g);
         this.applyClipping(g);
         this.draw.draw(g);
-        LOG.finest("DRAW TIME(" + (drawCnt++) + "): " + (System.currentTimeMillis() - time) + "ms");
+        LOG.trace("DRAW TIME(" + (drawCnt++) + "): " + (System.currentTimeMillis() - time) + "ms");
     }
 
     private void applyClipping(Graphics2D g) {

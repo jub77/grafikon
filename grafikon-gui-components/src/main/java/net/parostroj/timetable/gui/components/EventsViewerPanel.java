@@ -2,10 +2,11 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Rectangle;
 import java.util.*;
-import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Triplet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Events viewer panel.
@@ -16,7 +17,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
 
     private Map<Class<?>, EventsViewerTypeConverter> converterMap;
     private boolean writeToLog = false;
-    private static final Logger LOG = Logger.getLogger(EventsViewerPanel.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EventsViewerPanel.class.getName());
 
     class EventListModel extends AbstractListModel {
 
@@ -33,7 +34,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
             fireIntervalAdded(this, position, position);
             removeOverLimit();
             if (writeToLog)
-                LOG.fine(str);
+                LOG.debug(str);
         }
 
         @Override

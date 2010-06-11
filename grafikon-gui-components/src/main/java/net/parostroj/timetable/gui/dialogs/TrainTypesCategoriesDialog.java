@@ -7,8 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -18,6 +16,8 @@ import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * List of train type categories.
@@ -171,7 +171,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private TrainDiagram diagram;
     private TrainTypeCategoriesListModel listModel;
     private PenaltyTableModel tableModel;
-    private static final Logger LOG = Logger.getLogger(TrainTypesCategoriesDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainTypesCategoriesDialog.class.getName());
 
     /** Creates new form EngineClassesDialog */
     public TrainTypesCategoriesDialog(java.awt.Frame parent, boolean modal) {
@@ -429,8 +429,9 @@ private void trainTypeCategoriesListValueChanged(javax.swing.event.ListSelection
 
 private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newRowButtonActionPerformed
     // check if there is a speed specified
+    String speedStr = speedTextField.getText();
     try {
-        int speed = Integer.parseInt(speedTextField.getText());
+        int speed = Integer.parseInt(speedStr);
         if (speed == 0) {
             return;
         }
@@ -438,7 +439,7 @@ private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         speedTextField.setText("");
 
     } catch (NumberFormatException e) {
-        LOG.log(Level.FINEST, "Cannot convert speed string to int.", e);
+        LOG.debug("Cannot convert speed string to int: {}", speedStr);
     }
 }//GEN-LAST:event_newRowButtonActionPerformed
 

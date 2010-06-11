@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -11,8 +10,6 @@ import net.parostroj.timetable.utils.IdGenerator;
  * @author jub
  */
 public abstract class Import {
-
-    private static final Logger LOG = Logger.getLogger(Import.class.getName());
 
     private ImportMatch match;
     private TrainDiagram diagram;
