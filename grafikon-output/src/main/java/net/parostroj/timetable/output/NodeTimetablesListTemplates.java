@@ -7,8 +7,8 @@ package net.parostroj.timetable.output;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Templates for generating timetable list (HTML).
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class NodeTimetablesListTemplates extends Templates {
 
-    private static final Logger LOGGER = Logger.getLogger(NodeTimetablesListTemplates.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeTimetablesListTemplates.class.getName());
     
     private static final String PROPERTIES = "n_timetable_texts";
 
@@ -67,7 +67,7 @@ public class NodeTimetablesListTemplates extends Templates {
         try {
             return ResourceBundle.getBundle(PROPERTIES, getLocaleForTemplate()).getString(key);
         } catch (MissingResourceException e) {
-            LOGGER.log(Level.WARNING, "Error getting text for key: " + key, e);
+            LOGGER.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
     }

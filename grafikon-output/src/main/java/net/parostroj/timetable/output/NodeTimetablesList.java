@@ -10,7 +10,6 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
-import java.util.logging.Logger;
 import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.TrainsHelper;
@@ -24,8 +23,6 @@ import net.parostroj.timetable.utils.*;
  */
 public class NodeTimetablesList {
     
-    private static final Logger LOG = Logger.getLogger(NodeTimetablesList.class.getName());
-
     private List<Node> nodes;
     private NodeTimetablesListTemplates templates;
     private TrainDiagram diagram;
