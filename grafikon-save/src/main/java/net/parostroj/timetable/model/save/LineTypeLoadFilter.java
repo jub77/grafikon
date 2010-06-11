@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.save;
 
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -12,8 +11,6 @@ import net.parostroj.timetable.model.*;
  */
 public class LineTypeLoadFilter implements TrainDiagramFilter {
     
-    private static final Logger LOG = Logger.getLogger(LineTypeLoadFilter.class.getName());
-
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
         if (version.getMajorVersion() <= 2) {
