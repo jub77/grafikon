@@ -18,7 +18,6 @@
         <jgraph.version>5.13.0.0</jgraph.version>
         <jgrapht.version>0.7.3</jgrapht.version>
         <mvel2.version>2.0.16</mvel2.version>
-        <grafikon.version>${grafikon.version}</grafikon.version>
     </properties>
 
     <build>
