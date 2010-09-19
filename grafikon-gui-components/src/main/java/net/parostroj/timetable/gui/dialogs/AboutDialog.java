@@ -6,11 +6,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * About dialog.
@@ -19,7 +19,7 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  */
 public class AboutDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = Logger.getLogger(AboutDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(AboutDialog.class.getName());
 
     /** Creates new form AboutDialog */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
@@ -53,7 +53,7 @@ public class AboutDialog extends javax.swing.JDialog {
                 AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
                 image = op.filter(src, null);
             } catch (Exception e) {
-                LOG.log(Level.WARNING, e.getMessage(), e);
+                LOG.warn(e.getMessage(), e);
             }
         }
 

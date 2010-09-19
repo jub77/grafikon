@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Diagram change (extracted from events).
@@ -55,7 +55,7 @@ public class DiagramChange {
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(DiagramChange.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DiagramChange.class.getName());
 
     private Type type;
     private Action action;
@@ -139,7 +139,7 @@ public class DiagramChange {
         try {
             return getStringWithException(key);
         } catch (MissingResourceException e) {
-            LOG.log(Level.WARNING, "Error getting text for key: {0}", key);
+            LOG.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
     }

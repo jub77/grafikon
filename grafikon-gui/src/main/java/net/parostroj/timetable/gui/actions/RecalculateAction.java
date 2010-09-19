@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.SwingWorker;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -14,6 +13,8 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This action recalculates all trains.
@@ -22,7 +23,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RecalculateAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(RecalculateAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(RecalculateAction.class.getName());
     private ApplicationModel model;
 
     public RecalculateAction(ApplicationModel model) {
@@ -73,7 +74,7 @@ public class RecalculateAction extends AbstractAction {
 
                     @Override
                     protected void process(List<Train> chunks) {
-                        LOG.finest("Recalculate chunk of trains. Size: " + chunks.size());
+                        LOG.trace("Recalculate chunk of trains. Size: " + chunks.size());
                         lock.lock();
                         try {
                             for (Train train : chunks) {

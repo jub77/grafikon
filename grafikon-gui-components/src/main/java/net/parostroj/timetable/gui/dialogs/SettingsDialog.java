@@ -5,11 +5,11 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for settings modification of the train diagram.
@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.*;
  */
 public class SettingsDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = Logger.getLogger(SettingsDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsDialog.class.getName());
     private boolean diagramChanged;
     private TrainDiagram diagram;
 
@@ -79,7 +79,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (transferTime != null) {
                 stationTransferTextField.setText(transferTime.toString());
             } else {
-                LOG.warning("Station transfer time information missing.");
+                LOG.warn("Station transfer time information missing.");
                 stationTransferTextField.setText("");
             }
             // set station lengths information
@@ -377,7 +377,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         if ("".equals(name)|| "".equals(completeName)) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.emptytemplates"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.FINE, "Empty templates.");
+            LOG.debug("Empty templates.");
             return;
         }
 
@@ -390,7 +390,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.badratio"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.FINE, "Cannot covert ratio.", ex);
+            LOG.debug("Cannot covert ratio.", ex);
             return;
         }
         if (s != null && !s.equals(diagram.getAttribute("scale"))) {
@@ -431,7 +431,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (difference != null && !difference.equals(diagram.getAttribute("station.transfer.time")))
                 diagram.setAttribute("station.transfer.time", difference);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot parse station transfer time: {0}", stationTransferTextField.getText());
+            LOG.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
         }
 
         // get back values for stations lengths
@@ -455,7 +455,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (!loadedRatio.equals(diagram.getAttribute("weight.ratio.loaded")))
                 diagram.setAttribute("weight.ratio.loaded", loadedRatio);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot convert weight ratios to doubles.", e);
+            LOG.warn("Cannot convert weight ratios to doubles.", e);
         }
 
         // changes tracking

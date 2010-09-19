@@ -3,10 +3,9 @@ package net.parostroj.timetable.gui;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JRadioButtonMenuItem;
 import net.parostroj.timetable.gui.actions.ModelUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates menu with languages.
@@ -53,7 +52,7 @@ public class LanguageMenuBuilder {
 
             return this.sort(languages);
         } catch (IOException ex) {
-            Logger.getLogger(LanguageMenuBuilder.class.getName()).log(Level.WARNING, "Cannot find languages property file.", ex);
+            LoggerFactory.getLogger(LanguageMenuBuilder.class.getName()).warn("Cannot find languages property file.", ex);
             return Collections.emptyList();
         }
     }

@@ -6,13 +6,14 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
-import java.util.logging.Logger;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Trains pane.
@@ -21,7 +22,7 @@ import net.parostroj.timetable.gui.views.TrainListView.TreeType;
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private static final Logger LOG = Logger.getLogger(TrainsPane.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainsPane.class.getName());
     
     /** Creates new form TrainsPane */
     public TrainsPane() {
@@ -61,7 +62,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
         } catch (Exception e) {
             // use default values
-            LOG.warning("Wrong GTView settings - using default values.");
+            LOG.warn("Wrong GTView settings - using default values.");
         }
         graphicalTimetableView.setSettings(gtvs);
         scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));

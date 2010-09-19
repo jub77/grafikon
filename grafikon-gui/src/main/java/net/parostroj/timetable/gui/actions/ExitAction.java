@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -10,6 +8,8 @@ import net.parostroj.timetable.gui.MainFrame;
 import net.parostroj.timetable.gui.utils.AbstractModelAction;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exit action.
@@ -18,7 +18,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ExitAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(ExitAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ExitAction.class.getName());
     private ApplicationModel model;
     private MainFrame parent;
 
@@ -44,7 +44,7 @@ public class ExitAction extends AbstractAction {
                         }
                         parent.cleanUpBeforeApplicationEnd();
                     } catch (Exception e) {
-                        LOG.log(Level.WARNING, "Error saving model.", e);
+                        LOG.warn("Error saving model.", e);
                         errorMessage = ResourceLoader.getString("dialog.error.saving");
                     }
                 }
