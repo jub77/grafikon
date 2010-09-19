@@ -17,6 +17,7 @@ import net.parostroj.timetable.gui.components.GTViewScrollPane;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
+import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.components.TrainSelector;
@@ -94,7 +95,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     /** Creates new form TrainsCyclesPane */
     public TrainsCyclesPane() {
         initComponents();
-        graphicalTimetableView = new GraphicalTimetableView();
+        graphicalTimetableView = new GraphicalTimetableViewWithSave();
         JScrollPane scrollPane = new GTViewScrollPane(graphicalTimetableView);
         splitPane.setBottomComponent(scrollPane);
     }
@@ -204,5 +205,5 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private net.parostroj.timetable.gui.views.TCTrainListView trainListView;
     // End of variables declaration//GEN-END:variables
 
-    private GraphicalTimetableView graphicalTimetableView;
+    private GraphicalTimetableViewWithSave graphicalTimetableView;
 }
