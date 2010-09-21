@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainDiagramListener;
 import org.jgraph.event.GraphModelEvent;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgraph.JGraph;
@@ -22,12 +24,10 @@ import org.jgraph.graph.*;
  * 
  * @author jub
  */
-public class NetView extends javax.swing.JPanel implements ApplicationModelListener, GraphModelListener {
-    
-    private JGraphModelAdapter<Node,Line> netAdapter;
-    
+public class NetView extends javax.swing.JPanel implements ApplicationModelListener, GraphModelListener, TrainDiagramListener {
+
+    private JGraphModelAdapter<Node, Line> netAdapter;
     private ApplicationModel model;
-    
     private JGraph jGraph;
 
     public NetView() {
@@ -59,6 +59,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         case SET_DIAGRAM_CHANGED:
             if (model.getDiagram() != null) {
                 this.setNet(model);
+                model.getDiagram().addListener(this);
             }
             break;
         case MODIFIED_NODE:
@@ -105,13 +106,54 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
             jGraph.setModel(new DefaultGraphModel());
             return;
         }
-        
+
         // remove listener
         jGraph.getModel().removeGraphModelListener(this);
         jGraph.getSelectionModel().clearSelection();
         
         // initialize adapter
-        netAdapter = new JGraphModelAdapter<Node, Line>(net.getGraph());
+        netAdapter = new JGraphModelAdapter<Node, Line>(net.getGraph(),
+                JGraphModelAdapter.createDefaultVertexAttributes(),
+                JGraphModelAdapter.createDefaultEdgeAttributes(net.getGraph()),
+                new JGraphModelAdapter.DefaultCellFactory<Node, Line>() {
+
+                    @Override
+                    public DefaultEdge createEdgeCell(Line line) {
+                        return new DefaultEdge(line) {
+
+                            @Override
+                            public String toString() {
+                                StringBuilder result = new StringBuilder();
+                                Line line = (Line)getUserObject();
+                                collectRoutes(line, result);
+                                if (result.length() != 0)
+                                    result.append(';');
+                                result.append(line.getLength() / 10).append("cm");
+                                int topSpeed = line.getTopSpeed();
+                                if (topSpeed != Line.UNLIMITED_SPEED)
+                                    result.append(';').append(topSpeed).append("km/h");
+                                return result.toString();
+                            }
+                        };
+                    }
+
+                    private void collectRoutes(Line line, StringBuilder builder) {
+                        TrainDiagram diagram = line.getTrainDiagram();
+                        boolean added = false;
+                        for (Route route : diagram.getRoutes()) {
+                            if (route.isNetPart()) {
+                                for (RouteSegment seg : route.getSegments()) {
+                                    if (seg.asLine() != null && seg.asLine() == line) {
+                                        if (added)
+                                            builder.append(',');
+                                        added = true;
+                                        builder.append(route.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
         jGraph.setModel(netAdapter);
         
         for (Node point : net.getNodes()) {
@@ -161,5 +203,19 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         callChange = true;
         netAdapter.cellsChanged(new Object[]{netAdapter.getEdgeCell(line)});
         callChange = false;
+    }
+
+    @Override
+    public void trainDiagramChanged(TrainDiagramEvent event) {
+        switch (event.getType()) {
+            case ROUTE_ADDED:
+            case ROUTE_REMOVED:
+                Route route = (Route)event.getObject();
+                for (RouteSegment seg : route.getSegments()) {
+                    if (seg.asLine() != null) {
+                        this.updateLine(seg.asLine());
+                    }
+                }
+        }
     }
 }
