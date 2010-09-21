@@ -95,14 +95,18 @@ public class SettingsDialog extends javax.swing.JDialog {
             Double emptyRatio = (Double)diagram.getAttribute("weight.ratio.empty");
             Double loadedRatio = (Double)diagram.getAttribute("weight.ratio.loaded");
 
-            if (emptyRatio != null)
-                emptyRatioTextField.setText(emptyRatio.toString());
-            if (loadedRatio != null)
-                loadedRatioTextField.setText(loadedRatio.toString());
+            emptyRatioTextField.setText(emptyRatio != null ? emptyRatio.toString() : "");
+            loadedRatioTextField.setText(loadedRatio != null ? loadedRatio.toString() : "");
 
             // script
             scriptTextArea.setText(trainsData.getRunningTimeScript().getSourceCode());
             scriptTextArea.setCaretPosition(0);
+
+            // route length
+            Double routeLengthRatio = (Double)diagram.getAttribute("route.length.ratio");
+            rlRatioTextField.setText(routeLengthRatio != null ? routeLengthRatio.toString() : "");
+            String routeLengthUnit = (String)diagram.getAttribute("route.length.unit");
+            rlUnitTextField.setText(routeLengthUnit != null ? routeLengthUnit : "");
         }
     }
 
@@ -138,7 +142,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         changesTrackingCheckBox = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
         stationLengthUnitTextField = new javax.swing.JTextField();
-        ratioPanel = new javax.swing.JPanel();
+        javax.swing.JPanel ratioPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
         emptyRatioTextField = new javax.swing.JTextField();
@@ -147,6 +151,12 @@ public class SettingsDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel11 = new javax.swing.JLabel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         scriptTextArea = new javax.swing.JTextArea();
+        javax.swing.JPanel routeLengthPanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel12 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel14 = new javax.swing.JLabel();
+        rlRatioTextField = new javax.swing.JTextField();
+        javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
+        rlUnitTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -197,7 +207,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
@@ -341,7 +351,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel11.setText(ResourceLoader.getString("modelinfo.running.time.script")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
@@ -354,13 +364,40 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(scrollPane, gridBagConstraints);
+
+        routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
+        jLabel12.setText(bundle.getString("modelinfo.route.length") + " -"); // NOI18N
+        routeLengthPanel.add(jLabel12);
+
+        jLabel14.setText(bundle.getString("modelinfo.route.length.ratio") + ":"); // NOI18N
+        routeLengthPanel.add(jLabel14);
+
+        rlRatioTextField.setColumns(7);
+        routeLengthPanel.add(rlRatioTextField);
+
+        jLabel13.setText(bundle.getString("modelinfo.route.length.unit") + ":"); // NOI18N
+        routeLengthPanel.add(jLabel13);
+
+        rlUnitTextField.setColumns(5);
+        routeLengthPanel.add(rlUnitTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(routeLengthPanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -477,6 +514,27 @@ public class SettingsDialog extends javax.swing.JDialog {
             recalculate = true;
         }
 
+        // route length
+        try {
+            if (rlRatioTextField.getText() != null && !"".equals(rlRatioTextField.getText())) {
+                Double rlRatio = Double.valueOf(rlRatioTextField.getText());
+                if (!rlRatio.equals(diagram.getAttribute("route.length.ratio")))
+                    diagram.setAttribute("route.length.ratio", rlRatio);
+            } else {
+                if (diagram.getAttribute("route.length.ratio") != null)
+                    diagram.removeAttribute("route.length.ratio");
+            }
+        } catch (NumberFormatException e) {
+            LOG.warn("Cannot convert route length ratio to double.", e);
+        }
+        if (rlUnitTextField.getText() != null && !rlUnitTextField.getText().equals("")) {
+            if (!rlUnitTextField.getText().trim().equals(diagram.getAttribute("route.length.unit")))
+                diagram.setAttribute("route.length.unit", rlUnitTextField.getText().trim());
+        } else {
+            if (diagram.getAttribute("route.length.unit") != null)
+                diagram.removeAttribute("route.length.unit");
+        }
+
         // update model
         if (recalculate)
             for (Train train : diagram.getTrains()) {
@@ -518,7 +576,8 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JPanel panel1;
     private javax.swing.JComboBox ratioComboBox;
-    private javax.swing.JPanel ratioPanel;
+    private javax.swing.JTextField rlRatioTextField;
+    private javax.swing.JTextField rlUnitTextField;
     private javax.swing.JComboBox scaleComboBox;
     private javax.swing.JTextArea scriptTextArea;
     private javax.swing.JComboBox sortComboBox;
