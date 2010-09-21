@@ -30,18 +30,18 @@ public class GspTrainTimetablesOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract positions
-        TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, this.getTrains(params, diagram));
-        TrainTimetables timetables = tte.getTrainTimetables();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        Set<String> images = new HashSet<String>();
-        map.put("trains", timetables);
-        map.put("images", images);
-        ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
-
         try {
+            // extract positions
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, this.getTrains(params, diagram));
+            TrainTimetables timetables = tte.getTrainTimetables();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            Set<String> images = new HashSet<String>();
+            map.put("trains", timetables);
+            map.put("images", images);
+            ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
+
             Template template = this.createTemplate(params, "/templates/groovy/trains.gsp");
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");

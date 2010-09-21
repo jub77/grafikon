@@ -7,7 +7,6 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -43,7 +42,7 @@ class XmlEngineCyclesOutput extends OutputWithCharset {
 
             Writer writer = new OutputStreamWriter(stream, this.getCharset());
             m.marshal(cycles, writer);
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             throw new OutputException(e);
         }
     }

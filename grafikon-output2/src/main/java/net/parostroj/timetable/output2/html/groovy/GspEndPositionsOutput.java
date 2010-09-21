@@ -27,18 +27,18 @@ public class GspEndPositionsOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract positions
-        PositionsExtractor pe = new PositionsExtractor(diagram);
-        List<Position> engines = pe.getEndPositionsEngines();
-        List<Position> trainUnits = pe.getEndPositionsTrainUnits();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("engines", engines);
-        map.put("train_units", trainUnits);
-        ResourceHelper.addTextsToMap(map, "end_positions_", this.getLocale(), "texts/html_texts");
-
         try {
+            // extract positions
+            PositionsExtractor pe = new PositionsExtractor(diagram);
+            List<Position> engines = pe.getEndPositionsEngines();
+            List<Position> trainUnits = pe.getEndPositionsTrainUnits();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("engines", engines);
+            map.put("train_units", trainUnits);
+            ResourceHelper.addTextsToMap(map, "end_positions_", this.getLocale(), "texts/html_texts");
+
             Template template = this.createTemplate(params, "/templates/groovy/end_positions.gsp");
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");

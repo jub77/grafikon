@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder={"station", "stationType", "track", "straight", "arrival", "departure",
     "speed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
-    "onControlled", "trapezoidTrains", "lineClass"})
+    "onControlled", "trapezoidTrains", "lineClass", "routePosition"})
 public class TrainTimetableRow {
 
     private String station;
@@ -31,6 +31,7 @@ public class TrainTimetableRow {
     private Boolean onControlled;
     private List<String> trapezoidTrains;
     private String lineClass;
+    private Double routePosition;
 
     public String getArrival() {
         return arrival;
@@ -160,5 +161,13 @@ public class TrainTimetableRow {
 
     public void setLineClass(String lineClass) {
         this.lineClass = lineClass;
+    }
+
+    public Double getRoutePosition() {
+        return routePosition;
+    }
+
+    public void setRoutePosition(Double routePosition) {
+        this.routePosition = routePosition;
     }
 }

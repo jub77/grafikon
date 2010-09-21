@@ -26,16 +26,16 @@ public class GspStationTimetablesOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract positions
-        StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(params, diagram));
-        List<StationTimetable> timetables = se.getStationTimetables();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("stations", timetables);
-        ResourceHelper.addTextsToMap(map, "stations_", this.getLocale(), "texts/html_texts");
-
         try {
+            // extract positions
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(params, diagram));
+            List<StationTimetable> timetables = se.getStationTimetables();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("stations", timetables);
+            ResourceHelper.addTextsToMap(map, "stations_", this.getLocale(), "texts/html_texts");
+
             Template template = this.createTemplate(params, "/templates/groovy/stations.gsp");
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");

@@ -11,11 +11,12 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlRootElement(name="train")
-@XmlType(propOrder={"trainTimetables", "texts"})
+@XmlType(propOrder={"trainTimetables", "texts", "routeLengthUnit"})
 public class TrainTimetables {
 
     private List<TrainTimetable> trainTimetables;
     private List<Text> texts;
+    private String routeLengthUnit;
 
     public TrainTimetables() {
     }
@@ -40,5 +41,13 @@ public class TrainTimetables {
 
     public void setTexts(List<Text> texts) {
         this.texts = texts;
+    }
+
+    public String getRouteLengthUnit() {
+        return routeLengthUnit;
+    }
+
+    public void setRouteLengthUnit(String routeLengthUnit) {
+        this.routeLengthUnit = routeLengthUnit;
     }
 }

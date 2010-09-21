@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
@@ -46,7 +45,7 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
 
             Writer writer = new OutputStreamWriter(stream, this.getCharset());
             m.marshal(tt, writer);
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             throw new OutputException(e);
         }
     }

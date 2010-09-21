@@ -1,15 +1,19 @@
 package net.parostroj.timetable.output2.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Extracts information for train timetables.
@@ -20,10 +24,12 @@ public class TrainTimetablesExtractor {
 
     private TrainDiagram diagram;
     private List<Train> trains;
+    private Map<Pair<Line, Node>, Double> cachedRoutePositions;
 
     public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains) {
         this.diagram = diagram;
         this.trains = trains;
+        this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
     }
 
     public TrainTimetables getTrainTimetables() {
@@ -41,8 +47,14 @@ public class TrainTimetablesExtractor {
                 texts = new LinkedList<Text>();
             texts.add(this.createText(item));
         }
+
+        // route length unit
+        String unit = (String)diagram.getAttribute("route.length.unit");
+
         TrainTimetables timetables = new TrainTimetables(result);
         timetables.setTexts(texts);
+        if (unit != null && !"".equals(unit))
+            timetables.setRouteLengthUnit(unit);
         return timetables;
     }
 
@@ -189,6 +201,15 @@ public class TrainTimetablesExtractor {
             if (lineClass != null)
                 row.setLineClass(lineClass.getName());
 
+            // route position
+            Double routePosition = null;
+            if (lastLineI == null) {
+                routePosition = this.getRoutePosition(lineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
+            } else {
+                routePosition = this.getRoutePosition(lastLineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
+            }
+            row.setRoutePosition(routePosition);
+
             timetable.getRows().add(row);
 
             lastLineI = lineI;
@@ -214,7 +235,7 @@ public class TrainTimetablesExtractor {
                 i.remove();
             }
         }
-        if (over.size() == 0) {
+        if (over.isEmpty()) {
             return null;
         } else {
             List<Train> tTrains = new ArrayList<Train>(over.size());
@@ -234,5 +255,62 @@ public class TrainTimetablesExtractor {
     private Text createText(TextItem item) {
         Text t = new Text(item.getName(), item.getType(), item.getText());
         return t;
+    }
+
+    private Double getRoutePosition(Line line, Node node) {
+        Pair<Line, Node> pair = new Pair<Line, Node>(line, node);
+        Double position = null;
+        if (!cachedRoutePositions.containsKey(pair)) {
+            position = computeRoutePosition(pair);
+            cachedRoutePositions.put(pair, position);
+        } else {
+            position = cachedRoutePositions.get(pair);
+        }
+        return position;
+    }
+
+    private boolean checkRoute(Pair<Line, Node> pair, List<RouteSegment> segments) {
+        boolean foundLine = false;
+        for (RouteSegment seg : segments) {
+            // sequence line - node
+            if (seg.asLine() != null && pair.first != null)
+                foundLine = seg.asLine() == pair.first;
+            if (seg.asNode() != null && foundLine && seg.asNode() == pair.second)
+                return true;
+        }
+        return false;
+    }
+
+    private Double computeRoutePosition(Pair<Line, Node> pair) {
+        Route foundRoute = null;
+        for (Route route : diagram.getRoutes()) {
+            if (route.isNetPart()) {
+                if (checkRoute(pair, route.getSegments())) {
+                    foundRoute = route;
+                    break;
+                }
+                List<RouteSegment> rSegments = new LinkedList<RouteSegment>(route.getSegments());
+                Collections.reverse(rSegments);
+                if (checkRoute(pair, rSegments)) {
+                    foundRoute = route;
+                    break;
+                }
+            }
+        }
+        if (foundRoute != null) {
+            // compute distance
+            long length = 0;
+            for (RouteSegment seg : foundRoute.getSegments()) {
+                if (seg.asNode() == pair.second)
+                    break;
+                else if (seg.asLine() != null)
+                    length += seg.asLine().getLength();
+            }
+            Double ratio = (Double)diagram.getAttribute("route.length.ratio");
+            if (ratio == null)
+                ratio = 1.0;
+            return ratio * length;
+        } else
+            return null;
     }
 }

@@ -26,16 +26,16 @@ public class GspDriverCyclesOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract driver cycles
-        DriverCyclesExtractor ece = new DriverCyclesExtractor(diagram, getCycles(params, diagram));
-        DriverCycles cycles = ece.getDriverCycles();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("cycles", cycles);
-        ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
-
         try {
+            // extract driver cycles
+            DriverCyclesExtractor ece = new DriverCyclesExtractor(diagram, getCycles(params, diagram));
+            DriverCycles cycles = ece.getDriverCycles();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("cycles", cycles);
+            ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
+
             Template template = this.createTemplate(params, "/templates/groovy/driver_cycles.gsp");
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");

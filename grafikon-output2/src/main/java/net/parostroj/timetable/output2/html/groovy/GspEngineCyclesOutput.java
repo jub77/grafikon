@@ -26,16 +26,16 @@ public class GspEngineCyclesOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract engine cycles
-        EngineCyclesExtractor ece = new EngineCyclesExtractor(getCycles(params, diagram));
-        List<EngineCycle> cycles = ece.getEngineCycles();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("cycles", cycles);
-        ResourceHelper.addTextsToMap(map, "ec_", this.getLocale(), "texts/html_texts");
-
         try {
+            // extract engine cycles
+            EngineCyclesExtractor ece = new EngineCyclesExtractor(getCycles(params, diagram));
+            List<EngineCycle> cycles = ece.getEngineCycles();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("cycles", cycles);
+            ResourceHelper.addTextsToMap(map, "ec_", this.getLocale(), "texts/html_texts");
+
             Template template = this.createTemplate(params, "/templates/groovy/engine_cycles.gsp");
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
