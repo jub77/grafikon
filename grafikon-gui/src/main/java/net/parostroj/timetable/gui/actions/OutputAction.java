@@ -65,7 +65,7 @@ public class OutputAction extends AbstractAction {
                 this.singleOutput();
             else
                 this.multipleOutputs();
-        } catch (OutputException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
@@ -237,7 +237,7 @@ public class OutputAction extends AbstractAction {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
                     }
-                } catch (OutputException e) {
+                } catch (Exception e) {
                     LOG.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
