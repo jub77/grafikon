@@ -255,12 +255,14 @@ public class ApplicationModel implements StorableGuiData {
             prefs.setString("user.name", programSettings.getUserName());
         else
             prefs.remove("user.name");
+        prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         deserializeOutputTemplates(prefs.getString("output.templates", ""));
         programSettings.setUserName(prefs.getString("user.name", null));
+        programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
     }
 
     private String getSerializedOutputTemplates() {

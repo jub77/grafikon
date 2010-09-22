@@ -332,6 +332,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
@@ -644,6 +645,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(outputTypeMenu);
 
+        genTitlePageTTCheckBoxMenuItem.setSelected(true);
+        genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        actionMenu.add(genTitlePageTTCheckBoxMenuItem);
+
         menuBar.add(actionMenu);
 
         viewsMenu.setText(ResourceLoader.getString("menu.views")); // NOI18N
@@ -848,9 +858,14 @@ private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent e
 }//GEN-LAST:event_programSettingsMenuItemActionPerformed
 
 private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
-    boolean state = ((JCheckBoxMenuItem) evt.getSource()).getState();
+    boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
     trainsPane.setVisibilityOfGTView(state);
 }//GEN-LAST:event_showGTViewMenuItemActionPerformed
+
+private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+    boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+    model.getProgramSettings().setGenerateTitlePageTT(selected);
+}//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -961,7 +976,8 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
         }
 
-        showGTViewMenuItem.setState(prefs.getBoolean("trains.show.gtview", true));
+        showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
+        genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -994,6 +1010,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JMenuItem fileSaveMenuItem;
+    private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;

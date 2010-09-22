@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui;
 public class ProgramSettings {
 
     private String userName;
+    private boolean generateTitlePageTT;
 
     public String getUserName() {
         return userName;
@@ -26,5 +27,13 @@ public class ProgramSettings {
 
     public String getSystemUser() {
         return System.getProperty("user.name");
+    }
+
+    public boolean isGenerateTitlePageTT() {
+        return generateTitlePageTT;
+    }
+
+    public void setGenerateTitlePageTT(boolean generateTitlePageTT) {
+        this.generateTitlePageTT = generateTitlePageTT;
     }
 }
