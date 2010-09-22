@@ -1,7 +1,6 @@
 package net.parostroj.timetable.output2.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -203,12 +202,19 @@ public class TrainTimetablesExtractor {
 
             // route position
             Double routePosition = null;
-            if (lastLineI == null) {
-                routePosition = this.getRoutePosition(lineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
-            } else {
+            Double routePositionOut = null;
+            if (lineI != null)
+                routePositionOut = this.getRoutePosition(lineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
+            if (lastLineI != null)
                 routePosition = this.getRoutePosition(lastLineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
-            }
+            if (routePosition == null)
+                routePosition = routePositionOut;
+            if (routePosition != null && routePositionOut != null &&
+                    routePosition.doubleValue() == routePositionOut.doubleValue())
+                routePositionOut = null;
+
             row.setRoutePosition(routePosition);
+            row.setRoutePositionOut(routePositionOut);
 
             timetable.getRows().add(row);
 
@@ -269,13 +275,10 @@ public class TrainTimetablesExtractor {
         return position;
     }
 
-    private boolean checkRoute(Pair<Line, Node> pair, List<RouteSegment> segments) {
-        boolean foundLine = false;
+    private boolean checkRoute(Line line, List<RouteSegment> segments) {
         for (RouteSegment seg : segments) {
             // sequence line - node
-            if (seg.asLine() != null && pair.first != null)
-                foundLine = seg.asLine() == pair.first;
-            if (seg.asNode() != null && foundLine && seg.asNode() == pair.second)
+            if (seg.asLine() != null && seg.asLine() == line)
                 return true;
         }
         return false;
@@ -285,13 +288,7 @@ public class TrainTimetablesExtractor {
         Route foundRoute = null;
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {
-                if (checkRoute(pair, route.getSegments())) {
-                    foundRoute = route;
-                    break;
-                }
-                List<RouteSegment> rSegments = new LinkedList<RouteSegment>(route.getSegments());
-                Collections.reverse(rSegments);
-                if (checkRoute(pair, rSegments)) {
+                if (checkRoute(pair.first, route.getSegments())) {
                     foundRoute = route;
                     break;
                 }
