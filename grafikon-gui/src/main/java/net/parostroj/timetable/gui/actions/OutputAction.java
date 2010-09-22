@@ -142,6 +142,9 @@ public class OutputAction extends AbstractAction {
             select = selection;
         }
         OutputParams params = this.createParams(output, outputFile, select);
+        if (outputType.getOutputType().equals("trains")) {
+            params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
+        }
         this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
     }
 
