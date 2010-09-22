@@ -1,7 +1,17 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
@@ -17,13 +27,17 @@ public class DriverCyclesExtractor {
     private List<TrainsCycle> cycles;
     private TrainDiagram diagram;
 
+    private Map<Line, Route> routeMap;
+
     public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles) {
         this.cycles = cycles;
         this.diagram = diagram;
+        this.routeMap = new HashMap<Line, Route>();
     }
 
     public DriverCycles getDriverCycles() {
         List<DriverCycle> outputCyclesList = new LinkedList<DriverCycle>();
+        this.createRouteMap();
         for (TrainsCycle cycle : cycles) {
             outputCyclesList.add(createCycle(cycle));
         }
@@ -42,7 +56,35 @@ public class DriverCyclesExtractor {
         for (TrainsCycleItem item : cycle.getItems()) {
             outputCycle.getRows().add(this.createRow(item));
         }
+        this.addNetPartRouteInfos(outputCycle, cycle);
         return outputCycle;
+    }
+
+    private void addNetPartRouteInfos(DriverCycle cycle, TrainsCycle tCycle) {
+        Set<Route> routes = null;
+        // collect routes
+        for (TrainsCycleItem item : tCycle.getItems()) {
+            Train t = item.getTrain();
+            for (TimeInterval i : t.getTimeIntervalList()) {
+                if (i.isLineOwner()) {
+                    Route route = routeMap.get(i.getOwnerAsLine());
+                    if (route != null) {
+                        if (routes == null)
+                            routes = new HashSet<Route>();
+                        routes.add(route);
+                    }
+                }
+            }
+        }
+        if (routes != null) {
+            for (Route route : routes) {
+                NetPartRouteInfo info = new NetPartRouteInfo();
+                info.setName(route.getName());
+                info.getStations().add(((Node)route.getSegments().get(0)).getName());
+                info.getStations().add(((Node)route.getSegments().get(route.getSegments().size() - 1)).getName());
+                cycle.getRoutes().add(info);
+            }
+        }
     }
 
     private DriverCycleRow createRow(TrainsCycleItem item) {
@@ -56,5 +98,17 @@ public class DriverCyclesExtractor {
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
         row.setComment((item.getComment() != null && !item.getComment().trim().equals("")) ? item.getComment() : null);
         return row;
+    }
+
+    private void createRouteMap() {
+        for (Route route : diagram.getRoutes()) {
+            if (route.isNetPart()) {
+                for (RouteSegment seg : route.getSegments()) {
+                    if (seg.asLine() != null && !routeMap.containsKey(seg.asLine())) {
+                        routeMap.put(seg.asLine(), route);
+                    }
+                }
+            }
+        }
     }
 }
