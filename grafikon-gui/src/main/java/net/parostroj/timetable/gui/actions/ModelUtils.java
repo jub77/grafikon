@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.JFileChooser;
@@ -12,6 +13,7 @@ import javax.swing.SwingUtilities;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.changes.ChangesTracker;
@@ -86,6 +88,12 @@ public class ModelUtils {
                 return diagram.getCycles(TrainsCycleType.DRIVER_CYCLE);
             case TRAIN:
                 return diagram.getTrains();
+            case ROUTE:
+                List<Route> routes = new LinkedList<Route>();
+                for (Route r : diagram.getRoutes())
+                    if (r.isNetPart())
+                        routes.add(r);
+                return routes;
         }
         return null;
     }

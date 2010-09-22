@@ -258,6 +258,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
         tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
         editRoutesMenuItem.setEnabled(model.getDiagram() != null);
+        trainTimetableListByRoutesMenuItem.setEnabled(model.getDiagram() != null);
     }
     
     /** This method is called from within the constructor to
@@ -317,6 +318,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         epListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
         trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
+        trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
         ecListSelectMenuItem = new javax.swing.JMenuItem();
         tucListSelectMenuItem = new javax.swing.JMenuItem();
@@ -559,6 +561,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByDcSelectMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc.select")); // NOI18N
         trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
+
+        trainTimetableListByRoutesMenuItem.setAction(outputAction);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        trainTimetableListByRoutesMenuItem.setText(bundle.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
+        trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
+        actionMenu.add(trainTimetableListByRoutesMenuItem);
 
         nodeTimetableListSelectMenuItem.setAction(outputAction);
         nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
@@ -1011,6 +1019,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem textItemsMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
+    private javax.swing.JMenuItem trainTimetableListByRoutesMenuItem;
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
     private javax.swing.JMenuItem trainTimetableListMenuItem;
     private javax.swing.JMenuItem trainTypesMenuItem;
