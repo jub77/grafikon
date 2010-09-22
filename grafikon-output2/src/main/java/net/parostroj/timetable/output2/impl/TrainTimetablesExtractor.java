@@ -1,16 +1,11 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.util.RoutesExtractor;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Pair;
 
@@ -23,11 +18,13 @@ public class TrainTimetablesExtractor {
 
     private TrainDiagram diagram;
     private List<Train> trains;
+    private List<Route> routes;
     private Map<Pair<Line, Node>, Double> cachedRoutePositions;
 
-    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains) {
+    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes) {
         this.diagram = diagram;
         this.trains = trains;
+        this.routes = routes;
         this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
     }
 
@@ -47,13 +44,20 @@ public class TrainTimetablesExtractor {
             texts.add(this.createText(item));
         }
 
-        // route length unit
-        String unit = (String)diagram.getAttribute("route.length.unit");
-
         TrainTimetables timetables = new TrainTimetables(result);
         timetables.setTexts(texts);
+
+        // routes
+        timetables.setRoutes(RoutesExtractor.convert(routes));
+
+        // route length unit
+        String unit = (String)diagram.getAttribute("route.length.unit");
         if (unit != null && !"".equals(unit))
             timetables.setRouteLengthUnit(unit);
+
+        // validity
+        timetables.setValidity((String)diagram.getAttribute("route.validity"));
+
         return timetables;
     }
 

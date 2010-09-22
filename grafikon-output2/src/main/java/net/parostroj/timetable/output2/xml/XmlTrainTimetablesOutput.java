@@ -4,11 +4,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.impl.SelectionHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 
@@ -26,8 +29,10 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            // extract positions
-            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, SelectionHelper.selectTrains(params, diagram));
+            // extract tts
+            List<Train> trains = SelectionHelper.selectTrains(params, diagram);
+            List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
+            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, trains, routes);
             TrainTimetables tt = te.getTrainTimetables();
 
             JAXBContext context = JAXBContext.newInstance(TrainTimetables.class);

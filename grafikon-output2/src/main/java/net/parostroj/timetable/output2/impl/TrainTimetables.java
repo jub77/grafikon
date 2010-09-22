@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,12 +12,14 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlRootElement(name="train")
-@XmlType(propOrder={"trainTimetables", "texts", "routeLengthUnit"})
+@XmlType(propOrder={"routeLengthUnit", "routes", "validity", "trainTimetables", "texts"})
 public class TrainTimetables {
 
+    private String routeLengthUnit;
+    private List<NetPartRouteInfo> routes;
+    private String validity;
     private List<TrainTimetable> trainTimetables;
     private List<Text> texts;
-    private String routeLengthUnit;
 
     public TrainTimetables() {
     }
@@ -49,5 +52,24 @@ public class TrainTimetables {
 
     public void setRouteLengthUnit(String routeLengthUnit) {
         this.routeLengthUnit = routeLengthUnit;
+    }
+
+    @XmlElement(name="route")
+    public List<NetPartRouteInfo> getRoutes() {
+        if (routes == null)
+            routes = new LinkedList<NetPartRouteInfo>();
+        return routes;
+    }
+
+    public void setRoutes(List<NetPartRouteInfo> routes) {
+        this.routes = routes;
+    }
+
+    public String getValidity() {
+        return validity;
+    }
+
+    public void setValidity(String validity) {
+        this.validity = validity;
     }
 }

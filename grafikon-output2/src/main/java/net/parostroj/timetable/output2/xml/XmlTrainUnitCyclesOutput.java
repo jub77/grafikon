@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
-import net.parostroj.timetable.output2.impl.SelectionHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainUnitCyclesExtractor;
 
 /**

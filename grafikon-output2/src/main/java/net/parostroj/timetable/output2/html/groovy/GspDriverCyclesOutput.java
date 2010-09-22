@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.impl.DriverCycles;
 import net.parostroj.timetable.output2.impl.DriverCyclesExtractor;
-import net.parostroj.timetable.output2.impl.SelectionHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**

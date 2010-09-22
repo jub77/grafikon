@@ -4,9 +4,11 @@ import groovy.lang.Writable;
 import groovy.text.Template;
 import java.io.*;
 import java.util.*;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.impl.SelectionHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -25,8 +27,15 @@ public class GspTrainTimetablesOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            // extract positions
-            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, SelectionHelper.selectTrains(params, diagram));
+            // title page
+            boolean titlePage = false;
+            if (params.paramExistWithValue("title.page"))
+                titlePage = (Boolean)params.getParam("title.page").getValue();
+
+            // extract tts
+            List<Train> trains = SelectionHelper.selectTrains(params, diagram);
+            List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes);
             TrainTimetables timetables = tte.getTrainTimetables();
 
             // call template
@@ -34,6 +43,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             Set<String> images = new HashSet<String>();
             map.put("trains", timetables);
             map.put("images", images);
+            map.put("title_page", titlePage);
             ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
 
             Template template = this.createTemplate(params, "/templates/groovy/trains.gsp");

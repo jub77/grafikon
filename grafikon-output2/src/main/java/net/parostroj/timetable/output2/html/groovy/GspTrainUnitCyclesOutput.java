@@ -7,7 +7,7 @@ import java.util.*;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.impl.SelectionHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainUnitCycle;
 import net.parostroj.timetable.output2.impl.TrainUnitCyclesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;

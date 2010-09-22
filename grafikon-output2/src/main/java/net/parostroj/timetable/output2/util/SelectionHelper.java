@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.impl;
+package net.parostroj.timetable.output2.util;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,6 +15,15 @@ import net.parostroj.timetable.output2.OutputParams;
  * @author jub
  */
 public class SelectionHelper {
+
+    public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
+        if (params.paramExistWithValue("routes")) {
+            return (List<Route>) params.getParam("routes").getValue();
+        } else {
+            RoutesExtractor extractor = new RoutesExtractor(diagram);
+            return extractor.getRoutes(trains);
+        }
+    }
 
     public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
