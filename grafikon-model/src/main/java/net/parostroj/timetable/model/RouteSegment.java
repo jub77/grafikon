@@ -18,6 +18,10 @@ public interface RouteSegment extends ObjectWithId {
 
     public Node asNode();
 
+    public boolean isLine();
+
+    public boolean isNode();
+
     public void addTimeInterval(TimeInterval interval);
 
     public void removeTimeInterval(TimeInterval interval);

@@ -372,4 +372,14 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
         visitor.visitAfter(this);
     }
+
+    @Override
+    public boolean isLine() {
+        return false;
+    }
+
+    @Override
+    public boolean isNode() {
+        return true;
+    }
 }

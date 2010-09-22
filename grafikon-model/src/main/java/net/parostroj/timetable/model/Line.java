@@ -210,6 +210,16 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return speed;
     }
 
+    @Override
+    public boolean isLine() {
+        return true;
+    }
+
+    @Override
+    public boolean isNode() {
+        return false;
+    }
+
     private interface PenaltySolver {
         int getDecelerationPenalty(int speed);
         int getAccelerationPenalty(int speed);
