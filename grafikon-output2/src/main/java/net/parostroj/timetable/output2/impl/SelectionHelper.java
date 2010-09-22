@@ -1,7 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputParam;
@@ -28,6 +30,24 @@ public class SelectionHelper {
                 trains.add(item.getTrain());
             }
             return trains;
+        } else if (params.paramExistWithValue("routes")) {
+            List<Route> routes = (List<Route>) params.getParam("routes").getValue();
+            Set<Train> trains = new HashSet<Train>();
+            for (Route route : routes) {
+                for (RouteSegment seg : route.getSegments()) {
+                    if (seg.isLine()) {
+                        for (Track track : seg.asLine().getTracks()) {
+                            for (TimeInterval i : track.getTimeIntervalList()) {
+                                trains.add(i.getTrain());
+                            }
+                        }
+                    }
+                }
+            }
+            TrainSort s = new TrainSort(
+                    new TrainComparator(TrainComparator.Type.ASC,
+                    diagram.getTrainsData().getTrainSortPattern()));
+            return s.sort(trains);
         } else {
             TrainSort s = new TrainSort(
                     new TrainComparator(TrainComparator.Type.ASC,
