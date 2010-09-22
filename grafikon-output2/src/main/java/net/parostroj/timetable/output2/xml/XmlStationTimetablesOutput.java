@@ -5,17 +5,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import net.parostroj.timetable.actions.NodeFilter;
-import net.parostroj.timetable.actions.NodeSort;
-import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
+import net.parostroj.timetable.output2.impl.SelectionHelper;
 import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
 
 /**
@@ -33,7 +29,7 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, this.getNodes(params, diagram));
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram));
             StationTimetables st = new StationTimetables(se.getStationTimetables());
 
             JAXBContext context = JAXBContext.newInstance(StationTimetables.class);
@@ -46,20 +42,5 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
         } catch (Exception e) {
             throw new OutputException(e);
         }
-    }
-
-    private List<Node> getNodes(OutputParams params, TrainDiagram diagram) {
-        OutputParam param = params.getParam("stations");
-        if (param != null && param.getValue() != null) {
-            return (List<Node>) param.getValue();
-        }
-        NodeSort s = new NodeSort(NodeSort.Type.ASC);
-        return s.sort(diagram.getNet().getNodes(), new NodeFilter() {
-
-            @Override
-            public boolean check(Node node) {
-                return node.getType().isStation() || node.getType().isStop();
-            }
-        });
     }
 }

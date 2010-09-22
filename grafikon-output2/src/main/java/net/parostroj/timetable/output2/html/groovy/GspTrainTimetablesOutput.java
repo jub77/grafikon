@@ -4,15 +4,9 @@ import groovy.lang.Writable;
 import groovy.text.Template;
 import java.io.*;
 import java.util.*;
-import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.actions.TrainSort;
-import net.parostroj.timetable.actions.TrainSortByNodeFilter;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.impl.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -32,7 +26,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract positions
-            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, this.getTrains(params, diagram));
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, SelectionHelper.selectTrains(params, diagram));
             TrainTimetables timetables = tte.getTrainTimetables();
 
             // call template
@@ -61,28 +55,6 @@ public class GspTrainTimetablesOutput extends GspOutput {
 
         } catch (Exception e) {
             throw new OutputException(e);
-        }
-    }
-
-    private List<Train> getTrains(OutputParams params, TrainDiagram diagram) {
-        if (params.paramExistWithValue("trains")) {
-            OutputParam param = params.getParam("trains");
-            return (List<Train>) param.getValue();
-        } else if (params.paramExistWithValue("station")) {
-            Node station = (Node)params.getParam("station").getValue();
-            return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
-        } else if (params.paramExistWithValue("driver_cycle")) {
-            TrainsCycle cycle = (TrainsCycle)params.getParam("driver_cycle").getValue();
-            List<Train> trains = new LinkedList<Train>();
-            for (TrainsCycleItem item : cycle) {
-                trains.add(item.getTrain());
-            }
-            return trains;
-        } else {
-            TrainSort s = new TrainSort(
-                    new TrainComparator(TrainComparator.Type.ASC,
-                    diagram.getTrainsData().getTrainSortPattern()));
-            return s.sort(diagram.getTrains());
         }
     }
 }

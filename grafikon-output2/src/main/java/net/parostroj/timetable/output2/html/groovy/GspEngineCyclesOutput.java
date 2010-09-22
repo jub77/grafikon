@@ -4,13 +4,12 @@ import groovy.lang.Writable;
 import groovy.text.Template;
 import java.io.*;
 import java.util.*;
-import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.impl.EngineCycle;
 import net.parostroj.timetable.output2.impl.EngineCyclesExtractor;
+import net.parostroj.timetable.output2.impl.SelectionHelper;
 import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**
@@ -28,7 +27,7 @@ public class GspEngineCyclesOutput extends GspOutput {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract engine cycles
-            EngineCyclesExtractor ece = new EngineCyclesExtractor(getCycles(params, diagram));
+            EngineCyclesExtractor ece = new EngineCyclesExtractor(SelectionHelper.selectCycles(params, diagram, TrainsCycleType.ENGINE_CYCLE));
             List<EngineCycle> cycles = ece.getEngineCycles();
 
             // call template
@@ -44,14 +43,5 @@ public class GspEngineCyclesOutput extends GspOutput {
         } catch (Exception e) {
             throw new OutputException(e);
         }
-    }
-
-    private List<TrainsCycle> getCycles(OutputParams params, TrainDiagram diagram) {
-        OutputParam param = params.getParam("cycles");
-        if (param != null && param.getValue() != null) {
-            return (List<TrainsCycle>) param.getValue();
-        }
-        TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
-        return s.sort(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE));
     }
 }

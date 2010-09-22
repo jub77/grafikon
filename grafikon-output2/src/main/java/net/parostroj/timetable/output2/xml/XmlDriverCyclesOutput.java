@@ -5,18 +5,15 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
 import net.parostroj.timetable.output2.impl.DriverCyclesExtractor;
+import net.parostroj.timetable.output2.impl.SelectionHelper;
 
 /**
  * Xml output for driver cycles.
@@ -32,7 +29,7 @@ class XmlDriverCyclesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, getCycles(params, diagram));
+            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, TrainsCycleType.DRIVER_CYCLE));
             DriverCycles cycles = dce.getDriverCycles();
 
             JAXBContext context = JAXBContext.newInstance(DriverCycles.class);
@@ -45,14 +42,5 @@ class XmlDriverCyclesOutput extends OutputWithCharset {
         } catch (Exception e) {
             throw new OutputException(e);
         }
-    }
-
-    private List<TrainsCycle> getCycles(OutputParams params, TrainDiagram diagram) {
-        OutputParam param = params.getParam("cycles");
-        if (param != null && param.getValue() != null) {
-            return (List<TrainsCycle>) param.getValue();
-        }
-        TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
-        return s.sort(diagram.getCycles(TrainsCycleType.DRIVER_CYCLE));
     }
 }

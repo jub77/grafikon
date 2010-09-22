@@ -4,19 +4,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.actions.TrainSort;
-import net.parostroj.timetable.actions.TrainSortByNodeFilter;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.impl.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 
@@ -35,7 +27,7 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract positions
-            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, this.getTrains(params, diagram));
+            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, SelectionHelper.selectTrains(params, diagram));
             TrainTimetables tt = te.getTrainTimetables();
 
             JAXBContext context = JAXBContext.newInstance(TrainTimetables.class);
@@ -47,28 +39,6 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
             m.marshal(tt, writer);
         } catch (Exception e) {
             throw new OutputException(e);
-        }
-    }
-
-    private List<Train> getTrains(OutputParams params, TrainDiagram diagram) {
-        if (params.paramExistWithValue("trains")) {
-            OutputParam param = params.getParam("trains");
-            return (List<Train>) param.getValue();
-        } else if (params.paramExistWithValue("station")) {
-            Node station = (Node)params.getParam("station").getValue();
-            return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
-        } else if (params.paramExistWithValue("driver_cycle")) {
-            TrainsCycle cycle = (TrainsCycle)params.getParam("driver_cycle").getValue();
-            List<Train> trains = new LinkedList<Train>();
-            for (TrainsCycleItem item : cycle) {
-                trains.add(item.getTrain());
-            }
-            return trains;
-        } else {
-            TrainSort s = new TrainSort(
-                    new TrainComparator(TrainComparator.Type.ASC,
-                    diagram.getTrainsData().getTrainSortPattern()));
-            return s.sort(diagram.getTrains());
         }
     }
 }
