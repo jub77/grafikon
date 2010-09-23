@@ -4,10 +4,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.utils.FilterIterable;
 import net.parostroj.timetable.utils.TimeConverter;
 
 /**
@@ -53,11 +56,14 @@ public class DriverCyclesExtractor {
     }
 
     private void addNetPartRouteInfos(DriverCycle cycle, TrainsCycle tCycle) {
-        Set<Train> trains = new HashSet<Train>();
+        Set<Line> lines = new HashSet<Line>();
         for (TrainsCycleItem item : tCycle.getItems()) {
-            trains.add(item.getTrain());
+            for (TimeInterval i : item.getIntervals()) {
+                if (i.isLineOwner())
+                    lines.add(i.getOwnerAsLine());
+            }
         }
-        cycle.setRoutes(routesExtractor.getRouteInfos(trains));
+        cycle.setRoutes(routesExtractor.getRouteInfosForLines(lines));
     }
 
     private DriverCycleRow createRow(TrainsCycleItem item) {

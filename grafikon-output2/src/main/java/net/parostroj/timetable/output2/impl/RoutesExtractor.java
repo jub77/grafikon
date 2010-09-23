@@ -31,7 +31,7 @@ public class RoutesExtractor {
      * @param trains collection of trains
      * @return list of routes
      */
-    public List<Route> getRoutes(Collection<Train> trains) {
+    public List<Route> getRoutesForTrains(Collection<Train> trains) {
         Set<Route> routes = null;
         // collect routes
         for (Train t : trains) {
@@ -50,13 +50,43 @@ public class RoutesExtractor {
     }
 
     /**
+     * returns list of routes for lines.
+     *
+     * @param lines collection of lines
+     * @return list of routes
+     */
+    public List<Route> getRoutesForLines(Collection<Line> lines) {
+        Set<Route> routes = null;
+        for (Line line : lines) {
+            Route route = routeMap.get(line);
+            if (route != null) {
+                if (routes == null)
+                    routes = new HashSet<Route>();
+                routes.add(route);
+            }
+        }
+        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<Route>(routes);
+    }
+
+    /**
      * returns list of infos about routes for the trains.
      *
      * @param trains collection of trains
      * @return list of routes
      */
-    public List<NetPartRouteInfo> getRouteInfos(Collection<Train> trains) {
-        List<Route> routes = this.getRoutes(trains);
+    public List<NetPartRouteInfo> getRouteInfosForTrains(Collection<Train> trains) {
+        List<Route> routes = this.getRoutesForTrains(trains);
+        return convert(routes);
+    }
+
+    /**
+     * returns list of infos about routes for the lines.
+     *
+     * @param trains collection of lines
+     * @return list of routes
+     */
+    public List<NetPartRouteInfo> getRouteInfosForLines(Collection<Line> lines) {
+        List<Route> routes = this.getRoutesForLines(lines);
         return convert(routes);
     }
 
