@@ -133,23 +133,23 @@ public class OutputAction extends AbstractAction {
     }
 
     private void singleOutput() throws OutputException {
-        Output output = this.createOutput();
+        Output output = this.createOutput(outputType);
         Object select = null;
         if (outputType.isSelection() || outputType.getSelectionParam() != null) {
             select = selection;
         }
-        OutputParams params = this.createParams(output, outputFile, select, outputType.getOutputType());
+        OutputParams params = this.createParams(output, outputFile, select, outputType);
         this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
     }
 
     private void multipleOutputs() throws OutputException {
         List<ExecutableOutput> eOutputs = new LinkedList<ExecutableOutput>();
         if (outputType.getOutputType() != null) {
-            Output output = this.createOutput();
+            Output output = this.createOutput(outputType);
             if (selection instanceof Collection) {
                 Collection<Object> c = (Collection<Object>)selection;
                 for (Object item : c) {
-                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile), item, outputType.getOutputType());
+                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile, outputType), item, outputType);
                     eOutputs.add(new ExecutableOutput(output, params));
                 }
             }
@@ -161,48 +161,59 @@ public class OutputAction extends AbstractAction {
             // stations
             Output output = of.createOutput("stations");
             File oFile = new File(outputFile, ResourceLoader.getString("out.nodes") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "stations")));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.STATIONS)));
             // trains
             output = of.createOutput("trains");
             oFile = new File(outputFile, ResourceLoader.getString("out.trains") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "trains")));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.TRAINS)));
             // engine cycles
             output = of.createOutput("engine_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.ec") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "engine_cycles")));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENGINE_CYCLES)));
             // train unit cycles
             output = of.createOutput("train_unit_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.tuc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "train_unit_cycles")));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.TRAIN_UNIT_CYCLES)));
             // driver cycles
             output = of.createOutput("driver_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.dc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "driver_cycles")));
-            // starting positions
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.DRIVER_CYCLES)));
+            // start positions
             output = of.createOutput("starts");
             oFile = new File(outputFile, ResourceLoader.getString("out.sp") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "starts")));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.STARTS)));
+            // end positions
+            output = of.createOutput("ends");
+            oFile = new File(outputFile, ResourceLoader.getString("out.ep") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENDS)));
+            // tt by dc
+            List<TrainsCycle> cycles = model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE);
+            output = of.createOutput("trains");
+            for (TrainsCycle cycle : cycles) {
+                OutputParams params = this.createParams(output, createUniqueOutputFile(cycle, outputFile, OutputType.TRAINS_BY_DRIVER_CYCLES), cycle, OutputType.TRAINS_BY_DRIVER_CYCLES);
+                eOutputs.add(new ExecutableOutput(output, params));
+            }
         }
 
         this.saveOutputs(eOutputs);
     }
 
-    private File createUniqueOutputFile(Object item, File directory) throws OutputException {
-        if (outputType == OutputType.TRAINS_SELECT_DRIVER_CYCLES || outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
+    private File createUniqueOutputFile(Object item, File directory, OutputType type) throws OutputException {
+        if (type == OutputType.TRAINS_SELECT_DRIVER_CYCLES || type == OutputType.TRAINS_BY_DRIVER_CYCLES) {
             TrainsCycle cycle = (TrainsCycle)item;
             return new File(directory, ResourceLoader.getString("out.trains") + "_" + cycle.getName() + "." + model.getOutputCategory().getSuffix());
         }
         throw new OutputException("Error creating filenames of output files.");
     }
 
-    private Output createOutput() throws OutputException {
+    private Output createOutput(OutputType type) throws OutputException {
         OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
         of.setParameter("locale", model.getOutputLocale());
-        Output output = of.createOutput(outputType.getOutputType());
+        Output output = of.createOutput(type.getOutputType());
         return output;
     }
 
-    private OutputParams createParams(Output output, File file, Object select, String outType) throws OutputException {
+    private OutputParams createParams(Output output, File file, Object select, OutputType type) throws OutputException {
         // check file name for not allowed characters and some other also (e.g. ' ' - space)
         String name = file.getName();
         File parentFile = file.getParentFile();
@@ -224,10 +235,10 @@ public class OutputAction extends AbstractAction {
         }
         // selections
         if (select != null) {
-            params.setParam(outputType.getSelectionParam(), select);
+            params.setParam(type.getSelectionParam(), select);
         }
         params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
-        if (outType != null && outType.equals("trains")) {
+        if (type != null && type.getOutputType().equals("trains")) {
             params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
         }
         return params;
