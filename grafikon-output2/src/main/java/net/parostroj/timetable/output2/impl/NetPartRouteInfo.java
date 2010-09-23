@@ -10,11 +10,11 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "stations"})
+@XmlType(propOrder={"name", "segments"})
 public class NetPartRouteInfo {
 
     private String name;
-    private List<String> stations;
+    private List<RouteSegmentInfo> segments;
 
     public String getName() {
         return name;
@@ -24,14 +24,14 @@ public class NetPartRouteInfo {
         this.name = name;
     }
 
-    @XmlElement(name="station")
-    public List<String> getStations() {
-        if (stations == null)
-            stations = new LinkedList<String>();
-        return stations;
+    @XmlElement(name="segment")
+    public List<RouteSegmentInfo> getSegments() {
+        if (segments == null)
+            segments = new LinkedList<RouteSegmentInfo>();
+        return segments;
     }
 
-    public void setStations(List<String> stations) {
-        this.stations = stations;
+    public void setSegments(List<RouteSegmentInfo> segments) {
+        this.segments = segments;
     }
 }

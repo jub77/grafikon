@@ -1,8 +1,7 @@
-package net.parostroj.timetable.output2.util;
+package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.impl.NetPartRouteInfo;
 
 /**
  * Extracts routes from list of trains.
@@ -70,11 +69,28 @@ public class RoutesExtractor {
     public static List<NetPartRouteInfo> convert(Collection<Route> routes) {
         if (routes != null && !routes.isEmpty()) {
             List<NetPartRouteInfo> infos = new LinkedList<NetPartRouteInfo>();
+            // get ratio ...
+            TrainDiagram diagram = ((Node) routes.iterator().next().getSegments().get(0)).getTrainDiagram();
+            Double ratio = (Double) diagram.getAttribute("route.length.ratio");
+            if (ratio == null)
+                ratio = 1.0;
             for (Route route : routes) {
                 NetPartRouteInfo info = new NetPartRouteInfo();
                 info.setName(route.getName());
-                info.getStations().add(((Node)route.getSegments().get(0)).getName());
-                info.getStations().add(((Node)route.getSegments().get(route.getSegments().size() - 1)).getName());
+                long length = 0;
+                for (RouteSegment seg : route.getSegments()) {
+                    if (seg.isNode()) {
+                        Node node = seg.asNode();
+                        RouteSegmentInfo rsInfo = new RouteSegmentInfo();
+                        rsInfo.setName(node.getName());
+                        rsInfo.setType(node.getType().getKey());
+                        rsInfo.setDistance(ratio * length);
+                        info.getSegments().add(rsInfo);
+                    } else {
+                        Line line = seg.asLine();
+                        length += line.getLength();
+                    }
+                }
                 infos.add(info);
             }
             return infos;

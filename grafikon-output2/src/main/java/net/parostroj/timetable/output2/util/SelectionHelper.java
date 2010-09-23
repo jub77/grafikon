@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.util;
 
+import net.parostroj.timetable.output2.impl.RoutesExtractor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

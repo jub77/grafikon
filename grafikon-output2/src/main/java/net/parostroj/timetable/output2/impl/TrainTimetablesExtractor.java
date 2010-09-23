@@ -5,7 +5,6 @@ import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.util.RoutesExtractor;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Pair;
 

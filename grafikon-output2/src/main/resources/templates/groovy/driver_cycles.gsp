@@ -132,9 +132,8 @@ def getRoutePaths(cycle,cycles) {
   } else {
     for (route in cycle.routes) {
       def stationsStr = null
-      for (station in route.stations) {
-        stationsStr = add(stationsStr," - ",station)
-      }
+      stationsStr = add(stationsStr," - ",route.segments.first().name)
+      stationsStr = add(stationsStr," - ",route.segments.last().name)
       result = add(result,"<br>",stationsStr)
     }
   }
