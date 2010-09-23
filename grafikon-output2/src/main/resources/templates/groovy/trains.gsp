@@ -92,6 +92,18 @@
     div.text-page span.strike {text-decoration: line-through;}
     div.text-page div.center {text-align: center;}
     div.text-page img {max-width: 125mm; max-height: 180mm;}
+
+    table.titlepage {width: 130mm;}
+    td.company {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.space1 {height: 15mm; font-size: 4mm; text-align: center;}
+    td.gtitle {height: 15mm; font-size: 8mm; text-align: center; font-weight: bold;}
+    td.numbers {height: 15mm; font-size: 12mm; text-align: center; font-weight: bold;}
+    td.line {height: 5mm; font-size: 4mm; text-align: center;}
+    td.stations {height: 15mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.valid {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.cycle {height: 8mm; font-size: 5mm; text-align: center; vertical-align: top; font-weight: bold;}
+    td.space2 {height: 58mm; font-size: 5mm; text-align: center; vertical-align: top;}
+    td.publish {height: 5mm; font-size: 3mm; text-align: center;}
   </style>
 </head>
 <%
@@ -113,6 +125,8 @@
   trainPages = createTrainPages(trains.trainTimetables)
   pages = addIndexPages(trainPages)
   addTextPages(trains.texts, pages)
+  if (title_page)
+    addTitlePages(pages)
   printPages(pages)
 %>
 </body>
@@ -122,6 +136,7 @@
     def index = false
     def empty = false
     def text = false
+    def title = false
     def trains = []
     def textStr
 
@@ -222,6 +237,14 @@
     }
   }
 
+  def addTitlePages(pages) {
+    // title page
+    def titlePage = new Page()
+    titlePage.title = true
+    pages.add(0, titlePage)
+    pages.add(1, Page.emptyPage());
+  }
+
   // reorder pages
   def reorderPages(pages) {
     def result = []
@@ -302,6 +325,8 @@
   def printPage(page) {
     if (page.empty) {
       // do nothing
+    } else if (page.title) {
+      show_title(page)
     } else if (page.text) {
       show_text(page)
     } else if (page.index) {
@@ -618,6 +643,55 @@
       }
     }
     return list
+  }
+
+  def show_title(page) {
+    %>
+<table align="right" class="titlepage" border="0" cellspacing="0">
+  <tr><td class="company">${company}<br>${company_part}</td></tr>
+  <tr><td class="space1">&nbsp;</td></tr>
+  <tr><td class="gtitle">${train_timetable}</td></tr>
+  <tr><td class="numbers">${getRouteNames(trains)}</td></tr>
+  <tr><td class="line">${for_line}</td></tr>
+  <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
+  <tr><td class="valid"><% if (trains.validity != null) { %>${validity_from} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="space2">&nbsp;</td></tr>
+  <tr><td class="publish">${publisher}</td></tr>
+</table>
+<%
+  }
+
+  // returns names of routes
+  def getRouteNames(trains) {
+    def result = ""
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        result = add(result,"<br>",route.name)
+      }
+    }
+    return result
+  }
+
+  // returns paths of routes
+  def getRoutePaths(trains) {
+    def result = ""
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        def stationsStr = null
+        stationsStr = add(stationsStr," - ",route.segments.first().name)
+        stationsStr = add(stationsStr," - ",route.segments.last().name)
+        result = add(result,"<br>",stationsStr)
+      }
+    }
+    return result
+  }
+
+  def add(str, delimiter, value) {
+    if (str == null || str.isEmpty())
+      str = value
+    else
+      str += delimiter + value
+    return str
   }
 
   def show_text(page) {
