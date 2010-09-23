@@ -4,10 +4,7 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -209,6 +206,14 @@ public class OutputAction extends AbstractAction {
     }
 
     private OutputParams createParams(Output output, File file, Object select) throws OutputException {
+        // check file name for not allowed characters and some other also (e.g. ' ' - space)
+        String name = file.getName();
+        File parentFile = file.getParentFile();
+        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        if (parentFile == null)
+            file = new File(name);
+        else
+            file = new File(parentFile, name);
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
