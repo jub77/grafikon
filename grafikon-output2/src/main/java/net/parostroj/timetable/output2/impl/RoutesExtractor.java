@@ -91,6 +91,23 @@ public class RoutesExtractor {
     }
 
     /**
+     * returns lines for cycle.
+     *
+     * @param cycle trains cycle
+     * @return set of lines
+     */
+    public Set<Line> getLinesForCycle(TrainsCycle cycle) {
+        Set<Line> lines = new HashSet<Line>();
+        for (TrainsCycleItem item : cycle.getItems()) {
+            for (TimeInterval i : item.getIntervals()) {
+                if (i.isLineOwner())
+                    lines.add(i.getOwnerAsLine());
+            }
+        }
+        return lines;
+    }
+
+    /**
      * converts list of routes to infos.
      *
      * @param routes collection of routes.

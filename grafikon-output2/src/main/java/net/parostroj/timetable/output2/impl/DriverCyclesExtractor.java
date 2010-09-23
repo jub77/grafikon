@@ -56,13 +56,7 @@ public class DriverCyclesExtractor {
     }
 
     private void addNetPartRouteInfos(DriverCycle cycle, TrainsCycle tCycle) {
-        Set<Line> lines = new HashSet<Line>();
-        for (TrainsCycleItem item : tCycle.getItems()) {
-            for (TimeInterval i : item.getIntervals()) {
-                if (i.isLineOwner())
-                    lines.add(i.getOwnerAsLine());
-            }
-        }
+        Set<Line> lines = routesExtractor.getLinesForCycle(tCycle);
         cycle.setRoutes(routesExtractor.getRouteInfosForLines(lines));
     }
 

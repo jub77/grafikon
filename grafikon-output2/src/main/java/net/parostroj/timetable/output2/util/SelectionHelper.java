@@ -22,7 +22,12 @@ public class SelectionHelper {
             return (List<Route>) params.getParam("routes").getValue();
         } else {
             RoutesExtractor extractor = new RoutesExtractor(diagram);
-            return extractor.getRoutesForTrains(trains);
+            if (params.paramExistWithValue("driver_cycle")) {
+                TrainsCycle cycle = (TrainsCycle) params.getParam("driver_cycle").getValue();
+                Set<Line> lines = extractor.getLinesForCycle(cycle);
+                return extractor.getRoutesForLines(lines);
+            } else
+                return extractor.getRoutesForTrains(trains);
         }
     }
 
