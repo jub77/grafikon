@@ -93,7 +93,7 @@
     div.text-page div.center {text-align: center;}
     div.text-page img {max-width: 125mm; max-height: 180mm;}
 
-    table.titlepage {width: 130mm;}
+    table.titlepage {width: 125mm;}
     td.company {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
     td.space1 {height: 15mm; font-size: 4mm; text-align: center;}
     td.gtitle {height: 15mm; font-size: 8mm; text-align: center; font-weight: bold;}
@@ -104,6 +104,18 @@
     td.cycle {height: 8mm; font-size: 5mm; text-align: center; vertical-align: top; font-weight: bold;}
     td.space2 {height: 58mm; font-size: 5mm; text-align: center; vertical-align: top;}
     td.publish {height: 5mm; font-size: 3mm; text-align: center;}
+
+    table.list2 {font-size: 4mm; width: 120mm; padding-left: 5mm;}
+    tr.listh {height: 5mm; font-size: 3mm;}
+    td.ctrainh {width: 25mm; text-align: center;}
+    td.cdepartureh {width: 15mm; text-align: center;}
+    td.cfromtoh {width: 22mm; text-align: center;}
+    td.cnoteh {width: 53mm; padding-left: 5mm;}
+    td.ctrain {vertical-align: bottom;}
+    td.cdeparture {vertical-align: bottom; text-align: center; font-weight: bold;}
+    td.cfromto {vertical-align: bottom; text-align: center;}
+    td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
+    td.move {vertical-align: bottom;}
   </style>
 </head>
 <%
@@ -137,8 +149,11 @@
     def empty = false
     def text = false
     def title = false
+    def cycle = false
     def trains = []
     def textStr
+    def numbered = true
+    def numberShown = true
 
     static def emptyPage() {
       def aPage = new Page()
@@ -241,8 +256,17 @@
     // title page
     def titlePage = new Page()
     titlePage.title = true
+    titlePage.numbered = false
+    titlePage.numberShown = false
     pages.add(0, titlePage)
-    pages.add(1, Page.emptyPage());
+    def secondPage = new Page()
+    secondPage.numbered = false
+    secondPage.numberShown = false
+    if (trains.cycle != null)
+      secondPage.cycle = true
+    else
+      secondPage.empty = true
+    pages.add(1, secondPage);
   }
 
   // reorder pages
@@ -274,7 +298,8 @@
   def numberPages(pages) {
     def i = 1
     for (page in pages) {
-      page.number = i++
+      if (page.numbered)
+        page.number = i++
     }
   }
 
@@ -305,10 +330,10 @@
     %>
 <table class="two-pages${hasNext ? " page-break" :""}" cellspacing="0" cellpadding="0">
 <tr>
-    <td class="header-l-l">${pageLeft.number}</td>
-    <td class="header-l-r">OstraMo</td>
-    <td class="header-r-l">OstraMo</td>
-    <td class="header-r-r">${pageRight.number}</td>
+    <td class="header-l-l">${pageLeft.numberShown ? pageLeft.number : "&nbsp;"}</td>
+    <td class="header-l-r">${pageLeft.numberShown ? header_publisher : "&nbsp"}</td>
+    <td class="header-r-l">${pageRight.numberShown ? header_publisher : "&nbsp"}</td>
+    <td class="header-r-r">${pageRight.numberShown ? pageRight.number : "&nbsp;"}</td>
 </tr>
 <tr>
 <td colspan="2" class="page-left">
@@ -327,6 +352,8 @@
       // do nothing
     } else if (page.title) {
       show_title(page)
+    } else if (page.cycle) {
+      show_cycle(page)
     } else if (page.text) {
       show_text(page)
     } else if (page.index) {
@@ -647,7 +674,7 @@
 
   def show_title(page) {
     %>
-<table align="right" class="titlepage" border="0" cellspacing="0">
+<table class="titlepage" border="0" cellspacing="0">
   <tr><td class="company">${company}<br>${company_part}</td></tr>
   <tr><td class="space1">&nbsp;</td></tr>
   <tr><td class="gtitle">${train_timetable}</td></tr>
@@ -655,10 +682,10 @@
   <tr><td class="line">${for_line}</td></tr>
   <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
   <tr><td class="valid"><% if (trains.validity != null) { %>${validity_from} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycle"><% if (trains.cycle != null) { %>${cycle}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="space2">&nbsp;</td></tr>
   <tr><td class="publish">${publisher}</td></tr>
-</table>
-<%
+</table><%
   }
 
   // returns names of routes
@@ -692,6 +719,34 @@
     else
       str += delimiter + value
     return str
+  }
+
+  def show_cycle(page) {
+    %>
+<table class="list2" border="0" cellspacing="0" align="center">
+  <tr class="listh">
+    <td class="ctrainh">${column_train}</td>
+    <td class="cdepartureh">${column_departure}</td>
+    <td class="cfromtoh">${column_from_to}</td>
+    <td class="cnoteh">${column_note}</td>
+  </tr><% lastNode = null;
+          for (item in trains.cycle.rows) {
+            if (lastNode != null && lastNode != item.from) {
+              %>
+  <tr>
+    <td colspan="4" class="move">&#151;  ${move_to_station} ${item.from} &#151; </td>
+  </tr><%
+            }
+        %>
+  <tr>
+    <td class="ctrain">${item.trainName}</td>
+    <td class="cdeparture">${item.fromTime}</td>
+    <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
+    <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
+  </tr><% lastNode = item.to
+          }
+        %>
+</table><%
   }
 
   def show_text(page) {
