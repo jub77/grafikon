@@ -10,6 +10,7 @@ import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
@@ -32,7 +33,8 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
             // extract tts
             List<Train> trains = SelectionHelper.selectTrains(params, diagram);
             List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
-            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, trains, routes);
+            TrainsCycle cycle = SelectionHelper.getDriverCycle(params);
+            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, trains, routes, cycle);
             TrainTimetables tt = te.getTrainTimetables();
 
             JAXBContext context = JAXBContext.newInstance(TrainTimetables.class);

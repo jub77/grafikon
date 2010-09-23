@@ -18,12 +18,14 @@ public class TrainTimetablesExtractor {
     private TrainDiagram diagram;
     private List<Train> trains;
     private List<Route> routes;
+    private TrainsCycle cycle;
     private Map<Pair<Line, Node>, Double> cachedRoutePositions;
 
-    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes) {
+    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle) {
         this.diagram = diagram;
         this.trains = trains;
         this.routes = routes;
+        this.cycle = cycle;
         this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
     }
 
@@ -56,6 +58,12 @@ public class TrainTimetablesExtractor {
 
         // validity
         timetables.setValidity((String)diagram.getAttribute("route.validity"));
+
+        // cycle
+        if (cycle != null) {
+            DriverCyclesExtractor ex = new DriverCyclesExtractor(diagram, null, false);
+            timetables.setCycle(ex.createCycle(cycle));
+        }
 
         return timetables;
     }

@@ -7,6 +7,7 @@ import java.util.*;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
@@ -35,7 +36,8 @@ public class GspTrainTimetablesOutput extends GspOutput {
             // extract tts
             List<Train> trains = SelectionHelper.selectTrains(params, diagram);
             List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
-            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes);
+            TrainsCycle cycle = SelectionHelper.getDriverCycle(params);
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes, cycle);
             TrainTimetables timetables = tte.getTrainTimetables();
 
             // call template

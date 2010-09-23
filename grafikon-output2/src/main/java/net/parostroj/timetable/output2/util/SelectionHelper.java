@@ -22,13 +22,20 @@ public class SelectionHelper {
             return (List<Route>) params.getParam("routes").getValue();
         } else {
             RoutesExtractor extractor = new RoutesExtractor(diagram);
-            if (params.paramExistWithValue("driver_cycle")) {
-                TrainsCycle cycle = (TrainsCycle) params.getParam("driver_cycle").getValue();
+            TrainsCycle cycle = getDriverCycle(params);
+            if (cycle != null) {
                 Set<Line> lines = extractor.getLinesForCycle(cycle);
                 return extractor.getRoutesForLines(lines);
             } else
                 return extractor.getRoutesForTrains(trains);
         }
+    }
+
+    public static TrainsCycle getDriverCycle(OutputParams params) {
+        if (params.paramExistWithValue("driver_cycle"))
+            return (TrainsCycle) params.getParam("driver_cycle").getValue();
+        else
+            return null;
     }
 
     public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
