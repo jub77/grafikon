@@ -138,7 +138,7 @@ public class OutputAction extends AbstractAction {
         if (outputType.isSelection() || outputType.getSelectionParam() != null) {
             select = selection;
         }
-        OutputParams params = this.createParams(output, outputFile, select);
+        OutputParams params = this.createParams(output, outputFile, select, outputType.getOutputType());
         this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
     }
 
@@ -149,7 +149,7 @@ public class OutputAction extends AbstractAction {
             if (selection instanceof Collection) {
                 Collection<Object> c = (Collection<Object>)selection;
                 for (Object item : c) {
-                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile), item);
+                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile), item, outputType.getOutputType());
                     eOutputs.add(new ExecutableOutput(output, params));
                 }
             }
@@ -161,27 +161,27 @@ public class OutputAction extends AbstractAction {
             // stations
             Output output = of.createOutput("stations");
             File oFile = new File(outputFile, ResourceLoader.getString("out.nodes") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "stations")));
             // trains
             output = of.createOutput("trains");
             oFile = new File(outputFile, ResourceLoader.getString("out.trains") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "trains")));
             // engine cycles
             output = of.createOutput("engine_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.ec") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "engine_cycles")));
             // train unit cycles
             output = of.createOutput("train_unit_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.tuc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "train_unit_cycles")));
             // driver cycles
             output = of.createOutput("driver_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.dc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "driver_cycles")));
             // starting positions
             output = of.createOutput("starts");
             oFile = new File(outputFile, ResourceLoader.getString("out.sp") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, "starts")));
         }
 
         this.saveOutputs(eOutputs);
@@ -202,7 +202,7 @@ public class OutputAction extends AbstractAction {
         return output;
     }
 
-    private OutputParams createParams(Output output, File file, Object select) throws OutputException {
+    private OutputParams createParams(Output output, File file, Object select, String outType) throws OutputException {
         // check file name for not allowed characters and some other also (e.g. ' ' - space)
         String name = file.getName();
         File parentFile = file.getParentFile();
@@ -227,7 +227,7 @@ public class OutputAction extends AbstractAction {
             params.setParam(outputType.getSelectionParam(), select);
         }
         params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
-        if (outputType.getOutputType().equals("trains")) {
+        if (outType != null && outType.equals("trains")) {
             params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
         }
         return params;
