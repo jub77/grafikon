@@ -170,8 +170,10 @@ public class TrainTimetablesExtractor {
                 row.setArrival(TimeConverter.convertFromIntToText(nodeI.getStart()));
             if (!nodeI.isLast())
                 row.setDeparture(TimeConverter.convertFromIntToText(nodeI.getEnd()));
-            if (lineI != null)
+            if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
+                row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
+            }
 
             // comment
             if (Boolean.TRUE.equals(nodeI.getAttribute("comment.shown"))) {
