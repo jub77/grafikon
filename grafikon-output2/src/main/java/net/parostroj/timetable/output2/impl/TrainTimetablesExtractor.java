@@ -199,7 +199,7 @@ public class TrainTimetablesExtractor {
         // get all lines for node
         boolean check = true;
         for (Line line : diagram.getNet().getLinesOf(node)) {
-            check = check && (Boolean)line.getAttribute("line.controlled");
+            check = check && Boolean.TRUE.equals(line.getAttribute("line.controlled"));
         }
         return check;
     }

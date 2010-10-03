@@ -51,10 +51,10 @@
     <tr><td class="company">${company}<br>${company_part}</td></tr>
     <tr><td class="space1"></td></tr>
     <tr><td class="gtitle">${train_timetable}</td></tr>
-    <tr><td class="numbers">${cycles.routeNumbers.replace("\n","<br>")}</td></tr>
+    <tr><td class="numbers">${cycles.routeNumbers != null ? cycles.routeNumbers.replace("\n","<br>") : "&nbsp;"}</td></tr>
     <tr><td class="line">${for_line}</td></tr>
-    <tr><td class="stations">${cycles.routeStations.replace("\n","<br>")}</td></tr>
-    <tr><td class="valid">${validity_from} ${cycles.validity}</td></tr>
+    <tr><td class="stations">${cycles.routeStations != null ? cycles.routeStations.replace("\n","<br>") : "&nbsp;"}</td></tr>
+    <tr><td class="valid">${validity_from} ${cycles.validity != null ? cycles.validity : "&nbsp;"}</td></tr>
     <tr><td class="cycle">${cycle}: ${c.name}</td></tr>
     <tr><td class="space2">&nbsp;</td></tr>
     <tr><td class="publish">${publisher}</td></tr>
