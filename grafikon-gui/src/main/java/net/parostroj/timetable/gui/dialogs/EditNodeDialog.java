@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EditNodeDialog extends javax.swing.JDialog {
 
-    class EditTrack {
+    private static class EditTrack {
         public NodeTrack track;
         public String number;
         public Boolean platform;
