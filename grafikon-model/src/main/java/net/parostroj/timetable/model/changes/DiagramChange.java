@@ -132,7 +132,7 @@ public class DiagramChange {
 
     @Override
     public String toString() {
-        return String.format("Change(%s,%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object);
+        return String.format("Change(%s,%s,%s,%s)", type.toString(), objectId, action != null ? action.toString() : "<null>", object);
     }
 
     static String getString(String key) {
