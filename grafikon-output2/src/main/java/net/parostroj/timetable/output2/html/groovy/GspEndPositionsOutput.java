@@ -39,7 +39,7 @@ public class GspEndPositionsOutput extends GspOutput {
             map.put("train_units", trainUnits);
             ResourceHelper.addTextsToMap(map, "end_positions_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.createTemplate(params, "/templates/groovy/end_positions.gsp");
+            Template template = this.createTemplate(params, "templates/groovy/end_positions.gsp", this.getClass().getClassLoader());
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);

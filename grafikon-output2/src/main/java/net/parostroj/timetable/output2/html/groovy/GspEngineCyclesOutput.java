@@ -35,7 +35,7 @@ public class GspEngineCyclesOutput extends GspOutput {
             map.put("cycles", cycles);
             ResourceHelper.addTextsToMap(map, "ec_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.createTemplate(params, "/templates/groovy/engine_cycles.gsp");
+            Template template = this.createTemplate(params, "templates/groovy/engine_cycles.gsp", this.getClass().getClassLoader());
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);

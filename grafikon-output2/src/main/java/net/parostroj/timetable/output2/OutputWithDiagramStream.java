@@ -21,27 +21,32 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
         OutputParamsUtil.checkParamsOr(params, DefaultOutputParam.OUTPUT_FILE, DefaultOutputParam.OUTPUT_STREAM);
         TrainDiagram diagram = (TrainDiagram) params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).getValue();
         OutputStream stream = null;
-        if (params.paramExist(DefaultOutputParam.OUTPUT_STREAM) && params.getParam(DefaultOutputParam.OUTPUT_STREAM).getValue() != null)
+        if (params.paramExist(DefaultOutputParam.OUTPUT_STREAM) && params.getParam(DefaultOutputParam.OUTPUT_STREAM).getValue() != null) {
             stream = (OutputStream) params.getParam(DefaultOutputParam.OUTPUT_STREAM).getValue();
-        else {
+            testAndWrite(diagram, params, stream);
+        }  else {
             File oFile = (File) params.getParam(DefaultOutputParam.OUTPUT_FILE).getValue();
             try {
                 stream = new FileOutputStream(oFile);
+                testAndWrite(diagram, params, stream);
             } catch (FileNotFoundException e) {
                 throw new OutputException("Cannot open output file.", e);
+            } finally {
+                try {
+                    if (stream != null)
+                        stream.close();
+                } catch (IOException e) {
+                    throw new OutputException("Couldn't close stream.", e);
+                }
             }
         }
+    }
+
+    private void testAndWrite(TrainDiagram diagram, OutputParams params, OutputStream stream) throws OutputException {
         if (diagram == null || stream == null) {
             throw new OutputException("Parameter cannot be null");
         }
         this.writeTo(params, stream, diagram);
-        // close stream if created
-        if (params.paramExist(DefaultOutputParam.OUTPUT_FILE))
-            try {
-                stream.close();
-            } catch (IOException e) {
-                throw new OutputException("Couldn't close stream.", e);
-            }
     }
 
     @Override

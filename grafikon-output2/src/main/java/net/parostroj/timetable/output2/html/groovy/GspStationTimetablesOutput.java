@@ -34,7 +34,7 @@ public class GspStationTimetablesOutput extends GspOutput {
             map.put("stations", timetables);
             ResourceHelper.addTextsToMap(map, "stations_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.createTemplate(params, "/templates/groovy/stations.gsp");
+            Template template = this.createTemplate(params, "templates/groovy/stations.gsp", this.getClass().getClassLoader());
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);
