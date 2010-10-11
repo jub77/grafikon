@@ -19,9 +19,11 @@ public class ResourceHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class.getName());
 
-    public static String readResource(String filename) {
+    public static String readResource(String filename, ClassLoader cl) {
         try {
-            InputStream fis = ResourceHelper.class.getResourceAsStream(filename);
+            InputStream fis =  (cl != null) ?
+                cl.getResourceAsStream(filename) :
+                ClassLoader.getSystemResourceAsStream(filename);
             Reader in = new InputStreamReader(fis, "utf-8");
             char[] buffer = new char[1000];
             int read;

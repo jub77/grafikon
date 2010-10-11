@@ -41,7 +41,7 @@ public class HtmlStartPositionsOutput extends OutputWithLocale {
         map.put("train_units", trainUnits);
         ResourceHelper.addTextsToMap(map, "start_positions_", this.getLocale(), "texts/html_texts");
 
-        String template = ResourceHelper.readResource("/templates/mvel2/start_positions.html");
+        String template = ResourceHelper.readResource("templates/mvel2/start_positions.html", getClass().getClassLoader());
         String ret = (String) TemplateRuntime.eval(template, map);
 
         try {
