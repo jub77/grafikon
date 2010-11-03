@@ -9,7 +9,9 @@ import javax.swing.AbstractListModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.WeightTableRow;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -55,6 +57,13 @@ public class LineClassesDialog extends javax.swing.JDialog {
 
         public void removeLineClass(int index) {
             LineClass clazz = (LineClass) getElementAt(index);
+            // remove item with this line class from weight tables
+            for (EngineClass eClass : model.getDiagram().getEngineClasses()) {
+                for (WeightTableRow row : eClass.getWeightTable()) {
+                    row.removeWeightInfo(clazz);
+                }
+            }
+            // remove line class
             model.getDiagram().getNet().removeLineClass(clazz);
             this.fireIntervalRemoved(model, index, index);
         }
