@@ -14,9 +14,7 @@ import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.WeightTableRow;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -55,6 +53,13 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
         public void removeEngineClass(int index) {
             EngineClass clazz = (EngineClass) getElementAt(index);
+            // remove engine class from engine cycles
+            for (TrainsCycle cycle : model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE)) {
+                EngineClass eClass = (EngineClass) cycle.getAttribute("engine.class");
+                if (eClass == clazz)
+                    cycle.removeAttribute("engine.class");
+            }
+            // remove from model
             model.getDiagram().removeEngineClass(clazz);
             this.fireIntervalRemoved(model, index, index);
         }
