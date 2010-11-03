@@ -2,14 +2,14 @@ package net.parostroj.timetable.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.actions.ModelUtils;
 import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Window listener for the MainFrame.
@@ -18,7 +18,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class MainFrameWindowListener extends WindowAdapter {
 
-    private static final Logger LOG = Logger.getLogger(MainFrameWindowListener.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrameWindowListener.class.getName());
     private MainFrame parent;
     private ApplicationModel model;
 
@@ -44,7 +44,7 @@ public class MainFrameWindowListener extends WindowAdapter {
                         }
                         parent.cleanUpBeforeApplicationEnd();
                     } catch (Exception e) {
-                        LOG.log(Level.WARNING, "Error saving model.", e);
+                        LOG.warn("Error saving model.", e);
                         errorMessage = ResourceLoader.getString("dialog.error.saving");
                     }
                 }

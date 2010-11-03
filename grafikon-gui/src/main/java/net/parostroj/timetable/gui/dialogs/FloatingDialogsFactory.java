@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.util.logging.Logger;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
@@ -16,6 +15,8 @@ import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for creation of floating dialogs.
@@ -24,7 +25,7 @@ import net.parostroj.timetable.model.events.*;
  */
 public class FloatingDialogsFactory {
 
-    private static final Logger LOG = Logger.getLogger(FloatingDialogsFactory.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FloatingDialogsFactory.class.getName());
 
     private static FloatingDialog createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
@@ -188,7 +189,7 @@ public class FloatingDialogsFactory {
                 try {
                     gtView.setSettings(GTViewSettings.parseStorageString(prefs.getString(createStorageKey("gtv"), null)));
                 } catch (Exception e) {
-                    LOG.warning("Wrong GTView settings - using default values.");
+                    LOG.warn("Wrong GTView settings - using default values.");
                 }
             }
         };

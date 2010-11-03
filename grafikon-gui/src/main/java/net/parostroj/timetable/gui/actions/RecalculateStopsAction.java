@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -17,6 +16,8 @@ import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This action recalculates train stops.
@@ -25,7 +26,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RecalculateStopsAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(RecalculateStopsAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(RecalculateStopsAction.class.getName());
     private ApplicationModel model;
 
     public RecalculateStopsAction(ApplicationModel model) {
@@ -47,7 +48,7 @@ public class RecalculateStopsAction extends AbstractAction {
         try {
             cRatio = Double.parseDouble(ratioStr);
         } catch (NumberFormatException e) {
-            LOG.warning("Cannot convert to double: " + ratioStr);
+            LOG.warn("Cannot convert to double: {}", ratioStr);
             return;
         }
 
@@ -84,7 +85,7 @@ public class RecalculateStopsAction extends AbstractAction {
 
             @Override
             protected void process(List<Train> chunks) {
-                LOG.finest("Recalculate chunk of trains. Size: " + chunks.size());
+                LOG.trace("Recalculate chunk of trains. Size: " + chunks.size());
                 lock.lock();
                 try {
                     // recalculate trains

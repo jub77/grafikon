@@ -7,8 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.event.ItemEvent;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -18,6 +16,8 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Editation of a line.
@@ -26,7 +26,7 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class EditLineDialog extends javax.swing.JDialog {
     
-    private static final Logger LOGGER = Logger.getLogger(EditLineDialog.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(EditLineDialog.class.getName());
     private ApplicationModel model;
     private Line line;
     private Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
@@ -152,7 +152,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         try {
             length = Integer.parseInt(lengthTextField.getText());
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "Cannot convert string to int (length).", e);
+            LOGGER.warn("Cannot convert string to int (length).", e);
         }
         int speed = line.getTopSpeed();
         try {
@@ -161,7 +161,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             else
                 speed = Line.UNLIMITED_SPEED;
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "Cannot convert string to int (speed).", e);
+            LOGGER.warn("Cannot convert string to int (speed).", e);
         }
         if (line.getLength() != length) {
             line.setLength(length);

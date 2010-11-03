@@ -5,12 +5,12 @@ import java.awt.geom.*;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for all graphical timetable draws.
@@ -18,7 +18,7 @@ import net.parostroj.timetable.utils.TransformUtil;
  * @author jub
  */
 abstract public class GTDraw {
-    private static final Logger LOG = Logger.getLogger(GTDraw.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
     
     // basic display
     private static final Stroke HOURS_STROKE = new BasicStroke(1.8f);
@@ -312,7 +312,7 @@ abstract public class GTDraw {
                 try {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "Error transform name shape.", e);
+                    LOG.error("Error transform name shape.", e);
                 }
             }
         }

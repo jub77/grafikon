@@ -8,8 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.event.ItemEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
@@ -19,6 +17,8 @@ import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Edit dialog for node.
@@ -27,7 +27,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class EditNodeDialog extends javax.swing.JDialog {
 
-    class EditTrack {
+    private static class EditTrack {
         public NodeTrack track;
         public String number;
         public Boolean platform;
@@ -59,7 +59,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(EditNodeDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EditNodeDialog.class.getName());
     private Node node;
     private List<EditTrack> removed;
     private boolean modified;
@@ -160,7 +160,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 if (!length.equals(oldLength))
                     node.setAttribute("length", length);
             } catch (NumberFormatException e) {
-                LOG.log(Level.WARNING, "Cannot convert length to integer: {0}", lengthStr);
+                LOG.warn("Cannot convert length to integer: {}", lengthStr);
             }
         } else {
             node.removeAttribute("length");

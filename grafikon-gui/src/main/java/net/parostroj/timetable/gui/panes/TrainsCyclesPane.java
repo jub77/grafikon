@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
-import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -24,6 +23,8 @@ import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainsCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TrainsCyclePane.
@@ -32,7 +33,7 @@ import net.parostroj.timetable.model.TrainsCycle;
  */
 public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private static final Logger LOG = Logger.getLogger(TrainsCyclesPane.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainsCyclesPane.class.getName());
     private TCDelegate delegate;
 
     private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, ApplicationModelListener {
@@ -151,7 +152,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         try {
             graphicalTimetableView.setSettings(GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null)));
         } catch (Exception e) {
-            LOG.warning("Wrong GTView settings - using default values.");
+            LOG.warn("Wrong GTView settings - using default values.");
         }
     }
 

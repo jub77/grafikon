@@ -3,14 +3,14 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.WeightTableRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage for weight table row.
@@ -20,7 +20,7 @@ import net.parostroj.timetable.model.WeightTableRow;
 @XmlType(propOrder = {"speed", "weights"})
 public class LSWeightTableRow {
 
-    private static final Logger LOG = Logger.getLogger(LSWeightTableRow.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSWeightTableRow.class.getName());
 
     private int speed;
     private List<LSWeightLimit> weights;
@@ -59,7 +59,7 @@ public class LSWeightTableRow {
             for (LSWeightLimit limit : weights) {
                 LineClass lineClass = net.getLineClassById(limit.getLineClass());
                 if (lineClass == null)
-                    LOG.log(Level.WARNING, "Non-existent line class: {0}", limit.getLineClass());
+                    LOG.warn("Non-existent line class: {}", limit.getLineClass());
                 else
                     row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());
             }

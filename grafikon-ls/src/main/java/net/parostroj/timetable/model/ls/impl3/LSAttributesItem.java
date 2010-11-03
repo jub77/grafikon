@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.ls.impl3;
 
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
@@ -8,6 +7,8 @@ import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Scale;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * One item for LSAttributes.
@@ -17,7 +18,7 @@ import net.parostroj.timetable.utils.Pair;
 @XmlType(propOrder = {"key", "value", "type"})
 public class LSAttributesItem {
 
-    private static final Logger LOG = Logger.getLogger(LSAttributesItem.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
     private String key;
     private String value;
     private String type;
@@ -50,7 +51,7 @@ public class LSAttributesItem {
             this.type = pair.first;
             this.value = pair.second;
         } else {
-            LOG.warning("Cannot convert value to string: " + key);
+            LOG.warn("Cannot convert value to string: {}", key);
         }
     }
 
@@ -95,14 +96,14 @@ public class LSAttributesItem {
             return this.convertModelValue(diagram);
         } else {
             // it didn't recognize the type
-            LOG.warning("Not recognized type: " + type);
+            LOG.warn("Not recognized type: ", type);
             return null;
         }
     }
 
     private Object convertModelValue(TrainDiagram diagram) {
         if (diagram == null) {
-            LOG.warning("Cannot convert model value without diagram.");
+            LOG.warn("Cannot convert model value without diagram.");
             return null;
         } else {
             if (type.equals("model.engine.class")) {
@@ -110,7 +111,7 @@ public class LSAttributesItem {
             } else if (type.equals("model.line.class")) {
                 return diagram.getNet().getLineClassById(value);
             } else {
-                LOG.warning("Not recognized model type: " + type);
+                LOG.warn("Not recognized model type: ", type);
                 return null;
             }
         }
@@ -126,7 +127,7 @@ public class LSAttributesItem {
             lKey = "model.line.class";
             lValue = object.getId();
         } else {
-            LOG.warning("Not recognized class: " + object.getClass().getName());
+            LOG.warn("Not recognized class: {}", object.getClass().getName());
         }
         return new Pair<String, String>(lKey, lValue);
     }

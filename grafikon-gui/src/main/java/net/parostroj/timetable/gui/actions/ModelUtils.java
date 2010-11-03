@@ -4,16 +4,16 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.changes.ChangesTracker;
@@ -22,6 +22,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper methods for handling model.
@@ -30,7 +32,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ModelUtils {
 
-    private static final Logger LOG = Logger.getLogger(ModelUtils.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ModelUtils.class.getName());
 
     public static void saveModelData(final ApplicationModel model, File file) throws LSException {
         // update author and date before save
@@ -48,7 +50,7 @@ public class ModelUtils {
                     }
                 });
             } catch (Exception e) {
-                LOG.log(Level.WARNING, "Error updating values for current diagram change set.", e);
+                LOG.warn("Error updating values for current diagram change set.", e);
             }
         }
         FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();
@@ -86,6 +88,12 @@ public class ModelUtils {
                 return diagram.getCycles(TrainsCycleType.DRIVER_CYCLE);
             case TRAIN:
                 return diagram.getTrains();
+            case ROUTE:
+                List<Route> routes = new LinkedList<Route>();
+                for (Route r : diagram.getRoutes())
+                    if (r.isNetPart())
+                        routes.add(r);
+                return routes;
         }
         return null;
     }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon" href="grafikon.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.11" href="grafikon.jnlp">
     <information>
         <title>grafikon</title>
         <vendor>jub</vendor>
         <description>grafikon</description>
         <description kind="short">grafikon</description>
-        <homepage href="http://jub.parostroj.net/grafikon/"/>
+        <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
         <icon href="grafikon.gif"/>
         <icon href="splashscreen.png" kind="splash"/>
         <offline-allowed/>
@@ -34,6 +34,11 @@
         <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
         <jar href="jgrapht-jdk1.5-${jgrapht.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
+        <jar href="jsr311-api-${jsr311.version}.jar" download="eager"/>
+        <jar href="jersey-client-${jersey.version}.jar" download="eager"/>
+        <jar href="jersey-core-${jersey.version}.jar" download="eager"/>
+        <jar href="slf4j-api-${slf4j.version}.jar" download="eager"/>
+        <jar href="slf4j-jdk14-${slf4j.version}.jar" download="eager"/>
     </resources>
     <application-desc main-class="net.parostroj.timetable.gui.Main">
     </application-desc>

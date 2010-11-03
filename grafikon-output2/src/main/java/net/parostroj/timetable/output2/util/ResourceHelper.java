@@ -7,8 +7,8 @@ import java.io.Reader;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper methods.
@@ -17,11 +17,13 @@ import java.util.logging.Logger;
  */
 public class ResourceHelper {
 
-    private static final Logger LOG = Logger.getLogger(ResourceHelper.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class.getName());
 
-    public static String readResource(String filename) {
+    public static String readResource(String filename, ClassLoader cl) {
         try {
-            InputStream fis = ResourceHelper.class.getResourceAsStream(filename);
+            InputStream fis =  (cl != null) ?
+                cl.getResourceAsStream(filename) :
+                ClassLoader.getSystemResourceAsStream(filename);
             Reader in = new InputStreamReader(fis, "utf-8");
             char[] buffer = new char[1000];
             int read;
@@ -32,7 +34,7 @@ public class ResourceHelper {
             in.close();
             return result.toString();
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
             return "";
         }
     }

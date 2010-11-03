@@ -2,8 +2,7 @@ package net.parostroj.timetable.output2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Output factory.
@@ -40,7 +39,7 @@ public abstract class OutputFactory {
                 // create new instance
                 return clazz.newInstance();
             } catch (Exception e) {
-                Logger.getLogger(OutputFactory.class.getName()).log(Level.SEVERE, "Cannot create instance: " + clazz.getName(), e);
+                LoggerFactory.getLogger(OutputFactory.class.getName()).error("Cannot create instance.", e);
             }
         }
         throw new IllegalArgumentException("Unknown output factory type: " + type);

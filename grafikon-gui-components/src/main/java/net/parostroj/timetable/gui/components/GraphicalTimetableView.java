@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.Frame;
 import java.awt.event.*;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,6 +13,8 @@ import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Graphical timetable view.
@@ -22,7 +23,7 @@ import net.parostroj.timetable.model.events.*;
  */
 public class GraphicalTimetableView extends javax.swing.JPanel implements ChangeListener {
 
-    private static final Logger LOG = Logger.getLogger(GraphicalTimetableView.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableView.class.getName());
     private GTDraw draw;
     private TrainRegionCollector trainRegionCollector;
     private TrainSelector trainSelector;
@@ -527,7 +528,6 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
 
     @Override
     public void paint(Graphics g) {
-        LOG.finest("Starting paint.");
         long time = System.currentTimeMillis();
         super.paint(g);
 
@@ -537,7 +537,7 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
             // draw information about context menu
             g.drawString(ResourceLoader.getString("gt.contextmenu.info"), 20, 20);
         }
-        LOG.finest(String.format("Finished paint in %dms", System.currentTimeMillis() - time));
+        LOG.trace("Finished paint in {}ms", Long.toString(System.currentTimeMillis() - time));
     }
 
     private void createMenuForRoutes(List<Route> routes) {

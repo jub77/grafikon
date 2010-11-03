@@ -1,12 +1,12 @@
 package net.parostroj.timetable.gui.components;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.visitors.EventVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The visitor transforms an event to a string representation.
@@ -16,7 +16,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
 public class GTEventOutputVisitor implements EventVisitor {
 
     private static final String TIME_FORMAT = "%02d:%02d";
-    private static final Logger LOG = Logger.getLogger(GTEventOutputVisitor.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(GTEventOutputVisitor.class.getName());
 
     private Appendable str;
     private boolean full;
@@ -48,7 +48,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Image: ").append(event.getObject().toString()).append('\n');
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -75,7 +75,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -102,7 +102,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -135,7 +135,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -162,7 +162,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -179,7 +179,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -201,7 +201,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -218,7 +218,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(event.getAttributeChange().getName());
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -239,7 +239,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 }

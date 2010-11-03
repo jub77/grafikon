@@ -2,6 +2,8 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
@@ -17,9 +19,13 @@ public class DriverCyclesExtractor {
     private List<TrainsCycle> cycles;
     private TrainDiagram diagram;
 
-    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles) {
+    private RoutesExtractor routesExtractor;
+
+    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, boolean addRoutes) {
         this.cycles = cycles;
         this.diagram = diagram;
+        if (addRoutes)
+            this.routesExtractor = new RoutesExtractor(diagram);
     }
 
     public DriverCycles getDriverCycles() {
@@ -35,14 +41,21 @@ public class DriverCyclesExtractor {
         return outputCycles;
     }
 
-    private DriverCycle createCycle(TrainsCycle cycle) {
+    public DriverCycle createCycle(TrainsCycle cycle) {
         DriverCycle outputCycle = new DriverCycle();
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
         for (TrainsCycleItem item : cycle.getItems()) {
             outputCycle.getRows().add(this.createRow(item));
         }
+        if (this.routesExtractor != null)
+            this.addNetPartRouteInfos(outputCycle, cycle);
         return outputCycle;
+    }
+
+    private void addNetPartRouteInfos(DriverCycle cycle, TrainsCycle tCycle) {
+        Set<Line> lines = routesExtractor.getLinesForCycle(tCycle);
+        cycle.setRoutes(routesExtractor.getRouteInfosForLines(lines));
     }
 
     private DriverCycleRow createRow(TrainsCycleItem item) {
