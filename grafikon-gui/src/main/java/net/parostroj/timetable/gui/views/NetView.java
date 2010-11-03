@@ -17,6 +17,7 @@ import org.jgraph.event.GraphModelEvent;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelListener;
+import org.jgraph.event.GraphSelectionListener;
 import org.jgraph.graph.*;
 
 /**
@@ -43,8 +44,9 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         jGraph.getSelectionModel().setSelectionMode(GraphSelectionModel.SINGLE_GRAPH_SELECTION);
     }
 
-    public void setNetEditModel(NetSelectionModel netEditModel) {
-        jGraph.addGraphSelectionListener(netEditModel);
+    public void setGraphCallbacks(GraphSelectionListener listener, BasicMarqueeHandler handler) {
+        jGraph.addGraphSelectionListener(listener);
+        jGraph.setMarqueeHandler(handler);
     }
     
     public void setModel(ApplicationModel model) {
