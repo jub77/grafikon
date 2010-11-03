@@ -31,7 +31,10 @@ public class TrackedCheckVisitor implements EventVisitor {
 
     @Override
     public void visit(NetEvent event) {
-        tracked = true;
+        if (event.getType() == GTEventType.LINE_CLASS_MOVED)
+            tracked = false;
+        else
+            tracked = true;
     }
 
     @Override
