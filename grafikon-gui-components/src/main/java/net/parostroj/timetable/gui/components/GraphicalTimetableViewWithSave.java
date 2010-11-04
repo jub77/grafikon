@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.SaveGTDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -59,12 +60,14 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         }
         // get values and provide save
         GTDraw drawFile = null;
-        if (this.getType() == Type.CLASSIC) {
-            drawFile = new GTDrawClassic(10, 20, 100, dialog.getSaveSize(), this.getRoute(), this.getTrainColors(), this.getTrainColorChooser(), null, null);
-        } else if (this.getType() == Type.WITH_TRACKS) {
-            drawFile = new GTDrawWithNodeTracks(10, 20, 100, dialog.getSaveSize(), this.getRoute(), this.getTrainColors(), this.getTrainColorChooser(), null, null);
+        GTViewSettings config = this.getSettings();
+        config.set(GTViewSettings.Key.SIZE, dialog.getSaveSize());
+        config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
+        if (this.settings.get(GTViewSettings.Key.TYPE) == Type.CLASSIC) {
+            drawFile = new GTDrawClassic(config, this.getRoute(), null);
+        } else if (this.settings.get(GTViewSettings.Key.TYPE) == Type.WITH_TRACKS) {
+            drawFile = new GTDrawWithNodeTracks(config, this.getRoute(), null);
         }
-        this.setPreferencesToDraw(drawFile);
 
         if (dialog.getType() == SaveGTDialog.Type.PNG) {
             BufferedImage img = new BufferedImage(dialog.getSaveSize().width, dialog.getSaveSize().height, BufferedImage.TYPE_INT_RGB);

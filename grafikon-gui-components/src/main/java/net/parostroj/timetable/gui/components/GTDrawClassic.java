@@ -23,8 +23,8 @@ public class GTDrawClassic extends GTDraw {
     private static final Stroke STATION_STROKE_ROUTE_SPLIT_EXT = new BasicStroke(1.3f);
     
 
-    public GTDrawClassic(int borderX, int borderY, int gapStationX, Dimension size, Route route, GraphicalTimetableView.TrainColors colors,TrainColorChooser chooser, HighlightedTrains hTrains, TrainRegionCollector collector) {
-        super(borderX, borderY, gapStationX, size,route,colors,chooser,hTrains,collector);
+    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector) {
+        super(config ,route, collector);
     }
     
     @Override
@@ -58,7 +58,7 @@ public class GTDrawClassic extends GTDraw {
             // skip over signals
             if (s.getType() == NodeType.SIGNAL)
                 continue;
-            if (preferences.get(GTDrawPreference.EXTENDED_LINES) == Boolean.TRUE) {
+            if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(STATION_STROKE_STOP_EXT);

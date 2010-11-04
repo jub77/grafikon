@@ -50,7 +50,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         trainListView.setModel(model);
         trainView.setModel(model);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
-        graphicalTimetableView.setHTrains(hts);
+        graphicalTimetableView.setSettings(
+                graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         graphicalTimetableView.setTrainSelector(hts);
     }
     
@@ -64,7 +65,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             // use default values
             LOG.warn("Wrong GTView settings - using default values.");
         }
-        graphicalTimetableView.setSettings(gtvs);
+        graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));
         if (scrollPane.isVisible())
             splitPane.setDividerLocation(dividerLoc);

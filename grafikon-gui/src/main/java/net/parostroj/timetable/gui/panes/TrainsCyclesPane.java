@@ -14,8 +14,7 @@ import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.GTViewScrollPane;
 import net.parostroj.timetable.gui.components.GTViewSettings;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
+import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
@@ -121,9 +120,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
                 }
             }
         });
-        graphicalTimetableView.setTrainColors(TrainColors.BY_COLOR_CHOOSER, hts);
+        GTViewSettings settings = graphicalTimetableView.getSettings();
+        settings.set(GTViewSettings.Key.TRAIN_COLORS, TrainColors.BY_COLOR_CHOOSER);
+        settings.set(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, hts);
+        settings.set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts);
+        graphicalTimetableView.setSettings(settings);
         model.addListener(hts);
-        graphicalTimetableView.setHTrains(hts);
         graphicalTimetableView.setTrainSelector(hts);
     }
 
@@ -150,7 +152,8 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     public void loadFromPreferences(AppPreferences prefs) {
         splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
         try {
-            graphicalTimetableView.setSettings(GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null)));
+            GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null));
+            graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         } catch (Exception e) {
             LOG.warn("Wrong GTView settings - using default values.");
         }

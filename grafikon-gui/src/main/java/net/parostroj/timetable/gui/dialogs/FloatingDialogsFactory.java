@@ -172,7 +172,7 @@ public class FloatingDialogsFactory {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
         JScrollPane scrollPane = new GTViewScrollPane(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
-        gtView.setHTrains(hts);
+        gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         gtView.setTrainSelector(hts);
 
         FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview") {
@@ -187,7 +187,8 @@ public class FloatingDialogsFactory {
             public void loadFromPreferences(AppPreferences prefs) {
                 super.loadFromPreferences(prefs);
                 try {
-                    gtView.setSettings(GTViewSettings.parseStorageString(prefs.getString(createStorageKey("gtv"), null)));
+                    GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(createStorageKey("gtv"), null));
+                    gtView.setSettings(gtView.getSettings().merge(gtvs));
                 } catch (Exception e) {
                     LOG.warn("Wrong GTView settings - using default values.");
                 }

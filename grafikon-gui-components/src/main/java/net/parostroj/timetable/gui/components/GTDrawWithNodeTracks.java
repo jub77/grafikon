@@ -28,8 +28,8 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
     private Map<Track,Integer> trackPositions;
     
-    public GTDrawWithNodeTracks(int borderX, int borderY, int gapStationX, Dimension size, Route route, GraphicalTimetableView.TrainColors colors,TrainColorChooser chooser, HighlightedTrains hTrains, TrainRegionCollector collector) {
-        super(borderX, borderY, gapStationX, size,route,colors,chooser,hTrains,collector);
+    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector) {
+        super(config ,route, collector);
     }
     
     @Override
@@ -77,7 +77,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
             // skip over signals ...
             if (s.getType() == NodeType.SIGNAL)
                 continue;
-            if (preferences.get(GTDrawPreference.EXTENDED_LINES) == Boolean.TRUE) {
+            if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(STATION_STROKE_STOP_EXT);
@@ -127,7 +127,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
     private void paintTrainsInStation(Node station, Graphics2D g, double timeStep) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (interval.isTechnological() && preferences.get(GTDrawPreference.TECHNOLOGICAL_TIME) != Boolean.TRUE)
+                if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE)
                     continue;
                 if (!interval.isBoundary()) {
                     g.setStroke(TRAIN_STROKE);

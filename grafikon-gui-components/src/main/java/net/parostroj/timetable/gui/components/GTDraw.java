@@ -2,10 +2,8 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -18,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 abstract public class GTDraw {
+
     private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
     
     // basic display
@@ -27,57 +26,44 @@ abstract public class GTDraw {
     
     // extended display
     private static final Stroke HALF_HOURS_STROKE_EXT = new BasicStroke(1.1f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{15f,7f},0f);
-
     private static final int MINIMAL_SPACE = 25;
 
     protected Point start;
-    
     protected Dimension size;
-    
     protected int gapStationX;
-
     protected int borderX;
-
     protected int borderY;
-    
     protected Route route;
-
     protected int positionX = 0;
-    
     protected HighlightedTrains hTrains;
-    
-    private GraphicalTimetableView.TrainColors colors;
-    
+    private GTViewSettings.TrainColors colors;
     private TrainColorChooser trainColorChooser;
-    
     private TrainRegionCollector trainRegionCollector;
-    
-    protected Map<GTDrawPreference,Boolean> preferences;
-
+    protected GTViewSettings preferences;
     protected Map<Node,Integer> positions;
-
     protected List<Node> stations;
-
     protected Color background = Color.white;
 
-    public GTDraw(int borderX, int borderY, int gapStationX, Dimension size, Route route, GraphicalTimetableView.TrainColors colors, TrainColorChooser chooser, HighlightedTrains hTrains, TrainRegionCollector collector) {
-        this.gapStationX = gapStationX;
-        this.borderX = borderX;
-        this.borderY = borderY;
+    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector) {
+        this.gapStationX = config.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
+        this.borderX = config.get(GTViewSettings.Key.BORDER_X, Integer.class);
+        this.borderY = config.get(GTViewSettings.Key.BORDER_Y, Integer.class);
         this.route = route;
-        this.colors = colors;
-        this.trainColorChooser = chooser;
-        this.hTrains = hTrains;
+        this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
+        this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
+        this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
         this.trainRegionCollector = collector;
         
         // update start
-        this.updateStart();
+        this.start = new Point(borderX, borderY);
+        this.start.translate(gapStationX, 0);
         
         // compute size
-        this.setSize(size);
+        Dimension configSize = config.get(GTViewSettings.Key.SIZE, Dimension.class);
+        this.size = new Dimension(configSize.width - (borderX * 2 + gapStationX), configSize.height - borderY * 2);
         
         // create preferences
-        preferences = new EnumMap<GTDrawPreference, Boolean>(GTDrawPreference.class);
+        preferences = config;
     }
     
     public void draw(Graphics2D g) {
@@ -108,62 +94,12 @@ abstract public class GTDraw {
     
     protected abstract void paintTrains(Graphics2D g);
 
-    public void setPreference(GTDrawPreference key, boolean value) {
-        preferences.put(key, Boolean.valueOf(value));
-    }
-
-    public boolean getPreference(GTDrawPreference key) {
-        Boolean value = preferences.get(key);
-        return Boolean.TRUE.equals(value);
-    }
-
-    public void setGapStationX(int gapStationX) {
-        this.gapStationX = gapStationX;
-    }
-
-    public void setRoute(Route route) {
-        this.route = route;
-    }
-
-    public void setSize(Dimension size) {
-        this.size = new Dimension(size.width - (borderX * 2 + gapStationX), size.height - borderY * 2);
-        // clear stations and positions of nodes
-        this.positions = null;
-        this.stations = null;
-    }
-
-    public void setBorderX(int borderX) {
-        this.borderX = borderX;
-    }
-
-    public void setBorderY(int borderY) {
-        this.borderY = borderY;
-    }
-
-    public void setBackground(Color background) {
-        this.background = background;
-    }
-
-    private void updateStart() {
-        this.start = new Point(borderX, borderY);
-        this.start.translate(gapStationX, 0);
-    }
-
-    public void setPositionX(int positionX) {
-        this.positionX = positionX;
-    }
-
     public Route getRoute() {
         return route;
     }
 
-    public void setHTrains(HighlightedTrains hTrains) {
-        this.hTrains = hTrains;
-    }
-
-    public void setTrainColors(TrainColors colors, TrainColorChooser trainColorChooser) {
-        this.colors = colors;
-        this.trainColorChooser = trainColorChooser;
+    public void setPositionX(int positionX) {
+        this.positionX = positionX;
     }
 
     protected void paintHours(Graphics2D g) {
@@ -183,7 +119,7 @@ abstract public class GTDraw {
             } else {
                 // half hours
                 g.setColor(Color.orange);
-                if (preferences.get(GTDrawPreference.EXTENDED_LINES) == Boolean.TRUE)
+                if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE)
                     g.setStroke(HALF_HOURS_STROKE_EXT);
                 else
                     g.setStroke(HALF_HOURS_STROKE);
@@ -225,8 +161,8 @@ abstract public class GTDraw {
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL) &&
-                        (preferences.get(GTDrawPreference.TRAIN_NAMES) == Boolean.TRUE);
-                boolean paintMinutes = preferences.get(GTDrawPreference.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
+                        (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
+                boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
 
                 Interval normalized = interval.getInterval().normalize();
                 g.setColor(this.getIntervalColor(interval));
