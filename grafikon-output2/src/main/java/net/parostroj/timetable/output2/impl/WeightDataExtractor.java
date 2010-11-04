@@ -47,7 +47,7 @@ public class WeightDataExtractor {
             String name = TransformUtil.getEngineCycleDescription(item.getCycle());
             data.add(this.createRow(train, name, item.getFromInterval().getOwnerAsNode(), item.getToInterval().getOwnerAsNode(), weightStr));
         }
-        if (data.size() == 0 && weightStr != null) {
+        if (data.isEmpty() && weightStr != null) {
             data.add(this.createRow(train, null, null, null, weightStr));
         }
     }
@@ -127,7 +127,7 @@ public class WeightDataExtractor {
     }
 
     private boolean checkEngineClasses() {
-        if (train.getCycles(TrainsCycleType.ENGINE_CYCLE).size() == 0) {
+        if (train.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
             return false;
         }
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
