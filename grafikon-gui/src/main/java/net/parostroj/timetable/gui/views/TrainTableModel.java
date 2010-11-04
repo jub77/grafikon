@@ -166,7 +166,7 @@ class TrainTableModel extends AbstractTableModel {
                 // length info
                 if (interval.isLineOwner()) {
                     retValue = TrainsHelper.convertWeightToLength(train, model.getDiagram(), TrainsHelper.getWeightWithAttribute(interval));
-                } else if (interval.isNodeOwner()) {
+                } else if (interval.isNodeOwner() && (interval.getLength() != 0 || rowIndex == 0 || rowIndex == lastRow)) {
                     retValue = (Integer)interval.getOwnerAsNode().getAttribute("length");
                 }
                 break;
