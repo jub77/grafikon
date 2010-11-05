@@ -294,7 +294,7 @@ public class TrainTimetable {
         List<TrainEWDataRow> rows = weightRows.getData();
         String weightRowTemplate = d3 ? templates.getTimetableHeaderWeightLineD3() : templates.getTimetableHeaderWeightLine();
         String headerDataString = null;
-        if (rows.size() == 0) {
+        if (rows.isEmpty()) {
             headerDataString = "";
         } else if (rows.size() == 1 && rows.get(0).getFrom() == null && rows.get(0).getEngine() == null) {
             headerDataString = createOneWeightLineOneCell(rows.get(0).getWeight());
@@ -391,7 +391,7 @@ public class TrainTimetable {
                 i.remove();
             }
         }
-        if (over.size() == 0) {
+        if (over.isEmpty()) {
             return null;
         } else {
             StringBuilder result = new StringBuilder();

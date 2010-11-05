@@ -41,7 +41,7 @@ public class TrainEngineWeightRows {
             String name = TransformUtil.getEngineCycleDescription(item.getCycle());
             data.add(new TrainEWDataRow(train, name, item.getFromInterval().getOwnerAsNode(), item.getToInterval().getOwnerAsNode(), weightStr));
         }
-        if (data.size() == 0 && weightStr != null) {
+        if (data.isEmpty() && weightStr != null) {
             data.add(new TrainEWDataRow(train, null, null, null, weightStr));
         }
     }
