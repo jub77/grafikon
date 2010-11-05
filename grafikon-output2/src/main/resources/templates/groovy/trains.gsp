@@ -429,15 +429,18 @@
     <td colspan="${colspan}">
       <table cellpadding="0" cellspacing="0" class="wl"><%
         def fwt = true
-        if (train.weightData != null)
+        if (train.weightData != null) {
+        lastEngine = null
         for (wr in train.weightData) { %>
         <tr>
-          <td>${wr.engine != null ? ((train.diesel ? diesel_unit : engine) + " " + wr.engine + ". &nbsp;") : ""}</td>
+          <td>${(wr.engine != null && wr.engine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + wr.engine + ". &nbsp;") : ""}</td>
           <td>${(wr.weight != null && (fwt || wr.engine != null)) ? norm_load + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
           <td align="right">${wr.weight != null ? wr.weight + " " + tons : ""}</td>
         </tr><%
           fwt = false
+          lastEngine = wr.engine
+        }
         }
         if (train.lengthData != null) {%>
         <tr>
