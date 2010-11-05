@@ -98,14 +98,17 @@ public class WeightDataExtractor {
     private void collapseData() {
         Iterator<WeightDataRow> i = data.listIterator();
         WeightDataRow lastRow = i.next();
+        String lastEngine = lastRow.getEngine();
         while (i.hasNext()) {
             WeightDataRow row = i.next();
-            if (lastRow.getEngine().equals(row.getEngine()) && lastRow.getWeight().equals(row.getWeight())) {
+            if (lastEngine.equals(row.getEngine()) && lastRow.getWeight().equals(row.getWeight())) {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
                 if (lastRow.getEngine().equals(row.getEngine()))
                     row.setEngine(null);
+                else
+                    lastEngine = row.getEngine();
                 lastRow = row;
             }
         }
