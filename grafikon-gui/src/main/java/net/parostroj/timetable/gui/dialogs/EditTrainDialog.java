@@ -321,13 +321,15 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     // check max speed - modify if changed
     try {
         int maxSpeed = Integer.parseInt(speedTextField.getText());
-        if (maxSpeed != train.getTopSpeed()) {
+        if (maxSpeed != train.getTopSpeed() && maxSpeed > 0) {
             // modify top speed
             train.setTopSpeed(maxSpeed);
-            train.recalculate();
+            train.recalculate(maxSpeed);
             // fire event
             changed = true;
         }
+        if (maxSpeed <= 0)
+            LOG.warn("Speed has to be positive number: {}", maxSpeed);
     } catch (NumberFormatException e) {
         LOG.warn("Cannot convert speed to number: {}", speedTextField.getText());
     }
@@ -350,9 +352,9 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
     // fire changed event
     if (changed)
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN,model,train));
+        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
     // fire event
-    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE,model,train));
+    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE, model, train));
 
     this.setVisible(false);
 }//GEN-LAST:event_okButtonActionPerformed

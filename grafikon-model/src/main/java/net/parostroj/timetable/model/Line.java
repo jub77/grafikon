@@ -196,11 +196,12 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     public int computeSpeed(Train train, int prefferedSpeed) {
         int speed;
-        if (prefferedSpeed != NO_SPEED) {
+        if (prefferedSpeed < 1)
+            throw new IllegalArgumentException("Speed has to be greater than 0.");
+        if (train.getTopSpeed() != NO_SPEED) {
             speed = Math.min(prefferedSpeed, train.getTopSpeed());
         } else {
-            // apply max train speed
-            speed = train.getTopSpeed();
+            speed = prefferedSpeed;
         }
 
         // apply track speed limit

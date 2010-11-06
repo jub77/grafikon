@@ -261,7 +261,9 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     try {
         // test needed values
         try {
-            Integer.valueOf(speedTextField.getText());
+            Integer speed = Integer.valueOf(speedTextField.getText());
+            if (speed < 1)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
                     ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);

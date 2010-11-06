@@ -19,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Train implements AttributesHolder, ObjectWithId, Visitable {
 
     /** No top speed constant. */
-    public static final int NO_TOP_SPEED = 0;
+    public static final int NO_TOP_SPEED = Line.NO_SPEED;
 
     /** Train diagram reference. */
     private final TrainDiagram diagram;
@@ -33,7 +33,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     private TrainType type;
     /** List of time intervals. */
     private TimeIntervalList timeIntervalList;
-    /** Top speed (comment - 0 .. no speed defined (speed should be determined by train type)). */
+    /** Top speed. */
     private int topSpeed = NO_TOP_SPEED;
     /** Cycles. */
     private Map<TrainsCycleType, List<TrainsCycleItem>> cycles;
@@ -678,11 +678,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     }
 
     /**
-     * Recalculates all line intervals.
-     *
-     * @param info model info
+     * recalculates all line intervals.
      */
     public void recalculate() {
+        this.recalculateImpl(null);
+    }
+
+    /**
+     * recalculates all line intervals with given speed.
+     *
+     * @param newSpeed speed to be set to all line intervals
+     */
+    public void recalculate(int newSpeed) {
+        this.recalculateImpl(newSpeed);
+    }
+
+    private void recalculateImpl(Integer newSpeed) {
         int nextStart = this.getStartTime();
         int i = 0;
         for (TimeInterval interval : timeIntervalList) {
@@ -690,7 +701,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
             if (interval.isLineOwner()) {
                 Line line = (Line) interval.getOwner();
                 // compute speed
-                int speed = line.computeSpeed(this, interval.getSpeed());
+                int speed = line.computeSpeed(this, newSpeed == null ? interval.getSpeed() : newSpeed);
                 interval.setSpeed(speed);
 
                 timeIntervalList.updateLineInterval(interval, i);
