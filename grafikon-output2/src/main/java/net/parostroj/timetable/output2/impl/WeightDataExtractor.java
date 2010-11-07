@@ -31,18 +31,18 @@ public class WeightDataExtractor {
     }
 
     private void processData() {
-        if (!this.checkLineClasses() || !this.checkEngineClasses()) {
-            this.processOld();
+        String weightStr = (String) train.getAttribute("weight.info");
+        if (weightStr != null && weightStr.trim().equals(""))
+            weightStr = null;
+        if (!this.checkLineClasses() || !this.checkEngineClasses() || weightStr != null) {
+            this.processOld(weightStr);
         } else {
             this.processNew();
             this.collapseData();
         }
     }
 
-    private void processOld() {
-        String weightStr = (String) train.getAttribute("weight.info");
-        if (weightStr != null && weightStr.trim().equals(""))
-            weightStr = null;
+    private void processOld(String weightStr) {
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
             String name = TransformUtil.getEngineDescription(item.getCycle());
             if (name != null || weightStr != null)

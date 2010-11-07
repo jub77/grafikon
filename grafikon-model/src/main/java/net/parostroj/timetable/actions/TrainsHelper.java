@@ -44,9 +44,9 @@ public class TrainsHelper {
      * @return weight
      */
     public static Integer getWeightWithAttribute(TimeInterval interval) {
-        Integer weight = getWeight(interval);
+        Integer weight = getWeightFromAttribute(interval.getTrain());
         if (weight == null) {
-            weight = getWeightFromAttribute(interval.getTrain());
+            weight = getWeight(interval);
         }
         return weight;
     }
