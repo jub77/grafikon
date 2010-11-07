@@ -47,7 +47,7 @@ public class TrainEngineWeightRows {
     }
 
     private void processNew() {
-        List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> list = TrainsHelper.getWeightList(train);
+        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> list = TrainsHelper.getWeightList(train);
 
         if (list == null)
             return;
@@ -56,13 +56,13 @@ public class TrainEngineWeightRows {
         Node startNode = null;
         TrainsCycle cycle = null;
         for (int i = 0; i < list.size(); i++) {
-            Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> item = list.get(i);
+            Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> item = list.get(i);
 
             if (item.first.isLineOwner()) {
                 // process line interval
                 if (weight == null || weight > item.second.first)
                     weight = item.second.first;
-                cycle = item.second.second.getCycle();
+                cycle = item.second.second.isEmpty() ? null : item.second.second.get(0).getCycle();
             } else {
                 // process node interval
                 if (startNode == null)
@@ -72,8 +72,8 @@ public class TrainEngineWeightRows {
                     if (item.first.isLast())
                         process = true;
                     else {
-                        Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> itemNext = list.get(i + 1);
-                        if (cycle != null && !cycle.equals(itemNext.second.second.getCycle()))
+                        Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> itemNext = list.get(i + 1);
+                        if (cycle != null && !cycle.equals(itemNext.second.second.isEmpty() ? null : itemNext.second.second.get(0).getCycle()))
                             process = true;
                         if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStation())
                             process = true;
@@ -121,7 +121,7 @@ public class TrainEngineWeightRows {
     }
 
     private boolean checkEngineClasses() {
-        if (train.getCycles(TrainsCycleType.ENGINE_CYCLE).size() == 0) {
+        if (train.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
             return false;
         }
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
