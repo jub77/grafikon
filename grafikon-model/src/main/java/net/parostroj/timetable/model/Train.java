@@ -262,16 +262,32 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /**
      * @param type trains cycle type
      * @param interval time interval
-     * @return train cycle item that covers given interval (if there are more than one interval,
-     * it returns the first one)
+     * @return list of train cycle items that covers given interval (empty list if there are none)
      */
-    public TrainsCycleItem getCycleItemForInterval(TrainsCycleType type, TimeInterval interval) {
+    public List<TrainsCycleItem> getCycleItemsForInterval(TrainsCycleType type, TimeInterval interval) {
         List<TrainsCycleItem> items = this.getCyclesIntern(type);
+        List<TrainsCycleItem> mResults = null;
+        TrainsCycleItem sResult = null;
         for (TrainsCycleItem item : items) {
-            if (item.containsInterval(interval))
-                return item;
+            boolean contains = item.containsInterval(interval);
+            if (contains && sResult == null)
+                sResult = item;
+            else if (contains && sResult != null) {
+                if (mResults != null)
+                    mResults.add(item);
+                else {
+                    mResults = new LinkedList<TrainsCycleItem>();
+                    mResults.add(sResult);
+                    mResults.add(item);
+                }
+            }
         }
-        return null;
+        if (mResults != null)
+            return mResults;
+        else if (sResult != null)
+            return Collections.singletonList(sResult);
+        else
+            return Collections.emptyList();
     }
 
     /**

@@ -1,7 +1,9 @@
 package net.parostroj.timetable.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +29,7 @@ public class TrainsHelper {
      * @return weight
      */
     public static Integer getWeight(TimeInterval interval) {
-        Pair<Integer, TrainsCycleItem> weightAndCycle = getWeightAndCycle(interval);
+        Pair<Integer, List<TrainsCycleItem>> weightAndCycle = getWeightAndCycles(interval);
         if (weightAndCycle == null || weightAndCycle.first == null)
             return null;
         else
@@ -77,22 +79,28 @@ public class TrainsHelper {
     }
 
     /**
-     * returns weight and train cycle item for specified time interval based
+     * returns weight and train cycle items for specified time interval based
      * on line and engine class. It returns <code>null</code> if the weight is
      * not specified.
      *
      * @param interval time interval
-     * @return weight and train cycle item
+     * @return weight and train cycle items
      */
-    public static Pair<Integer, TrainsCycleItem> getWeightAndCycle(TimeInterval interval) {
+    public static Pair<Integer, List<TrainsCycleItem>> getWeightAndCycles(TimeInterval interval) {
         if (!interval.isLineOwner()) {
             throw new IllegalArgumentException("Weight can be returned only for line interval.");
         }
-        Pair<Integer, TrainsCycleItem> retValue = null;
+        Pair<Integer, List<TrainsCycleItem>> retValue = null;
         LineClass lineClass = (LineClass) interval.getOwnerAsLine().getAttribute("line.class");
-        Pair<EngineClass, TrainsCycleItem> engineClass = getEngineClassAndCycle(interval);
-        if (lineClass != null && engineClass != null && engineClass.first != null) {
-            retValue = new Pair<Integer, TrainsCycleItem>(engineClass.first.getWeightTableRowForSpeed(interval.getSpeed()).getWeight(lineClass), engineClass.second);
+        List<TrainsCycleItem> items = getCyclesForInterval(interval);
+        List<EngineClass> engines = getEngineClasses(items);
+        if (lineClass != null && !engines.isEmpty()) {
+            // compute weight
+            int weight = 0;
+            for (EngineClass engine : engines) {
+                weight += engine.getWeightTableRowForSpeed(interval.getSpeed()).getWeight(lineClass);
+            }
+            retValue = new Pair<Integer, List<TrainsCycleItem>>(weight, items);
         }
         return retValue;
     }
@@ -120,34 +128,52 @@ public class TrainsHelper {
     }
 
     /**
-     * returns engine class and train cycle item for time interval. It returns
-     * <code>null</code> if the engine cycle is not specified.
+     * returns engine cycle items for interval.
      *
      * @param interval time interval
-     * @return engine class and train cycle item
+     * @return list of engine cycle items
      */
-    public static Pair<EngineClass, TrainsCycleItem> getEngineClassAndCycle(TimeInterval interval) {
+    public static List<TrainsCycleItem> getCyclesForInterval(TimeInterval interval) {
         Train train = interval.getTrain();
-        TrainsCycleItem item = train.getCycleItemForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
-        if (item != null) {
-            return new Pair<EngineClass, TrainsCycleItem>((EngineClass) item.getCycle().getAttribute("engine.class"), item);
-        }
-        return null;
+        return train.getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
     }
 
     /**
-     * returns engine class for time interval. It returns <code>null</code>
-     * if the engine class is not specified.
+     * returns list of engine classes for time interval.
      *
      * @param interval time interval
-     * @return
+     * @return list of engine classes
      */
-    public static EngineClass getEngineClass(TimeInterval interval) {
-        Pair<EngineClass, TrainsCycleItem> pair = getEngineClassAndCycle(interval);
-        if (pair != null)
-            return pair.first;
-        else
-            return null;
+    public static List<EngineClass> getEngineClasses(TimeInterval interval) {
+        List<TrainsCycleItem> list = getCyclesForInterval(interval);
+        return getEngineClasses(list);
+    }
+
+    public static List<EngineClass> getEngineClasses(List<TrainsCycleItem> list) {
+        List<EngineClass> result = Collections.emptyList();
+        if (list.size() == 1) {
+            EngineClass eClass = getEngineClass(list.get(0));
+            if (eClass != null)
+                result = Collections.singletonList(eClass);
+        } else {
+            result = new LinkedList<EngineClass>();
+            for (TrainsCycleItem item : list) {
+                EngineClass eClass = getEngineClass(item);
+                if (eClass != null)
+                    result.add(eClass);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * extracts engine class from cycle item.
+     *
+     * @param item cycle item
+     * @return cycle item
+     */
+    public static EngineClass getEngineClass(TrainsCycleItem item) {
+        return (EngineClass) item.getCycle().getAttribute("engine.class");
     }
 
     /**
@@ -157,20 +183,20 @@ public class TrainsHelper {
      * @param train train
      * @return list with weights
      */
-    public static List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getWeightList(Train train) {
+    public static List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> getWeightList(Train train) {
         // if the train is not coverred return null
         if (!train.isCovered(TrainsCycleType.ENGINE_CYCLE))
             return null;
-        List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> result = new ArrayList<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>>();
+        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> result = new ArrayList<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             if (interval.isNodeOwner())
-                result.add(new Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>(interval, null));
+                result.add(new Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>(interval, null));
             else {
-                Pair<Integer, TrainsCycleItem> weight = getWeightAndCycle(interval);
+                Pair<Integer, List<TrainsCycleItem>> weight = getWeightAndCycles(interval);
                 if (weight == null)
                     return null;
                 else {
-                    result.add(new Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>(interval, weight));
+                    result.add(new Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>(interval, weight));
                 }
             }
         }
@@ -186,8 +212,8 @@ public class TrainsHelper {
      * @param diagram trains diagram
      * @return list of lengths
      */
-    public static List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> getLengthList(Train train, TrainDiagram diagram) {
-        List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> result = getWeightList(train);
+    public static List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> getLengthList(Train train, TrainDiagram diagram) {
+        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> result = getWeightList(train);
         convertWeightToLength(result, diagram);
         return result;
     }
@@ -198,8 +224,8 @@ public class TrainsHelper {
      * @param list list of weights
      * @param diagram trains diagram
      */
-    public static void convertWeightToLength(List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> list, TrainDiagram diagram) {
-        for (Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> pair : list) {
+    public static void convertWeightToLength(List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> list, TrainDiagram diagram) {
+        for (Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pair : list) {
             convertWeightToLength(pair.first.getTrain(), diagram, pair.second.first);
         }
     }
@@ -214,21 +240,21 @@ public class TrainsHelper {
      * @return next node and available weight
      */
     public static Pair<Node, Integer> getNextWeight(Node node, Train train) {
-        List<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> weightList = getWeightList(train);
+        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> weightList = getWeightList(train);
         Integer retValue = null;
         Node retNode = null;
         if (weightList != null) {
-            Iterator<Pair<TimeInterval, Pair<Integer, TrainsCycleItem>>> i = weightList.iterator();
+            Iterator<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> i = weightList.iterator();
             // skip to node
             while (i.hasNext()) {
-                Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> pairI = i.next();
+                Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pairI = i.next();
                 // node found
                 if (pairI.first.getOwner() == node)
                     break;
             }
             // check weight
             while (i.hasNext()) {
-                Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> pairI = i.next();
+                Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pairI = i.next();
                 if (pairI.first.isLineOwner()) {
                     if (retValue == null || retValue > pairI.second.first)
                         retValue = pairI.second.first;

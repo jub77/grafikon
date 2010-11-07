@@ -431,15 +431,16 @@
         def fwt = true
         if (train.weightData != null) {
         lastEngine = null
-        for (wr in train.weightData) { %>
+        for (wr in train.weightData) { 
+          currentEngine = concat(wr.engines, ",") %>
         <tr>
-          <td>${(wr.engine != null && wr.engine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + wr.engine + ". &nbsp;") : ""}</td>
-          <td>${(wr.weight != null && (fwt || wr.engine != null)) ? norm_load + ": &nbsp;" : ""}</td>
+          <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
+          <td>${(wr.weight != null && (fwt || currentEngine != "")) ? norm_load + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
           <td align="right">${wr.weight != null ? wr.weight + " " + tons : ""}</td>
         </tr><%
           fwt = false
-          lastEngine = wr.engine
+          lastEngine = currentEngine
         }
         }
         if (train.lengthData != null) {%>
@@ -807,5 +808,15 @@
     }
     m.appendTail(result)
     return result.toString()
+  }
+
+  def concat(strs, delim) {
+    result = strs.inject("") {
+      str, item ->
+        if (str != "")
+          str += delim
+        str + item
+    }
+    return result
   }
 %>
