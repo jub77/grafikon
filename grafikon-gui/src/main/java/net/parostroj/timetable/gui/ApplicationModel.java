@@ -256,6 +256,7 @@ public class ApplicationModel implements StorableGuiData {
         else
             prefs.remove("user.name");
         prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
+        prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
     }
 
     @Override
@@ -263,6 +264,7 @@ public class ApplicationModel implements StorableGuiData {
         deserializeOutputTemplates(prefs.getString("output.templates", ""));
         programSettings.setUserName(prefs.getString("user.name", null));
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
+        programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
     }
 
     private String getSerializedOutputTemplates() {

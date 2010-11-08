@@ -38,6 +38,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         javax.swing.JPanel dataPanel = new javax.swing.JPanel();
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
+        warningAutoECCorrectionCheckBox = new javax.swing.JCheckBox();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
@@ -57,6 +58,16 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
         dataPanel.add(nameTextField, gridBagConstraints);
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        warningAutoECCorrectionCheckBox.setText(bundle.getString("program.settings.speedautochange.warning")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        dataPanel.add(warningAutoECCorrectionCheckBox, gridBagConstraints);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
@@ -108,6 +119,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
 
     private void updateValues() {
         this.nameTextField.setText(model.getProgramSettings().getUserNameOrSystemUser());
+        this.warningAutoECCorrectionCheckBox.setSelected(model.getProgramSettings().isWarningAutoECCorrection());
     }
 
     private boolean writeBackValues() {
@@ -117,10 +129,12 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
             ps.setUserName(null);
         else
             ps.setUserName(name);
+        ps.setWarningAutoECCorrection(warningAutoECCorrectionCheckBox.isSelected());
         return true;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField nameTextField;
+    private javax.swing.JCheckBox warningAutoECCorrectionCheckBox;
     // End of variables declaration//GEN-END:variables
 }

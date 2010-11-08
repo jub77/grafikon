@@ -9,6 +9,7 @@ public class ProgramSettings {
 
     private String userName;
     private boolean generateTitlePageTT;
+    private boolean warningAutoECCorrection;
 
     public String getUserName() {
         return userName;
@@ -35,5 +36,13 @@ public class ProgramSettings {
 
     public void setGenerateTitlePageTT(boolean generateTitlePageTT) {
         this.generateTitlePageTT = generateTitlePageTT;
+    }
+
+    public boolean isWarningAutoECCorrection() {
+        return warningAutoECCorrection;
+    }
+
+    public void setWarningAutoECCorrection(boolean warningAutoECCorrection) {
+        this.warningAutoECCorrection = warningAutoECCorrection;
     }
 }
