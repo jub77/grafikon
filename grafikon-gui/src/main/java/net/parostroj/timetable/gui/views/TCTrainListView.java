@@ -458,6 +458,8 @@ private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
     Object[] selectedValues = allTrainsList.getSelectedValues();
+    boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+    StringBuilder trainsStr = null;
     for (Object objectSelected : selectedValues) {
         TrainWrapper selected = (TrainWrapper) objectSelected;
         if (selected != null) {
@@ -472,8 +474,19 @@ private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
                     item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                 }
                 cycle.addItem(item);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
+                // recalculate if needed (engine class dependency)
+                if (t.checkNeedSpeedRecalculate()) {
+                    t.recalculate();
+                    if (warning) {
+                        if (trainsStr == null)
+                            trainsStr = new StringBuilder();
+                        else
+                            trainsStr.append(',');
+                        trainsStr.append(t.getName());
+                    }
+                }
 
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
             }
         }
@@ -482,6 +495,11 @@ private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         this.updateListAllTrains();
         this.updateListCycle();
         this.updateErrors();
+    }
+    if (warning && trainsStr != null) {
+        ActionUtils.showWarning(
+                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
+                ActionUtils.getTopLevelComponent(this));
     }
 }//GEN-LAST:event_addButtonActionPerformed
 
@@ -508,6 +526,16 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                 if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
                     this.updateListAllTrains();
                 ecTrainsList.repaint();
+                // recalculate if needed (engine class depedency)
+                if (train.checkNeedSpeedRecalculate()) {
+                    train.recalculate();
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                    if (model.getProgramSettings().isWarningAutoECCorrection()) {
+                        ActionUtils.showWarning(
+                                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
+                                ActionUtils.getTopLevelComponent(this));
+                    }
+                }
             } else {
                 this.updateSelectedTrainsCycleItem(item);
             }

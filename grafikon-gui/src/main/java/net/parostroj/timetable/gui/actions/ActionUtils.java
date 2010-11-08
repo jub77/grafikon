@@ -35,4 +35,8 @@ public class ActionUtils {
     public static void showError(String text, Component parent) {
         JOptionPane.showMessageDialog(parent, text, ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
+
+    public static void showWarning(String text, Component parent) {
+        JOptionPane.showMessageDialog(parent, text, ResourceLoader.getString("dialog.warning.title"), JOptionPane.WARNING_MESSAGE);
+    }
 }
