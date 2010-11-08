@@ -5,6 +5,7 @@ import java.util.List;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -72,6 +73,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             w = (Wrapper)new TrainsCycleWrapper((TrainsCycle)o);
         } else if (o instanceof Route) {
             w = (Wrapper)new RouteWrapper((Route)o);
+        } else if (o instanceof TimeIntervalWrapper) {
+            w = (Wrapper)new TimeIntervalWrapper((TimeInterval)o);
         } else {
             throw new IllegalArgumentException("Not supported type: " + o.getClass());
         }

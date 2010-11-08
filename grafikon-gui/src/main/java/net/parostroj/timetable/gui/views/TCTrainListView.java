@@ -17,6 +17,7 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
+import net.parostroj.timetable.gui.helpers.TimeIntervalWrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -511,8 +512,8 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
         if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
             item.setComment(newComment);
-        TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getInterval();
-        TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getInterval();
+        TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getElement();
+        TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getElement();
         // new trains cycle item
         boolean oldCovered = train.isCovered(delegate.getType());
         if (from != item.getFromInterval() || to != item.getToInterval()) {
@@ -677,44 +678,4 @@ private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
-}
-
-class TimeIntervalWrapper {
-
-    private final TimeInterval interval;
-
-    TimeIntervalWrapper(TimeInterval interval) {
-        this.interval = interval;
-    }
-
-    public TimeInterval getInterval() {
-        return interval;
-    }
-
-    @Override
-    public String toString() {
-        return interval.getOwner().toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TimeIntervalWrapper other = (TimeIntervalWrapper) obj;
-        if (this.interval != other.interval && (this.interval == null || !this.interval.equals(other.interval))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + (this.interval != null ? this.interval.hashCode() : 0);
-        return hash;
-    }
 }
