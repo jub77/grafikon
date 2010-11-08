@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.LineEvent;
@@ -194,7 +195,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("topSpeed", oldTopSpeed, topSpeed)));
     }
 
-    public int computeSpeed(Train train, int prefferedSpeed) {
+    public int computeSpeed(Train train, TimeInterval interval, int prefferedSpeed) {
         int speed;
         if (prefferedSpeed < 1)
             throw new IllegalArgumentException("Speed has to be greater than 0.");
@@ -208,6 +209,18 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (this.topSpeed != UNLIMITED_SPEED) {
             speed = Math.min(speed, this.topSpeed);
         }
+
+        // adjust (engine class influence)
+        if (interval != null) {
+            List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(interval);
+            for (EngineClass engineClass : engineClasses) {
+                WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
+                if (row.getSpeed() != UNLIMITED_SPEED) {
+                    speed = Math.min(speed, row.getSpeed());
+                }
+            }
+        }
+
         return speed;
     }
 

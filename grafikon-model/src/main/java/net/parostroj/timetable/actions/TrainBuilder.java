@@ -135,7 +135,7 @@ public class TrainBuilder {
             } else {
                 // line
                 Line line = (Line)pair.first;
-                pair.second = line.computeSpeed(train, speed);
+                pair.second = line.computeSpeed(train, null, speed);
             }
         }
     }
