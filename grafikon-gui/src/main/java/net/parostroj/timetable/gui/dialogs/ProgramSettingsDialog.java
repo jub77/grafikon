@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.actions.ActionUtils;
-import net.parostroj.timetable.gui.components.LengthUnit;
+import net.parostroj.timetable.model.LengthUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -25,7 +25,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         for (LengthUnit unit : LengthUnit.values()) {
-            unitComboBox.addItem(unit);
+            if (unit.isScaleDependent())
+                unitComboBox.addItem(unit);
         }
     }
 

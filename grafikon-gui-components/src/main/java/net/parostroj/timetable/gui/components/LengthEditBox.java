@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import net.parostroj.timetable.model.LengthUnit;
 
 /**
  * Editing component for length.
@@ -24,7 +25,8 @@ public class LengthEditBox extends javax.swing.JPanel {
 
         // fill unit combo box
         for (LengthUnit unit : LengthUnit.values()) {
-            unitComboBox.addItem(unit);
+            if (unit.isScaleDependent())
+                unitComboBox.addItem(unit);
         }
 
         DecimalFormat format = new  DecimalFormat("#0.########");
