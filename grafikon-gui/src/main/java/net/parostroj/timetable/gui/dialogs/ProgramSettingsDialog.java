@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.actions.ActionUtils;
+import net.parostroj.timetable.gui.components.LengthUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -23,6 +24,9 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
     public ProgramSettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        for (LengthUnit unit : LengthUnit.values()) {
+            unitComboBox.addItem(unit);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -39,6 +43,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
         warningAutoECCorrectionCheckBox = new javax.swing.JCheckBox();
+        javax.swing.JLabel unitLabel = new javax.swing.JLabel();
+        unitComboBox = new javax.swing.JComboBox();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
@@ -68,6 +74,20 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         dataPanel.add(warningAutoECCorrectionCheckBox, gridBagConstraints);
+
+        unitLabel.setText(bundle.getString("program.settings.unit")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        dataPanel.add(unitLabel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
+        dataPanel.add(unitComboBox, gridBagConstraints);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
@@ -120,6 +140,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
     private void updateValues() {
         this.nameTextField.setText(model.getProgramSettings().getUserNameOrSystemUser());
         this.warningAutoECCorrectionCheckBox.setSelected(model.getProgramSettings().isWarningAutoECCorrection());
+        this.unitComboBox.setSelectedItem(model.getProgramSettings().getLengthUnit());
     }
 
     private boolean writeBackValues() {
@@ -130,11 +151,13 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         else
             ps.setUserName(name);
         ps.setWarningAutoECCorrection(warningAutoECCorrectionCheckBox.isSelected());
+        ps.setLengthUnit((LengthUnit) unitComboBox.getSelectedItem());
         return true;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField nameTextField;
+    private javax.swing.JComboBox unitComboBox;
     private javax.swing.JCheckBox warningAutoECCorrectionCheckBox;
     // End of variables declaration//GEN-END:variables
 }

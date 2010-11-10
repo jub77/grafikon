@@ -11,6 +11,7 @@ import java.util.Set;
 import net.parostroj.timetable.gui.actions.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
+import net.parostroj.timetable.gui.components.LengthUnit;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -257,6 +258,7 @@ public class ApplicationModel implements StorableGuiData {
             prefs.remove("user.name");
         prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
         prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
+        prefs.setString("unit", programSettings.getLengthUnit().getKey());
     }
 
     @Override
@@ -265,6 +267,7 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setUserName(prefs.getString("user.name", null));
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
+        programSettings.setLengthUnit(LengthUnit.getByKey(prefs.getString("unit", "mm")));
     }
 
     private String getSerializedOutputTemplates() {

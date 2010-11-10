@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
+import net.parostroj.timetable.gui.components.LengthUnit;
 import net.parostroj.timetable.gui.views.NodeTypeWrapper;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
@@ -83,9 +84,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         this.modified = modified;
     }
 
-    public void setNode(Node node) {
+    public void setNode(Node node, LengthUnit unit) {
         this.node = node;
         this.modified = false;
+        this.lengthEditBox.setUnit(unit);
         this.updateValues();
     }
 
@@ -111,10 +113,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // set node length
         Integer length = (Integer)node.getAttribute("length");
         if (length != null) {
-            lengthTextField.setText(length.toString());
+            lengthEditBox.setValue(length);
         } else {
-            lengthTextField.setText("");
+            lengthEditBox.setValue(0);
         }
+        lengthCheckBox.setSelected(length != null);
+        lengthEditBox.setEnabled(length != null);
 
         // get node tracks
         DefaultListModel listModel = new DefaultListModel();
@@ -152,16 +156,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
             node.setAttribute("trapezoid.sign", trapezoidCheckBox.isSelected());
 
         // length
-        String lengthStr = lengthTextField.getText().trim();
-        if (!"".equals(lengthStr)) {
-            try {
-                Integer length = Integer.valueOf(lengthStr);
-                Integer oldLength = (Integer) node.getAttribute("length");
-                if (!length.equals(oldLength))
-                    node.setAttribute("length", length);
-            } catch (NumberFormatException e) {
-                LOG.warn("Cannot convert length to integer: {}", lengthStr);
-            }
+        if (lengthCheckBox.isSelected()) {
+            Integer length = lengthEditBox.getValue();
+            Integer oldLength = (Integer) node.getAttribute("length");
+            if (!length.equals(oldLength))
+                node.setAttribute("length", length);
         } else {
             node.removeAttribute("length");
         }
@@ -209,8 +208,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         trapezoidCheckBox = new javax.swing.JCheckBox();
         platformCheckBox = new javax.swing.JCheckBox();
         lineEndCheckBox = new javax.swing.JCheckBox();
-        lengthTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
+        lengthEditBox = new net.parostroj.timetable.gui.components.LengthEditBox();
+        lengthCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
@@ -295,6 +295,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         jLabel4.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
+        lengthCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                lengthCheckBoxItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -330,10 +336,13 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                             .addComponent(abbrTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                             .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-                            .addComponent(typeComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 261, Short.MAX_VALUE))))
+                            .addComponent(typeComboBox, 0, 261, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lengthEditBox, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lengthCheckBox)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -352,9 +361,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3)
                     .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(lengthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lengthEditBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lengthCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(signalsCheckBox)
@@ -465,11 +475,17 @@ public class EditNodeDialog extends javax.swing.JDialog {
             selected.lineEnd = lineEndCheckBox.isSelected();
         }
     }//GEN-LAST:event_lineEndCheckBoxItemStateChanged
+
+    private void lengthCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_lengthCheckBoxItemStateChanged
+        lengthEditBox.setEnabled(evt.getStateChange() == ItemEvent.SELECTED);
+    }//GEN-LAST:event_lengthCheckBoxItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField abbrTextField;
     private javax.swing.JCheckBox controlCheckBox;
     private javax.swing.JButton deleteTrackButton;
-    private javax.swing.JTextField lengthTextField;
+    private javax.swing.JCheckBox lengthCheckBox;
+    private net.parostroj.timetable.gui.components.LengthEditBox lengthEditBox;
     private javax.swing.JCheckBox lineEndCheckBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newTrackButton;
