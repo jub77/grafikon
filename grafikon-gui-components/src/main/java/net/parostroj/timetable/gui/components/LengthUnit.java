@@ -66,4 +66,12 @@ public enum LengthUnit {
     public String toString() {
         return getValue();
     }
+
+    public static LengthUnit getByKey(String key) {
+        for (LengthUnit unit : values()) {
+            if (unit.getKey().equals(key))
+                return unit;
+        }
+        return null;
+    }
 }
