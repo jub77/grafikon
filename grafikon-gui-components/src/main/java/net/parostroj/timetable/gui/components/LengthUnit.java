@@ -61,4 +61,9 @@ public enum LengthUnit {
     public int convertFrom(double value) {
         return (int)Math.round(value * ratio);
     }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }

@@ -88,6 +88,13 @@ public class LengthEditBox extends javax.swing.JPanel {
         valueTextField.setValue(dValue);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        unitComboBox.setEnabled(enabled);
+        valueTextField.setEnabled(enabled);
+        super.setEnabled(enabled);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -100,14 +107,15 @@ public class LengthEditBox extends javax.swing.JPanel {
         valueTextField = new javax.swing.JFormattedTextField();
         unitComboBox = new javax.swing.JComboBox();
 
-        add(valueTextField);
+        setLayout(new java.awt.BorderLayout());
+        add(valueTextField, java.awt.BorderLayout.CENTER);
 
         unitComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 unitComboBoxItemStateChanged(evt);
             }
         });
-        add(unitComboBox);
+        add(unitComboBox, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private LengthUnit deselected;
