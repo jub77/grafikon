@@ -81,7 +81,7 @@ public class WeightDataExtractor {
                         Pair<TimeInterval, Pair<Integer, TrainsCycleItem>> itemNext = list.get(i + 1);
                         if (cycle != null && !cycle.equals(itemNext.second.second.getCycle()))
                             process = true;
-                        if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStation())
+                        if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
                             process = true;
                     }
                     if (process) {
@@ -105,7 +105,7 @@ public class WeightDataExtractor {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
-                if (lastRow.getEngine().equals(row.getEngine()))
+                if (lastEngine.equals(row.getEngine()))
                     row.setEngine(null);
                 else
                     lastEngine = row.getEngine();
