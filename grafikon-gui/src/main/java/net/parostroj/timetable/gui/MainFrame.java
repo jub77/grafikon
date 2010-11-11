@@ -9,8 +9,6 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
@@ -22,6 +20,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,7 +31,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
-    private static final Logger LOG = Logger.getLogger(MainFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class.getName());
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -81,7 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "Cannot load preferences.", e);
+            LOG.warn("Cannot load preferences.", e);
         }
 
         outputAction = new OutputAction(model, this);
@@ -180,7 +180,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             AppPreferences.getPreferences().load();
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error loading preferences.", e);
+            LOG.error("Error loading preferences.", e);
         }
         
         this.setSelectedLocale();
@@ -258,6 +258,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
         tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
         editRoutesMenuItem.setEnabled(model.getDiagram() != null);
+        trainTimetableListByRoutesMenuItem.setEnabled(model.getDiagram() != null);
     }
     
     /** This method is called from within the constructor to
@@ -317,6 +318,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         epListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
         trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
+        trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
         ecListSelectMenuItem = new javax.swing.JMenuItem();
         tucListSelectMenuItem = new javax.swing.JMenuItem();
@@ -330,6 +332,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
@@ -560,6 +563,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
 
+        trainTimetableListByRoutesMenuItem.setAction(outputAction);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        trainTimetableListByRoutesMenuItem.setText(bundle.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
+        trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
+        actionMenu.add(trainTimetableListByRoutesMenuItem);
+
         nodeTimetableListSelectMenuItem.setAction(outputAction);
         nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
         nodeTimetableListSelectMenuItem.setActionCommand("stations_select");
@@ -635,6 +644,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         outputTypeMenu.add(xmlRadioButtonMenuItem);
 
         actionMenu.add(outputTypeMenu);
+
+        genTitlePageTTCheckBoxMenuItem.setSelected(true);
+        genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        actionMenu.add(genTitlePageTTCheckBoxMenuItem);
 
         menuBar.add(actionMenu);
 
@@ -803,7 +821,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     try {
         fls = f.createLatestForSave();
     } catch (LSException e) {
-        LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
+        LOG.warn("Cannot create FileLoadSave", e);
     }
     AboutDialog dialog = new AboutDialog(this, true,
             String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
@@ -840,9 +858,14 @@ private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent e
 }//GEN-LAST:event_programSettingsMenuItemActionPerformed
 
 private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
-    boolean state = ((JCheckBoxMenuItem) evt.getSource()).getState();
+    boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
     trainsPane.setVisibilityOfGTView(state);
 }//GEN-LAST:event_showGTViewMenuItemActionPerformed
+
+private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+    boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+    model.getProgramSettings().setGenerateTitlePageTT(selected);
+}//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -887,7 +910,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             this.saveToPreferences(prefs);
             prefs.save();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error saving preferences.", ex);
+            LOG.error("Error saving preferences.", ex);
         }
     }
 
@@ -953,7 +976,8 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
         }
 
-        showGTViewMenuItem.setState(prefs.getBoolean("trains.show.gtview", true));
+        showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
+        genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -986,6 +1010,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JMenuItem fileSaveMenuItem;
+    private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
@@ -1011,6 +1036,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem textItemsMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
+    private javax.swing.JMenuItem trainTimetableListByRoutesMenuItem;
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
     private javax.swing.JMenuItem trainTimetableListMenuItem;
     private javax.swing.JMenuItem trainTypesMenuItem;

@@ -1,12 +1,13 @@
 package net.parostroj.timetable.actions;
 
 import java.util.Comparator;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.parostroj.timetable.model.SortPattern;
 import net.parostroj.timetable.model.SortPatternGroup;
 import net.parostroj.timetable.model.Train;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Comparator that uses train numbers.
@@ -15,7 +16,7 @@ import net.parostroj.timetable.model.Train;
  */
 public class TrainComparator implements Comparator<Train> {
     
-    private static final Logger LOG = Logger.getLogger(TrainComparator.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainComparator.class.getName());
     
     public enum Type {ASC, DESC; }
     
@@ -34,14 +35,14 @@ public class TrainComparator implements Comparator<Train> {
     @Override
     public int compare(Train o1, Train o2) {
         // checks
-        if (sortPattern.getGroups().size() == 0) {
-            LOG.severe("Pattern groups are empty.");
+        if (sortPattern.getGroups().isEmpty()) {
+            LOG.error("Pattern groups are empty.");
             throw new IllegalArgumentException("Pattern groups are empty.");
         }
         Matcher m1 = pattern.matcher(o1.getNumber());
         Matcher m2 = pattern.matcher(o2.getNumber());
         if (!m1.matches() || !m2.matches()) {
-            LOG.severe("Pattern doesn't match: " + sortPattern.getPattern());
+            LOG.error("Pattern doesn't match: {}", sortPattern.getPattern());
             throw new IllegalArgumentException("Pattern doesn't match: " + sortPattern.getPattern());
         }
         // loop

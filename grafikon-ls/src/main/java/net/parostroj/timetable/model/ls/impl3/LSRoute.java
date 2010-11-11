@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +10,8 @@ import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.RouteSegment;
 import net.parostroj.timetable.model.ls.LSException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage for route.
@@ -21,7 +22,7 @@ import net.parostroj.timetable.model.ls.LSException;
 @XmlType(propOrder = {"id", "name", "netPart", "segments"})
 public class LSRoute {
     
-    private static final Logger LOG = Logger.getLogger(LSRoute.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSRoute.class.getName());
 
     private String id;
     private String name;
@@ -91,7 +92,7 @@ public class LSRoute {
             }
             if (routeSegment == null) {
                 String message = String.format("Segment with id:%s not found. Cannot create route with id:%s.", segment, id);
-                LOG.warning(message);
+                LOG.warn(message);
                 throw new LSException(message);
             }
             route.getSegments().add(routeSegment);

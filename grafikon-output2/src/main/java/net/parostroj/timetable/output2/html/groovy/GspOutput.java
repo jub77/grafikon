@@ -21,17 +21,20 @@ public abstract class GspOutput extends OutputWithLocale {
         super(locale);
     }
 
-    protected InputStream getTemplateStream(OutputParams params, String defaultTemplate) throws IOException {
+    protected InputStream getTemplateStream(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
         if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {
             return (InputStream)params.getParam(DefaultOutputParam.TEMPLATE_STREAM).getValue();
         } else {
-            return getClass().getResource(defaultTemplate).openStream();
+            if (classLoader != null)
+                return classLoader.getResourceAsStream(defaultTemplate);
+            else
+                return ClassLoader.getSystemResourceAsStream(defaultTemplate);
         }
     }
 
-    protected Template createTemplate(OutputParams params, String defaultTemplate) throws IOException {
+    protected Template createTemplate(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
         SimpleTemplateEngine ste = new SimpleTemplateEngine();
-        InputStream is = getTemplateStream(params, defaultTemplate);
+        InputStream is = getTemplateStream(params, defaultTemplate, classLoader);
         Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
         is.close();
         return template;

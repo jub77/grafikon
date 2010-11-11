@@ -201,7 +201,7 @@ public class ImportDialog extends javax.swing.JDialog {
         List<Object> errors = new LinkedList<Object>();
         // trains
         Set<Object> trains = selectedItems.get(ImportComponents.TRAINS);
-        if (trains.size() != 0) {
+        if (!trains.isEmpty()) {
             TrainImport tImport = new TrainImport(diagram, libraryDiagram, this.getImportMatch());
             tImport.importObjects(trains);
             importedObjects.addAll(tImport.getImportedObjects());
@@ -209,7 +209,7 @@ public class ImportDialog extends javax.swing.JDialog {
         }
         // import nodes
         Set<Object> nodes = selectedItems.get(ImportComponents.NODES);
-        if (nodes.size() != 0) {
+        if (!nodes.isEmpty()) {
             NodeImport nImport = new NodeImport(diagram, libraryDiagram, this.getImportMatch());
             nImport.importObjects(nodes);
             importedObjects.addAll(nImport.getImportedObjects());
@@ -217,15 +217,23 @@ public class ImportDialog extends javax.swing.JDialog {
         }
         // import train types
         Set<Object> types = selectedItems.get(ImportComponents.TRAIN_TYPES);
-        if (types.size() != 0) {
+        if (!types.isEmpty()) {
             TrainTypeImport ttImport = new TrainTypeImport(diagram, libraryDiagram, this.getImportMatch());
             ttImport.importObjects(types);
             importedObjects.addAll(ttImport.getImportedObjects());
             errors.addAll(ttImport.getErrors());
         }
+        // import line classes
+        Set<Object> lineClasses = selectedItems.get(ImportComponents.LINE_CLASSES);
+        if (!lineClasses.isEmpty()) {
+            LineClassImport lcImport = new LineClassImport(diagram, libraryDiagram, this.getImportMatch());
+            lcImport.importObjects(lineClasses);
+            importedObjects.addAll(lcImport.getImportedObjects());
+            errors.addAll(lcImport.getErrors());
+        }
 
         // create string ...
-        if (errors.size() != 0) {
+        if (!errors.isEmpty()) {
             StringBuilder message = new StringBuilder();
             int lineLength = 70;
             int nextLimit = lineLength;
@@ -294,7 +302,7 @@ public class ImportDialog extends javax.swing.JDialog {
     private void updateLists(ImportComponents comps) {
         // fill in new items
         Set<Object> all = comps != null ? comps.getObjects(libraryDiagram) : null;
-        if (all ==null || all.size() == 0) {
+        if (all == null || all.isEmpty()) {
             componentsList.setModel(EMPTY_LIST_MODEL);
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
             return;

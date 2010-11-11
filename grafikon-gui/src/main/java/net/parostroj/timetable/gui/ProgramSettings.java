@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui;
 
+import net.parostroj.timetable.model.LengthUnit;
+
 /**
  * Settings of the program.
  *
@@ -8,6 +10,9 @@ package net.parostroj.timetable.gui;
 public class ProgramSettings {
 
     private String userName;
+    private boolean generateTitlePageTT;
+    private boolean warningAutoECCorrection;
+    private LengthUnit lengthUnit;
 
     public String getUserName() {
         return userName;
@@ -26,5 +31,29 @@ public class ProgramSettings {
 
     public String getSystemUser() {
         return System.getProperty("user.name");
+    }
+
+    public boolean isGenerateTitlePageTT() {
+        return generateTitlePageTT;
+    }
+
+    public void setGenerateTitlePageTT(boolean generateTitlePageTT) {
+        this.generateTitlePageTT = generateTitlePageTT;
+    }
+
+    public boolean isWarningAutoECCorrection() {
+        return warningAutoECCorrection;
+    }
+
+    public void setWarningAutoECCorrection(boolean warningAutoECCorrection) {
+        this.warningAutoECCorrection = warningAutoECCorrection;
+    }
+
+    public LengthUnit getLengthUnit() {
+        return lengthUnit;
+    }
+
+    public void setLengthUnit(LengthUnit lengthUnit) {
+        this.lengthUnit = lengthUnit;
     }
 }

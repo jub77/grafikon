@@ -8,8 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -22,6 +20,8 @@ import net.parostroj.timetable.gui.helpers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Edit dialog for images for timetable.
@@ -30,7 +30,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class EditImagesDialog extends javax.swing.JDialog implements ApplicationModelListener {
     
-    private static final Logger LOG = Logger.getLogger(EditImagesDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EditImagesDialog.class.getName());
     private static JFileChooser fileChooserInstance;
 
     private ApplicationModel model;
@@ -225,7 +225,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 model.getDiagram().addImage(image);
                 listModel.addWrapper(new TimetableImageWrapper(image));
             } catch (IOException e) {
-                LOG.log(Level.WARNING,"Cannot save temporary image file.", e);
+                LOG.warn("Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
                         ResourceLoader.getString("dialog.error.temporaryfile"),
                         ResourceLoader.getString("dialog.error.title"),
@@ -276,7 +276,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
         if (!selected.getImageFile().delete())
-            LOG.log(Level.FINER, "Cannot remove temporary file: {0}", selected.getImageFile().getPath());
+            LOG.debug("Cannot remove temporary file: {}", selected.getImageFile().getPath());
     }//GEN-LAST:event_deleteButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

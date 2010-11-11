@@ -17,7 +17,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 public enum ImportComponents {
     TRAINS("import.trains"),
     NODES("import.stations"),
-    TRAIN_TYPES("import.train_types");
+    TRAIN_TYPES("import.train_types"),
+    LINE_CLASSES("import.line_classes");
 
     private String key;
 
@@ -47,6 +48,9 @@ public enum ImportComponents {
                 break;
             case TRAIN_TYPES:
                 map.addAll(diagram.getTrainTypes());
+                break;
+            case LINE_CLASSES:
+                map.addAll(diagram.getNet().getLineClasses());
                 break;
         }
         return map;

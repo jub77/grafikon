@@ -3,10 +3,11 @@ package net.parostroj.timetable.gui.utils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Invokes action and show dialog after specified amount of time
@@ -14,13 +15,13 @@ import javax.swing.Timer;
  * @author jub
  */
 public class ActionHandler {
-    private static final Logger LOG = Logger.getLogger(ActionHandler.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ActionHandler.class.getName());
 
     private static ActionHandler instance = new ActionHandler();
 
     private static int DEFAULT_WAIT_TIME = 200;
 
-    public static final ActionHandler getInstance() {
+    public static ActionHandler getInstance() {
         return instance;
     }
     
@@ -53,12 +54,12 @@ public class ActionHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (worker.getState() != SwingWorker.StateValue.DONE) {
-                    LOG.finest("Waiting dialog initialization.");
+                    LOG.trace("Waiting dialog initialization.");
                     WaitDialog dialog = createWaitDialog(component, message);
                     worker.addPropertyChangeListener(dialog);
                     dialog.setVisible(true);
                 } else {
-                    LOG.finest("Waiting dialog initialization skipped - action already finished.");
+                    LOG.trace("Waiting dialog initialization skipped - action already finished.");
                 }
             }
         });
@@ -88,8 +89,8 @@ public class ActionHandler {
     
     private WaitDialog createWaitDialog(Component component, String message) {
         Window top = (component != null) ? SwingUtilities.getWindowAncestor(component) : null;
-        LOG.finest("Component: " + ((component == null) ? "<null>" : component.getClass().getName()));
-        LOG.finest("Top: " + ((top == null) ? "<null>" : top.getClass().getName()));
+        LOG.trace("Component: " + ((component == null) ? "<null>" : component.getClass().getName()));
+        LOG.trace("Top: " + ((top == null) ? "<null>" : top.getClass().getName()));
         WaitDialog waitDialog = (component instanceof Dialog) ?
                 new WaitDialog((Dialog)component, true) :
                 new WaitDialog((Frame)component, true);

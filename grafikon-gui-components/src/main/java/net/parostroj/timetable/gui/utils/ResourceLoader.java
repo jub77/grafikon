@@ -2,8 +2,8 @@ package net.parostroj.timetable.gui.utils;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper for loading resources.
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class ResourceLoader {
     
-    private static final Logger LOG = Logger.getLogger(ResourceLoader.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceLoader.class.getName());
     
     /**
      * returns localized string for key.
@@ -24,7 +24,7 @@ public class ResourceLoader {
         try {
             return ResourceBundle.getBundle("net.parostroj.timetable.gui.components_texts").getString(key);
         } catch (MissingResourceException e) {
-            LOG.log(Level.WARNING, "Error getting text for key: " + key, e);
+            LOG.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
     }

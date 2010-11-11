@@ -5,6 +5,7 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.awt.Component;
 import net.parostroj.timetable.gui.helpers.TrainWrapper;
 import java.awt.Color;
 import java.util.*;
@@ -13,8 +14,10 @@ import javax.swing.DefaultListModel;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
+import net.parostroj.timetable.gui.helpers.TimeIntervalWrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -186,6 +189,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageTextPane = new net.parostroj.timetable.gui.views.ColorTextPane();
+        selectionButton = new javax.swing.JButton();
 
         filterbuttonGroup.add(allRadioButtonMenuItem);
         allRadioButtonMenuItem.setSelected(true);
@@ -322,26 +326,29 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         coverageTextPane.setEditable(false);
         coverageScrollPane.setViewportView(coverageTextPane);
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        selectionButton.setText(bundle.getString("ec.list.selection")); // NOI18N
+        selectionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectionButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(scrollPane1)
+                .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(6, 6, 6))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(scrollPane2))
+                    .addComponent(selectionButton, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -360,6 +367,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -367,9 +375,10 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(upButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton))
-                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                    .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
+                        .addComponent(downButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectionButton))
+                    .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -450,6 +459,8 @@ private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
     Object[] selectedValues = allTrainsList.getSelectedValues();
+    boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+    StringBuilder trainsStr = null;
     for (Object objectSelected : selectedValues) {
         TrainWrapper selected = (TrainWrapper) objectSelected;
         if (selected != null) {
@@ -464,8 +475,19 @@ private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
                     item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                 }
                 cycle.addItem(item);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
+                // recalculate if needed (engine class dependency)
+                if (t.checkNeedSpeedRecalculate()) {
+                    t.recalculate();
+                    if (warning) {
+                        if (trainsStr == null)
+                            trainsStr = new StringBuilder();
+                        else
+                            trainsStr.append(',');
+                        trainsStr.append(t.getName());
+                    }
+                }
 
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
             }
         }
@@ -474,6 +496,11 @@ private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         this.updateListAllTrains();
         this.updateListCycle();
         this.updateErrors();
+    }
+    if (warning && trainsStr != null) {
+        ActionUtils.showWarning(
+                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
+                ActionUtils.getTopLevelComponent(this));
     }
 }//GEN-LAST:event_addButtonActionPerformed
 
@@ -485,8 +512,8 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
         if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
             item.setComment(newComment);
-        TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getInterval();
-        TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getInterval();
+        TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getElement();
+        TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getElement();
         // new trains cycle item
         boolean oldCovered = train.isCovered(delegate.getType());
         if (from != item.getFromInterval() || to != item.getToInterval()) {
@@ -500,6 +527,16 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                 if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
                     this.updateListAllTrains();
                 ecTrainsList.repaint();
+                // recalculate if needed (engine class depedency)
+                if (train.checkNeedSpeedRecalculate()) {
+                    train.recalculate();
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                    if (model.getProgramSettings().isWarningAutoECCorrection()) {
+                        ActionUtils.showWarning(
+                                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
+                                ActionUtils.getTopLevelComponent(this));
+                    }
+                }
             } else {
                 this.updateSelectedTrainsCycleItem(item);
             }
@@ -581,7 +618,7 @@ private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt)
 private void filterChangedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterChangedActionPerformed
     ButtonModel selected = filterbuttonGroup.getSelection();
     if (selected != null)
-        this.setFilter(selected.getActionCommand());
+        this.setFilter(selected.getActionCommand(), (Component) evt.getSource());
 }//GEN-LAST:event_filterChangedActionPerformed
 
 private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overlappingCheckBoxMenuItemActionPerformed
@@ -590,16 +627,20 @@ private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
     this.updateListAllTrains();
 }//GEN-LAST:event_overlappingCheckBoxMenuItemActionPerformed
 
-    private void setFilter(String type) {
+private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectionButtonActionPerformed
+    filterMenu.show(selectionButton, 3, 3);
+}//GEN-LAST:event_selectionButtonActionPerformed
+
+    private void setFilter(String type, Component component) {
         if ("P".equals(type)) {
             filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.PASSENGER);
         } else if ("F".equals(type)) {
             filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.FREIGHT);
         } else if ("C".equals(type)) {
             // custom filter
-            TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)this.getTopLevelAncestor(), true);
+            TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
             dialog.setTrainTypes(model.getDiagram(), selectedTypes);
-            dialog.setLocationRelativeTo(scrollPane1);
+            dialog.setLocationRelativeTo((java.awt.Frame)ActionUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
 
             this.selectedTypes = dialog.getSelectedTypes();
@@ -633,47 +674,8 @@ private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane1;
+    private javax.swing.JButton selectionButton;
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
-}
-
-class TimeIntervalWrapper {
-
-    private final TimeInterval interval;
-
-    TimeIntervalWrapper(TimeInterval interval) {
-        this.interval = interval;
-    }
-
-    public TimeInterval getInterval() {
-        return interval;
-    }
-
-    @Override
-    public String toString() {
-        return interval.getOwner().toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TimeIntervalWrapper other = (TimeIntervalWrapper) obj;
-        if (this.interval != other.interval && (this.interval == null || !this.interval.equals(other.interval))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + (this.interval != null ? this.interval.hashCode() : 0);
-        return hash;
-    }
 }

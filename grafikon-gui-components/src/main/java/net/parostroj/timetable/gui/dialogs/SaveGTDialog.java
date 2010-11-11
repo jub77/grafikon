@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -15,8 +14,6 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  * @author jub
  */
 public class SaveGTDialog extends javax.swing.JDialog {
-    
-    private static final Logger LOG = Logger.getLogger(SaveGTDialog.class.getName());
     
     public static enum Type {
         PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"), SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg");

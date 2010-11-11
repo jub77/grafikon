@@ -1,5 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -7,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"engine", "from", "to", "weight"})
+@XmlType(propOrder={"engines", "from", "to", "weight"})
 public class WeightDataRow {
-    private String engine;
+    private List<String> engines;
     private String from;
     private String to;
     private String weight;
@@ -17,15 +19,16 @@ public class WeightDataRow {
     public WeightDataRow() {
     }
 
-    public WeightDataRow(String engine, String from, String to, String weight) {
-        this.engine = engine;
+    public WeightDataRow(List<String> engines, String from, String to, String weight) {
+        this.engines = engines;
         this.from = from;
         this.to = to;
         this.weight = weight;
     }
 
-    public String getEngine() {
-        return engine;
+    @XmlElement(name="engine")
+    public List<String> getEngines() {
+        return engines;
     }
 
     public String getFrom() {
@@ -44,8 +47,8 @@ public class WeightDataRow {
         this.to = to;
     }
 
-    public void setEngine(String engine) {
-        this.engine = engine;
+    public void setEngines(List<String> engines) {
+        this.engines = engines;
     }
 
     public void setFrom(String from) {

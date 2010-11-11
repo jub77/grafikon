@@ -5,8 +5,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -21,6 +19,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Combined new/open action.
@@ -29,7 +29,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class NewOpenAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(NewOpenAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(NewOpenAction.class.getName());
     private ApplicationModel model;
     private NewModelDialog newModelDialog;
 
@@ -86,7 +86,7 @@ public class NewOpenAction extends AbstractAction {
                             diagram = ls.load(xmlFileChooser.getSelectedFile());
                         }
                     } catch (LSException e) {
-                        LOG.log(Level.WARNING, "Error loading model.", e);
+                        LOG.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
                             errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
                         } else if (e.getCause() instanceof IOException) {
@@ -96,11 +96,11 @@ public class NewOpenAction extends AbstractAction {
                             errorException = e;
                         }
                     } catch (Exception e) {
-                        LOG.log(Level.WARNING, "Error loading model.", e);
+                        LOG.warn("Error loading model.", e);
                         errorMessage = ResourceLoader.getString("dialog.error.loading");
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
+                    LOG.warn("Error saving model.", e);
                     errorSaveMessage = ResourceLoader.getString("dialog.error.saving");
                 }
             }
@@ -147,7 +147,7 @@ public class NewOpenAction extends AbstractAction {
                         ModelUtils.saveModelData(model, model.getOpenedFile());
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
+                    LOG.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
             }

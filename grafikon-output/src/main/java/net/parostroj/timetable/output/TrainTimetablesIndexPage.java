@@ -10,11 +10,11 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Page with indexes to trains.
@@ -23,7 +23,7 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class TrainTimetablesIndexPage implements Page {
     
-    private static final Logger LOG = Logger.getLogger(TrainTimetablesIndexPage.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainTimetablesIndexPage.class.getName());
 
     private int number;
     
@@ -64,7 +64,7 @@ public class TrainTimetablesIndexPage implements Page {
                     TrainTimetablesListTemplates.getString("index.train"),
                     TrainTimetablesListTemplates.getString("index.page"));
         } catch(Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
         
         int i = 0;

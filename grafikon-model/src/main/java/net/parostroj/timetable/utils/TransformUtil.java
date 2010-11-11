@@ -101,4 +101,13 @@ public class TransformUtil {
         }
         return result;
     }
+
+    public static String getEngineDescription(TrainsCycle ec) {
+        EngineClass cl = (EngineClass)ec.getAttribute("engine.class");
+        if (cl != null)
+            return cl.getName();
+        else {
+            return ec.getDescription();
+        }
+    }
 }

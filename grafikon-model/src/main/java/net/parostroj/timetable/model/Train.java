@@ -19,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Train implements AttributesHolder, ObjectWithId, Visitable {
 
     /** No top speed constant. */
-    public static final int NO_TOP_SPEED = 0;
+    public static final int NO_TOP_SPEED = Line.NO_SPEED;
 
     /** Train diagram reference. */
     private final TrainDiagram diagram;
@@ -33,7 +33,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     private TrainType type;
     /** List of time intervals. */
     private TimeIntervalList timeIntervalList;
-    /** Top speed (comment - 0 .. no speed defined (speed should be determined by train type)). */
+    /** Top speed. */
     private int topSpeed = NO_TOP_SPEED;
     /** Cycles. */
     private Map<TrainsCycleType, List<TrainsCycleItem>> cycles;
@@ -262,16 +262,32 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /**
      * @param type trains cycle type
      * @param interval time interval
-     * @return train cycle item that covers given interval (if there are more than one interval,
-     * it returns the first one)
+     * @return list of train cycle items that covers given interval (empty list if there are none)
      */
-    public TrainsCycleItem getCycleItemForInterval(TrainsCycleType type, TimeInterval interval) {
+    public List<TrainsCycleItem> getCycleItemsForInterval(TrainsCycleType type, TimeInterval interval) {
         List<TrainsCycleItem> items = this.getCyclesIntern(type);
+        List<TrainsCycleItem> mResults = null;
+        TrainsCycleItem sResult = null;
         for (TrainsCycleItem item : items) {
-            if (item.containsInterval(interval))
-                return item;
+            boolean contains = item.containsInterval(interval);
+            if (contains && sResult == null)
+                sResult = item;
+            else if (contains && sResult != null) {
+                if (mResults != null)
+                    mResults.add(item);
+                else {
+                    mResults = new LinkedList<TrainsCycleItem>();
+                    mResults.add(sResult);
+                    mResults.add(item);
+                }
+            }
         }
-        return null;
+        if (mResults != null)
+            return mResults;
+        else if (sResult != null)
+            return Collections.singletonList(sResult);
+        else
+            return Collections.emptyList();
     }
 
     /**
@@ -604,7 +620,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         if (index == -1 || !lineInterval.isLineOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
-        int computedSpeed = lineInterval.getOwnerAsLine().computeSpeed(this, speed);
+        int computedSpeed = lineInterval.getOwnerAsLine().computeSpeed(this, lineInterval, speed);
         lineInterval.setSpeed(computedSpeed);
 
         int changedIndex = index;
@@ -678,11 +694,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     }
 
     /**
-     * Recalculates all line intervals.
-     *
-     * @param info model info
+     * recalculates all line intervals.
      */
     public void recalculate() {
+        this.recalculateImpl(null);
+    }
+
+    /**
+     * recalculates all line intervals with given speed.
+     *
+     * @param newSpeed speed to be set to all line intervals
+     */
+    public void recalculate(int newSpeed) {
+        this.recalculateImpl(newSpeed);
+    }
+
+    private void recalculateImpl(Integer newSpeed) {
         int nextStart = this.getStartTime();
         int i = 0;
         for (TimeInterval interval : timeIntervalList) {
@@ -690,7 +717,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
             if (interval.isLineOwner()) {
                 Line line = (Line) interval.getOwner();
                 // compute speed
-                int speed = line.computeSpeed(this, interval.getSpeed());
+                int speed = line.computeSpeed(this, interval, newSpeed == null ? interval.getSpeed() : newSpeed);
                 interval.setSpeed(speed);
 
                 timeIntervalList.updateLineInterval(interval, i);
@@ -703,6 +730,21 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         }
         this.updateTechnologicalTimes();
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
+    }
+
+    /**
+     * checks if the train needs to call have recalculate called because of speed adjustments needed.
+     */
+    public boolean checkNeedSpeedRecalculate() {
+        for (TimeInterval interval : timeIntervalList) {
+            if (interval.isLineOwner()) {
+                Line line = interval.getOwnerAsLine();
+                int cSpeed = line.computeSpeed(this, interval, interval.getSpeed());
+                if (cSpeed != interval.getSpeed())
+                    return true;
+            }
+        }
+        return false;
     }
 
     /**

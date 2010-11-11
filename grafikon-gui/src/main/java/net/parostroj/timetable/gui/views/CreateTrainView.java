@@ -9,8 +9,6 @@ package net.parostroj.timetable.gui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.actions.NodeSort;
@@ -24,6 +22,8 @@ import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.TimeConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * View for dialog with creating of the train.
@@ -32,7 +32,7 @@ import net.parostroj.timetable.utils.TimeConverter;
  */
 public class CreateTrainView extends javax.swing.JPanel {
     
-    private static final Logger LOG = Logger.getLogger(CreateTrainView.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CreateTrainView.class.getName());
 
     private ApplicationModel model;
     
@@ -261,7 +261,9 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     try {
         // test needed values
         try {
-            Integer.valueOf(speedTextField.getText());
+            Integer speed = Integer.valueOf(speedTextField.getText());
+            if (speed < 1)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
                     ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
@@ -304,7 +306,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         // hide dialog
         this.closeDialog();
     } catch (CommandException e) {
-        LOG.log(Level.WARNING, "Error executing create train command.", e);
+        LOG.warn("Error executing create train command.", e);
         JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
                     ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
     }
