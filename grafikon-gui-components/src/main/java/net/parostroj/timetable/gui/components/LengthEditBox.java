@@ -2,11 +2,12 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.event.ItemEvent;
 import java.text.DecimalFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JFormattedTextField;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 import net.parostroj.timetable.model.LengthUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Editing component for length.
@@ -15,7 +16,7 @@ import net.parostroj.timetable.model.LengthUnit;
  */
 public class LengthEditBox extends javax.swing.JPanel {
 
-    private static final Logger LOG = Logger.getLogger(LengthEditBox.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LengthEditBox.class);
 
     private int value;
 
@@ -34,6 +35,7 @@ public class LengthEditBox extends javax.swing.JPanel {
         NumberFormatter formatter = new NumberFormatter(format);
         formatter.setMinimum(Double.valueOf(0.0));
         valueTextField.setFormatterFactory(new DefaultFormatterFactory(formatter));
+        valueTextField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
         setValue(0);
     }
@@ -57,7 +59,7 @@ public class LengthEditBox extends javax.swing.JPanel {
             Double valueDouble = this.getValueFromField();
             return unit.convertFrom(valueDouble);
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
             setValueImpl(this.value, unit);
             return this.value;
         }
