@@ -76,6 +76,18 @@ public abstract class Import {
         return null;
     }
 
+    protected LineClass getLineClass(LineClass origLineClass) {
+        if (match == ImportMatch.ID)
+            return diagram.getNet().getLineClassById(origLineClass.getId());
+        else {
+            for (LineClass lineClass : diagram.getNet().getLineClasses()) {
+                if (lineClass.getName().equals(origLineClass.getName()))
+                    return lineClass;
+            }
+            return null;
+        }
+    }
+
     protected String getId(ObjectWithId oid) {
         if (match == ImportMatch.ID) {
             return oid.getId();

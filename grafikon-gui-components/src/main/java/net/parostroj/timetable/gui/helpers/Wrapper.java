@@ -3,12 +3,7 @@ package net.parostroj.timetable.gui.helpers;
 import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.*;
 
 /**
  * Wrapper class for lists in GUI.
@@ -75,6 +70,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             w = (Wrapper)new RouteWrapper((Route)o);
         } else if (o instanceof TimeIntervalWrapper) {
             w = (Wrapper)new TimeIntervalWrapper((TimeInterval)o);
+        } else if (o instanceof LineClass) {
+            w = (Wrapper)new LineClassWrapper((LineClass)o);
         } else {
             throw new IllegalArgumentException("Not supported type: " + o.getClass());
         }

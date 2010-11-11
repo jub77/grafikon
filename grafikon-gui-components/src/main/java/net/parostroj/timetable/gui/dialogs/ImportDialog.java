@@ -223,6 +223,14 @@ public class ImportDialog extends javax.swing.JDialog {
             importedObjects.addAll(ttImport.getImportedObjects());
             errors.addAll(ttImport.getErrors());
         }
+        // import line classes
+        Set<Object> lineClasses = selectedItems.get(ImportComponents.LINE_CLASSES);
+        if (!lineClasses.isEmpty()) {
+            LineClassImport lcImport = new LineClassImport(diagram, libraryDiagram, this.getImportMatch());
+            lcImport.importObjects(lineClasses);
+            importedObjects.addAll(lcImport.getImportedObjects());
+            errors.addAll(lcImport.getErrors());
+        }
 
         // create string ...
         if (!errors.isEmpty()) {
