@@ -9,6 +9,7 @@ import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.TimeConverter;
 
 /**
@@ -182,7 +183,11 @@ public class TrainTimetablesExtractor {
             if (lastLineI != null && lastLineI.getToStraightTrack() != null)
                 row.setStraight(lastLineI.getToStraightTrack() == nodeI.getTrack());
             if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute("trapezoid.sign"))) {
-                row.setTrapezoidTrains(this.getTrapezoidTrains(nodeI));
+                Pair<Boolean, List<String>> trapezoidTrains = this.getTrapezoidTrains(nodeI);
+                if (trapezoidTrains != null) {
+                    row.setTrapezoidTrains(trapezoidTrains.second);
+                    row.setTrapezoid(trapezoidTrains.first);
+                }
             }
 
             LineClass lineClass = lineI != null ? (LineClass) lineI.getOwnerAsLine().getAttribute("line.class") : null;
@@ -204,22 +209,39 @@ public class TrainTimetablesExtractor {
         return check;
     }
 
-    private List<String> getTrapezoidTrains(TimeInterval interval) {
+    private Pair<Boolean, List<String>> getTrapezoidTrains(TimeInterval interval) {
         Node node = interval.getOwnerAsNode();
-        Set<TimeInterval> over = node.getOverlappingTimeIntervals(interval);
-        // filter out ...
-        for (Iterator<TimeInterval> i = over.iterator(); i.hasNext();) {
-            TimeInterval checked = i.next();
-            if (interval.getStart() < checked.getStart()) {
-                i.remove();
+        TimeInterval toBeChecked = interval;
+        Train train = interval.getTrain();
+        if (train.getFirstInterval() == interval && train.getTimeIntervalBefore() != null)
+            toBeChecked = train.getTimeIntervalBefore();
+        else if (train.getLastInterval() == interval && train.getTimeIntervalAfter() != null)
+            toBeChecked = train.getTimeIntervalAfter();
+        Set<TimeInterval> over = node.getOverlappingTimeIntervals(toBeChecked);
+        boolean first = true;
+        // check if the train is first in the station (start be marked with trapezoid)
+        if (interval.getTrain().getFirstInterval() != interval)
+            for (Iterator<TimeInterval> i = over.iterator(); i.hasNext();) {
+                TimeInterval checked = i.next();
+                if (interval.getStart() > checked.getStart()) {
+                    first = false;
+                    break;
+                } else if (interval.getStart() == checked.getStart()) {
+                    // train nearer the begining is first
+                    List<Train> tl = diagram.getTrains();
+                    if (tl.indexOf(interval.getTrain()) > tl.indexOf(checked.getTrain())) {
+                        first = false;
+                        break;
+                    }
+                }
             }
-        }
-        if (over.size() == 0) {
+        if (over.isEmpty()) {
             return null;
         } else {
             List<Train> tTrains = new ArrayList<Train>(over.size());
             for (TimeInterval ti : over) {
-                tTrains.add(ti.getTrain());
+                if (!tTrains.contains(ti.getTrain()))
+                    tTrains.add(ti.getTrain());
             }
             TrainSort s = new TrainSort(new TrainComparator(TrainComparator.Type.ASC, node.getTrainDiagram().getTrainsData().getTrainSortPattern()));
             tTrains = s.sort(tTrains);
@@ -227,7 +249,7 @@ public class TrainTimetablesExtractor {
             for (Train t : tTrains) {
                 result.add(t.getName());
             }
-            return result;
+            return new Pair<Boolean, List<String>>(!first, result);
         }
     }
 

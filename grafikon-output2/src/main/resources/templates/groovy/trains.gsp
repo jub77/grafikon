@@ -464,7 +464,7 @@
     if (emphName) stationName = "<span class=\"emph\">${stationName}</span>"
     if (row.straight == false && !row.lightSignals) desc += "&#8594;"
     if (row.lightSignals) { desc += "<img src=\"signal.gif\" class=\"signal\">"; images.add("signal.gif")}
-    if (train.controlled && row.trapezoidTrains != null) {
+    if (train.controlled && row.trapezoid) {
       desc += "<img src=\"trapezoid_sign.gif\" class=\"trapezoid\">"
       images.add("trapezoid_sign.gif")
     }
