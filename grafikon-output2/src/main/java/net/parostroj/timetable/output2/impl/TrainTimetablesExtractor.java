@@ -213,14 +213,14 @@ public class TrainTimetablesExtractor {
         Node node = interval.getOwnerAsNode();
         TimeInterval toBeChecked = interval;
         Train train = interval.getTrain();
-        if (train.getFirstInterval() == interval && train.getTimeIntervalBefore() != null)
+        if (interval.isFirst() && train.getTimeIntervalBefore() != null)
             toBeChecked = train.getTimeIntervalBefore();
-        else if (train.getLastInterval() == interval && train.getTimeIntervalAfter() != null)
+        else if (interval.isLast() && train.getTimeIntervalAfter() != null)
             toBeChecked = train.getTimeIntervalAfter();
         Set<TimeInterval> over = node.getOverlappingTimeIntervals(toBeChecked);
         boolean first = true;
         // check if the train is first in the station (start be marked with trapezoid)
-        if (interval.getTrain().getFirstInterval() != interval)
+        if (!interval.isFirst())
             for (Iterator<TimeInterval> i = over.iterator(); i.hasNext();) {
                 TimeInterval checked = i.next();
                 if (interval.getStart() > checked.getStart()) {
