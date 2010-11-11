@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"engine", "from", "to", "weight"})
+@XmlType(propOrder={"engines", "from", "to", "weight"})
 public class WeightDataRow {
     private List<String> engines;
     private String from;
