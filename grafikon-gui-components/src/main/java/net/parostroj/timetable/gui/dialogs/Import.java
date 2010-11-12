@@ -138,4 +138,19 @@ public abstract class Import {
     }
 
     protected abstract void importObjectImpl(Object o);
+
+    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
+            TrainDiagram library, ImportMatch match) {
+        switch (components) {
+            case NODES:
+                return new NodeImport(diagram, library, match);
+            case TRAINS:
+                return new TrainImport(diagram, library, match);
+            case TRAIN_TYPES:
+                return new TrainTypeImport(diagram, library, match);
+            case LINE_CLASSES:
+                return new LineClassImport(diagram, library, match);
+        }
+        return null;
+    }
 }

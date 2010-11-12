@@ -15,10 +15,10 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 public enum ImportComponents {
-    TRAINS("import.trains"),
     NODES("import.stations"),
     TRAIN_TYPES("import.train_types"),
-    LINE_CLASSES("import.line_classes");
+    LINE_CLASSES("import.line_classes"),
+    TRAINS("import.trains");
 
     private String key;
 

@@ -199,37 +199,16 @@ public class ImportDialog extends javax.swing.JDialog {
         // import things
         importedObjects = new HashSet<ObjectWithId>();
         List<Object> errors = new LinkedList<Object>();
-        // trains
-        Set<Object> trains = selectedItems.get(ImportComponents.TRAINS);
-        if (!trains.isEmpty()) {
-            TrainImport tImport = new TrainImport(diagram, libraryDiagram, this.getImportMatch());
-            tImport.importObjects(trains);
-            importedObjects.addAll(tImport.getImportedObjects());
-            errors.addAll(tImport.getErrors());
-        }
-        // import nodes
-        Set<Object> nodes = selectedItems.get(ImportComponents.NODES);
-        if (!nodes.isEmpty()) {
-            NodeImport nImport = new NodeImport(diagram, libraryDiagram, this.getImportMatch());
-            nImport.importObjects(nodes);
-            importedObjects.addAll(nImport.getImportedObjects());
-            errors.addAll(nImport.getErrors());
-        }
-        // import train types
-        Set<Object> types = selectedItems.get(ImportComponents.TRAIN_TYPES);
-        if (!types.isEmpty()) {
-            TrainTypeImport ttImport = new TrainTypeImport(diagram, libraryDiagram, this.getImportMatch());
-            ttImport.importObjects(types);
-            importedObjects.addAll(ttImport.getImportedObjects());
-            errors.addAll(ttImport.getErrors());
-        }
-        // import line classes
-        Set<Object> lineClasses = selectedItems.get(ImportComponents.LINE_CLASSES);
-        if (!lineClasses.isEmpty()) {
-            LineClassImport lcImport = new LineClassImport(diagram, libraryDiagram, this.getImportMatch());
-            lcImport.importObjects(lineClasses);
-            importedObjects.addAll(lcImport.getImportedObjects());
-            errors.addAll(lcImport.getErrors());
+
+        // for all types
+        for (ImportComponents component : ImportComponents.values()) {
+            Set<Object> objects = selectedItems.get(component);
+            if (objects != null) {
+                Import imp = Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
+                imp.importObjects(objects);
+                importedObjects.addAll(imp.getImportedObjects());
+                errors.addAll(imp.getErrors());
+            }
         }
 
         // create string ...
