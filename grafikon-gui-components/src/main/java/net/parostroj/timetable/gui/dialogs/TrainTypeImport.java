@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TrainTypeImport extends Import<TrainType> {
+public class TrainTypeImport extends Import {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainTypeImport.class.getName());
 
@@ -19,7 +20,7 @@ public class TrainTypeImport extends Import<TrainType> {
     }
 
     @Override
-    protected void importObjectImpl(TrainType o) {
+    protected void importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof TrainType))
             return;

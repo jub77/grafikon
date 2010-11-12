@@ -197,7 +197,6 @@ public class ImportDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    @SuppressWarnings("unchecked")
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // import things
         importedObjects = new HashSet<ObjectWithId>();
@@ -207,7 +206,7 @@ public class ImportDialog extends javax.swing.JDialog {
         for (ImportComponents component : ImportComponents.values()) {
             Set<ObjectWithId> objects = selectedItems.get(component);
             if (objects != null) {
-                Import<ObjectWithId> imp = (Import<ObjectWithId>) Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
+                Import imp = Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
                 imp.importObjects(objects);
                 importedObjects.addAll(imp.getImportedObjects());
                 errors.addAll(imp.getErrors());

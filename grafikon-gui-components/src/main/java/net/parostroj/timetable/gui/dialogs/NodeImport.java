@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class NodeImport extends Import<Node> {
+class NodeImport extends Import {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeImport.class.getName());
 
@@ -20,7 +21,7 @@ class NodeImport extends Import<Node> {
     }
 
     @Override
-    protected void importObjectImpl(Node o) {
+    protected void importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof Node))
             return;

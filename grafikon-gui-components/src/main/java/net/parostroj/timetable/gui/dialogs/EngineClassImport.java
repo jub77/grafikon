@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.util.Map;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.WeightTableRow;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class EngineClassImport extends Import<EngineClass> {
+public class EngineClassImport extends Import {
 
     private static final Logger LOG = LoggerFactory.getLogger(EngineClassImport.class.getName());
 
@@ -22,7 +23,7 @@ public class EngineClassImport extends Import<EngineClass> {
     }
 
     @Override
-    protected void importObjectImpl(EngineClass o) {
+    protected void importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof EngineClass))
             return;

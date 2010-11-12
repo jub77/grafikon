@@ -9,14 +9,14 @@ import net.parostroj.timetable.utils.IdGenerator;
  *
  * @author jub
  */
-public abstract class Import<T extends ObjectWithId> {
+public abstract class Import {
 
     private ImportMatch match;
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
 
-    private List<T> errors;
-    private Set<T> importedObjects;
+    private List<ObjectWithId> errors;
+    private Set<ObjectWithId> importedObjects;
 
     public Import(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         this.match = match;
@@ -109,27 +109,27 @@ public abstract class Import<T extends ObjectWithId> {
     }
 
     protected void clean() {
-        errors = new LinkedList<T>();
-        importedObjects = new HashSet<T>();
+        errors = new LinkedList<ObjectWithId>();
+        importedObjects = new HashSet<ObjectWithId>();
     }
 
-    public void importObjects(Collection<? extends T> objects) {
+    public void importObjects(Collection<? extends ObjectWithId> objects) {
         this.clean();
-        for (T object : objects) {
+        for (ObjectWithId object : objects) {
             this.importObjectImpl(object);
         }
     }
 
-    public void importObject(T object) {
+    public void importObject(ObjectWithId object) {
         this.clean();
         this.importObjectImpl(object);
     }
 
-    protected void addError(T o, String explanation) {
+    protected void addError(ObjectWithId o, String explanation) {
         errors.add(o);
     }
 
-    protected void addImportedObject(T o) {
+    protected void addImportedObject(ObjectWithId o) {
         importedObjects.add(o);
     }
 
@@ -141,17 +141,17 @@ public abstract class Import<T extends ObjectWithId> {
         return libraryDiagram;
     }
 
-    public List<T> getErrors() {
+    public List<ObjectWithId> getErrors() {
         return errors;
     }
 
-    public Set<T> getImportedObjects() {
+    public Set<ObjectWithId> getImportedObjects() {
         return importedObjects;
     }
 
-    protected abstract void importObjectImpl(T o);
+    protected abstract void importObjectImpl(ObjectWithId o);
 
-    public static Import<?> getInstance(ImportComponents components, TrainDiagram diagram,
+    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
             case NODES:
