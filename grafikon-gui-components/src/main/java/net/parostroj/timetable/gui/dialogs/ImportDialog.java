@@ -5,10 +5,12 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.Collection;
 import net.parostroj.timetable.gui.helpers.WrapperListModel;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +70,7 @@ public class ImportDialog extends javax.swing.JDialog {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
         for (ImportComponents comps : ImportComponents.values()) {
-            selectedItems.put(comps, new HashSet<ObjectWithId>());
+            selectedItems.put(comps, new LinkedHashSet<ObjectWithId>());
         }
         updateDialog();
     }
@@ -295,7 +297,7 @@ public class ImportDialog extends javax.swing.JDialog {
 
     @SuppressWarnings("unchecked")
     private void fillList(ImportComponents comps, JList list, Set<? extends Object> set) {
-        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers((Set<Object>)set), set);
+        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers((Collection<Object>)set), set, comps.sorted());
         list.setModel(model);
     }
 

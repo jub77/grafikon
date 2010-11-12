@@ -1,8 +1,9 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import net.parostroj.timetable.gui.helpers.Wrapper;
@@ -39,7 +40,7 @@ public enum ImportComponents {
     public Set<Object> getObjects(TrainDiagram diagram) {
         if (diagram == null)
             return Collections.emptySet();
-        Set<Object> map = new HashSet<Object>();
+        Set<Object> map = new LinkedHashSet<Object>();
         switch (this) {
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
@@ -59,7 +60,7 @@ public enum ImportComponents {
         return map;
     }
 
-    public List<Wrapper<?>> getListOfWrappers(Set<Object> objects) {
+    public List<Wrapper<?>> getListOfWrappers(Collection<Object> objects) {
         List<Wrapper<?>> list = new ArrayList<Wrapper<?>>(objects.size());
         for (Object oid : objects) {
             list.add(this.getWrapper(oid));
@@ -69,5 +70,9 @@ public enum ImportComponents {
 
     public Wrapper<?> getWrapper(Object oid) {
         return Wrapper.getWrapper(oid);
+    }
+
+    public boolean sorted() {
+        return this == NODES || this == TRAINS;
     }
 }
