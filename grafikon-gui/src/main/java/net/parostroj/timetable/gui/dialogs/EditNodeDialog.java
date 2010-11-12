@@ -18,8 +18,6 @@ import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Edit dialog for node.
@@ -60,7 +58,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditNodeDialog.class.getName());
     private Node node;
     private List<EditTrack> removed;
     private boolean modified;

@@ -24,7 +24,7 @@ public class Pair<T, V> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Pair<T, V> other = (Pair<T, V>) obj;
+        final Pair<?, ?> other = (Pair<?, ?>) obj;
         if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
             return false;
         }

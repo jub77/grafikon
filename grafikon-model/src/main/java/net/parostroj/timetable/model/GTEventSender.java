@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.events.*;
  *
  * @author jub
  */
-abstract class GTEventSender<T extends GTListener, E extends GTEvent> {
+abstract class GTEventSender<T extends GTListener, E extends GTEvent<?>> {
 
     abstract public void fireEvent(T listener, E event);
 }

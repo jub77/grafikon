@@ -86,7 +86,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
             Node node = (Node)cell.getUserObject();
             if (node == null)
                 continue;
-            Map attr = cell.getAttributes();
+            Map<?,?> attr = cell.getAttributes();
             Rectangle2D b = GraphConstants.getBounds(attr);
             if (!callChange) {
                 node.setPositionX(b.getBounds().x);
@@ -183,12 +183,12 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
 
     private void positionVertexAt(Object vertex, int x, int y) {
         DefaultGraphCell cell = netAdapter.getVertexCell(vertex);
-        Map attr = cell.getAttributes();
+        Map<?,?> attr = cell.getAttributes();
         Rectangle2D b = GraphConstants.getBounds(attr);
 
         GraphConstants.setBounds(attr, new Rectangle(x, y, (int) b.getWidth(), (int) b.getHeight()));
 
-        Map<GraphCell, Map> cellAttr = new HashMap<GraphCell, Map>();
+        Map<GraphCell, Map<?,?>> cellAttr = new HashMap<GraphCell, Map<?,?>>();
         cellAttr.put(cell, attr);
         netAdapter.edit(cellAttr, null, null, null);
     }

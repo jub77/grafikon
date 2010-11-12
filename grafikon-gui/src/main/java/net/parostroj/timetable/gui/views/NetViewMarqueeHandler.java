@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.event.MouseEvent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import org.jgraph.JGraph;
 import org.jgraph.graph.BasicMarqueeHandler;
@@ -14,13 +12,13 @@ import org.jgraph.graph.BasicMarqueeHandler;
  */
 public class NetViewMarqueeHandler extends BasicMarqueeHandler {
 
-    private JGraph graph;
+//    private JGraph graph;
 
     public NetViewMarqueeHandler() {
     }
 
     public void setGraph(JGraph graph) {
-        this.graph = graph;
+//        this.graph = graph;
     }
 
     @Override

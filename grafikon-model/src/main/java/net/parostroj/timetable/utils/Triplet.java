@@ -25,7 +25,7 @@ public class Triplet<T, V, U> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Triplet<T, V, U> other = (Triplet<T, V, U>) obj;
+        final Triplet<?, ?, ?> other = (Triplet<?, ?, ?>) obj;
         if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
             return false;
         }

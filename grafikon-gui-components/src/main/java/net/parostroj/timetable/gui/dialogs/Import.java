@@ -113,7 +113,7 @@ public abstract class Import<T extends ObjectWithId> {
         importedObjects = new HashSet<T>();
     }
 
-    public void importObjects(Collection<T> objects) {
+    public void importObjects(Collection<? extends T> objects) {
         this.clean();
         for (T object : objects) {
             this.importObjectImpl(object);
@@ -151,7 +151,7 @@ public abstract class Import<T extends ObjectWithId> {
 
     protected abstract void importObjectImpl(T o);
 
-    public static Import<? extends ObjectWithId> getInstance(ImportComponents components, TrainDiagram diagram,
+    public static Import<?> getInstance(ImportComponents components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
             case NODES:

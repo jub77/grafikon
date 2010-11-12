@@ -17,7 +17,8 @@ import net.parostroj.timetable.output2.OutputParams;
  */
 public class SelectionHelper {
 
-    public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
+    @SuppressWarnings("unchecked")
+	public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
         if (params.paramExistWithValue("routes")) {
             return (List<Route>) params.getParam("routes").getValue();
         } else {
@@ -38,7 +39,8 @@ public class SelectionHelper {
             return null;
     }
 
-    public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
+    @SuppressWarnings("unchecked")
+	public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
             OutputParam param = params.getParam("trains");
             return (List<Train>) param.getValue();
@@ -78,7 +80,8 @@ public class SelectionHelper {
         }
     }
 
-    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
+    @SuppressWarnings("unchecked")
+	public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
         OutputParam param = params.getParam("cycles");
         if (param != null && param.getValue() != null) {
             return (List<TrainsCycle>) param.getValue();
@@ -87,7 +90,8 @@ public class SelectionHelper {
         return s.sort(diagram.getCycles(type));
     }
 
-    public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
+    @SuppressWarnings("unchecked")
+	public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
         OutputParam param = params.getParam("stations");
         if (param != null && param.getValue() != null) {
             return (List<Node>) param.getValue();

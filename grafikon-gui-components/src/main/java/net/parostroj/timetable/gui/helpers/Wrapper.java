@@ -80,7 +80,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return w;
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(List<T> objList) {
+    public static <T> List<Wrapper<T>> getWrapperList(List<? extends T> objList) {
         List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
         Class<?> clazz = null;
         for (T o : objList) {

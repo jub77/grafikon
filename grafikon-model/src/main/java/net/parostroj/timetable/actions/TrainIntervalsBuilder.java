@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 public class TrainIntervalsBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainIntervalsBuilder.class.getName());
-    private TrainDiagram diagram;
     private Train train;
     private TimeInterval lastInterval;
     private int startTime;
@@ -23,7 +22,6 @@ public class TrainIntervalsBuilder {
     private List<TimeInterval> timeIntervals;
 
     public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
-        this.diagram = diagram;
         this.train = train;
         this.lastInterval = null;
         this.startTime = startTime;

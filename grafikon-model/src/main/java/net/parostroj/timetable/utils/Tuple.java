@@ -24,7 +24,7 @@ public class Tuple<V> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Tuple<V> other = (Tuple<V>) obj;
+        final Tuple<?> other = (Tuple<?>) obj;
         if (this.first != other.first && (this.first == null || !this.first.equals(other.first))) {
             return false;
         }

@@ -114,7 +114,7 @@ public class OutputAction extends AbstractAction {
         if (outputType.isSelection()) {
             ElementSelectionDialog<Object> selDialog = new ElementSelectionDialog<Object>(getFrame(), true);
             selDialog.setLocationRelativeTo(parent);
-            selection = selDialog.selectElements((List<Object>)ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
+            selection = selDialog.selectElements(ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
             if (selection == null)
                 return false;
         } else if (outputType == OutputType.TRAINS_SELECT_STATION) {
@@ -146,8 +146,8 @@ public class OutputAction extends AbstractAction {
         List<ExecutableOutput> eOutputs = new LinkedList<ExecutableOutput>();
         if (outputType.getOutputType() != null) {
             Output output = this.createOutput(outputType);
-            if (selection instanceof Collection) {
-                Collection<Object> c = (Collection<Object>)selection;
+            if (selection instanceof Collection<?>) {
+                Collection<?> c = (Collection<?>)selection;
                 for (Object item : c) {
                     OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile, outputType), item, outputType);
                     eOutputs.add(new ExecutableOutput(output, params));

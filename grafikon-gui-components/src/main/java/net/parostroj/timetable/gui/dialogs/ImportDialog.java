@@ -197,7 +197,8 @@ public class ImportDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+    @SuppressWarnings("unchecked")
+	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // import things
         importedObjects = new HashSet<ObjectWithId>();
         List<Object> errors = new LinkedList<Object>();

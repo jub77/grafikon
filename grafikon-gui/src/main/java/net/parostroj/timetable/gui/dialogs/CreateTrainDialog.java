@@ -16,8 +16,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class CreateTrainDialog extends javax.swing.JDialog {
     
-    private ApplicationModel model;
-    
     /**
      * Creates new form CreateTrainDialog.
      * 
@@ -27,7 +25,6 @@ public class CreateTrainDialog extends javax.swing.JDialog {
     public CreateTrainDialog(java.awt.Frame parent, ApplicationModel model) {
         super(parent, true);
         initComponents();
-        this.model = model;
         createTrainView.setModel(model);
         
         // fix size

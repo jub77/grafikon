@@ -75,7 +75,7 @@ public class TrainTreeNodeType implements TrainTreeNode {
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<?> children() {
         return Collections.enumeration(children);
     }
     
