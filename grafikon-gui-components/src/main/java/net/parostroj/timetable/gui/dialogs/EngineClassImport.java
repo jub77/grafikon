@@ -1,7 +1,10 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.Map;
 import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.WeightTableRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,22 @@ public class EngineClassImport extends Import<EngineClass> {
 
         // create new engine class
         EngineClass engineClass = new EngineClass(this.getId(importedEngineClass), importedEngineClass.getName());
+
+        // process weight rows
+        for (WeightTableRow impRow : importedEngineClass.getWeightTable()) {
+            WeightTableRow row = engineClass.createWeightTableRow(impRow.getSpeed());
+            for (Map.Entry<LineClass, Integer> impEntry : impRow.getWeights().entrySet()) {
+                LineClass lineClass = this.getLineClass(impEntry.getKey());
+                if (lineClass == null) {
+                    String message = "Line class missing: " + impEntry.getKey().getName();
+                    this.addError(importedEngineClass, message);
+                    LOG.trace(message);
+                    return;
+                }
+                row.setWeightInfo(lineClass, impEntry.getValue());
+            }
+            engineClass.addWeightTableRow(row);
+        }
 
         // add to diagram
         this.getDiagram().addEngineClass(engineClass);
