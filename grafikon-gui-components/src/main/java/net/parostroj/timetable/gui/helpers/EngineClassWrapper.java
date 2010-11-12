@@ -1,16 +1,16 @@
 package net.parostroj.timetable.gui.helpers;
 
-import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.EngineClass;
 
 /**
- * Line class wrapper.
+ * Engine class wrapper.
  *
  * @author jub
  */
-public class LineClassWrapper extends Wrapper<LineClass> {
+public class EngineClassWrapper extends Wrapper<EngineClass> {
 
-    public LineClassWrapper(LineClass lineClass) {
-        super(lineClass);
+    public EngineClassWrapper(EngineClass engineClass) {
+        super(engineClass);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class LineClassWrapper extends Wrapper<LineClass> {
         return toString(getElement());
     }
 
-    public static String toString(LineClass lineClass) {
-        return lineClass.getName();
+    public static String toString(EngineClass engineClass) {
+        return engineClass.getName();
     }
 }

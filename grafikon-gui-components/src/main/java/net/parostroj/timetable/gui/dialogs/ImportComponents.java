@@ -18,6 +18,7 @@ public enum ImportComponents {
     NODES("import.stations"),
     TRAIN_TYPES("import.train_types"),
     LINE_CLASSES("import.line_classes"),
+    ENGINE_CLASSES("import.engine_classes"),
     TRAINS("import.trains");
 
     private String key;
@@ -52,6 +53,8 @@ public enum ImportComponents {
             case LINE_CLASSES:
                 map.addAll(diagram.getNet().getLineClasses());
                 break;
+            case ENGINE_CLASSES:
+                map.addAll(diagram.getEngineClasses());
         }
         return map;
     }

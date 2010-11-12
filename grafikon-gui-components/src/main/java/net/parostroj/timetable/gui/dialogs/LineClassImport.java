@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class LineClassImport extends Import {
+public class LineClassImport extends Import<LineClass> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LineClassImport.class.getName());
 
@@ -19,7 +19,7 @@ public class LineClassImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(Object o) {
+    protected void importObjectImpl(LineClass o) {
         // check class
         if (!(o instanceof LineClass))
             return;

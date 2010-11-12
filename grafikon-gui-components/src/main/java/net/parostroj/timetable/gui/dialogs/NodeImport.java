@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class NodeImport extends Import {
+class NodeImport extends Import<Node> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeImport.class.getName());
 
@@ -20,7 +20,7 @@ class NodeImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(Object o) {
+    protected void importObjectImpl(Node o) {
         // check class
         if (!(o instanceof Node))
             return;

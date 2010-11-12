@@ -39,7 +39,7 @@ public class ImportDialog extends javax.swing.JDialog {
     private TrainDiagram libraryDiagram;
     private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
 
-    private Map<ImportComponents, Set<Object>> selectedItems;
+    private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
     private Set<ObjectWithId> importedObjects;
 
     /** Creates new form ExportImportDialog */
@@ -48,7 +48,7 @@ public class ImportDialog extends javax.swing.JDialog {
         initComponents();
 
         // create map
-        selectedItems = new EnumMap<ImportComponents, Set<Object>>(ImportComponents.class);
+        selectedItems = new EnumMap<ImportComponents, Set<ObjectWithId>>(ImportComponents.class);
         // initialize combo box with components and create sets
         for (ImportComponents comps : ImportComponents.values()) {
             componentComboBox.addItem(comps);
@@ -68,7 +68,7 @@ public class ImportDialog extends javax.swing.JDialog {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
         for (ImportComponents comps : ImportComponents.values()) {
-            selectedItems.put(comps, new HashSet<Object>());
+            selectedItems.put(comps, new HashSet<ObjectWithId>());
         }
         updateDialog();
     }
@@ -202,9 +202,9 @@ public class ImportDialog extends javax.swing.JDialog {
 
         // for all types
         for (ImportComponents component : ImportComponents.values()) {
-            Set<Object> objects = selectedItems.get(component);
+            Set<ObjectWithId> objects = selectedItems.get(component);
             if (objects != null) {
-                Import imp = Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
+                Import<ObjectWithId> imp = (Import<ObjectWithId>) Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
                 imp.importObjects(objects);
                 importedObjects.addAll(imp.getImportedObjects());
                 errors.addAll(imp.getErrors());
@@ -286,7 +286,7 @@ public class ImportDialog extends javax.swing.JDialog {
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
             return;
         }
-        Set<Object> sel = selectedItems.get(comps);
+        Set<ObjectWithId> sel = selectedItems.get(comps);
         // remove already selected
         all.removeAll(sel);
         fillList(comps, componentsList, all);
@@ -294,8 +294,8 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     @SuppressWarnings("unchecked")
-    private void fillList(ImportComponents comps, JList list, Set<Object> set) {
-        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers(set), set);
+    private void fillList(ImportComponents comps, JList list, Set<? extends Object> set) {
+        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers((Set<Object>)set), set);
         list.setModel(model);
     }
 

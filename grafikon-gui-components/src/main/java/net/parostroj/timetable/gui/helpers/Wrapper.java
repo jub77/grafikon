@@ -72,6 +72,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             w = (Wrapper)new TimeIntervalWrapper((TimeInterval)o);
         } else if (o instanceof LineClass) {
             w = (Wrapper)new LineClassWrapper((LineClass)o);
+        } else if (o instanceof EngineClass) {
+            w = (Wrapper)new EngineClassWrapper((EngineClass)o);
         } else {
             throw new IllegalArgumentException("Not supported type: " + o.getClass());
         }

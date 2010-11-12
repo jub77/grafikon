@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TrainImport extends Import {
+public class TrainImport extends Import<Train> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainImport.class.getName());
 
@@ -22,7 +22,7 @@ public class TrainImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(Object importedObject) {
+    protected void importObjectImpl(Train importedObject) {
         // check class
         if (!(importedObject instanceof Train)) {
             // skip other objects

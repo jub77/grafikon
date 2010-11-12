@@ -9,14 +9,14 @@ import net.parostroj.timetable.utils.IdGenerator;
  *
  * @author jub
  */
-public abstract class Import {
+public abstract class Import<T extends ObjectWithId> {
 
     private ImportMatch match;
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
 
-    private List<ObjectWithId> errors;
-    private Set<ObjectWithId> importedObjects;
+    private List<T> errors;
+    private Set<T> importedObjects;
 
     public Import(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         this.match = match;
@@ -88,6 +88,18 @@ public abstract class Import {
         }
     }
 
+    protected EngineClass getEngineClass(EngineClass origEngineClass) {
+        if (match == ImportMatch.ID)
+            return diagram.getEngineClassById(origEngineClass.getId());
+        else {
+            for (EngineClass engineClass : diagram.getEngineClasses()) {
+                if (engineClass.getName().equals(origEngineClass.getName()))
+                    return engineClass;
+            }
+            return null;
+        }
+    }
+
     protected String getId(ObjectWithId oid) {
         if (match == ImportMatch.ID) {
             return oid.getId();
@@ -97,27 +109,27 @@ public abstract class Import {
     }
 
     protected void clean() {
-        errors = new LinkedList<ObjectWithId>();
-        importedObjects = new HashSet<ObjectWithId>();
+        errors = new LinkedList<T>();
+        importedObjects = new HashSet<T>();
     }
 
-    public void importObjects(Collection<Object> objects) {
+    public void importObjects(Collection<T> objects) {
         this.clean();
-        for (Object object : objects) {
+        for (T object : objects) {
             this.importObjectImpl(object);
         }
     }
 
-    public void importObject(Object object) {
+    public void importObject(T object) {
         this.clean();
         this.importObjectImpl(object);
     }
 
-    protected void addError(ObjectWithId o, String explanation) {
+    protected void addError(T o, String explanation) {
         errors.add(o);
     }
 
-    protected void addImportedObject(ObjectWithId o) {
+    protected void addImportedObject(T o) {
         importedObjects.add(o);
     }
 
@@ -129,17 +141,17 @@ public abstract class Import {
         return libraryDiagram;
     }
 
-    public List<ObjectWithId> getErrors() {
+    public List<T> getErrors() {
         return errors;
     }
 
-    public Set<ObjectWithId> getImportedObjects() {
+    public Set<T> getImportedObjects() {
         return importedObjects;
     }
 
-    protected abstract void importObjectImpl(Object o);
+    protected abstract void importObjectImpl(T o);
 
-    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
+    public static Import<? extends ObjectWithId> getInstance(ImportComponents components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
             case NODES:
@@ -150,6 +162,8 @@ public abstract class Import {
                 return new TrainTypeImport(diagram, library, match);
             case LINE_CLASSES:
                 return new LineClassImport(diagram, library, match);
+            case ENGINE_CLASSES:
+                return new EngineClassImport(diagram, library, match);
         }
         return null;
     }
