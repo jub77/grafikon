@@ -17,33 +17,41 @@ import net.parostroj.timetable.output2.OutputParams;
  */
 public class SelectionHelper {
 
-    @SuppressWarnings("unchecked")
-	public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
+    public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
         if (params.paramExistWithValue("routes")) {
-            return (List<Route>) params.getParam("routes").getValue();
+            return getList((List<?>) params.getParam("routes").getValue(), Route.class);
         } else {
             RoutesExtractor extractor = new RoutesExtractor(diagram);
             TrainsCycle cycle = getDriverCycle(params);
             if (cycle != null) {
                 Set<Line> lines = extractor.getLinesForCycle(cycle);
                 return extractor.getRoutesForLines(lines);
-            } else
+            } else {
                 return extractor.getRoutesForTrains(trains);
+            }
         }
     }
 
-    public static TrainsCycle getDriverCycle(OutputParams params) {
-        if (params.paramExistWithValue("driver_cycle"))
-            return (TrainsCycle) params.getParam("driver_cycle").getValue();
-        else
-            return null;
+    private static <T> List<T> getList(List<?> orig, Class<T> clazz) {
+        List<T> dest = new LinkedList<T>();
+        for (Object o : orig) {
+            dest.add(clazz.cast(o));
+        }
+        return dest;
     }
 
-    @SuppressWarnings("unchecked")
-	public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
+    public static TrainsCycle getDriverCycle(OutputParams params) {
+        if (params.paramExistWithValue("driver_cycle")) {
+            return (TrainsCycle) params.getParam("driver_cycle").getValue();
+        } else {
+            return null;
+        }
+    }
+
+    public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
             OutputParam param = params.getParam("trains");
-            return (List<Train>) param.getValue();
+            return getList((List<?>) param.getValue(), Train.class);
         } else if (params.paramExistWithValue("station")) {
             Node station = (Node) params.getParam("station").getValue();
             return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
@@ -55,7 +63,7 @@ public class SelectionHelper {
             }
             return trains;
         } else if (params.paramExistWithValue("routes")) {
-            List<Route> routes = (List<Route>) params.getParam("routes").getValue();
+            List<Route> routes = getList((List<?>) params.getParam("routes").getValue(), Route.class);
             Set<Train> trains = new HashSet<Train>();
             for (Route route : routes) {
                 for (RouteSegment seg : route.getSegments()) {
@@ -80,21 +88,19 @@ public class SelectionHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
-	public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
+    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
         OutputParam param = params.getParam("cycles");
         if (param != null && param.getValue() != null) {
-            return (List<TrainsCycle>) param.getValue();
+            return getList((List<?>) param.getValue(), TrainsCycle.class);
         }
         TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
         return s.sort(diagram.getCycles(type));
     }
 
-    @SuppressWarnings("unchecked")
-	public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
+    public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
         OutputParam param = params.getParam("stations");
         if (param != null && param.getValue() != null) {
-            return (List<Node>) param.getValue();
+            return getList((List<?>) param.getValue(), Node.class);
         }
         NodeSort s = new NodeSort(NodeSort.Type.ASC);
         return s.sort(diagram.getNet().getNodes(), new NodeFilter() {
