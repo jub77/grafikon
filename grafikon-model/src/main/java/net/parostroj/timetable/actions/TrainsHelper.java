@@ -91,7 +91,7 @@ public class TrainsHelper {
             throw new IllegalArgumentException("Weight can be returned only for line interval.");
         }
         Pair<Integer, List<TrainsCycleItem>> retValue = null;
-        LineClass lineClass = (LineClass) interval.getOwnerAsLine().getAttribute("line.class");
+        LineClass lineClass = interval.getLineClass();
         List<TrainsCycleItem> items = getEngineCyclesForInterval(interval);
         List<EngineClass> engines = getEngineClasses(items);
         if (lineClass != null && !engines.isEmpty()) {

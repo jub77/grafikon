@@ -313,6 +313,16 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public NodeTrack getToStraightTrack() {
         return (owner instanceof Line) ? ((LineTrack) track).getToStraightTrack(direction) : null;
     }
+    
+    /**
+     * @return line class for interval that belongs to line (otherwise an error is thrown).
+     */
+    public LineClass getLineClass() {
+        if (isLineOwner()) {
+            return getOwnerAsLine().getLineClass(direction);
+        } else
+            throw new IllegalStateException("Cannot get line class for node interval.");
+    }
 
     public void removeFromOwner() {
         if (!isAttached())

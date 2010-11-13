@@ -19,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable {
+public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, LineAttributes {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -341,6 +341,15 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     public Node getTo(TimeIntervalDirection direction) {
         return (direction == TimeIntervalDirection.FORWARD) ? to : from;
+    }
+
+    public LineClass getLineClass(TimeIntervalDirection direction) {
+        LineClass result = null;
+        if (direction == TimeIntervalDirection.BACKWARD)
+            result = (LineClass) getAttribute(ATTR_CLASS_BACK);
+        if (direction == TimeIntervalDirection.FORWARD || result == null)
+            result = (LineClass) getAttribute(ATTR_CLASS);
+        return result;
     }
 
     @Override

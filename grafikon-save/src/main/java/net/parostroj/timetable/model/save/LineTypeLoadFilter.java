@@ -15,7 +15,7 @@ public class LineTypeLoadFilter implements TrainDiagramFilter {
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
         if (version.getMajorVersion() <= 2) {
             for (Line line : diagram.getNet().getLines()) {
-                line.setAttribute("line.controlled", "D3".equals(line.getAttribute("line.type")));
+                line.setAttribute(Line.ATTR_CONTROLLED, "D3".equals(line.getAttribute("line.type")));
                 line.removeAttribute("line.type");
             }
         }

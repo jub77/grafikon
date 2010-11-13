@@ -129,7 +129,7 @@ public class WeightDataExtractor {
     private boolean checkLineClasses() {
         for (TimeInterval interval : train.getTimeIntervalList()) {
             if (interval.isLineOwner()) {
-                if (interval.getOwnerAsLine().getAttribute("line.class") == null)
+                if (interval.getLineClass() == null)
                     return false;
             }
         }

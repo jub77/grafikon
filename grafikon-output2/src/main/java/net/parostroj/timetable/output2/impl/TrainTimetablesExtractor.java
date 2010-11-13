@@ -74,7 +74,7 @@ public class TrainTimetablesExtractor {
         timetable.setCompleteName(train.getCompleteName());
         this.extractRouteInfo(train, timetable);
         this.extractDieselElectric(train, timetable);
-        if (train.oneLineHasAttribute("line.controlled", Boolean.TRUE))
+        if (train.oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
         WeightDataExtractor wex = new WeightDataExtractor(train);
         timetable.setWeightData(wex.getData());
@@ -213,7 +213,7 @@ public class TrainTimetablesExtractor {
                 }
             }
 
-            LineClass lineClass = lineI != null ? (LineClass) lineI.getOwnerAsLine().getAttribute("line.class") : null;
+            LineClass lineClass = lineI != null ? lineI.getLineClass() : null;
             if (lineClass != null)
                 row.setLineClass(lineClass.getName());
 
@@ -243,7 +243,7 @@ public class TrainTimetablesExtractor {
         // get all lines for node
         boolean check = true;
         for (Line line : diagram.getNet().getLinesOf(node)) {
-            check = check && Boolean.TRUE.equals(line.getAttribute("line.controlled"));
+            check = check && Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED));
         }
         return check;
     }

@@ -89,7 +89,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         
         lengthEditBox.setValue(line.getLength());
         
-        controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute("line.controlled")));
+        controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED)));
         
         // update line class combo box
         List<LineClass> classes = model.getDiagram().getNet().getLineClasses();
@@ -98,10 +98,10 @@ public class EditLineDialog extends javax.swing.JDialog {
         for (LineClass clazz : classes) {
             lineClassComboBox.addItem(clazz);
         }
-        if (line.getAttribute("line.class") == null)
+        if (line.getAttribute(Line.ATTR_CLASS) == null)
             lineClassComboBox.setSelectedItem(noneLineClass);
         else
-            lineClassComboBox.setSelectedItem(line.getAttribute("line.class"));
+            lineClassComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS));
         
         this.updateTracks(null);
 
@@ -188,16 +188,16 @@ public class EditLineDialog extends javax.swing.JDialog {
                 line.addTrack(track);
         }
 
-        Boolean bool = (Boolean) line.getAttribute("line.controlled");
+        Boolean bool = (Boolean) line.getAttribute(Line.ATTR_CONTROLLED);
         if ((bool == null && controlledCheckBox.isSelected()) || (bool != null && controlledCheckBox.isSelected() != bool.booleanValue()))
-            line.setAttribute("line.controlled", controlledCheckBox.isSelected());
+            line.setAttribute(Line.ATTR_CONTROLLED, controlledCheckBox.isSelected());
 
         // set line class
         if (lineClassComboBox.getSelectedItem() == noneLineClass)
-            line.removeAttribute("line.class");
+            line.removeAttribute(Line.ATTR_CLASS);
         else {
-            if (lineClassComboBox.getSelectedItem() != line.getAttribute("line.class"))
-                line.setAttribute("line.class", lineClassComboBox.getSelectedItem());
+            if (lineClassComboBox.getSelectedItem() != line.getAttribute(Line.ATTR_CLASS))
+                line.setAttribute(Line.ATTR_CLASS, lineClassComboBox.getSelectedItem());
         }
 
         if (recalculate) {
