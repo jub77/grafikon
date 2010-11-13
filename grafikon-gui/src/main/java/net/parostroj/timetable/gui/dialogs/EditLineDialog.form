@@ -28,8 +28,15 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="okButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="fromToLabel" alignment="0" pref="305" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel9" pref="108" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jLabel5" max="32767" attributes="1"/>
                               <Component id="jLabel4" max="32767" attributes="1"/>
@@ -39,33 +46,28 @@
                               <Component id="jLabel7" alignment="0" max="32767" attributes="1"/>
                           </Group>
                           <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" pref="97" max="32767" attributes="1"/>
+                          <Component id="jLabel1" alignment="0" pref="108" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="controlledCheckBox" min="-2" max="-2" attributes="0"/>
                           <Component id="unlimitedSpeedCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="speedTextField" alignment="0" pref="204" max="32767" attributes="0"/>
-                          <Component id="fromDirectTrackComboBox" alignment="0" pref="204" max="32767" attributes="0"/>
-                          <Component id="toDirectTrackComboBox" alignment="0" pref="204" max="32767" attributes="0"/>
+                          <Component id="speedTextField" alignment="0" pref="193" max="32767" attributes="0"/>
+                          <Component id="fromDirectTrackComboBox" alignment="0" pref="193" max="32767" attributes="0"/>
+                          <Component id="toDirectTrackComboBox" alignment="0" pref="193" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="scrollPane" pref="91" max="32767" attributes="0"/>
+                              <Component id="scrollPane" pref="65" max="32767" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="deleteTrackButton" pref="107" max="32767" attributes="0"/>
-                                  <Component id="newTrackButton" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="deleteTrackButton" pref="122" max="32767" attributes="0"/>
+                                  <Component id="newTrackButton" alignment="0" pref="122" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="lineClassComboBox" alignment="0" pref="204" max="32767" attributes="0"/>
-                          <Component id="lengthEditBox" alignment="1" pref="204" max="32767" attributes="0"/>
+                          <Component id="lineClassComboBox" alignment="0" pref="193" max="32767" attributes="0"/>
+                          <Component id="lengthEditBox" alignment="1" pref="193" max="32767" attributes="0"/>
+                          <Component id="lineClassBackComboBox" pref="193" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="okButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="fromToLabel" alignment="0" pref="305" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -100,6 +102,11 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lineClassComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lineClassBackComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -299,6 +306,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="lineClassChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
@@ -328,6 +338,23 @@
       </Properties>
     </Component>
     <Component class="net.parostroj.timetable.gui.components.LengthEditBox" name="lengthEditBox">
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel9">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="gt_texts.properties" key="editline.lineclass.back" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="lineClassBackComboBox">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="lineClassChanged"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
