@@ -263,7 +263,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         fromToLabel = new javax.swing.JLabel();
         lengthEditBox = new net.parostroj.timetable.gui.components.LengthEditBox();
-        jLabel9 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
         lineClassBackComboBox = new javax.swing.JComboBox();
 
         setTitle(ResourceLoader.getString("editline.title")); // NOI18N
@@ -556,7 +556,6 @@ public class EditLineDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteTrackButton;
     private javax.swing.JComboBox fromDirectTrackComboBox;
     private javax.swing.JLabel fromToLabel;
-    private javax.swing.JLabel jLabel9;
     private net.parostroj.timetable.gui.components.LengthEditBox lengthEditBox;
     private javax.swing.JComboBox lineClassBackComboBox;
     private javax.swing.JComboBox lineClassComboBox;
