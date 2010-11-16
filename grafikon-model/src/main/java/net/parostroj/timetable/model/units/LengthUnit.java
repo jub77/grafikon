@@ -1,5 +1,8 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.units;
 
+import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -7,27 +10,28 @@ import java.util.ResourceBundle;
  *
  * @author jub
  */
-public enum LengthUnit {
-    MM(1, "mm", true),
-    CM(10, "cm", true),
-    M(1000, "m", true),
-    KM(1000 * 1000, "km", true),
-    INCH(25.4, "inch", true),
-    YARD(914.4, "yard", true),
-    MILE(1609.344 * 1000, "mile", true),
-    AXLE(0, "axles", false);
+public enum LengthUnit implements Unit {
+    MM(new BigDecimal(1), "mm", true),
+    CM(new BigDecimal(10), "cm", true),
+    M(new BigDecimal(1000), "m", true),
+    KM(new BigDecimal(1000 * 1000), "km", true),
+    INCH(new BigDecimal(25.4), "inch", true),
+    YARD(new BigDecimal(914.4), "yard", true),
+    MILE(new BigDecimal(1609.344 * 1000), "mile", true),
+    AXLE(null, "axle", false);
 
-    private double ratio;
+    private BigDecimal ratio;
     private String key;
     private boolean scaleDependent;
 
-    private LengthUnit(double ratio, String key, boolean scaleDependent) {
+    private LengthUnit(BigDecimal ratio, String key, boolean scaleDependent) {
         this.ratio = ratio;
         this.key = key;
         this.scaleDependent = scaleDependent;
     }
 
-    public double getRatio() {
+    @Override
+    public BigDecimal getRatio() {
         return ratio;
     }
 
@@ -40,37 +44,40 @@ public enum LengthUnit {
     }
 
     /**
-     * converts from base mm to some other unit.
+     * converts from this to some other unit.
      *
      * @param value value
+     * @param to to unit
      * @return converted value
      */
-    public double convertTo(int value) {
-        if (!scaleDependent)
-            throw new IllegalStateException("Cannot convert to scale independent value.");
-        return value / ratio;
+    @Override
+    public BigDecimal convertTo(BigDecimal value, Unit to) {
+        return UnitUtil.convert(value, this, to);
     }
 
     /**
-     * converts to base mm from other unit.
+     * converts from other unit to this.
      *
      * @param value value
+     * @param from from unit
      * @return converted value
      */
-    public int convertFrom(double value) {
-        if (!scaleDependent)
-            throw new IllegalStateException("Cannot convert from scale independent value.");
-        return (int)Math.round(value * ratio);
+    @Override
+    public BigDecimal convertFrom(BigDecimal value, Unit from) {
+        return UnitUtil.convert(value, from, this);
     }
 
+    @Override
     public String getUnitString() {
         return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("unit." + key);
     }
 
+    @Override
     public String getUnitsString() {
         return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units." + key);
     }
 
+    @Override
     public String getUnitsOfString() {
         return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units.of" + key);
     }
@@ -92,5 +99,13 @@ public enum LengthUnit {
                 return unit;
         }
         return null;
+    }
+
+    public static List<LengthUnit> getScaleDependent() {
+        List<LengthUnit> dep = new LinkedList<LengthUnit>();
+        for (LengthUnit unit : values())
+            if (unit.isScaleDependent())
+                dep.add(unit);
+        return dep;
     }
 }

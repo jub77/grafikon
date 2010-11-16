@@ -6,18 +6,22 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.event.ItemEvent;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import net.parostroj.timetable.gui.views.NodeTypeWrapper;
-import net.parostroj.timetable.model.LengthUnit;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Edit dialog for node.
@@ -25,6 +29,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * @author jub
  */
 public class EditNodeDialog extends javax.swing.JDialog {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EditNodeDialog.class);
 
     private static class EditTrack {
         public NodeTrack track;
@@ -71,6 +77,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         for (NodeType type : NodeType.values()) {
             typeComboBox.addItem(NodeTypeWrapper.getWrapper(type));
         }
+
+        // set units
+        lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
 
     public boolean isModified() {
@@ -110,9 +119,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // set node length
         Integer length = (Integer)node.getAttribute("length");
         if (length != null) {
-            lengthEditBox.setValue(length);
+            lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
         } else {
-            lengthEditBox.setValue(0);
+            lengthEditBox.setValue(new BigDecimal(0));
         }
         lengthCheckBox.setSelected(length != null);
         lengthEditBox.setEnabled(length != null);
@@ -154,10 +163,14 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         // length
         if (lengthCheckBox.isSelected()) {
-            Integer length = lengthEditBox.getValue();
-            Integer oldLength = (Integer) node.getAttribute("length");
-            if (!length.equals(oldLength))
-                node.setAttribute("length", length);
+            try {
+                Integer length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
+                Integer oldLength = (Integer) node.getAttribute("length");
+                if (!length.equals(oldLength))
+                    node.setAttribute("length", length);
+            } catch (ArithmeticException e) {
+                LOG.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
+            }
         } else {
             node.removeAttribute("length");
         }
@@ -206,7 +219,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         platformCheckBox = new javax.swing.JCheckBox();
         lineEndCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
-        lengthEditBox = new net.parostroj.timetable.gui.components.LengthEditBox();
+        lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         lengthCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -482,7 +495,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox controlCheckBox;
     private javax.swing.JButton deleteTrackButton;
     private javax.swing.JCheckBox lengthCheckBox;
-    private net.parostroj.timetable.gui.components.LengthEditBox lengthEditBox;
+    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthEditBox;
     private javax.swing.JCheckBox lineEndCheckBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newTrackButton;

@@ -13,10 +13,10 @@ import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
-import net.parostroj.timetable.model.LengthUnit;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.units.LengthUnit;
 
 /**
  * Application model.

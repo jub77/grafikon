@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.event.ItemEvent;
+import java.math.BigDecimal;
 import java.util.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -13,6 +14,8 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
@@ -39,6 +42,9 @@ public class EditLineDialog extends javax.swing.JDialog {
     public EditLineDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+        // set units
+        lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
     
     public void setModel(ApplicationModel model) {
@@ -87,7 +93,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             speedTextField.setEditable(true);
         }
         
-        lengthEditBox.setValue(line.getLength());
+        lengthEditBox.setValueInUnit(new BigDecimal(line.getLength()), LengthUnit.MM);
         
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED)));
         
@@ -160,7 +166,12 @@ public class EditLineDialog extends javax.swing.JDialog {
         // recalculate flag
         boolean recalculate = false;
         modified = true;
-        int length = lengthEditBox.getValue();
+        int length = line.getLength();
+        try {
+            length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
+        } catch (ArithmeticException e) {
+            LOGGER.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
+        }
         int speed = line.getTopSpeed();
         try {
             if (!unlimitedSpeedCheckBox.isSelected())
@@ -262,7 +273,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         fromToLabel = new javax.swing.JLabel();
-        lengthEditBox = new net.parostroj.timetable.gui.components.LengthEditBox();
+        lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
         lineClassBackComboBox = new javax.swing.JComboBox();
 
@@ -556,7 +567,7 @@ public class EditLineDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteTrackButton;
     private javax.swing.JComboBox fromDirectTrackComboBox;
     private javax.swing.JLabel fromToLabel;
-    private net.parostroj.timetable.gui.components.LengthEditBox lengthEditBox;
+    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthEditBox;
     private javax.swing.JComboBox lineClassBackComboBox;
     private javax.swing.JComboBox lineClassComboBox;
     private javax.swing.JButton newTrackButton;

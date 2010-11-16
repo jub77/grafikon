@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui;
 
-import net.parostroj.timetable.model.LengthUnit;
+import net.parostroj.timetable.model.units.LengthUnit;
 
 /**
  * Settings of the program.

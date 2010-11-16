@@ -127,7 +127,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         scaleComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         ratioComboBox = new javax.swing.JComboBox();
-        panel1 = new javax.swing.JPanel();
+        javax.swing.JPanel panel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
@@ -136,11 +136,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         completeNameTemplateTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         sortComboBox = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         stationTransferTextField = new javax.swing.JTextField();
         lengthInAxlesCheckBox = new javax.swing.JCheckBox();
         changesTrackingCheckBox = new javax.swing.JCheckBox();
-        jLabel7 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         stationLengthUnitTextField = new javax.swing.JTextField();
         javax.swing.JPanel ratioPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
@@ -568,13 +568,10 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox changesTrackingCheckBox;
     private javax.swing.JTextField completeNameTemplateTextField;
     private javax.swing.JTextField emptyRatioTextField;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JCheckBox lengthInAxlesCheckBox;
     private javax.swing.JTextField loadedRatioTextField;
     private javax.swing.JTextField nameTemplateTextField;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel panel1;
     private javax.swing.JComboBox ratioComboBox;
     private javax.swing.JTextField rlRatioTextField;
     private javax.swing.JTextField rlUnitTextField;

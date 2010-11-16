@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.actions.ActionUtils;
-import net.parostroj.timetable.model.LengthUnit;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**

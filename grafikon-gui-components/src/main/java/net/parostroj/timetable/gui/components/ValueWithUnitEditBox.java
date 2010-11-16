@@ -1,11 +1,16 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.event.ItemEvent;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.List;
+
 import javax.swing.JFormattedTextField;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
-import net.parostroj.timetable.model.LengthUnit;
+
+import net.parostroj.timetable.model.units.Unit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,30 +19,38 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class LengthEditBox extends javax.swing.JPanel {
+public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LengthEditBox.class);
-
-    private int value;
+    private static final Logger LOG = LoggerFactory.getLogger(ValueWithUnitEditBox.class);
+    private BigDecimal value;
+    private List<? extends Unit> units;
 
     /** Creates new form LengthEditBox */
-    public LengthEditBox() {
+    public ValueWithUnitEditBox() {
         initComponents();
-
-        // fill unit combo box
-        for (LengthUnit unit : LengthUnit.values()) {
-            if (unit.isScaleDependent())
-                unitComboBox.addItem(unit);
-        }
 
         DecimalFormat format = new  DecimalFormat("#0.########");
         format.setDecimalSeparatorAlwaysShown(false);
+        format.setParseBigDecimal(true);
         NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setMinimum(Double.valueOf(0.0));
+        formatter.setValueClass(BigDecimal.class);
+        formatter.setMinimum(new BigDecimal(0));
         valueTextField.setFormatterFactory(new DefaultFormatterFactory(formatter));
         valueTextField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
-        setValue(0);
+        setValue(new BigDecimal(0));
+    }
+    
+    public void setUnits(List<? extends Unit> units) {
+        this.units = units;
+        // fill combo box
+        unitComboBox.removeAllItems();
+        for (Unit unit : units)
+            unitComboBox.addItem(unit);
+    }
+    
+    public List<? extends Unit> getUnits() {
+        return this.units;
     }
 
     public void setValueColumns(int length) {
@@ -47,48 +60,55 @@ public class LengthEditBox extends javax.swing.JPanel {
     public int getValueColumns() {
         return valueTextField.getColumns();
     }
-
-    public int getValue() {
-        return getValueImpl(getUnit());
+    
+    public BigDecimal getValueInUnit(Unit unit) {
+        return unit.convertFrom(getValue(), getUnit());
+    }
+    
+    public void setValueInUnit(BigDecimal dValue, Unit unit) {
+        this.setValue(unit.convertTo(dValue, getUnit()));
     }
 
-    private int getValueImpl(LengthUnit unit) {
+    public BigDecimal getValue() {
+        return getValueImpl();
+    }
+
+    private BigDecimal getValueImpl() {
         // convert to double
         try {
             valueTextField.commitEdit();
-            Double valueDouble = this.getValueFromField();
-            return unit.convertFrom(valueDouble);
+            BigDecimal dValue = this.getValueFromField();
+            return dValue;
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-            setValueImpl(this.value, unit);
+            setValueImpl(this.value);
             return this.value;
         }
     }
 
-    public void setValue(int value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
-        setValueImpl(value, getUnit());
+        setValueImpl(value);
     }
 
-    private void setValueImpl(int value, LengthUnit unit) {
-        double valueDouble = unit.convertTo(value);
-        this.setValueToField(valueDouble);
+    private void setValueImpl(BigDecimal dValue) {
+        this.setValueToField(dValue);
         valueTextField.setCaretPosition(0);
     }
 
-    public LengthUnit getUnit() {
-        return (LengthUnit) unitComboBox.getSelectedItem();
+    public Unit getUnit() {
+        return (Unit) unitComboBox.getSelectedItem();
     }
 
-    public void setUnit(LengthUnit unit) {
+    public void setUnit(Unit unit) {
         unitComboBox.setSelectedItem(unit);
     }
 
-    private double getValueFromField() {
-        return ((Number) valueTextField.getValue()).doubleValue();
+    private BigDecimal getValueFromField() {
+        return (BigDecimal) valueTextField.getValue();
     }
 
-    private void setValueToField(double dValue) {
+    private void setValueToField(BigDecimal dValue) {
         valueTextField.setValue(dValue);
     }
 
@@ -122,17 +142,18 @@ public class LengthEditBox extends javax.swing.JPanel {
         add(unitComboBox, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
 
-    private LengthUnit deselected;
+    private Unit deselected;
 
     private void unitComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_unitComboBoxItemStateChanged
         if (evt.getStateChange() == ItemEvent.DESELECTED) {
-            deselected = (LengthUnit) evt.getItem();
+            deselected = (Unit) evt.getItem();
         } else {
             if (deselected != null) {
-                LengthUnit selected = (LengthUnit) evt.getItem();
+                Unit selected = (Unit) evt.getItem();
                 // conversion
-                int cValue = getValueImpl(deselected);
-                setValueImpl(cValue, selected);
+                BigDecimal dValue = getValueImpl();
+                dValue = selected.convertFrom(dValue, deselected);
+                setValueImpl(dValue);
                 deselected = null;
             }
         }

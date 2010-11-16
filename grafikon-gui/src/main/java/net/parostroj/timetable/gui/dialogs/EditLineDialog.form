@@ -337,7 +337,7 @@
         <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
     </Component>
-    <Component class="net.parostroj.timetable.gui.components.LengthEditBox" name="lengthEditBox">
+    <Component class="net.parostroj.timetable.gui.components.ValueWithUnitEditBox" name="lengthEditBox">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
       <Properties>
