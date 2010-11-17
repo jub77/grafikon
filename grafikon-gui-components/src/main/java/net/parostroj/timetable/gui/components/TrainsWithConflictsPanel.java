@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.gui.helpers.TrainWrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.TrainWrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Train;
 
 /**

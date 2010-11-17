@@ -10,7 +10,7 @@ import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
-import net.parostroj.timetable.gui.helpers.TrainWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainWrapper;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;

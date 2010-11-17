@@ -1,16 +1,16 @@
-package net.parostroj.timetable.gui.helpers;
+package net.parostroj.timetable.gui.wrappers;
 
-import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainsCycle;
 
 /**
- * Train type wrapper.
+ * Trains cycle wrapper.
  *
  * @author jub
  */
-public class TrainsTypeWrapper extends Wrapper<TrainType> {
+public class TrainsCycleWrapper extends Wrapper<TrainsCycle> {
 
-    public TrainsTypeWrapper(TrainType trainType) {
-        super(trainType);
+    public TrainsCycleWrapper(TrainsCycle node) {
+        super(node);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class TrainsTypeWrapper extends Wrapper<TrainType> {
         return toString(getElement());
     }
 
-    public static String toString(TrainType type) {
-        return type.getDesc();
+    public static String toString(TrainsCycle cycle) {
+        return cycle.getName();
     }
 }

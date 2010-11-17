@@ -1,8 +1,8 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.helpers.TextItemWrapper;
-import net.parostroj.timetable.gui.helpers.Wrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.TextItemWrapper;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TrainDiagram;

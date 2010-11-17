@@ -7,7 +7,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.parostroj.timetable.gui.helpers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**

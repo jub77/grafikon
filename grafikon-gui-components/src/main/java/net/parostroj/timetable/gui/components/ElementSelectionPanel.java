@@ -7,8 +7,8 @@ package net.parostroj.timetable.gui.components;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.parostroj.timetable.gui.helpers.Wrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 
 /**
  * Panel for elements selection.

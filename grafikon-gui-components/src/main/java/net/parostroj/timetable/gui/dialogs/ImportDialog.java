@@ -6,7 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Collection;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -19,10 +19,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
-import net.parostroj.timetable.gui.helpers.NodeWrapper;
-import net.parostroj.timetable.gui.helpers.TrainWrapper;
-import net.parostroj.timetable.gui.helpers.TrainsTypeWrapper;
-import net.parostroj.timetable.gui.helpers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.NodeWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainsTypeWrapper;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;

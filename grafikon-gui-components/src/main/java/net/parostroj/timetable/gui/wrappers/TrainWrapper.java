@@ -3,7 +3,7 @@
  * 
  * Created on 13.9.2007, 8:32:53
  */
-package net.parostroj.timetable.gui.helpers;
+package net.parostroj.timetable.gui.wrappers;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.Train;

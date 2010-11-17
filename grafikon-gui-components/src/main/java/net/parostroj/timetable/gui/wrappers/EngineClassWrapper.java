@@ -1,16 +1,16 @@
-package net.parostroj.timetable.gui.helpers;
+package net.parostroj.timetable.gui.wrappers;
 
-import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.EngineClass;
 
 /**
- * Node wrapper.
+ * Engine class wrapper.
  *
  * @author jub
  */
-public class NodeWrapper extends Wrapper<Node> {
+public class EngineClassWrapper extends Wrapper<EngineClass> {
 
-    public NodeWrapper(Node node) {
-        super(node);
+    public EngineClassWrapper(EngineClass engineClass) {
+        super(engineClass);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class NodeWrapper extends Wrapper<Node> {
         return toString(getElement());
     }
 
-    public static String toString(Node node) {
-        return node.getName();
+    public static String toString(EngineClass engineClass) {
+        return engineClass.getName();
     }
 }

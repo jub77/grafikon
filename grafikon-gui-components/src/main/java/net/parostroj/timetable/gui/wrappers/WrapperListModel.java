@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.helpers;
+package net.parostroj.timetable.gui.wrappers;
 
 import java.util.ArrayList;
 import java.util.Collections;

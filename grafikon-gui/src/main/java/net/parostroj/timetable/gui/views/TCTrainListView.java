@@ -6,7 +6,7 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Component;
-import net.parostroj.timetable.gui.helpers.TrainWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainWrapper;
 import java.awt.Color;
 import java.util.*;
 import javax.swing.ButtonModel;
@@ -17,7 +17,7 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
-import net.parostroj.timetable.gui.helpers.TimeIntervalWrapper;
+import net.parostroj.timetable.gui.wrappers.TimeIntervalWrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
