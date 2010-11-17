@@ -79,7 +79,7 @@ public enum LengthUnit implements Unit {
 
     @Override
     public String getUnitsOfString() {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units.of" + key);
+        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units.of." + key);
     }
 
     @Override
