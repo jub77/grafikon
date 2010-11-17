@@ -6,6 +6,8 @@ import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Scale;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,12 @@ public class LSAttributesItem {
         } else if (value instanceof Scale) {
             this.value = value.toString();
             this.type = "scale";
+        } else if (value instanceof LengthUnit) {
+            this.value = ((LengthUnit) value).getKey();
+            this.type = "length.unit";
+        } else if (value instanceof WeightUnit) {
+            this.value = ((WeightUnit) value).getKey();
+            this.type = "length.unit";
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             this.type = pair.first;
@@ -92,6 +100,10 @@ public class LSAttributesItem {
             return Double.valueOf(value);
         } else if (type.equals("scale")) {
             return Scale.fromString(value);
+        } else if (type.equals("length.unit")) {
+            return LengthUnit.getByKey(value);
+        } else if (type.equals("weight.unit")) {
+            return WeightUnit.getByKey(value);
         } else if (type.startsWith("model.")) {
             return this.convertModelValue(diagram);
         } else {
