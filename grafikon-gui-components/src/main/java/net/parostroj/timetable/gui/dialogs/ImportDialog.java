@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.Collection;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -40,6 +39,9 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
     private Set<ObjectWithId> importedObjects;
+    
+    private WrapperListModel<ObjectWithId> left;
+    private WrapperListModel<ObjectWithId> right;
 
     /** Creates new form ExportImportDialog */
     public ImportDialog(java.awt.Frame parent, boolean modal) {
@@ -243,32 +245,26 @@ public class ImportDialog extends javax.swing.JDialog {
         this.updateDialog();
     }//GEN-LAST:event_componentComboBoxActionPerformed
 
-    @SuppressWarnings("unchecked")
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         // add object to selected
-        WrapperListModel left = (WrapperListModel)componentsList.getModel();
-        WrapperListModel right = (WrapperListModel)selectedComponentsList.getModel();
         Object[] values = selectedComponentsList.getSelectedValues();
         for (Object value : values) {
             if (value instanceof Wrapper<?>) {
                 Wrapper<?> w = (Wrapper<?>)value;
-                right.removeWrapper(w);
-                left.addWrapper(w);
+                right.removeObject((ObjectWithId) w.getElement());
+                left.addWrapper(Wrapper.getWrapper((ObjectWithId) w.getElement()));
             }
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
-    @SuppressWarnings("unchecked")
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // remove object from selected
-        WrapperListModel left = (WrapperListModel)componentsList.getModel();
-        WrapperListModel right = (WrapperListModel)selectedComponentsList.getModel();
         Object[] values = componentsList.getSelectedValues();
         for (Object value : values) {
             if (value instanceof Wrapper<?>) {
                 Wrapper<?> w = (Wrapper<?>)value;
-                left.removeWrapper(w);
-                right.addWrapper(w);
+                left.removeObject((ObjectWithId) w.getElement());
+                right.addWrapper(Wrapper.getWrapper((ObjectWithId) w.getElement()));
             }
         }
     }//GEN-LAST:event_addButtonActionPerformed
@@ -279,7 +275,7 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private void updateLists(ImportComponents comps) {
         // fill in new items
-        Set<Object> all = comps != null ? comps.getObjects(libraryDiagram) : null;
+        Set<ObjectWithId> all = comps != null ? comps.getObjects(libraryDiagram) : null;
         if (all == null || all.isEmpty()) {
             componentsList.setModel(EMPTY_LIST_MODEL);
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
@@ -288,14 +284,14 @@ public class ImportDialog extends javax.swing.JDialog {
         Set<ObjectWithId> sel = selectedItems.get(comps);
         // remove already selected
         all.removeAll(sel);
-        fillList(comps, componentsList, all);
-        fillList(comps, selectedComponentsList, sel);
+        left = fillList(comps, componentsList, all);
+        right = fillList(comps, selectedComponentsList, sel);
     }
 
-    @SuppressWarnings("unchecked")
-    private void fillList(ImportComponents comps, JList list, Set<? extends Object> set) {
-        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers((Collection<Object>)set), set, comps.sorted());
+    private WrapperListModel<ObjectWithId> fillList(ImportComponents comps, JList list, Set<ObjectWithId> set) {
+        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(comps.getListOfWrappers(set), set, comps.sorted());
         list.setModel(model);
+        return model;
     }
 
     private ImportMatch getImportMatch() {

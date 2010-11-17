@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
+
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 
 /**
@@ -37,10 +39,10 @@ public enum ImportComponents {
         return ResourceLoader.getString(key);
     }
 
-    public Set<Object> getObjects(TrainDiagram diagram) {
+    public Set<ObjectWithId> getObjects(TrainDiagram diagram) {
         if (diagram == null)
             return Collections.emptySet();
-        Set<Object> map = new LinkedHashSet<Object>();
+        Set<ObjectWithId> map = new LinkedHashSet<ObjectWithId>();
         switch (this) {
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
@@ -60,15 +62,15 @@ public enum ImportComponents {
         return map;
     }
 
-    public List<Wrapper<?>> getListOfWrappers(Collection<Object> objects) {
-        List<Wrapper<?>> list = new ArrayList<Wrapper<?>>(objects.size());
-        for (Object oid : objects) {
+    public List<Wrapper<ObjectWithId>> getListOfWrappers(Collection<ObjectWithId> objects) {
+        List<Wrapper<ObjectWithId>> list = new ArrayList<Wrapper<ObjectWithId>>(objects.size());
+        for (ObjectWithId oid : objects) {
             list.add(this.getWrapper(oid));
         }
         return list;
     }
 
-    public Wrapper<?> getWrapper(Object oid) {
+    public Wrapper<ObjectWithId> getWrapper(ObjectWithId oid) {
         return Wrapper.getWrapper(oid);
     }
 
