@@ -5,6 +5,7 @@ import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Pair;
 
@@ -52,12 +53,12 @@ public class TrainTimetablesExtractor {
         timetables.setRoutes(RoutesExtractor.convert(routes));
 
         // route length unit
-        String unit = (String)diagram.getAttribute("route.length.unit");
+        String unit = (String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
         if (unit != null && !"".equals(unit))
             timetables.setRouteLengthUnit(unit);
 
         // validity
-        timetables.setValidity((String)diagram.getAttribute("route.validity"));
+        timetables.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
 
         // cycle
         if (cycle != null) {
@@ -119,7 +120,7 @@ public class TrainTimetablesExtractor {
             List<Integer> lengths = new LinkedList<Integer>();
             for (TimeInterval interval : train.getTimeIntervalList()) {
                 if (interval.isNodeOwner() && interval.isStop() && TrainsHelper.shouldCheckLength(interval.getOwnerAsNode(), train))
-                    lengths.add((Integer)interval.getOwnerAsNode().getAttribute("length"));
+                    lengths.add(TrainsHelper.convertLength(diagram, (Integer)interval.getOwnerAsNode().getAttribute("length")));
             }
             // check if all lengths are set and choose the minimum
             Integer minLength = null;
@@ -132,17 +133,11 @@ public class TrainTimetablesExtractor {
                 }
             }
             // get length unit
-            String lengthUnit = null;
-            boolean lengthInAxles = false;
-            if (Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles"))) {
-                lengthInAxles = true;
-            } else {
-                lengthUnit = (String)diagram.getAttribute("station.length.unit");
-            }
+            LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
             LengthData data = new LengthData();
             data.setLength(minLength);
-            data.setLengthInAxles(lengthInAxles);
-            data.setLengthUnit(lengthUnit);
+            data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
+            data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
             timetable.setLengthData(data);
         }
     }
@@ -337,7 +332,7 @@ public class TrainTimetablesExtractor {
                 else if (seg.asLine() != null)
                     length += seg.asLine().getLength();
             }
-            Double ratio = (Double)diagram.getAttribute("route.length.ratio");
+            Double ratio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
             if (ratio == null)
                 ratio = 1.0;
             return ratio * length;

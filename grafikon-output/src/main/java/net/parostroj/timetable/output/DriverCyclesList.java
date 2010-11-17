@@ -49,11 +49,11 @@ public class DriverCyclesList {
     }
 
     private void writeDriverCycleFirstPage(Formatter f, Writer writer, TrainsCycle cycle) throws IOException {
-        String number = (String) infos.get("route.numbers");
+        String number = (String) infos.get(TrainDiagram.ATTR_ROUTE_NUMBERS);
         number = (number != null) ? number.replace("\n", "<br>") : "";
-        String validity = (String) infos.get("route.validity");
+        String validity = (String) infos.get(TrainDiagram.ATTR_ROUTE_VALIDITY);
         validity = (validity != null) ? validity : "";
-        String routes = (String) infos.get("route.nodes");
+        String routes = (String) infos.get(TrainDiagram.ATTR_ROUTE_NODES);
         routes = (routes != null) ? routes.replace("\n", "<br>") : "";
 
         f.format(templates.getDcHeader(), cycle.getName(), number, routes, validity, templates.getString("company"),

@@ -170,6 +170,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     node.setAttribute("length", length);
             } catch (ArithmeticException e) {
                 LOG.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
+                LOG.warn(e.getMessage());
             }
         } else {
             node.removeAttribute("length");

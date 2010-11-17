@@ -1,5 +1,6 @@
 package net.parostroj.timetable.actions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +109,35 @@ public class TrainsHelper {
     }
 
     /**
+     * converts length in mm to unit specified by train diagram.
+     *
+     * @param diagram train diagram
+     * @param length length
+     * @return converted length
+     */
+    public static Integer convertLength(TrainDiagram diagram, Integer length) {
+        if (length == null)
+            return null;
+        LengthUnit lengthUnit = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+        if (lengthUnit == LengthUnit.AXLE) {
+            Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
+            Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+            length = (length * scale.getRatio()) / lpa;
+            // number of axles should be an even number
+            length = length - (length % 2);
+        } else if (lengthUnit != null) {
+            BigDecimal converted = lengthUnit.convertFrom(new BigDecimal(length), LengthUnit.MM);
+            try {
+                length = UnitUtil.convert(converted);
+            } catch (ArithmeticException e) {
+                LOG.warn("Couldn't convert value {} to {}.", length, lengthUnit.getKey());
+                LOG.warn(e.getMessage());
+            }
+        }
+        return length;
+    }
+
+    /**
      * converts weight to length based on conversion ratio and state of the train empty/loaded.
      *
      * @param train train
@@ -114,15 +146,36 @@ public class TrainsHelper {
      * @return length
      */
     public static Integer convertWeightToLength(Train train, TrainDiagram diagram, Integer weight) {
-        Double ratio = Boolean.TRUE.equals(train.getAttribute("empty")) ?
-            (Double)diagram.getAttribute("weight.ratio.empty") :
-            (Double)diagram.getAttribute("weight.ratio.loaded");
-        if (ratio == null || weight == null)
+        if (weight == null)
             return null;
-        int result = (int)(weight * ratio);
-        // number of axles should be an even number
-        if (Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles"))) {
+        // weight in kg
+        Integer wpa = Boolean.TRUE.equals(train.getAttribute("empty")) ?
+            (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY) :
+            (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE);
+        LengthUnit lu = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+        // length in mm
+        double axles = (weight * 1000) / wpa;
+        Integer result = null;
+        if (lu == LengthUnit.AXLE) {
+            // number of axles should be an even number
+            result = (int) axles;
             result = result - (result % 2);
+        } else {
+            Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
+            Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+            // length in mm
+            result = (int)(axles * lpa);
+            // adjust by scale
+            result = result / scale.getRatio();
+            // convert to unit
+            BigDecimal converted = lu.convertFrom(new BigDecimal(result), LengthUnit.MM);
+            try {
+                result = UnitUtil.convert(converted);
+            } catch (ArithmeticException e) {
+                LOG.warn("Couldn't convert value {} to {}.", result, lu.getKey());
+                LOG.warn(e.getMessage());
+                result = null;
+            }
         }
         return result;
     }
@@ -334,7 +387,7 @@ public class TrainsHelper {
      * @return updated length
      */
     public static Integer updateWithStationLength(Node node, Integer length) {
-        Integer nodeLength = (Integer)node.getAttribute("length");
+        Integer nodeLength = convertLength(node.getTrainDiagram(), (Integer)node.getAttribute("length"));
         if (nodeLength != null && nodeLength < length)
             return nodeLength;
         else

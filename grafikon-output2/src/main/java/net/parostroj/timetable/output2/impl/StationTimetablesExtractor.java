@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.*;
 
 /**
@@ -133,8 +134,9 @@ public class StationTimetablesExtractor {
                 length.second = TrainsHelper.updateNextLengthWithStationLengths(interval.getOwnerAsNode(), train, length.second);
                 lengthInfo = new LengthInfo();
                 lengthInfo.setLength(length.second);
-                lengthInfo.setLengthInAxles(Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles")));
-                lengthInfo.setLengthUnit((String)diagram.getAttribute("station.length.unit"));
+                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                lengthInfo.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
+                lengthInfo.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
                 lengthInfo.setStationAbbr(length.first.getAbbr());
             }
         }

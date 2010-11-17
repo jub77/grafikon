@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.*;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.*;
 
 /**
@@ -320,7 +321,7 @@ public class TrainTimetable {
             List<Integer> lengths = new LinkedList<Integer>();
             for (TimeInterval interval : train.getTimeIntervalList()) {
                 if (interval.isNodeOwner() && interval.isStop() && TrainsHelper.shouldCheckLength(interval.getOwnerAsNode(), train))
-                    lengths.add((Integer)interval.getOwnerAsNode().getAttribute("length"));
+                    lengths.add(TrainsHelper.convertLength(diagram, (Integer)interval.getOwnerAsNode().getAttribute("length")));
             }
             // check if all lengths are set and choose the minimum
             Integer minLength = null;
@@ -333,14 +334,8 @@ public class TrainTimetable {
                 }
             }
             // get length unit
-            String lengthUnit = null;
-            if (Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles"))) {
-                lengthUnit = TrainTimetablesListTemplates.getString("length.axles");
-            } else {
-                lengthUnit = (String)diagram.getAttribute("station.length.unit");
-            }
-            if (lengthUnit == null)
-                lengthUnit = "";
+            LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+            String lengthUnit = lengthUnitObj == null ? "" : lengthUnitObj.getUnitsOfString();
             result = String.format(templates.getTimetableHeaderLengthLine(), TrainTimetablesListTemplates.getString("length"), minLength.toString(), lengthUnit);
         }
         return result;

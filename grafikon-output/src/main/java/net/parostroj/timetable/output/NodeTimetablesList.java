@@ -14,6 +14,7 @@ import net.parostroj.timetable.actions.NodeFilter;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.*;
 
 /**
@@ -186,14 +187,8 @@ public class NodeTimetablesList {
                 length.second = TrainsHelper.updateNextLengthWithStationLengths(interval.getOwnerAsNode(), train, length.second);
                 comment.append("[");
                 comment.append(length.second);
-                String lengthUnit = null;
-                if (Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles"))) {
-                    lengthUnit = " " + TrainTimetablesListTemplates.getString("length.axles");
-                } else {
-                    lengthUnit = (String)diagram.getAttribute("station.length.unit");
-                }
-                if (lengthUnit == null)
-                    lengthUnit = "";
+                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                String lengthUnit = lengthUnitObj == null ? "" : lengthUnitObj.getUnitsOfString();
                 comment.append(lengthUnit);
                 comment.append(" (").append(length.first.getAbbr()).append(")");
                 comment.append("]");

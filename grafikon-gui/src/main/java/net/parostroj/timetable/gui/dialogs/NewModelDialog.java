@@ -175,8 +175,8 @@ public class NewModelDialog extends javax.swing.JDialog {
             return;
         }
         // update scale and time scale
-        diagram.setAttribute("scale", s);
-        diagram.setAttribute("time.scale", sp);
+        diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
+        diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
         model.setDiagram(diagram);
         model.setOpenedFile(null);
         model.setModelChanged(true);

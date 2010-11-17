@@ -152,7 +152,7 @@ class TrainTableModel extends AbstractTableModel {
                         && ((Node)interval.getOwner()).getType() != NodeType.SIGNAL) {
                     int stop = interval.getLength() / 60;
                     // celculate with time scale ...
-                    Double timeScale = (Double)model.getDiagram().getAttribute("time.scale");
+                    Double timeScale = (Double)model.getDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE);
                     retValue = Double.valueOf(stop / timeScale.doubleValue());
                 }
                 break;
@@ -167,7 +167,7 @@ class TrainTableModel extends AbstractTableModel {
                 if (interval.isLineOwner()) {
                     retValue = TrainsHelper.convertWeightToLength(train, model.getDiagram(), TrainsHelper.getWeightWithAttribute(interval));
                 } else if (interval.isNodeOwner() && (interval.getLength() != 0 || rowIndex == 0 || rowIndex == lastRow)) {
-                    retValue = (Integer)interval.getOwnerAsNode().getAttribute("length");
+                    retValue = TrainsHelper.convertLength(model.getDiagram(), (Integer)interval.getOwnerAsNode().getAttribute("length"));
                 }
                 break;
             // default (should not be reached)

@@ -35,9 +35,9 @@ public class DriverCyclesExtractor {
         }
         DriverCycles outputCycles = new DriverCycles(outputCyclesList);
         // fill in other data
-        outputCycles.setRouteNumbers((String)diagram.getAttribute("route.numbers"));
-        outputCycles.setRouteStations((String)diagram.getAttribute("route.nodes"));
-        outputCycles.setValidity((String)diagram.getAttribute("route.validity"));
+        outputCycles.setRouteNumbers((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
+        outputCycles.setRouteStations((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
+        outputCycles.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
         return outputCycles;
     }
 

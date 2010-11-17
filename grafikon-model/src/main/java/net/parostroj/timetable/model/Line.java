@@ -250,8 +250,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @return pair running time and speed
      */
     public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed) {
-        Scale scale = (Scale) diagram.getAttribute("scale");
-        double timeScale = (Double) diagram.getAttribute("time.scale");
+        Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+        double timeScale = (Double) diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
         PenaltySolver ps = new PenaltySolver() {
 
