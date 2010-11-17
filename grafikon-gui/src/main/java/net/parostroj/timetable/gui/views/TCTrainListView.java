@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Component;
-import net.parostroj.timetable.gui.wrappers.TrainWrapper;
 import java.awt.Color;
 import java.util.*;
 import javax.swing.ButtonModel;
@@ -17,7 +16,8 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
-import net.parostroj.timetable.gui.wrappers.TimeIntervalWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -112,7 +112,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
 
             DefaultListModel m = new DefaultListModel();
             for (Train train : getTrains) {
-                m.addElement(new TrainWrapper(train, TrainWrapper.Type.NAME_AND_END_NODES_WITH_TIME));
+                m.addElement(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
             }
             allTrainsList.setModel(m);
         }
@@ -144,7 +144,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
     @Override
     public void selectTrainInterval(TimeInterval interval) {
         if (interval != null)
-            allTrainsList.setSelectedValue(new TrainWrapper(interval.getTrain(), TrainWrapper.Type.NAME_AND_END_NODES_WITH_TIME), true);
+            allTrainsList.setSelectedValue(new Wrapper<Train>(interval.getTrain(), new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, interval.getTrain().getTrainDiagram())), true);
         if (interval == null)
             lastSelected = null;
         else
@@ -462,9 +462,9 @@ private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
     StringBuilder trainsStr = null;
     for (Object objectSelected : selectedValues) {
-        TrainWrapper selected = (TrainWrapper) objectSelected;
+        Wrapper<?> selected = (Wrapper<?>) objectSelected;
         if (selected != null) {
-            Train t = selected.getElement();
+            Train t = (Train) selected.getElement();
             TrainsCycle cycle = delegate.getSelectedCycle(model);
             if (cycle != null) {
                 TrainsCycleItem item = null;
@@ -512,8 +512,8 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
         if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
             item.setComment(newComment);
-        TimeInterval from = ((TimeIntervalWrapper)fromComboBox.getSelectedItem()).getElement();
-        TimeInterval to = ((TimeIntervalWrapper)toComboBox.getSelectedItem()).getElement();
+        TimeInterval from = (TimeInterval) ((Wrapper<?>)fromComboBox.getSelectedItem()).getElement();
+        TimeInterval to = (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
         // new trains cycle item
         boolean oldCovered = train.isCovered(delegate.getType());
         if (from != item.getFromInterval() || to != item.getToInterval()) {
@@ -599,13 +599,13 @@ private void ecTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) 
         toComboBox.removeAllItems();
         for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner()) {
-                TimeIntervalWrapper w = new TimeIntervalWrapper(interval);
+                Wrapper<TimeInterval> w = new Wrapper<TimeInterval>(interval);
                 fromComboBox.addItem(w);
                 toComboBox.addItem(w);
             }
         }
-        fromComboBox.setSelectedItem(new TimeIntervalWrapper(from));
-        toComboBox.setSelectedItem(new TimeIntervalWrapper(to));
+        fromComboBox.setSelectedItem(new Wrapper<TimeInterval>(from));
+        toComboBox.setSelectedItem(new Wrapper<TimeInterval>(to));
     }
 
 private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_allTrainsListValueChanged

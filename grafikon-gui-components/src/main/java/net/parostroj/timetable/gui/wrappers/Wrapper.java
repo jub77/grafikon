@@ -11,10 +11,18 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public class Wrapper<T> implements Comparable<Wrapper<T>> {
+
     private T wrappedElement;
+    private WrapperDelegate delegate;
 
     public Wrapper(T element) {
-        this.setElement(element);
+        this.wrappedElement = element;
+        this.delegate = new ElementWrapperDelegate();
+    }
+
+    public Wrapper(T element, WrapperDelegate delegate) {
+        this.wrappedElement = element;
+        this.delegate = delegate;
     }
 
     public void setElement(T elemenet) {
@@ -49,33 +57,22 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
 
     @Override
     public int compareTo(Wrapper<T> o) {
-        return this.toString().compareTo(o.toString());
+        return delegate.compare(getElement(), o.getElement());
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public String toString() {
+        return delegate.toString(getElement());
+    }
+
     public static <T> Wrapper<T> getWrapper(T o) {
         Wrapper<T> w = null;
-        if (o instanceof Node) {
-            w = (Wrapper)new NodeWrapper((Node)o);
-        } else if (o instanceof Train) {
-            w = (Wrapper)new TrainWrapper(
-                    (Train) o,
-                    TrainWrapper.Type.NAME,
-                    new TrainComparator(TrainComparator.Type.ASC, ((Train)o).getTrainDiagram().getTrainsData().getTrainSortPattern()));
-        } else if (o instanceof TrainType) {
-            w = (Wrapper)new TrainsTypeWrapper((TrainType)o);
-        } else if (o instanceof TrainsCycle) {
-            w = (Wrapper)new TrainsCycleWrapper((TrainsCycle)o);
-        } else if (o instanceof Route) {
-            w = (Wrapper)new RouteWrapper((Route)o);
-        } else if (o instanceof TimeIntervalWrapper) {
-            w = (Wrapper)new TimeIntervalWrapper((TimeInterval)o);
-        } else if (o instanceof LineClass) {
-            w = (Wrapper)new LineClassWrapper((LineClass)o);
-        } else if (o instanceof EngineClass) {
-            w = (Wrapper)new EngineClassWrapper((EngineClass)o);
+        if (o instanceof Train) {
+            w = new Wrapper<T>(o, new TrainWrapperDelegate(
+                    TrainWrapperDelegate.Type.NAME,
+                    new TrainComparator(TrainComparator.Type.ASC, ((Train)o).getTrainDiagram().getTrainsData().getTrainSortPattern())));
         } else {
-            throw new IllegalArgumentException("Not supported type: " + o.getClass());
+            w = new Wrapper<T>(o);
         }
         return w;
     }

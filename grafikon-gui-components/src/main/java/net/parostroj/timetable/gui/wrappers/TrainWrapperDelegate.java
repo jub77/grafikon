@@ -1,63 +1,47 @@
-/*
- * TrainWrapper.java
- * 
- * Created on 13.9.2007, 8:32:53
- */
 package net.parostroj.timetable.gui.wrappers;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.TimeConverter;
 
 /**
- * Train wrapper for list of trains.
- * 
+ * Delegate for trains.
+ *
  * @author jub
  */
-public class TrainWrapper extends Wrapper<Train> {
-    
+public class TrainWrapperDelegate implements WrapperDelegate {
+
     public enum Type {
         NAME, NAME_AND_END_NODES, NAME_AND_END_NODES_WITH_TIME;
     }
 
     private Type type;
     private TrainComparator comparator;
-    
-    public TrainWrapper(Train train, Type type) {
-        super(train);
+
+    public TrainWrapperDelegate(Type type, TrainDiagram diagram) {
         this.type = type;
         this.comparator = new TrainComparator(
                 TrainComparator.Type.ASC,
-                train.getTrainDiagram().getTrainsData().getTrainSortPattern());
+                diagram.getTrainsData().getTrainSortPattern());
     }
 
-    public TrainWrapper(Train train, Type type, TrainComparator comparator) {
-        this(train, type);
+    public TrainWrapperDelegate(Type type, TrainComparator comparator) {
+        this.type = type;
         this.comparator = comparator;
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public String toString(Object element) {
+        return toStringTrain((Train) element);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        return super.equals(obj);
+    public int compare(Object o1, Object o2) {
+        return comparator.compare((Train) o1, (Train) o2);
     }
 
-    @Override
-    public String toString() {
-        return toString(getElement(), type);
-    }
-
-    public static String toString(Train train, Type type) {
+    private String toStringTrain(Train train) {
         switch (type) {
             case NAME:
                 return train.getName();
@@ -76,13 +60,5 @@ public class TrainWrapper extends Wrapper<Train> {
             default:
                 return train.getName();
         }
-    }
-
-    @Override
-    public int compareTo(Wrapper<Train> o) {
-        if (comparator == null)
-            return super.compareTo(o);
-        else
-            return comparator.compare(this.getElement(), o.getElement());
     }
 }

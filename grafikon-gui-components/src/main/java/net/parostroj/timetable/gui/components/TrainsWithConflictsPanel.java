@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.gui.wrappers.TrainWrapper;
+import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Train;
 
@@ -31,8 +32,8 @@ public class TrainsWithConflictsPanel extends javax.swing.JPanel {
     }
 
     private Train getSelectedTrain() {
-        TrainWrapper selectedValue = (TrainWrapper)trainsList.getSelectedValue();
-        return selectedValue != null ? selectedValue.getElement() : null;
+        Wrapper<?> selectedValue = (Wrapper<?>) trainsList.getSelectedValue();
+        return selectedValue != null ? (Train) selectedValue.getElement() : null;
     }
 
     private void addTrainToList(Train train) {
@@ -40,7 +41,7 @@ public class TrainsWithConflictsPanel extends javax.swing.JPanel {
         if (listModel.getSetOfObjects().contains(train))
             return;
         // add to list
-        listModel.addWrapper(new TrainWrapper(train, TrainWrapper.Type.NAME_AND_END_NODES_WITH_TIME, trainComparator));
+        listModel.addWrapper(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, trainComparator)));
     }
 
     public void updateSelectedTrain(Train train) {

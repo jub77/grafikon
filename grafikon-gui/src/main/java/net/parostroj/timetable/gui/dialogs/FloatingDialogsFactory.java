@@ -10,8 +10,8 @@ import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
-import net.parostroj.timetable.gui.wrappers.TrainWrapper;
 import net.parostroj.timetable.gui.utils.NormalHTS;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
@@ -35,10 +35,10 @@ public class FloatingDialogsFactory {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     JList list = (JList)e.getSource();
-                    TrainWrapper wrapper = (TrainWrapper)list.getSelectedValue();
+                    Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
                     if (wrapper != null) {
                         if (wrapper.getElement() != model.getSelectedTrain()) {
-                            model.setSelectedTrain(wrapper.getElement());
+                            model.setSelectedTrain((Train) wrapper.getElement());
                         }
                     }
                 }

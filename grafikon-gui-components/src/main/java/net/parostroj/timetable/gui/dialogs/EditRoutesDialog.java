@@ -4,8 +4,8 @@ import java.util.*;
 import javax.swing.DefaultListModel;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
-import net.parostroj.timetable.gui.wrappers.RouteWrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -49,7 +49,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         // update list of routes
         routesList.setModel(new DefaultListModel());
         for (Route r : diagram.getRoutes()) {
-            ((DefaultListModel) routesList.getModel()).addElement(new RouteWrapper(r));
+            ((DefaultListModel) routesList.getModel()).addElement(new Wrapper<Route>(r));
         }
 
         deleteButton.setEnabled(routesList.getSelectedIndex() != -1);
@@ -235,7 +235,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         }
         // net part
         newRoute.setNetPart(netPartCheckBox.isSelected());
-        ((DefaultListModel) routesList.getModel()).addElement(new RouteWrapper(newRoute));
+        ((DefaultListModel) routesList.getModel()).addElement(new Wrapper<Route>(newRoute));
         diagram.addRoute(newRoute);
         // clear name
         routeNameTextField.setText("");
@@ -253,7 +253,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // delete route
-        Route deletedRoute = ((RouteWrapper) routesList.getSelectedValue()).getElement();
+        Route deletedRoute = (Route)((Wrapper<?>) routesList.getSelectedValue()).getElement();
         diagram.removeRoute(deletedRoute);
         ((DefaultListModel) routesList.getModel()).remove(routesList.getSelectedIndex());
     }//GEN-LAST:event_deleteButtonActionPerformed

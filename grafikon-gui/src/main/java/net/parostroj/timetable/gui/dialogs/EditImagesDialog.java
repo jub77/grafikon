@@ -15,7 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
-import net.parostroj.timetable.gui.wrappers.TimetableImageWrapper;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -75,7 +75,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         imagesList.setModel(listModel);
         if (this.model.getDiagram() != null) {
             for (TimetableImage item : this.model.getDiagram().getImages())
-                listModel.addWrapper(new TimetableImageWrapper(item));
+                listModel.addWrapper(new Wrapper<TimetableImage>(item));
         }
     }
 
@@ -223,7 +223,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
                 model.getDiagram().addImage(image);
-                listModel.addWrapper(new TimetableImageWrapper(image));
+                listModel.addWrapper(new Wrapper<TimetableImage>(image));
             } catch (IOException e) {
                 LOG.warn("Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
@@ -235,7 +235,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }//GEN-LAST:event_newButtonActionPerformed
 
     private void renameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameButtonActionPerformed
-        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         // ask for a new name
         String newName = JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),selected.getFilename());
         if (newName != null && !newName.equals(selected.getFilename())) {
@@ -254,7 +254,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             model.getDiagram().addImage(newImage);
             // list model
             listModel.removeObject(selected);
-            TimetableImageWrapper newWrapper = new TimetableImageWrapper(newImage);
+            Wrapper<TimetableImage> newWrapper = new Wrapper<TimetableImage>(newImage);
             listModel.addWrapper(newWrapper);
             // set selected
             imagesList.setSelectedValue(newWrapper, true);
@@ -271,7 +271,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }//GEN-LAST:event_imagesListValueChanged
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         model.getDiagram().removeImage(selected);
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file

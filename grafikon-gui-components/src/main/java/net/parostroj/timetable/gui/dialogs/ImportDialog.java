@@ -19,9 +19,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
-import net.parostroj.timetable.gui.wrappers.NodeWrapper;
-import net.parostroj.timetable.gui.wrappers.TrainWrapper;
-import net.parostroj.timetable.gui.wrappers.TrainsTypeWrapper;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Node;
@@ -311,11 +308,11 @@ public class ImportDialog extends javax.swing.JDialog {
 
     public String getText(Object oid) {
         if (oid instanceof Train) {
-            return TrainWrapper.toString((Train)oid, TrainWrapper.Type.NAME);
+            return ((Train) oid).getName();
         } else if (oid instanceof Node) {
-            return NodeWrapper.toString((Node)oid);
+            return ((Node) oid).getName();
         } else if (oid instanceof TrainType) {
-            return TrainsTypeWrapper.toString((TrainType)oid);
+            return ((TrainType) oid).getDesc();
         } else {
             return oid.toString();
         }
