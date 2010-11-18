@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelListener;
 import org.jgraph.event.GraphSelectionListener;
 import org.jgraph.graph.*;
+import org.jgraph.plaf.basic.BasicGraphUI;
 
 /**
  * Net view ....
@@ -53,6 +56,14 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         this.model = model;
         this.model.addListener(this);
         this.setNet(model);
+    }
+
+    public Dimension getGraphSize() {
+        return jGraph.getPreferredScrollableViewportSize();
+    }
+
+    public void paintGraph(Graphics g) {
+        ((BasicGraphUI)jGraph.getUI()).drawGraph(g, null);
     }
 
     @Override

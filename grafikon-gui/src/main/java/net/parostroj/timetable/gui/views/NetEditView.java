@@ -5,9 +5,18 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
@@ -18,6 +27,13 @@ import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * View for editing net.
@@ -25,6 +41,8 @@ import net.parostroj.timetable.utils.Tuple;
  * @author jub
  */
 public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, ApplicationModelListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NetEditView.class);
 
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
@@ -38,6 +56,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private Action newLineAction;
     private Action editAction;
     private Action deleteAction;
+    private Action saveNetImageAction;
 
     public class NewNodeAction extends AbstractAction {
 
@@ -162,6 +181,77 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         }
     }
 
+    public class SaveNetImageAction extends AbstractAction {
+
+        private SaveImageDialog dialog;
+
+        public SaveNetImageAction(String name) {
+            super(name);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            SaveImageDialog saveDialog = this.getDialog();
+            dialog.setLocationRelativeTo(NetEditView.this);
+            Dimension graphSize = netView.getGraphSize();
+            dialog.setSaveSize(new Dimension(graphSize.width + 10, graphSize.height + 10));
+            saveDialog.setVisible(true);
+
+            if (!dialog.isSave())
+                return;
+
+            Dimension saveSize = dialog.getSaveSize();
+
+            if (dialog.getType() == SaveImageDialog.Type.PNG) {
+                BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = img.createGraphics();
+                g2d.setColor(Color.white);
+                g2d.fillRect(0, 0, saveSize.width, saveSize.height);
+
+                netView.paintGraph(g2d);
+
+                try {
+                    ImageIO.write(img, "png", dialog.getSaveFile());
+                } catch (IOException e) {
+                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                    JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+                }
+            } else if (dialog.getType() == SaveImageDialog.Type.SVG) {
+                DOMImplementation domImpl =
+                        GenericDOMImplementation.getDOMImplementation();
+
+                // Create an instance of org.w3c.dom.Document.
+                String svgNS = "http://www.w3.org/2000/svg";
+                Document document = domImpl.createDocument(svgNS, "svg", null);
+
+                SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
+                SVGGraphics2D g2d = new SVGGraphics2D(context, false);
+
+                g2d.setSVGCanvasSize(saveSize);
+
+                netView.paintGraph(g2d);
+
+                // write to ouput - do not use css style
+                boolean useCSS = false;
+                try {
+                    Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
+                    g2d.stream(out, useCSS);
+                } catch (IOException e) {
+                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                    JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+        private SaveImageDialog getDialog() {
+            if (dialog == null) {
+                dialog = new SaveImageDialog((Frame)NetEditView.this.getTopLevelAncestor(), true);
+                dialog.setSizeChangeEnabled(false);
+            }
+            return dialog;
+        }
+    }
+
     /** Creates new form NetEditView */
     public NetEditView() {
         newNodeAction = new NewNodeAction(ResourceLoader.getString("net.edit.new.node") + " ...");
@@ -170,7 +260,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         editAction.setEnabled(false);
         deleteAction = new DeleteAction(ResourceLoader.getString("button.delete"));
         deleteAction.setEnabled(false);
-
+        saveNetImageAction = new SaveNetImageAction(ResourceLoader.getString("net.edit.save.image") + " ...");
+        saveNetImageAction.setEnabled(true);
 
         initComponents();
         initializeListeners();
@@ -218,6 +309,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         javax.swing.JButton deleteButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         netView = new net.parostroj.timetable.gui.views.NetView();
+        jButton1 = new javax.swing.JButton();
 
         newNodeButton.setAction(newNodeAction);
         newNodeButton.setEnabled(false);
@@ -233,22 +325,26 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         scrollPane.setViewportView(netView);
 
+        jButton1.setAction(saveNetImageAction);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(newNodeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newLineButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)))
+                        .addComponent(deleteButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -257,17 +353,20 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 .addContainerGap()
                 .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(newNodeButton)
-                    .addComponent(newLineButton)
-                    .addComponent(editButton)
-                    .addComponent(deleteButton))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(newNodeButton)
+                        .addComponent(newLineButton)
+                        .addComponent(editButton)
+                        .addComponent(deleteButton))
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private net.parostroj.timetable.gui.views.NetView netView;
     // End of variables declaration//GEN-END:variables
 

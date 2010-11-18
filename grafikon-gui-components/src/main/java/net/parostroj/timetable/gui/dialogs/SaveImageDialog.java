@@ -13,17 +13,14 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
  * 
  * @author jub
  */
-public class SaveGTDialog extends javax.swing.JDialog {
+public class SaveImageDialog extends javax.swing.JDialog {
     
     public static enum Type {
         PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"), SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg");
         
         private String name;
-        
         private String description;
-        
         private FileNameExtensionFilter filter;
-        
         private String extension;
         
         private Type(String name, FileNameExtensionFilter filter,String extension) {
@@ -60,18 +57,11 @@ public class SaveGTDialog extends javax.swing.JDialog {
         }
     }
     
-    private Dimension saveSize;
-    
     private File saveFile;
-    
     private boolean save;
-    
     private static final int DEFAULT_WIDTH = 2000;
-    
     private static final int DEFAULT_HEIGHT = 400;
-    
     private static final int MAX_WIDTH = 10000;
-    
     private static final int MAX_HEIGHT = 2000;
     
     private static JFileChooser fileChooserInstance;
@@ -101,12 +91,12 @@ public class SaveGTDialog extends javax.swing.JDialog {
      * @param parent 
      * @param modal 
      */
-    public SaveGTDialog(java.awt.Frame parent, boolean modal) {
+    public SaveImageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
-        xTextField.setValue(Long.valueOf(DEFAULT_WIDTH));
-        yTextField.setValue(Long.valueOf(DEFAULT_HEIGHT));
+        xTextField.setValue(Integer.valueOf(DEFAULT_WIDTH));
+        yTextField.setValue(Integer.valueOf(DEFAULT_HEIGHT));
         
         typeComboBox.setModel(new DefaultComboBoxModel(Type.values()));
         
@@ -123,11 +113,38 @@ public class SaveGTDialog extends javax.swing.JDialog {
     }
 
     public Dimension getSaveSize() {
-        return saveSize;
+        int x = DEFAULT_WIDTH;
+        int y = DEFAULT_HEIGHT;
+        if (xTextField.getValue() != null) {
+            x = ((Number)xTextField.getValue()).intValue();
+            if (x > MAX_WIDTH)
+                x = MAX_WIDTH;
+        }
+
+        if (yTextField.getValue() != null) {
+            y = ((Number)yTextField.getValue()).intValue();
+            if (y > MAX_HEIGHT)
+                y = MAX_HEIGHT;
+        }
+        return new Dimension(x, y);
+    }
+
+    public void setSaveSize(Dimension size) {
+        xTextField.setValue(size.width);
+        yTextField.setValue(size.height);
     }
     
     public Type getType() {
         return (Type)typeComboBox.getSelectedItem();
+    }
+
+    public void setSizeChangeEnabled(boolean enabled) {
+        xTextField.setEnabled(enabled);
+        yTextField.setEnabled(enabled);
+    }
+
+    public boolean isSizeChangeEnabled() {
+        return xTextField.isEnabled() && yTextField.isEnabled();
     }
 
     /** This method is called from within the constructor to
@@ -247,23 +264,6 @@ private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         if (!saveFile.getName().toLowerCase().endsWith("." + this.getType().getExtension()))
             saveFile = new File(saveFile.getAbsolutePath()+"." + this.getType().getExtension());
         this.save = true;
-        int x,y;
-        if (xTextField.getValue() != null) {
-            x = ((Long)xTextField.getValue()).intValue();
-            if (x > MAX_WIDTH)
-                x = MAX_WIDTH;
-        } else {
-            x = DEFAULT_WIDTH;
-        }
-        
-        if (yTextField.getValue() != null) {
-            y = ((Long)yTextField.getValue()).intValue();
-            if (y > MAX_HEIGHT)
-                y = MAX_HEIGHT;
-        } else {
-            y = DEFAULT_HEIGHT;
-        }
-        saveSize = new Dimension(x,y);
     } else {
         this.save = false;
     }
