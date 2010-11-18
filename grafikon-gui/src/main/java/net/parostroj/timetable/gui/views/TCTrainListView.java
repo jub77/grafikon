@@ -139,16 +139,29 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
             infoTextArea.setText("");
         }
     }
+
     private TimeInterval lastSelected;
 
     @Override
     public void selectTrainInterval(TimeInterval interval) {
-        if (interval != null)
-            allTrainsList.setSelectedValue(new Wrapper<Train>(interval.getTrain(), new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, interval.getTrain().getTrainDiagram())), true);
-        if (interval == null)
-            lastSelected = null;
-        else
-            lastSelected = interval;
+        if (interval != null) {
+            // select in left list
+            allTrainsList.setSelectedValue(new Wrapper<Train>(interval.getTrain(), null), true);
+            // select all intervals in right list
+            DefaultListModel dlm = (DefaultListModel) ecTrainsList.getModel();
+            boolean selection = false;
+            for (int i = 0; i < dlm.getSize(); i++) {
+                TrainsCycleItemWrapper w = (TrainsCycleItemWrapper) dlm.getElementAt(i);
+                if (w.getItem().getTrain() == interval.getTrain()) {
+                    if (!selection) {
+                        selection = true;
+                        ecTrainsList.clearSelection();
+                    }
+                    ecTrainsList.addSelectionInterval(i, i);
+                }
+            }
+        }
+        lastSelected = interval;
     }
 
     @Override
@@ -172,13 +185,13 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         javax.swing.JSeparator separator = new javax.swing.JSeparator();
         overlappingCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         filterbuttonGroup = new javax.swing.ButtonGroup();
-        scrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         allTrainsList = new javax.swing.JList();
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         ecTrainsList = new javax.swing.JList();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
-        errorsScrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane errorsScrollPane = new javax.swing.JScrollPane();
         infoTextArea = new javax.swing.JTextArea();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
@@ -664,7 +677,6 @@ private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
     private javax.swing.JTextField detailsTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JList ecTrainsList;
-    private javax.swing.JScrollPane errorsScrollPane;
     private javax.swing.JPopupMenu filterMenu;
     private javax.swing.ButtonGroup filterbuttonGroup;
     private javax.swing.JRadioButtonMenuItem freightRadioButtonMenuItem;
@@ -673,7 +685,6 @@ private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//G
     private javax.swing.JCheckBoxMenuItem overlappingCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
-    private javax.swing.JScrollPane scrollPane1;
     private javax.swing.JButton selectionButton;
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
