@@ -67,6 +67,11 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         });
 
         moveLeftButton.setText("<<");
+        moveLeftButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveLeftButtonActionPerformed(evt);
+            }
+        });
 
         scrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
