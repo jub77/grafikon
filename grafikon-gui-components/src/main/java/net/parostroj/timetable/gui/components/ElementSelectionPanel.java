@@ -52,7 +52,11 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         rightList = new javax.swing.JList();
 
+        scrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         leftList.setModel(leftListModel);
+        leftList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
         scrollPane1.setViewportView(leftList);
 
         moveRightButton.setText(">>");
@@ -63,13 +67,12 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         });
 
         moveLeftButton.setText("<<");
-        moveLeftButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moveLeftButtonActionPerformed(evt);
-            }
-        });
+
+        scrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         rightList.setModel(rightListModel);
+        rightList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
         scrollPane2.setViewportView(rightList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -80,8 +83,8 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
                 .addComponent(scrollPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(moveRightButton)
-                    .addComponent(moveLeftButton))
+                    .addComponent(moveRightButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(moveLeftButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPane2))
         );
@@ -97,29 +100,21 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    @SuppressWarnings("unchecked")
     private void moveLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveLeftButtonActionPerformed
         // get selected elements and move them
-        Object[] values = rightList.getSelectedValues();
-        for (Object o : values) {
-            if (o instanceof Wrapper<?>) {
-                Wrapper w = (Wrapper)o;
-                rightListModel.removeWrapper(w);
-                leftListModel.addWrapper(w);
-            }
+        int[] values = rightList.getSelectedIndices();
+        for (int ind : values) {
+            Wrapper<T> wrapper = rightListModel.removeIndex(ind);
+            leftListModel.addWrapper(wrapper);
         }
     }//GEN-LAST:event_moveLeftButtonActionPerformed
 
-    @SuppressWarnings("unchecked")
     private void moveRightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveRightButtonActionPerformed
         // get selected elements and move them
-        Object[] values = leftList.getSelectedValues();
-        for (Object o : values) {
-            if (o instanceof Wrapper) {
-                Wrapper w = (Wrapper)o;
-                leftListModel.removeWrapper(w);
-                rightListModel.addWrapper(w);
-            }
+        int[] values = leftList.getSelectedIndices();
+        for (int ind : values) {
+            Wrapper<T> wrapper = leftListModel.removeIndex(ind);
+            rightListModel.addWrapper(wrapper);
         }
     }//GEN-LAST:event_moveRightButtonActionPerformed
 
