@@ -18,6 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 
@@ -151,6 +152,7 @@ public class LoadSave implements FileLoadSave {
         for (TrainDiagramFilter filter : loadFilters) {
             diagram = filter.filter(diagram, modelVersion);
         }
+        (new AfterLoadCheck()).check(diagram);
         return diagram;
     }
     

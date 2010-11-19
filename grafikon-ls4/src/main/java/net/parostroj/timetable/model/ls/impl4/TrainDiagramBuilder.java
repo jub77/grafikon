@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
+import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -143,7 +144,8 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
-
+        // after load check
+        (new AfterLoadCheck()).check(diagram);
         return diagram;
     }
 }

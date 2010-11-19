@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui;
+package net.parostroj.timetable.actions;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.units.LengthUnit;
  *
  * @author jub
  */
-public class AfterSetChecker {
+public class AfterLoadCheck {
 
     private static final Integer STATION_TRANSFER_TIME = 10;
     private static final Integer AXLE_LENGTH = 4500;

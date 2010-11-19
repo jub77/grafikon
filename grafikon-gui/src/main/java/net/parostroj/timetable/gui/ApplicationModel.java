@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui;
 
+import net.parostroj.timetable.actions.AfterLoadCheck;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,11 +136,8 @@ public class ApplicationModel implements StorableGuiData {
         this.setSelectedEngineCycle(null);
         this.setSelectedDriverCycle(null);
         this.setSelectedTrainUnitCycle(null);
-        
-        this.diagram = diagram;
 
-        // after set checker
-        (new AfterSetChecker()).check(diagram);
+        this.diagram = diagram;
 
         this.collegue.setTrainDiagram(diagram);
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,this));
