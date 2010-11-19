@@ -63,7 +63,7 @@ public class GTViewSettings {
     }
 
     public GTViewSettings set(Key key, Object value) {
-        if (!key.getValueClass().isInstance(value))
+        if (value != null && !key.getValueClass().isInstance(value))
             throw new IllegalArgumentException("Wrong class of parameter.");
         preferences.put(key, value);
         return this;

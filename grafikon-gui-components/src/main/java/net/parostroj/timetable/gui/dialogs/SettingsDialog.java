@@ -13,6 +13,8 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.model.units.WeightUnit;
+import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +119,46 @@ public class SettingsDialog extends javax.swing.JDialog {
             emptyWeightEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY)), WeightUnit.KG);
             lengthPerAxleEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE)), LengthUnit.MM);
             lengthUnitComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT));
+
+            // time range
+            Integer fromTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            Integer toTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            this.setTimeRange(fromTime, toTime);
         }
+    }
+
+    private void setTimeRange(Integer from, Integer to) {
+        fromTimeTextField.setText(TimeConverter.convertFromIntToText(from != null ? from : 0));
+        toTimeTextField.setText(TimeConverter.convertFromIntToTextNN(to != null ? to : TimeInterval.DAY));
+    }
+
+    private Tuple<Integer> getTimeRange() {
+        int from = TimeConverter.convertFromTextToInt(fromTimeTextField.getText());
+        int to = TimeConverter.convertFromTextToInt(toTimeTextField.getText());
+        Integer fromTime = from == -1 ? 0 : from;
+        Integer toTime = to == -1 ? TimeInterval.DAY : to;
+        if (toTime == 0)
+            toTime = TimeInterval.DAY;
+        // check range (a least an hour)
+        if (fromTime > toTime) {
+            // swap
+            Integer swap = fromTime;
+            fromTime = toTime;
+            toTime = swap;
+        }
+        // check minimal distance
+        if ((toTime - fromTime) < 3600) {
+            toTime = fromTime + 3600;
+            if (toTime > TimeInterval.DAY) {
+                toTime = TimeInterval.DAY;
+                fromTime = toTime - 3600;
+            }
+        }
+        if (fromTime == 0)
+            fromTime = null;
+        if (toTime == TimeInterval.DAY || toTime == 0)
+            toTime = null;
+        return new Tuple<Integer>(fromTime, toTime);
     }
 
     public boolean isDiagramChanged() {
@@ -169,6 +210,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         lengthPerAxleEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         javax.swing.JLabel jLabel15 = new javax.swing.JLabel();
         lengthUnitComboBox = new javax.swing.JComboBox();
+        timeRangePanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel16 = new javax.swing.JLabel();
+        fromTimeTextField = new javax.swing.JTextField();
+        javax.swing.JLabel jLabel17 = new javax.swing.JLabel();
+        toTimeTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -219,7 +265,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
@@ -299,13 +345,13 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(changesTrackingCheckBox, gridBagConstraints);
 
         jLabel11.setText(ResourceLoader.getString("modelinfo.running.time.script")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
@@ -318,7 +364,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -400,6 +446,39 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         getContentPane().add(lengthPanel, gridBagConstraints);
+
+        timeRangePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel16.setText(bundle.getString("modelinfo.from.time")); // NOI18N
+        timeRangePanel.add(jLabel16);
+
+        fromTimeTextField.setColumns(7);
+        fromTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                timeTextFieldFocusLost(evt);
+            }
+        });
+        timeRangePanel.add(fromTimeTextField);
+
+        jLabel17.setText(bundle.getString("modelinfo.to.time")); // NOI18N
+        timeRangePanel.add(jLabel17);
+
+        toTimeTextField.setColumns(7);
+        toTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                timeTextFieldFocusLost(evt);
+            }
+        });
+        timeRangePanel.add(toTimeTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        getContentPane().add(timeRangePanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -524,6 +603,21 @@ public class SettingsDialog extends javax.swing.JDialog {
                 diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
         }
 
+        // time range
+        Tuple<Integer> timeRange = this.getTimeRange();
+        if (timeRange.first != diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME)) {
+            if (timeRange.first == null)
+                diagram.removeAttribute(TrainDiagram.ATTR_FROM_TIME);
+            else
+                diagram.setAttribute(TrainDiagram.ATTR_FROM_TIME, timeRange.first);
+        }
+        if (timeRange.second != diagram.getAttribute(TrainDiagram.ATTR_TO_TIME)) {
+            if (timeRange.second == null)
+                diagram.removeAttribute(TrainDiagram.ATTR_TO_TIME);
+            else
+                diagram.setAttribute(TrainDiagram.ATTR_TO_TIME, timeRange.second);
+        }
+
         // update model
         if (recalculate)
             for (Train train : diagram.getTrains()) {
@@ -556,11 +650,18 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.diagramChanged = false;
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void timeTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_timeTextFieldFocusLost
+        // focus lost - check time information
+        Tuple<Integer> timeRange = this.getTimeRange();
+        this.setTimeRange(timeRange.first, timeRange.second);
+    }//GEN-LAST:event_timeTextFieldFocusLost
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox changesTrackingCheckBox;
     private javax.swing.JTextField completeNameTemplateTextField;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox emptyWeightEditBox;
+    private javax.swing.JTextField fromTimeTextField;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthPerAxleEditBox;
     private javax.swing.JComboBox lengthUnitComboBox;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox loadedWeightEditBox;
@@ -573,6 +674,8 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea scriptTextArea;
     private javax.swing.JComboBox sortComboBox;
     private javax.swing.JTextField stationTransferTextField;
+    private javax.swing.JPanel timeRangePanel;
+    private javax.swing.JTextField toTimeTextField;
     // End of variables declaration//GEN-END:variables
 
 }

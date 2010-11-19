@@ -18,4 +18,6 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_ROUTE_VALIDITY = "route.validity";
     public static final String ATTR_ROUTE_NODES = "route.nodes";
     public static final String ATTR_ROUTE_NUMBERS = "route.numbers";
+    public static final String ATTR_FROM_TIME = "from.time";
+    public static final String ATTR_TO_TIME = "to.time";
 }

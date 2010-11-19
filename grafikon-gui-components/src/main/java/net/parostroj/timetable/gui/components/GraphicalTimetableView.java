@@ -105,6 +105,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                                 trainRegionCollector.deleteTrain((Train)event.getObject());
                             repaint();
                             break;
+                        case ATTRIBUTE:
+                            String name = event.getAttributeChange().getName();
+                            if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name))
+                                recreateDraw();
+                            break;
                     }
                 }
 
@@ -201,7 +206,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     }
 
     private void setGTWidth(int size, Integer start, Integer end) {
-        double ratio = (start != null && end != null) ? (double)(end - start) / TimeInterval.DAY : 1;
+        if (start == null)
+            start = 0;
+        if (end == null)
+            end = TimeInterval.DAY;
+        double ratio = (double)(end - start) / TimeInterval.DAY;
         int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
         newWidth = (int) (newWidth * ratio);
         Dimension d = this.getPreferredSize();
@@ -229,6 +238,13 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         } else {
             trainRegionCollector.clear();
             GTViewSettings config = this.getSettings();
+            if (diagram != null) {
+                Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+                Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+                config.set(Key.START_TIME, from);
+                config.set(Key.END_TIME, to);
+                this.setGTWidth(config.get(Key.VIEW_SIZE, Integer.class), from, to);
+            }
             config.set(GTViewSettings.Key.SIZE, this.getSize());
             if (settings.get(Key.TYPE) == Type.CLASSIC) {
                 draw = new GTDrawClassic(config, drawnRoute, trainRegionCollector);
