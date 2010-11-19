@@ -35,11 +35,9 @@ public class GTDrawWithNodeTracks extends GTDraw {
     @Override
     protected void computePositions() {
         positions = new HashMap<Node, Integer>();
-        
         trackPositions = new HashMap<Track, Integer>();
-        
         stations = new LinkedList<Node>();
-        
+
         int completeLength = 0;
         int trackGaps = 0;
         for (RouteSegment segment : route.getSegments()) {
@@ -48,7 +46,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
             if (segment.asNode() != null)
                 trackGaps = trackGaps + segment.asNode().getTracks().size() - 1;
         }
-        
+
         double position = 0;
         int height = size.height - trackGaps * TRACK_GAP;
         double step = (double)height / (double)completeLength;
@@ -102,21 +100,19 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
     @Override
     protected void paintTrains(Graphics2D g) {
-        double timeStep = (double)size.width / (24 * 3600);
-        
         for (RouteSegment part : route.getSegments()) {
             if (part.asNode() != null) {
-                this.paintTrainsInStation(part.asNode(), g, timeStep);
+                this.paintTrainsInStation(part.asNode(), g);
             } else if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, timeStep, TRAIN_STROKE);
+                this.paintTrainsOnLine(part.asLine(), g, TRAIN_STROKE);
             }
         }
     }
 
     @Override
-    protected Line2D createTrainLine(TimeInterval interval, Interval i, double timeStep) {
-        int x1 = (int)(start.x + i.getStart() * timeStep);
-        int x2 = (int)(start.x + i.getEnd() * timeStep);
+    protected Line2D createTrainLine(TimeInterval interval, Interval i) {
+        int x1 = this.getX(i.getStart());
+        int x2 = this.getX(i.getEnd());
         int y1 = start.y + trackPositions.get(interval.getTrain().getIntervalBefore(interval).getTrack());
         int y2 = start.y + trackPositions.get(interval.getTrain().getIntervalAfter(interval).getTrack());
 
@@ -124,9 +120,12 @@ public class GTDrawWithNodeTracks extends GTDraw {
         return line2D;
     }
     
-    private void paintTrainsInStation(Node station, Graphics2D g, double timeStep) {
+    private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
+                // skip intervals outside start - end time
+                if (!this.isTimeVisible(interval.getStart(), interval.getEnd()))
+                    continue;
                 if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE)
                     continue;
                 if (!interval.isBoundary()) {
@@ -139,7 +138,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 g.setColor(this.getIntervalColor(interval));
 
                 Interval normalized = interval.getInterval().normalize();
-                Line2D line = this.createTrainLineInStation(interval, normalized, timeStep);
+                Line2D line = this.createTrainLineInStation(interval, normalized);
 
                 // add shape to collector
                 boolean isCollected = this.isCollectorCollecting(interval.getTrain());
@@ -149,7 +148,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 g.draw(line);
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
                 if (overMidnight != null) {
-                    line = this.createTrainLineInStation(interval, overMidnight, timeStep);
+                    line = this.createTrainLineInStation(interval, overMidnight);
                     if (isCollected)
                         this.addShapeToCollector(interval, line);
                     g.draw(line);
@@ -158,10 +157,10 @@ public class GTDrawWithNodeTracks extends GTDraw {
         }
     }
 
-    private Line2D createTrainLineInStation(TimeInterval interval, Interval i, double timeStep) {
+    private Line2D createTrainLineInStation(TimeInterval interval, Interval i) {
         int y = start.y + trackPositions.get(interval.getTrack());
-        int x1 = (int)(start.x + i.getStart() * timeStep);
-        int x2 = (int)(start.x + i.getEnd() * timeStep);
+        int x1 = this.getX(i.getStart());
+        int x2 = this.getX(i.getEnd());
         Line2D line2D = new Line2D.Float(x1, y, x2, y);
         return line2D;
     }

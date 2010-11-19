@@ -48,7 +48,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
 
         this.settings = this.getDefaultViewSettings();
 
-        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class));
+        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class),
+                settings.get(Key.START_TIME, Integer.class),
+                settings.get(Key.END_TIME, Integer.class));
         this.setBackground(Color.WHITE);
 
         this.addComponentListener(new ComponentAdapter() {
@@ -198,8 +200,10 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         }
     }
 
-    private void setGTWidth(int size) {
+    private void setGTWidth(int size, Integer start, Integer end) {
+        double ratio = (start != null && end != null) ? (double)(end - start) / TimeInterval.DAY : 1;
         int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
+        newWidth = (int) (newWidth * ratio);
         Dimension d = this.getPreferredSize();
         d.width = newWidth;
         this.setPreferredSize(d);
@@ -287,7 +291,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                 }
             }
         }
-        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class));
+        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class),
+                settings.get(Key.START_TIME, Integer.class),
+                settings.get(Key.END_TIME, Integer.class));
         trainNamesCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TRAIN_NAMES));
         addigitsCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS));
         techTimeCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TECHNOLOGICAL_TIME));
@@ -533,7 +539,9 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
                 public void actionPerformed(ActionEvent e) {
                     int size = Integer.parseInt(e.getActionCommand());
                     settings.set(Key.VIEW_SIZE, size);
-                    setGTWidth(size);
+                    setGTWidth(size,
+                            settings.get(Key.START_TIME, Integer.class),
+                            settings.get(Key.END_TIME, Integer.class));
                     recreateDraw();
                 }
             });
