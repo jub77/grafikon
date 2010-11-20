@@ -22,16 +22,19 @@ public class WeightDataExtractor {
 
     private Train train;
     private List<WeightDataRow> data;
+    private boolean showWeight;
 
     public WeightDataExtractor(Train train) {
         this.train = train;
         this.data = new LinkedList<WeightDataRow>();
+        this.showWeight = train.getType().getCategory().getKey().equals("freight")
+                || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
         this.processData();
     }
 
     private void processData() {
         Integer weight = TrainsHelper.getWeightFromAttribute(train);
-        if (!this.checkLineClasses() || !this.checkEngineClasses() || weight != null) {
+        if (!this.checkLineClasses() || !this.checkEngineClasses() || weight != null || !showWeight) {
             this.processOld(weight);
             this.collapseData();
         } else {
@@ -66,7 +69,7 @@ public class WeightDataExtractor {
                     }
                     if (process) {
                         // add data
-                        data.add(this.createRow(eClasses, startNode, interval.getOwnerAsNode(), weight));
+                        data.add(this.createRow(eClasses, startNode, interval.getOwnerAsNode(), showWeight ? weight : null));
                         // set new start node
                         startNode = interval.getOwnerAsNode();
                     }
