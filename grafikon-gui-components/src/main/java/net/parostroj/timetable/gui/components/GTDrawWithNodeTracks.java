@@ -57,7 +57,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 Node node = segment.asNode();
                 stations.add(node);
                 int tracks = node.getTracks().size();
-                positions.put(node, (int)position);
+                positions.put(node, (int)position + (((tracks - 1) * TRACK_GAP) / 2));
                 trackPositions.put(node.getTracks().get(0),(int)position);
                 for (int i = 1; i < tracks; i++) {
                     position = position + TRACK_GAP;

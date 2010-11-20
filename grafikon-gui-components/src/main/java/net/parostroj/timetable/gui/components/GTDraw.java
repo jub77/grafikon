@@ -204,6 +204,7 @@ abstract public class GTDraw {
     }
 
     protected void paintStationNames(Graphics2D g, List<Node> stations, Map<Node, Integer> positions) {
+        int yShift = (int) (this.getDigitSize(g).getHeight() / 2);
         for (Node s : stations) {
             // ignore signals
             if (s.getType() == NodeType.SIGNAL)
@@ -224,11 +225,11 @@ abstract public class GTDraw {
                 }
             }
             Rectangle r = new Rectangle((int)b.getX() - 2, (int)b.getY(), (int)b.getWidth() + 4, (int)b.getHeight());
-            r.setLocation(10 + 0 + positionX - 3, y + 12 + (int)r.getY());
+            r.setLocation(10 + 0 + positionX - 3, y + yShift + (int)r.getY());
             g.setColor(background);
             g.fill(r);
             g.setColor(Color.black);
-            g.drawString(transName, 10 + 0 + positionX, y + 12);
+            g.drawString(transName, 10 + 0 + positionX, y + yShift);
         }
     }
 
