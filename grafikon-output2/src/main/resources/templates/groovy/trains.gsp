@@ -432,7 +432,7 @@
         if (train.weightData != null) {
         lastEngine = null
         for (wr in train.weightData) { 
-          currentEngine = concat(wr.engines, ",") %>
+          currentEngine = concat(wr.engines, ", ") %>
         <tr>
           <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
           <td>${(wr.weight != null && (fwt || currentEngine != "")) ? norm_load + ": &nbsp;" : ""}</td>

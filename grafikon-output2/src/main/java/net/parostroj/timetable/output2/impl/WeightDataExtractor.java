@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
@@ -44,7 +43,7 @@ public class WeightDataExtractor {
 
     private void processOld(String weightStr) {
         for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
-            String name = TransformUtil.getEngineDescription(item.getCycle());
+            String name = TransformUtil.getEngineCycleDescription(item.getCycle());
             if (name != null || weightStr != null)
                 data.add(this.createRow(train, name, item.getFromInterval().getOwnerAsNode(), item.getToInterval().getOwnerAsNode(), weightStr));
         }
@@ -61,7 +60,7 @@ public class WeightDataExtractor {
 
         Integer weight = null;
         Node startNode = null;
-        List<EngineClass> eClasses = null;
+        List<String> eClasses = null;
         for (int i = 0; i < list.size(); i++) {
             Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> item = list.get(i);
 
@@ -69,7 +68,7 @@ public class WeightDataExtractor {
                 // process line interval
                 if (weight == null || weight > item.second.first)
                     weight = item.second.first;
-                eClasses = TrainsHelper.getEngineClasses(item.second.second);
+                eClasses = this.convertItemList(item.second.second);
             } else {
                 // process node interval
                 if (startNode == null)
@@ -80,7 +79,7 @@ public class WeightDataExtractor {
                         process = true;
                     else {
                         Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> itemNext = list.get(i + 1);
-                        List<EngineClass> eClasses2 = TrainsHelper.getEngineClasses(itemNext.second.second);
+                        List<String> eClasses2 = this.convertItemList(itemNext.second.second);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
                         if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
@@ -97,9 +96,17 @@ public class WeightDataExtractor {
         }
     }
 
-    private boolean compareEngineLists(List<EngineClass> list1, List<EngineClass> list2) {
-        List<EngineClass> test = new LinkedList<EngineClass>(list1);
-        for (EngineClass eClass : list2) {
+    private List<String> convertItemList(List<TrainsCycleItem> items) {
+        List<String> result = new LinkedList<String>();
+        for (TrainsCycleItem item : items) {
+            result.add(TransformUtil.getEngineCycleDescription(item.getCycle()));
+        }
+        return result;
+    }
+
+    private boolean compareEngineLists(List<String> list1, List<String> list2) {
+        List<String> test = new LinkedList<String>(list1);
+        for (String eClass : list2) {
             boolean removed = test.remove(eClass);
             if (!removed)
                 return false;
@@ -153,15 +160,11 @@ public class WeightDataExtractor {
         return Collections.unmodifiableList(data);
     }
 
-    private WeightDataRow createRow(List<EngineClass> engineClasses, Node from, Node to, Integer weight) {
-        List<String> ecs = new LinkedList<String>();
-        for (EngineClass c : engineClasses) {
-            ecs.add(c.getName());
-        }
+    private WeightDataRow createRow(List<String> engineClasses, Node from, Node to, Integer weight) {
         String fromStr = from.getName();
         String toStr = to.getName();
         String weightStr = weight.toString();
-        return new WeightDataRow(ecs, fromStr, toStr, weightStr);
+        return new WeightDataRow(engineClasses, fromStr, toStr, weightStr);
     }
 
     private WeightDataRow createRow(Train train, String engine, Node from, Node to, String weight) {
