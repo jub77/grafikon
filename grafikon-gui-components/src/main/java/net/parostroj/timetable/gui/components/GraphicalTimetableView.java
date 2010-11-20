@@ -266,6 +266,10 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         return this.route;
     }
 
+    protected TrainDiagram getDiagram() {
+        return diagram;
+    }
+
     private void setShiftX(int shift) {
         if (draw != null) {
             draw.setPositionX(shift);

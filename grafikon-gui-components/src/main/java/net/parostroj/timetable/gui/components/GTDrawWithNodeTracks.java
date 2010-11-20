@@ -123,9 +123,6 @@ public class GTDrawWithNodeTracks extends GTDraw {
     private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                // skip intervals outside start - end time
-                if (!this.isTimeVisible(interval.getStart(), interval.getEnd()))
-                    continue;
                 if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE)
                     continue;
                 if (!interval.isBoundary()) {
@@ -137,18 +134,19 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 }
                 g.setColor(this.getIntervalColor(interval));
 
-                Interval normalized = interval.getInterval().normalize();
-                Line2D line = this.createTrainLineInStation(interval, normalized);
-
                 // add shape to collector
                 boolean isCollected = this.isCollectorCollecting(interval.getTrain());
-                if (isCollected)
-                    this.addShapeToCollector(interval, line);
 
-                g.draw(line);
+                Interval normalized = interval.getInterval().normalize();
+                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
+                    Line2D line = this.createTrainLineInStation(interval, normalized);
+                    if (isCollected)
+                        this.addShapeToCollector(interval, line);
+                    g.draw(line);
+                }
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
-                if (overMidnight != null) {
-                    line = this.createTrainLineInStation(interval, overMidnight);
+                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+                    Line2D line = this.createTrainLineInStation(interval, overMidnight);
                     if (isCollected)
                         this.addShapeToCollector(interval, line);
                     g.draw(line);

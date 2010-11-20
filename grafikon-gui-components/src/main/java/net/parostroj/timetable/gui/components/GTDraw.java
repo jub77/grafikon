@@ -168,18 +168,16 @@ abstract public class GTDraw {
         g.setStroke(trainStroke);
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                // skip intervals outside start - end time
-                if (!this.isTimeVisible(interval.getStart(), interval.getEnd()))
-                    continue;
                 boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL) &&
                         (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
                 boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
 
                 Interval normalized = interval.getInterval().normalize();
                 g.setColor(this.getIntervalColor(interval));
-                this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
+                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd()))
+                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
-                if (overMidnight != null) {
+                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
                     this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
                 }
             }

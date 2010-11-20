@@ -12,6 +12,7 @@ import javax.swing.*;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.model.TrainDiagram;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -64,6 +65,13 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         // get values and provide save
         GTDraw drawFile = null;
         GTViewSettings config = this.getSettings();
+        TrainDiagram diagram = this.getDiagram();
+        if (diagram != null) {
+            Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            config.set(GTViewSettings.Key.START_TIME, from);
+            config.set(GTViewSettings.Key.END_TIME, to);
+        }
         config.set(GTViewSettings.Key.SIZE, saveSize);
         config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
         if (this.settings.get(GTViewSettings.Key.TYPE) == Type.CLASSIC) {
