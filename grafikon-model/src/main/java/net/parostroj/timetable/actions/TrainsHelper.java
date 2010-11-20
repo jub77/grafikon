@@ -329,18 +329,7 @@ public class TrainsHelper {
                 } else if (pairI.first.isNodeOwner()) {
                     retNode = pairI.first.getOwnerAsNode();
                     // next stop found
-                    boolean shouldBreak = false;
-                    switch (nextType) {
-                        case BRANCH_STATION:
-                            if (pairI.first.isStop() && retNode.getType() == NodeType.STATION_BRANCH)
-                                shouldBreak = true;
-                            break;
-                        case FIRST_STATION:
-                            if (pairI.first.isStop() && retNode.getType().isStation())
-                                shouldBreak = true;
-                            break;
-                    }
-                    if (shouldBreak)
+                    if (isNextTypeNode(pairI.first, nextType))
                         break;
                 }
             }
@@ -351,7 +340,7 @@ public class TrainsHelper {
     /**
      * returns length for the next node. It returns pair with node and length. It
      * returns <code>null</code> if the weights are not specified. As the next node
-     * is taken the end of the route or the nearest branch station.
+     * is taken a node according to given type.
      *
      * @param node starting node
      * @param train train
@@ -359,11 +348,46 @@ public class TrainsHelper {
      * @return next node and available weight
      */
     public static Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram, NextType nextType) {
+        // get weight limit
         Pair<Node, Integer> result = getNextWeight(node, train, nextType);
-        if (result != null) {
+        if (result == null) {
+            Integer attrWeight = getWeightFromAttribute(train);
+            result = new Pair<Node, Integer>(getNextNodeByType(node, train, nextType), attrWeight);
+        }
+        // conversion to length
+        if (result.second != null) {
             result.second = convertWeightToLength(train, diagram, result.second);
         }
+        // update with lengths of stations
+        result.second = updateNextLengthWithStationLengths(node, result.first, train, result.second);
         return result;
+    }
+
+    public static boolean isNextTypeNode(TimeInterval interval, NextType type) {
+        Node node = interval.getOwnerAsNode();
+        if (interval.isStop())
+            switch (type) {
+                case BRANCH_STATION:
+                    return node.getType() == NodeType.STATION_BRANCH;
+                case FIRST_STATION:
+                    return node.getType().isStation();
+                case LAST_STATION:
+                    return interval.isLast();
+            }
+        return false;
+    }
+
+    public static Node getNextNodeByType(Node node, Train train, NextType type) {
+        Iterator<TimeInterval> iterator = train.getTimeIntervalList().iterator();
+        while (iterator.hasNext())
+            if (iterator.next().getOwnerAsNode() == node)
+                break;
+        while (iterator.hasNext()) {
+            TimeInterval i = iterator.next();
+            if (i.isNodeOwner() && isNextTypeNode(i, type))
+                return i.getOwnerAsNode();
+        }
+        return null;
     }
 
     /**
@@ -371,20 +395,20 @@ public class TrainsHelper {
      * (stops for the trains that need platforms). As the next station is taken
      * end of the route or the nearest branch station.
      *
-     * @param node starting node
+     * @param fromNode starting node
      * @param train train
      * @param length precalculated length
      * @return updated length
      */
-    public static Integer updateNextLengthWithStationLengths(Node node, Train train, Integer length) {
+    public static Integer updateNextLengthWithStationLengths(Node fromNode, Node toNode, Train train, Integer length) {
         Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
         // look for current node
         while (i.hasNext()) {
             TimeInterval interval = i.next();
             if (interval.isNodeOwner()) {
-                if (interval.getOwnerAsNode() == node) {
-                    if (shouldCheckLength(node, train))
-                        length = updateWithStationLength(node, length);
+                if (interval.getOwnerAsNode() == fromNode) {
+                    if (shouldCheckLength(fromNode, train))
+                        length = updateWithStationLength(fromNode, length);
                     break;
                 }
             }
@@ -396,7 +420,7 @@ public class TrainsHelper {
                 if (interval.isStop()) {
                     if (shouldCheckLength(interval.getOwnerAsNode(), train))
                         length = updateWithStationLength(interval.getOwnerAsNode(), length);
-                    if (interval.getOwnerAsNode().getType() == NodeType.STATION_BRANCH)
+                    if (interval.getOwnerAsNode() == toNode)
                         break;
                 }
             }
@@ -415,7 +439,7 @@ public class TrainsHelper {
      */
     public static Integer updateWithStationLength(Node node, Integer length) {
         Integer nodeLength = convertLength(node.getTrainDiagram(), (Integer)node.getAttribute("length"));
-        if (nodeLength != null && nodeLength < length)
+        if (nodeLength != null && (length == null || nodeLength < length))
             return nodeLength;
         else
             return length;
