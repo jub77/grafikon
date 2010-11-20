@@ -91,12 +91,13 @@ public class TransformUtil {
         if (ec.getType() != TrainsCycleType.ENGINE_CYCLE)
             throw new IllegalArgumentException("Engine cycle expected.");
         
-        String result = (ec.getDescription() != null) ? ec.getDescription() : "";
+        String result = (ec.getDescription() != null) ? ec.getDescription().trim() : "";
         if (ec.getAttribute("engine.class") != null) {
             EngineClass cl = (EngineClass)ec.getAttribute("engine.class");
+            String desc = result;
             result = cl.getName();
-            if (ec.getDescription() != null && !"".equals(ec.getDescription())) {
-                result += " (" + ec.getDescription() + ")";
+            if (!"".equals(desc)) {
+                result = String.format("%s (%s)", result, desc);
             }
         }
         return result;
