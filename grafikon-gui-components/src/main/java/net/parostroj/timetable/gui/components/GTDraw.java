@@ -137,7 +137,9 @@ abstract public class GTDraw {
                 if ((i & 1) == 0) {
                     // draw hours
                     g.setColor(Color.black);
-                    g.drawString(Integer.toString(i / 2), xLocation - 5, start.y - 3);
+                    String text = Integer.toString(i / 2);
+                    Rectangle2D rr = g.getFont().getStringBounds(text, g.getFontRenderContext());
+                    g.drawString(text, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
                 }
             }
 
