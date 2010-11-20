@@ -435,7 +435,7 @@
           currentEngine = concat(wr.engines, ", ") %>
         <tr>
           <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
-          <td>${(wr.weight != null && (fwt || currentEngine != "")) ? norm_load + ": &nbsp;" : ""}</td>
+          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? norm_load + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
           <td align="right">${wr.weight != null ? wr.weight + " " + tons : ""}</td>
         </tr><%
