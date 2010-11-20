@@ -21,8 +21,8 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="deleteButton" max="32767" attributes="0"/>
           </Group>
-          <Component id="newNameTextField" alignment="0" max="32767" attributes="0"/>
-          <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+          <Component id="newNameTextField" alignment="0" pref="160" max="32767" attributes="0"/>
+          <Component id="scrollPane" alignment="0" pref="160" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
