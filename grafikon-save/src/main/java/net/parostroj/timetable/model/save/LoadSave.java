@@ -47,6 +47,7 @@ public class LoadSave implements FileLoadSave {
         loadFilters = new LinkedList<TrainDiagramFilter>();
         loadFilters.add(new TrainsNamesLoadFilter());
         loadFilters.add(new LineTypeLoadFilter());
+        loadFilters.add(new WeightFilter());
         saveFilters = new LinkedList<TrainDiagramFilter>();
     }
     

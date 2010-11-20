@@ -61,8 +61,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
             descriptionTextField.setText(train.getDescription());
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
-
-            weightTextField.setText((String)train.getAttribute("weight.info"));
+            Integer weight = (Integer) train.getAttribute("weight");
+            weightTextField.setText(weight != null ? weight.toString() : "");
             routeTextField.setText((String)train.getAttribute("route.info"));
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
@@ -304,14 +304,26 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         train.setNumber(numberTextField.getText());
     if (!descriptionTextField.getText().equals(train.getDescription()))
         train.setDescription(descriptionTextField.getText());
-    String newWI = weightTextField.getText().trim();
-    String oldWI = (String)train.getAttribute("weight.info");
+
+    // weight
+    Integer oldWI = (Integer) train.getAttribute("weight");
+    Integer newWI = null;
+    try {
+        String weightStr = weightTextField.getText().trim();
+        if (!"".equals(weightStr))
+            newWI = Integer.valueOf(weightStr);
+    } catch (NumberFormatException e) {
+        LOG.warn("Couldn't convert weight to int.");
+        newWI = oldWI;
+    }
+    if (newWI != null && !newWI.equals(oldWI)) {
+        train.setAttribute("weight", newWI);
+    } else if (newWI == null && oldWI != null)
+        train.removeAttribute("weight");
+
+    // route
     String newRI = routeTextField.getText().trim();
     String oldRI = (String)train.getAttribute("route.info");
-    if (!newWI.equals("") && !newWI.equals(oldWI)) {
-        train.setAttribute("weight.info", newWI);
-    } else if (newWI.equals("") && oldWI != null)
-        train.removeAttribute("weight.info");
     if (!newRI.equals("") && !newRI.equals(oldRI)) {
         train.setAttribute("route.info", newRI);
     } else if (newRI.equals("") && oldRI != null)

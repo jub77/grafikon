@@ -58,12 +58,22 @@ public class TrainsHelper {
     private static Pattern NUMBER = Pattern.compile("\\d+");
 
     /**
-     * return converted weight from weight.info attribute.
+     * return converted weight from weight attribute.
      *
      * @param train train
      * @return weight
      */
     public static Integer getWeightFromAttribute(Train train) {
+        return (Integer) train.getAttribute("weight");
+    }
+
+    /**
+     * return converted weight from weight.info attribute.
+     *
+     * @param train train
+     * @return weight
+     */
+    public static Integer getWeightFromInfoAttribute(Train train) {
         Integer weight = null;
         String weightStr = (String) train.getAttribute("weight.info");
         // try to convert weight string to number

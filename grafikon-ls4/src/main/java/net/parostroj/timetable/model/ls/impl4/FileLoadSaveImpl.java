@@ -83,11 +83,12 @@ public class FileLoadSaveImpl implements FileLoadSave {
         return metadata;
     }
 
-    private void checkVersion(Properties props) throws LSException {
+    private ModelVersion checkVersion(Properties props) throws LSException {
         ModelVersion current = METADATA_MODEL_VERSION;
         ModelVersion loaded = new ModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
         if (current.compareTo(loaded) < 0)
             throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
+        return loaded;
     }
 
     @Override
@@ -96,12 +97,13 @@ public class FileLoadSaveImpl implements FileLoadSave {
             ZipEntry entry = null;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
+            ModelVersion version = null;
             while ((entry = zipInput.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
                     Properties props = new Properties();
                     props.load(zipInput);
-                    checkVersion(props);
+                    version = checkVersion(props);
                     continue;
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
@@ -136,7 +138,9 @@ public class FileLoadSaveImpl implements FileLoadSave {
                         builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput, entry));
                 }
             }
-            return builder.getTrainDiagram();
+            TrainDiagram trainDiagram = builder.getTrainDiagram();
+            new LoadFilter().checkDiagram(trainDiagram, version);
+            return trainDiagram;
         } catch (IOException e) {
             throw new LSException(e);
         } finally {

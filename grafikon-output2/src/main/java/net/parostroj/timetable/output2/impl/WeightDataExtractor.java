@@ -148,7 +148,7 @@ public class WeightDataExtractor {
         WeightDataRow lastRow = i.next();
         while (i.hasNext()) {
             WeightDataRow row = i.next();
-            if (lastRow.getEngines().containsAll(row.getEngines()) && lastRow.getWeight() == row.getWeight()) {
+            if (lastRow.getEngines().containsAll(row.getEngines()) && ((lastRow.getWeight() != null && lastRow.getWeight().equals(row.getWeight())) || lastRow.getWeight() == row.getWeight())) {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
