@@ -117,28 +117,16 @@ public class TrainTimetablesExtractor {
     private void extractLengthData(Train train, TrainTimetable timetable) {
         if (Boolean.TRUE.equals(train.getAttribute("show.station.length"))) {
             // compute maximal length
-            List<Integer> lengths = new LinkedList<Integer>();
-            for (TimeInterval interval : train.getTimeIntervalList()) {
-                if (interval.isNodeOwner() && interval.isStop() && TrainsHelper.shouldCheckLength(interval.getOwnerAsNode(), train))
-                    lengths.add(TrainsHelper.convertLength(diagram, (Integer)interval.getOwnerAsNode().getAttribute("length")));
+            Pair<Node, Integer> length = TrainsHelper.getNextLength(train.getStartNode(), train, diagram, TrainsHelper.NextType.LAST_STATION);
+            if (length != null && length.second != null) {
+                // get length unit
+                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                LengthData data = new LengthData();
+                data.setLength(length.second);
+                data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
+                data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
+                timetable.setLengthData(data);
             }
-            // check if all lengths are set and choose the minimum
-            Integer minLength = null;
-            for (Integer sLength : lengths) {
-                if (sLength == null)
-                    return;
-                else {
-                    if (minLength == null || sLength.intValue() < minLength.intValue())
-                        minLength = sLength;
-                }
-            }
-            // get length unit
-            LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
-            LengthData data = new LengthData();
-            data.setLength(minLength);
-            data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
-            data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
-            timetable.setLengthData(data);
         }
     }
 

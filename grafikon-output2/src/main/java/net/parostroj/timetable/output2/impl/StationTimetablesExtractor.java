@@ -122,16 +122,9 @@ public class StationTimetablesExtractor {
         Train train = interval.getTrain();
         if (train.getIntervalAfter(interval) != null && interval.isStop() && train.getType().getCategory().getKey().equals("freight")) {
             Pair<Node, Integer> length = TrainsHelper.getNextLength(interval.getOwnerAsNode(), train, diagram, TrainsHelper.NextType.LAST_STATION);
-            if (length == null) {
-                // check old style comment
-                Integer weight = TrainsHelper.getWeightFromAttribute(train);
-                if (weight != null)
-                    length = new Pair<Node, Integer>(train.getEndNode(), TrainsHelper.convertWeightToLength(train, diagram, weight));
-            }
             // if length was calculated
             if (length != null && length.second != null) {
                 // update length with station lengths
-                length.second = TrainsHelper.updateNextLengthWithStationLengths(interval.getOwnerAsNode(), train, length.second);
                 lengthInfo = new LengthInfo();
                 lengthInfo.setLength(length.second);
                 LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
