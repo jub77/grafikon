@@ -12,7 +12,7 @@ public class AfterLoadCheck {
 
     private static final Integer STATION_TRANSFER_TIME = 10;
     private static final Integer AXLE_LENGTH = 4500;
-    private static final Integer WEIGHT_PER_AXLE = 17000;
+    private static final Integer WEIGHT_PER_AXLE = 14000;
     private static final Integer WEIGHT_PER_AXLE_EMPTY = 6000;
     private static final LengthUnit LENGTH_UNIT = LengthUnit.AXLE;
 
