@@ -24,6 +24,10 @@ public class TrainsHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainsHelper.class.getName());
 
+    public static enum NextType {
+        LAST_STATION, FIRST_STATION, BRANCH_STATION;
+    }
+
     /**
      * returns weight for specified time interval based on line and engine class.
      * It returns <code>null</code> if the weight is not specified.
@@ -300,9 +304,10 @@ public class TrainsHelper {
      *
      * @param node starting node
      * @param train train
+     * @param nextType next type
      * @return next node and available weight
      */
-    public static Pair<Node, Integer> getNextWeight(Node node, Train train) {
+    public static Pair<Node, Integer> getNextWeight(Node node, Train train, NextType nextType) {
         List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> weightList = getWeightList(train);
         Integer retValue = null;
         Node retNode = null;
@@ -324,7 +329,18 @@ public class TrainsHelper {
                 } else if (pairI.first.isNodeOwner()) {
                     retNode = pairI.first.getOwnerAsNode();
                     // next stop found
-                    if (pairI.first.isStop() && retNode.getType() == NodeType.STATION_BRANCH)
+                    boolean shouldBreak = false;
+                    switch (nextType) {
+                        case BRANCH_STATION:
+                            if (pairI.first.isStop() && retNode.getType() == NodeType.STATION_BRANCH)
+                                shouldBreak = true;
+                            break;
+                        case FIRST_STATION:
+                            if (pairI.first.isStop() && retNode.getType().isStation())
+                                shouldBreak = true;
+                            break;
+                    }
+                    if (shouldBreak)
                         break;
                 }
             }
@@ -339,10 +355,11 @@ public class TrainsHelper {
      *
      * @param node starting node
      * @param train train
+     * @param next type
      * @return next node and available weight
      */
-    public static Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram) {
-        Pair<Node, Integer> result = getNextWeight(node, train);
+    public static Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram, NextType nextType) {
+        Pair<Node, Integer> result = getNextWeight(node, train, nextType);
         if (result != null) {
             result.second = convertWeightToLength(train, diagram, result.second);
         }
