@@ -30,25 +30,49 @@ public class WeightDataExtractor {
     }
 
     private void processData() {
-        String weightStr = (String) train.getAttribute("weight.info");
-        if (weightStr != null && weightStr.trim().equals(""))
-            weightStr = null;
-        if (!this.checkLineClasses() || !this.checkEngineClasses() || weightStr != null) {
-            this.processOld(weightStr);
+        Integer weight = TrainsHelper.getWeightFromAttribute(train);
+        if (!this.checkLineClasses() || !this.checkEngineClasses() || weight != null) {
+            this.processOld(weight);
+            this.collapseData();
         } else {
             this.processNew();
             this.collapseData();
         }
     }
 
-    private void processOld(String weightStr) {
-        for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
-            String name = TransformUtil.getEngineCycleDescription(item.getCycle());
-            if (name != null || weightStr != null)
-                data.add(this.createRow(train, name, item.getFromInterval().getOwnerAsNode(), item.getToInterval().getOwnerAsNode(), weightStr));
-        }
-        if (data.isEmpty() && weightStr != null) {
-            data.add(this.createRow(train, null, null, null, weightStr));
+    private void processOld(Integer weight) {
+        List<String> eClasses = null;
+        Node startNode = null;
+        for (int i = 0; i < train.getTimeIntervalList().size(); i++) {
+            TimeInterval interval = train.getTimeIntervalList().get(i);
+            if (interval.isLineOwner()) {
+                if (eClasses == null)
+                    eClasses = this.convertItemList(TrainsHelper.getEngineCyclesForInterval(interval));
+            } else {
+                if (startNode == null)
+                    startNode = interval.getOwnerAsNode();
+                else {
+                    boolean process = false;
+                    List<String> eClasses2 = null;
+                    if (interval.isLast())
+                        process = true;
+                    else {
+                        TimeInterval nextInterval = train.getTimeIntervalList().get(i + 1);
+                        eClasses2 = this.convertItemList(TrainsHelper.getEngineCyclesForInterval(nextInterval));
+                        if (!this.compareEngineLists(eClasses, eClasses2))
+                            process = true;
+                        if (interval.isStop() && interval.getOwnerAsNode().getType().isStationOrStop())
+                            process = true;
+                    }
+                    if (process) {
+                        // add data
+                        data.add(this.createRow(eClasses, startNode, interval.getOwnerAsNode(), weight));
+                        // set new start node
+                        startNode = interval.getOwnerAsNode();
+                    }
+                    eClasses = eClasses2;
+                }
+            }
         }
     }
 
@@ -68,18 +92,20 @@ public class WeightDataExtractor {
                 // process line interval
                 if (weight == null || weight > item.second.first)
                     weight = item.second.first;
-                eClasses = this.convertItemList(item.second.second);
+                if (eClasses == null)
+                    eClasses = this.convertItemList(item.second.second);
             } else {
                 // process node interval
                 if (startNode == null)
                     startNode = item.first.getOwnerAsNode();
                 else {
+                    List<String> eClasses2 = null;
                     boolean process = false;
                     if (item.first.isLast())
                         process = true;
                     else {
                         Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> itemNext = list.get(i + 1);
-                        List<String> eClasses2 = this.convertItemList(itemNext.second.second);
+                        eClasses2 = this.convertItemList(itemNext.second.second);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
                         if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
@@ -91,6 +117,7 @@ public class WeightDataExtractor {
                         // set new start node
                         startNode = item.first.getOwnerAsNode();
                     }
+                    eClasses = eClasses2;
                 }
             }
         }
@@ -115,11 +142,13 @@ public class WeightDataExtractor {
     }
 
     private void collapseData() {
+        if (data.isEmpty())
+            return;
         Iterator<WeightDataRow> i = data.listIterator();
         WeightDataRow lastRow = i.next();
         while (i.hasNext()) {
             WeightDataRow row = i.next();
-            if (lastRow.getEngines().containsAll(row.getEngines()) && lastRow.getWeight().equals(row.getWeight())) {
+            if (lastRow.getEngines().containsAll(row.getEngines()) && lastRow.getWeight() == row.getWeight()) {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
@@ -130,6 +159,8 @@ public class WeightDataExtractor {
         if (data.size() == 1) {
             lastRow.setFrom(null);
             lastRow.setTo(null);
+            if (lastRow.isRowEmpty())
+                data.clear();
         }
     }
 
@@ -163,20 +194,6 @@ public class WeightDataExtractor {
     private WeightDataRow createRow(List<String> engineClasses, Node from, Node to, Integer weight) {
         String fromStr = from.getName();
         String toStr = to.getName();
-        String weightStr = weight.toString();
-        return new WeightDataRow(engineClasses, fromStr, toStr, weightStr);
-    }
-
-    private WeightDataRow createRow(Train train, String engine, Node from, Node to, String weight) {
-        String fromStr = null;
-        String toStr = null;
-        if ((train.getStartNode() == from && train.getEndNode() == to) || from == null || to == null) {
-            fromStr = null;
-            toStr = null;
-        } else {
-            fromStr = from.getName();
-            toStr = to.getName();
-        }
-        return new WeightDataRow(engine == null ? Collections.<String>emptyList() : Collections.singletonList(engine), fromStr, toStr, weight);
+        return new WeightDataRow(engineClasses, fromStr, toStr, weight);
     }
 }

@@ -14,12 +14,12 @@ public class WeightDataRow {
     private List<String> engines;
     private String from;
     private String to;
-    private String weight;
+    private Integer weight;
 
     public WeightDataRow() {
     }
 
-    public WeightDataRow(List<String> engines, String from, String to, String weight) {
+    public WeightDataRow(List<String> engines, String from, String to, Integer weight) {
         this.engines = engines;
         this.from = from;
         this.to = to;
@@ -39,7 +39,7 @@ public class WeightDataRow {
         return to;
     }
 
-    public String getWeight() {
+    public Integer getWeight() {
         return weight;
     }
 
@@ -55,7 +55,11 @@ public class WeightDataRow {
         this.from = from;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public boolean isRowEmpty() {
+        return weight == null && from == null && to == null && (engines == null || engines.isEmpty());
     }
 }
