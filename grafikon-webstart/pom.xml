@@ -21,6 +21,7 @@
         <jersey.version>1.2</jersey.version>
         <jsr311.version>1.1.1</jsr311.version>
         <slf4j.version>1.6.0</slf4j.version>
+        <grafikon.version>${grafikon.version}</grafikon.version>
     </properties>
 
     <build>
