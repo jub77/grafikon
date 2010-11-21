@@ -64,8 +64,9 @@ abstract public class GTDraw {
         // start and end time
         Integer st = config.get(GTViewSettings.Key.START_TIME, Integer.class);
         Integer et = config.get(GTViewSettings.Key.END_TIME, Integer.class);
-        startTime = st != null ? st : 0;
-        endTime = et != null ? et : TimeInterval.DAY;
+        boolean ignore = config.getOption(GTViewSettings.Key.IGNORE_TIME_LIMITS);
+        startTime = (st != null && !ignore) ? st : 0;
+        endTime = (et != null && !ignore) ? et : TimeInterval.DAY;
         
         // compute size
         Dimension configSize = config.get(GTViewSettings.Key.SIZE, Dimension.class);

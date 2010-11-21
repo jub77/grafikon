@@ -48,9 +48,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
 
         this.settings = this.getDefaultViewSettings();
 
-        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class),
-                settings.get(Key.START_TIME, Integer.class),
-                settings.get(Key.END_TIME, Integer.class));
+        this.setGTWidth(settings);
         this.setBackground(Color.WHITE);
 
         this.addComponentListener(new ComponentAdapter() {
@@ -107,8 +105,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                             break;
                         case ATTRIBUTE:
                             String name = event.getAttributeChange().getName();
-                            if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name))
+                            if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name)) {
+                                setTimeRange();
+                                setGTWidth(settings);
                                 recreateDraw();
+                            }
                             break;
                     }
                 }
@@ -130,6 +131,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                 }
             };
             this.diagram.addListenerWithNested(this.currentListener);
+            this.setTimeRange();
+            this.setGTWidth(settings);
             if (diagram.getRoutes().size() > 0) {
                 this.setRoute(diagram.getRoutes().get(0));
             } else {
@@ -150,6 +153,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                 .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)
                 .set(Key.TECHNOLOGICAL_TIME, Boolean.FALSE)
+                .set(Key.IGNORE_TIME_LIMITS, Boolean.FALSE)
                 .set(Key.VIEW_SIZE, INITIAL_WIDTH);
         return config;
     }
@@ -205,7 +209,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         }
     }
 
-    private void setGTWidth(int size, Integer start, Integer end) {
+    private void setGTWidth(GTViewSettings config) {
+        Integer start = null;
+        Integer end = null;
+        int size = config.get(Key.VIEW_SIZE, Integer.class);
+        if (!config.getOption(Key.IGNORE_TIME_LIMITS)) {
+            start = config.get(Key.START_TIME, Integer.class);
+            end = config.get(Key.END_TIME, Integer.class);
+        }
         if (start == null)
             start = 0;
         if (end == null)
@@ -231,6 +242,24 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         this.activateRouteMenuItem(route);
     }
 
+    private void setTimeRange() {
+        if (diagram == null) {
+            settings.remove(Key.START_TIME);
+            settings.remove(Key.END_TIME);
+        } else {
+            Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            if (from != null)
+                settings.set(Key.START_TIME, from);
+            else
+                settings.remove(Key.START_TIME);
+            if (to != null)
+                settings.set(Key.END_TIME, to);
+            else
+                settings.remove(Key.END_TIME);
+        }
+    }
+
     private void recreateDraw() {
         Route drawnRoute = this.getRoute();
         if (drawnRoute == null) {
@@ -238,13 +267,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         } else {
             trainRegionCollector.clear();
             GTViewSettings config = this.getSettings();
-            if (diagram != null) {
-                Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
-                Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
-                config.set(Key.START_TIME, from);
-                config.set(Key.END_TIME, to);
-                this.setGTWidth(config.get(Key.VIEW_SIZE, Integer.class), from, to);
-            }
             config.set(GTViewSettings.Key.SIZE, this.getSize());
             if (settings.get(Key.TYPE) == Type.CLASSIC) {
                 draw = new GTDrawClassic(config, drawnRoute, trainRegionCollector);
@@ -311,13 +333,13 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                 }
             }
         }
-        this.setGTWidth(settings.get(Key.VIEW_SIZE, Integer.class),
-                settings.get(Key.START_TIME, Integer.class),
-                settings.get(Key.END_TIME, Integer.class));
+        this.setTimeRange();
+        this.setGTWidth(settings);
         trainNamesCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TRAIN_NAMES));
         addigitsCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS));
         techTimeCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TECHNOLOGICAL_TIME));
         extendedLinesCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.EXTENDED_LINES));
+        ignoreTimeLimitsCheckBoxMenuItem.setSelected(settings.getOption(Key.IGNORE_TIME_LIMITS));
         this.recreateDraw();
     }
 
@@ -342,6 +364,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         extendedLinesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         trainNamesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         techTimeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        ignoreTimeLimitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         typesButtonGroup = new javax.swing.ButtonGroup();
         routesGroup = new javax.swing.ButtonGroup();
 
@@ -417,6 +440,15 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
             }
         });
         preferencesMenu.add(techTimeCheckBoxMenuItem);
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
+        ignoreTimeLimitsCheckBoxMenuItem.setText(bundle.getString("gt.ignore.time.limits")); // NOI18N
+        ignoreTimeLimitsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                preferencesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        preferencesMenu.add(ignoreTimeLimitsCheckBoxMenuItem);
 
         popupMenu.add(preferencesMenu);
 
@@ -497,7 +529,12 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
     settings.set(Key.ARRIVAL_DEPARTURE_DIGITS, addigitsCheckBoxMenuItem.isSelected());
     settings.set(Key.EXTENDED_LINES, extendedLinesCheckBoxMenuItem.isSelected());
     settings.set(Key.TECHNOLOGICAL_TIME, techTimeCheckBoxMenuItem.isSelected());
+    settings.set(Key.IGNORE_TIME_LIMITS, ignoreTimeLimitsCheckBoxMenuItem.isSelected());
     settings.set(Key.TRAIN_NAMES, trainNamesCheckBoxMenuItem.isSelected());
+    if (evt.getSource() == ignoreTimeLimitsCheckBoxMenuItem) {
+        this.setTimeRange();
+        this.setGTWidth(settings);
+    }
     // recreate draw
     this.recreateDraw();
 }//GEN-LAST:event_preferencesCheckBoxMenuItemActionPerformed
@@ -559,9 +596,7 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
                 public void actionPerformed(ActionEvent e) {
                     int size = Integer.parseInt(e.getActionCommand());
                     settings.set(Key.VIEW_SIZE, size);
-                    setGTWidth(size,
-                            settings.get(Key.START_TIME, Integer.class),
-                            settings.get(Key.END_TIME, Integer.class));
+                    setGTWidth(settings);
                     recreateDraw();
                 }
             });
@@ -588,6 +623,7 @@ private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEve
     private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem classicMenuItem;
     private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;
     protected javax.swing.JPopupMenu popupMenu;
     private javax.swing.JMenu preferencesMenu;
     private javax.swing.JMenuItem routesEditMenuItem;
