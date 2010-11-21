@@ -18,7 +18,7 @@
         <jgraph.version>5.13.0.0</jgraph.version>
         <jgrapht.version>0.7.3</jgrapht.version>
         <mvel2.version>2.0.16</mvel2.version>
-        <jersey.version>1.2</jersey.version>
+        <jersey.version>1.3</jersey.version>
         <jsr311.version>1.1.1</jsr311.version>
         <slf4j.version>1.6.0</slf4j.version>
         <grafikon.version>${grafikon.version}</grafikon.version>
