@@ -2,16 +2,19 @@ package net.parostroj.timetable.actions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.ResultList;
+import net.parostroj.timetable.utils.Triplet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,20 @@ public class TrainsHelper {
     public static enum NextType {
         LAST_STATION, FIRST_STATION, BRANCH_STATION;
     }
+    
+    public static Integer getLength(TimeInterval interval) {
+        Integer length = null;
+        if (interval.isNodeOwner()) {
+            Node node = interval.getOwnerAsNode();
+            if (shouldCheckLength(node, interval.getTrain()) && interval.isStop()) {
+                length = (Integer) node.getAttribute("length");
+                length = convertLength(node.getTrainDiagram(), length);
+            }
+        } else {
+            length = convertWeightToLength(interval.getTrain(), getWeight(interval));
+        }
+        return length;
+    }
 
     /**
      * returns weight for specified time interval based on line and engine class.
@@ -35,7 +52,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return weight
      */
-    public static Integer getWeight(TimeInterval interval) {
+    public static Integer getWeightFromLineAndEngine(TimeInterval interval) {
         Pair<Integer, List<TrainsCycleItem>> weightAndCycle = getWeightAndCycles(interval);
         if (weightAndCycle == null || weightAndCycle.first == null)
             return null;
@@ -44,16 +61,15 @@ public class TrainsHelper {
     }
 
     /**
-     * returns weight for interval. It returns old style weight if the
-     * weight table info is not specified.
+     * returns weight for interval. Weight specified in train has higher priority.
      *
      * @param interval time interval
      * @return weight
      */
-    public static Integer getWeightWithAttribute(TimeInterval interval) {
+    public static Integer getWeight(TimeInterval interval) {
         Integer weight = getWeightFromAttribute(interval.getTrain());
         if (weight == null) {
-            weight = getWeight(interval);
+            weight = getWeightFromLineAndEngine(interval);
         }
         return weight;
     }
@@ -62,7 +78,7 @@ public class TrainsHelper {
     private static Pattern NUMBER = Pattern.compile("\\d+");
 
     /**
-     * return converted weight from weight attribute.
+     * return weight from weight attribute.
      *
      * @param train train
      * @return weight
@@ -137,8 +153,6 @@ public class TrainsHelper {
             Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
             Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
             length = (length * scale.getRatio()) / lpa;
-            // number of axles should be an even number
-            length = length - (length % 2);
         } else if (lengthUnit != null) {
             BigDecimal converted = lengthUnit.convertFrom(new BigDecimal(length), LengthUnit.MM);
             try {
@@ -159,21 +173,21 @@ public class TrainsHelper {
      * @param weight weight
      * @return length
      */
-    public static Integer convertWeightToLength(Train train, TrainDiagram diagram, Integer weight) {
+    public static Integer convertWeightToLength(Train train, Integer weight) {
         if (weight == null)
             return null;
         // weight in kg
+        TrainDiagram diagram = train.getTrainDiagram();
         Integer wpa = Boolean.TRUE.equals(train.getAttribute("empty")) ?
             (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY) :
             (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE);
         LengthUnit lu = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
         // length in mm
-        double axles = (weight * 1000) / wpa;
+        double axles = (double) (weight * 1000) / wpa;
         Integer result = null;
         if (lu == LengthUnit.AXLE) {
             // number of axles should be an even number
             result = (int) axles;
-            result = result - (result % 2);
         } else {
             Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
             Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
@@ -216,21 +230,20 @@ public class TrainsHelper {
         return getEngineClasses(list);
     }
 
+    /**
+     * returns list of extracted engine classes from list of cycle items.
+     * 
+     * @param list list of cycle items
+     * @return list of engines
+     */
     public static List<EngineClass> getEngineClasses(List<TrainsCycleItem> list) {
-        List<EngineClass> result = Collections.emptyList();
-        if (list.size() == 1) {
-            EngineClass eClass = getEngineClass(list.get(0));
+        ResultList<EngineClass> result = new ResultList<EngineClass>();
+        for (TrainsCycleItem item : list) {
+            EngineClass eClass = getEngineClass(item);
             if (eClass != null)
-                result = Collections.singletonList(eClass);
-        } else {
-            result = new LinkedList<EngineClass>();
-            for (TrainsCycleItem item : list) {
-                EngineClass eClass = getEngineClass(item);
-                if (eClass != null)
-                    result.add(eClass);
-            }
+                result.add(eClass);
         }
-        return result;
+        return result.get();
     }
 
     /**
@@ -244,97 +257,44 @@ public class TrainsHelper {
     }
 
     /**
-     * return list with weights for the train. It returns <code>null</code> if
-     * the weight is not specified for all parts.
+     * return list with weights for the train.
      *
      * @param train train
      * @return list with weights
      */
-    public static List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> getWeightList(Train train) {
-        // if the train is not coverred return null
-        if (!train.isCovered(TrainsCycleType.ENGINE_CYCLE))
-            return null;
-        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> result = new ArrayList<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>>();
-        for (TimeInterval interval : train.getTimeIntervalList()) {
+    public static List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> getWeightList(Train train) {
+        List<TimeInterval> intervals = train.getTimeIntervalList();
+        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> result =
+            new ArrayList<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>>(intervals.size());
+        for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner())
-                result.add(new Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>(interval, null));
+                result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, null, null));
             else {
-                Pair<Integer, List<TrainsCycleItem>> weight = getWeightAndCycles(interval);
-                if (weight == null)
-                    return null;
-                else {
-                    result.add(new Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>(interval, weight));
-                }
+                Integer weight = getWeight(interval);
+                List<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);
+                result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, weight, cycles));
             }
         }
-
         return result;
     }
 
     /**
-     * returns list of lengths. It returns <code>null</code> if the weight is not
-     * specified for all parts of the route of the train.
+     * returns list of lengths.
      *
      * @param train train
      * @param diagram trains diagram
      * @return list of lengths
      */
-    public static List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> getLengthList(Train train, TrainDiagram diagram) {
-        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> result = getWeightList(train);
-        convertWeightToLength(result, diagram);
+    public static List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> getLengthList(Train train) {
+        List<TimeInterval> intervals = train.getTimeIntervalList();
+        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> result =
+            new ArrayList<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>>(intervals.size());
+        for (TimeInterval interval : intervals) {
+            Integer length = getLength(interval);
+            List<TrainsCycleItem> cycles = interval.isLineOwner() ? getEngineCyclesForInterval(interval) : null;
+            result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, length, cycles));
+        }
         return result;
-    }
-
-    /**
-     * converts weights to lengths in the list.
-     *
-     * @param list list of weights
-     * @param diagram trains diagram
-     */
-    public static void convertWeightToLength(List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> list, TrainDiagram diagram) {
-        for (Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pair : list) {
-            convertWeightToLength(pair.first.getTrain(), diagram, pair.second.first);
-        }
-    }
-
-    /**
-     * returns weight for the next node. It returns pair with node and weight. It
-     * returns <code>null</code> if the weights are not specified. As the next node
-     * is taken the end of the route or the nearest branch station.
-     *
-     * @param node starting node
-     * @param train train
-     * @param nextType next type
-     * @return next node and available weight
-     */
-    public static Pair<Node, Integer> getNextWeight(Node node, Train train, NextType nextType) {
-        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> weightList = getWeightList(train);
-        Integer retValue = null;
-        Node retNode = null;
-        if (weightList != null) {
-            Iterator<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> i = weightList.iterator();
-            // skip to node
-            while (i.hasNext()) {
-                Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pairI = i.next();
-                // node found
-                if (pairI.first.getOwner() == node)
-                    break;
-            }
-            // check weight
-            while (i.hasNext()) {
-                Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> pairI = i.next();
-                if (pairI.first.isLineOwner()) {
-                    if (retValue == null || retValue > pairI.second.first)
-                        retValue = pairI.second.first;
-                } else if (pairI.first.isNodeOwner()) {
-                    retNode = pairI.first.getOwnerAsNode();
-                    // next stop found
-                    if (isNextTypeNode(pairI.first, nextType))
-                        break;
-                }
-            }
-        }
-        return retValue == null ? null : new Pair<Node, Integer>(retNode, retValue);
     }
 
     /**
@@ -347,40 +307,79 @@ public class TrainsHelper {
      * @param next type
      * @return next node and available weight
      */
-    public static Pair<Node, Integer> getNextLength(Node node, Train train, TrainDiagram diagram, NextType nextType) {
-        // get weight limit
-        Pair<Node, Integer> result = getNextWeight(node, train, nextType);
-        if (result == null) {
-            Integer attrWeight = getWeightFromAttribute(train);
-            result = new Pair<Node, Integer>(getNextNodeByType(node, train, nextType), attrWeight);
-        }
-        // conversion to length
-        if (result.second != null) {
-            result.second = convertWeightToLength(train, diagram, result.second);
-        }
-        // update with lengths of stations
-        result.second = updateNextLengthWithStationLengths(node, result.first, train, result.second);
-        return result;
+    public static Pair<Node, Integer> getNextLength(Node node, Train train, NextType nextType) {
+        Node endNode = getNextNodeByType(node, train, nextType);
+        Integer length = getLengthFromTo(node, endNode, train);
+        return length == null ? null : new Pair<Node, Integer>(endNode, length);
     }
 
+    /**
+     * returns length minimal length from one node to another.
+     * 
+     * @param from node from
+     * @param to node to
+     * @param train train
+     * @return allowed length
+     */
+    public static Integer getLengthFromTo(Node from, Node to, Train train) {
+        Integer length = null;
+        // skip nodes
+        ListIterator<TimeInterval> iterator = train.getTimeIntervalList().listIterator();
+        while (iterator.hasNext()) {
+            TimeInterval interval = iterator.next();
+            if (interval.getOwner() == from) {
+                iterator.previous();
+                break;
+            }
+        }
+        while (iterator.hasNext()) {
+            TimeInterval interval = iterator.next();
+            Integer tempLength = getLength(interval);
+            if (length == null || (tempLength != null && tempLength < length))
+                length = tempLength;
+            
+            if (interval.getOwner() == to)
+                break;
+        }
+        return null;
+    }
+
+    /**
+     * checks if the node of the interval fulfills search criteria.
+     * 
+     * @param interval time interval
+     * @param type type
+     * @return if the criteria are met
+     */
     public static boolean isNextTypeNode(TimeInterval interval, NextType type) {
+        if (interval == null || !interval.isNodeOwner())
+            throw new IllegalArgumentException("Wrong interval parameter: " + interval);
         Node node = interval.getOwnerAsNode();
-        if (interval.isStop())
+        if (interval.isStop()) {
             switch (type) {
                 case BRANCH_STATION:
                     return node.getType() == NodeType.STATION_BRANCH;
                 case FIRST_STATION:
                     return node.getType().isStation();
-                case LAST_STATION:
-                    return interval.isLast();
             }
+            // last station is always true regardless of the type (including LAST_STATION type) 
+            return interval.isLast();
+        }
         return false;
     }
 
+    /**
+     * returns next node with specified type.
+     * 
+     * @param node starting node
+     * @param train train
+     * @param type type
+     * @return found node
+     */
     public static Node getNextNodeByType(Node node, Train train, NextType type) {
         Iterator<TimeInterval> iterator = train.getTimeIntervalList().iterator();
         while (iterator.hasNext())
-            if (iterator.next().getOwnerAsNode() == node)
+            if (iterator.next().getOwner() == node)
                 break;
         while (iterator.hasNext()) {
             TimeInterval i = iterator.next();
@@ -388,61 +387,6 @@ public class TrainsHelper {
                 return i.getOwnerAsNode();
         }
         return null;
-    }
-
-    /**
-     * updates length to the next station. It considers lengths of the stations and stops
-     * (stops for the trains that need platforms). As the next station is taken
-     * end of the route or the nearest branch station.
-     *
-     * @param fromNode starting node
-     * @param train train
-     * @param length precalculated length
-     * @return updated length
-     */
-    public static Integer updateNextLengthWithStationLengths(Node fromNode, Node toNode, Train train, Integer length) {
-        Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
-        // look for current node
-        while (i.hasNext()) {
-            TimeInterval interval = i.next();
-            if (interval.isNodeOwner()) {
-                if (interval.getOwnerAsNode() == fromNode) {
-                    if (shouldCheckLength(fromNode, train))
-                        length = updateWithStationLength(fromNode, length);
-                    break;
-                }
-            }
-        }
-        // check next stop
-        while (i.hasNext()) {
-            TimeInterval interval = i.next();
-            if (interval.isNodeOwner()) {
-                if (interval.isStop()) {
-                    if (shouldCheckLength(interval.getOwnerAsNode(), train))
-                        length = updateWithStationLength(interval.getOwnerAsNode(), length);
-                    if (interval.getOwnerAsNode() == toNode)
-                        break;
-                }
-            }
-        }
-        return length;
-    }
-
-    /**
-     * updates length with station length. The update is applied always without
-     * consideration for the node type. The only consideration is existence of
-     * station length.
-     *
-     * @param node node
-     * @param length precalculated length
-     * @return updated length
-     */
-    public static Integer updateWithStationLength(Node node, Integer length) {
-        Integer nodeLength = convertLength(node.getTrainDiagram(), (Integer)node.getAttribute("length"));
-        if (nodeLength != null && (length == null || nodeLength < length))
-            return nodeLength;
-        else
-            return length;
     }
 
     /**

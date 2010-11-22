@@ -159,16 +159,12 @@ class TrainTableModel extends AbstractTableModel {
             case WEIGHT:
                 // weight info
                 if (interval.isLineOwner()) {
-                    retValue = TrainsHelper.getWeightWithAttribute(interval);
+                    retValue = TrainsHelper.getWeight(interval);
                 }
                 break;
             case LENGTH:
                 // length info
-                if (interval.isLineOwner()) {
-                    retValue = TrainsHelper.convertWeightToLength(train, model.getDiagram(), TrainsHelper.getWeightWithAttribute(interval));
-                } else if (interval.isNodeOwner() && (interval.getLength() != 0 || rowIndex == 0 || rowIndex == lastRow)) {
-                    retValue = TrainsHelper.convertLength(model.getDiagram(), (Integer)interval.getOwnerAsNode().getAttribute("length"));
-                }
+                retValue = TrainsHelper.getLength(interval);
                 break;
             // default (should not be reached)
             default:

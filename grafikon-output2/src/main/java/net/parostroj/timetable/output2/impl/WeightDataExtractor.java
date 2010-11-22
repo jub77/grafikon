@@ -4,14 +4,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.TrainsCycleType;
-import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
+import net.parostroj.timetable.utils.Triplet;
 
 /**
  * Weight data extractor.
@@ -80,7 +77,7 @@ public class WeightDataExtractor {
     }
 
     private void processNew() {
-        List<Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>>> list = TrainsHelper.getWeightList(train);
+        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list = TrainsHelper.getWeightList(train);
 
         if (list == null)
             return;
@@ -89,14 +86,14 @@ public class WeightDataExtractor {
         Node startNode = null;
         List<String> eClasses = null;
         for (int i = 0; i < list.size(); i++) {
-            Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> item = list.get(i);
+            Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item = list.get(i);
 
             if (item.first.isLineOwner()) {
                 // process line interval
-                if (weight == null || weight > item.second.first)
-                    weight = item.second.first;
+                if (weight == null || weight > item.second)
+                    weight = item.second;
                 if (eClasses == null)
-                    eClasses = this.convertItemList(item.second.second);
+                    eClasses = this.convertItemList(item.third);
             } else {
                 // process node interval
                 if (startNode == null)
@@ -107,8 +104,8 @@ public class WeightDataExtractor {
                     if (item.first.isLast())
                         process = true;
                     else {
-                        Pair<TimeInterval, Pair<Integer, List<TrainsCycleItem>>> itemNext = list.get(i + 1);
-                        eClasses2 = this.convertItemList(itemNext.second.second);
+                        Triplet<TimeInterval, Integer, List<TrainsCycleItem>> itemNext = list.get(i + 1);
+                        eClasses2 = this.convertItemList(itemNext.third);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
                         if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
