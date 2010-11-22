@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui;
 
-import net.parostroj.timetable.actions.AfterLoadCheck;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
