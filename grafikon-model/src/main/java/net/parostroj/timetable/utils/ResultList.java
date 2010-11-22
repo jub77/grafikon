@@ -30,6 +30,9 @@ public class ResultList<T> {
     }
     
     public List<T> get() {
-        return multipleValues != null ? multipleValues : (singleValue != null ? Collections.singletonList(singleValue) : Collections.<T>emptyList());
+        List<T> result = multipleValues != null ? multipleValues : (singleValue != null ? Collections.singletonList(singleValue) : Collections.<T>emptyList());
+        singleValue = null;
+        multipleValues = null;
+        return result;
     }
 }
