@@ -858,6 +858,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
             timeBefore.addToOwner();
         if (timeAfter != null)
             timeAfter.addToOwner();
+        // trim size of time interval list to save space (once attached, it cannot be changed)
+        timeIntervalList.trimToSize();
         attached = true;
     }
 
