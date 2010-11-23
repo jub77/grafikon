@@ -49,7 +49,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track) {
         this.train = train;
         this.setOwner(owner);
-        this.interval = new Interval(start, end);
+        this.interval = IntervalFactory.createInterval(start, end);
         this.speed = speed;
         this.direction = direction;
         this.track = track;
@@ -94,7 +94,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param end end time to be set
      */
     public void setEnd(int end) {
-        this.interval = new Interval(interval.getStart(), end);
+        this.interval = IntervalFactory.createInterval(interval.getStart(), end);
     }
 
     /**
@@ -108,7 +108,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param start start time to be set
      */
     public void setStart(int start) {
-        this.interval = new Interval(start, interval.getEnd());
+        this.interval = IntervalFactory.createInterval(start, interval.getEnd());
     }
 
     /**
@@ -229,7 +229,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param timeShift shift time
      */
     public void shift(int timeShift) {
-        this.interval = new Interval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
+        this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
     }
 
     /**
@@ -237,7 +237,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      */
     public void move(int aStart) {
         int length = this.getLength();
-        this.interval = new Interval(aStart, aStart + length);
+        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
     }
 
     /**
@@ -255,7 +255,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param length new length of the interval
      */
     public void setLength(int length) {
-        this.interval = new Interval(interval.getStart(), interval.getStart() + length);
+        this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
     }
 
     /**
