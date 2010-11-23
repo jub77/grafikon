@@ -346,7 +346,7 @@ public class TrainsHelper {
             if (interval.getOwner() == to)
                 break;
         }
-        return null;
+        return length;
     }
 
     /**
