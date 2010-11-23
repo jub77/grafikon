@@ -126,14 +126,19 @@ public class TrainsHelper {
         Pair<Integer, List<TrainsCycleItem>> retValue = null;
         LineClass lineClass = interval.getLineClass();
         List<TrainsCycleItem> items = getEngineCyclesForInterval(interval);
-        List<EngineClass> engines = getEngineClasses(items);
-        if (lineClass != null && !engines.isEmpty()) {
+        if (lineClass != null) {
             // compute weight
-            int weight = 0;
-            for (EngineClass engine : engines) {
-                weight += engine.getWeightTableRowForSpeed(interval.getSpeed()).getWeight(lineClass);
+            Integer weight = null;
+            for (TrainsCycleItem item : items) {
+                EngineClass engine = getEngineClass(item);
+                if (engine != null) {
+                    if (weight == null)
+                        weight = 0;
+                    weight += engine.getWeightTableRowForSpeed(interval.getSpeed()).getWeight(lineClass);
+                }
             }
-            retValue = new Pair<Integer, List<TrainsCycleItem>>(weight, items);
+            if (weight != null)
+                retValue = new Pair<Integer, List<TrainsCycleItem>>(weight, items);
         }
         return retValue;
     }

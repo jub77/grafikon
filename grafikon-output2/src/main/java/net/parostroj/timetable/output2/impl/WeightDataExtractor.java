@@ -19,68 +19,37 @@ public class WeightDataExtractor {
 
     private Train train;
     private List<WeightDataRow> data;
-    private boolean showWeight;
 
     public WeightDataExtractor(Train train) {
         this.train = train;
         this.data = new LinkedList<WeightDataRow>();
-        this.showWeight = train.getType().getCategory().getKey().equals("freight")
-                || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
+
         this.processData();
+        this.collapseData();
+    }
+
+    private void testWeights(List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list) {
+        boolean showWeight = train.getType().getCategory().getKey().equals("freight")
+            || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
+        // test if all weight are defined
+        boolean defined = true;
+        for (Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item : list) {
+            if (item.first.isLineOwner() && item.second == null) {
+                defined = false;
+                break;
+            }
+        }
+        // clear if all weights are not defined or shouldn't be shown
+        if (!defined || !showWeight)
+            for (Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item : list) {
+                if (item.first.isLineOwner())
+                    item.second = null;
+            }
     }
 
     private void processData() {
-        Integer weight = TrainsHelper.getWeightFromAttribute(train);
-        if (!this.checkLineClasses() || !this.checkEngineClasses() || weight != null || !showWeight) {
-            this.processOld(weight);
-            this.collapseData();
-        } else {
-            this.processNew();
-            this.collapseData();
-        }
-    }
-
-    private void processOld(Integer weight) {
-        List<String> eClasses = null;
-        Node startNode = null;
-        for (int i = 0; i < train.getTimeIntervalList().size(); i++) {
-            TimeInterval interval = train.getTimeIntervalList().get(i);
-            if (interval.isLineOwner()) {
-                if (eClasses == null)
-                    eClasses = this.convertItemList(TrainsHelper.getEngineCyclesForInterval(interval));
-            } else {
-                if (startNode == null)
-                    startNode = interval.getOwnerAsNode();
-                else {
-                    boolean process = false;
-                    List<String> eClasses2 = null;
-                    if (interval.isLast())
-                        process = true;
-                    else {
-                        TimeInterval nextInterval = train.getTimeIntervalList().get(i + 1);
-                        eClasses2 = this.convertItemList(TrainsHelper.getEngineCyclesForInterval(nextInterval));
-                        if (!this.compareEngineLists(eClasses, eClasses2))
-                            process = true;
-                        if (interval.isStop() && interval.getOwnerAsNode().getType().isStationOrStop())
-                            process = true;
-                    }
-                    if (process) {
-                        // add data
-                        data.add(this.createRow(eClasses, startNode, interval.getOwnerAsNode(), showWeight ? weight : null));
-                        // set new start node
-                        startNode = interval.getOwnerAsNode();
-                    }
-                    eClasses = eClasses2;
-                }
-            }
-        }
-    }
-
-    private void processNew() {
         List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list = TrainsHelper.getWeightList(train);
-
-        if (list == null)
-            return;
+        this.testWeights(list);
 
         Integer weight = null;
         Node startNode = null;
@@ -90,7 +59,7 @@ public class WeightDataExtractor {
 
             if (item.first.isLineOwner()) {
                 // process line interval
-                if (weight == null || weight > item.second)
+                if (weight == null || (item.second != null && weight > item.second))
                     weight = item.second;
                 if (eClasses == null)
                     eClasses = this.convertItemList(item.third);
@@ -108,14 +77,15 @@ public class WeightDataExtractor {
                         eClasses2 = this.convertItemList(itemNext.third);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
-                        if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
+                        else if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
                             process = true;
                     }
                     if (process) {
                         // add data
                         data.add(this.createRow(eClasses, startNode, item.first.getOwnerAsNode(), weight));
-                        // set new start node
+                        // set new start node and reset weight
                         startNode = item.first.getOwnerAsNode();
+                        weight = null;
                     }
                     eClasses = eClasses2;
                 }
@@ -132,6 +102,8 @@ public class WeightDataExtractor {
     }
 
     private boolean compareEngineLists(List<String> list1, List<String> list2) {
+        if (list1 == null || list2 == null)
+            return list1 == list2;
         List<String> test = new LinkedList<String>(list1);
         for (String eClass : list2) {
             boolean removed = test.remove(eClass);
@@ -148,7 +120,7 @@ public class WeightDataExtractor {
         WeightDataRow lastRow = i.next();
         while (i.hasNext()) {
             WeightDataRow row = i.next();
-            if (lastRow.getEngines().containsAll(row.getEngines()) && ((lastRow.getWeight() != null && lastRow.getWeight().equals(row.getWeight())) || lastRow.getWeight() == row.getWeight())) {
+            if (this.compareEngineLists(lastRow.getEngines(), row.getEngines()) && ((lastRow.getWeight() != null && lastRow.getWeight().equals(row.getWeight())) || lastRow.getWeight() == row.getWeight())) {
                 lastRow.setTo(row.getTo());
                 i.remove();
             } else {
@@ -164,30 +136,7 @@ public class WeightDataExtractor {
         }
     }
 
-    private boolean checkLineClasses() {
-        for (TimeInterval interval : train.getTimeIntervalList()) {
-            if (interval.isLineOwner()) {
-                if (interval.getLineClass() == null)
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean checkEngineClasses() {
-        if (train.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
-            return false;
-        }
-        for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
-            if (item.getCycle().getAttribute("engine.class") == null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    List<WeightDataRow> getData() {
+    public List<WeightDataRow> getData() {
         return Collections.unmodifiableList(data);
     }
 
