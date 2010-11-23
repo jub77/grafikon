@@ -35,7 +35,7 @@ public class GspDriverCyclesOutput extends GspOutput {
             map.put("cycles", cycles);
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.createTemplate(params, "templates/groovy/driver_cycles.gsp", this.getClass().getClassLoader());
+            Template template = this.getTemplate(params, "templates/groovy/driver_cycles.gsp", this.getClass().getClassLoader());
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);
