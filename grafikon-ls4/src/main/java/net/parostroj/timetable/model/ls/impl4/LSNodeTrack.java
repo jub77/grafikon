@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for node tracks storage.
@@ -27,7 +28,7 @@ public class LSNodeTrack extends LSTrack {
         this.platform = platform;
     }
 
-    public NodeTrack createNodeTrack() {
+    public NodeTrack createNodeTrack() throws LSException {
         NodeTrack nodeTrack = new NodeTrack(this.getId());
         this.addValuesTrack(nodeTrack);
         nodeTrack.setPlatform(platform);

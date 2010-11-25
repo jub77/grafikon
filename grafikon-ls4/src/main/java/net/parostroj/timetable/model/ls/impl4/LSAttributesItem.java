@@ -1,11 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Scale;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.Pair;
@@ -54,6 +51,10 @@ public class LSAttributesItem {
         } else if (value instanceof WeightUnit) {
             this.value = ((WeightUnit) value).getKey();
             this.type = "length.unit";
+        } else if (value instanceof TextTemplate) {
+            TextTemplate tt = (TextTemplate) value;
+            this.type = "text.template." + tt.getLanguage().name();
+            this.value = tt.getTemplate();
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             this.type = pair.first;
@@ -87,7 +88,7 @@ public class LSAttributesItem {
         this.value = value;
     }
 
-    public Object convertValue(TrainDiagram diagram) {
+    public Object convertValue(TrainDiagram diagram) throws LSException {
         if (type == null) {
             return null;
         } else if (type.equals("string")) {
@@ -104,12 +105,24 @@ public class LSAttributesItem {
             return LengthUnit.getByKey(value);
         } else if (type.equals("weight.unit")) {
             return WeightUnit.getByKey(value);
+        } else if (type.startsWith("text.template.")) {
+            return this.convertTextTemplate();
         } else if (type.startsWith("model.")) {
             return this.convertModelValue(diagram);
         } else {
             // it didn't recognize the type
             LOG.warn("Not recognized type: {}", type);
             return null;
+        }
+    }
+
+    private Object convertTextTemplate() throws LSException {
+        String languageStr = type.substring("text.template.".length());
+        Language language = Language.valueOf(languageStr);
+        try {
+            return TextTemplate.createTextTemplate(value, language);
+        } catch (GrafikonException e) {
+            throw new LSException("Cannot convert template: " + e.getMessage(), e);
         }
     }
 

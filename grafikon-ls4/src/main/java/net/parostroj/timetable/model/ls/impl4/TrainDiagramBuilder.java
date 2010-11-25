@@ -41,7 +41,7 @@ public class TrainDiagramBuilder {
         this.diagram.setPenaltyTable(table);
     }
     
-    public void setNet(LSNet lsNet) {
+    public void setNet(LSNet lsNet) throws LSException {
         Net net = lsNet.createNet();
         this.diagram.setNet(net);
         // add line classes
@@ -83,7 +83,7 @@ public class TrainDiagramBuilder {
         diagram.addTrainType(type);
     }
     
-    public void setTextItem(LSTextItem lsTextItem) {
+    public void setTextItem(LSTextItem lsTextItem) throws LSException {
         TextItem item = lsTextItem.createTextItem(diagram);
         diagram.addTextItem(item);
     }
@@ -95,7 +95,7 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setTrain(LSTrain lsTrain) {
+    public void setTrain(LSTrain lsTrain) throws LSException {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
         if ((foundTrain = diagram.getTrainById(train.getId())) != null) {
@@ -113,7 +113,7 @@ public class TrainDiagramBuilder {
         diagram.addEngineClass(ec);
     }
     
-    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) {
+    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
         if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType())) != null) {
