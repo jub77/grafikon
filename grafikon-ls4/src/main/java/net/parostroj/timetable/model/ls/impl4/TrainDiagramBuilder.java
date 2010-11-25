@@ -137,6 +137,8 @@ public class TrainDiagramBuilder {
     }
     
     public TrainDiagram getTrainDiagram() {
+        // after load check
+        (new AfterLoadCheck()).check(diagram);
         // tracking of changes has to be enabled at the end, otherwise
         // it would also track changes caused by loading of the diagram
         diagram.getChangesTracker().setTrackingEnabled(trackChanges);
@@ -144,8 +146,6 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
-        // after load check
-        (new AfterLoadCheck()).check(diagram);
         return diagram;
     }
 }
