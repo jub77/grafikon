@@ -40,7 +40,8 @@ public class SettingsDialog extends javax.swing.JDialog {
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.string"));
         sortComboBox.setPrototypeDisplayValue("nnnnnnnnnnnnn");
 
-        completeNameTemplateTextField.setColumns(50);
+        nameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+        cNameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
 
         emptyWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));
         loadedWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));
@@ -87,10 +88,8 @@ public class SettingsDialog extends javax.swing.JDialog {
             } else {
                 sortComboBox.setSelectedIndex(1);
             }
-            completeNameTemplateTextField.setText(trainsData.getTrainCompleteNameTemplate().getTemplate());
-            completeNameTemplateTextField.setCaretPosition(0);
-            nameTemplateTextField.setText(trainsData.getTrainNameTemplate().getTemplate());
-            nameTemplateTextField.setCaretPosition(0);
+            cNameTemplateEditBox.setTemplate(trainsData.getTrainCompleteNameTemplate());
+            nameTemplateEditBox.setTemplate(trainsData.getTrainNameTemplate());
 
             // set crossing time in minutes
             Integer transferTime = (Integer)diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME);
@@ -182,9 +181,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        nameTemplateTextField = new javax.swing.JTextField();
+        nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
-        completeNameTemplateTextField = new javax.swing.JTextField();
+        cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         sortComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
@@ -264,7 +263,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         panel1.add(cancelButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
@@ -285,8 +284,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(nameTemplateTextField, gridBagConstraints);
+        getContentPane().add(nameTemplateEditBox, gridBagConstraints);
 
         jLabel4.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -304,7 +304,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(completeNameTemplateTextField, gridBagConstraints);
+        getContentPane().add(cNameTemplateEditBox, gridBagConstraints);
 
         jLabel5.setText(ResourceLoader.getString("modelinfo.sort")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -357,8 +357,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         getContentPane().add(jLabel11, gridBagConstraints);
 
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         scriptTextArea.setColumns(20);
-        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
+        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         scriptTextArea.setRows(5);
         scrollPane.setViewportView(scriptTextArea);
 
@@ -368,6 +371,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(scrollPane, gridBagConstraints);
@@ -489,13 +493,15 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // get templates values
         TrainsData trainsData = diagram.getTrainsData();
-        String completeName = completeNameTemplateTextField.getText();
-        String name = nameTemplateTextField.getText();
-
-        if ("".equals(name)|| "".equals(completeName)) {
+        TextTemplate completeName = null;
+        TextTemplate name = null;
+        try {
+            completeName = cNameTemplateEditBox.getTemplate();
+            name = nameTemplateEditBox.getTemplate();
+        } catch (GrafikonException e) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.emptytemplates"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.debug("Empty templates.");
+            LOG.debug("Error setting templates.", e);
             return;
         }
 
@@ -521,20 +527,13 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // set templates
-        try {
-            if (!completeName.equals(trainsData.getTrainCompleteNameTemplate().getTemplate())) {
-                trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
-                clear = true;
-            }
-            if (!name.equals(trainsData.getTrainNameTemplate().getTemplate())) {
-                trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
-                clear = true;
-            }
-        } catch (GrafikonException e) {
-            JOptionPane.showMessageDialog(this.getParent(), e.getMessage(),
-                    ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.warn("Cannot set templates.", e);
-            return;
+        if (!completeName.equals(trainsData.getTrainCompleteNameTemplate())) {
+            trainsData.setTrainCompleteNameTemplate(completeName);
+            clear = true;
+        }
+        if (!name.equals(trainsData.getTrainNameTemplate())) {
+            trainsData.setTrainNameTemplate(name);
+            clear = true;
         }
 
         // set sorting
@@ -612,13 +611,15 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // time range
         Tuple<Integer> timeRange = this.getTimeRange();
-        if (timeRange.first != diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME)) {
+        if ((timeRange.first != null && !timeRange.first.equals(diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME)))
+                || (timeRange.first == null && diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME) != null)) {
             if (timeRange.first == null)
                 diagram.removeAttribute(TrainDiagram.ATTR_FROM_TIME);
             else
                 diagram.setAttribute(TrainDiagram.ATTR_FROM_TIME, timeRange.first);
         }
-        if (timeRange.second != diagram.getAttribute(TrainDiagram.ATTR_TO_TIME)) {
+        if ((timeRange.second != null && !timeRange.second.equals(diagram.getAttribute(TrainDiagram.ATTR_TO_TIME)))
+                || (timeRange.second == null && diagram.getAttribute(TrainDiagram.ATTR_TO_TIME) != null)) {
             if (timeRange.second == null)
                 diagram.removeAttribute(TrainDiagram.ATTR_TO_TIME);
             else
@@ -664,15 +665,15 @@ public class SettingsDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_timeTextFieldFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox changesTrackingCheckBox;
-    private javax.swing.JTextField completeNameTemplateTextField;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox emptyWeightEditBox;
     private javax.swing.JTextField fromTimeTextField;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthPerAxleEditBox;
     private javax.swing.JComboBox lengthUnitComboBox;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox loadedWeightEditBox;
-    private javax.swing.JTextField nameTemplateTextField;
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox ratioComboBox;
     private javax.swing.JTextField rlRatioTextField;
