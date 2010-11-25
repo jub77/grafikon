@@ -52,6 +52,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("program.settings.title")); // NOI18N
+        setResizable(false);
 
         dataPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -63,6 +64,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         nameTextField.setColumns(25);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
         dataPanel.add(nameTextField, gridBagConstraints);
 
