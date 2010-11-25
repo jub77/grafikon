@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
