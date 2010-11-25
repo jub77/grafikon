@@ -39,6 +39,13 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         return this.languages;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        templateTextField.setEnabled(enabled);
+        languageComboBox.setEnabled(enabled);
+        super.setEnabled(enabled);
+    }
+
     public TextTemplate getTemplate() throws GrafikonException {
         String str = templateTextField.getText().trim();
         Language lang = (Language) languageComboBox.getSelectedItem();
@@ -48,7 +55,10 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
     }
 
     public void setTemplate(TextTemplate template) {
-        this.setTemplate(template.getTemplate(), template.getLanguage());
+        if (template != null)
+            this.setTemplate(template.getTemplate(), template.getLanguage());
+        else
+            this.setTemplate(null, null);
     }
 
     public void setTemplate(String template, Language language) {
