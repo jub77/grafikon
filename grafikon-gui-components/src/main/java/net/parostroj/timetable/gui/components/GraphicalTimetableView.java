@@ -110,6 +110,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                                 setGTWidth(settings);
                                 recreateDraw();
                             }
+                            if (TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE.equals(name) ||
+                                    TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE.equals(name))
+                                repaint();
                             break;
                     }
                 }
@@ -203,7 +206,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         switch (event.getType()) {
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("color") || event.getAttributeChange().getName().equals("trainNameTemplate"))
-                    // repait
+                    // repaint
                     this.repaint();
                 break;
         }
