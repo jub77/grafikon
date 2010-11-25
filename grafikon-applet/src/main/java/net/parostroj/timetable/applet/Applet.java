@@ -35,7 +35,7 @@ public class Applet extends javax.swing.JApplet {
                         URL u = getCodeBase();
                         if (getParameter("file") != null) {
                             u = new URL(u,getParameter("file"));
-                            Logger.getLogger(Applet.class.getName()).log(Level.FINE, "Loading file: " + u);
+                            Logger.getLogger(Applet.class.getName()).log(Level.FINE, "Loading file: {0}", u);
                             ZipInputStream is = new ZipInputStream(u.openStream());
                             FileLoadSave ls = factory.createForLoad(is);
                             TrainDiagram td = ls.load(is);
@@ -47,7 +47,7 @@ public class Applet extends javax.swing.JApplet {
                 }
             });
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.getLogger(Applet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

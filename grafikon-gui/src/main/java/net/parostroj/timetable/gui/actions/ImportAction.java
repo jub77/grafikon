@@ -5,8 +5,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -18,6 +16,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Import action.
@@ -26,7 +26,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class ImportAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(ImportAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ImportAction.class.getName());
     private ImportDialog importDialog;
     private ApplicationModel model;
 
@@ -53,13 +53,13 @@ public class ImportAction extends AbstractAction {
                 return;
             }
         } catch (LSException e) {
-            LOG.log(Level.WARNING, "Error loading model.", e);
+            LOG.warn("Error loading model.", e);
             if (e.getCause() instanceof FileNotFoundException)
                 errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
             else
                 errorMessage = ResourceLoader.getString("dialog.error.loading");
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Error loading model.", e);
+            LOG.warn("Error loading model.", e);
             errorMessage = ResourceLoader.getString("dialog.error.loading");
         }
 

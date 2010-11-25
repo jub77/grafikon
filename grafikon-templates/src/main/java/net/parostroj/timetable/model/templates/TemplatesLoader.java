@@ -3,8 +3,6 @@ package net.parostroj.timetable.model.templates;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,6 +11,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for loading model templates. It also returns list of available
@@ -22,7 +22,7 @@ import net.parostroj.timetable.model.ls.LSFileFactory;
  */
 public class TemplatesLoader {
 
-    private static final Logger LOG = Logger.getLogger(TemplatesLoader.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TemplatesLoader.class.getName());
     private static final String TEMPLATE_LIST_FILE = "/templates/list.xml";
     private static final String TEMPLATES_LOCATION = "/templates/";
     private static TemplateList templateList;
@@ -39,13 +39,13 @@ public class TemplatesLoader {
                 } finally {
                     is.close();
                 }
-                LOG.fine("Loaded list of templates.");
+                LOG.debug("Loaded list of templates.");
             } catch (JAXBException e) {
-                LOG.log(Level.SEVERE, "Cannot load list of templates.", e);
+                LOG.error("Cannot load list of templates.", e);
                 // empty template list
                 templateList = new TemplateList();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error reading/closing template file.", e);
+                LOG.error("Error reading/closing template file.", e);
                 // empty template list
                 templateList = new TemplateList();
             }

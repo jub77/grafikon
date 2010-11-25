@@ -1,12 +1,14 @@
 package net.parostroj.timetable.model.save;
 
+import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.TrainType;
 import java.awt.Color;
 import java.util.UUID;
-import net.parostroj.timetable.model.Language;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainTypeCategory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Conversions;
 
 /**
@@ -15,20 +17,16 @@ import net.parostroj.timetable.utils.Conversions;
  * @author jub
  */
 public class LSTrainType {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(LSTrainType.class);
+
     private String key;
-    
     private String abbr;
-    
     private String desc;
-    
     private String color;
-    
     private String braking;
-    
     private boolean platform;
-    
     private String trainNameTemplate;
-    
     private String trainCompleteNameTemplate;
     
     public LSTrainType() {}
@@ -117,10 +115,18 @@ public class LSTrainType {
         type.setDesc(this.desc);
         type.setPlatform(this.platform);
         type.setCategory(this.getCategory(diagram));
-        type.setTrainNameTemplate(this.trainNameTemplate != null ?
-            TextTemplate.createTextTemplate(this.trainNameTemplate, Language.MVEL) : null);
-        type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-            TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, Language.MVEL) : null);
+        try {
+            type.setTrainNameTemplate(this.trainNameTemplate != null ?
+                TextTemplate.createTextTemplate(this.trainNameTemplate, Language.MVEL) : null);
+        } catch (GrafikonException e) {
+            LOG.error("Couldn't create train name template.", e);
+        }
+        try {
+            type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
+                TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, Language.MVEL) : null);
+        } catch (GrafikonException e) {
+            LOG.error("Couldn't create complete train name template.", e);
+        }
         return type;
     }
 

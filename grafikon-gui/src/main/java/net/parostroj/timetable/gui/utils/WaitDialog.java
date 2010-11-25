@@ -8,8 +8,9 @@ package net.parostroj.timetable.gui.utils;
 import java.awt.Dialog;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for showing information of long duration operation.
@@ -18,7 +19,7 @@ import javax.swing.SwingWorker;
  */
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
     
-    private static final Logger LOG = Logger.getLogger(WaitDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(WaitDialog.class.getName());
     
     /** Creates new form WaitDiag */
     public WaitDialog(java.awt.Frame parent, boolean modal) {
@@ -75,8 +76,9 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     private javax.swing.JLabel messageLabel;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        LOG.finest(String.format("Event received: %s, %s, %s", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue()));
+        LOG.trace(String.format("Event received: %s, %s, %s", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue()));
         if ("state".equals(evt.getPropertyName())) {
             if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
                 this.setVisible(false);

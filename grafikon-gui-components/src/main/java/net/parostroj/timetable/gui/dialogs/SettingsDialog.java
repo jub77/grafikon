@@ -5,11 +5,18 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
+import net.parostroj.timetable.model.units.WeightUnit;
+import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for settings modification of the train diagram.
@@ -18,7 +25,7 @@ import net.parostroj.timetable.model.*;
  */
 public class SettingsDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = Logger.getLogger(SettingsDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsDialog.class.getName());
     private boolean diagramChanged;
     private TrainDiagram diagram;
 
@@ -33,7 +40,19 @@ public class SettingsDialog extends javax.swing.JDialog {
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.string"));
         sortComboBox.setPrototypeDisplayValue("nnnnnnnnnnnnn");
 
-        completeNameTemplateTextField.setColumns(50);
+        nameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+        cNameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+
+        emptyWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));
+        loadedWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));
+        emptyWeightEditBox.setUnit(WeightUnit.T);
+        loadedWeightEditBox.setUnit(WeightUnit.T);
+        lengthPerAxleEditBox.setUnits(LengthUnit.getScaleDependent());
+        lengthPerAxleEditBox.setUnit(LengthUnit.M);
+
+        for (LengthUnit unit : LengthUnit.values()) {
+            lengthUnitComboBox.addItem(unit);
+        }
 
         pack();
     }
@@ -58,8 +77,8 @@ public class SettingsDialog extends javax.swing.JDialog {
     private void updateValues() {
         if (diagram != null) {
             // set original values ...
-            scaleComboBox.setSelectedItem(diagram.getAttribute("scale"));
-            ratioComboBox.setSelectedItem(((Double)diagram.getAttribute("time.scale")).toString());
+            scaleComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_SCALE));
+            ratioComboBox.setSelectedItem(((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).toString());
 
             // sorting
             TrainsData trainsData = diagram.getTrainsData();
@@ -69,41 +88,76 @@ public class SettingsDialog extends javax.swing.JDialog {
             } else {
                 sortComboBox.setSelectedIndex(1);
             }
-            completeNameTemplateTextField.setText(trainsData.getTrainCompleteNameTemplate().getTemplate());
-            completeNameTemplateTextField.setCaretPosition(0);
-            nameTemplateTextField.setText(trainsData.getTrainNameTemplate().getTemplate());
-            nameTemplateTextField.setCaretPosition(0);
+            cNameTemplateEditBox.setTemplate(trainsData.getTrainCompleteNameTemplate());
+            nameTemplateEditBox.setTemplate(trainsData.getTrainNameTemplate());
 
             // set crossing time in minutes
-            Integer transferTime = (Integer)diagram.getAttribute("station.transfer.time");
+            Integer transferTime = (Integer)diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME);
             if (transferTime != null) {
                 stationTransferTextField.setText(transferTime.toString());
             } else {
-                LOG.warning("Station transfer time information missing.");
+                LOG.warn("Station transfer time information missing.");
                 stationTransferTextField.setText("");
             }
-            // set station lengths information
-            lengthInAxlesCheckBox.setSelected(Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles")));
-            stationLengthUnitTextField.setEnabled(!lengthInAxlesCheckBox.isSelected());
-            String stationLengthUnit = (String)diagram.getAttribute("station.length.unit");
-            stationLengthUnitTextField.setText(stationLengthUnit == null ? "" : stationLengthUnit);
 
             // changes tracking
             changesTrackingCheckBox.setSelected(diagram.getChangesTracker().isTrackingEnabled());
 
-            // weight ratios
-            Double emptyRatio = (Double)diagram.getAttribute("weight.ratio.empty");
-            Double loadedRatio = (Double)diagram.getAttribute("weight.ratio.loaded");
-
-            if (emptyRatio != null)
-                emptyRatioTextField.setText(emptyRatio.toString());
-            if (loadedRatio != null)
-                loadedRatioTextField.setText(loadedRatio.toString());
-
             // script
             scriptTextArea.setText(trainsData.getRunningTimeScript().getSourceCode());
             scriptTextArea.setCaretPosition(0);
+
+            // route length
+            Double routeLengthRatio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            rlRatioTextField.setText(routeLengthRatio != null ? routeLengthRatio.toString() : "");
+            String routeLengthUnit = (String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
+            rlUnitTextField.setText(routeLengthUnit != null ? routeLengthUnit : "");
+
+            // weight -> length conversion
+            loadedWeightEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE)), WeightUnit.KG);
+            emptyWeightEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY)), WeightUnit.KG);
+            lengthPerAxleEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE)), LengthUnit.MM);
+            lengthUnitComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT));
+
+            // time range
+            Integer fromTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            Integer toTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            this.setTimeRange(fromTime, toTime);
         }
+    }
+
+    private void setTimeRange(Integer from, Integer to) {
+        fromTimeTextField.setText(TimeConverter.convertFromIntToText(from != null ? from : 0));
+        toTimeTextField.setText(TimeConverter.convertFromIntToTextNN(to != null ? to : TimeInterval.DAY));
+    }
+
+    private Tuple<Integer> getTimeRange() {
+        int from = TimeConverter.convertFromTextToInt(fromTimeTextField.getText());
+        int to = TimeConverter.convertFromTextToInt(toTimeTextField.getText());
+        Integer fromTime = from == -1 ? 0 : from;
+        Integer toTime = to == -1 ? TimeInterval.DAY : to;
+        if (toTime == 0)
+            toTime = TimeInterval.DAY;
+        // check range (a least an hour)
+        if (fromTime > toTime) {
+            // swap
+            Integer swap = fromTime;
+            fromTime = toTime;
+            toTime = swap;
+        }
+        // check minimal distance
+        if ((toTime - fromTime) < 3600) {
+            toTime = fromTime + 3600;
+            if (toTime > TimeInterval.DAY) {
+                toTime = TimeInterval.DAY;
+                fromTime = toTime - 3600;
+            }
+        }
+        if (fromTime == 0)
+            fromTime = null;
+        if (toTime == TimeInterval.DAY || toTime == 0)
+            toTime = null;
+        return new Tuple<Integer>(fromTime, toTime);
     }
 
     public boolean isDiagramChanged() {
@@ -123,30 +177,43 @@ public class SettingsDialog extends javax.swing.JDialog {
         scaleComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         ratioComboBox = new javax.swing.JComboBox();
-        panel1 = new javax.swing.JPanel();
+        javax.swing.JPanel panel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        nameTemplateTextField = new javax.swing.JTextField();
+        nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
-        completeNameTemplateTextField = new javax.swing.JTextField();
+        cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         sortComboBox = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         stationTransferTextField = new javax.swing.JTextField();
-        lengthInAxlesCheckBox = new javax.swing.JCheckBox();
         changesTrackingCheckBox = new javax.swing.JCheckBox();
-        jLabel7 = new javax.swing.JLabel();
-        stationLengthUnitTextField = new javax.swing.JTextField();
-        ratioPanel = new javax.swing.JPanel();
-        javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
-        emptyRatioTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel10 = new javax.swing.JLabel();
-        loadedRatioTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel11 = new javax.swing.JLabel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         scriptTextArea = new javax.swing.JTextArea();
+        javax.swing.JPanel routeLengthPanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel12 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel14 = new javax.swing.JLabel();
+        rlRatioTextField = new javax.swing.JTextField();
+        javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
+        rlUnitTextField = new javax.swing.JTextField();
+        javax.swing.JPanel weightPerAxlePanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
+        loadedWeightEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
+        javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
+        emptyWeightEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
+        javax.swing.JPanel lengthPanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel10 = new javax.swing.JLabel();
+        lengthPerAxleEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
+        javax.swing.JLabel jLabel15 = new javax.swing.JLabel();
+        lengthUnitComboBox = new javax.swing.JComboBox();
+        timeRangePanel = new javax.swing.JPanel();
+        javax.swing.JLabel jLabel16 = new javax.swing.JLabel();
+        fromTimeTextField = new javax.swing.JTextField();
+        javax.swing.JLabel jLabel17 = new javax.swing.JLabel();
+        toTimeTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -217,8 +284,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(nameTemplateTextField, gridBagConstraints);
+        getContentPane().add(nameTemplateEditBox, gridBagConstraints);
 
         jLabel4.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -236,7 +304,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(completeNameTemplateTextField, gridBagConstraints);
+        getContentPane().add(cNameTemplateEditBox, gridBagConstraints);
 
         jLabel5.setText(ResourceLoader.getString("modelinfo.sort")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -270,73 +338,15 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
         getContentPane().add(stationTransferTextField, gridBagConstraints);
 
-        lengthInAxlesCheckBox.setText(ResourceLoader.getString("modelinfo.station.length.in.axles")); // NOI18N
-        lengthInAxlesCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lengthInAxlesCheckBoxActionPerformed(evt);
-            }
-        });
+        changesTrackingCheckBox.setText(ResourceLoader.getString("modelinfo.tracking.changes")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(lengthInAxlesCheckBox, gridBagConstraints);
-
-        changesTrackingCheckBox.setText(ResourceLoader.getString("modelinfo.tracking.changes")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(changesTrackingCheckBox, gridBagConstraints);
-
-        jLabel7.setText(ResourceLoader.getString("modelinfo.station.length.unit")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
-        getContentPane().add(jLabel7, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        getContentPane().add(stationLengthUnitTextField, gridBagConstraints);
-
-        ratioPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        jLabel8.setText(ResourceLoader.getString("modelinfo.weight.ratio")); // NOI18N
-        ratioPanel.add(jLabel8);
-
-        jLabel9.setText(ResourceLoader.getString("modelinfo.weight.ratio.empty")); // NOI18N
-        ratioPanel.add(jLabel9);
-
-        emptyRatioTextField.setColumns(10);
-        ratioPanel.add(emptyRatioTextField);
-
-        jLabel10.setText(ResourceLoader.getString("modelinfo.weight.ratio.loaded")); // NOI18N
-        ratioPanel.add(jLabel10);
-
-        loadedRatioTextField.setColumns(10);
-        ratioPanel.add(loadedRatioTextField);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        getContentPane().add(ratioPanel, gridBagConstraints);
 
         jLabel11.setText(ResourceLoader.getString("modelinfo.running.time.script")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -347,8 +357,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         getContentPane().add(jLabel11, gridBagConstraints);
 
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         scriptTextArea.setColumns(20);
-        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
+        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         scriptTextArea.setRows(5);
         scrollPane.setViewportView(scriptTextArea);
 
@@ -358,9 +371,118 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(scrollPane, gridBagConstraints);
+
+        routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
+        jLabel12.setText(bundle.getString("modelinfo.route.length") + " -"); // NOI18N
+        routeLengthPanel.add(jLabel12);
+
+        jLabel14.setText(bundle.getString("modelinfo.route.length.ratio") + ":"); // NOI18N
+        routeLengthPanel.add(jLabel14);
+
+        rlRatioTextField.setColumns(7);
+        routeLengthPanel.add(rlRatioTextField);
+
+        jLabel13.setText(bundle.getString("modelinfo.route.length.unit") + ":"); // NOI18N
+        routeLengthPanel.add(jLabel13);
+
+        rlUnitTextField.setColumns(5);
+        routeLengthPanel.add(rlUnitTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(routeLengthPanel, gridBagConstraints);
+
+        weightPerAxlePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel7.setText(bundle.getString("modelinfo.weight.per.axle") + " - "); // NOI18N
+        weightPerAxlePanel.add(jLabel7);
+
+        jLabel8.setText(bundle.getString("modelinfo.weight.per.axle.loaded") + ":"); // NOI18N
+        weightPerAxlePanel.add(jLabel8);
+
+        loadedWeightEditBox.setValueColumns(5);
+        weightPerAxlePanel.add(loadedWeightEditBox);
+
+        jLabel9.setText(bundle.getString("modelinfo.weight.per.axle.empty") + ":"); // NOI18N
+        weightPerAxlePanel.add(jLabel9);
+
+        emptyWeightEditBox.setValueColumns(5);
+        weightPerAxlePanel.add(emptyWeightEditBox);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(weightPerAxlePanel, gridBagConstraints);
+
+        lengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel10.setText(bundle.getString("modelinfo.axle.length") + ":"); // NOI18N
+        lengthPanel.add(jLabel10);
+
+        lengthPerAxleEditBox.setValueColumns(5);
+        lengthPanel.add(lengthPerAxleEditBox);
+
+        jLabel15.setText(bundle.getString("modelinfo.length.unit") + ":"); // NOI18N
+        lengthPanel.add(jLabel15);
+
+        lengthPanel.add(lengthUnitComboBox);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(lengthPanel, gridBagConstraints);
+
+        timeRangePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel16.setText(bundle.getString("modelinfo.from.time")); // NOI18N
+        timeRangePanel.add(jLabel16);
+
+        fromTimeTextField.setColumns(7);
+        fromTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                timeTextFieldFocusLost(evt);
+            }
+        });
+        timeRangePanel.add(fromTimeTextField);
+
+        jLabel17.setText(bundle.getString("modelinfo.to.time")); // NOI18N
+        timeRangePanel.add(jLabel17);
+
+        toTimeTextField.setColumns(7);
+        toTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                timeTextFieldFocusLost(evt);
+            }
+        });
+        timeRangePanel.add(toTimeTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        getContentPane().add(timeRangePanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -371,13 +493,15 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // get templates values
         TrainsData trainsData = diagram.getTrainsData();
-        String completeName = completeNameTemplateTextField.getText();
-        String name = nameTemplateTextField.getText();
-
-        if ("".equals(name)|| "".equals(completeName)) {
+        TextTemplate completeName = null;
+        TextTemplate name = null;
+        try {
+            completeName = cNameTemplateEditBox.getTemplate();
+            name = nameTemplateEditBox.getTemplate();
+        } catch (GrafikonException e) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.emptytemplates"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.FINE, "Empty templates.");
+            LOG.debug("Error setting templates.", e);
             return;
         }
 
@@ -390,25 +514,25 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.badratio"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.FINE, "Cannot covert ratio.", ex);
+            LOG.debug("Cannot covert ratio.", ex);
             return;
         }
-        if (s != null && !s.equals(diagram.getAttribute("scale"))) {
-            diagram.setAttribute("scale", s);
+        if (s != null && !s.equals(diagram.getAttribute(TrainDiagram.ATTR_SCALE))) {
+            diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
             recalculate = true;
         }
-        if (sp != ((Double)diagram.getAttribute("time.scale")).doubleValue()) {
-            diagram.setAttribute("time.scale", sp);
+        if (sp != ((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).doubleValue()) {
+            diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
             recalculate = true;
         }
 
         // set templates
-        if (!completeName.equals(trainsData.getTrainCompleteNameTemplate().getTemplate())) {
-            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
+        if (!completeName.equals(trainsData.getTrainCompleteNameTemplate())) {
+            trainsData.setTrainCompleteNameTemplate(completeName);
             clear = true;
         }
-        if (!name.equals(trainsData.getTrainNameTemplate().getTemplate())) {
-            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
+        if (!name.equals(trainsData.getTrainNameTemplate())) {
+            trainsData.setTrainNameTemplate(name);
             clear = true;
         }
 
@@ -428,34 +552,10 @@ public class SettingsDialog extends javax.swing.JDialog {
         // set transfer time
         try {
             Integer difference = Integer.valueOf(stationTransferTextField.getText());
-            if (difference != null && !difference.equals(diagram.getAttribute("station.transfer.time")))
-                diagram.setAttribute("station.transfer.time", difference);
+            if (difference != null && !difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME)))
+                diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, difference);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot parse station transfer time: {0}", stationTransferTextField.getText());
-        }
-
-        // get back values for stations lengths
-        Boolean lia = Boolean.valueOf(lengthInAxlesCheckBox.isSelected());
-        if (!lia.equals(diagram.getAttribute("station.length.in.axles")))
-            diagram.setAttribute("station.length.in.axles", lia);
-        if (lia.booleanValue())
-            diagram.removeAttribute("station.length.unit");
-        else {
-            if (!stationLengthUnitTextField.getText().equals(diagram.getAttribute("station.length.unit")))
-                diagram.setAttribute("station.length.unit", stationLengthUnitTextField.getText());
-        }
-
-        // weight ratios
-        try {
-            Double emptyRatio = Double.valueOf(emptyRatioTextField.getText());
-            Double loadedRatio = Double.valueOf(loadedRatioTextField.getText());
-
-            if (!emptyRatio.equals(diagram.getAttribute("weight.ratio.empty")))
-                diagram.setAttribute("weight.ratio.empty", emptyRatio);
-            if (!loadedRatio.equals(diagram.getAttribute("weight.ratio.loaded")))
-                diagram.setAttribute("weight.ratio.loaded", loadedRatio);
-        } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot convert weight ratios to doubles.", e);
+            LOG.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
         }
 
         // changes tracking
@@ -477,6 +577,55 @@ public class SettingsDialog extends javax.swing.JDialog {
             recalculate = true;
         }
 
+        // weight -> length conversion
+        BigDecimal wpa = loadedWeightEditBox.getValueInUnit(WeightUnit.KG);
+        BigDecimal wpae = emptyWeightEditBox.getValueInUnit(WeightUnit.KG);
+        BigDecimal lpa = lengthPerAxleEditBox.getValueInUnit(LengthUnit.MM);
+        LengthUnit lu = (LengthUnit) lengthUnitComboBox.getSelectedItem();
+        if (lu != diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT))
+            diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, lu);
+        this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE, wpa);
+        this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, wpae);
+        this.setAttributeBDtoInt(TrainDiagram.ATTR_LENGTH_PER_AXLE, lpa);
+
+        // route length
+        try {
+            if (rlRatioTextField.getText() != null && !"".equals(rlRatioTextField.getText())) {
+                Double rlRatio = Double.valueOf(rlRatioTextField.getText());
+                if (!rlRatio.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO)))
+                    diagram.setAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
+            } else {
+                if (diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO) != null)
+                    diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            }
+        } catch (NumberFormatException e) {
+            LOG.warn("Cannot convert route length ratio to double.", e);
+        }
+        if (rlUnitTextField.getText() != null && !rlUnitTextField.getText().equals("")) {
+            if (!rlUnitTextField.getText().trim().equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT)))
+                diagram.setAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, rlUnitTextField.getText().trim());
+        } else {
+            if (diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT) != null)
+                diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
+        }
+
+        // time range
+        Tuple<Integer> timeRange = this.getTimeRange();
+        if ((timeRange.first != null && !timeRange.first.equals(diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME)))
+                || (timeRange.first == null && diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME) != null)) {
+            if (timeRange.first == null)
+                diagram.removeAttribute(TrainDiagram.ATTR_FROM_TIME);
+            else
+                diagram.setAttribute(TrainDiagram.ATTR_FROM_TIME, timeRange.first);
+        }
+        if ((timeRange.second != null && !timeRange.second.equals(diagram.getAttribute(TrainDiagram.ATTR_TO_TIME)))
+                || (timeRange.second == null && diagram.getAttribute(TrainDiagram.ATTR_TO_TIME) != null)) {
+            if (timeRange.second == null)
+                diagram.removeAttribute(TrainDiagram.ATTR_TO_TIME);
+            else
+                diagram.setAttribute(TrainDiagram.ATTR_TO_TIME, timeRange.second);
+        }
+
         // update model
         if (recalculate)
             for (Train train : diagram.getTrains()) {
@@ -493,37 +642,48 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.diagramChanged = true;
     }//GEN-LAST:event_okButtonActionPerformed
 
+    private void setAttributeBDtoInt(String attr, BigDecimal value) {
+        try {
+            Integer cValue = UnitUtil.convert(value);
+            if (!cValue.equals(diagram.getAttribute(attr)))
+                diagram.setAttribute(attr, cValue);
+        } catch (ArithmeticException e) {
+            LOG.warn("Cannot convert {} attribute to int: {}", attr, e.getMessage());
+        }
+    }
+
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.updateValues();
         this.setVisible(false);
         this.diagramChanged = false;
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void lengthInAxlesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lengthInAxlesCheckBoxActionPerformed
-        // enable/disable custom unit for station length depending on this value
-        boolean customUnitEnabled = !lengthInAxlesCheckBox.isSelected();
-        stationLengthUnitTextField.setEnabled(customUnitEnabled);
-    }//GEN-LAST:event_lengthInAxlesCheckBoxActionPerformed
+    private void timeTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_timeTextFieldFocusLost
+        // focus lost - check time information
+        Tuple<Integer> timeRange = this.getTimeRange();
+        this.setTimeRange(timeRange.first, timeRange.second);
+    }//GEN-LAST:event_timeTextFieldFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox changesTrackingCheckBox;
-    private javax.swing.JTextField completeNameTemplateTextField;
-    private javax.swing.JTextField emptyRatioTextField;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JCheckBox lengthInAxlesCheckBox;
-    private javax.swing.JTextField loadedRatioTextField;
-    private javax.swing.JTextField nameTemplateTextField;
+    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox emptyWeightEditBox;
+    private javax.swing.JTextField fromTimeTextField;
+    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthPerAxleEditBox;
+    private javax.swing.JComboBox lengthUnitComboBox;
+    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox loadedWeightEditBox;
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel panel1;
     private javax.swing.JComboBox ratioComboBox;
-    private javax.swing.JPanel ratioPanel;
+    private javax.swing.JTextField rlRatioTextField;
+    private javax.swing.JTextField rlUnitTextField;
     private javax.swing.JComboBox scaleComboBox;
     private javax.swing.JTextArea scriptTextArea;
     private javax.swing.JComboBox sortComboBox;
-    private javax.swing.JTextField stationLengthUnitTextField;
     private javax.swing.JTextField stationTransferTextField;
+    private javax.swing.JPanel timeRangePanel;
+    private javax.swing.JTextField toTimeTextField;
     // End of variables declaration//GEN-END:variables
 
 }

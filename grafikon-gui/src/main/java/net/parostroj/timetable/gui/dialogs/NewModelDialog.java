@@ -6,8 +6,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
@@ -15,6 +13,8 @@ import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.templates.Template;
 import net.parostroj.timetable.model.templates.TemplatesLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for creation new GT.
@@ -23,7 +23,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class NewModelDialog extends javax.swing.JDialog {
     
-    private static final Logger LOG = Logger.getLogger(NewModelDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(NewModelDialog.class.getName());
     
     private ApplicationModel model;
     
@@ -159,7 +159,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ex.getMessage(),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.WARNING, "Cannot convert ratio value.", ex);
+            LOG.warn("Cannot convert ratio value.", ex);
             return;
         }
         
@@ -171,12 +171,12 @@ public class NewModelDialog extends javax.swing.JDialog {
         } catch (LSException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ex.getMessage(),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.log(Level.WARNING, "Cannot load template.", ex);
+            LOG.warn("Cannot load template.", ex);
             return;
         }
         // update scale and time scale
-        diagram.setAttribute("scale", s);
-        diagram.setAttribute("time.scale", sp);
+        diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
+        diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
         model.setDiagram(diagram);
         model.setOpenedFile(null);
         model.setModelChanged(true);

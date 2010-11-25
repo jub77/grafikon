@@ -1,8 +1,10 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Logger;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Imports train types.
@@ -11,14 +13,14 @@ import net.parostroj.timetable.model.TrainType;
  */
 public class TrainTypeImport extends Import {
 
-    private static final Logger LOG = Logger.getLogger(TrainTypeImport.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainTypeImport.class.getName());
 
     public TrainTypeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
     }
 
     @Override
-    protected void importObjectImpl(Object o) {
+    protected void importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof TrainType))
             return;
@@ -29,7 +31,7 @@ public class TrainTypeImport extends Import {
         if (checkedType != null) {
             String message = "Train type already exists: " + checkedType;
             this.addError(importedType, message);
-            LOG.finer(message);
+            LOG.trace(message);
             return;
         }
 
@@ -46,6 +48,6 @@ public class TrainTypeImport extends Import {
         // add to diagram
         this.getDiagram().addTrainType(type);
         this.addImportedObject(type);
-        LOG.finer("Successfully imported type: " + type);
+        LOG.trace("Successfully imported type: " + type);
     }
 }

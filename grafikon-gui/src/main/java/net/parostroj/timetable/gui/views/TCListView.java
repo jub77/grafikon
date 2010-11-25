@@ -178,7 +178,7 @@ private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
     // get name from text field (ignore shorter than one character
     if (newNameTextField.getText().length() > 0) {
-        TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),newNameTextField.getText(), delegate.getType());
+        TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getType());
         model.getDiagram().addCycle(cycle);
         
         // clear field

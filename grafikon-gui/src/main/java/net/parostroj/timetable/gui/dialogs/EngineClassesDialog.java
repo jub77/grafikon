@@ -5,8 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -17,6 +15,8 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * List of engine class.
@@ -169,7 +169,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private ApplicationModel model;
     private EngineClassesListModel listModel;
     private WeightTableModel tableModel;
-    private static final Logger LOG = Logger.getLogger(EngineClassesDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EngineClassesDialog.class.getName());
 
     /** Creates new form EngineClassesDialog */
     public EngineClassesDialog(java.awt.Frame parent, boolean modal) {
@@ -427,7 +427,7 @@ private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         speedTextField.setText("");
 
     } catch (NumberFormatException e) {
-        LOG.log(Level.FINEST, "Cannot convert speed string to int.", e);
+        LOG.trace("Cannot convert speed string to int.", e);
     }
 }//GEN-LAST:event_newRowButtonActionPerformed
 

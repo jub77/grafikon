@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import net.parostroj.timetable.utils.FilterIterable;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -66,7 +67,7 @@ public class Route implements ObjectWithId, Visitable {
      */
     public Route(String id, RouteSegment... segments) {
         this.id = id;
-        this.segments.addAll(Arrays.asList(segments));
+        this.segments = new LinkedList<RouteSegment>(Arrays.asList(segments));
     }
 
     /**
@@ -170,6 +171,20 @@ public class Route implements ObjectWithId, Visitable {
         }
         builder.append(']');
         return builder.toString();
+    }
+
+    /**
+     * @return iterable which consists only of lines of this route
+     */
+    public Iterable<Line> lines() {
+        return new FilterIterable<Line>(segments, Line.class);
+    }
+
+    /**
+     * @return iterable which consists only of nodes of this route
+     */
+    public Iterable<Node> nodes() {
+        return new FilterIterable<Node>(segments, Node.class);
     }
 
     /**

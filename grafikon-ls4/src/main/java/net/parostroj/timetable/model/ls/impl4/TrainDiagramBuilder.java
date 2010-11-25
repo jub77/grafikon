@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
+import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -18,7 +19,7 @@ public class TrainDiagramBuilder {
         this.diagram = diagram;
     }
     
-    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) {
+    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
         // attributes
@@ -30,7 +31,7 @@ public class TrainDiagramBuilder {
         trackChanges = lsDiagram.isChangesTrackingEnabled();
     }
     
-    public void setTrainsData(LSTrainsData lsData) {
+    public void setTrainsData(LSTrainsData lsData) throws LSException {
         TrainsData data = lsData.createTrainsData();
         this.diagram.setTrainsData(data);
     }
@@ -40,7 +41,7 @@ public class TrainDiagramBuilder {
         this.diagram.setPenaltyTable(table);
     }
     
-    public void setNet(LSNet lsNet) {
+    public void setNet(LSNet lsNet) throws LSException {
         Net net = lsNet.createNet();
         this.diagram.setNet(net);
         // add line classes
@@ -73,7 +74,7 @@ public class TrainDiagramBuilder {
         diagram.addRoute(route);
     }
     
-    public void setTrainType(LSTrainType lsType) {
+    public void setTrainType(LSTrainType lsType) throws LSException {
         TrainType type = lsType.createTrainType(diagram);
         TrainType foundTrainType = null;
         if ((foundTrainType = diagram.getTrainTypeById(type.getId())) != null) {
@@ -82,7 +83,7 @@ public class TrainDiagramBuilder {
         diagram.addTrainType(type);
     }
     
-    public void setTextItem(LSTextItem lsTextItem) {
+    public void setTextItem(LSTextItem lsTextItem) throws LSException {
         TextItem item = lsTextItem.createTextItem(diagram);
         diagram.addTextItem(item);
     }
@@ -94,7 +95,7 @@ public class TrainDiagramBuilder {
         }
     }
 
-    public void setTrain(LSTrain lsTrain) {
+    public void setTrain(LSTrain lsTrain) throws LSException {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
         if ((foundTrain = diagram.getTrainById(train.getId())) != null) {
@@ -112,7 +113,7 @@ public class TrainDiagramBuilder {
         diagram.addEngineClass(ec);
     }
     
-    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) {
+    public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
         if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType())) != null) {
@@ -136,6 +137,8 @@ public class TrainDiagramBuilder {
     }
     
     public TrainDiagram getTrainDiagram() {
+        // after load check
+        (new AfterLoadCheck()).check(diagram);
         // tracking of changes has to be enabled at the end, otherwise
         // it would also track changes caused by loading of the diagram
         diagram.getChangesTracker().setTrackingEnabled(trackChanges);
@@ -143,7 +146,6 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
-
         return diagram;
     }
 }

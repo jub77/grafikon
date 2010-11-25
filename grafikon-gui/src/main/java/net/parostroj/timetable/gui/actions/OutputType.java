@@ -19,6 +19,7 @@ public enum OutputType {
     TRAINS_SELECT_DRIVER_CYCLES("trains_select_driver_cycles", "trains", false, ElementType.DRIVER_CYCLE, "driver_cycle"),
     TRAINS_SELECT_STATION("trains_select_station", "trains", true, null, "station"),
     TRAINS_BY_DRIVER_CYCLES("trains_by_driver_cycles", "trains", false, null, "driver_cycle"),
+    TRAINS_SELECT_ROUTES("trains_select_routes", "trains", true, ElementType.ROUTE, "routes"),
     ALL("all", null, false, null, null);
 
     private String actionCommand;

@@ -14,3 +14,8 @@ grafikon-templates/target/*
 grafikon-webstart/target/*
 grafikon-webstart/src/main/keystore/grafikon.ks
 /*.cmd
+/*/.classpath
+/*/.project
+/*/.settings
+.project
+.settings
