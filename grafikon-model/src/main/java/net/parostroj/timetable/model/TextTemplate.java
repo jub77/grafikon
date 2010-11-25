@@ -35,4 +35,29 @@ public abstract class TextTemplate {
                 throw new IllegalArgumentException("No template for language available.");
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TextTemplate other = (TextTemplate) obj;
+        if (this.template != other.template && (this.template == null || !this.template.equals(other.template))) {
+            return false;
+        }
+        if (this.getLanguage() != other.getLanguage()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.template != null ? this.template.hashCode() : 0);
+        return hash;
+    }
 }
