@@ -10,9 +10,14 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
@@ -26,8 +31,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class TrainTypesDialog extends javax.swing.JDialog {
     
-    private ApplicationModel model;
+    private static final Logger LOG = LoggerFactory.getLogger(TrainTypesDialog.class);
     
+    private ApplicationModel model;
     private TrainTypesModel typesModel;
     
     /** Creates new form TrainTypesDialog */
@@ -363,17 +369,27 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (!category.equals(type.getCategory()))
                 type.setCategory(category);
             if (nameTemplateCheckBox.isSelected()) {
-                if (type.getTrainNameTemplate() == null ||
-                        !nameTemplateTextField.getText().trim().equals(type.getTrainNameTemplate().getTemplate()))
-                    type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+                try {
+                    if (type.getTrainNameTemplate() == null ||
+                            !nameTemplateTextField.getText().trim().equals(type.getTrainNameTemplate().getTemplate()))
+                        type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+                } catch (GrafikonException e) {
+                    ActionUtils.showWarning(e.getMessage(), this);
+                    LOG.warn(e.getMessage(), e);
+                }
             } else {
                 if (type.getTrainNameTemplate() != null)
                     type.setTrainNameTemplate(null);
             }
             if (completeNameTemplateCheckBox.isSelected()) {
-                if (type.getTrainCompleteNameTemplate() == null ||
-                        !completeNameTemplateTextField.getText().trim().equals(type.getTrainCompleteNameTemplate().getTemplate()))
-                    type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+                try {
+                    if (type.getTrainCompleteNameTemplate() == null ||
+                            !completeNameTemplateTextField.getText().trim().equals(type.getTrainCompleteNameTemplate().getTemplate()))
+                        type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+                } catch (GrafikonException e) {
+                    ActionUtils.showWarning(e.getMessage(), this);
+                    LOG.warn(e.getMessage(), e);
+                }
             } else {
                 if (type.getTrainCompleteNameTemplate() != null)
                     type.setTrainCompleteNameTemplate(null);
@@ -427,11 +443,17 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         type.setDesc(desc);
         type.setColor(Conversions.convertTextToColor(colorLabel.getText()));
         type.setCategory((TrainTypeCategory) ((Wrapper<?>)brakeComboBox.getSelectedItem()).getElement());
-        if (nameTemplateCheckBox.isSelected()) {
-            type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
-        }
-        if (completeNameTemplateCheckBox.isSelected()) {
-            type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+        try {
+            if (nameTemplateCheckBox.isSelected()) {
+                type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+            }
+            if (completeNameTemplateCheckBox.isSelected()) {
+                type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+            }
+        } catch (GrafikonException e) {
+            ActionUtils.showError(e.getMessage(), this);
+            LOG.warn(e.getMessage(), e);
+            return;
         }
         int index = typesModel.add(type);
         trainTypesList.setSelectedIndex(index);

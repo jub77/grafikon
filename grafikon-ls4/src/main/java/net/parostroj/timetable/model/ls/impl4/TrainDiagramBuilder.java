@@ -19,7 +19,7 @@ public class TrainDiagramBuilder {
         this.diagram = diagram;
     }
     
-    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) {
+    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
         // attributes
@@ -31,7 +31,7 @@ public class TrainDiagramBuilder {
         trackChanges = lsDiagram.isChangesTrackingEnabled();
     }
     
-    public void setTrainsData(LSTrainsData lsData) {
+    public void setTrainsData(LSTrainsData lsData) throws LSException {
         TrainsData data = lsData.createTrainsData();
         this.diagram.setTrainsData(data);
     }
@@ -74,7 +74,7 @@ public class TrainDiagramBuilder {
         diagram.addRoute(route);
     }
     
-    public void setTrainType(LSTrainType lsType) {
+    public void setTrainType(LSTrainType lsType) throws LSException {
         TrainType type = lsType.createTrainType(diagram);
         TrainType foundTrainType = null;
         if ((foundTrainType = diagram.getTrainTypeById(type.getId())) != null) {

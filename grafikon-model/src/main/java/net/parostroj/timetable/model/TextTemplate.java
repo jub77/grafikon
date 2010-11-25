@@ -25,10 +25,12 @@ public abstract class TextTemplate {
 
     public abstract Language getLanguage();
 
-    public static TextTemplate createTextTemplate(String template, Language language) {
+    public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
         switch(language) {
             case MVEL:
                 return new TextTemplateMvel(template);
+            case GROOVY:
+                return new TextTemplateGroovy(template);
             default:
                 throw new IllegalArgumentException("No template for language available.");
         }

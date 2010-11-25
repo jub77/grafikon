@@ -5,12 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.parostroj.timetable.model.Language;
-import net.parostroj.timetable.model.Script;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.TrainsData;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.model.*;
 
 /**
  * List of train types.
@@ -19,20 +18,16 @@ import net.parostroj.timetable.model.TrainsData;
  */
 @XmlRootElement
 public class LSTrainTypeList {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(LSTrainTypeList.class);
+
     private Map<TrainType, LSTrainType> mapping;
-    
     private Map<String, TrainType> mappingByKey;
-    
     private List<TrainType> trainTypeList;
-    
     private TrainsData data;
-    
     private String trainNameTemplate;
-    
     private String trainCompleteNameTemplate;
-    
     private LSSortPattern trainSortPattern;
-    
     private LSTrainType[] trainType;
     
     public LSTrainTypeList() {
@@ -66,7 +61,8 @@ public class LSTrainTypeList {
     }
     
     private void createData() {
-        data = new TrainsData(
+        try {
+            data = new TrainsData(
                 TextTemplate.createTextTemplate(trainNameTemplate, Language.MVEL),
                 TextTemplate.createTextTemplate(trainCompleteNameTemplate, Language.MVEL),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
@@ -86,6 +82,9 @@ public class LSTrainTypeList {
                 "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
                 "time = ((int)((time + 40) / 60)) * 60;\n" +
                 "return time;\n", Language.GROOVY));
+        } catch (GrafikonException e) {
+            LOG.error("Couldn't create trains data." ,e);
+        }
     }
     
     public TrainType getTrainType(String key) {

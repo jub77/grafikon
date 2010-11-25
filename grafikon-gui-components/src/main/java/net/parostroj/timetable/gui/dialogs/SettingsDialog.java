@@ -521,13 +521,20 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // set templates
-        if (!completeName.equals(trainsData.getTrainCompleteNameTemplate().getTemplate())) {
-            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
-            clear = true;
-        }
-        if (!name.equals(trainsData.getTrainNameTemplate().getTemplate())) {
-            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
-            clear = true;
+        try {
+            if (!completeName.equals(trainsData.getTrainCompleteNameTemplate().getTemplate())) {
+                trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeName, Language.MVEL));
+                clear = true;
+            }
+            if (!name.equals(trainsData.getTrainNameTemplate().getTemplate())) {
+                trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(name, Language.MVEL));
+                clear = true;
+            }
+        } catch (GrafikonException e) {
+            JOptionPane.showMessageDialog(this.getParent(), e.getMessage(),
+                    ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+            LOG.warn("Cannot set templates.", e);
+            return;
         }
 
         // set sorting
