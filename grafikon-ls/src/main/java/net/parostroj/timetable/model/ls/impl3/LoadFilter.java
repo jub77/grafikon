@@ -18,6 +18,8 @@ public class LoadFilter {
             Integer weight = TrainsHelper.getWeightFromInfoAttribute(train);
             if (weight != null)
                 train.setAttribute("weight", weight);
+            // remove weight.info attribute
+            train.removeAttribute("weight.info");
         }
     }
 }
