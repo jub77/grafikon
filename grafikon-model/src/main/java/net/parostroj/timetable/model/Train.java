@@ -42,6 +42,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /* cached data */
     private String _cachedName;
     private String _cachedCompleteName;
+    private Map<String,Object> _cachedBinding;
     private GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
     private boolean attached;
 
@@ -1007,11 +1008,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /**
      * @return binding for template
      */
-    public Map<String,Object> createTemplateBinding() {
-        Map<String,Object> variables = new HashMap<String, Object>();
-        variables.put("train", this);
-        variables.put("type", this.getType());
-        return variables;
+    Map<String,Object> createTemplateBinding() {
+        if (_cachedBinding == null) {
+            _cachedBinding = new HashMap<String, Object>();
+            _cachedBinding.put("train", this);
+            _cachedBinding.put("stations", new Stations());
+        }
+        _cachedBinding.put("type", this.getType());
+        return _cachedBinding;
     }
 
     /**
@@ -1022,5 +1026,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    /**
+     * Wrapper for accessing stations for text templates.
+     */
+    public class Stations {
+        public Node getAt(int index) {
+            return timeIntervalList.get(index * 2).getOwnerAsNode();
+        }
+
+        public Node getFirst() {
+            return getFirstInterval().getOwnerAsNode();
+        }
+
+        public Node getLast() {
+            return getLastInterval().getOwnerAsNode();
+        }
     }
 }
