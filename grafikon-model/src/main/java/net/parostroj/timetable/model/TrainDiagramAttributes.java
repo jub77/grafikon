@@ -20,4 +20,6 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_ROUTE_NUMBERS = "route.numbers";
     public static final String ATTR_FROM_TIME = "from.time";
     public static final String ATTR_TO_TIME = "to.time";
+    public static final String ATTR_TRAIN_NAME_TEMPLATE = "train.name.template";
+    public static final String ATTR_TRAIN_COMPLETE_NAME_TEMPLATE = "train.complete.name.template";
 }
