@@ -4,13 +4,17 @@ import groovy.text.GStringTemplateEngine;
 import groovy.text.Template;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * MVEL text template.
+ * Groovy text template.
  *
  * @author jub
  */
 public final class TextTemplateGroovy extends TextTemplate {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TextTemplateGroovy.class);
 
     private final Template templateGString;
     
@@ -26,7 +30,12 @@ public final class TextTemplateGroovy extends TextTemplate {
 
     @Override
     public String evaluate(Map<String, Object> binding) {
-        return templateGString.make(binding).toString();
+        try {
+            return templateGString.make(binding).toString();
+        } catch (Exception e) {
+            LOG.warn("Error evaluating template: " + e.getMessage());
+            return "-- Template error --";
+        }
     }
 
     @Override
