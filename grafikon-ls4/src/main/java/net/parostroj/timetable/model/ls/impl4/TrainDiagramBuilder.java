@@ -28,7 +28,7 @@ public class TrainDiagramBuilder {
             this.diagram = new TrainDiagram(lsDiagram.getId(), null);
         this.diagram.setTrainsData(data);
         this.diagram.setAttributes(attributes);
-        trackChanges = lsDiagram.isChangesTrackingEnabled();
+        trackChanges = lsDiagram.isChangesTracking();
     }
     
     public void setTrainsData(LSTrainsData lsData) throws LSException {
