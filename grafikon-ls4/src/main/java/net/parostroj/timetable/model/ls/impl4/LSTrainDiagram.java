@@ -26,7 +26,7 @@ public class LSTrainDiagram {
         id = diagram.getId();
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
-        changesTrackingEnabled = diagram.getChangesTracker() != null;
+        changesTrackingEnabled = diagram.getChangesTracker().isTrackingEnabled();
     }
 
     public LSAttributes getAttributes() {
