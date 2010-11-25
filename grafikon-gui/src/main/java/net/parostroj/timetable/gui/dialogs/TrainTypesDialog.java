@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.JColorChooser;
@@ -41,6 +42,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setComponentsEnabled(false);
+        nameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+        cNameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
     }
     
     public void setModel(ApplicationModel model) {
@@ -76,48 +79,30 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
+        abbrTextField = new javax.swing.JTextField();
+        brakeComboBox = new javax.swing.JComboBox();
+        editColorButton = new javax.swing.JButton();
+        descTextField = new javax.swing.JTextField();
+        nameTemplateCheckBox = new javax.swing.JCheckBox();
+        nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
+        completeNameTemplateCheckBox = new javax.swing.JCheckBox();
+        cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
+        javax.swing.JScrollPane jScrollPane = new javax.swing.JScrollPane();
         trainTypesList = new javax.swing.JList();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        descTextField = new javax.swing.JTextField();
-        brakeComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         colorLabel = new javax.swing.JLabel();
-        editColorButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
         updateButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
-        nameTemplateTextField = new javax.swing.JTextField();
-        nameTemplateCheckBox = new javax.swing.JCheckBox();
-        completeNameTemplateTextField = new javax.swing.JTextField();
-        completeNameTemplateCheckBox = new javax.swing.JCheckBox();
 
         setTitle(ResourceLoader.getString("edit.traintypes")); // NOI18N
 
-        trainTypesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        trainTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                trainTypesListValueChanged(evt);
-            }
-        });
-        jScrollPane1.setViewportView(trainTypesList);
-
-        jLabel1.setText(ResourceLoader.getString("edit.traintypes.abbr")); // NOI18N
-
-        jLabel2.setText(ResourceLoader.getString("edit.traintypes.desc")); // NOI18N
-
         brakeComboBox.setMaximumRowCount(2);
-
-        jLabel3.setText(ResourceLoader.getString("edit.traintypes.category")); // NOI18N
-
-        jLabel4.setText(ResourceLoader.getString("edit.traintypes.color")); // NOI18N
-
-        colorLabel.setText("0x000000");
 
         editColorButton.setText(ResourceLoader.getString("button.edit") + "..."); // NOI18N
         editColorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -125,6 +110,38 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 editColorButtonActionPerformed(evt);
             }
         });
+
+        nameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
+        nameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameTemplateCheckBoxActionPerformed(evt);
+            }
+        });
+
+        completeNameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
+        completeNameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                completeNameTemplateCheckBoxActionPerformed(evt);
+            }
+        });
+
+        trainTypesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        trainTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                trainTypesListValueChanged(evt);
+            }
+        });
+        jScrollPane.setViewportView(trainTypesList);
+
+        jLabel1.setText(ResourceLoader.getString("edit.traintypes.abbr")); // NOI18N
+
+        jLabel2.setText(ResourceLoader.getString("edit.traintypes.desc")); // NOI18N
+
+        jLabel3.setText(ResourceLoader.getString("edit.traintypes.category")); // NOI18N
+
+        jLabel4.setText(ResourceLoader.getString("edit.traintypes.color")); // NOI18N
+
+        colorLabel.setText("0x000000");
 
         newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
@@ -161,20 +178,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             }
         });
 
-        nameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
-        nameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTemplateCheckBoxActionPerformed(evt);
-            }
-        });
-
-        completeNameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
-        completeNameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                completeNameTemplateCheckBoxActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,12 +185,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cNameTemplateEditBox, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                     .addComponent(completeNameTemplateCheckBox)
                     .addComponent(nameTemplateCheckBox)
-                    .addComponent(completeNameTemplateTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                     .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                        .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -211,7 +214,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                                 .addComponent(editColorButton))
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jLabel2)
-                    .addComponent(nameTemplateTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+                    .addComponent(nameTemplateEditBox, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -235,14 +238,14 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameTemplateCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nameTemplateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameTemplateEditBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(completeNameTemplateCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(completeNameTemplateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cNameTemplateEditBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                    .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(newButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -285,28 +288,18 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));
             colorLabel.setForeground(selected.getColor());
             brakeComboBox.setSelectedItem(new Wrapper<TrainTypeCategory>(selected.getCategory()));
-            if (selected.getTrainNameTemplate() == null) {
-                nameTemplateCheckBox.setSelected(false);
-                nameTemplateTextField.setText(selected.getTrainDiagram().getTrainsData().getTrainNameTemplate().getTemplate());
-                nameTemplateTextField.setEnabled(false);
-                nameTemplateTextField.setCaretPosition(0);
-            } else {
-                nameTemplateCheckBox.setSelected(true);
-                nameTemplateTextField.setText(selected.getTrainNameTemplate().getTemplate());
-                nameTemplateTextField.setEnabled(true);
-                nameTemplateTextField.setCaretPosition(0);
-            }
-            if (selected.getTrainCompleteNameTemplate() == null) {
-                completeNameTemplateCheckBox.setSelected(false);
-                completeNameTemplateTextField.setText(selected.getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate().getTemplate());
-                completeNameTemplateTextField.setEnabled(false);
-                completeNameTemplateTextField.setCaretPosition(0);
-            } else {
-                completeNameTemplateCheckBox.setSelected(true);
-                completeNameTemplateTextField.setText(selected.getTrainCompleteNameTemplate().getTemplate());
-                completeNameTemplateTextField.setEnabled(true);
-                completeNameTemplateTextField.setCaretPosition(0);
-            }
+
+            nameTemplateCheckBox.setSelected(selected.getTrainNameTemplate() != null);
+            nameTemplateEditBox.setEnabled(selected.getTrainNameTemplate() != null);
+            nameTemplateEditBox.setTemplate(selected.getTrainNameTemplate() == null ? 
+                selected.getTrainDiagram().getTrainsData().getTrainNameTemplate() :
+                selected.getTrainNameTemplate());
+
+            completeNameTemplateCheckBox.setSelected(selected.getTrainCompleteNameTemplate() != null);
+            cNameTemplateEditBox.setEnabled(selected.getTrainCompleteNameTemplate() != null);
+            cNameTemplateEditBox.setTemplate(selected.getTrainCompleteNameTemplate() == null ?
+                selected.getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
+                selected.getTrainCompleteNameTemplate());
         } else {
             abbrTextField.setText("");
             descTextField.setText("");
@@ -314,13 +307,11 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             colorLabel.setForeground(Color.BLACK);
             brakeComboBox.setSelectedItem(model.getDiagram().getPenaltyTable().getTrainTypeCategories().get(0));
             nameTemplateCheckBox.setSelected(false);
-            nameTemplateTextField.setText(model.getDiagram().getTrainsData().getTrainNameTemplate().getTemplate());
-            nameTemplateTextField.setEnabled(false);
-            nameTemplateTextField.setCaretPosition(0);
+            nameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainNameTemplate());
+            nameTemplateEditBox.setEnabled(false);
             completeNameTemplateCheckBox.setSelected(false);
-            completeNameTemplateTextField.setText(model.getDiagram().getTrainsData().getTrainCompleteNameTemplate().getTemplate());
-            completeNameTemplateTextField.setEnabled(false);
-            completeNameTemplateTextField.setCaretPosition(0);
+            cNameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainCompleteNameTemplate());
+            cNameTemplateEditBox.setEnabled(false);
         }
     }
     
@@ -371,8 +362,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (nameTemplateCheckBox.isSelected()) {
                 try {
                     if (type.getTrainNameTemplate() == null ||
-                            !nameTemplateTextField.getText().trim().equals(type.getTrainNameTemplate().getTemplate()))
-                        type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+                            !nameTemplateEditBox.getTemplate().equals(type.getTrainNameTemplate()))
+                        type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     ActionUtils.showWarning(e.getMessage(), this);
                     LOG.warn(e.getMessage(), e);
@@ -384,8 +375,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (completeNameTemplateCheckBox.isSelected()) {
                 try {
                     if (type.getTrainCompleteNameTemplate() == null ||
-                            !completeNameTemplateTextField.getText().trim().equals(type.getTrainCompleteNameTemplate().getTemplate()))
-                        type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+                            !cNameTemplateEditBox.getTemplate().equals(type.getTrainCompleteNameTemplate()))
+                        type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     ActionUtils.showWarning(e.getMessage(), this);
                     LOG.warn(e.getMessage(), e);
@@ -445,10 +436,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         type.setCategory((TrainTypeCategory) ((Wrapper<?>)brakeComboBox.getSelectedItem()).getElement());
         try {
             if (nameTemplateCheckBox.isSelected()) {
-                type.setTrainNameTemplate(TextTemplate.createTextTemplate(nameTemplateTextField.getText(), Language.MVEL));
+                type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
             }
             if (completeNameTemplateCheckBox.isSelected()) {
-                type.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(completeNameTemplateTextField.getText(), Language.MVEL));
+                type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
             }
         } catch (GrafikonException e) {
             ActionUtils.showError(e.getMessage(), this);
@@ -462,11 +453,11 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_newButtonActionPerformed
 
     private void nameTemplateCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTemplateCheckBoxActionPerformed
-        nameTemplateTextField.setEnabled(nameTemplateCheckBox.isSelected());
+        nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected());
     }//GEN-LAST:event_nameTemplateCheckBoxActionPerformed
 
     private void completeNameTemplateCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completeNameTemplateCheckBoxActionPerformed
-        completeNameTemplateTextField.setEnabled(completeNameTemplateCheckBox.isSelected());
+        cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected());
     }//GEN-LAST:event_completeNameTemplateCheckBoxActionPerformed
     
     private boolean existsTrainWithType(TrainType type, List<Train> trains) {
@@ -488,15 +479,15 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField abbrTextField;
     private javax.swing.JComboBox brakeComboBox;
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
     private javax.swing.JLabel colorLabel;
     private javax.swing.JCheckBox completeNameTemplateCheckBox;
-    private javax.swing.JTextField completeNameTemplateTextField;
     private javax.swing.JButton deleteButton;
     private javax.swing.JTextField descTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editColorButton;
     private javax.swing.JCheckBox nameTemplateCheckBox;
-    private javax.swing.JTextField nameTemplateTextField;
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JButton newButton;
     private javax.swing.JList trainTypesList;
     private javax.swing.JButton upButton;
