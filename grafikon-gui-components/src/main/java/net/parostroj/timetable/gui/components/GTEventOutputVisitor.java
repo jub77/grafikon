@@ -35,7 +35,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 if (event.getObject() instanceof Train)
                     str.append("    Train: ").append(((Train)event.getObject()).getName()).append('\n');
                 if (event.getObject() instanceof Route)
@@ -99,7 +99,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getTrack() != null)
                     str.append("    Track: ").append(event.getTrack().getNumber()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
@@ -132,7 +132,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getTrack() != null)
                     str.append("    Track: ").append(event.getTrack().getNumber()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
@@ -150,7 +150,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Name: ").append(event.getSource().getCompleteName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 if (event.getCycleItem() != null) {
                     str.append("    Cycle item: ").append(event.getCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(event.getCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
@@ -176,7 +176,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
@@ -194,7 +194,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Cycle type: ").append(event.getSource().getType().toString()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName()).append('\n');
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange())).append('\n');
                 if (event.getNewCycleItem() != null) {
                     str.append("    Cycle item: ").append(event.getNewCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(event.getNewCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
@@ -215,7 +215,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
@@ -232,7 +232,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
-                    str.append("    Attribute: ").append(event.getAttributeChange().getName());
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 if (event.getTableActionType() != null && event.getWeightTableRow() != null) {
                     str.append("    Table action type: ").append(event.getTableActionType().toString()).append('\n');
                     str.append("    Weight table row speed: ").append(Integer.toString(event.getWeightTableRow().getSpeed()));
@@ -241,5 +241,12 @@ public class GTEventOutputVisitor implements EventVisitor {
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
         }
+    }
+
+    private String convertAttribute(AttributeChange change) {
+        if (change.getNewValue() == null)
+            return change.getName() + " (removed)";
+        else
+            return change.getName();
     }
 }
