@@ -28,7 +28,7 @@ public final class TextTemplateMvel extends TextTemplate {
     @Override
     public String evaluateWithException(Map<String, Object> binding) throws GrafikonException {
         try {
-            return (String)TemplateRuntime.execute(compiledTemplate, binding);
+            return TemplateRuntime.execute(compiledTemplate, binding).toString();
         } catch (Exception e) {
             throw new GrafikonException("Error evaluating template: " + e.getMessage(), e, GrafikonException.Type.TEXT_TEMPLATE);
         }
