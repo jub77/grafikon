@@ -129,6 +129,15 @@ public class EngineClass implements ObjectWithId, Visitable {
         return null;
     }
 
+    public WeightTableRow getWeigthTableRowWithMaxSpeed() {
+        if (weightTable.isEmpty())
+            // empty row with unlimited speed
+            return EMPTY_ROW;
+        else
+            // return last row (one with max speed)
+            return weightTable.get(weightTable.size() - 1);
+    }
+
     public List<WeightTableRow> getWeightTable() {
         return Collections.unmodifiableList(weightTable);
     }

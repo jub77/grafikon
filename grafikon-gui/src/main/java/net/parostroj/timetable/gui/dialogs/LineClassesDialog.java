@@ -66,9 +66,8 @@ public class LineClassesDialog extends javax.swing.JDialog {
             }
             // remove line class from lines
             for (Line line : model.getDiagram().getNet().getLines()) {
-                LineClass lClass = (LineClass) line.getAttribute("line.class");
-                if (lClass == clazz)
-                    line.removeAttribute("line.class");
+                line.removeAttribute(Line.ATTR_CLASS);
+                line.removeAttribute(Line.ATTR_CLASS_BACK);
             }
             // remove line class
             model.getDiagram().getNet().removeLineClass(clazz);

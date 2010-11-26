@@ -3,8 +3,6 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -14,6 +12,8 @@ import net.parostroj.timetable.gui.utils.ActionHandler;
 import net.parostroj.timetable.gui.utils.ModelAction;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Save/Save as action.
@@ -22,7 +22,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class SaveAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(SaveAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SaveAction.class.getName());
     private ApplicationModel model;
 
     public SaveAction(ApplicationModel model) {
@@ -79,10 +79,10 @@ public class SaveAction extends AbstractAction {
                 try {
                     ModelUtils.saveModelData(model, file);
                 } catch (LSException e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
+                    LOG.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Error saving model.", e);
+                    LOG.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
             }

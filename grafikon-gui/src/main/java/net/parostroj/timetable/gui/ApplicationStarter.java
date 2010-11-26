@@ -3,12 +3,11 @@ package net.parostroj.timetable.gui;
 import java.awt.Image;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Application starter class. It creates splash screen and after initialization
@@ -17,7 +16,7 @@ import javax.swing.SwingUtilities;
  * @author jub
  */
 public class ApplicationStarter {
-    private static final Logger LOG = Logger.getLogger(ApplicationStarter.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationStarter.class.getName());
     
     private Class<? extends JFrame> applicationClass;
     
@@ -46,13 +45,13 @@ public class ApplicationStarter {
     }
     
     public void start() throws ApplicationStarterException {
-            LOG.finer("Start starter.");
+            LOG.trace("Start starter.");
             if (SplashScreen.getSplashScreen() == null)
                 startFrame();
             else {
                 startOriginal();
             }
-            LOG.finer("End starter.");
+            LOG.trace("End starter.");
     }
     
     private JFrame getApplicationInstance(SplashScreenInfo splash) throws ApplicationStarterException {
@@ -61,30 +60,18 @@ public class ApplicationStarter {
         } catch (NoSuchMethodException e) {
             try {
                 return applicationClass.newInstance();
-            } catch (InstantiationException ex) {
-                Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
-                throw new ApplicationStarterException(ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
                 throw new ApplicationStarterException(ex);
             }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ApplicationStarterException(ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ApplicationStarterException(ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ApplicationStarterException(ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(ApplicationStarter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
             throw new ApplicationStarterException(ex);
         }
     }
     
     private void startOriginal() throws ApplicationStarterException {
-        LOG.fine("Using Java 1.6 splash screen.");
+        LOG.debug("Using Java 1.6 splash screen.");
         SplashScreen splash = SplashScreen.getSplashScreen();
         SplashScreenInfoOrig info = new SplashScreenInfoOrig(splash, x, y);
         final JFrame frm = this.getApplicationInstance(info);
@@ -97,10 +84,10 @@ public class ApplicationStarter {
     }
     
     private void startFrame() throws ApplicationStarterException {
-        LOG.fine("Showing JFrame splash screen.");
+        LOG.debug("Showing JFrame splash screen.");
         final SplashScreenFrame spl = new SplashScreenFrame(x, y, image);
         spl.setVisible(true);
-        LOG.finer("Splash initialized.");
+        LOG.trace("Splash initialized.");
         final JFrame frm = this.getApplicationInstance(spl);
         SwingUtilities.invokeLater(new Runnable() {
             @Override

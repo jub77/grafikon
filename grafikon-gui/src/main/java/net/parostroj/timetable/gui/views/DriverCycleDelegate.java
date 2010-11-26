@@ -84,11 +84,11 @@ public class DriverCycleDelegate implements TCDelegate {
                     result.append('\n');
                 // get time difference
                 int difference = item.second.getStartTime() - item.first.getEndTime();
-                Integer okDifference = (Integer)diagram.getAttribute("station.transfer.time");
+                Integer okDifference = (Integer)diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME);
                 String template = ResourceLoader.getString("ec.move.nodes");
                 if (okDifference != null) {
                     // computed difference in model seconds
-                    int computedDiff = (int)(okDifference.intValue() * ((Double)diagram.getAttribute("time.scale")).doubleValue() * 60);
+                    int computedDiff = (int)(okDifference.intValue() * ((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).doubleValue() * 60);
                     if (difference < computedDiff)
                         template = ResourceLoader.getString("ec.move.nodes.time.problem");
                 }

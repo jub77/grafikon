@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.2" maxVersion="1.2" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -123,6 +123,16 @@
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="gt.technological.time" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="preferencesCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ignoreTimeLimitsCheckBoxMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="gt.ignore.time.limits" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>

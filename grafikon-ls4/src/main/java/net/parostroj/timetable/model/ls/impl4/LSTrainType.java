@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
 
 /**
@@ -110,7 +111,7 @@ public class LSTrainType {
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
     }
     
-    public TrainType createTrainType(TrainDiagram diagram) {
+    public TrainType createTrainType(TrainDiagram diagram) throws LSException {
         TrainType type = diagram.createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));

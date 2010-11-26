@@ -4,12 +4,7 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -22,6 +17,8 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Output action.
@@ -30,7 +27,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class OutputAction extends AbstractAction {
 
-    private static final Logger LOG = Logger.getLogger(OutputAction.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(OutputAction.class.getName());
     private ApplicationModel model;
     private Component parent;
     private TemplateSelectDialog templateSelectDialog;
@@ -65,8 +62,8 @@ public class OutputAction extends AbstractAction {
                 this.singleOutput();
             else
                 this.multipleOutputs();
-        } catch (OutputException ex) {
-            LOG.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (Exception ex) {
+            LOG.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
         }
@@ -117,7 +114,7 @@ public class OutputAction extends AbstractAction {
         if (outputType.isSelection()) {
             ElementSelectionDialog<Object> selDialog = new ElementSelectionDialog<Object>(getFrame(), true);
             selDialog.setLocationRelativeTo(parent);
-            selection = selDialog.selectElements((List<Object>)ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
+            selection = selDialog.selectElements(ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
             if (selection == null)
                 return false;
         } else if (outputType == OutputType.TRAINS_SELECT_STATION) {
@@ -136,23 +133,23 @@ public class OutputAction extends AbstractAction {
     }
 
     private void singleOutput() throws OutputException {
-        Output output = this.createOutput();
+        Output output = this.createOutput(outputType);
         Object select = null;
         if (outputType.isSelection() || outputType.getSelectionParam() != null) {
             select = selection;
         }
-        OutputParams params = this.createParams(output, outputFile, select);
+        OutputParams params = this.createParams(output, outputFile, select, outputType);
         this.saveOutputs(Collections.singletonList(new ExecutableOutput(output, params)));
     }
 
     private void multipleOutputs() throws OutputException {
         List<ExecutableOutput> eOutputs = new LinkedList<ExecutableOutput>();
         if (outputType.getOutputType() != null) {
-            Output output = this.createOutput();
-            if (selection instanceof Collection) {
-                Collection<Object> c = (Collection<Object>)selection;
+            Output output = this.createOutput(outputType);
+            if (selection instanceof Collection<?>) {
+                Collection<?> c = (Collection<?>)selection;
                 for (Object item : c) {
-                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile), item);
+                    OutputParams params = this.createParams(output, createUniqueOutputFile(item, outputFile, outputType), item, outputType);
                     eOutputs.add(new ExecutableOutput(output, params));
                 }
             }
@@ -164,48 +161,67 @@ public class OutputAction extends AbstractAction {
             // stations
             Output output = of.createOutput("stations");
             File oFile = new File(outputFile, ResourceLoader.getString("out.nodes") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.STATIONS)));
             // trains
             output = of.createOutput("trains");
             oFile = new File(outputFile, ResourceLoader.getString("out.trains") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.TRAINS)));
             // engine cycles
             output = of.createOutput("engine_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.ec") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENGINE_CYCLES)));
             // train unit cycles
             output = of.createOutput("train_unit_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.tuc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.TRAIN_UNIT_CYCLES)));
             // driver cycles
             output = of.createOutput("driver_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.dc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
-            // starting positions
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.DRIVER_CYCLES)));
+            // start positions
             output = of.createOutput("starts");
             oFile = new File(outputFile, ResourceLoader.getString("out.sp") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null)));
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.STARTS)));
+            // end positions
+            output = of.createOutput("ends");
+            oFile = new File(outputFile, ResourceLoader.getString("out.ep") + "." + suffix);
+            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENDS)));
+            // tt by dc
+            List<TrainsCycle> cycles = model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE);
+            output = of.createOutput("trains");
+            for (TrainsCycle cycle : cycles) {
+                OutputParams params = this.createParams(output, createUniqueOutputFile(cycle, outputFile, OutputType.TRAINS_BY_DRIVER_CYCLES), cycle, OutputType.TRAINS_BY_DRIVER_CYCLES);
+                eOutputs.add(new ExecutableOutput(output, params));
+            }
         }
 
         this.saveOutputs(eOutputs);
     }
 
-    private File createUniqueOutputFile(Object item, File directory) throws OutputException {
-        if (outputType == OutputType.TRAINS_SELECT_DRIVER_CYCLES || outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
+    private File createUniqueOutputFile(Object item, File directory, OutputType type) throws OutputException {
+        if (type == OutputType.TRAINS_SELECT_DRIVER_CYCLES || type == OutputType.TRAINS_BY_DRIVER_CYCLES) {
             TrainsCycle cycle = (TrainsCycle)item;
             return new File(directory, ResourceLoader.getString("out.trains") + "_" + cycle.getName() + "." + model.getOutputCategory().getSuffix());
         }
         throw new OutputException("Error creating filenames of output files.");
     }
 
-    private Output createOutput() throws OutputException {
+    private Output createOutput(OutputType type) throws OutputException {
         OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
         of.setParameter("locale", model.getOutputLocale());
-        Output output = of.createOutput(outputType.getOutputType());
+        Output output = of.createOutput(type.getOutputType());
         return output;
     }
 
-    private OutputParams createParams(Output output, File file, Object select) throws OutputException {
+    private OutputParams createParams(Output output, File file, Object select, OutputType type) throws OutputException {
+        // check file name for not allowed characters and some other also (e.g. ' ' - space)
+        String name = file.getName();
+        File parentFile = file.getParentFile();
+        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        if (parentFile == null)
+            file = new File(name);
+        else
+            file = new File(parentFile, name);
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
@@ -219,10 +235,12 @@ public class OutputAction extends AbstractAction {
         }
         // selections
         if (select != null) {
-            params.setParam(outputType.getSelectionParam(), select);
+            params.setParam(type.getSelectionParam(), select);
         }
         params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
-
+        if (type != null && type.getOutputType().equals("trains")) {
+            params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
+        }
         return params;
     }
 
@@ -237,8 +255,8 @@ public class OutputAction extends AbstractAction {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
                     }
-                } catch (OutputException e) {
-                    LOG.log(Level.WARNING, e.getMessage(), e);
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
             }

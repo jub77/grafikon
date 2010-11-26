@@ -7,7 +7,6 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
@@ -46,7 +45,7 @@ class XmlStartPositionsOutput extends OutputWithCharset {
 
             Writer writer = new OutputStreamWriter(stream, this.getCharset());
             m.marshal(sp, writer);
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             throw new OutputException(e);
         }
     }

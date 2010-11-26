@@ -4,15 +4,12 @@ import groovy.lang.Writable;
 import groovy.text.Template;
 import java.io.*;
 import java.util.*;
-import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.actions.TrainSort;
-import net.parostroj.timetable.actions.TrainSortByNodeFilter;
-import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -30,19 +27,29 @@ public class GspTrainTimetablesOutput extends GspOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        // extract positions
-        TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, this.getTrains(params, diagram));
-        TrainTimetables timetables = tte.getTrainTimetables();
-
-        // call template
-        Map<String, Object> map = new HashMap<String, Object>();
-        Set<String> images = new HashSet<String>();
-        map.put("trains", timetables);
-        map.put("images", images);
-        ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
-
         try {
-            Template template = this.createTemplate(params, "/templates/groovy/trains.gsp");
+            // title page
+            boolean titlePage = false;
+            if (params.paramExistWithValue("title.page"))
+                titlePage = (Boolean)params.getParam("title.page").getValue();
+
+            // extract tts
+            List<Train> trains = SelectionHelper.selectTrains(params, diagram);
+            List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
+            TrainsCycle cycle = SelectionHelper.getDriverCycle(params);
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes, cycle);
+            TrainTimetables timetables = tte.getTrainTimetables();
+
+            // call template
+            Map<String, Object> map = new HashMap<String, Object>();
+            Set<String> images = new HashSet<String>();
+            map.put("trains", timetables);
+            map.put("images", images);
+            map.put("title_page", titlePage);
+            ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
+            ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
+
+            Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
             Writable result = template.make(map);
             Writer writer = new OutputStreamWriter(stream, "utf-8");
             result.writeTo(writer);
@@ -61,28 +68,6 @@ public class GspTrainTimetablesOutput extends GspOutput {
 
         } catch (Exception e) {
             throw new OutputException(e);
-        }
-    }
-
-    private List<Train> getTrains(OutputParams params, TrainDiagram diagram) {
-        if (params.paramExistWithValue("trains")) {
-            OutputParam param = params.getParam("trains");
-            return (List<Train>) param.getValue();
-        } else if (params.paramExistWithValue("station")) {
-            Node station = (Node)params.getParam("station").getValue();
-            return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
-        } else if (params.paramExistWithValue("driver_cycle")) {
-            TrainsCycle cycle = (TrainsCycle)params.getParam("driver_cycle").getValue();
-            List<Train> trains = new LinkedList<Train>();
-            for (TrainsCycleItem item : cycle) {
-                trains.add(item.getTrain());
-            }
-            return trains;
-        } else {
-            TrainSort s = new TrainSort(
-                    new TrainComparator(TrainComparator.Type.ASC,
-                    diagram.getTrainsData().getTrainSortPattern()));
-            return s.sort(diagram.getTrains());
         }
     }
 }

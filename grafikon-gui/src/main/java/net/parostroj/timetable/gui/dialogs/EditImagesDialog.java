@@ -8,8 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,11 +15,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
-import net.parostroj.timetable.gui.helpers.TimetableImageWrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Edit dialog for images for timetable.
@@ -30,7 +30,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class EditImagesDialog extends javax.swing.JDialog implements ApplicationModelListener {
     
-    private static final Logger LOG = Logger.getLogger(EditImagesDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EditImagesDialog.class.getName());
     private static JFileChooser fileChooserInstance;
 
     private ApplicationModel model;
@@ -75,7 +75,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
         imagesList.setModel(listModel);
         if (this.model.getDiagram() != null) {
             for (TimetableImage item : this.model.getDiagram().getImages())
-                listModel.addWrapper(new TimetableImageWrapper(item));
+                listModel.addWrapper(new Wrapper<TimetableImage>(item));
         }
     }
 
@@ -223,9 +223,9 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
                 model.getDiagram().addImage(image);
-                listModel.addWrapper(new TimetableImageWrapper(image));
+                listModel.addWrapper(new Wrapper<TimetableImage>(image));
             } catch (IOException e) {
-                LOG.log(Level.WARNING,"Cannot save temporary image file.", e);
+                LOG.warn("Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
                         ResourceLoader.getString("dialog.error.temporaryfile"),
                         ResourceLoader.getString("dialog.error.title"),
@@ -235,7 +235,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }//GEN-LAST:event_newButtonActionPerformed
 
     private void renameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameButtonActionPerformed
-        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         // ask for a new name
         String newName = JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),selected.getFilename());
         if (newName != null && !newName.equals(selected.getFilename())) {
@@ -254,7 +254,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             model.getDiagram().addImage(newImage);
             // list model
             listModel.removeObject(selected);
-            TimetableImageWrapper newWrapper = new TimetableImageWrapper(newImage);
+            Wrapper<TimetableImage> newWrapper = new Wrapper<TimetableImage>(newImage);
             listModel.addWrapper(newWrapper);
             // set selected
             imagesList.setSelectedValue(newWrapper, true);
@@ -271,12 +271,12 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }//GEN-LAST:event_imagesListValueChanged
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        TimetableImage selected = ((TimetableImageWrapper)imagesList.getSelectedValue()).getElement();
+        TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         model.getDiagram().removeImage(selected);
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
         if (!selected.getImageFile().delete())
-            LOG.log(Level.FINER, "Cannot remove temporary file: {0}", selected.getImageFile().getPath());
+            LOG.debug("Cannot remove temporary file: {}", selected.getImageFile().getPath());
     }//GEN-LAST:event_deleteButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

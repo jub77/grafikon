@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.LineEvent;
@@ -18,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable {
+public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, LineAttributes {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -194,20 +195,43 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("topSpeed", oldTopSpeed, topSpeed)));
     }
 
-    public int computeSpeed(Train train, int prefferedSpeed) {
+    public int computeSpeed(Train train, TimeInterval interval, int prefferedSpeed) {
         int speed;
-        if (prefferedSpeed != NO_SPEED) {
+        if (prefferedSpeed < 1)
+            throw new IllegalArgumentException("Speed has to be greater than 0.");
+        if (train.getTopSpeed() != NO_SPEED) {
             speed = Math.min(prefferedSpeed, train.getTopSpeed());
         } else {
-            // apply max train speed
-            speed = train.getTopSpeed();
+            speed = prefferedSpeed;
         }
 
         // apply track speed limit
         if (this.topSpeed != UNLIMITED_SPEED) {
             speed = Math.min(speed, this.topSpeed);
         }
+
+        // adjust (engine class influence)
+        if (interval != null) {
+            List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(interval);
+            for (EngineClass engineClass : engineClasses) {
+                WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
+                if (row.getSpeed() != UNLIMITED_SPEED) {
+                    speed = Math.min(speed, row.getSpeed());
+                }
+            }
+        }
+
         return speed;
+    }
+
+    @Override
+    public boolean isLine() {
+        return true;
+    }
+
+    @Override
+    public boolean isNode() {
+        return false;
     }
 
     private interface PenaltySolver {
@@ -226,8 +250,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @return pair running time and speed
      */
     public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed) {
-        Scale scale = (Scale) diagram.getAttribute("scale");
-        double timeScale = (Double) diagram.getAttribute("time.scale");
+        Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+        double timeScale = (Double) diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
         PenaltySolver ps = new PenaltySolver() {
 
@@ -317,6 +341,15 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     public Node getTo(TimeIntervalDirection direction) {
         return (direction == TimeIntervalDirection.FORWARD) ? to : from;
+    }
+
+    public LineClass getLineClass(TimeIntervalDirection direction) {
+        LineClass result = null;
+        if (direction == TimeIntervalDirection.BACKWARD)
+            result = (LineClass) getAttribute(ATTR_CLASS_BACK);
+        if (direction == TimeIntervalDirection.FORWARD || result == null)
+            result = (LineClass) getAttribute(ATTR_CLASS);
+        return result;
     }
 
     @Override

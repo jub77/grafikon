@@ -1,16 +1,13 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Extracts information for train timetables.
@@ -21,10 +18,16 @@ public class TrainTimetablesExtractor {
 
     private TrainDiagram diagram;
     private List<Train> trains;
+    private List<Route> routes;
+    private TrainsCycle cycle;
+    private Map<Pair<Line, Node>, Double> cachedRoutePositions;
 
-    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains) {
+    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle) {
         this.diagram = diagram;
         this.trains = trains;
+        this.routes = routes;
+        this.cycle = cycle;
+        this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
     }
 
     public TrainTimetables getTrainTimetables() {
@@ -42,8 +45,27 @@ public class TrainTimetablesExtractor {
                 texts = new LinkedList<Text>();
             texts.add(this.createText(item));
         }
+
         TrainTimetables timetables = new TrainTimetables(result);
         timetables.setTexts(texts);
+
+        // routes
+        timetables.setRoutes(RoutesExtractor.convert(routes));
+
+        // route length unit
+        String unit = (String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
+        if (unit != null && !"".equals(unit))
+            timetables.setRouteLengthUnit(unit);
+
+        // validity
+        timetables.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
+
+        // cycle
+        if (cycle != null) {
+            DriverCyclesExtractor ex = new DriverCyclesExtractor(diagram, null, false);
+            timetables.setCycle(ex.createCycle(cycle));
+        }
+
         return timetables;
     }
 
@@ -53,7 +75,7 @@ public class TrainTimetablesExtractor {
         timetable.setCompleteName(train.getCompleteName());
         this.extractRouteInfo(train, timetable);
         this.extractDieselElectric(train, timetable);
-        if (train.oneLineHasAttribute("line.controlled", Boolean.TRUE))
+        if (train.oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
         WeightDataExtractor wex = new WeightDataExtractor(train);
         timetable.setWeightData(wex.getData());
@@ -95,34 +117,16 @@ public class TrainTimetablesExtractor {
     private void extractLengthData(Train train, TrainTimetable timetable) {
         if (Boolean.TRUE.equals(train.getAttribute("show.station.length"))) {
             // compute maximal length
-            List<Integer> lengths = new LinkedList<Integer>();
-            for (TimeInterval interval : train.getTimeIntervalList()) {
-                if (interval.isNodeOwner() && interval.isStop() && TrainsHelper.shouldCheckLength(interval.getOwnerAsNode(), train))
-                    lengths.add((Integer)interval.getOwnerAsNode().getAttribute("length"));
+            Pair<Node, Integer> length = TrainsHelper.getNextLength(train.getStartNode(), train, TrainsHelper.NextType.LAST_STATION);
+            if (length != null && length.second != null) {
+                // get length unit
+                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                LengthData data = new LengthData();
+                data.setLength(length.second);
+                data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
+                data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
+                timetable.setLengthData(data);
             }
-            // check if all lengths are set and choose the minimum
-            Integer minLength = null;
-            for (Integer sLength : lengths) {
-                if (sLength == null)
-                    return;
-                else {
-                    if (minLength == null || sLength.intValue() < minLength.intValue())
-                        minLength = sLength;
-                }
-            }
-            // get length unit
-            String lengthUnit = null;
-            boolean lengthInAxles = false;
-            if (Boolean.TRUE.equals(diagram.getAttribute("station.length.in.axles"))) {
-                lengthInAxles = true;
-            } else {
-                lengthUnit = (String)diagram.getAttribute("station.length.unit");
-            }
-            LengthData data = new LengthData();
-            data.setLength(minLength);
-            data.setLengthInAxles(lengthInAxles);
-            data.setLengthUnit(lengthUnit);
-            timetable.setLengthData(data);
         }
     }
 
@@ -149,8 +153,10 @@ public class TrainTimetablesExtractor {
                 row.setArrival(TimeConverter.convertFromIntToText(nodeI.getStart()));
             if (!nodeI.isLast())
                 row.setDeparture(TimeConverter.convertFromIntToText(nodeI.getEnd()));
-            if (lineI != null)
+            if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
+                row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
+            }
 
             // comment
             if (Boolean.TRUE.equals(nodeI.getAttribute("comment.shown"))) {
@@ -190,9 +196,25 @@ public class TrainTimetablesExtractor {
                 }
             }
 
-            LineClass lineClass = lineI != null ? (LineClass) lineI.getOwnerAsLine().getAttribute("line.class") : null;
+            LineClass lineClass = lineI != null ? lineI.getLineClass() : null;
             if (lineClass != null)
                 row.setLineClass(lineClass.getName());
+
+            // route position
+            Double routePosition = null;
+            Double routePositionOut = null;
+            if (lineI != null)
+                routePositionOut = this.getRoutePosition(lineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
+            if (lastLineI != null)
+                routePosition = this.getRoutePosition(lastLineI.getOwnerAsLine(), nodeI.getOwnerAsNode());
+            if (routePosition == null)
+                routePosition = routePositionOut;
+            if (routePosition != null && routePositionOut != null &&
+                    routePosition.doubleValue() == routePositionOut.doubleValue())
+                routePositionOut = null;
+
+            row.setRoutePosition(routePosition);
+            row.setRoutePositionOut(routePositionOut);
 
             timetable.getRows().add(row);
 
@@ -204,7 +226,7 @@ public class TrainTimetablesExtractor {
         // get all lines for node
         boolean check = true;
         for (Line line : diagram.getNet().getLinesOf(node)) {
-            check = check && Boolean.TRUE.equals(line.getAttribute("line.controlled"));
+            check = check && Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED));
         }
         return check;
     }
@@ -256,5 +278,53 @@ public class TrainTimetablesExtractor {
     private Text createText(TextItem item) {
         Text t = new Text(item.getName(), item.getType(), item.getText());
         return t;
+    }
+
+    private Double getRoutePosition(Line line, Node node) {
+        Pair<Line, Node> pair = new Pair<Line, Node>(line, node);
+        Double position = null;
+        if (!cachedRoutePositions.containsKey(pair)) {
+            position = computeRoutePosition(pair);
+            cachedRoutePositions.put(pair, position);
+        } else {
+            position = cachedRoutePositions.get(pair);
+        }
+        return position;
+    }
+
+    private boolean checkRoute(Line line, List<RouteSegment> segments) {
+        for (RouteSegment seg : segments) {
+            // sequence line - node
+            if (seg.asLine() != null && seg.asLine() == line)
+                return true;
+        }
+        return false;
+    }
+
+    private Double computeRoutePosition(Pair<Line, Node> pair) {
+        Route foundRoute = null;
+        for (Route route : diagram.getRoutes()) {
+            if (route.isNetPart()) {
+                if (checkRoute(pair.first, route.getSegments())) {
+                    foundRoute = route;
+                    break;
+                }
+            }
+        }
+        if (foundRoute != null) {
+            // compute distance
+            long length = 0;
+            for (RouteSegment seg : foundRoute.getSegments()) {
+                if (seg.asNode() == pair.second)
+                    break;
+                else if (seg.asLine() != null)
+                    length += seg.asLine().getLength();
+            }
+            Double ratio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            if (ratio == null)
+                ratio = 1.0;
+            return ratio * length;
+        } else
+            return null;
     }
 }

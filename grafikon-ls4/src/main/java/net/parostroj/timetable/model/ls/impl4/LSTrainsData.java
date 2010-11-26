@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TrainsData;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train types.
@@ -66,7 +67,7 @@ public class LSTrainsData {
         this.runningTimeScript = runningTimeScript;
     }
     
-    public TrainsData createTrainsData() {
+    public TrainsData createTrainsData() throws LSException {
         return new TrainsData(trainNameTemplate.createTextTemplate(),
                 trainCompleteNameTemplate.createTextTemplate(),
                 trainSortPattern.createSortPattern(),

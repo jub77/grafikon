@@ -27,12 +27,12 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="cNameTemplateEditBox" alignment="0" pref="391" max="32767" attributes="0"/>
                   <Component id="completeNameTemplateCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="nameTemplateCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="completeNameTemplateTextField" alignment="0" pref="391" max="32767" attributes="0"/>
                   <Component id="descTextField" alignment="0" pref="391" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane1" pref="264" max="32767" attributes="0"/>
+                      <Component id="jScrollPane" pref="264" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="updateButton" max="32767" attributes="1"/>
@@ -63,7 +63,7 @@
                       </Group>
                   </Group>
                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="nameTemplateTextField" alignment="0" pref="391" max="32767" attributes="0"/>
+                  <Component id="nameTemplateEditBox" alignment="0" pref="391" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -92,14 +92,14 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="nameTemplateCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="nameTemplateTextField" min="-2" max="-2" attributes="0"/>
+              <Component id="nameTemplateEditBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="completeNameTemplateCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="completeNameTemplateTextField" min="-2" max="-2" attributes="0"/>
+              <Component id="cNameTemplateEditBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="141" max="32767" attributes="0"/>
+                  <Component id="jScrollPane" pref="139" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="newButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -118,7 +118,53 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+    <Component class="javax.swing.JTextField" name="abbrTextField">
+    </Component>
+    <Component class="javax.swing.JComboBox" name="brakeComboBox">
+      <Properties>
+        <Property name="maximumRowCount" type="int" value="2"/>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="editColorButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="gt_texts.properties" key="button.edit" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;) + &quot;...&quot;"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editColorButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="descTextField">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="nameTemplateCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="gt_texts.properties" key="edit.traintypes.nametemplate" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nameTemplateCheckBoxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="net.parostroj.timetable.gui.components.TextTemplateEditBox" name="nameTemplateEditBox">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="completeNameTemplateCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="gt_texts.properties" key="edit.traintypes.completenametemplate" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="completeNameTemplateCheckBoxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="net.parostroj.timetable.gui.components.TextTemplateEditBox" name="cNameTemplateEditBox">
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
@@ -151,8 +197,6 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JTextField" name="abbrTextField">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -163,16 +207,6 @@
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
       </AuxValues>
-    </Component>
-    <Component class="javax.swing.JTextField" name="descTextField">
-    </Component>
-    <Component class="javax.swing.JComboBox" name="brakeComboBox">
-      <Properties>
-        <Property name="maximumRowCount" type="int" value="2"/>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="0"/>
-        </Property>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
@@ -200,16 +234,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="0x000000"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="editColorButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="button.edit" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;) + &quot;...&quot;"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editColorButtonActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="newButton">
       <Properties>
@@ -255,30 +279,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="downButtonActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JTextField" name="nameTemplateTextField">
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="nameTemplateCheckBox">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="edit.traintypes.nametemplate" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nameTemplateCheckBoxActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JTextField" name="completeNameTemplateTextField">
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="completeNameTemplateCheckBox">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="gt_texts.properties" key="edit.traintypes.completenametemplate" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="completeNameTemplateCheckBoxActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

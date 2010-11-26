@@ -1,8 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.helpers.TextItemWrapper;
-import net.parostroj.timetable.gui.helpers.Wrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -47,7 +46,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     private void fillList() {
         for (TextItem item : diagram.getTextItems()) {
-            itemsModel.addWrapper(new TextItemWrapper(item));
+            itemsModel.addWrapper(new Wrapper<TextItem>(item));
         }
     }
 
@@ -207,7 +206,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         item.setType((String)typeComboBox.getSelectedItem());
         item.setText("");
         diagram.addTextItem(item);
-        TextItemWrapper wrapper = new TextItemWrapper(item);
+        Wrapper<TextItem> wrapper = new Wrapper<TextItem>(item);
         itemsModel.addWrapper(wrapper);
         nameTextField.setText("");
         itemList.setSelectedValue(wrapper, true);
@@ -217,10 +216,10 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void itemListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_itemListValueChanged
         if (!evt.getValueIsAdjusting()) {
             writeChangedValueBack();
-            TextItemWrapper wrapper = (TextItemWrapper)itemList.getSelectedValue();
+            Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
             if (wrapper != null) {
-                selectedItem = wrapper.getElement();
-                textArea.setText(wrapper.getElement().getText());
+                selectedItem = (TextItem) wrapper.getElement();
+                textArea.setText(selectedItem.getText());
             } else {
                 textArea.setText("");
                 selectedItem = null;
@@ -235,10 +234,10 @@ public class TextItemsDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_textAreaCaretUpdate
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        TextItemWrapper wrapper = (TextItemWrapper)itemList.getSelectedValue();
+        Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
         if (wrapper != null) {
-            itemsModel.removeWrapper(wrapper);
-            diagram.removeTextItem(wrapper.getElement());
+            itemsModel.removeObject((TextItem) wrapper.getElement());
+            diagram.removeTextItem((TextItem) wrapper.getElement());
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 

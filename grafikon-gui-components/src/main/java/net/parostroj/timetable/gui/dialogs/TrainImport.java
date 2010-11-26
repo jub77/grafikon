@@ -2,10 +2,11 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import net.parostroj.timetable.actions.TrainIntervalsBuilder;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Triplet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Imports trains from one diagram to another.
@@ -14,14 +15,14 @@ import net.parostroj.timetable.utils.Triplet;
  */
 public class TrainImport extends Import {
 
-    private static final Logger LOG = Logger.getLogger(TrainImport.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainImport.class.getName());
 
     public TrainImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
     }
 
     @Override
-    protected void importObjectImpl(Object importedObject) {
+    protected void importObjectImpl(ObjectWithId importedObject) {
         // check class
         if (!(importedObject instanceof Train)) {
             // skip other objects
@@ -34,7 +35,7 @@ public class TrainImport extends Import {
         if (checkedTrain != null) {
             String message = "Train already exists: " + checkedTrain;
             this.addError(importedTrain, message);
-            LOG.finer(message);
+            LOG.trace(message);
             return;
         }
         // create a new train
@@ -42,7 +43,7 @@ public class TrainImport extends Import {
         if (trainType == null) {
             String message = "Train type missing: " + importedTrain.getType();
             this.addError(importedTrain, message);
-            LOG.finer(message);
+            LOG.trace(message);
             return;
         }
         Train train = getDiagram().createTrain(this.getId(importedTrain));
@@ -58,7 +59,7 @@ public class TrainImport extends Import {
         if (route == null) {
             String message = "Error creating route for train: " + importedTrain;
             this.addError(importedTrain, message);
-            LOG.finer(message);
+            LOG.trace(message);
             return;
         }
         for (Triplet<RouteSegment, Track, TimeInterval> seg : route) {
@@ -78,7 +79,7 @@ public class TrainImport extends Import {
 
         this.getDiagram().addTrain(train);
         this.addImportedObject(train);
-        LOG.finer("Successfully imported train: " + train);
+        LOG.trace("Successfully imported train: " + train);
     }
 
     private List<Triplet<RouteSegment, Track, TimeInterval>> createNewRoute(Train train) {
@@ -91,7 +92,7 @@ public class TrainImport extends Import {
                 Node node = this.getNode(interval.getOwnerAsNode());
                 Track nodeTrack = node != null ? this.getTrack(node, interval.getTrack()) : null;
                 if (node == null || nodeTrack == null) {
-                    LOG.finer("Cannot find node or track: " + interval.getOwnerAsNode());
+                    LOG.trace("Cannot find node or track: " + interval.getOwnerAsNode());
                     return null;
                 }
                 if (previousNode != null) {
@@ -99,7 +100,7 @@ public class TrainImport extends Import {
                     Line line = this.getDiagram().getNet().getLine(previousNode, node);
                     Track lineTrack = line != null ? this.getTrack(line, previousLineTrack) : null;
                     if (line == null || lineTrack == null) {
-                        LOG.finer("Cannot find line or track: " + previousNode + ", " + node);
+                        LOG.trace("Cannot find line or track: " + previousNode + ", " + node);
                         return null;
                     }
                     segments.add(new Triplet<RouteSegment, Track, TimeInterval>(line, lineTrack, previousLineInterval));

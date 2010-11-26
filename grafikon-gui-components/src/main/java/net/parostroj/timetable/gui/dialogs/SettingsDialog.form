@@ -83,6 +83,10 @@
       </Constraints>
     </Component>
     <Container class="javax.swing.JPanel" name="panel1">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="16" gridWidth="3" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="10" insetsRight="5" anchor="13" weightX="0.0" weightY="0.0"/>
@@ -129,10 +133,10 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JTextField" name="nameTemplateTextField">
+    <Component class="net.parostroj.timetable.gui.components.TextTemplateEditBox" name="nameTemplateEditBox">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="3" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
+          <GridBagConstraints gridX="0" gridY="3" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="1.0" weightY="0.0"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -152,7 +156,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JTextField" name="completeNameTemplateTextField">
+    <Component class="net.parostroj.timetable.gui.components.TextTemplateEditBox" name="cNameTemplateEditBox">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="5" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="1.0" weightY="0.0"/>
@@ -193,6 +197,10 @@
           <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.crossing" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="7" gridWidth="2" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -206,21 +214,6 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="lengthInAxlesCheckBox">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.station.length.in.axles" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lengthInAxlesCheckBoxActionPerformed"/>
-      </Events>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="9" gridWidth="2" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
-        </Constraint>
-      </Constraints>
-    </Component>
     <Component class="javax.swing.JCheckBox" name="changesTrackingCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -229,85 +222,10 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="10" gridWidth="2" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
+          <GridBagConstraints gridX="0" gridY="9" gridWidth="2" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel7">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.station.length.unit" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="11" gridWidth="2" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="javax.swing.JTextField" name="stationLengthUnitTextField">
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="12" gridWidth="2" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="5" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Container class="javax.swing.JPanel" name="ratioPanel">
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="13" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
-        </Constraint>
-      </Constraints>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
-        <Property name="alignment" type="int" value="0"/>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel8">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.ratio" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel9">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.ratio.empty" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JTextField" name="emptyRatioTextField">
-          <Properties>
-            <Property name="columns" type="int" value="10"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel10">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.ratio.loaded" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JTextField" name="loadedRatioTextField">
-          <Properties>
-            <Property name="columns" type="int" value="10"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
     <Component class="javax.swing.JLabel" name="jLabel11">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -325,6 +243,10 @@
       </Constraints>
     </Component>
     <Container class="javax.swing.JScrollPane" name="scrollPane">
+      <Properties>
+        <Property name="horizontalScrollBarPolicy" type="int" value="32"/>
+        <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+      </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
@@ -332,7 +254,7 @@
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="15" gridWidth="3" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="10" anchor="17" weightX="0.0" weightY="1.0"/>
+          <GridBagConstraints gridX="0" gridY="15" gridWidth="3" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="10" anchor="17" weightX="1.0" weightY="1.0"/>
         </Constraint>
       </Constraints>
 
@@ -346,6 +268,228 @@
             </Property>
             <Property name="rows" type="int" value="5"/>
           </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="routeLengthPanel">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="0" gridY="12" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+        <Property name="alignment" type="int" value="0"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel12">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.route.length" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot; -&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel14">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.route.length.ratio" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="rlRatioTextField">
+          <Properties>
+            <Property name="columns" type="int" value="7"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel13">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.route.length.unit" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="rlUnitTextField">
+          <Properties>
+            <Property name="columns" type="int" value="5"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="weightPerAxlePanel">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="0" gridY="10" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+        <Property name="alignment" type="int" value="0"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel7">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.per.axle" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot; - &quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel8">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.per.axle.loaded" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="net.parostroj.timetable.gui.components.ValueWithUnitEditBox" name="loadedWeightEditBox">
+          <Properties>
+            <Property name="valueColumns" type="int" value="5"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel9">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.weight.per.axle.empty" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="net.parostroj.timetable.gui.components.ValueWithUnitEditBox" name="emptyWeightEditBox">
+          <Properties>
+            <Property name="valueColumns" type="int" value="5"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="lengthPanel">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="0" gridY="11" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+        <Property name="alignment" type="int" value="0"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel10">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.axle.length" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="net.parostroj.timetable.gui.components.ValueWithUnitEditBox" name="lengthPerAxleEditBox">
+          <Properties>
+            <Property name="valueColumns" type="int" value="5"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel15">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.length.unit" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;) + &quot;:&quot;"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="lengthUnitComboBox">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="timeRangePanel">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="0" gridY="13" gridWidth="3" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="10" anchor="17" weightX="0.0" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+        <Property name="alignment" type="int" value="0"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel16">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.from.time" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="fromTimeTextField">
+          <Properties>
+            <Property name="columns" type="int" value="7"/>
+          </Properties>
+          <Events>
+            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="timeTextFieldFocusLost"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel17">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="modelinfo.to.time" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="toTimeTextField">
+          <Properties>
+            <Property name="columns" type="int" value="7"/>
+          </Properties>
+          <Events>
+            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="timeTextFieldFocusLost"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

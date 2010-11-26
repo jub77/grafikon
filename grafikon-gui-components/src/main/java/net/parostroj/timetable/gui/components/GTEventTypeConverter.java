@@ -13,7 +13,7 @@ public class GTEventTypeConverter implements EventsViewerTypeConverter {
     public String getListString(Object event) {
         StringBuilder str = new StringBuilder();
         GTEventOutputVisitor visitor = new GTEventOutputVisitor(str, false);
-        ((GTEvent)event).accept(visitor);
+        ((GTEvent<?>)event).accept(visitor);
         return str.toString();
     }
 
@@ -21,7 +21,7 @@ public class GTEventTypeConverter implements EventsViewerTypeConverter {
     public String getViewString(Object event) {
         StringBuilder str = new StringBuilder();
         GTEventOutputVisitor visitor = new GTEventOutputVisitor(str, true);
-        ((GTEvent)event).accept(visitor);
+        ((GTEvent<?>)event).accept(visitor);
         return str.toString();
     }
 

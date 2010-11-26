@@ -62,6 +62,20 @@ public class TimeConverter {
     }
 
     /**
+     * converts from seconds to textual representation (not normalized).
+     *
+     * @param time time in seconds
+     * @return textual representation
+     */
+    public static String convertFromIntToTextNN(int time) {
+        int hours = getHoursNN(time);
+        int minutes = getMinutes(time);
+        Formatter formatter = new Formatter();
+        formatter.format("%1$d:%2$02d", hours, minutes);
+        return formatter.toString();
+    }
+
+    /**
      * converts from seconds to textual representation.
      *
      * @param time time in seconds
@@ -117,6 +131,18 @@ public class TimeConverter {
         return time;
     }
     
+    /**
+     * returns hours (not normalized).
+     *
+     * @param time time in seconds
+     * @return hours
+     */
+    public static int getHoursNN(int time) {
+        time = adjustTimeForRounding(time);
+        time = time / 3600;
+        return time;
+    }
+
     /**
      * returns string with hours.
      * 

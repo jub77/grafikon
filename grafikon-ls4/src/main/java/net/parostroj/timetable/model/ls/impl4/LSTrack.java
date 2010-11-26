@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Abstract class for tracks storage.
@@ -48,7 +49,7 @@ abstract public class LSTrack {
         this.number = number;
     }
 
-    protected void addValuesTrack(Track track) {
+    protected void addValuesTrack(Track track) throws LSException {
         track.setAttributes(attributes.createAttributes());
         track.setNumber(number);
     }

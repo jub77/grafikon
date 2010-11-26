@@ -5,8 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
@@ -14,6 +12,8 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for editation of train properties.
@@ -22,7 +22,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class EditTrainDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = Logger.getLogger(EditTrainDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EditTrainDialog.class.getName());
 
     public ApplicationModel model;
 
@@ -61,8 +61,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
             descriptionTextField.setText(train.getDescription());
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
-
-            weightTextField.setText((String)train.getAttribute("weight.info"));
+            Integer weight = (Integer) train.getAttribute("weight");
+            weightTextField.setText(weight != null ? weight.toString() : "");
             routeTextField.setText((String)train.getAttribute("route.info"));
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
@@ -304,14 +304,26 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         train.setNumber(numberTextField.getText());
     if (!descriptionTextField.getText().equals(train.getDescription()))
         train.setDescription(descriptionTextField.getText());
-    String newWI = weightTextField.getText().trim();
-    String oldWI = (String)train.getAttribute("weight.info");
+
+    // weight
+    Integer oldWI = (Integer) train.getAttribute("weight");
+    Integer newWI = null;
+    try {
+        String weightStr = weightTextField.getText().trim();
+        if (!"".equals(weightStr))
+            newWI = Integer.valueOf(weightStr);
+    } catch (NumberFormatException e) {
+        LOG.warn("Couldn't convert weight to int.");
+        newWI = oldWI;
+    }
+    if (newWI != null && !newWI.equals(oldWI)) {
+        train.setAttribute("weight", newWI);
+    } else if (newWI == null && oldWI != null)
+        train.removeAttribute("weight");
+
+    // route
     String newRI = routeTextField.getText().trim();
     String oldRI = (String)train.getAttribute("route.info");
-    if (!newWI.equals("") && !newWI.equals(oldWI)) {
-        train.setAttribute("weight.info", newWI);
-    } else if (newWI.equals("") && oldWI != null)
-        train.removeAttribute("weight.info");
     if (!newRI.equals("") && !newRI.equals(oldRI)) {
         train.setAttribute("route.info", newRI);
     } else if (newRI.equals("") && oldRI != null)
@@ -321,15 +333,17 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     // check max speed - modify if changed
     try {
         int maxSpeed = Integer.parseInt(speedTextField.getText());
-        if (maxSpeed != train.getTopSpeed()) {
+        if (maxSpeed != train.getTopSpeed() && maxSpeed > 0) {
             // modify top speed
             train.setTopSpeed(maxSpeed);
-            train.recalculate();
+            train.recalculate(maxSpeed);
             // fire event
             changed = true;
         }
+        if (maxSpeed <= 0)
+            LOG.warn("Speed has to be positive number: {}", maxSpeed);
     } catch (NumberFormatException e) {
-        LOG.log(Level.WARNING, "Cannot convert speed to number: {0}", speedTextField.getText());
+        LOG.warn("Cannot convert speed to number: {}", speedTextField.getText());
     }
 
     // technological times
@@ -345,14 +359,14 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             changed = true;
         }
     } catch (NumberFormatException e) {
-        LOG.log(Level.WARNING, "Cannot convert technological time: {0}, {1}", new Object[]{timeBeforeTextField.getText(), timeAfterTextField.getText()});
+        LOG.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
     }
 
     // fire changed event
     if (changed)
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN,model,train));
+        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
     // fire event
-    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE,model,train));
+    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE, model, train));
 
     this.setVisible(false);
 }//GEN-LAST:event_okButtonActionPerformed

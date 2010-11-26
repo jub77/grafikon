@@ -6,9 +6,14 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.ApplicationModelEvent;
+import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.actions.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -157,8 +162,31 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         // event for removing non-existent attribute
         cycle.removeAttribute("engine.class");
     } else {
-        if (engineClassComboBox.getSelectedItem() != cycle.getAttribute("engine.class"))
-            cycle.setAttribute("engine.class", engineClassComboBox.getSelectedItem());
+        EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
+        if (eClass != cycle.getAttribute("engine.class")) {
+            cycle.setAttribute("engine.class", eClass);
+            boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+            StringBuilder trainsStr = null;
+            for (TrainsCycleItem item : cycle.getItems()) {
+                Train train = item.getTrain();
+                if (train.checkNeedSpeedRecalculate()) {
+                    train.recalculate();
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                    if (warning) {
+                        if (trainsStr == null)
+                            trainsStr = new StringBuilder();
+                        else
+                            trainsStr.append(',');
+                        trainsStr.append(train.getName());
+                    }
+                }
+            }
+            if (warning && trainsStr != null) {
+                ActionUtils.showWarning(
+                        String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
+                        ActionUtils.getTopLevelComponent(this.getParent()));
+            }
+        }
     }
     
     // event

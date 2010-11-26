@@ -40,9 +40,9 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         if (model.getDiagram() == null) {
             return;
         }
-        routeNumberTextArea.setText((String) model.getDiagram().getAttribute("route.numbers"));
-        routesTextArea.setText((String) model.getDiagram().getAttribute("route.nodes"));
-        validityTextField.setText((String) model.getDiagram().getAttribute("route.validity"));
+        routeNumberTextArea.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
+        routesTextArea.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
+        validityTextField.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
     }
     
     /** This method is called from within the constructor to
@@ -178,12 +178,12 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         String number = routeNumberTextArea.getText().trim(); if (number.equals("")) number = null;
         String nodes = routesTextArea.getText().trim(); if (nodes.equals("")) nodes = null;
         String validity = validityTextField.getText().trim(); if (validity.equals("")) validity = null;
-        if (number == null || !number.equals(diagram.getAttribute("route.numbers")))
-            diagram.setAttribute("route.numbers", number);
-        if (nodes == null || !nodes.equals(diagram.getAttribute("route.nodes")))
-            diagram.setAttribute("route.nodes", nodes);
-        if (validity == null || !validity.equals(diagram.getAttribute("route.validity")))
-            diagram.setAttribute("route.validity", validity);
+        if (number == null || !number.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS)))
+            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
+        if (nodes == null || !nodes.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES)))
+            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NODES, nodes);
+        if (validity == null || !validity.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY)))
+            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
         
         this.setVisible(false);
 }//GEN-LAST:event_okButtonActionPerformed

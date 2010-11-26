@@ -32,7 +32,7 @@
     // length
     if (row.length != null) {
       length_unit_s = row.length.lengthInAxles ? " ${length_axles}" : row.length.lengthUnit
-      note_parts << "[${row.length.length}${length_unit_s} (${row.length.stationAbbr})]"
+      note_parts << "[${row.length.length}${length_unit_s}]"
     }
     // engine to
     if (row.engineTo != null)
