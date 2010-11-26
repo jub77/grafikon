@@ -58,7 +58,7 @@ public class LSAttributes {
             for (LSAttributesItem lItem : this.attributes) {
                 Object value = lItem.convertValue(diagram);
                 if (value != null)
-                    lAttributes.put(lItem.getKey(), lItem.convertValue(diagram));
+                    lAttributes.put(lItem.getKey(), value);
                 else
                     LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValue());
             }
