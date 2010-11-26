@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 public class EditTrainDialog extends javax.swing.JDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(EditTrainDialog.class.getName());
+    private static final String FROM_STATION = "${stations.first}";
+    private static final String TO_STATION = "${stations.last}";
 
     public ApplicationModel model;
 
@@ -404,11 +406,13 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_okButtonActionPerformed
 
 private void fromNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fromNodeButtonActionPerformed
-    // TODO add your handling code here:
+    routeEditBox.insertText(FROM_STATION);
+    routeEditBox.requestFocusForTemplateField();
 }//GEN-LAST:event_fromNodeButtonActionPerformed
 
 private void toNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toNodeButtonActionPerformed
-    // TODO add your handling code here:
+    routeEditBox.insertText(TO_STATION);
+    routeEditBox.requestFocusForTemplateField();
 }//GEN-LAST:event_toNodeButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
