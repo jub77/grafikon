@@ -11,6 +11,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -116,7 +117,11 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             copyButton.setEnabled(false);
         } else {
             // train type
-            trainTextField.setText(train.getCompleteName());
+            String name = train.getCompleteName();
+            TextTemplate routeTemplate = (TextTemplate) train.getAttribute("route");
+            if (routeTemplate != null)
+                name = String.format("%s (%s)", name, routeTemplate.evaluate(train));
+            trainTextField.setText(name);
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             techTimeTextField.setText(this.createTechTimeString(train));
             speedTextField.setEnabled(true);
