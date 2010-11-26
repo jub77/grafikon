@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -18,12 +19,39 @@ public abstract class TextTemplate {
     public String getTemplate() {
         return template;
     }
+    
+    public abstract String evaluateWithException(Map<String, Object> binding) throws GrafikonException;
+
+    public String evaluateWithException(Object object, Map<String, Object> binding) throws GrafikonException {
+        Map<String, Object> bindingObj = this.getBinding(object);
+        binding.putAll(bindingObj);
+        return this.evaluateWithException(binding);
+    }
+    
+    public String evaluateWithException(Object object) throws GrafikonException {
+        return this.evaluateWithException(this.getBinding(object));
+    }
 
     public abstract String evaluate(Map<String, Object> binding);
 
-    public abstract String evaluate(Object object, Map<String, Object> binding);
+    public String evaluate(Object object, Map<String, Object> binding) {
+        Map<String, Object> bindingObj = this.getBinding(object);
+        binding.putAll(bindingObj);
+        return this.evaluate(binding);
+    }
+    
+    public String evaluate(Object object) {
+        return this.evaluate(this.getBinding(object));
+    }
 
     public abstract Language getLanguage();
+    
+    protected Map<String, Object> getBinding(Object object) {
+        if (object instanceof Train)
+            return ((Train) object).createTemplateBinding();
+        else
+            return Collections.emptyMap();
+    }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
         switch(language) {

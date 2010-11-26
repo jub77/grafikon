@@ -185,7 +185,7 @@ public class TrainType implements ObjectWithId, Visitable {
         TextTemplate template = (trainNameTemplate == null) ?
             getTrainDiagram().getTrainsData().getTrainNameTemplate() :
             trainNameTemplate;
-        return template.evaluate(train, train.createTemplateBinding());
+        return template.evaluate(train);
     }
 
     /**
@@ -198,7 +198,7 @@ public class TrainType implements ObjectWithId, Visitable {
         TextTemplate template = (trainCompleteNameTemplate == null) ?
             getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
             trainCompleteNameTemplate;
-        return template.evaluate(train, train.createTemplateBinding());
+        return template.evaluate(train);
     }
 
     /**
