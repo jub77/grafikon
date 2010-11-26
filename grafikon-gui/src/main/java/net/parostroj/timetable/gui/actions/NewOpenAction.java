@@ -83,7 +83,9 @@ public class NewOpenAction extends AbstractAction {
                         if (retVal == JFileChooser.APPROVE_OPTION) {
                             model.setOpenedFile(xmlFileChooser.getSelectedFile());
                             FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
+                            long time = System.currentTimeMillis();
                             diagram = ls.load(xmlFileChooser.getSelectedFile());
+                            LOG.debug("Loaded in {}ms", System.currentTimeMillis() - time);
                         }
                     } catch (LSException e) {
                         LOG.warn("Error loading model.", e);
