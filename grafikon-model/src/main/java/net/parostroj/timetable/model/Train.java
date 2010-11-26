@@ -1032,10 +1032,15 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * Wrapper for accessing stations for text templates.
      */
     public class Stations {
+
         public Node getAt(int index) {
             return timeIntervalList.get(index * 2).getOwnerAsNode();
         }
 
+        public Node get(int index) {
+            return getAt(index);
+        }
+        
         public Node getFirst() {
             return getFirstInterval().getOwnerAsNode();
         }
