@@ -1,6 +1,12 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.Collection;
+
+import javax.swing.text.BadLocationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Language;
 import net.parostroj.timetable.model.TextTemplate;
@@ -11,6 +17,8 @@ import net.parostroj.timetable.model.TextTemplate;
  * @author jub
  */
 public class TextTemplateEditBox extends javax.swing.JPanel {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TextTemplateEditBox.class);
 
     private Collection<Language> languages;
 
@@ -78,6 +86,26 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         if (language == null)
             language = languages.iterator().next();
         languageComboBox.setSelectedItem(language);
+    }
+    
+    public void setCaretPosition(int position) {
+        templateTextField.setCaretPosition(position);
+    }
+    
+    public int getCaretPosition() {
+        return templateTextField.getCaretPosition();
+    }
+    
+    public void insertText(String text) {
+        try {
+            templateTextField.getDocument().insertString(templateTextField.getCaretPosition(), text, null);
+        } catch (BadLocationException e) {
+            LOG.warn("Error inserting text: {}", e.getMessage());
+        }
+    }
+    
+    public void requestFocusForTemplateField() {
+        templateTextField.requestFocusInWindow();
     }
 
     /** This method is called from within the constructor to
