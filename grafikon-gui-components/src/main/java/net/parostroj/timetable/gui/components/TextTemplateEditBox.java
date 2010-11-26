@@ -98,6 +98,11 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
     
     public void insertText(String text) {
         try {
+            int start = templateTextField.getSelectionStart();
+            int end = templateTextField.getSelectionEnd();
+            if (start != end) {
+                templateTextField.getDocument().remove(start, end - start);
+            }
             templateTextField.getDocument().insertString(templateTextField.getCaretPosition(), text, null);
         } catch (BadLocationException e) {
             LOG.warn("Error inserting text: {}", e.getMessage());
