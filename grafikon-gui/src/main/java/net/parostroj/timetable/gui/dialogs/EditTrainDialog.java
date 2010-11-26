@@ -5,10 +5,14 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.model.GrafikonException;
+import net.parostroj.timetable.model.Language;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -35,6 +39,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     public EditTrainDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        routeEditBox.setLanguages(Arrays.asList(Language.values()));
     }
 
     /**
@@ -63,7 +68,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             Integer weight = (Integer) train.getAttribute("weight");
             weightTextField.setText(weight != null ? weight.toString() : "");
-            routeTextField.setText((String)train.getAttribute("route.info"));
+            routeEditBox.setTemplate((TextTemplate) train.getAttribute("route"));
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
             timeAfterTextField.setText(Integer.toString(train.getTimeAfter() / 60));
@@ -95,20 +100,19 @@ public class EditTrainDialog extends javax.swing.JDialog {
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         weightTextField = new javax.swing.JTextField();
-        routeTextField = new javax.swing.JTextField();
+        routeEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
-        javax.swing.JButton cancelButton = new javax.swing.JButton();
-        javax.swing.JButton okButton = new javax.swing.JButton();
         timeBeforeTextField = new javax.swing.JTextField();
         timeAfterTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("edit.train")); // NOI18N
-        setResizable(false);
 
         jLabel1.setText(ResourceLoader.getString("create.train.type")); // NOI18N
 
@@ -128,9 +132,11 @@ public class EditTrainDialog extends javax.swing.JDialog {
         emptyCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         emptyCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        numberTextField.setColumns(180);
+        numberTextField.setColumns(20);
 
         jLabel2.setText(ResourceLoader.getString("create.train.number")); // NOI18N
+
+        descriptionTextField.setColumns(30);
 
         jLabel3.setText(ResourceLoader.getString("create.train.description")); // NOI18N
 
@@ -142,12 +148,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         jLabel6.setText(ResourceLoader.getString("edit.train.route")); // NOI18N
 
-        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        timeBeforeTextField.setColumns(6);
+
+        timeAfterTextField.setColumns(6);
+
+        jLabel7.setText(ResourceLoader.getString("create.train.technological.time")); // NOI18N
+
+        jLabel8.setText(ResourceLoader.getString("create.train.time.before")); // NOI18N
+
+        jLabel9.setText(ResourceLoader.getString("create.train.time.after")); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -156,75 +165,56 @@ public class EditTrainDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel7.setText(ResourceLoader.getString("create.train.technological.time")); // NOI18N
-
-        jLabel8.setText(ResourceLoader.getString("create.train.time.before")); // NOI18N
-
-        jLabel9.setText(ResourceLoader.getString("create.train.time.after")); // NOI18N
+        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(numberTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(279, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeBeforeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeAfterTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(292, Short.MAX_VALUE)
-                .addComponent(okButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton)
-                .addGap(10, 10, 10))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(emptyCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(showLengthCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(dieselCheckBox)
-                        .addGap(18, 18, 18)
-                        .addComponent(electricCheckBox)))
-                .addContainerGap(108, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(weightTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(descriptionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(typeComboBox, 0, 355, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addComponent(routeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                        .addComponent(okButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(dieselCheckBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(electricCheckBox))
+                            .addComponent(emptyCheckBox)
+                            .addComponent(descriptionTextField)
+                            .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(weightTextField)
+                            .addComponent(showLengthCheckBox)
+                            .addComponent(numberTextField)
+                            .addComponent(typeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(routeEditBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(timeBeforeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(timeAfterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -259,9 +249,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
                     .addComponent(weightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(routeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(routeEditBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -322,12 +312,17 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
         train.removeAttribute("weight");
 
     // route
-    String newRI = routeTextField.getText().trim();
-    String oldRI = (String)train.getAttribute("route.info");
-    if (!newRI.equals("") && !newRI.equals(oldRI)) {
-        train.setAttribute("route.info", newRI);
-    } else if (newRI.equals("") && oldRI != null)
-        train.removeAttribute("route.info");
+    try {
+        TextTemplate newRI = routeEditBox.getTemplateEmpty();
+        TextTemplate oldRI = (TextTemplate) train.getAttribute("route");
+        if ((oldRI != null && !oldRI.equals(newRI)) ||
+                (oldRI == null && newRI != null))
+            train.setAttribute("route", newRI);
+        else if (oldRI != null && newRI == null)
+            train.removeAttribute("route");
+    } catch (GrafikonException e) {
+        LOG.warn("Error creating template: {}", e.getMessage());
+    }
 
     boolean changed = false;
     // check max speed - modify if changed
@@ -377,7 +372,7 @@ private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JCheckBox electricCheckBox;
     private javax.swing.JCheckBox emptyCheckBox;
     private javax.swing.JTextField numberTextField;
-    private javax.swing.JTextField routeTextField;
+    private net.parostroj.timetable.gui.components.TextTemplateEditBox routeEditBox;
     private javax.swing.JCheckBox showLengthCheckBox;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JTextField timeAfterTextField;
