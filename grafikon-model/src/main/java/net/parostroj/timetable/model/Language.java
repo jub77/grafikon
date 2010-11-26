@@ -6,5 +6,5 @@ package net.parostroj.timetable.model;
  * @author jub
  */
 public enum Language {
-    MVEL, GROOVY;
+    MVEL, GROOVY, PLAIN;
 }

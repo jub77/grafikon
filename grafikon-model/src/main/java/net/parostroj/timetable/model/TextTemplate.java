@@ -59,6 +59,8 @@ public abstract class TextTemplate {
                 return new TextTemplateMvel(template);
             case GROOVY:
                 return new TextTemplateGroovy(template);
+            case PLAIN:
+                return new TextTemplatePlain(template);
             default:
                 throw new IllegalArgumentException("No template for language available.");
         }
