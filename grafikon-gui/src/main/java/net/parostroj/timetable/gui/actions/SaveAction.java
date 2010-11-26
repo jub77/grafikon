@@ -77,7 +77,10 @@ public class SaveAction extends AbstractAction {
             @Override
             public void run() {
                 try {
+                    long time = System.currentTimeMillis();
                     ModelUtils.saveModelData(model, file);
+                    time = System.currentTimeMillis() - time;
+                    LOG.debug("Saved in {}ms", time);
                 } catch (LSException e) {
                     LOG.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");

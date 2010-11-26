@@ -251,6 +251,7 @@ public class OutputAction extends AbstractAction {
 
             @Override
             public void run() {
+                long time = System.currentTimeMillis();
                 try {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
@@ -259,6 +260,8 @@ public class OutputAction extends AbstractAction {
                     LOG.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 }
+                time = System.currentTimeMillis() - time;
+                LOG.debug("Generated in {}ms", time);
             }
 
             @Override

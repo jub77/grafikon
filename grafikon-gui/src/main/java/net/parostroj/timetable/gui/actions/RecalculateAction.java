@@ -46,6 +46,7 @@ public class RecalculateAction extends AbstractAction {
                     @Override
                     protected Void doInBackground() throws Exception {
                         // recalculate all trains
+                        long time = System.currentTimeMillis();
                         lock.lock();
                         try {
                             int cnt = 0;
@@ -61,6 +62,8 @@ public class RecalculateAction extends AbstractAction {
                             }
                         } finally {
                             lock.unlock();
+                            time = System.currentTimeMillis() - time;
+                            LOG.debug("Recalculated in {}ms", time);
                         }
                         return null;
                     }
