@@ -92,25 +92,16 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractRouteInfo(Train train, TrainTimetable timetable) {
-        if (train.getAttribute("route.info") == null || ((String)train.getAttribute("route.info")).trim().equals("")) {
+        if (train.getAttribute("route") == null) {
             return;
         }
-        String result = (String) train.getAttribute("route.info");
+        String result = ((TextTemplate) train.getAttribute("route")).evaluate(train);
         timetable.setRouteInfo(new LinkedList<RouteInfoPart>());
         // split
         String[] splitted = result.split("-");
         for (String sPart : splitted) {
             sPart = sPart.trim();
-            if ("$1".equals(sPart)) {
-                timetable.getRouteInfo().add(new RouteInfoPart(train.getStartNode().getName(), true));
-            } else if ("$2".equals(sPart)) {
-                timetable.getRouteInfo().add(new RouteInfoPart(train.getEndNode().getName(), true));
-            } else if ("$".equals(sPart)) {
-                timetable.getRouteInfo().add(new RouteInfoPart(train.getStartNode().getName(), true));
-                timetable.getRouteInfo().add(new RouteInfoPart(train.getEndNode().getName(), true));
-            } else {
-                timetable.getRouteInfo().add(new RouteInfoPart(sPart, null));
-            }
+            timetable.getRouteInfo().add(new RouteInfoPart(sPart, null));
         }
     }
 
