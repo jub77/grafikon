@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -108,18 +109,28 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
     private void moveLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveLeftButtonActionPerformed
         // get selected elements and move them
         int[] values = rightList.getSelectedIndices();
+        List<Wrapper<T>> toBeRemoved = new LinkedList<Wrapper<T>>();
         for (int ind : values) {
-            Wrapper<T> wrapper = rightListModel.removeIndex(ind);
+            Wrapper<T> wrapper = rightListModel.getIndex(ind);
+            toBeRemoved.add(wrapper);
             leftListModel.addWrapper(wrapper);
+        }
+        for (Wrapper<T> w : toBeRemoved) {
+            rightListModel.removeWrapper(w);
         }
     }//GEN-LAST:event_moveLeftButtonActionPerformed
 
     private void moveRightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveRightButtonActionPerformed
         // get selected elements and move them
         int[] values = leftList.getSelectedIndices();
+        List<Wrapper<T>> toBeRemoved = new LinkedList<Wrapper<T>>();
         for (int ind : values) {
-            Wrapper<T> wrapper = leftListModel.removeIndex(ind);
+            Wrapper<T> wrapper = leftListModel.getIndex(ind);
+            toBeRemoved.add(wrapper);
             rightListModel.addWrapper(wrapper);
+        }
+        for (Wrapper<T> w : toBeRemoved) {
+            leftListModel.removeWrapper(w);
         }
     }//GEN-LAST:event_moveRightButtonActionPerformed
 
