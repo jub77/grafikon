@@ -30,31 +30,18 @@ public enum TrainTableColumn {
     SHUNT("train.table.shunt", 30, 30, 30, "fo", Boolean.class, false, null);
     
     private int index;
-    
     private String key;
-    
     private int minWidth;
-    
     private int prefWidth;
-    
     private int maxWidth;
-    
     private Class<?> clazz;
-    
     private boolean rightAling;
-    
     private boolean even;
-    
     private boolean odd;
-    
     private boolean first;
-    
     private boolean last;
-    
     private boolean all;
-    
     private boolean oneTrack;
-    
     private TableCellEditor editor;
 
     private static class Counter {

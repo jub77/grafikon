@@ -685,5 +685,4 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JPanel timeRangePanel;
     private javax.swing.JTextField toTimeTextField;
     // End of variables declaration//GEN-END:variables
-
 }

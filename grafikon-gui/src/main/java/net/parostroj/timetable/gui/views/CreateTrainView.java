@@ -3,7 +3,6 @@
  *
  * Created on 26. srpen 2007, 12:53
  */
-
 package net.parostroj.timetable.gui.views;
 
 import java.util.ArrayList;
@@ -257,74 +256,74 @@ public class CreateTrainView extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-    try {
-        // test needed values
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         try {
-            Integer speed = Integer.valueOf(speedTextField.getText());
-            if (speed < 1)
-                throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-            return;
+            // test needed values
+            try {
+                Integer speed = Integer.valueOf(speedTextField.getText());
+                if (speed < 1)
+                    throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
+                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
+                JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
+                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this.getParent(), "",
+                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            // get start time
+            int start = TimeConverter.convertFromTextToInt(startTimeTextField.getText());
+            if (start == -1)
+                // midnight if cannot be parsed
+                start = 0;
+    
+            // create command ...
+            CreateTrainCommand createCommand = new CreateTrainCommand(
+                    nameTextField.getText(),
+                    (TrainType)typeComboBox.getSelectedItem(),
+                    Integer.valueOf(speedTextField.getText()),
+                    (Node)fromComboBox.getSelectedItem(),
+                    (Node)toComboBox.getSelectedItem(),
+                    throughNodes,
+                    start,
+                    (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
+                    commentTextField.getText(),
+                    dieselCheckBox.isSelected(),
+                    electricCheckBox.isSelected());
+            // execute command
+            model.applyCommand(createCommand);
+            // hide dialog
+            this.closeDialog();
+        } catch (CommandException e) {
+            LOG.warn("Error executing create train command.", e);
+            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
+                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
         }
-        
-        if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
-            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this.getParent(), "",
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    }//GEN-LAST:event_okButtonActionPerformed
 
-        // get start time
-        int start = TimeConverter.convertFromTextToInt(startTimeTextField.getText());
-        if (start == -1)
-            // midnight if cannot be parsed
-            start = 0;
-
-        // create command ...
-        CreateTrainCommand createCommand = new CreateTrainCommand(
-                nameTextField.getText(),
-                (TrainType)typeComboBox.getSelectedItem(),
-                Integer.valueOf(speedTextField.getText()),
-                (Node)fromComboBox.getSelectedItem(),
-                (Node)toComboBox.getSelectedItem(),
-                throughNodes,
-                start,
-                (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
-                commentTextField.getText(),
-                dieselCheckBox.isSelected(),
-                electricCheckBox.isSelected());
-        // execute command
-        model.applyCommand(createCommand);
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // hide dialog
         this.closeDialog();
-    } catch (CommandException e) {
-        LOG.warn("Error executing create train command.", e);
-        JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-    }
-}//GEN-LAST:event_okButtonActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
-private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-    // hide dialog
-    this.closeDialog();
-}//GEN-LAST:event_cancelButtonActionPerformed
-
-private void throughButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_throughButtonActionPerformed
-    // show through dialog
-    tnDialog.setNodes(throughNodes, model.getDiagram().getNet().getNodes());
-    tnDialog.setLocationRelativeTo(this);
-    tnDialog.setVisible(true);
-    throughNodes = tnDialog.getNodes();
-    throughTextField.setText(throughNodes.toString());
-}//GEN-LAST:event_throughButtonActionPerformed
+    private void throughButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_throughButtonActionPerformed
+        // show through dialog
+        tnDialog.setNodes(throughNodes, model.getDiagram().getNet().getNodes());
+        tnDialog.setLocationRelativeTo(this);
+        tnDialog.setVisible(true);
+        throughNodes = tnDialog.getNodes();
+        throughTextField.setText(throughNodes.toString());
+    }//GEN-LAST:event_throughButtonActionPerformed
     
     private void closeDialog() {
         this.getTopLevelAncestor().setVisible(false);

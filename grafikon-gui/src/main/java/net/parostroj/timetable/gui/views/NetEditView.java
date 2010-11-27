@@ -5,28 +5,33 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.dialogs.*;
+
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.ApplicationModelEvent;
+import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.dialogs.CreateLineDialog;
+import net.parostroj.timetable.gui.dialogs.EditLineDialog;
+import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
+import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
+
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;

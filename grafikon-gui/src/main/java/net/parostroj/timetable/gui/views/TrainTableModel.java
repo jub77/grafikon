@@ -22,11 +22,8 @@ class TrainTableModel extends AbstractTableModel {
 
     /** Train. */
     private Train train;
-    
     private int lastRow;
-    
     private ApplicationModel model;
-
     private boolean editBlock;
 
     public TrainTableModel(ApplicationModel model, Train train) {

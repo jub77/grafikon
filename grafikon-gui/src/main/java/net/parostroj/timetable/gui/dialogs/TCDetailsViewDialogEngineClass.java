@@ -142,63 +142,63 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-    // write values back and close
-    TrainsCycle cycle = delegate.getSelectedCycle(model);
-    if (nameTextField.getText() != null && !"".equals(nameTextField.getText())
-            && !nameTextField.getText().equals(cycle.getName()))
-        cycle.setName(nameTextField.getText().trim());
-    if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
-        if (cycle.getDescription() != null)
-            cycle.setDescription(null);
-    } else {
-        if (!descTextField.getText().equals(cycle.getDescription()))
-            cycle.setDescription(descTextField.getText().trim());
-    }
-    
-    // write back engine class
-    if (engineClassComboBox.getSelectedItem() == noneEngineClass) {
-        // another check is not needed because remove attribute doesn't send
-        // event for removing non-existent attribute
-        cycle.removeAttribute("engine.class");
-    } else {
-        EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
-        if (eClass != cycle.getAttribute("engine.class")) {
-            cycle.setAttribute("engine.class", eClass);
-            boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
-            StringBuilder trainsStr = null;
-            for (TrainsCycleItem item : cycle.getItems()) {
-                Train train = item.getTrain();
-                if (train.checkNeedSpeedRecalculate()) {
-                    train.recalculate();
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-                    if (warning) {
-                        if (trainsStr == null)
-                            trainsStr = new StringBuilder();
-                        else
-                            trainsStr.append(',');
-                        trainsStr.append(train.getName());
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        // write values back and close
+        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        if (nameTextField.getText() != null && !"".equals(nameTextField.getText())
+                && !nameTextField.getText().equals(cycle.getName()))
+            cycle.setName(nameTextField.getText().trim());
+        if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
+            if (cycle.getDescription() != null)
+                cycle.setDescription(null);
+        } else {
+            if (!descTextField.getText().equals(cycle.getDescription()))
+                cycle.setDescription(descTextField.getText().trim());
+        }
+        
+        // write back engine class
+        if (engineClassComboBox.getSelectedItem() == noneEngineClass) {
+            // another check is not needed because remove attribute doesn't send
+            // event for removing non-existent attribute
+            cycle.removeAttribute("engine.class");
+        } else {
+            EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
+            if (eClass != cycle.getAttribute("engine.class")) {
+                cycle.setAttribute("engine.class", eClass);
+                boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+                StringBuilder trainsStr = null;
+                for (TrainsCycleItem item : cycle.getItems()) {
+                    Train train = item.getTrain();
+                    if (train.checkNeedSpeedRecalculate()) {
+                        train.recalculate();
+                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                        if (warning) {
+                            if (trainsStr == null)
+                                trainsStr = new StringBuilder();
+                            else
+                                trainsStr.append(',');
+                            trainsStr.append(train.getName());
+                        }
                     }
                 }
-            }
-            if (warning && trainsStr != null) {
-                ActionUtils.showWarning(
-                        String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
-                        ActionUtils.getTopLevelComponent(this.getParent()));
+                if (warning && trainsStr != null) {
+                    ActionUtils.showWarning(
+                            String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
+                            ActionUtils.getTopLevelComponent(this.getParent()));
+                }
             }
         }
-    }
-    
-    // event
-    delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
-    
-    this.setVisible(false);
-}//GEN-LAST:event_okButtonActionPerformed
+        
+        // event
+        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
+        
+        this.setVisible(false);
+    }//GEN-LAST:event_okButtonActionPerformed
 
-private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-    // do nothing
-    this.setVisible(false);
-}//GEN-LAST:event_cancelButtonActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // do nothing
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField descTextField;

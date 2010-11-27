@@ -19,7 +19,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class TCDetailsView extends javax.swing.JPanel implements ApplicationModelListener {
     
     private ApplicationModel model;
-    
     private TCDelegate delegate;
     
     /** Creates new form ECDetailsView */
@@ -123,15 +122,14 @@ public class TCDetailsView extends javax.swing.JPanel implements ApplicationMode
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-    // set values for cycle
-    TrainsCycle cycle = delegate.getSelectedCycle(model);
-    if (cycle != null) {
-        cycle.setDescription(descriptionTextField.getText());
-        cycle.setAttribute("comment", commentTextField.getText());
-    }
-}//GEN-LAST:event_changeButtonActionPerformed
-    
+    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
+        // set values for cycle
+        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        if (cycle != null) {
+            cycle.setDescription(descriptionTextField.getText());
+            cycle.setAttribute("comment", commentTextField.getText());
+        }
+    }//GEN-LAST:event_changeButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton changeButton;
@@ -139,5 +137,4 @@ private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JTextField descriptionTextField;
     private javax.swing.JTextField nameTextField;
     // End of variables declaration//GEN-END:variables
-    
 }

@@ -3,7 +3,6 @@
  *
  * Created on 3. září 2007, 19:49
  */
-
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;

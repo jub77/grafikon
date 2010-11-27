@@ -3,7 +3,6 @@
  *
  * Created on 13. říjen 2007, 13:03
  */
-
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -200,5 +199,4 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
     private javax.swing.JTextArea routesTextArea;
     private javax.swing.JTextField validityTextField;
     // End of variables declaration//GEN-END:variables
-    
 }

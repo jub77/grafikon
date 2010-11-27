@@ -247,29 +247,29 @@ public class SaveImageDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-    // do nothing - close dialog
-    this.save = false;
-    this.setVisible(false);
-}//GEN-LAST:event_cancelButtonActionPerformed
-
-private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-    // set specific file name filter
-    JFileChooser fileChooser = getFileChooser();
-    fileChooser.setFileFilter(this.getType().getFilter());
-    // show save dialog    
-    int result = fileChooser.showSaveDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-        saveFile = fileChooser.getSelectedFile();
-        if (!saveFile.getName().toLowerCase().endsWith("." + this.getType().getExtension()))
-            saveFile = new File(saveFile.getAbsolutePath()+"." + this.getType().getExtension());
-        this.save = true;
-    } else {
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // do nothing - close dialog
         this.save = false;
-    }
-    fileChooser.removeChoosableFileFilter(this.getType().getFilter());
-    this.setVisible(false);
-}//GEN-LAST:event_saveButtonActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // set specific file name filter
+        JFileChooser fileChooser = getFileChooser();
+        fileChooser.setFileFilter(this.getType().getFilter());
+        // show save dialog    
+        int result = fileChooser.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            saveFile = fileChooser.getSelectedFile();
+            if (!saveFile.getName().toLowerCase().endsWith("." + this.getType().getExtension()))
+                saveFile = new File(saveFile.getAbsolutePath()+"." + this.getType().getExtension());
+            this.save = true;
+        } else {
+            this.save = false;
+        }
+        fileChooser.removeChoosableFileFilter(this.getType().getFilter());
+        this.setVisible(false);
+    }//GEN-LAST:event_saveButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonsPanel;
@@ -279,5 +279,4 @@ private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JFormattedTextField xTextField;
     private javax.swing.JFormattedTextField yTextField;
     // End of variables declaration//GEN-END:variables
-    
 }

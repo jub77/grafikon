@@ -356,87 +356,88 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-    if (nameTextField != null && !"".equals(nameTextField.getText())) {
-        // create new LineClass
-        EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
-        listModel.addEngineClass(clazz);
-        nameTextField.setText("");
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_newButtonActionPerformed
-
-private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-    if (!engineClassesList.isSelectionEmpty()) {
-        int selected = engineClassesList.getSelectedIndex();
-        listModel.removeEngineClass(selected);
-        if (selected >= listModel.getSize()) {
-            selected--;
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        if (nameTextField != null && !"".equals(nameTextField.getText())) {
+            // create new LineClass
+            EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
+            listModel.addEngineClass(clazz);
+            nameTextField.setText("");
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
-        engineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_deleteButtonActionPerformed
+    }//GEN-LAST:event_newButtonActionPerformed
 
-private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-    // move selected engine class up
-    if (!engineClassesList.isSelectionEmpty()) {
-        int selected = engineClassesList.getSelectedIndex();
-        selected -= 1;
-        if (selected < 0) {
-            return;
-        }
-        listModel.moveEngineClass(selected + 1, selected);
-        engineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_upButtonActionPerformed
-
-private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
-    // move selected engine class down
-    if (!engineClassesList.isSelectionEmpty()) {
-        int selected = engineClassesList.getSelectedIndex();
-        selected += 1;
-        if (selected >= listModel.getSize()) {
-            return;
-        }
-        listModel.moveEngineClass(selected - 1, selected);
-        engineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_downButtonActionPerformed
-
-private void engineClassesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_engineClassesListValueChanged
-    if (!evt.getValueIsAdjusting()) {
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         if (!engineClassesList.isSelectionEmpty()) {
-            weightTable.removeEditor();
-            tableModel.updateInfo();
+            int selected = engineClassesList.getSelectedIndex();
+            listModel.removeEngineClass(selected);
+            if (selected >= listModel.getSize()) {
+                selected--;
+            }
+            engineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
-        this.enableDisable();
-    }
-}//GEN-LAST:event_engineClassesListValueChanged
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newRowButtonActionPerformed
-    // check if there is a speed specified
-    try {
-        int speed = Integer.parseInt(speedTextField.getText());
-        if (speed == 0) {
-            return;
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        // move selected engine class up
+        if (!engineClassesList.isSelectionEmpty()) {
+            int selected = engineClassesList.getSelectedIndex();
+            selected -= 1;
+            if (selected < 0) {
+                return;
+            }
+            listModel.moveEngineClass(selected + 1, selected);
+            engineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
-        tableModel.addWeightTableRowForSpeed(speed);
-        speedTextField.setText("");
+    }//GEN-LAST:event_upButtonActionPerformed
 
-    } catch (NumberFormatException e) {
-        LOG.trace("Cannot convert speed string to int.", e);
-    }
-}//GEN-LAST:event_newRowButtonActionPerformed
+    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        // move selected engine class down
+        if (!engineClassesList.isSelectionEmpty()) {
+            int selected = engineClassesList.getSelectedIndex();
+            selected += 1;
+            if (selected >= listModel.getSize()) {
+                return;
+            }
+            listModel.moveEngineClass(selected - 1, selected);
+            engineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
+        }
+    }//GEN-LAST:event_downButtonActionPerformed
 
-private void deleteRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRowButtonActionPerformed
-    int selectedRow = weightTable.getSelectedRow();
-    if (selectedRow != -1) {
-        tableModel.removeWeightTableRow(selectedRow);
-    }
-}//GEN-LAST:event_deleteRowButtonActionPerformed
+    private void engineClassesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_engineClassesListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            if (!engineClassesList.isSelectionEmpty()) {
+                weightTable.removeEditor();
+                tableModel.updateInfo();
+            }
+            this.enableDisable();
+        }
+    }//GEN-LAST:event_engineClassesListValueChanged
+
+    private void newRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newRowButtonActionPerformed
+        // check if there is a speed specified
+        try {
+            int speed = Integer.parseInt(speedTextField.getText());
+            if (speed == 0) {
+                return;
+            }
+            tableModel.addWeightTableRowForSpeed(speed);
+            speedTextField.setText("");
+    
+        } catch (NumberFormatException e) {
+            LOG.trace("Cannot convert speed string to int.", e);
+        }
+    }//GEN-LAST:event_newRowButtonActionPerformed
+
+    private void deleteRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRowButtonActionPerformed
+        int selectedRow = weightTable.getSelectedRow();
+        if (selectedRow != -1) {
+            tableModel.removeWeightTableRow(selectedRow);
+        }
+    }//GEN-LAST:event_deleteRowButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteRowButton;

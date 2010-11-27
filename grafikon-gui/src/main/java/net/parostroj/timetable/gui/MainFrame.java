@@ -736,136 +736,135 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    settingsDialog.setLocationRelativeTo(this);
-    settingsDialog.setTrainDiagram(model.getDiagram());
-    settingsDialog.setVisible(true);
-    // check and send event if neccessary
-    if (settingsDialog.isDiagramChanged()) {
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,model));
-        model.setModelChanged(true);
-    }
-}//GEN-LAST:event_settingsMenuItemActionPerformed
+    private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
+        settingsDialog.setLocationRelativeTo(this);
+        settingsDialog.setTrainDiagram(model.getDiagram());
+        settingsDialog.setVisible(true);
+        // check and send event if neccessary
+        if (settingsDialog.isDiagramChanged()) {
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,model));
+            model.setModelChanged(true);
+        }
+    }//GEN-LAST:event_settingsMenuItemActionPerformed
 
-private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
-    imagesDialog.setLocationRelativeTo(this);
-    imagesDialog.setVisible(true);
-}//GEN-LAST:event_imagesMenuItemActionPerformed
+    private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
+        imagesDialog.setLocationRelativeTo(this);
+        imagesDialog.setVisible(true);
+    }//GEN-LAST:event_imagesMenuItemActionPerformed
 
-private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
-    infoDialog.setLocationRelativeTo(this);
-    infoDialog.updateValues();
-    infoDialog.setVisible(true);
-}//GEN-LAST:event_infoMenuItemActionPerformed
+    private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
+        infoDialog.setLocationRelativeTo(this);
+        infoDialog.updateValues();
+        infoDialog.setVisible(true);
+    }//GEN-LAST:event_infoMenuItemActionPerformed
 
-private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
-    if (systemLanguageRadioButtonMenuItem.isSelected())
-        locale = null;
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
-    }
-}//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
+    private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
+        if (systemLanguageRadioButtonMenuItem.isSelected())
+            locale = null;
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
+        }
+    }//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
 
-private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
-    if (oSystemLRadioButtonMenuItem.isSelected())
-        model.setOutputLocale(null);
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
-    }
-}//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
+    private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
+        if (oSystemLRadioButtonMenuItem.isSelected())
+            model.setOutputLocale(null);
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
+        }
+    }//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
 
-private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
-    trainTypesDialog.updateValues();
-    trainTypesDialog.setLocationRelativeTo(this);
-    trainTypesDialog.setVisible(true);
-}//GEN-LAST:event_trainTypesMenuItemActionPerformed
+    private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
+        trainTypesDialog.updateValues();
+        trainTypesDialog.setLocationRelativeTo(this);
+        trainTypesDialog.setVisible(true);
+    }//GEN-LAST:event_trainTypesMenuItemActionPerformed
 
-private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
-    lineClassesDialog.updateValues();
-    lineClassesDialog.setLocationRelativeTo(this);
-    lineClassesDialog.setVisible(true);
-}//GEN-LAST:event_lineClassesMenuItemActionPerformed
+    private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
+        lineClassesDialog.updateValues();
+        lineClassesDialog.setLocationRelativeTo(this);
+        lineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_lineClassesMenuItemActionPerformed
 
-private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
-    engineClassesDialog.updateValues();
-    engineClassesDialog.setLocationRelativeTo(this);
-    engineClassesDialog.setVisible(true);
-}//GEN-LAST:event_weightTablesMenuItemActionPerformed
+    private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
+        engineClassesDialog.updateValues();
+        engineClassesDialog.setLocationRelativeTo(this);
+        engineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_weightTablesMenuItemActionPerformed
 
-private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
-    trainsPane.editColumns();
-}//GEN-LAST:event_columnsMenuItemActionPerformed
+    private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
+        trainsPane.editColumns();
+    }//GEN-LAST:event_columnsMenuItemActionPerformed
 
-private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
-    trainsPane.sortColumns();
-}//GEN-LAST:event_sortColumnsMenuItemActionPerformed
+    private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
+        trainsPane.sortColumns();
+    }//GEN-LAST:event_sortColumnsMenuItemActionPerformed
 
-private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
-    trainsPane.resizeColumns();
-}//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
+    private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
+        trainsPane.resizeColumns();
+    }//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
 
-private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
-    TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
-    dialog.setTrainDiagram(model.getDiagram());
-    dialog.updateValues();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+    private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
+        TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
+        dialog.setTrainDiagram(model.getDiagram());
+        dialog.updateValues();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_penaltyTableMenuItemActionPerformed
 
-}//GEN-LAST:event_penaltyTableMenuItemActionPerformed
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        // show about dialog
+        ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
+        LSFileFactory f = LSFileFactory.getInstance();
+        FileLoadSave fls = null;
+        try {
+            fls = f.createLatestForSave();
+        } catch (LSException e) {
+            LOG.warn("Cannot create FileLoadSave", e);
+        }
+        AboutDialog dialog = new AboutDialog(this, true,
+                String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
+                getClass().getResource(aboutBundle.getString("image")), true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
-private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-    // show about dialog
-    ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
-    LSFileFactory f = LSFileFactory.getInstance();
-    FileLoadSave fls = null;
-    try {
-        fls = f.createLatestForSave();
-    } catch (LSException e) {
-        LOG.warn("Cannot create FileLoadSave", e);
-    }
-    AboutDialog dialog = new AboutDialog(this, true,
-            String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
-            getClass().getResource(aboutBundle.getString("image")), true);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-}//GEN-LAST:event_aboutMenuItemActionPerformed
+    private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
+        // get output type
+        OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
+        model.setOutputCategory(type);
+    }//GEN-LAST:event_outputTypeActionPerformed
 
-private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
-    // get output type
-    OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
-    model.setOutputCategory(type);
-}//GEN-LAST:event_outputTypeActionPerformed
+    private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
+        EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
+        editRoutesDialog.setLocationRelativeTo(this);
+        editRoutesDialog.showDialog(model.getDiagram());
+    }//GEN-LAST:event_editRoutesMenuItemActionPerformed
 
-private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
-    EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
-    editRoutesDialog.setLocationRelativeTo(this);
-    editRoutesDialog.showDialog(model.getDiagram());
-}//GEN-LAST:event_editRoutesMenuItemActionPerformed
+    private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
+        TextItemsDialog dialog = new TextItemsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }//GEN-LAST:event_textItemsMenuItemActionPerformed
 
-private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
-    TextItemsDialog dialog = new TextItemsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model.getDiagram());
-    dialog.dispose();
-}//GEN-LAST:event_textItemsMenuItemActionPerformed
+    private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
+        // program settings
+        ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model);
+        dialog.dispose();
+    }//GEN-LAST:event_programSettingsMenuItemActionPerformed
 
-private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
-    // program settings
-    ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model);
-    dialog.dispose();
-}//GEN-LAST:event_programSettingsMenuItemActionPerformed
+    private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
+        boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        trainsPane.setVisibilityOfGTView(state);
+    }//GEN-LAST:event_showGTViewMenuItemActionPerformed
 
-private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
-    boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-    trainsPane.setVisibilityOfGTView(state);
-}//GEN-LAST:event_showGTViewMenuItemActionPerformed
-
-private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
-    boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-    model.getProgramSettings().setGenerateTitlePageTT(selected);
-}//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+    private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        model.getProgramSettings().setGenerateTitlePageTT(selected);
+    }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)

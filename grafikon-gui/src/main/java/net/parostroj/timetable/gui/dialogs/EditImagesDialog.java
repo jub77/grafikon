@@ -287,5 +287,4 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     private javax.swing.JButton renameButton;
     private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
-    
 }

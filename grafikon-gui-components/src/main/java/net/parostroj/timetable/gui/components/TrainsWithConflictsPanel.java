@@ -134,10 +134,8 @@ public class TrainsWithConflictsPanel extends javax.swing.JPanel {
         add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList trainsList;
     // End of variables declaration//GEN-END:variables
-
 }

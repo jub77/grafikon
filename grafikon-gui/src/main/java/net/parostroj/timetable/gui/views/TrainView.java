@@ -260,17 +260,17 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-    getEditTrainDialog().getSelectedTrainData();
-    getEditTrainDialog().setLocationRelativeTo(this);
-    getEditTrainDialog().setVisible(true);
-}//GEN-LAST:event_editButtonActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        getEditTrainDialog().getSelectedTrainData();
+        getEditTrainDialog().setLocationRelativeTo(this);
+        getEditTrainDialog().setVisible(true);
+    }//GEN-LAST:event_editButtonActionPerformed
 
-private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
-    CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true, model, train);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-}//GEN-LAST:event_copyButtonActionPerformed
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true, model, train);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_copyButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

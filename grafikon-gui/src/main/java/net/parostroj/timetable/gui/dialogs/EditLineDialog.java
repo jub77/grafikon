@@ -495,7 +495,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             connections.put(track, new Tuple<NodeTrack>(null, null));
             this.updateSelectedTrack(track);
         }
-}//GEN-LAST:event_newTrackButtonActionPerformed
+    }//GEN-LAST:event_newTrackButtonActionPerformed
 
     private void deleteTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteTrackButtonActionPerformed
         // remove track
@@ -577,5 +577,4 @@ public class EditLineDialog extends javax.swing.JDialog {
     private javax.swing.JList trackList;
     private javax.swing.JCheckBox unlimitedSpeedCheckBox;
     // End of variables declaration//GEN-END:variables
-    
 }

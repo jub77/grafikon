@@ -161,37 +161,36 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-    // get selected cycles ...
-    Object[] selectedValues = ecList.getSelectedValues();
-    for (Object selectedObject : selectedValues) {
-        TrainsCycle cycle = (TrainsCycle)selectedObject;
-        if (cycle != null) {
-            // remove from diagram
-            model.getDiagram().removeCycle(cycle);
-            // fire event
-            delegate.fireEvent(TCDelegate.Action.DELETE_CYCLE, model, cycle);
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        // get selected cycles ...
+        Object[] selectedValues = ecList.getSelectedValues();
+        for (Object selectedObject : selectedValues) {
+            TrainsCycle cycle = (TrainsCycle)selectedObject;
+            if (cycle != null) {
+                // remove from diagram
+                model.getDiagram().removeCycle(cycle);
+                // fire event
+                delegate.fireEvent(TCDelegate.Action.DELETE_CYCLE, model, cycle);
+            }
         }
-    }
-}//GEN-LAST:event_deleteButtonActionPerformed
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
-    // get name from text field (ignore shorter than one character
-    if (newNameTextField.getText().length() > 0) {
-        TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getType());
-        model.getDiagram().addCycle(cycle);
-        
-        // clear field
-        newNameTextField.setText("");
-        // fire event
-        delegate.fireEvent(TCDelegate.Action.NEW_CYCLE, model, cycle);
-        // set selected
-        ecList.setSelectedValue(cycle, true);
-        delegate.fireEvent(TCDelegate.Action.SELECTED_CHANGED, model, cycle);
-    }
-}//GEN-LAST:event_createButtonActionPerformed
-    
-    
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        // get name from text field (ignore shorter than one character
+        if (newNameTextField.getText().length() > 0) {
+            TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getType());
+            model.getDiagram().addCycle(cycle);
+            
+            // clear field
+            newNameTextField.setText("");
+            // fire event
+            delegate.fireEvent(TCDelegate.Action.NEW_CYCLE, model, cycle);
+            // set selected
+            ecList.setSelectedValue(cycle, true);
+            delegate.fireEvent(TCDelegate.Action.SELECTED_CHANGED, model, cycle);
+        }
+    }//GEN-LAST:event_createButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
@@ -199,5 +198,4 @@ private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JTextField newNameTextField;
     private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
-    
 }

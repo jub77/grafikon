@@ -117,30 +117,30 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-    // write values back and close
-    TrainsCycle cycle = delegate.getSelectedCycle(model);
-    if (nameTextField.getText() != null && !"".equals(nameTextField.getText().trim())
-            && !nameTextField.getText().equals(cycle.getName()))
-        cycle.setName(nameTextField.getText());
-    if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
-        if (cycle.getDescription() != null)
-            cycle.setDescription(null);
-    } else {
-        if (!descTextField.getText().equals(cycle.getDescription()))
-            cycle.setDescription(descTextField.getText().trim());
-    }
-    
-    // event
-    delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
-    
-    this.setVisible(false);
-}//GEN-LAST:event_okButtonActionPerformed
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        // write values back and close
+        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        if (nameTextField.getText() != null && !"".equals(nameTextField.getText().trim())
+                && !nameTextField.getText().equals(cycle.getName()))
+            cycle.setName(nameTextField.getText());
+        if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
+            if (cycle.getDescription() != null)
+                cycle.setDescription(null);
+        } else {
+            if (!descTextField.getText().equals(cycle.getDescription()))
+                cycle.setDescription(descTextField.getText().trim());
+        }
+        
+        // event
+        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
+        
+        this.setVisible(false);
+    }//GEN-LAST:event_okButtonActionPerformed
 
-private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-    // do nothing
-    this.setVisible(false);
-}//GEN-LAST:event_cancelButtonActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // do nothing
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField descTextField;

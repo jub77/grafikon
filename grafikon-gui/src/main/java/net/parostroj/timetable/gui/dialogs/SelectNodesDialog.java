@@ -22,7 +22,6 @@ public class SelectNodesDialog extends javax.swing.JDialog {
     }
 
     public void setNodes(Set<Node> nodes) {
-
         List<Node> sortedNodes = (new NodeSort(NodeSort.Type.ASC)).sort(nodes);
 
         nodesComboBox.removeAllItems();
@@ -97,5 +96,4 @@ public class SelectNodesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox nodesComboBox;
     private javax.swing.JPanel nodesPanel;
     // End of variables declaration//GEN-END:variables
-
 }

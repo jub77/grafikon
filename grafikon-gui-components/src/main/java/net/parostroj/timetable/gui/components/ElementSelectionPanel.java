@@ -134,12 +134,10 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_moveRightButtonActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList leftList;
     private javax.swing.JButton moveLeftButton;
     private javax.swing.JButton moveRightButton;
     private javax.swing.JList rightList;
     // End of variables declaration//GEN-END:variables
-
 }

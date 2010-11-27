@@ -407,174 +407,174 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
-    // change order
-    TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
-    int selectedIndex = ecTrainsList.getSelectedIndex();
-    if (selected != null) {
-        TrainsCycleItem item = selected.getItem();
-        int newIndex = selectedIndex + 1;
-        if (newIndex < item.getCycle().getItems().size()) {
-            // remove ...
-            DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
-            m.remove(selectedIndex);
-            // move to new place
-            m.add(newIndex, selected);
-            item.getCycle().moveItem(selectedIndex, newIndex);
-            this.updateErrors();
-            ecTrainsList.setSelectedValue(selected, true);
-            ecTrainsList.repaint();
-        }
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
-    }
-}//GEN-LAST:event_downButtonActionPerformed
-
-private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-    // change order
-    TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
-    int selectedIndex = ecTrainsList.getSelectedIndex();
-    if (selected != null) {
-        TrainsCycleItem item = selected.getItem();
-        int newIndex = selectedIndex - 1;
-        if (newIndex >= 0) {
-            // remove ...
-            DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
-            m.remove(selectedIndex);
-            // move to new place
-            m.add(newIndex, selected);
-            item.getCycle().moveItem(selectedIndex, newIndex);
-            this.updateErrors();
-            ecTrainsList.setSelectedValue(selected, true);
-            ecTrainsList.repaint();
-        }
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
-    }
-}//GEN-LAST:event_upButtonActionPerformed
-
-private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-    Object[] selectedValues = ecTrainsList.getSelectedValues();
-    for (Object selectedObject : selectedValues) {
-        TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) selectedObject;
+    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        // change order
+        TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
+        int selectedIndex = ecTrainsList.getSelectedIndex();
         if (selected != null) {
             TrainsCycleItem item = selected.getItem();
-            item.getCycle().removeItem(item);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, item.getTrain()));
-
+            int newIndex = selectedIndex + 1;
+            if (newIndex < item.getCycle().getItems().size()) {
+                // remove ...
+                DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
+                m.remove(selectedIndex);
+                // move to new place
+                m.add(newIndex, selected);
+                item.getCycle().moveItem(selectedIndex, newIndex);
+                this.updateErrors();
+                ecTrainsList.setSelectedValue(selected, true);
+                ecTrainsList.repaint();
+            }
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
         }
-    }
-    if (selectedValues.length > 0) {
-        this.updateListAllTrains();
-        this.updateListCycle();
-        this.updateErrors();
-    }
-}//GEN-LAST:event_removeButtonActionPerformed
+    }//GEN-LAST:event_downButtonActionPerformed
 
-private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-    Object[] selectedValues = allTrainsList.getSelectedValues();
-    boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
-    StringBuilder trainsStr = null;
-    for (Object objectSelected : selectedValues) {
-        Wrapper<?> selected = (Wrapper<?>) objectSelected;
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        // change order
+        TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
+        int selectedIndex = ecTrainsList.getSelectedIndex();
         if (selected != null) {
-            Train t = (Train) selected.getElement();
-            TrainsCycle cycle = delegate.getSelectedCycle(model);
-            if (cycle != null) {
-                TrainsCycleItem item = null;
-                if (overlappingEnabled) {
-                    item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval());
-                } else {
-                    Tuple<TimeInterval> tuple = t.getFirstUncoveredPart(delegate.getType());
-                    item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
-                }
-                cycle.addItem(item);
-                // recalculate if needed (engine class dependency)
-                if (t.checkNeedSpeedRecalculate()) {
-                    t.recalculate();
-                    if (warning) {
-                        if (trainsStr == null)
-                            trainsStr = new StringBuilder();
-                        else
-                            trainsStr.append(',');
-                        trainsStr.append(t.getName());
-                    }
-                }
+            TrainsCycleItem item = selected.getItem();
+            int newIndex = selectedIndex - 1;
+            if (newIndex >= 0) {
+                // remove ...
+                DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
+                m.remove(selectedIndex);
+                // move to new place
+                m.add(newIndex, selected);
+                item.getCycle().moveItem(selectedIndex, newIndex);
+                this.updateErrors();
+                ecTrainsList.setSelectedValue(selected, true);
+                ecTrainsList.repaint();
+            }
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+        }
+    }//GEN-LAST:event_upButtonActionPerformed
 
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        Object[] selectedValues = ecTrainsList.getSelectedValues();
+        for (Object selectedObject : selectedValues) {
+            TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) selectedObject;
+            if (selected != null) {
+                TrainsCycleItem item = selected.getItem();
+                item.getCycle().removeItem(item);
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, item.getTrain()));
+    
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
             }
         }
-    }
-    if (selectedValues.length > 0) {
-        this.updateListAllTrains();
-        this.updateListCycle();
-        this.updateErrors();
-    }
-    if (warning && trainsStr != null) {
-        ActionUtils.showWarning(
-                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
-                ActionUtils.getTopLevelComponent(this));
-    }
-}//GEN-LAST:event_addButtonActionPerformed
+        if (selectedValues.length > 0) {
+            this.updateListAllTrains();
+            this.updateListCycle();
+            this.updateErrors();
+        }
+    }//GEN-LAST:event_removeButtonActionPerformed
 
-private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-    if (ecTrainsList.getSelectedIndex() != -1) {
-        TrainsCycleItem item = ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem();
-        Train train = item.getTrain();
-        // check if the comment changed ...
-        String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
-        if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
-            item.setComment(newComment);
-        TimeInterval from = (TimeInterval) ((Wrapper<?>)fromComboBox.getSelectedItem()).getElement();
-        TimeInterval to = (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
-        // new trains cycle item
-        boolean oldCovered = train.isCovered(delegate.getType());
-        if (from != item.getFromInterval() || to != item.getToInterval()) {
-            TrainsCycleItem newItem = new TrainsCycleItem(item.getCycle(), train, item.getComment(), from, to);
-            if (train.testAddCycle(newItem, item, overlappingEnabled)) {
-                TrainsCycle cycle = item.getCycle();
-                cycle.replaceItem(newItem, item);
-                ((TrainsCycleItemWrapper)ecTrainsList.getSelectedValue()).setItem(newItem);
-                this.updateSelectedTrainsCycleItem(newItem);
-                this.updateErrors();
-                if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
-                    this.updateListAllTrains();
-                ecTrainsList.repaint();
-                // recalculate if needed (engine class depedency)
-                if (train.checkNeedSpeedRecalculate()) {
-                    train.recalculate();
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-                    if (model.getProgramSettings().isWarningAutoECCorrection()) {
-                        ActionUtils.showWarning(
-                                String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
-                                ActionUtils.getTopLevelComponent(this));
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        Object[] selectedValues = allTrainsList.getSelectedValues();
+        boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+        StringBuilder trainsStr = null;
+        for (Object objectSelected : selectedValues) {
+            Wrapper<?> selected = (Wrapper<?>) objectSelected;
+            if (selected != null) {
+                Train t = (Train) selected.getElement();
+                TrainsCycle cycle = delegate.getSelectedCycle(model);
+                if (cycle != null) {
+                    TrainsCycleItem item = null;
+                    if (overlappingEnabled) {
+                        item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval());
+                    } else {
+                        Tuple<TimeInterval> tuple = t.getFirstUncoveredPart(delegate.getType());
+                        item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                     }
+                    cycle.addItem(item);
+                    // recalculate if needed (engine class dependency)
+                    if (t.checkNeedSpeedRecalculate()) {
+                        t.recalculate();
+                        if (warning) {
+                            if (trainsStr == null)
+                                trainsStr = new StringBuilder();
+                            else
+                                trainsStr.append(',');
+                            trainsStr.append(t.getName());
+                        }
+                    }
+    
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
+                    delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
                 }
-            } else {
-                this.updateSelectedTrainsCycleItem(item);
             }
         }
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
-    }
-}//GEN-LAST:event_changeButtonActionPerformed
+        if (selectedValues.length > 0) {
+            this.updateListAllTrains();
+            this.updateListCycle();
+            this.updateErrors();
+        }
+        if (warning && trainsStr != null) {
+            ActionUtils.showWarning(
+                    String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
+                    ActionUtils.getTopLevelComponent(this));
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
 
-private void ecTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ecTrainsListValueChanged
-    if (!evt.getValueIsAdjusting()) {
-        boolean selectedOne = ecTrainsList.getSelectedIndex() != -1 && ecTrainsList.getMaxSelectionIndex() == ecTrainsList.getMinSelectionIndex();
-        boolean selected = ecTrainsList.getSelectedIndex() != -1;
-        fromComboBox.removeAllItems();
-        toComboBox.removeAllItems();
-        TrainsCycleItem item = selectedOne ? ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem() : null;
-        this.updateSelectedTrainsCycleItem(item);
-        detailsTextField.setEnabled(selectedOne);
-        changeButton.setEnabled(selectedOne);
-        fromComboBox.setEnabled(selectedOne);
-        toComboBox.setEnabled(selectedOne);
-        removeButton.setEnabled(selected);
-        upButton.setEnabled(selectedOne);
-        downButton.setEnabled(selectedOne);
-    }
-}//GEN-LAST:event_ecTrainsListValueChanged
+    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
+        if (ecTrainsList.getSelectedIndex() != -1) {
+            TrainsCycleItem item = ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem();
+            Train train = item.getTrain();
+            // check if the comment changed ...
+            String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
+            if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
+                item.setComment(newComment);
+            TimeInterval from = (TimeInterval) ((Wrapper<?>)fromComboBox.getSelectedItem()).getElement();
+            TimeInterval to = (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
+            // new trains cycle item
+            boolean oldCovered = train.isCovered(delegate.getType());
+            if (from != item.getFromInterval() || to != item.getToInterval()) {
+                TrainsCycleItem newItem = new TrainsCycleItem(item.getCycle(), train, item.getComment(), from, to);
+                if (train.testAddCycle(newItem, item, overlappingEnabled)) {
+                    TrainsCycle cycle = item.getCycle();
+                    cycle.replaceItem(newItem, item);
+                    ((TrainsCycleItemWrapper)ecTrainsList.getSelectedValue()).setItem(newItem);
+                    this.updateSelectedTrainsCycleItem(newItem);
+                    this.updateErrors();
+                    if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
+                        this.updateListAllTrains();
+                    ecTrainsList.repaint();
+                    // recalculate if needed (engine class depedency)
+                    if (train.checkNeedSpeedRecalculate()) {
+                        train.recalculate();
+                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                        if (model.getProgramSettings().isWarningAutoECCorrection()) {
+                            ActionUtils.showWarning(
+                                    String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
+                                    ActionUtils.getTopLevelComponent(this));
+                        }
+                    }
+                } else {
+                    this.updateSelectedTrainsCycleItem(item);
+                }
+            }
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+        }
+    }//GEN-LAST:event_changeButtonActionPerformed
+
+    private void ecTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ecTrainsListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            boolean selectedOne = ecTrainsList.getSelectedIndex() != -1 && ecTrainsList.getMaxSelectionIndex() == ecTrainsList.getMinSelectionIndex();
+            boolean selected = ecTrainsList.getSelectedIndex() != -1;
+            fromComboBox.removeAllItems();
+            toComboBox.removeAllItems();
+            TrainsCycleItem item = selectedOne ? ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem() : null;
+            this.updateSelectedTrainsCycleItem(item);
+            detailsTextField.setEnabled(selectedOne);
+            changeButton.setEnabled(selectedOne);
+            fromComboBox.setEnabled(selectedOne);
+            toComboBox.setEnabled(selectedOne);
+            removeButton.setEnabled(selected);
+            upButton.setEnabled(selectedOne);
+            downButton.setEnabled(selectedOne);
+        }
+    }//GEN-LAST:event_ecTrainsListValueChanged
 
     private void updateSelectedTrainsCycleItem(TrainsCycleItem item) {
         if (item == null) {
@@ -621,28 +621,28 @@ private void ecTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) 
         toComboBox.setSelectedItem(new Wrapper<TimeInterval>(to));
     }
 
-private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_allTrainsListValueChanged
-    // until now nothing here
-    if (!evt.getValueIsAdjusting()) {
-        addButton.setEnabled(!allTrainsList.isSelectionEmpty() && delegate.getSelectedCycle(model) != null);
-    }
-}//GEN-LAST:event_allTrainsListValueChanged
+    private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_allTrainsListValueChanged
+        // until now nothing here
+        if (!evt.getValueIsAdjusting()) {
+            addButton.setEnabled(!allTrainsList.isSelectionEmpty() && delegate.getSelectedCycle(model) != null);
+        }
+    }//GEN-LAST:event_allTrainsListValueChanged
 
-private void filterChangedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterChangedActionPerformed
-    ButtonModel selected = filterbuttonGroup.getSelection();
-    if (selected != null)
-        this.setFilter(selected.getActionCommand(), (Component) evt.getSource());
-}//GEN-LAST:event_filterChangedActionPerformed
+    private void filterChangedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterChangedActionPerformed
+        ButtonModel selected = filterbuttonGroup.getSelection();
+        if (selected != null)
+            this.setFilter(selected.getActionCommand(), (Component) evt.getSource());
+    }//GEN-LAST:event_filterChangedActionPerformed
 
-private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overlappingCheckBoxMenuItemActionPerformed
-    // enable/disable overlapping (refresh list of all trains)
-    overlappingEnabled = overlappingCheckBoxMenuItem.isSelected();
-    this.updateListAllTrains();
-}//GEN-LAST:event_overlappingCheckBoxMenuItemActionPerformed
+    private void overlappingCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overlappingCheckBoxMenuItemActionPerformed
+        // enable/disable overlapping (refresh list of all trains)
+        overlappingEnabled = overlappingCheckBoxMenuItem.isSelected();
+        this.updateListAllTrains();
+    }//GEN-LAST:event_overlappingCheckBoxMenuItemActionPerformed
 
-private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectionButtonActionPerformed
-    filterMenu.show(selectionButton, 3, 3);
-}//GEN-LAST:event_selectionButtonActionPerformed
+    private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectionButtonActionPerformed
+        filterMenu.show(selectionButton, 3, 3);
+    }//GEN-LAST:event_selectionButtonActionPerformed
 
     private void setFilter(String type, Component component) {
         if ("P".equals(type)) {

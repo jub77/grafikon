@@ -273,5 +273,4 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
-
 }
