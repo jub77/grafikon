@@ -2,26 +2,26 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Iterator;
+
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.utils.ActionHandler;
+import net.parostroj.timetable.gui.utils.EDTModelAction;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This action recalculates train stops.
- *
+ * 
  * @author jub
  */
 public class RecalculateStopsAction extends AbstractAction {
@@ -54,45 +54,29 @@ public class RecalculateStopsAction extends AbstractAction {
 
         final double ratio = cRatio;
 
-        ActionHandler.getInstance().executeAction(top, ResourceLoader.getString("wait.message.recalculate"), new SwingWorker<Void, Train>() {
+        ActionHandler.getInstance().executeAction(top, ResourceLoader.getString("wait.message.recalculate"),
+                new EDTModelAction<Train>("Recalculation of stops") {
 
-            private Lock lock = new ReentrantLock();
-            private Condition condition = lock.newCondition();
-            private boolean chunksFinished = false;
-            private static final int CHUNK_SIZE = 10;
+                    private static final int CHUNK_SIZE = 10;
+                    private Iterator<Train> iterator = model.getDiagram().getTrains().iterator();
 
-            @Override
-            protected Void doInBackground() throws Exception {
-                // recalculate all trains
-                long time = System.currentTimeMillis();
-                lock.lock();
-                try {
-                    int cnt = 0;
-                    for (Train train : model.getDiagram().getTrains()) {
-                        publish(train);
-                        if (++cnt >= CHUNK_SIZE) {
-                            chunksFinished = false;
-                            while (!chunksFinished) {
-                                condition.await();
-                            }
-                            cnt = 0;
-                        }
+                    @Override
+                    protected void itemsFinished() {
+                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
+                        // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
+                        model.setModelChanged(true);
                     }
-                } finally {
-                    lock.unlock();
-                    time = System.currentTimeMillis() - time;
-                    LOG.debug("Stops recalculated in {}ms", time);
-                }
-                return null;
-            }
 
-            @Override
-            protected void process(List<Train> chunks) {
-                LOG.trace("Recalculate chunk of trains. Size: " + chunks.size());
-                lock.lock();
-                try {
-                    // recalculate trains
-                    for (Train train : chunks) {
+                    @Override
+                    protected boolean prepareItems() throws Exception {
+                        int number = 0;
+                        while (number++ < CHUNK_SIZE && iterator.hasNext())
+                            addItems(iterator.next());
+                        return iterator.hasNext();
+                    }
+
+                    @Override
+                    protected void processItem(Train train) throws Exception {
                         // convert stops ...
                         for (TimeInterval interval : train.getTimeIntervalList()) {
                             if (interval.isInnerStop()) {
@@ -117,29 +101,16 @@ public class RecalculateStopsAction extends AbstractAction {
                             train.setTimeAfter(time);
                         }
                     }
-                    chunksFinished = true;
-                    condition.signalAll();
-                } finally {
-                    lock.unlock();
-                }
-            }
-            
-            private int convertTime(int time, double convertRatio) {
-                // recalculate
-                time = (int)(convertRatio * time);
-                // round to minutes
-                time = ((time + 40) / 60) * 60;
-                // do not change stop to 0
-                time = (time == 0) ? 1 : time;
-                return time;
-            }
 
-            @Override
-            protected void done() {
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
-                // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
-                model.setModelChanged(true);
-            }
-        });
+                    private int convertTime(int time, double convertRatio) {
+                        // recalculate
+                        time = (int) (convertRatio * time);
+                        // round to minutes
+                        time = ((time + 40) / 60) * 60;
+                        // do not change stop to 0
+                        time = (time == 0) ? 1 : time;
+                        return time;
+                    }
+                });
     }
 }
