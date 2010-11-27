@@ -77,6 +77,10 @@ public class WrapperListModel<T> extends AbstractListModel {
         this.removeWrapper(wrapper);
         return wrapper;
     }
+    
+    public Wrapper<T> getIndex(int index) {
+        return list.get(index);
+    }
 
     public void addWrapper(Wrapper<T> w) {
         // add to set

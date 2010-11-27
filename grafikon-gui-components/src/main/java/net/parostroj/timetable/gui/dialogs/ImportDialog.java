@@ -248,18 +248,28 @@ public class ImportDialog extends javax.swing.JDialog {
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         // add object to selected
         int[] values = selectedComponentsList.getSelectedIndices();
+        List<Wrapper<ObjectWithId>> toBeRemoved = new LinkedList<Wrapper<ObjectWithId>>();
         for (int ind : values) {
-            Wrapper<ObjectWithId> wrapper = right.removeIndex(ind);
+            Wrapper<ObjectWithId> wrapper = right.getIndex(ind);
+            toBeRemoved.add(wrapper);
             left.addWrapper(wrapper);
+        }
+        for (Wrapper<ObjectWithId> w : toBeRemoved) {
+            right.removeWrapper(w);
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // remove object from selected
         int[] values = componentsList.getSelectedIndices();
+        List<Wrapper<ObjectWithId>> toBeRemoved = new LinkedList<Wrapper<ObjectWithId>>();
         for (int ind : values) {
-            Wrapper<ObjectWithId> wrapper = left.removeIndex(ind);
+            Wrapper<ObjectWithId> wrapper = left.getIndex(ind);
+            toBeRemoved.add(wrapper);
             right.addWrapper(wrapper);
+        }
+        for (Wrapper<ObjectWithId> w : toBeRemoved) {
+            left.removeWrapper(w);
         }
     }//GEN-LAST:event_addButtonActionPerformed
 
