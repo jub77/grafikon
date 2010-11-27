@@ -5,26 +5,17 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.wrappers.WrapperListModel;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
+
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.model.*;
 
 /**
  * Export/Import dialog.
@@ -36,10 +27,8 @@ public class ImportDialog extends javax.swing.JDialog {
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
     private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
-
     private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
     private Set<ObjectWithId> importedObjects;
-    
     private WrapperListModel<ObjectWithId> left;
     private WrapperListModel<ObjectWithId> right;
 
@@ -196,7 +185,7 @@ public class ImportDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // import things
         importedObjects = new HashSet<ObjectWithId>();
         List<Object> errors = new LinkedList<Object>();
@@ -218,20 +207,21 @@ public class ImportDialog extends javax.swing.JDialog {
             int lineLength = 70;
             int nextLimit = lineLength;
             for (Object error : errors) {
-                if (message.length() != 0)
+                if (message.length() != 0) {
                     message.append(", ");
+                }
                 if (nextLimit < message.length()) {
                     message.append('\n');
                     nextLimit += lineLength;
                 }
                 message.append(this.getText(error));
             }
-            JOptionPane.showConfirmDialog(this, message, 
+            JOptionPane.showConfirmDialog(this, message,
                     ResourceLoader.getString("import.warning.title"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
         }
         this.setVisible(false);
-}//GEN-LAST:event_okButtonActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
@@ -274,7 +264,7 @@ public class ImportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void updateDialog() {
-        this.updateLists((ImportComponents)componentComboBox.getSelectedItem());
+        this.updateLists((ImportComponents) componentComboBox.getSelectedItem());
     }
 
     private void updateLists(ImportComponents comps) {
@@ -299,7 +289,7 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private ImportMatch getImportMatch() {
-        return (ImportMatch)matchComboBox.getSelectedItem();
+        return (ImportMatch) matchComboBox.getSelectedItem();
     }
 
     public Set<ObjectWithId> getImportedObjects() {
@@ -317,7 +307,6 @@ public class ImportDialog extends javax.swing.JDialog {
             return oid.toString();
         }
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
