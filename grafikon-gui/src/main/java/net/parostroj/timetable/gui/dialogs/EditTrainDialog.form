@@ -50,6 +50,10 @@
                               <Component id="fromNodeButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="toNodeButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="stationsComboBox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="insertButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="dieselCheckBox" min="-2" max="-2" attributes="1"/>
@@ -57,13 +61,13 @@
                               <Component id="electricCheckBox" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="emptyCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="descriptionTextField" alignment="0" pref="244" max="32767" attributes="0"/>
+                          <Component id="descriptionTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="speedTextField" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="weightTextField" alignment="0" pref="244" max="32767" attributes="0"/>
+                          <Component id="weightTextField" alignment="0" pref="246" max="32767" attributes="0"/>
                           <Component id="showLengthCheckBox" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="numberTextField" alignment="0" pref="244" max="32767" attributes="2"/>
-                          <Component id="typeComboBox" alignment="0" pref="244" max="32767" attributes="0"/>
-                          <Component id="routeEditBox" alignment="0" pref="244" max="32767" attributes="0"/>
+                          <Component id="numberTextField" alignment="0" pref="246" max="32767" attributes="2"/>
+                          <Component id="typeComboBox" alignment="0" pref="246" max="32767" attributes="0"/>
+                          <Component id="routeEditBox" alignment="0" pref="246" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -124,17 +128,16 @@
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="routeEditBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="toNodeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="stationsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="insertButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="toNodeButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="fromNodeButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="fromNodeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -152,7 +155,7 @@
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="20" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -296,6 +299,21 @@
     <Component class="javax.swing.JButton" name="toNodeButton">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="toNodeButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="stationsComboBox">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="insertButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="^"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="insertButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
