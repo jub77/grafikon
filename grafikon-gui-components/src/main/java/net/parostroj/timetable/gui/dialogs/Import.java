@@ -24,6 +24,7 @@ public abstract class Import {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
         this.errors = new LinkedList<ObjectWithId>();
+        this.importedObjects = new HashSet<ObjectWithId>();
     }
 
     protected TrainType getTrainType(TrainType origType) {
