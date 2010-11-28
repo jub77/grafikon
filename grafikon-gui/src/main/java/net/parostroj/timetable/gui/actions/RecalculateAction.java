@@ -8,8 +8,8 @@ import javax.swing.AbstractAction;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.utils.ActionHandler;
-import net.parostroj.timetable.gui.utils.EDTModelAction;
+import net.parostroj.timetable.gui.modelactions.ActionHandler;
+import net.parostroj.timetable.gui.modelactions.EDTModelAction;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
 

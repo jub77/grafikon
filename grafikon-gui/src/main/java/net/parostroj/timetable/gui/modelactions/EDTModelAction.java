@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.utils;
+package net.parostroj.timetable.gui.modelactions;
 
 import java.util.List;
 import java.util.concurrent.locks.Condition;

@@ -5,8 +5,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.MainFrame;
-import net.parostroj.timetable.gui.utils.AbstractModelAction;
-import net.parostroj.timetable.gui.utils.ActionHandler;
+import net.parostroj.timetable.gui.modelactions.ActionHandler;
 import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class ExitAction extends AbstractAction {
         // exiting application
         final int result = ModelUtils.checkModelChangedContinue(model, parent);
         if (result != JOptionPane.CANCEL_OPTION) {
-            ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.programclose"), 0, new AbstractModelAction() {
+            ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.programclose"), 0, new ModelAction("Exit") {
 
                 private String errorMessage;
 

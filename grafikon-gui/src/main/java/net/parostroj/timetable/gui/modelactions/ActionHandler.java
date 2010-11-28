@@ -1,11 +1,20 @@
-package net.parostroj.timetable.gui.utils;
+package net.parostroj.timetable.gui.modelactions;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+
+import net.parostroj.timetable.gui.utils.WaitDialog;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +24,12 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 public class ActionHandler {
+
     private static final Logger LOG = LoggerFactory.getLogger(ActionHandler.class.getName());
-
     private static ActionHandler instance = new ActionHandler();
-
     private static int DEFAULT_WAIT_TIME = 200;
+    
+    private Executor executor;
 
     public static ActionHandler getInstance() {
         return instance;
@@ -28,14 +38,20 @@ public class ActionHandler {
     /**
      * Private constructor to prevent outside instantiation.
      */
-    private ActionHandler() {}
+    private ActionHandler() {
+        executor = Executors.newSingleThreadExecutor();
+    }
+    
+    public void executeActionWithoutDialog(Runnable runnable) {
+        executor.execute(runnable);
+    }
     
     public void executeAction(Component component, String comment, ModelAction action) {
         this.executeAction(component, comment, DEFAULT_WAIT_TIME, action);
     }
     
-    public void executeAction(Component component, String comment, int waitTime, ModelAction action) {
-        SwingWorker<Void, Void> worker = this.createWorker(action);
+    public void executeAction(Component component, String comment, int waitTime, ModelAction modelAction) {
+        SwingWorker<Void, Void> worker = this.createWorker(modelAction);
         this.executeAction(component, comment, waitTime, worker);
     }
 
@@ -46,7 +62,7 @@ public class ActionHandler {
     public void executeAction(Component component, String comment, int waitTime, SwingWorker<?, ?> worker) {
         Timer timer = this.createTimer(worker, waitTime, component, comment);
         timer.start();
-        worker.execute();
+        executor.execute(worker);
     }
     
     private Timer createTimer(final SwingWorker<?, ?> worker,int waitTime, final Component component, final String message) {
