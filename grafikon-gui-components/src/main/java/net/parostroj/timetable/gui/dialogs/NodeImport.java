@@ -21,10 +21,10 @@ class NodeImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(ObjectWithId o) {
+    protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof Node))
-            return;
+            return null;
         Node importedNode = (Node)o;
 
         // check if the train already exist
@@ -33,7 +33,7 @@ class NodeImport extends Import {
             String message = "Station already exists: " + checkedNode;
             this.addError(importedNode, message);
             LOG.trace(message);
-            return;
+            return null;
         }
 
         // create new node
@@ -53,5 +53,6 @@ class NodeImport extends Import {
         this.getDiagram().getNet().addNode(node);
         this.addImportedObject(node);
         LOG.trace("Successfully imported node: " + node);
+        return node;
     }
 }

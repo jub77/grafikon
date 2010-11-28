@@ -20,10 +20,10 @@ public class TrainTypeImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(ObjectWithId o) {
+    protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof TrainType))
-            return;
+            return null;
         TrainType importedType = (TrainType)o;
 
         // check existence
@@ -32,7 +32,7 @@ public class TrainTypeImport extends Import {
             String message = "Train type already exists: " + checkedType;
             this.addError(importedType, message);
             LOG.trace(message);
-            return;
+            return null;
         }
 
         // create new type
@@ -49,5 +49,6 @@ public class TrainTypeImport extends Import {
         this.getDiagram().addTrainType(type);
         this.addImportedObject(type);
         LOG.trace("Successfully imported type: " + type);
+        return type;
     }
 }

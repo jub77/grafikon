@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -22,6 +23,7 @@ public abstract class Import {
         this.match = match;
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
+        this.errors = new LinkedList<ObjectWithId>();
     }
 
     protected TrainType getTrainType(TrainType origType) {
@@ -114,15 +116,13 @@ public abstract class Import {
     }
 
     public void importObjects(Collection<? extends ObjectWithId> objects) {
-        this.clean();
         for (ObjectWithId object : objects) {
             this.importObjectImpl(object);
         }
     }
 
-    public void importObject(ObjectWithId object) {
-        this.clean();
-        this.importObjectImpl(object);
+    public ObjectWithId importObject(ObjectWithId object) {
+        return this.importObjectImpl(object);
     }
 
     protected void addError(ObjectWithId o, String explanation) {
@@ -149,7 +149,7 @@ public abstract class Import {
         return importedObjects;
     }
 
-    protected abstract void importObjectImpl(ObjectWithId o);
+    protected abstract ObjectWithId importObjectImpl(ObjectWithId o);
 
     public static Import getInstance(ImportComponents components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {

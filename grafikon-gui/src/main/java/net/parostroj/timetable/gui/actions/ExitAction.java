@@ -1,12 +1,16 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.MainFrame;
 import net.parostroj.timetable.gui.modelactions.ActionHandler;
+import net.parostroj.timetable.gui.modelactions.ModelAction;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

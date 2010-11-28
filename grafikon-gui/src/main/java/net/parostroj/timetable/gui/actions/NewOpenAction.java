@@ -66,7 +66,13 @@ public class NewOpenAction extends AbstractAction {
         // loading train diagram
         final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
         final int retVal = xmlFileChooser.showOpenDialog(parent);
-        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.loadmodel"), new ModelAction() {
+        if (result == JOptionPane.YES_OPTION) {
+            SaveAction.saveModel(model.getOpenedFile(), parent, model);
+        }
+        if (retVal != JFileChooser.APPROVE_OPTION)
+            // cancel
+            return;
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.loadmodel"), new ModelAction("Open") {
 
             private TrainDiagram diagram;
             private String errorMessage;
@@ -76,17 +82,10 @@ public class NewOpenAction extends AbstractAction {
             @Override
             public void run() {
                 try {
-                    if (result == JOptionPane.YES_OPTION) {
-                        ModelUtils.saveModelData(model, model.getOpenedFile());
-                    }
                     try {
-                        if (retVal == JFileChooser.APPROVE_OPTION) {
-                            model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
-                            long time = System.currentTimeMillis();
-                            diagram = ls.load(xmlFileChooser.getSelectedFile());
-                            LOG.debug("Loaded in {}ms", System.currentTimeMillis() - time);
-                        }
+                        model.setOpenedFile(xmlFileChooser.getSelectedFile());
+                        FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
+                        diagram = ls.load(xmlFileChooser.getSelectedFile());
                     } catch (LSException e) {
                         LOG.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
@@ -138,7 +137,7 @@ public class NewOpenAction extends AbstractAction {
         if (result == JOptionPane.CANCEL_OPTION) {
             return;
         }
-        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.newmodel"), new ModelAction() {
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.newmodel"), new ModelAction("New model") {
 
             private String errorMessage;
 

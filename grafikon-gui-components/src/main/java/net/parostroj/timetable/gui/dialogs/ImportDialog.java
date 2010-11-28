@@ -9,7 +9,6 @@ import java.util.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -24,13 +23,15 @@ import net.parostroj.timetable.model.*;
  */
 public class ImportDialog extends javax.swing.JDialog {
 
+    private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
+
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
-    private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
     private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
-    private Set<ObjectWithId> importedObjects;
     private WrapperListModel<ObjectWithId> left;
     private WrapperListModel<ObjectWithId> right;
+    
+    private boolean selected;
 
     /** Creates new form ExportImportDialog */
     public ImportDialog(java.awt.Frame parent, boolean modal) {
@@ -46,6 +47,8 @@ public class ImportDialog extends javax.swing.JDialog {
         // initialize combobox for matching
         matchComboBox.addItem(ImportMatch.NAME);
         matchComboBox.addItem(ImportMatch.ID);
+        
+        selected = false;
     }
 
     /**
@@ -57,10 +60,18 @@ public class ImportDialog extends javax.swing.JDialog {
     public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram) {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
+        clear();
+        updateDialog();
+    }
+
+    /**
+     * clears selected and imported objects.
+     */
+    public void clear() {
+        selected = false;
         for (ImportComponents comps : ImportComponents.values()) {
             selectedItems.put(comps, new LinkedHashSet<ObjectWithId>());
         }
-        updateDialog();
     }
 
     /** This method is called from within the constructor to
@@ -186,48 +197,12 @@ public class ImportDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        // import things
-        importedObjects = new HashSet<ObjectWithId>();
-        List<Object> errors = new LinkedList<Object>();
-
-        // for all types
-        for (ImportComponents component : ImportComponents.values()) {
-            Set<ObjectWithId> objects = selectedItems.get(component);
-            if (objects != null) {
-                Import imp = Import.getInstance(component, diagram, libraryDiagram, this.getImportMatch());
-                imp.importObjects(objects);
-                importedObjects.addAll(imp.getImportedObjects());
-                errors.addAll(imp.getErrors());
-            }
-        }
-
-        // create string ...
-        if (!errors.isEmpty()) {
-            StringBuilder message = new StringBuilder();
-            int lineLength = 70;
-            int nextLimit = lineLength;
-            for (Object error : errors) {
-                if (message.length() != 0) {
-                    message.append(", ");
-                }
-                if (nextLimit < message.length()) {
-                    message.append('\n');
-                    nextLimit += lineLength;
-                }
-                message.append(this.getText(error));
-            }
-            JOptionPane.showConfirmDialog(this, message,
-                    ResourceLoader.getString("import.warning.title"),
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
-        }
+        selected = true;
         this.setVisible(false);
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
-        // release instances
-        this.setTrainDiagrams(null, null);
-        this.importedObjects = Collections.emptySet();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void componentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_componentComboBoxActionPerformed
@@ -288,25 +263,26 @@ public class ImportDialog extends javax.swing.JDialog {
         return model;
     }
 
-    private ImportMatch getImportMatch() {
+    public ImportMatch getImportMatch() {
         return (ImportMatch) matchComboBox.getSelectedItem();
     }
 
-    public Set<ObjectWithId> getImportedObjects() {
-        return importedObjects;
+    public Map<ImportComponents, Set<ObjectWithId>> getSelectedItems() {
+        return selectedItems;
+    }
+    
+    public TrainDiagram getLibraryDiagram() {
+        return libraryDiagram;
+    }
+    
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
-    public String getText(Object oid) {
-        if (oid instanceof Train) {
-            return ((Train) oid).getName();
-        } else if (oid instanceof Node) {
-            return ((Node) oid).getName();
-        } else if (oid instanceof TrainType) {
-            return ((TrainType) oid).getDesc();
-        } else {
-            return oid.toString();
-        }
+    public boolean isSelected() {
+        return selected;
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;

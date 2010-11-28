@@ -22,11 +22,11 @@ public class TrainImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(ObjectWithId importedObject) {
+    protected ObjectWithId importObjectImpl(ObjectWithId importedObject) {
         // check class
         if (!(importedObject instanceof Train)) {
             // skip other objects
-            return;
+            return null;
         }
         Train importedTrain = (Train)importedObject;
 
@@ -36,7 +36,7 @@ public class TrainImport extends Import {
             String message = "Train already exists: " + checkedTrain;
             this.addError(importedTrain, message);
             LOG.trace(message);
-            return;
+            return null;
         }
         // create a new train
         TrainType trainType = this.getTrainType(importedTrain.getType());
@@ -44,7 +44,7 @@ public class TrainImport extends Import {
             String message = "Train type missing: " + importedTrain.getType();
             this.addError(importedTrain, message);
             LOG.trace(message);
-            return;
+            return null;
         }
         Train train = getDiagram().createTrain(this.getId(importedTrain));
         train.setNumber(importedTrain.getNumber());
@@ -60,7 +60,7 @@ public class TrainImport extends Import {
             String message = "Error creating route for train: " + importedTrain;
             this.addError(importedTrain, message);
             LOG.trace(message);
-            return;
+            return null;
         }
         for (Triplet<RouteSegment, Track, TimeInterval> seg : route) {
             if (seg.first instanceof Node) {
@@ -80,6 +80,7 @@ public class TrainImport extends Import {
         this.getDiagram().addTrain(train);
         this.addImportedObject(train);
         LOG.trace("Successfully imported train: " + train);
+        return train;
     }
 
     private List<Triplet<RouteSegment, Track, TimeInterval>> createNewRoute(Train train) {

@@ -20,10 +20,10 @@ public class LineClassImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(ObjectWithId o) {
+    protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof LineClass))
-            return;
+            return null;
         LineClass importedLineClass = (LineClass)o;
 
         // check existence
@@ -32,7 +32,7 @@ public class LineClassImport extends Import {
             String message = "Line class already exists: " + checkedLineClass;
             this.addError(importedLineClass, message);
             LOG.trace(message);
-            return;
+            return null;
         }
 
         // create new line class
@@ -42,5 +42,6 @@ public class LineClassImport extends Import {
         this.getDiagram().getNet().addLineClass(lineClass);
         this.addImportedObject(lineClass);
         LOG.trace("Successfully imported line class: " + lineClass);
+        return lineClass;
     }
 }

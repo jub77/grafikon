@@ -32,7 +32,7 @@ public class MainFrameWindowListener extends WindowAdapter {
         super.windowClosing(e);
         final int result = ModelUtils.checkModelChangedContinue(model, parent);
         if (result != JOptionPane.CANCEL_OPTION) {
-            ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.programclose"), 0, new ModelAction() {
+            ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.programclose"), 0, new ModelAction("Exit") {
 
                 private String errorMessage;
 

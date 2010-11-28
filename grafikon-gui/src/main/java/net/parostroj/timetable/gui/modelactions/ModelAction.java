@@ -5,7 +5,7 @@ package net.parostroj.timetable.gui.modelactions;
  * 
  * @author jub
  */
-abstract class ModelAction {
+public abstract class ModelAction {
     
     private String actionName;
     

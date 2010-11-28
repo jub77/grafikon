@@ -23,10 +23,10 @@ public class EngineClassImport extends Import {
     }
 
     @Override
-    protected void importObjectImpl(ObjectWithId o) {
+    protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof EngineClass))
-            return;
+            return null;
         EngineClass importedEngineClass = (EngineClass)o;
 
         // check existence
@@ -35,7 +35,7 @@ public class EngineClassImport extends Import {
             String message = "Engine class already exists: " + checkedEngineClass;
             this.addError(importedEngineClass, message);
             LOG.trace(message);
-            return;
+            return null;
         }
 
         // create new engine class
@@ -50,7 +50,7 @@ public class EngineClassImport extends Import {
                     String message = "Line class missing: " + impEntry.getKey().getName();
                     this.addError(importedEngineClass, message);
                     LOG.trace(message);
-                    return;
+                    return null;
                 }
                 row.setWeightInfo(lineClass, impEntry.getValue());
             }
@@ -61,5 +61,6 @@ public class EngineClassImport extends Import {
         this.getDiagram().addEngineClass(engineClass);
         this.addImportedObject(engineClass);
         LOG.trace("Successfully imported engine class: " + engineClass);
+        return engineClass;
     }
 }

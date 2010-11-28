@@ -1,16 +1,10 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 
 /**
  * Export/Import components.
@@ -18,20 +12,26 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 public enum ImportComponents {
-    NODES("import.stations"),
-    TRAIN_TYPES("import.train_types"),
-    LINE_CLASSES("import.line_classes"),
-    ENGINE_CLASSES("import.engine_classes"),
-    TRAINS("import.trains");
+    NODES("import.stations", Node.class),
+    TRAIN_TYPES("import.train_types", TrainType.class),
+    LINE_CLASSES("import.line_classes", LineClass.class),
+    ENGINE_CLASSES("import.engine_classes", EngineClass.class),
+    TRAINS("import.trains", Train.class);
 
     private String key;
+    private Class<?> clazz;
 
-    private ImportComponents(String key) {
+    private ImportComponents(String key, Class<?> clazz) {
         this.key = key;
+        this.clazz = clazz;
     }
 
     public String getKey() {
         return key;
+    }
+    
+    public Class<?> getComponentClass() {
+        return clazz;
     }
 
     @Override
@@ -76,5 +76,13 @@ public enum ImportComponents {
 
     public boolean sorted() {
         return this == NODES || this == TRAINS;
+    }
+    
+    public static ImportComponents getByComponentClass(Class<?> clazz) {
+        for (ImportComponents comp : values()) {
+            if (comp.getComponentClass().equals(clazz))
+                return comp;
+        }
+        return null;
     }
 }

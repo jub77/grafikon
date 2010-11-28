@@ -6,6 +6,8 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -60,12 +62,23 @@ public class ActionHandler {
     }
 
     public void executeAction(Component component, String comment, int waitTime, SwingWorker<?, ?> worker) {
-        Timer timer = this.createTimer(worker, waitTime, component, comment);
-        timer.start();
+        final Timer timer = this.createTimer(worker, waitTime, component, comment);
+        worker.addPropertyChangeListener(new PropertyChangeListener() {
+            
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                LOG.trace(String.format("Event received: %s, %s, %s", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue()));
+                if ("state".equals(evt.getPropertyName())) {
+                    if (evt.getNewValue() == SwingWorker.StateValue.STARTED) {
+                        timer.start();
+                    }
+                }
+            }
+        });
         executor.execute(worker);
     }
     
-    private Timer createTimer(final SwingWorker<?, ?> worker,int waitTime, final Component component, final String message) {
+    private Timer createTimer(final SwingWorker<?, ?> worker, int waitTime, final Component component, final String message) {
         Timer timer = new Timer(waitTime, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,8 +100,11 @@ public class ActionHandler {
     private SwingWorker<Void, Void> createWorker(final ModelAction action) {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
+            private long time;
+
             @Override
             protected Void doInBackground() throws Exception {
+                time = System.currentTimeMillis();
                 // run action ...
                 action.run();
                 return null;
@@ -96,6 +112,8 @@ public class ActionHandler {
 
             @Override
             protected void done() {
+                time = System.currentTimeMillis() - time;
+                LOG.debug("{} finished in {}ms", action.getActionName(), time);
                 // run after action code in event dispatch thread
                 action.afterRun();
             }

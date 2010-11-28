@@ -245,7 +245,7 @@ public class OutputAction extends AbstractAction {
     }
 
     private void saveOutputs(final Collection<ExecutableOutput> outputs) {
-        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction() {
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction("Save outputs") {
 
             private String errorMessage;
 

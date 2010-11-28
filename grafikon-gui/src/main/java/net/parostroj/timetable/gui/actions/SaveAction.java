@@ -48,7 +48,7 @@ public class SaveAction extends AbstractAction {
             ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
             return;
         }
-        this.saveModel(model.getOpenedFile(), parent);
+        saveModel(model.getOpenedFile(), parent, model);
     }
 
     private void saveAs(Component parent) {
@@ -61,26 +61,23 @@ public class SaveAction extends AbstractAction {
         int retVal = xmlFileChooser.showSaveDialog(parent);
         if (retVal == JFileChooser.APPROVE_OPTION) {
             model.setOpenedFile(xmlFileChooser.getSelectedFile());
-            this.saveModel(xmlFileChooser.getSelectedFile(), parent);
+            saveModel(xmlFileChooser.getSelectedFile(), parent, model);
         }
     }
 
-    private void saveModel(final File file, final Component parent) {
+    public static void saveModel(final File file, final Component parent, final ApplicationModel model) {
         if (model.getDiagram() == null) {
             ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
             return;
         }
 
-        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.savemodel"), new ModelAction() {
+        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.savemodel"), new ModelAction("Save") {
             private String errorMessage = null;
 
             @Override
             public void run() {
                 try {
-                    long time = System.currentTimeMillis();
                     ModelUtils.saveModelData(model, file);
-                    time = System.currentTimeMillis() - time;
-                    LOG.debug("Saved in {}ms", time);
                 } catch (LSException e) {
                     LOG.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
