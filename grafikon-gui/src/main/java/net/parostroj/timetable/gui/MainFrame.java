@@ -145,6 +145,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             item.addActionListener(oLangListener);
             outputLbuttonGroup.add(item);
         }
+
+        // look and feel
+        ActionListener lafListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lafRadioButtonMenuItemActionPerformed(e);
+            }
+        };
+        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
+            item.setActionCommand(laf.getClassName());
+            item.addActionListener(lafListener);
+            lookAndFeelbuttonGroup.add(item);
+            lookAndFeelMenu.add(item);
+        }
         
         model.addListener(this);
         model.addListener(statusBar);
@@ -272,6 +287,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         languageButtonGroup = new javax.swing.ButtonGroup();
         outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
+        lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
         applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
@@ -302,6 +318,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        lookAndFeelMenu = new javax.swing.JMenu();
+        javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -368,7 +386,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, applicationPanelLayout.createSequentialGroup()
                 .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabbedPane.getAccessibleContext().setAccessibleName(ResourceLoader.getString("tab.trains")); // NOI18N
@@ -491,6 +509,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         languageMenu.add(systemLanguageRadioButtonMenuItem);
 
         fileMenu.add(languageMenu);
+
+        lookAndFeelMenu.setText(ResourceLoader.getString("menu.lookandfeel")); // NOI18N
+
+        lookAndFeelbuttonGroup.add(systemLAFRadioButtonMenuItem);
+        systemLAFRadioButtonMenuItem.setSelected(true);
+        systemLAFRadioButtonMenuItem.setText(ResourceLoader.getString("menu.lookandfeel.system")); // NOI18N
+        systemLAFRadioButtonMenuItem.setActionCommand("system");
+        systemLAFRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lafRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        lookAndFeelMenu.add(systemLAFRadioButtonMenuItem);
+
+        fileMenu.add(lookAndFeelMenu);
 
         programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
         programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -866,6 +899,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         model.getProgramSettings().setGenerateTitlePageTT(selected);
     }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
 
+    private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
+    }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
+
     private void setSelectedLocale() {
         if (locale == null)
             systemLanguageRadioButtonMenuItem.setSelected(true);
@@ -941,6 +977,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // save output type
         prefs.setString("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
+
+        // save look and feel
+        prefs.setString("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
         
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -971,6 +1010,17 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             if (button.getActionCommand().equals(aC)) {
                 button.setSelected(true);
                 model.setOutputCategory(OutputCategory.fromString(button.getActionCommand()));
+                break;
+            }
+        }
+
+        // load look and feel
+        String laf = prefs.getString("look.and.feel", "system");
+        e = lookAndFeelbuttonGroup.getElements();
+        while (e.hasMoreElements()) {
+            AbstractButton button = e.nextElement();
+            if (button.getActionCommand().equals(laf)) {
+                button.setSelected(true);
                 break;
             }
         }
@@ -1015,6 +1065,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenuItem lineClassesMenuItem;
+    private javax.swing.JMenu lookAndFeelMenu;
+    private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
     private net.parostroj.timetable.gui.panes.NetPane netPane;
     private javax.swing.JMenuItem nodeTimetableListMenuItem;
     private javax.swing.JMenuItem nodeTimetableListSelectMenuItem;
