@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui;
 
+import groovy.lang.GroovyShell;
+
 import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
@@ -209,6 +211,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         
         // preload FileLoadSave
         LSFileFactory.getInstance();
+        
+        // initialize groovy
+        new GroovyShell().parse("");
     }
 
     @Override
