@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -14,17 +15,14 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.dialogs.Import;
 import net.parostroj.timetable.gui.dialogs.ImportComponents;
 import net.parostroj.timetable.gui.dialogs.ImportDialog;
-import net.parostroj.timetable.gui.modelactions.ActionHandler;
-import net.parostroj.timetable.gui.modelactions.EDTModelAction;
-import net.parostroj.timetable.gui.modelactions.ModelAction;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.utils.ReferenceHolder;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -52,79 +50,83 @@ public class ImportAction extends AbstractAction {
         // select imported model
         final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
         final int retVal = xmlFileChooser.showOpenDialog(parent);
-        final ReferenceHolder<TrainDiagram> diagram = new ReferenceHolder<TrainDiagram>();
 
+        ActionContext context = new ActionContext(parent);
         ActionHandler handler = ActionHandler.getInstance();
         
         if (retVal == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = xmlFileChooser.getSelectedFile();
-            handler.executeAction(parent,
-                    ResourceLoader.getString("wait.message.loadmodel"), new ModelAction("Library load") {
-                
+            ModelAction loadAction = new EventDispatchAfterModelAction(context) {
+
                 private String errorMessage;
+
+                @Override
+                protected void backgroundAction() {
+                    setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
+                    setWaitDialogVisible(true);
+                    long time = System.currentTimeMillis();
+                    try {
+                        try {
+                            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
+                            context.setAttribute("diagram", ls.load(selectedFile));
+                        } catch (LSException e) {
+                            LOG.warn("Error loading model.", e);
+                            if (e.getCause() instanceof FileNotFoundException)
+                                errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
+                            else
+                                errorMessage = ResourceLoader.getString("dialog.error.loading");
+                        } catch (Exception e) {
+                            LOG.warn("Error loading model.", e);
+                            errorMessage = ResourceLoader.getString("dialog.error.loading");
+                        }
+                    } finally {
+                        LOG.debug("Library loaded in {}ms", System.currentTimeMillis() - time);
+                        setWaitDialogVisible(false);
+                    }
+                }
                 
                 @Override
-                public void run() {
-                    try {
-                        FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                        diagram.set(ls.load(selectedFile));
-                    } catch (LSException e) {
-                        LOG.warn("Error loading model.", e);
-                        if (e.getCause() instanceof FileNotFoundException)
-                            errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
-                        else
-                            errorMessage = ResourceLoader.getString("dialog.error.loading");
-                    } catch (Exception e) {
-                        LOG.warn("Error loading model.", e);
-                        errorMessage = ResourceLoader.getString("dialog.error.loading");
+                protected void eventDispatchActionAfter() {
+                    if (errorMessage != null) {
+                        String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
+                        ActionUtils.showError(text, parent);
                     }
-                    ActionUtils.runInEDT(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            if (errorMessage != null) {
-                                String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-                                ActionUtils.showError(text, parent);
-                            }
-                        }
-                    });
                 }
-            });
+            };
+            handler.execute(loadAction);
         } else {
             // skip the rest
             return;
         }
-
-        handler.executeActionWithoutDialog(new Runnable() {
-
+        
+        handler.execute(new EventDispatchModelAction(context) {
+            
             @Override
-            public void run() {
-                if (diagram.get() != null)
-                    ActionUtils.runInEDT(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            importDialog.setTrainDiagrams(model.getDiagram(), diagram.get());
-                            importDialog.setLocationRelativeTo(parent);
-                            importDialog.setVisible(true);
-                        }
-                    });
+            protected void eventDispatchAction() {
+                TrainDiagram diagram = (TrainDiagram) context.getAttribute("diagram");
+                if (diagram != null) {
+                    importDialog.setTrainDiagrams(model.getDiagram(), diagram);
+                    importDialog.setLocationRelativeTo(parent);
+                    importDialog.setVisible(true);
+                }
             }
-
         });
 
-        handler.executeAction(parent, ResourceLoader.getString("wait.message.import"), new EDTModelAction<ObjectWithId>("Import") {
+        ModelAction importAction = new EventDispatchAfterModelAction(context) {
             
             private static final int CHUNK_SIZE = 10;
-            private boolean trainType;
-            private Iterator<ObjectWithId> objects = null;
             private Map<ImportComponents, Import> imports = new EnumMap<ImportComponents, Import>(ImportComponents.class);
+            private boolean trainType;
+            private int size;
 
             @Override
-            protected boolean prepareItems() throws Exception {
+            protected void backgroundAction() {
                 if (!importDialog.isSelected())
-                    return false;
-                if (objects == null) {
+                    return;
+                setWaitMessage(ResourceLoader.getString("wait.message.import"));
+                setWaitDialogVisible(true);
+                long time = System.currentTimeMillis();
+                try {
                     Map<ImportComponents, Set<ObjectWithId>> map = importDialog.getSelectedItems();
                     List<ObjectWithId> list = new LinkedList<ObjectWithId>();
                     for (ImportComponents comp : ImportComponents.values()) {
@@ -133,30 +135,63 @@ public class ImportAction extends AbstractAction {
                         imports.put(comp, Import.getInstance(comp, importDialog.getDiagram(),
                                 importDialog.getLibraryDiagram(), importDialog.getImportMatch()));
                     }
-                    objects = list.iterator();
+                    size = list.size();
+                    if (size == 0)
+                        return;
+                    int totalCount = (size - 1) / CHUNK_SIZE + 1;
+                    CountDownLatch signal = new CountDownLatch(totalCount);
+                    List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
+                    Iterator<ObjectWithId> iterator = list.iterator();
+                    int cnt = 0;
+                    while (iterator.hasNext()) {
+                        ObjectWithId o = iterator.next();
+                        batch.add(o);
+                        if (++cnt == CHUNK_SIZE) {
+                            processChunk(batch, signal);
+                            cnt = 0;
+                            batch = new LinkedList<ObjectWithId>();
+                        }
+                    }
+                    if (batch.size() > 0) {
+                        processChunk(batch, signal);
+                    }
+                    try {
+                        signal.await();
+                    } catch (InterruptedException e) {
+                        LOG.error("Recalculate - await interrupted.", e);
+                    }
+                } finally {
+                    LOG.debug("Import finished in {}ms", System.currentTimeMillis() - time);
+                    setWaitDialogVisible(false);
                 }
-                int cnt = 0;
-                while (objects.hasNext() && cnt++ < CHUNK_SIZE) {
-                    addItems(objects.next());
-                }
-                return objects.hasNext();
+            }
+
+            private void processChunk(final Collection<ObjectWithId> objects, final CountDownLatch signal) {
+                ModelActionUtilities.runLaterInEDT(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            for (ObjectWithId o : objects) {
+                                Import i = imports.get(ImportComponents.getByComponentClass(o.getClass()));
+                                if (i != null) {
+                                    if (o instanceof TrainType)
+                                        trainType = true;
+                                    ObjectWithId imported = i.importObject(o);
+                                    processImportedObject(imported);
+                                } else {
+                                    LOG.warn("No import for class {}", o.getClass().getName());
+                                }
+                            }
+                        } finally {
+                            signal.countDown();
+                        }
+                    }
+                });
             }
             
             @Override
-            protected void processItem(ObjectWithId item) throws Exception {
-                Import i = imports.get(ImportComponents.getByComponentClass(item.getClass()));
-                if (i != null) {
-                    if (item instanceof TrainType)
-                        trainType = true;
-                    ObjectWithId imported = i.importObject(item);
-                    processImportedObject(imported);
-                } else {
-                    LOG.warn("No import for class {}", item.getClass().getName());
-                }
-            }
-            
-            @Override
-            protected void itemsFinished() {
+            protected void eventDispatchActionAfter() {
                 boolean selected = importDialog.isSelected();
                 importDialog.clear();
                 if (!selected)
@@ -169,6 +204,10 @@ public class ImportAction extends AbstractAction {
                     Import i = imports.get(comp);
                     errors.addAll(i.getErrors());
                 }
+                
+                if (size > 0)
+                    model.setModelChanged(true);
+                
                 // create string ...
                 if (!errors.isEmpty()) {
                     StringBuilder message = new StringBuilder();
@@ -189,7 +228,8 @@ public class ImportAction extends AbstractAction {
                             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
                 }
             }
-        });
+        };
+        handler.execute(importAction);
     }
 
     private void processImportedObject(ObjectWithId o) {

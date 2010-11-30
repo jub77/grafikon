@@ -8,11 +8,13 @@ import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.dialogs.SelectNodesDialog;
 import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
-import net.parostroj.timetable.gui.modelactions.ActionHandler;
-import net.parostroj.timetable.gui.modelactions.ModelAction;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
@@ -245,13 +247,17 @@ public class OutputAction extends AbstractAction {
     }
 
     private void saveOutputs(final Collection<ExecutableOutput> outputs) {
-        ActionHandler.getInstance().executeAction(parent, ResourceLoader.getString("wait.message.genoutput"), new ModelAction("Save outputs") {
+        ActionContext c = new ActionContext();
+        c.setLocationComponent(parent);
+        ModelAction action = new EventDispatchAfterModelAction(c) {
 
             private String errorMessage;
 
             @Override
-            public void run() {
+            protected void backgroundAction() {
                 long time = System.currentTimeMillis();
+                setWaitMessage(ResourceLoader.getString("wait.message.genoutput"));
+                setWaitDialogVisible(true);
                 try {
                     for (ExecutableOutput output : outputs) {
                         output.execute();
@@ -259,17 +265,20 @@ public class OutputAction extends AbstractAction {
                 } catch (Exception e) {
                     LOG.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
+                } finally {
+                    setWaitDialogVisible(false);
                 }
                 time = System.currentTimeMillis() - time;
                 LOG.debug("Generated in {}ms", time);
             }
-
+            
             @Override
-            public void afterRun() {
+            protected void eventDispatchActionAfter() {
                 if (errorMessage != null) {
                     ActionUtils.showError(errorMessage + " " + outputFile.getName(), parent);
                 }
             }
-        });
+        };
+        ActionHandler.getInstance().execute(action);
     }
 }

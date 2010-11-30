@@ -206,6 +206,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
         fcf.getFileChooser(FileChooserFactory.Type.GTM);
+        
+        // preload FileLoadSave
+        LSFileFactory.getInstance();
     }
 
     @Override
