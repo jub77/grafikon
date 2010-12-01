@@ -12,16 +12,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public final class ScriptGroovy extends Script {
+public final class ScriptEngineScript extends Script {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptGroovy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptEngineScript.class);
     
     private final CompiledScript script;
+    private final Language language;
 
-    protected ScriptGroovy(String sourceCode) throws GrafikonException {
+    protected ScriptEngineScript(String sourceCode, Language language) throws GrafikonException {
         super(sourceCode);
+        this.language = language;
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("groovy");
+        ScriptEngine engine = manager.getEngineByName(language == Language.GROOVY ? "groovy" : "javascript");
         Compilable cEngine = (Compilable) engine;
         try {
             script = cEngine.compile(sourceCode);
@@ -32,7 +34,7 @@ public final class ScriptGroovy extends Script {
 
     @Override
     public Language getLanguage() {
-        return Language.GROOVY;
+        return language;
     }
 
     @Override

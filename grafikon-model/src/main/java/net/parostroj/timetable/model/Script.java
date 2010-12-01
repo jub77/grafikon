@@ -30,8 +30,8 @@ public abstract class Script {
 
     public static Script createScript(String sourceCode, Language language) throws GrafikonException {
         switch (language) {
-            case GROOVY:
-                return new ScriptGroovy(sourceCode);
+            case GROOVY: case JAVASCRIPT:
+                return new ScriptEngineScript(sourceCode, language);
             default:
                 throw new IllegalArgumentException("No script for language available.");
         }
