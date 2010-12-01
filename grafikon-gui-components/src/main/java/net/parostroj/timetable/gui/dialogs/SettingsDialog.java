@@ -571,9 +571,16 @@ public class SettingsDialog extends javax.swing.JDialog {
         // set running time script
         if (scriptTextArea.getText() != null && !scriptTextArea.getText().equals("") &&
                 !scriptTextArea.getText().equals(diagram.getTrainsData().getRunningTimeScript().getSourceCode())) {
-            diagram.getTrainsData().setRunningTimeScript(
-                    Script.createScript(scriptTextArea.getText(),
-                    diagram.getTrainsData().getRunningTimeScript().getLanguage()));
+            try {
+                diagram.getTrainsData().setRunningTimeScript(
+                        Script.createScript(scriptTextArea.getText(),
+                        diagram.getTrainsData().getRunningTimeScript().getLanguage()));
+            } catch (GrafikonException e) {
+                JOptionPane.showMessageDialog(this.getParent(), e.getMessage(),
+                        ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+                LOG.debug("Error setting script.", e);
+                return;
+            }
             recalculate = true;
         }
 

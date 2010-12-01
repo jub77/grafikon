@@ -21,8 +21,10 @@ public abstract class Script {
     public abstract Language getLanguage();
 
     public abstract Object evaluate(Map<String, Object> binding);
+    
+    public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
-    public static Script createScript(String sourceCode, Language language) {
+    public static Script createScript(String sourceCode, Language language) throws GrafikonException {
         switch (language) {
             case GROOVY:
                 return new ScriptGroovy(sourceCode);

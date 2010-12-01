@@ -1,8 +1,11 @@
 package net.parostroj.timetable.model;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import java.util.Map;
+
+import javax.script.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Groovy script.
@@ -11,11 +14,20 @@ import java.util.Map;
  */
 public final class ScriptGroovy extends Script {
 
-    private final groovy.lang.Script groovyScript;
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptGroovy.class);
+    
+    private final CompiledScript script;
 
-    protected ScriptGroovy(String sourceCode) {
+    protected ScriptGroovy(String sourceCode) throws GrafikonException {
         super(sourceCode);
-        groovyScript = new GroovyShell().parse(getSourceCode());
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("groovy");
+        Compilable cEngine = (Compilable) engine;
+        try {
+            script = cEngine.compile(sourceCode);
+        } catch (ScriptException e) {
+            throw new GrafikonException("Couldn't create template.", e, GrafikonException.Type.SCRIPT);
+        }
     }
 
     @Override
@@ -25,8 +37,20 @@ public final class ScriptGroovy extends Script {
 
     @Override
     public Object evaluate(Map<String, Object> binding) {
-        groovyScript.setBinding(new Binding(binding));
-        return groovyScript.run();
+        try {
+            return this.evaluateWithException(binding);
+        } catch (GrafikonException e) {
+            LOG.error(e.getMessage(), e);
+            return null;
+        }
     }
 
+    @Override
+    public Object evaluateWithException(Map<String, Object> binding) throws GrafikonException {
+        try {
+            return script.eval(new SimpleBindings(binding));
+        } catch (ScriptException e) {
+            throw new GrafikonException("Couldn't evaluate script.", e, GrafikonException.Type.SCRIPT);
+        }
+    }
 }
