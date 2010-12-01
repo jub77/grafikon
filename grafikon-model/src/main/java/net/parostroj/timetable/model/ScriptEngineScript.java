@@ -28,7 +28,7 @@ public final class ScriptEngineScript extends Script {
         try {
             script = cEngine.compile(sourceCode);
         } catch (ScriptException e) {
-            throw new GrafikonException("Couldn't create template.", e, GrafikonException.Type.SCRIPT);
+            throw new GrafikonException("Couldn't create script.", e, GrafikonException.Type.SCRIPT);
         }
     }
 
