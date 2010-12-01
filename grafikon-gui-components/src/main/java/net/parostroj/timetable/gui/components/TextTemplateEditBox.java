@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.Language;
+import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.model.TextTemplate;
 
 /**

@@ -66,6 +66,6 @@ public class LoadFilter {
                 result.append(ch);
             }
         }
-        return TextTemplate.createTextTemplate(result.toString(), Language.MVEL);
+        return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.MVEL);
     }
 }

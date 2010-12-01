@@ -117,13 +117,13 @@ public class LSTrainType {
         type.setCategory(this.getCategory(diagram));
         try {
             type.setTrainNameTemplate(this.trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(this.trainNameTemplate, Language.MVEL) : null);
+                TextTemplate.createTextTemplate(this.trainNameTemplate, TextTemplate.Language.MVEL) : null);
         } catch (GrafikonException e) {
             LOG.error("Couldn't create train name template.", e);
         }
         try {
             type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, Language.MVEL) : null);
+                TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, TextTemplate.Language.MVEL) : null);
         } catch (GrafikonException e) {
             LOG.error("Couldn't create complete train name template.", e);
         }

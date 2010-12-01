@@ -63,8 +63,8 @@ public class LSTrainTypeList {
     private void createData() {
         try {
             data = new TrainsData(
-                TextTemplate.createTextTemplate(trainNameTemplate, Language.MVEL),
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate, Language.MVEL),
+                TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL),
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
                 Script.createScript(
                 "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +
@@ -81,7 +81,7 @@ public class LSTrainTypeList {
                 "}\n" +
                 "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
                 "time = ((int)((time + 40) / 60)) * 60;\n" +
-                "return time;\n", Language.GROOVY));
+                "return time;\n", Script.Language.GROOVY));
         } catch (GrafikonException e) {
             LOG.error("Couldn't create trains data." ,e);
         }

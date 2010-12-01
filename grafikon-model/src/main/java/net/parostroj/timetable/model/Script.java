@@ -9,6 +9,10 @@ import java.util.Map;
  */
 public abstract class Script {
 
+    public static enum Language {
+        GROOVY, JAVASCRIPT;
+    }
+    
     private final String sourceCode;
 
     protected Script(String sourceCode) {

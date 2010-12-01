@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.Language;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -45,7 +44,7 @@ public class LSScript {
 
     public Script createScript() throws LSException {
         try {
-            return Script.createScript(sourceCode, Language.valueOf(language));
+            return Script.createScript(sourceCode, Script.Language.valueOf(language));
         } catch (GrafikonException e) {
             throw new LSException("Error reading script.", e);
         }

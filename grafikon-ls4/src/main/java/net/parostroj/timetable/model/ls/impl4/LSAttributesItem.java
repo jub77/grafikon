@@ -118,7 +118,7 @@ public class LSAttributesItem {
 
     private Object convertTextTemplate() throws LSException {
         String languageStr = type.substring("text.template.".length());
-        Language language = Language.valueOf(languageStr);
+        TextTemplate.Language language = TextTemplate.Language.valueOf(languageStr);
         try {
             return TextTemplate.createTextTemplate(value, language);
         } catch (GrafikonException e) {

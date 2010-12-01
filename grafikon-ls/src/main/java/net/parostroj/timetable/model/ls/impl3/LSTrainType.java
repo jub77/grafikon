@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.ls.impl3;
 
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainType;
 import java.awt.Color;
 import javax.xml.bind.annotation.XmlElement;
@@ -118,9 +119,9 @@ public class LSTrainType {
         type.setCategory(this.convertToCategory(diagram));
         try {
             type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate, Language.MVEL): null);
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL): null);
             type.setTrainNameTemplate(trainNameTemplate != null ?
-                TextTemplate.createTextTemplate(trainNameTemplate, Language.MVEL) : null);
+                TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL) : null);
         } catch (GrafikonException e) {
             throw new LSException(e);
         }

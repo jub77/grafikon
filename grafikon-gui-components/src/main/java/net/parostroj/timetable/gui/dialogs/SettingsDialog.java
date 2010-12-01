@@ -40,8 +40,8 @@ public class SettingsDialog extends javax.swing.JDialog {
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.string"));
         sortComboBox.setPrototypeDisplayValue("nnnnnnnnnnnnn");
 
-        nameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
-        cNameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+        nameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
+        cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
 
         emptyWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));
         loadedWeightEditBox.setUnits(Arrays.asList(WeightUnit.values()));

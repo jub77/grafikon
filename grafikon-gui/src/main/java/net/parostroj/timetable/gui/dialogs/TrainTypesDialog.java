@@ -42,8 +42,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setComponentsEnabled(false);
-        nameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
-        cNameTemplateEditBox.setLanguages(Arrays.asList(Language.values()));
+        nameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
+        cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
     }
     
     public void setModel(ApplicationModel model) {

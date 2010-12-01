@@ -10,6 +10,10 @@ import java.util.Map;
  */
 public abstract class TextTemplate {
 
+    public static enum Language {
+        MVEL, GROOVY, PLAIN;
+    }
+    
     private final String template;
 
     protected TextTemplate(String template) {

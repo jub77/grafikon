@@ -41,7 +41,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     public EditTrainDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        routeEditBox.setLanguages(Arrays.asList(Language.values()));
+        routeEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
     }
 
     /**
