@@ -276,10 +276,10 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         binding.put("penaltySolver", ps);
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
-        if (!(result instanceof Integer))
+        if (!(result instanceof Number))
             throw new IllegalStateException("Unexpected result: " + result);
 
-        return ((Integer)result).intValue();
+        return ((Number)result).intValue();
     }
 
     @Override
