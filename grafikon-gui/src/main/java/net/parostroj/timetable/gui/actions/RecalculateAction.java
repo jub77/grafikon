@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 
 import javax.swing.AbstractAction;
 
@@ -66,6 +66,7 @@ public class RecalculateAction extends AbstractAction {
         ModelAction action = new CheckedModelAction(context) {
             
             private static final int CHUNK_SIZE = 10;
+            private CyclicBarrier barrier = new CyclicBarrier(2);
 
             @Override
             protected void action() {
@@ -76,8 +77,6 @@ public class RecalculateAction extends AbstractAction {
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis(); 
                 try {
-                    int totalCount = (size - 1) / CHUNK_SIZE + 1;
-                    CountDownLatch signal = new CountDownLatch(totalCount);
                     List<Train> batch = new LinkedList<Train>();
                     Iterator<Train> iterator = diagram.getTrains().iterator();
                     int cnt = 0;
@@ -85,18 +84,13 @@ public class RecalculateAction extends AbstractAction {
                         Train train = iterator.next();
                         batch.add(train);
                         if (++cnt == CHUNK_SIZE) {
-                            processChunk(batch, signal);
+                            processChunk(batch);
                             cnt = 0;
                             batch = new LinkedList<Train>();
                         }
                     }
                     if (batch.size() > 0) {
-                        processChunk(batch, signal);
-                    }
-                    try {
-                        signal.await();
-                    } catch (InterruptedException e) {
-                        LOG.error("Recalculate - await interrupted.", e);
+                        processChunk(batch);
                     }
                 } finally {
                     LOG.debug("{} finished in {}ms", actionName, System.currentTimeMillis() - time);
@@ -104,7 +98,7 @@ public class RecalculateAction extends AbstractAction {
                 }
             }
 
-            private void processChunk(final Collection<Train> trains, final CountDownLatch signal) {
+            private void processChunk(final Collection<Train> trains) {
                 ModelActionUtilities.runLaterInEDT(new Runnable() {
 
                     @Override
@@ -117,10 +111,19 @@ public class RecalculateAction extends AbstractAction {
                                     LOG.error("Modification of train failed.", e);
                                 }
                         } finally {
-                            signal.countDown();
+                            try {
+                                barrier.await();
+                            } catch (Exception e) {
+                                LOG.error("Recalculate action - await interrupted.", e);
+                            }
                         }
                     }
                 });
+                try {
+                    barrier.await();
+                } catch (Exception e) {
+                    LOG.error("Recalculate - await interrupted.", e);
+                }
             }
         };
         return action;
