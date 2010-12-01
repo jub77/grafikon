@@ -13,6 +13,11 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import net.parostroj.timetable.gui.actions.*;
+import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -33,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
-    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -49,7 +54,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
-        // remove hg revision if it is SNAPSHOT
         info.setText("Starting Grafikon ...\n" + version);
         this.initializeFrame();
     }
@@ -781,10 +785,30 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         settingsDialog.setLocationRelativeTo(this);
         settingsDialog.setTrainDiagram(model.getDiagram());
         settingsDialog.setVisible(true);
+        // check if recalculate should be executed
+        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        if (settingsDialog.isRecalculate()) {
+            ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
+                
+                @Override
+                public void execute(Train train) throws Exception {
+                    train.recalculate();
+                }
+            }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
+            ActionHandler.getInstance().execute(action);
+        }
         // check and send event if neccessary
         if (settingsDialog.isDiagramChanged()) {
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,model));
-            model.setModelChanged(true);
+            ModelAction action = new EventDispatchModelAction(context) {
+                
+                @Override
+                protected void eventDispatchAction() {
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
+                    // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
+                    model.setModelChanged(true);
+                }
+            };
+            ActionHandler.getInstance().execute(action);
         }
     }//GEN-LAST:event_settingsMenuItemActionPerformed
 

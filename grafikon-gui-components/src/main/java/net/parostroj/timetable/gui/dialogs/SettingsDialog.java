@@ -27,6 +27,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(SettingsDialog.class.getName());
     private boolean diagramChanged;
+    private boolean recalculate;
     private TrainDiagram diagram;
 
     /** Creates new form SettingsDialog */
@@ -35,6 +36,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         initComponents();
 
         diagramChanged = false;
+        recalculate = false;
 
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.number"));
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.string"));
@@ -65,6 +67,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     public void setTrainDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
         this.diagramChanged = false;
+        this.recalculate = false;
 
         for (Scale scale : Scale.getPredefined()) {
             scaleComboBox.addItem(scale);
@@ -168,6 +171,10 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     public boolean isDiagramChanged() {
         return diagramChanged;
+    }
+    
+    public boolean isRecalculate() {
+        return recalculate;
     }
 
     /** This method is called from within the constructor to
@@ -649,11 +656,6 @@ public class SettingsDialog extends javax.swing.JDialog {
                 diagram.setAttribute(TrainDiagram.ATTR_TO_TIME, timeRange.second);
         }
 
-        // update model
-        if (recalculate)
-            for (Train train : diagram.getTrains()) {
-                train.recalculate();
-            }
         // clear cached information for train names
         if (clear)
             for (Train train : diagram.getTrains())
@@ -662,6 +664,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.updateValues();
 
         this.setVisible(false);
+        this.recalculate = recalculate;
         this.diagramChanged = true;
     }//GEN-LAST:event_okButtonActionPerformed
 
