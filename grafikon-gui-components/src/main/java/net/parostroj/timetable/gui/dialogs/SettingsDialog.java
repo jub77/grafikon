@@ -54,6 +54,11 @@ public class SettingsDialog extends javax.swing.JDialog {
             lengthUnitComboBox.addItem(unit);
         }
 
+        scriptLanguageComboBox.setPrototypeDisplayValue("MMMMMMMMMM");
+        for (Script.Language lang : Script.Language.values()) {
+            scriptLanguageComboBox.addItem(lang);
+        }
+
         pack();
     }
 
@@ -106,6 +111,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             // script
             scriptTextArea.setText(trainsData.getRunningTimeScript().getSourceCode());
             scriptTextArea.setCaretPosition(0);
+            scriptLanguageComboBox.setSelectedItem(trainsData.getRunningTimeScript().getLanguage());
 
             // route length
             Double routeLengthRatio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
@@ -214,6 +220,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         fromTimeTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel17 = new javax.swing.JLabel();
         toTimeTextField = new javax.swing.JTextField();
+        scriptLanguageComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -264,7 +271,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
@@ -361,7 +368,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         scriptTextArea.setColumns(20);
-        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
+        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
         scriptTextArea.setRows(5);
         scrollPane.setViewportView(scriptTextArea);
 
@@ -484,6 +491,14 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(timeRangePanel, gridBagConstraints);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 10, 0, 10);
+        getContentPane().add(scriptLanguageComboBox, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -569,14 +584,15 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // set running time script
-        if (scriptTextArea.getText() != null && !scriptTextArea.getText().equals("") &&
-                !scriptTextArea.getText().equals(diagram.getTrainsData().getRunningTimeScript().getSourceCode())) {
+        boolean langSame = diagram.getTrainsData().getRunningTimeScript().getLanguage() == scriptLanguageComboBox.getSelectedItem();
+        if (!langSame || (scriptTextArea.getText() != null && !scriptTextArea.getText().equals("") &&
+                !scriptTextArea.getText().equals(diagram.getTrainsData().getRunningTimeScript().getSourceCode()))) {
             try {
                 diagram.getTrainsData().setRunningTimeScript(
                         Script.createScript(scriptTextArea.getText(),
-                        diagram.getTrainsData().getRunningTimeScript().getLanguage()));
+                        (Script.Language) scriptLanguageComboBox.getSelectedItem()));
             } catch (GrafikonException e) {
-                JOptionPane.showMessageDialog(this.getParent(), e.getMessage(),
+                JOptionPane.showMessageDialog(this.getParent(), String.format(ResourceLoader.getString("dialog.error.script"), e.getCause().getMessage()),
                         ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
                 LOG.debug("Error setting script.", e);
                 return;
@@ -686,6 +702,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JTextField rlRatioTextField;
     private javax.swing.JTextField rlUnitTextField;
     private javax.swing.JComboBox scaleComboBox;
+    private javax.swing.JComboBox scriptLanguageComboBox;
     private javax.swing.JTextArea scriptTextArea;
     private javax.swing.JComboBox sortComboBox;
     private javax.swing.JTextField stationTransferTextField;
