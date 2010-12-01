@@ -7,9 +7,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.List;
 import javax.swing.JOptionPane;
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.templates.Template;
 import net.parostroj.timetable.model.templates.TemplatesLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -25,17 +23,26 @@ public class NewModelDialog extends javax.swing.JDialog {
     
     private static final Logger LOG = LoggerFactory.getLogger(NewModelDialog.class.getName());
     
-    private ApplicationModel model;
+    public static class NewModelValues {
+
+        public String template;
+        public double timeScale;
+        public Scale scale;
+
+        public NewModelValues(String template, double timeScale, Scale scale) {
+            super();
+            this.template = template;
+            this.timeScale = timeScale;
+            this.scale = scale;
+        }
+    }
+    
+    private NewModelValues values;
     
     /** Creates new form SettingsDialog */
     public NewModelDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-    }
-    
-    public void setModel(ApplicationModel model) {
-        this.model = model;
-        
         for (Scale scale : Scale.getPredefined()) {
             scaleComboBox.addItem(scale);
         }
@@ -51,6 +58,17 @@ public class NewModelDialog extends javax.swing.JDialog {
         for (Template template : list) {
             templatesComboBox.addItem(template.getName());
         }
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b)
+            values = null;
+        super.setVisible(b);
+    }
+    
+    public NewModelValues getNewModelValues() {
+        return values;
     }
     
     /** This method is called from within the constructor to
@@ -165,22 +183,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         
         // load template
         String templateName = (String)templatesComboBox.getSelectedItem();
-        TrainDiagram diagram = null;
-        try {
-            diagram = (new TemplatesLoader()).getTemplate(templateName);
-        } catch (LSException ex) {
-            JOptionPane.showMessageDialog(this.getParent(), ex.getMessage(),
-                    ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.warn("Cannot load template.", ex);
-            return;
-        }
-        // update scale and time scale
-        diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
-        diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
-        model.setDiagram(diagram);
-        model.setOpenedFile(null);
-        model.setModelChanged(true);
-
+        values = new NewModelValues(templateName, sp, s);
         this.setVisible(false);
     }//GEN-LAST:event_okButtonActionPerformed
 

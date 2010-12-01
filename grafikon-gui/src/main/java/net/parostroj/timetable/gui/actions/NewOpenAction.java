@@ -13,10 +13,12 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog;
+import net.parostroj.timetable.gui.dialogs.NewModelDialog.NewModelValues;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.templates.TemplatesLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -43,7 +45,6 @@ public class NewOpenAction extends AbstractAction {
         this.model = model;
         if (createNewDialog) {
             newModelDialog = new NewModelDialog(owner, true);
-            newModelDialog.setModel(model);
         }
     }
 
@@ -158,8 +159,52 @@ public class NewOpenAction extends AbstractAction {
                 // create new model
                 newModelDialog.setLocationRelativeTo(parent);
                 newModelDialog.setVisible(true);
+                NewModelValues values = newModelDialog.getNewModelValues();
+                if (values != null)
+                    context.setAttribute("values", values);
+            }
+        };
+        ModelAction createAction = new EventDispatchAfterModelAction(context) {
+            
+            private NewModelDialog.NewModelValues values;
+            private TrainDiagram diagram;
+
+            protected boolean check() {
+                values = (NewModelValues) context.getAttribute("values");
+                return values != null;
+            }
+            
+            protected void backgroundAction() {
+                setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
+                setWaitDialogVisible(true);
+                long time = System.currentTimeMillis();
+                try {
+                    try {
+                        diagram = (new TemplatesLoader()).getTemplate(values.template);
+                    } catch (LSException ex) {
+                        JOptionPane.showMessageDialog(parent, ex.getMessage(),
+                                ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+                        LOG.warn("Cannot load template.", ex);
+                        return;
+                    }
+                    // update scale and time scale
+                    diagram.setAttribute(TrainDiagram.ATTR_SCALE, values.scale);
+                    diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, values.timeScale);
+                } finally {
+                    LOG.debug("Template loaded in {}ms", System.currentTimeMillis() - time);
+                    setWaitDialogVisible(false);
+                }
+            }
+            
+            protected void eventDispatchActionAfter() {
+                if (diagram != null) {
+                    model.setDiagram(diagram);
+                    model.setOpenedFile(null);
+                    model.setModelChanged(true);
+                }
             }
         };
         ActionHandler.getInstance().execute(newAction);
+        ActionHandler.getInstance().execute(createAction);
     }
 }
