@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -118,6 +118,7 @@ public class ImportAction extends AbstractAction {
             private Map<ImportComponents, Import> imports = new EnumMap<ImportComponents, Import>(ImportComponents.class);
             private boolean trainType;
             private int size;
+            private CyclicBarrier barrier = new CyclicBarrier(2);
 
             @Override
             protected void backgroundAction() {
@@ -138,8 +139,6 @@ public class ImportAction extends AbstractAction {
                     size = list.size();
                     if (size == 0)
                         return;
-                    int totalCount = (size - 1) / CHUNK_SIZE + 1;
-                    CountDownLatch signal = new CountDownLatch(totalCount);
                     List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
                     Iterator<ObjectWithId> iterator = list.iterator();
                     int cnt = 0;
@@ -147,18 +146,13 @@ public class ImportAction extends AbstractAction {
                         ObjectWithId o = iterator.next();
                         batch.add(o);
                         if (++cnt == CHUNK_SIZE) {
-                            processChunk(batch, signal);
+                            processChunk(batch);
                             cnt = 0;
                             batch = new LinkedList<ObjectWithId>();
                         }
                     }
                     if (batch.size() > 0) {
-                        processChunk(batch, signal);
-                    }
-                    try {
-                        signal.await();
-                    } catch (InterruptedException e) {
-                        LOG.error("Recalculate - await interrupted.", e);
+                        processChunk(batch);
                     }
                 } finally {
                     LOG.debug("Import finished in {}ms", System.currentTimeMillis() - time);
@@ -166,7 +160,7 @@ public class ImportAction extends AbstractAction {
                 }
             }
 
-            private void processChunk(final Collection<ObjectWithId> objects, final CountDownLatch signal) {
+            private void processChunk(final Collection<ObjectWithId> objects) {
                 ModelActionUtilities.runLaterInEDT(new Runnable() {
 
                     @Override
@@ -184,10 +178,19 @@ public class ImportAction extends AbstractAction {
                                 }
                             }
                         } finally {
-                            signal.countDown();
+                            try {
+                                barrier.await();
+                            } catch (Exception e) {
+                                LOG.error("Import action - await interrupted.", e);
+                            }
                         }
                     }
                 });
+                try {
+                    barrier.await();
+                } catch (Exception e) {
+                    LOG.error("Import - await interrupted.", e);
+                }
             }
             
             @Override
