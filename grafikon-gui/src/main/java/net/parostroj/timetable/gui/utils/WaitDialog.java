@@ -6,10 +6,17 @@
 package net.parostroj.timetable.gui.utils;
 
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Logger;
-import javax.swing.SwingWorker;
+
+import javax.swing.Timer;
+
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for showing information of long duration operation.
@@ -18,7 +25,9 @@ import javax.swing.SwingWorker;
  */
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
     
-    private static final Logger LOG = Logger.getLogger(WaitDialog.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(WaitDialog.class.getName());
+    
+    private int level = 0;
     
     /** Creates new form WaitDiag */
     public WaitDialog(java.awt.Frame parent, boolean modal) {
@@ -75,12 +84,43 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     private javax.swing.JLabel messageLabel;
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            level++;
+            if (level == 1)
+                super.setVisible(b);
+        } else {
+            level--;
+            if (level == 0)
+                super.setVisible(b);
+        }
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        LOG.finest(String.format("Event received: %s, %s, %s", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue()));
+        LOG.trace("Event received: {}, {}", evt.getPropertyName(), evt.getNewValue());
         if ("state".equals(evt.getPropertyName())) {
-            if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+            if (evt.getNewValue() == ActionContext.WaitDialogState.HIDE) {
                 this.setVisible(false);
+            } else if (evt.getNewValue() == ActionContext.WaitDialogState.SHOW) {
+                final ActionContext context = (ActionContext) evt.getSource();
+                Timer timer = new Timer(context.getDelay(), new ActionListener() {
+                    
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (context.getLocationComponent() != null)
+                            setLocationRelativeTo(context.getLocationComponent());
+                        setVisible(true);
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
             }
+        }
+        if ("description".equals(evt.getPropertyName())) {
+            if (evt.getNewValue() != null)
+                messageLabel.setText((String) evt.getNewValue());
         }
     }
 }

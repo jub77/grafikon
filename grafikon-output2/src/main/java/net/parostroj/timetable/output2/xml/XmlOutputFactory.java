@@ -17,7 +17,7 @@ import net.parostroj.timetable.output2.OutputFactory;
 public class XmlOutputFactory extends OutputFactory {
 
     private static final String TYPE = "xml";
-    private static Map<String, Class<? extends Output>> OUTPUT_TYPES;
+    private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
         OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();

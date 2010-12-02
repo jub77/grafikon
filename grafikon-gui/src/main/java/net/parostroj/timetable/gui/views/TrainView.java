@@ -7,15 +7,16 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * View of train details.
@@ -24,7 +25,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
-    private static final Logger LOG = Logger.getLogger(TrainView.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainView.class.getName());
     private ApplicationModel model;
     private Train train;
     private EditTrainDialog editDialog;
@@ -116,7 +117,11 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             copyButton.setEnabled(false);
         } else {
             // train type
-            trainTextField.setText(train.getCompleteName());
+            String name = train.getCompleteName();
+            TextTemplate routeTemplate = (TextTemplate) train.getAttribute("route");
+            if (routeTemplate != null)
+                name = String.format("%s (%s)", name, routeTemplate.evaluate(train));
+            trainTextField.setText(name);
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             techTimeTextField.setText(this.createTechTimeString(train));
             speedTextField.setEnabled(true);
@@ -255,17 +260,17 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-    getEditTrainDialog().getSelectedTrainData();
-    getEditTrainDialog().setLocationRelativeTo(this);
-    getEditTrainDialog().setVisible(true);
-}//GEN-LAST:event_editButtonActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        getEditTrainDialog().getSelectedTrainData();
+        getEditTrainDialog().setLocationRelativeTo(this);
+        getEditTrainDialog().setVisible(true);
+    }//GEN-LAST:event_editButtonActionPerformed
 
-private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
-    CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true, model, train);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-}//GEN-LAST:event_copyButtonActionPerformed
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true, model, train);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_copyButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -324,7 +329,7 @@ private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                     }
                     shownColumns.add(ac);
                 } catch (NumberFormatException e) {
-                    LOG.log(Level.WARNING, "Cannot load columns order for train view: {0}", cStr);
+                    LOG.warn("Cannot load columns order for train view: {}", cStr);
                 }
             }
         }

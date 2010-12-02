@@ -2,8 +2,10 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Language;
+
+import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for script.
@@ -40,7 +42,11 @@ public class LSScript {
         this.sourceCode = sourceCode;
     }
 
-    public Script createScript() {
-        return Script.createScript(sourceCode, Language.valueOf(language));
+    public Script createScript() throws LSException {
+        try {
+            return Script.createScript(sourceCode, Script.Language.valueOf(language));
+        } catch (GrafikonException e) {
+            throw new LSException("Error reading script.", e);
+        }
     }
 }

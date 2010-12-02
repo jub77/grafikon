@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
 import net.parostroj.timetable.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class tracks changes in the model in order to provides a list
@@ -23,7 +23,7 @@ import net.parostroj.timetable.utils.Pair;
  */
 class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTracker {
 
-    private static final Logger LOG = Logger.getLogger(ChangesTrackerImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ChangesTrackerImpl.class.getName());
 
     private List<DiagramChangeSetImpl> sets;
     private TrackedCheckVisitor trackedVisitor;
@@ -58,7 +58,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     public void addChange(DiagramChange change) {
         if (_currentChangeSet == null) {
             String message = "Current change set is empty.";
-            LOG.log(Level.WARNING, message);
+            LOG.warn(message);
             throw new IllegalStateException(message);
         }
         List<Pair<DiagramChange, ChangesTrackerEvent.Type>> arChanges = _currentChangeSet.addChange(change);
@@ -181,7 +181,7 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
             ilv++;
             lastVersion = Integer.toString(ilv);
         } catch (NumberFormatException e) {
-            LOG.log(Level.WARNING, "Cannot parse version string: {0} ({1})", new Object[]{lastVersion, e.getMessage()});
+            LOG.warn("Cannot parse version string: {} ({})", lastVersion, e.getMessage());
             lastVersion = "1";
         }
         return lastVersion;

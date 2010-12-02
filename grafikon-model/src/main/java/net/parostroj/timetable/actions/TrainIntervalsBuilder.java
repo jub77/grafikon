@@ -2,9 +2,10 @@ package net.parostroj.timetable.actions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder for creating trains.
@@ -13,8 +14,7 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public class TrainIntervalsBuilder {
 
-    private static final Logger LOG = Logger.getLogger(TrainIntervalsBuilder.class.getName());
-    private TrainDiagram diagram;
+    private static final Logger LOG = LoggerFactory.getLogger(TrainIntervalsBuilder.class.getName());
     private Train train;
     private TimeInterval lastInterval;
     private int startTime;
@@ -22,7 +22,6 @@ public class TrainIntervalsBuilder {
     private List<TimeInterval> timeIntervals;
 
     public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
-        this.diagram = diagram;
         this.train = train;
         this.lastInterval = null;
         this.startTime = startTime;
@@ -32,7 +31,7 @@ public class TrainIntervalsBuilder {
 
     public void addNode(String intervalId, Node node, NodeTrack track, int stop, Attributes attributes) {
         if (intervalId == null) {
-            LOG.warning("Adding interval with not specified id (fix - generated): " + node);
+            LOG.warn("Adding interval with not specified id (fix - generated): {}", node);
             intervalId = IdGenerator.getInstance().getId();
         }
         if (finished) {
@@ -54,7 +53,7 @@ public class TrainIntervalsBuilder {
 
     public void addLine(String intervalId, Line line, LineTrack track, int speed, Attributes attributes) {
         if (intervalId == null) {
-            LOG.warning("Adding interval with not specified id (fix - generated): " + line);
+            LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
         }
         if (finished) {

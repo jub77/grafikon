@@ -1,7 +1,0 @@
-  <tr style="height: 4.5mm; font-size: 3.5mm">
-    <td colspan=3 style="border-width: 0.4mm 0.2mm 0.4mm 0mm; text-align: right;">%4$s &nbsp;. . . &nbsp;</td>
-    <td style="border-width: 0.4mm 0.2mm 0.4mm 0mm; text-align: center;"><b>%1$s</b></td>
-    <td style="border-width: 0.4mm 0.2mm 0.4mm 0mm; text-align: center;">+</td>
-    <td style="border-width: 0.4mm 0.2mm 0.4mm 0mm; text-align: center;">%2$s</td>
-    <td colspan="4" style="border-width: 0.4mm 0mm 0.4mm 0mm;">&nbsp;= %3$s</td>
-  </tr>

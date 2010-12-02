@@ -184,5 +184,4 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
-    
 }

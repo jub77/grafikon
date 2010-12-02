@@ -5,6 +5,7 @@ import javax.swing.DefaultListModel;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -47,12 +48,8 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         }
         // update list of routes
         routesList.setModel(new DefaultListModel());
-        String prototype = "";
         for (Route r : diagram.getRoutes()) {
-            ((DefaultListModel) routesList.getModel()).addElement(r);
-            if (r.toString().length() > prototype.length()) {
-                prototype = r.toString();
-            }
+            ((DefaultListModel) routesList.getModel()).addElement(new Wrapper<Route>(r));
         }
 
         deleteButton.setEnabled(routesList.getSelectedIndex() != -1);
@@ -84,6 +81,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         throughTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         routeNameTextField = new javax.swing.JTextField();
+        netPartCheckBox = new javax.swing.JCheckBox();
 
         FormListener formListener = new FormListener();
 
@@ -116,18 +114,19 @@ public class EditRoutesDialog extends javax.swing.JDialog {
 
         jLabel3.setText(ResourceLoader.getString("edit.routes.routename")); // NOI18N
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
+        netPartCheckBox.setText(bundle.getString("edit.routes.net.part")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exitButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                    .addComponent(newButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -143,7 +142,10 @@ public class EditRoutesDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(routeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(routeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(netPartCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -151,7 +153,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -168,6 +170,8 @@ public class EditRoutesDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(throughButton)
                             .addComponent(throughTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(netPartCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(newButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -224,15 +228,18 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         // do not create route with duplicate nodes
         if (newRoute.checkDuplicateNodes()) {
             return;
-        // set name
         }
+        // set name
         if (routeNameTextField.getText() != null && !"".equals(routeNameTextField.getText())) {
             newRoute.setName(routeNameTextField.getText());
         }
-        ((DefaultListModel) routesList.getModel()).addElement(newRoute);
+        // net part
+        newRoute.setNetPart(netPartCheckBox.isSelected());
+        ((DefaultListModel) routesList.getModel()).addElement(new Wrapper<Route>(newRoute));
         diagram.addRoute(newRoute);
         // clear name
         routeNameTextField.setText("");
+        netPartCheckBox.setSelected(false);
         // clear through option
         throughNodes = new ArrayList<Node>();
         throughTextField.setText(throughNodes.toString());
@@ -246,7 +253,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // delete route
-        Route deletedRoute = (Route) routesList.getSelectedValue();
+        Route deletedRoute = (Route)((Wrapper<?>) routesList.getSelectedValue()).getElement();
         diagram.removeRoute(deletedRoute);
         ((DefaultListModel) routesList.getModel()).remove(routesList.getSelectedIndex());
     }//GEN-LAST:event_deleteButtonActionPerformed
@@ -264,6 +271,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JComboBox fromComboBox;
+    private javax.swing.JCheckBox netPartCheckBox;
     private javax.swing.JButton newButton;
     private javax.swing.JTextField routeNameTextField;
     private javax.swing.JList routesList;

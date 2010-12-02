@@ -22,11 +22,8 @@ import net.parostroj.timetable.model.Train;
 public class TrainTreeNodeType implements TrainTreeNode {
 
     private List<TrainTreeNodeTrain> children;
-
     private TrainType trainType;
-
     private TrainTreeNodeRoot parent;
-    
     private TrainTreeNodeSort sort;
 
     public TrainTreeNodeType(TrainDiagram diagram, TrainType trainType, TrainTreeNodeRoot parent) {
@@ -75,7 +72,7 @@ public class TrainTreeNodeType implements TrainTreeNode {
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<?> children() {
         return Collections.enumeration(children);
     }
     

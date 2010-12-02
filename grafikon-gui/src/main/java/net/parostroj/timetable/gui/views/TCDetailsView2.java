@@ -118,16 +118,14 @@ public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationMod
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-    // call dialog
-    delegate.showEditDialog(editButton, model);
-}//GEN-LAST:event_editButtonActionPerformed
-    
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        // call dialog
+        delegate.showEditDialog(editButton, model);
+    }//GEN-LAST:event_editButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField descriptionTextField;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField nameTextField;
     // End of variables declaration//GEN-END:variables
-    
 }

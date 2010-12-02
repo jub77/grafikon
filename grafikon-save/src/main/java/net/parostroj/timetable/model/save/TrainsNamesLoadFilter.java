@@ -3,12 +3,12 @@ package net.parostroj.timetable.model.save;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Converting old style of train names into the new one ... Effectivelly
@@ -19,7 +19,7 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class TrainsNamesLoadFilter implements TrainDiagramFilter {
     
-    private static final Logger LOG = Logger.getLogger(TrainsNamesLoadFilter.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(TrainsNamesLoadFilter.class.getName());
 
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
@@ -42,10 +42,10 @@ public class TrainsNamesLoadFilter implements TrainDiagramFilter {
                     if (m.matches()) {
                         train.setNumber(m.group(1));
                     } else {
-                        LOG.log(Level.WARNING, "Cannot convert train name. Name doesn't match: " + train.getNumber());
+                        LOG.warn("Cannot convert train name. Name doesn't match: {}", train.getNumber());
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Cannot convert train name.", e);
+                    LOG.warn("Cannot convert train name.", e);
                 }
             }
         }

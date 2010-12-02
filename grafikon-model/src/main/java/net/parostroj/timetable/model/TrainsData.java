@@ -30,7 +30,9 @@ public class TrainsData {
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
         TextTemplate oldValue = this.trainNameTemplate;
         this.trainNameTemplate = trainNameTemplate;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.name.template", oldValue, this.trainNameTemplate)));
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram,
+                new AttributeChange(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE,
+                oldValue, this.trainNameTemplate)));
     }
 
     public TextTemplate getTrainCompleteNameTemplate() {
@@ -40,7 +42,9 @@ public class TrainsData {
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
         TextTemplate oldValue = this.trainCompleteNameTemplate;
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.complete.name.template", oldValue, this.trainCompleteNameTemplate)));
+        this.diagram.fireEvent(new TrainDiagramEvent(diagram,
+                new AttributeChange(TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE,
+                oldValue, this.trainCompleteNameTemplate)));
     }
 
     public SortPattern getTrainSortPattern() {

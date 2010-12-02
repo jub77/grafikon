@@ -16,6 +16,7 @@ import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.units.LengthUnit;
 
 /**
  * Application model.
@@ -134,11 +135,8 @@ public class ApplicationModel implements StorableGuiData {
         this.setSelectedEngineCycle(null);
         this.setSelectedDriverCycle(null);
         this.setSelectedTrainUnitCycle(null);
-        
-        this.diagram = diagram;
 
-        // after set checker
-        (new AfterSetChecker()).check(diagram);
+        this.diagram = diagram;
 
         this.collegue.setTrainDiagram(diagram);
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,this));
@@ -255,12 +253,18 @@ public class ApplicationModel implements StorableGuiData {
             prefs.setString("user.name", programSettings.getUserName());
         else
             prefs.remove("user.name");
+        prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
+        prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
+        prefs.setString("unit", programSettings.getLengthUnit().getKey());
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         deserializeOutputTemplates(prefs.getString("output.templates", ""));
         programSettings.setUserName(prefs.getString("user.name", null));
+        programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
+        programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
+        programSettings.setLengthUnit(LengthUnit.getByKey(prefs.getString("unit", "mm")));
     }
 
     private String getSerializedOutputTemplates() {

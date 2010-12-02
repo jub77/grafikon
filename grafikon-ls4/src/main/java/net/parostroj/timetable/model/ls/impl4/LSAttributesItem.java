@@ -1,13 +1,13 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Scale;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * One item for LSAttributes.
@@ -17,7 +17,7 @@ import net.parostroj.timetable.utils.Pair;
 @XmlType(propOrder = {"key", "value", "type"})
 public class LSAttributesItem {
 
-    private static final Logger LOG = Logger.getLogger(LSAttributesItem.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
     private String key;
     private String value;
     private String type;
@@ -45,12 +45,22 @@ public class LSAttributesItem {
         } else if (value instanceof Scale) {
             this.value = value.toString();
             this.type = "scale";
+        } else if (value instanceof LengthUnit) {
+            this.value = ((LengthUnit) value).getKey();
+            this.type = "length.unit";
+        } else if (value instanceof WeightUnit) {
+            this.value = ((WeightUnit) value).getKey();
+            this.type = "length.unit";
+        } else if (value instanceof TextTemplate) {
+            TextTemplate tt = (TextTemplate) value;
+            this.type = "text.template." + tt.getLanguage().name();
+            this.value = tt.getTemplate();
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             this.type = pair.first;
             this.value = pair.second;
         } else {
-            LOG.warning("Cannot convert value to string: " + key);
+            LOG.warn("Cannot convert value to string: {}", key);
         }
     }
 
@@ -78,7 +88,7 @@ public class LSAttributesItem {
         this.value = value;
     }
 
-    public Object convertValue(TrainDiagram diagram) {
+    public Object convertValue(TrainDiagram diagram) throws LSException {
         if (type == null) {
             return null;
         } else if (type.equals("string")) {
@@ -91,18 +101,34 @@ public class LSAttributesItem {
             return Double.valueOf(value);
         } else if (type.equals("scale")) {
             return Scale.fromString(value);
+        } else if (type.equals("length.unit")) {
+            return LengthUnit.getByKey(value);
+        } else if (type.equals("weight.unit")) {
+            return WeightUnit.getByKey(value);
+        } else if (type.startsWith("text.template.")) {
+            return this.convertTextTemplate();
         } else if (type.startsWith("model.")) {
             return this.convertModelValue(diagram);
         } else {
             // it didn't recognize the type
-            LOG.warning("Not recognized type: " + type);
+            LOG.warn("Not recognized type: {}", type);
             return null;
+        }
+    }
+
+    private Object convertTextTemplate() throws LSException {
+        String languageStr = type.substring("text.template.".length());
+        TextTemplate.Language language = TextTemplate.Language.valueOf(languageStr);
+        try {
+            return TextTemplate.createTextTemplate(value, language);
+        } catch (GrafikonException e) {
+            throw new LSException("Cannot convert template: " + e.getMessage(), e);
         }
     }
 
     private Object convertModelValue(TrainDiagram diagram) {
         if (diagram == null) {
-            LOG.warning("Cannot convert model value without diagram.");
+            LOG.warn("Cannot convert model value without diagram.");
             return null;
         } else {
             if (type.equals("model.engine.class")) {
@@ -110,7 +136,7 @@ public class LSAttributesItem {
             } else if (type.equals("model.line.class")) {
                 return diagram.getNet().getLineClassById(value);
             } else {
-                LOG.warning("Not recognized model type: " + type);
+                LOG.warn("Not recognized model type: {}", type);
                 return null;
             }
         }
@@ -126,7 +152,7 @@ public class LSAttributesItem {
             lKey = "model.line.class";
             lValue = object.getId();
         } else {
-            LOG.warning("Not recognized class: " + object.getClass().getName());
+            LOG.warn("Not recognized class: {}", object.getClass().getName());
         }
         return new Pair<String, String>(lKey, lValue);
     }

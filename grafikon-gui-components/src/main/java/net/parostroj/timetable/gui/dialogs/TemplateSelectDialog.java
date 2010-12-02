@@ -117,5 +117,4 @@ public class TemplateSelectDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField templateTextField;
     // End of variables declaration//GEN-END:variables
-
 }

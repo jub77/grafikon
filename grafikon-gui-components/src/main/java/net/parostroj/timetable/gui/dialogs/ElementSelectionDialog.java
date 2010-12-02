@@ -7,7 +7,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.parostroj.timetable.gui.helpers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
@@ -29,11 +29,11 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
      * shows dialog and returns list of selected elements. It returns
      * <code>null</code> in case cancel was pressed.
      *
-     * @param elements list of element from which the selection is done
+     * @param list list of element from which the selection is done
      * @return list of selected elements
      */
-    public List<T> selectElements(List<T> elements) {
-        elementSelectionPanel.setListForSelection(Wrapper.getWrapperList(elements));
+    public List<T> selectElements(List<? extends T> list) {
+        elementSelectionPanel.setListForSelection(Wrapper.getWrapperList(list));
         setVisible(true);
         if (ok)
             return this.getElements(elementSelectionPanel.getSelectedList());

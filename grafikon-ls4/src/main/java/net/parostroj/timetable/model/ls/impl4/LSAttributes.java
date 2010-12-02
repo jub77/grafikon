@@ -3,12 +3,14 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage class for attributes.
@@ -18,7 +20,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 @XmlRootElement(name = "attributes")
 public class LSAttributes {
 
-    private static final Logger LOG = Logger.getLogger(LSAttributes.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSAttributes.class.getName());
     private List<LSAttributesItem> attributes;
 
     /**
@@ -46,19 +48,19 @@ public class LSAttributes {
         this.attributes = attributes;
     }
 
-    public Attributes createAttributes() {
+    public Attributes createAttributes() throws LSException {
         return this.createAttributes(null);
     }
 
-    public Attributes createAttributes(TrainDiagram diagram) {
+    public Attributes createAttributes(TrainDiagram diagram) throws LSException {
         Attributes lAttributes = new Attributes();
         if (this.attributes != null) {
             for (LSAttributesItem lItem : this.attributes) {
                 Object value = lItem.convertValue(diagram);
                 if (value != null)
-                    lAttributes.put(lItem.getKey(), lItem.convertValue(diagram));
+                    lAttributes.put(lItem.getKey(), value);
                 else
-                    LOG.log(Level.WARNING, "Null value for attribute: {0}, value: {1}", new Object[]{lItem.getKey(), lItem.getValue()});
+                    LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValue());
             }
         }
         return lAttributes;

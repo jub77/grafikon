@@ -1,9 +1,11 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Import of nodes.
@@ -12,17 +14,17 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 class NodeImport extends Import {
 
-    private static final Logger LOG = Logger.getLogger(NodeImport.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(NodeImport.class.getName());
 
     public NodeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch importMatch) {
         super(diagram, libraryDiagram, importMatch);
     }
 
     @Override
-    protected void importObjectImpl(Object o) {
+    protected ObjectWithId importObjectImpl(ObjectWithId o) {
         // check class
         if (!(o instanceof Node))
-            return;
+            return null;
         Node importedNode = (Node)o;
 
         // check if the train already exist
@@ -30,8 +32,8 @@ class NodeImport extends Import {
         if (checkedNode != null) {
             String message = "Station already exists: " + checkedNode;
             this.addError(importedNode, message);
-            LOG.finer(message);
-            return;
+            LOG.trace(message);
+            return null;
         }
 
         // create new node
@@ -50,6 +52,7 @@ class NodeImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addNode(node);
         this.addImportedObject(node);
-        LOG.finer("Successfully imported node: " + node);
+        LOG.trace("Successfully imported node: " + node);
+        return node;
     }
 }

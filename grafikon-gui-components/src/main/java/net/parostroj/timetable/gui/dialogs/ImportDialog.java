@@ -5,28 +5,16 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListModel;
-import net.parostroj.timetable.gui.helpers.NodeWrapper;
-import net.parostroj.timetable.gui.helpers.TrainWrapper;
-import net.parostroj.timetable.gui.helpers.TrainsTypeWrapper;
-import net.parostroj.timetable.gui.helpers.Wrapper;
+
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.model.*;
 
 /**
  * Export/Import dialog.
@@ -35,12 +23,15 @@ import net.parostroj.timetable.model.TrainType;
  */
 public class ImportDialog extends javax.swing.JDialog {
 
-    private TrainDiagram diagram;
-    private TrainDiagram libraryDiagram;
     private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
 
-    private Map<ImportComponents, Set<Object>> selectedItems;
-    private Set<ObjectWithId> importedObjects;
+    private TrainDiagram diagram;
+    private TrainDiagram libraryDiagram;
+    private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
+    private WrapperListModel<ObjectWithId> left;
+    private WrapperListModel<ObjectWithId> right;
+    
+    private boolean selected;
 
     /** Creates new form ExportImportDialog */
     public ImportDialog(java.awt.Frame parent, boolean modal) {
@@ -48,7 +39,7 @@ public class ImportDialog extends javax.swing.JDialog {
         initComponents();
 
         // create map
-        selectedItems = new EnumMap<ImportComponents, Set<Object>>(ImportComponents.class);
+        selectedItems = new EnumMap<ImportComponents, Set<ObjectWithId>>(ImportComponents.class);
         // initialize combo box with components and create sets
         for (ImportComponents comps : ImportComponents.values()) {
             componentComboBox.addItem(comps);
@@ -56,6 +47,8 @@ public class ImportDialog extends javax.swing.JDialog {
         // initialize combobox for matching
         matchComboBox.addItem(ImportMatch.NAME);
         matchComboBox.addItem(ImportMatch.ID);
+        
+        selected = false;
     }
 
     /**
@@ -67,10 +60,18 @@ public class ImportDialog extends javax.swing.JDialog {
     public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram) {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
-        for (ImportComponents comps : ImportComponents.values()) {
-            selectedItems.put(comps, new HashSet<Object>());
-        }
+        clear();
         updateDialog();
+    }
+
+    /**
+     * clears selected and imported objects.
+     */
+    public void clear() {
+        selected = false;
+        for (ImportComponents comps : ImportComponents.values()) {
+            selectedItems.put(comps, new LinkedHashSet<ObjectWithId>());
+        }
     }
 
     /** This method is called from within the constructor to
@@ -196,60 +197,12 @@ public class ImportDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        // import things
-        importedObjects = new HashSet<ObjectWithId>();
-        List<Object> errors = new LinkedList<Object>();
-        // trains
-        Set<Object> trains = selectedItems.get(ImportComponents.TRAINS);
-        if (trains.size() != 0) {
-            TrainImport tImport = new TrainImport(diagram, libraryDiagram, this.getImportMatch());
-            tImport.importObjects(trains);
-            importedObjects.addAll(tImport.getImportedObjects());
-            errors.addAll(tImport.getErrors());
-        }
-        // import nodes
-        Set<Object> nodes = selectedItems.get(ImportComponents.NODES);
-        if (nodes.size() != 0) {
-            NodeImport nImport = new NodeImport(diagram, libraryDiagram, this.getImportMatch());
-            nImport.importObjects(nodes);
-            importedObjects.addAll(nImport.getImportedObjects());
-            errors.addAll(nImport.getErrors());
-        }
-        // import train types
-        Set<Object> types = selectedItems.get(ImportComponents.TRAIN_TYPES);
-        if (types.size() != 0) {
-            TrainTypeImport ttImport = new TrainTypeImport(diagram, libraryDiagram, this.getImportMatch());
-            ttImport.importObjects(types);
-            importedObjects.addAll(ttImport.getImportedObjects());
-            errors.addAll(ttImport.getErrors());
-        }
-
-        // create string ...
-        if (errors.size() != 0) {
-            StringBuilder message = new StringBuilder();
-            int lineLength = 70;
-            int nextLimit = lineLength;
-            for (Object error : errors) {
-                if (message.length() != 0)
-                    message.append(", ");
-                if (nextLimit < message.length()) {
-                    message.append('\n');
-                    nextLimit += lineLength;
-                }
-                message.append(this.getText(error));
-            }
-            JOptionPane.showConfirmDialog(this, message, 
-                    ResourceLoader.getString("import.warning.title"),
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
-        }
+        selected = true;
         this.setVisible(false);
-}//GEN-LAST:event_okButtonActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
-        // release instances
-        this.setTrainDiagrams(null, null);
-        this.importedObjects = Collections.emptySet();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void componentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_componentComboBoxActionPerformed
@@ -257,79 +210,77 @@ public class ImportDialog extends javax.swing.JDialog {
         this.updateDialog();
     }//GEN-LAST:event_componentComboBoxActionPerformed
 
-    @SuppressWarnings("unchecked")
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         // add object to selected
-        WrapperListModel left = (WrapperListModel)componentsList.getModel();
-        WrapperListModel right = (WrapperListModel)selectedComponentsList.getModel();
-        Object[] values = selectedComponentsList.getSelectedValues();
-        for (Object value : values) {
-            if (value instanceof Wrapper<?>) {
-                Wrapper<?> w = (Wrapper<?>)value;
-                right.removeWrapper(w);
-                left.addWrapper(w);
-            }
+        int[] values = selectedComponentsList.getSelectedIndices();
+        List<Wrapper<ObjectWithId>> toBeRemoved = new LinkedList<Wrapper<ObjectWithId>>();
+        for (int ind : values) {
+            Wrapper<ObjectWithId> wrapper = right.getIndex(ind);
+            toBeRemoved.add(wrapper);
+            left.addWrapper(wrapper);
+        }
+        for (Wrapper<ObjectWithId> w : toBeRemoved) {
+            right.removeWrapper(w);
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
-    @SuppressWarnings("unchecked")
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // remove object from selected
-        WrapperListModel left = (WrapperListModel)componentsList.getModel();
-        WrapperListModel right = (WrapperListModel)selectedComponentsList.getModel();
-        Object[] values = componentsList.getSelectedValues();
-        for (Object value : values) {
-            if (value instanceof Wrapper<?>) {
-                Wrapper<?> w = (Wrapper<?>)value;
-                left.removeWrapper(w);
-                right.addWrapper(w);
-            }
+        int[] values = componentsList.getSelectedIndices();
+        List<Wrapper<ObjectWithId>> toBeRemoved = new LinkedList<Wrapper<ObjectWithId>>();
+        for (int ind : values) {
+            Wrapper<ObjectWithId> wrapper = left.getIndex(ind);
+            toBeRemoved.add(wrapper);
+            right.addWrapper(wrapper);
+        }
+        for (Wrapper<ObjectWithId> w : toBeRemoved) {
+            left.removeWrapper(w);
         }
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void updateDialog() {
-        this.updateLists((ImportComponents)componentComboBox.getSelectedItem());
+        this.updateLists((ImportComponents) componentComboBox.getSelectedItem());
     }
 
     private void updateLists(ImportComponents comps) {
         // fill in new items
-        Set<Object> all = comps != null ? comps.getObjects(libraryDiagram) : null;
-        if (all ==null || all.size() == 0) {
+        Set<ObjectWithId> all = comps != null ? comps.getObjects(libraryDiagram) : null;
+        if (all == null || all.isEmpty()) {
             componentsList.setModel(EMPTY_LIST_MODEL);
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
             return;
         }
-        Set<Object> sel = selectedItems.get(comps);
+        Set<ObjectWithId> sel = selectedItems.get(comps);
         // remove already selected
         all.removeAll(sel);
-        fillList(comps, componentsList, all);
-        fillList(comps, selectedComponentsList, sel);
+        left = fillList(comps, componentsList, all);
+        right = fillList(comps, selectedComponentsList, sel);
     }
 
-    @SuppressWarnings("unchecked")
-    private void fillList(ImportComponents comps, JList list, Set<Object> set) {
-        WrapperListModel model = new WrapperListModel(comps.getListOfWrappers(set), set);
+    private WrapperListModel<ObjectWithId> fillList(ImportComponents comps, JList list, Set<ObjectWithId> set) {
+        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(comps.getListOfWrappers(set), set, comps.sorted());
         list.setModel(model);
+        return model;
     }
 
-    private ImportMatch getImportMatch() {
-        return (ImportMatch)matchComboBox.getSelectedItem();
+    public ImportMatch getImportMatch() {
+        return (ImportMatch) matchComboBox.getSelectedItem();
     }
 
-    public Set<ObjectWithId> getImportedObjects() {
-        return importedObjects;
+    public Map<ImportComponents, Set<ObjectWithId>> getSelectedItems() {
+        return selectedItems;
+    }
+    
+    public TrainDiagram getLibraryDiagram() {
+        return libraryDiagram;
+    }
+    
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
-    public String getText(Object oid) {
-        if (oid instanceof Train) {
-            return TrainWrapper.toString((Train)oid, TrainWrapper.Type.NAME);
-        } else if (oid instanceof Node) {
-            return NodeWrapper.toString((Node)oid);
-        } else if (oid instanceof TrainType) {
-            return TrainsTypeWrapper.toString((TrainType)oid);
-        } else {
-            return oid.toString();
-        }
+    public boolean isSelected() {
+        return selected;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

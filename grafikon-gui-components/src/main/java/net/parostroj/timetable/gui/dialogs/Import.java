@@ -1,7 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
-import java.util.logging.Logger;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -11,8 +11,6 @@ import net.parostroj.timetable.utils.IdGenerator;
  * @author jub
  */
 public abstract class Import {
-
-    private static final Logger LOG = Logger.getLogger(Import.class.getName());
 
     private ImportMatch match;
     private TrainDiagram diagram;
@@ -25,6 +23,8 @@ public abstract class Import {
         this.match = match;
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
+        this.errors = new LinkedList<ObjectWithId>();
+        this.importedObjects = new HashSet<ObjectWithId>();
     }
 
     protected TrainType getTrainType(TrainType origType) {
@@ -79,6 +79,30 @@ public abstract class Import {
         return null;
     }
 
+    protected LineClass getLineClass(LineClass origLineClass) {
+        if (match == ImportMatch.ID)
+            return diagram.getNet().getLineClassById(origLineClass.getId());
+        else {
+            for (LineClass lineClass : diagram.getNet().getLineClasses()) {
+                if (lineClass.getName().equals(origLineClass.getName()))
+                    return lineClass;
+            }
+            return null;
+        }
+    }
+
+    protected EngineClass getEngineClass(EngineClass origEngineClass) {
+        if (match == ImportMatch.ID)
+            return diagram.getEngineClassById(origEngineClass.getId());
+        else {
+            for (EngineClass engineClass : diagram.getEngineClasses()) {
+                if (engineClass.getName().equals(origEngineClass.getName()))
+                    return engineClass;
+            }
+            return null;
+        }
+    }
+
     protected String getId(ObjectWithId oid) {
         if (match == ImportMatch.ID) {
             return oid.getId();
@@ -92,16 +116,14 @@ public abstract class Import {
         importedObjects = new HashSet<ObjectWithId>();
     }
 
-    public void importObjects(Collection<Object> objects) {
-        this.clean();
-        for (Object object : objects) {
+    public void importObjects(Collection<? extends ObjectWithId> objects) {
+        for (ObjectWithId object : objects) {
             this.importObjectImpl(object);
         }
     }
 
-    public void importObject(Object object) {
-        this.clean();
-        this.importObjectImpl(object);
+    public ObjectWithId importObject(ObjectWithId object) {
+        return this.importObjectImpl(object);
     }
 
     protected void addError(ObjectWithId o, String explanation) {
@@ -128,5 +150,22 @@ public abstract class Import {
         return importedObjects;
     }
 
-    protected abstract void importObjectImpl(Object o);
+    protected abstract ObjectWithId importObjectImpl(ObjectWithId o);
+
+    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
+            TrainDiagram library, ImportMatch match) {
+        switch (components) {
+            case NODES:
+                return new NodeImport(diagram, library, match);
+            case TRAINS:
+                return new TrainImport(diagram, library, match);
+            case TRAIN_TYPES:
+                return new TrainTypeImport(diagram, library, match);
+            case LINE_CLASSES:
+                return new LineClassImport(diagram, library, match);
+            case ENGINE_CLASSES:
+                return new EngineClassImport(diagram, library, match);
+        }
+        return null;
+    }
 }

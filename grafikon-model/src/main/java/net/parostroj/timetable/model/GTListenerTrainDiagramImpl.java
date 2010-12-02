@@ -1,18 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.logging.Logger;
-import net.parostroj.timetable.model.events.EngineClassEvent;
-import net.parostroj.timetable.model.events.EngineClassListener;
-import net.parostroj.timetable.model.events.NetEvent;
-import net.parostroj.timetable.model.events.NetListener;
-import net.parostroj.timetable.model.events.TextItemEvent;
-import net.parostroj.timetable.model.events.TextItemListener;
-import net.parostroj.timetable.model.events.TrainEvent;
-import net.parostroj.timetable.model.events.TrainListener;
-import net.parostroj.timetable.model.events.TrainTypeEvent;
-import net.parostroj.timetable.model.events.TrainTypeListener;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
-import net.parostroj.timetable.model.events.TrainsCycleListener;
+import net.parostroj.timetable.model.events.*;
 
 /**
  * Listener implementation for train diagram.
@@ -22,7 +10,6 @@ import net.parostroj.timetable.model.events.TrainsCycleListener;
 class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener,
         NetListener, TrainTypeListener, TextItemListener, EngineClassListener {
 
-    private static final Logger LOG = Logger.getLogger(GTListenerTrainDiagramImpl.class.getName());
     private TrainDiagram diagram;
 
     protected GTListenerTrainDiagramImpl(TrainDiagram diagram) {

@@ -36,9 +36,9 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         if (AppPreferences.getPreferences().getBoolean("debug", false))
             setDebug();
+        setLookAndFeel();
         ApplicationStarter starter = new ApplicationStarter(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
         starter.start();
     }
@@ -48,5 +48,17 @@ public class Main {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         Level level = Level.parse(AppPreferences.getPreferences().getString("debug.level", "FINER"));
         netParostrojLogger.setLevel(level);
+    }
+
+    private static void setLookAndFeel() throws IOException {
+        String laf = AppPreferences.getPreferences().getString("look.and.feel", "system");
+        try {
+            if (laf.equals("system"))
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            else
+                UIManager.setLookAndFeel(laf);
+        } catch (Exception e) {
+            netParostrojLogger.log(Level.WARNING, "Error setting up look and feel.", e);
+        }
     }
 }

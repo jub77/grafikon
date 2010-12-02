@@ -9,6 +9,10 @@ import java.util.Map;
  */
 public abstract class Script {
 
+    public static enum Language {
+        GROOVY, JAVASCRIPT;
+    }
+    
     private final String sourceCode;
 
     protected Script(String sourceCode) {
@@ -21,11 +25,13 @@ public abstract class Script {
     public abstract Language getLanguage();
 
     public abstract Object evaluate(Map<String, Object> binding);
+    
+    public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
-    public static Script createScript(String sourceCode, Language language) {
+    public static Script createScript(String sourceCode, Language language) throws GrafikonException {
         switch (language) {
-            case GROOVY:
-                return new ScriptGroovy(sourceCode);
+            case GROOVY: case JAVASCRIPT:
+                return new ScriptEngineScript(sourceCode, language);
             default:
                 throw new IllegalArgumentException("No script for language available.");
         }

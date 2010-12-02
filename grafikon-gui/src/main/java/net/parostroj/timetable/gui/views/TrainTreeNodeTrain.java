@@ -59,7 +59,7 @@ public class TrainTreeNodeTrain implements TrainTreeNode {
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<?> children() {
         return null;
     }
 

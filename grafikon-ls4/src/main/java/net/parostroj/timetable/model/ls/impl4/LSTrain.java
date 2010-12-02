@@ -15,6 +15,7 @@ import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing trains.
@@ -152,7 +153,7 @@ public class LSTrain {
         this.start = start;
     }
     
-    public Train createTrain(TrainDiagram diagram) {
+    public Train createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
         train.setType(diagram.getTrainTypeById(type));

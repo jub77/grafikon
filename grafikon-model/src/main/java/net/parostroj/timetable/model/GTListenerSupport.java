@@ -9,7 +9,7 @@ import java.util.Set;
  * 
  * @author jub
  */
-class GTListenerSupport<T extends GTListener, E extends GTEvent> {
+class GTListenerSupport<T extends GTListener, E extends GTEvent<?>> {
 
     private Set<T> listeners;
     private GTEventSender<T, E> sender;

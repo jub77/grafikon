@@ -5,14 +5,19 @@
  */
 package net.parostroj.timetable.gui;
 
+import groovy.lang.GroovyShell;
+
 import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import net.parostroj.timetable.gui.actions.*;
+import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -22,6 +27,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,7 +38,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
-    private static final Logger LOG = Logger.getLogger(MainFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -47,7 +54,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
-        // remove hg revision if it is SNAPSHOT
         info.setText("Starting Grafikon ...\n" + version);
         this.initializeFrame();
     }
@@ -81,7 +87,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "Cannot load preferences.", e);
+            LOG.warn("Cannot load preferences.", e);
         }
 
         outputAction = new OutputAction(model, this);
@@ -145,6 +151,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             item.addActionListener(oLangListener);
             outputLbuttonGroup.add(item);
         }
+
+        // look and feel
+        ActionListener lafListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lafRadioButtonMenuItemActionPerformed(e);
+            }
+        };
+        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
+            item.setActionCommand(laf.getClassName());
+            item.addActionListener(lafListener);
+            lookAndFeelbuttonGroup.add(item);
+            lookAndFeelMenu.add(item);
+        }
         
         model.addListener(this);
         model.addListener(statusBar);
@@ -180,7 +201,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             AppPreferences.getPreferences().load();
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error loading preferences.", e);
+            LOG.error("Error loading preferences.", e);
         }
         
         this.setSelectedLocale();
@@ -191,6 +212,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
         fcf.getFileChooser(FileChooserFactory.Type.GTM);
+        
+        // preload FileLoadSave
+        LSFileFactory.getInstance();
+        
+        // initialize groovy
+        new GroovyShell().parse("");
     }
 
     @Override
@@ -258,6 +285,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
         tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
         editRoutesMenuItem.setEnabled(model.getDiagram() != null);
+        trainTimetableListByRoutesMenuItem.setEnabled(model.getDiagram() != null);
     }
     
     /** This method is called from within the constructor to
@@ -271,6 +299,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         languageButtonGroup = new javax.swing.ButtonGroup();
         outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
+        lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
         applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
@@ -301,6 +330,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        lookAndFeelMenu = new javax.swing.JMenu();
+        javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -317,6 +348,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         epListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
         trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
+        trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
         ecListSelectMenuItem = new javax.swing.JMenuItem();
         tucListSelectMenuItem = new javax.swing.JMenuItem();
@@ -330,6 +362,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
@@ -365,7 +398,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, applicationPanelLayout.createSequentialGroup()
                 .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabbedPane.getAccessibleContext().setAccessibleName(ResourceLoader.getString("tab.trains")); // NOI18N
@@ -489,6 +522,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(languageMenu);
 
+        lookAndFeelMenu.setText(ResourceLoader.getString("menu.lookandfeel")); // NOI18N
+
+        lookAndFeelbuttonGroup.add(systemLAFRadioButtonMenuItem);
+        systemLAFRadioButtonMenuItem.setSelected(true);
+        systemLAFRadioButtonMenuItem.setText(ResourceLoader.getString("menu.lookandfeel.system")); // NOI18N
+        systemLAFRadioButtonMenuItem.setActionCommand("system");
+        systemLAFRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lafRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        lookAndFeelMenu.add(systemLAFRadioButtonMenuItem);
+
+        fileMenu.add(lookAndFeelMenu);
+
         programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
         programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -559,6 +607,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByDcSelectMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc.select")); // NOI18N
         trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
+
+        trainTimetableListByRoutesMenuItem.setAction(outputAction);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        trainTimetableListByRoutesMenuItem.setText(bundle.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
+        trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
+        actionMenu.add(trainTimetableListByRoutesMenuItem);
 
         nodeTimetableListSelectMenuItem.setAction(outputAction);
         nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
@@ -635,6 +689,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         outputTypeMenu.add(xmlRadioButtonMenuItem);
 
         actionMenu.add(outputTypeMenu);
+
+        genTitlePageTTCheckBoxMenuItem.setSelected(true);
+        genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        actionMenu.add(genTitlePageTTCheckBoxMenuItem);
 
         menuBar.add(actionMenu);
 
@@ -718,131 +781,158 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    settingsDialog.setLocationRelativeTo(this);
-    settingsDialog.setTrainDiagram(model.getDiagram());
-    settingsDialog.setVisible(true);
-    // check and send event if neccessary
-    if (settingsDialog.isDiagramChanged()) {
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,model));
-        model.setModelChanged(true);
-    }
-}//GEN-LAST:event_settingsMenuItemActionPerformed
+    private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
+        settingsDialog.setLocationRelativeTo(this);
+        settingsDialog.setTrainDiagram(model.getDiagram());
+        settingsDialog.setVisible(true);
+        // check if recalculate should be executed
+        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        if (settingsDialog.isRecalculate()) {
+            ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
+                
+                @Override
+                public void execute(Train train) throws Exception {
+                    train.recalculate();
+                }
+            }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
+            ActionHandler.getInstance().execute(action);
+        }
+        // check and send event if neccessary
+        if (settingsDialog.isDiagramChanged()) {
+            ModelAction action = new EventDispatchModelAction(context) {
+                
+                @Override
+                protected void eventDispatchAction() {
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
+                    // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
+                    model.setModelChanged(true);
+                }
+            };
+            ActionHandler.getInstance().execute(action);
+        }
+    }//GEN-LAST:event_settingsMenuItemActionPerformed
 
-private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
-    imagesDialog.setLocationRelativeTo(this);
-    imagesDialog.setVisible(true);
-}//GEN-LAST:event_imagesMenuItemActionPerformed
+    private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
+        imagesDialog.setLocationRelativeTo(this);
+        imagesDialog.setVisible(true);
+    }//GEN-LAST:event_imagesMenuItemActionPerformed
 
-private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
-    infoDialog.setLocationRelativeTo(this);
-    infoDialog.updateValues();
-    infoDialog.setVisible(true);
-}//GEN-LAST:event_infoMenuItemActionPerformed
+    private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
+        infoDialog.setLocationRelativeTo(this);
+        infoDialog.updateValues();
+        infoDialog.setVisible(true);
+    }//GEN-LAST:event_infoMenuItemActionPerformed
 
-private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
-    if (systemLanguageRadioButtonMenuItem.isSelected())
-        locale = null;
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
-    }
-}//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
+    private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
+        if (systemLanguageRadioButtonMenuItem.isSelected())
+            locale = null;
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
+        }
+    }//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
 
-private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
-    if (oSystemLRadioButtonMenuItem.isSelected())
-        model.setOutputLocale(null);
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
-    }
-}//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
+    private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
+        if (oSystemLRadioButtonMenuItem.isSelected())
+            model.setOutputLocale(null);
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
+        }
+    }//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
 
-private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
-    trainTypesDialog.updateValues();
-    trainTypesDialog.setLocationRelativeTo(this);
-    trainTypesDialog.setVisible(true);
-}//GEN-LAST:event_trainTypesMenuItemActionPerformed
+    private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
+        trainTypesDialog.updateValues();
+        trainTypesDialog.setLocationRelativeTo(this);
+        trainTypesDialog.setVisible(true);
+    }//GEN-LAST:event_trainTypesMenuItemActionPerformed
 
-private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
-    lineClassesDialog.updateValues();
-    lineClassesDialog.setLocationRelativeTo(this);
-    lineClassesDialog.setVisible(true);
-}//GEN-LAST:event_lineClassesMenuItemActionPerformed
+    private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
+        lineClassesDialog.updateValues();
+        lineClassesDialog.setLocationRelativeTo(this);
+        lineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_lineClassesMenuItemActionPerformed
 
-private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
-    engineClassesDialog.updateValues();
-    engineClassesDialog.setLocationRelativeTo(this);
-    engineClassesDialog.setVisible(true);
-}//GEN-LAST:event_weightTablesMenuItemActionPerformed
+    private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
+        engineClassesDialog.updateValues();
+        engineClassesDialog.setLocationRelativeTo(this);
+        engineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_weightTablesMenuItemActionPerformed
 
-private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
-    trainsPane.editColumns();
-}//GEN-LAST:event_columnsMenuItemActionPerformed
+    private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
+        trainsPane.editColumns();
+    }//GEN-LAST:event_columnsMenuItemActionPerformed
 
-private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
-    trainsPane.sortColumns();
-}//GEN-LAST:event_sortColumnsMenuItemActionPerformed
+    private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
+        trainsPane.sortColumns();
+    }//GEN-LAST:event_sortColumnsMenuItemActionPerformed
 
-private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
-    trainsPane.resizeColumns();
-}//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
+    private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
+        trainsPane.resizeColumns();
+    }//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
 
-private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
-    TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
-    dialog.setTrainDiagram(model.getDiagram());
-    dialog.updateValues();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+    private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
+        TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
+        dialog.setTrainDiagram(model.getDiagram());
+        dialog.updateValues();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_penaltyTableMenuItemActionPerformed
 
-}//GEN-LAST:event_penaltyTableMenuItemActionPerformed
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        // show about dialog
+        ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
+        LSFileFactory f = LSFileFactory.getInstance();
+        FileLoadSave fls = null;
+        try {
+            fls = f.createLatestForSave();
+        } catch (LSException e) {
+            LOG.warn("Cannot create FileLoadSave", e);
+        }
+        AboutDialog dialog = new AboutDialog(this, true,
+                String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
+                getClass().getResource(aboutBundle.getString("image")), true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
-private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-    // show about dialog
-    ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
-    LSFileFactory f = LSFileFactory.getInstance();
-    FileLoadSave fls = null;
-    try {
-        fls = f.createLatestForSave();
-    } catch (LSException e) {
-        LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
-    }
-    AboutDialog dialog = new AboutDialog(this, true,
-            String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
-            getClass().getResource(aboutBundle.getString("image")), true);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-}//GEN-LAST:event_aboutMenuItemActionPerformed
+    private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
+        // get output type
+        OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
+        model.setOutputCategory(type);
+    }//GEN-LAST:event_outputTypeActionPerformed
 
-private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
-    // get output type
-    OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
-    model.setOutputCategory(type);
-}//GEN-LAST:event_outputTypeActionPerformed
+    private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
+        EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
+        editRoutesDialog.setLocationRelativeTo(this);
+        editRoutesDialog.showDialog(model.getDiagram());
+    }//GEN-LAST:event_editRoutesMenuItemActionPerformed
 
-private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
-    EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
-    editRoutesDialog.setLocationRelativeTo(this);
-    editRoutesDialog.showDialog(model.getDiagram());
-}//GEN-LAST:event_editRoutesMenuItemActionPerformed
+    private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
+        TextItemsDialog dialog = new TextItemsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }//GEN-LAST:event_textItemsMenuItemActionPerformed
 
-private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
-    TextItemsDialog dialog = new TextItemsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model.getDiagram());
-    dialog.dispose();
-}//GEN-LAST:event_textItemsMenuItemActionPerformed
+    private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
+        // program settings
+        ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model);
+        dialog.dispose();
+    }//GEN-LAST:event_programSettingsMenuItemActionPerformed
 
-private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
-    // program settings
-    ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model);
-    dialog.dispose();
-}//GEN-LAST:event_programSettingsMenuItemActionPerformed
+    private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
+        boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        trainsPane.setVisibilityOfGTView(state);
+    }//GEN-LAST:event_showGTViewMenuItemActionPerformed
 
-private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
-    boolean state = ((JCheckBoxMenuItem) evt.getSource()).getState();
-    trainsPane.setVisibilityOfGTView(state);
-}//GEN-LAST:event_showGTViewMenuItemActionPerformed
+    private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        model.getProgramSettings().setGenerateTitlePageTT(selected);
+    }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+
+    private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
+    }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -887,7 +977,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             this.saveToPreferences(prefs);
             prefs.save();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error saving preferences.", ex);
+            LOG.error("Error saving preferences.", ex);
         }
     }
 
@@ -919,6 +1009,9 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 
         // save output type
         prefs.setString("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
+
+        // save look and feel
+        prefs.setString("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
         
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -953,7 +1046,19 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
         }
 
-        showGTViewMenuItem.setState(prefs.getBoolean("trains.show.gtview", true));
+        // load look and feel
+        String laf = prefs.getString("look.and.feel", "system");
+        e = lookAndFeelbuttonGroup.getElements();
+        while (e.hasMoreElements()) {
+            AbstractButton button = e.nextElement();
+            if (button.getActionCommand().equals(laf)) {
+                button.setSelected(true);
+                break;
+            }
+        }
+
+        showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
+        genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -986,11 +1091,14 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JMenuItem fileSaveMenuItem;
+    private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenuItem lineClassesMenuItem;
+    private javax.swing.JMenu lookAndFeelMenu;
+    private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
     private net.parostroj.timetable.gui.panes.NetPane netPane;
     private javax.swing.JMenuItem nodeTimetableListMenuItem;
     private javax.swing.JMenuItem nodeTimetableListSelectMenuItem;
@@ -1011,6 +1119,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem textItemsMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
+    private javax.swing.JMenuItem trainTimetableListByRoutesMenuItem;
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
     private javax.swing.JMenuItem trainTimetableListMenuItem;
     private javax.swing.JMenuItem trainTypesMenuItem;

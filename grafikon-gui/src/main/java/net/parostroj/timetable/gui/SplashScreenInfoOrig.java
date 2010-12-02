@@ -6,7 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of splash screen info for splash screen from java 1.6.
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class SplashScreenInfoOrig implements SplashScreenInfo {
 
-    private static final Logger LOG = Logger.getLogger(SplashScreenInfoOrig.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SplashScreenInfoOrig.class.getName());
     private int x,  y;
     private SplashScreen splash;
 
@@ -40,7 +41,7 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
             for (String str : texts) {
                 g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
                 g.setColor(Color.BLACK);
-                LOG.finest(String.format("Text %d,%d,%s", x, posY, str));
+                LOG.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;
             }

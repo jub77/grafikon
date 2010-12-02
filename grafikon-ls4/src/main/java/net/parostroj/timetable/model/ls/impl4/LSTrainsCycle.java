@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train cycles.
@@ -89,7 +90,7 @@ public class LSTrainsCycle {
         this.items = items;
     }
     
-    public TrainsCycle createTrainsCycle(TrainDiagram diagram) {
+    public TrainsCycle createTrainsCycle(TrainDiagram diagram) throws LSException {
         TrainsCycle cycle = new TrainsCycle(id, name, description, TrainsCycleType.valueOf(type));
         cycle.setAttributes(attributes.createAttributes(diagram));
         for (LSTrainsCycleItem item : items) {
