@@ -9,7 +9,7 @@
         <icon href="grafikon.gif"/>
         <icon href="splashscreen.png" kind="splash"/>
         <offline-allowed/>
-        <shortcut>
+        <shortcut online="false">
             <desktop/>
             <menu submenu="Grafikon"/>
         </shortcut>
