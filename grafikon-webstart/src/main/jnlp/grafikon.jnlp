@@ -17,23 +17,24 @@
     <security>
         <all-permissions/>
     </security>
+    <update check="timeout" policy="always"/>
     <resources>
         <j2se version="1.6+"/>
         <jar href="grafikon.jar" main="true" download="eager"/>
-        <jar href="grafikon-gui-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="batik-awt-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-dom-${batik.version}.jar" download="eager"/>
         <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
         <jar href="batik-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-xml-${batik.version}.jar" download="eager"/>
-        <jar href="grafikon-gui-components-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-ls-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-net-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-ls4-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-model-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-output2-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-save-${grafikon.version}.jar" download="eager"/>
-        <jar href="grafikon-templates-${grafikon.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-net-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-ls4-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-model-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-save-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-templates-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="jgraph-${jgraph.version}.jar" download="eager"/>
         <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
         <jar href="jgrapht-jdk1.5-${jgrapht.version}.jar" download="eager"/>
