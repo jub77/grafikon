@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -52,13 +53,15 @@ public class NewOpenAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         Component parent = ActionUtils.getTopLevelComponent(e.getSource());
         if (e.getActionCommand().equals("open")) {
-            this.open(parent);
+            this.open(parent, null);
         } else if (e.getActionCommand().equals("new")) {
             this.create(parent);
+        } else if (e.getActionCommand().startsWith("open:")) {
+            this.open(parent, new File(e.getActionCommand().substring("open:".length())));
         }
     }
 
-    private void open(final Component parent) {
+    private void open(final Component parent, final File preselectedFile) {
         // check changes
         final int result = ModelUtils.checkModelChangedContinue(model, parent);
         if (result == JOptionPane.CANCEL_OPTION) {
@@ -79,11 +82,19 @@ public class NewOpenAction extends AbstractAction {
             private TrainDiagram diagram;
             private String errorMessage;
             private Exception errorException;
+            private File selectedFile;
             
             @Override
             protected void eventDispatchActionBefore() {
-                xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-                retVal = xmlFileChooser.showOpenDialog(parent);
+                if (preselectedFile == null) {
+                    xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
+                    retVal = xmlFileChooser.showOpenDialog(parent);
+                    if (retVal == JFileChooser.APPROVE_OPTION)
+                        selectedFile = xmlFileChooser.getSelectedFile();
+                } else {
+                    selectedFile = preselectedFile;
+                    retVal = JFileChooser.APPROVE_OPTION;
+                }
             }
             
             @Override
@@ -95,9 +106,9 @@ public class NewOpenAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     try {
-                        model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                        FileLoadSave ls = LSFileFactory.getInstance().createForLoad(xmlFileChooser.getSelectedFile());
-                        diagram = ls.load(xmlFileChooser.getSelectedFile());
+                        model.setOpenedFile(selectedFile);
+                        FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
+                        diagram = ls.load(selectedFile);
                     } catch (LSException e) {
                         LOG.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
@@ -125,7 +136,7 @@ public class NewOpenAction extends AbstractAction {
                 if (diagram != null) {
                     model.setDiagram(diagram);
                 } else {
-                    String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
+                    String text = errorMessage + " " + selectedFile.getName();
                     if (errorException != null) {
                         text = text + "\n(" + errorException.getMessage() + ")";
                     }

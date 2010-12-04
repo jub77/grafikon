@@ -11,13 +11,12 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
+
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
-import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
-import net.parostroj.timetable.gui.actions.execution.ModelAction;
+import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -51,6 +50,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private Locale locale;
     private OutputAction outputAction;
     
+    private Map<File, JMenuItem> lastOpened;
+    
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
         info.setText("Starting Grafikon ...\n" + version);
@@ -72,6 +73,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
      */
     private void initializeFrame() {
         model = new ApplicationModel();
+        lastOpened = new HashMap<File, JMenuItem>();
 
         // set local before anything else
         String loadedLocale = null;
@@ -216,22 +218,71 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         LSFileFactory.getInstance();
         
         // initialize groovy
-        new GroovyShell().parse("");
+        new GroovyShell().parse("");        
     }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
-        if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            this.updateView();
-            tabbedPane.setEnabled(model.getDiagram() != null);
-            this.setTitleChanged(false);
+        switch (event.getType()) {
+            case SET_DIAGRAM_CHANGED:
+                this.updateView();
+                tabbedPane.setEnabled(model.getDiagram() != null);
+                this.setTitleChanged(false);
+                break;
+            case MODEL_CHANGED:
+                this.setTitleChanged(true);
+                break;
+            case MODEL_SAVED:
+                this.setTitleChanged(false);
+                break;
+            case ADD_LAST_OPENED:
+                this.addLastOpenedFile((File) event.getObject());
+                break;
+            case REMOVE_LAST_OPENED:
+                this.removeLastOpened((File) event.getObject());
+                break;
         }
-        if (event.getType() == ApplicationModelEventType.MODEL_CHANGED) {
-            this.setTitleChanged(true);
-        }
-        if (event.getType() == ApplicationModelEventType.MODEL_SAVED) {
-            this.setTitleChanged(false);
-        }
+    }
+
+    private void removeLastOpened(final File file) {
+        ModelActionUtilities.runLaterInEDT(new Runnable() {
+            
+            @Override
+            public void run() {
+                JMenuItem removed = lastOpened.remove(file);
+                if (removed != null) {
+                    fileMenu.remove(removed);
+                }
+            }
+        });
+    }
+
+    private void addLastOpenedFile(final File file) {
+        ModelActionUtilities.runLaterInEDT(new Runnable() {
+            
+            @Override
+            public void run() {
+                JMenuItem openItem = null;
+                if (!lastOpened.containsKey(file)) {
+                    openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, false));
+                    openItem.setText("x " + file.getName());
+                    openItem.setActionCommand("open:" + file.getAbsoluteFile());
+                    lastOpened.put(file, openItem);
+                } else {
+                    openItem = lastOpened.get(file);
+                    fileMenu.remove(openItem);
+                }
+                int menuItems = fileMenu.getItemCount();
+                int fileItems = lastOpened.size();
+                fileMenu.add(openItem, menuItems - 1 - fileItems);
+                // regenerate accelerators
+                for (int i = fileItems; i > 0; i--) {
+                    JMenuItem item = fileMenu.getItem(menuItems - i - 1);
+                    item.setText(Integer.toString(fileItems - i + 1) + " " + item.getText().substring(2));
+                    item.setMnemonic(Character.forDigit(fileItems - i + 1, 10));
+                }
+            }
+        });
     }
 
     private void setTitleChanged(boolean b) {
@@ -308,7 +359,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         netPane = new net.parostroj.timetable.gui.panes.NetPane();
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
-        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem fileNewMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator3 = new javax.swing.JSeparator();
         fileOpenMenuItem = new javax.swing.JMenuItem();
@@ -1093,6 +1144,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenuItem epListMenuItem;
     private javax.swing.JMenuItem fileImportMenuItem;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JMenuItem fileSaveMenuItem;

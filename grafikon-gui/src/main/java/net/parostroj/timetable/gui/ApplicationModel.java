@@ -25,6 +25,8 @@ import net.parostroj.timetable.model.units.LengthUnit;
  */
 public class ApplicationModel implements StorableGuiData {
     
+    private static final int LAST_OPENED_COUNT = 5;
+    
     private Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
     private TrainsCycle selectedEngineCycle;
@@ -40,6 +42,7 @@ public class ApplicationModel implements StorableGuiData {
     private Map<String, File> outputTemplates;
     private Locale outputLocale;
     private ProgramSettings programSettings;
+    private LinkedList<File> lastOpenedFiles;
     
     /**
      * Default constructor.
@@ -53,6 +56,7 @@ public class ApplicationModel implements StorableGuiData {
         mediator.addColleague(new ApplicationModelColleague(this));
         outputTemplates = new HashMap<String, File>();
         programSettings = new ProgramSettings();
+        lastOpenedFiles = new LinkedList<File>();
     }
 
     /**
@@ -232,6 +236,8 @@ public class ApplicationModel implements StorableGuiData {
 
     public void setOpenedFile(File openedFile) {
         this.openedFile = openedFile;
+        if (openedFile != null)
+            this.addLastOpenedFile(openedFile);
     }
 
     public Map<String, File> getOutputTemplates() {
@@ -256,6 +262,11 @@ public class ApplicationModel implements StorableGuiData {
         prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
         prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
         prefs.setString("unit", programSettings.getLengthUnit().getKey());
+        prefs.removeWithPrefix("last.opened.");
+        int i = 0;
+        for (File file : this.lastOpenedFiles) {
+            prefs.setString("last.opened." + (i++), file.getAbsolutePath());
+        }
     }
 
     @Override
@@ -265,6 +276,11 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         programSettings.setLengthUnit(LengthUnit.getByKey(prefs.getString("unit", "mm")));
+        for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
+            String filename = prefs.getString("last.opened." + i, null);
+            if (filename != null)
+                this.addLastOpenedFile(new File(filename));
+        }
     }
 
     private String getSerializedOutputTemplates() {
@@ -295,5 +311,27 @@ public class ApplicationModel implements StorableGuiData {
 
     public void setProgramSettings(ProgramSettings programSettings) {
         this.programSettings = programSettings;
+    }
+
+    public LinkedList<File> getLastOpenedFiles() {
+        return lastOpenedFiles;
+    }
+
+    public void setLastOpenedFiles(LinkedList<File> lastOpenedFiles) {
+        this.lastOpenedFiles = lastOpenedFiles;
+    }
+    
+    public void addLastOpenedFile(File file) {
+        if (!this.lastOpenedFiles.contains(file)) {
+            this.lastOpenedFiles.addFirst(file);
+            if (this.lastOpenedFiles.size() > LAST_OPENED_COUNT) {
+                File removed = this.lastOpenedFiles.removeLast();
+                this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, removed));
+            }
+        } else {
+            this.lastOpenedFiles.remove(file);
+            this.lastOpenedFiles.addFirst(file);
+        }
+        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ADD_LAST_OPENED, this, file));
     }
 }
