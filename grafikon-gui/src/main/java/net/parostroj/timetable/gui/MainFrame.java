@@ -30,7 +30,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Main frame for the application.
  *
@@ -318,6 +317,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator1 = new javax.swing.JSeparator();
         fileImportMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator5 = new javax.swing.JSeparator();
+        languageMenu = new javax.swing.JMenu();
+        systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        lookAndFeelMenu = new javax.swing.JMenu();
+        javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
+        javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        diagramMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
         editRoutesMenuItem = new javax.swing.JMenuItem();
         imagesMenuItem = new javax.swing.JMenuItem();
@@ -327,14 +334,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lineClassesMenuItem = new javax.swing.JMenuItem();
         weightTablesMenuItem = new javax.swing.JMenuItem();
         penaltyTableMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
-        languageMenu = new javax.swing.JMenu();
-        systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        lookAndFeelMenu = new javax.swing.JMenu();
-        javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        programSettingsMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
         trainTimetableListMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListMenuItem = new javax.swing.JMenuItem();
@@ -372,6 +371,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem resizeColumnsMenuItem = new javax.swing.JMenuItem();
         showGTViewMenuItem = new javax.swing.JCheckBoxMenuItem();
+        programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -435,79 +435,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(fileImportMenuItem);
         fileMenu.add(separator5);
 
-        settingsMenuItem.setText(ResourceLoader.getString("menu.file.settings")); // NOI18N
-        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settingsMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(settingsMenuItem);
-
-        editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
-        editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editRoutesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(editRoutesMenuItem);
-
-        imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
-        imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                imagesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(imagesMenuItem);
-
-        textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
-        textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textItemsMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(textItemsMenuItem);
-
-        infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
-        infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                infoMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(infoMenuItem);
-
-        trainTypesMenuItem.setText(ResourceLoader.getString("menu.file.traintypes")); // NOI18N
-        trainTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTypesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(trainTypesMenuItem);
-
-        lineClassesMenuItem.setText(ResourceLoader.getString("menu.file.lineclasses")); // NOI18N
-        lineClassesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lineClassesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(lineClassesMenuItem);
-
-        weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
-        weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                weightTablesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(weightTablesMenuItem);
-
-        penaltyTableMenuItem.setText(ResourceLoader.getString("menu.file.penaltytable")); // NOI18N
-        penaltyTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                penaltyTableMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(penaltyTableMenuItem);
-        fileMenu.add(separator2);
-
         languageMenu.setText(ResourceLoader.getString("menu.language")); // NOI18N
 
         languageButtonGroup.add(systemLanguageRadioButtonMenuItem);
@@ -536,14 +463,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lookAndFeelMenu.add(systemLAFRadioButtonMenuItem);
 
         fileMenu.add(lookAndFeelMenu);
-
-        programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
-        programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                programSettingsMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(programSettingsMenuItem);
+        fileMenu.add(separator2);
         fileMenu.add(separator4);
 
         exitMenuItem.setAction(new ExitAction(model, this));
@@ -552,8 +472,84 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         menuBar.add(fileMenu);
 
+        diagramMenu.setText(ResourceLoader.getString("menu.diagram")); // NOI18N
+
+        settingsMenuItem.setText(ResourceLoader.getString("menu.file.settings")); // NOI18N
+        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(settingsMenuItem);
+
+        editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
+        editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editRoutesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(editRoutesMenuItem);
+
+        imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
+        imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imagesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(imagesMenuItem);
+
+        textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
+        textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textItemsMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(textItemsMenuItem);
+
+        infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
+        infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(infoMenuItem);
+
+        trainTypesMenuItem.setText(ResourceLoader.getString("menu.file.traintypes")); // NOI18N
+        trainTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trainTypesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(trainTypesMenuItem);
+
+        lineClassesMenuItem.setText(ResourceLoader.getString("menu.file.lineclasses")); // NOI18N
+        lineClassesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineClassesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(lineClassesMenuItem);
+
+        weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
+        weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                weightTablesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(weightTablesMenuItem);
+
+        penaltyTableMenuItem.setText(ResourceLoader.getString("menu.file.penaltytable")); // NOI18N
+        penaltyTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                penaltyTableMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(penaltyTableMenuItem);
+
+        menuBar.add(diagramMenu);
+
         actionMenu.setAction(outputAction);
-        actionMenu.setText(ResourceLoader.getString("menu.action")); // NOI18N
+        actionMenu.setText(ResourceLoader.getString("menu.outputs")); // NOI18N
         actionMenu.setActionCommand("stations_select");
 
         trainTimetableListMenuItem.setAction(outputAction);
@@ -750,6 +746,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         settingsMenu.add(showGTViewMenuItem);
+
+        programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
+        programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                programSettingsMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(programSettingsMenuItem);
 
         menuBar.add(settingsMenu);
 
@@ -1081,6 +1085,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JPanel applicationPanel;
     private javax.swing.JMenuItem dcListMenuItem;
     private javax.swing.JMenuItem dcListSelectMenuItem;
+    private javax.swing.JMenu diagramMenu;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
     private javax.swing.JMenuItem ecListMenuItem;
     private javax.swing.JMenuItem ecListSelectMenuItem;
