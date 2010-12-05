@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.actions.ActionUtils;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.actions;
+package net.parostroj.timetable.gui.actions.execution;
 
 import java.awt.Component;
 import java.awt.Window;
@@ -6,7 +6,7 @@ import java.awt.Window;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
  * Utility class.

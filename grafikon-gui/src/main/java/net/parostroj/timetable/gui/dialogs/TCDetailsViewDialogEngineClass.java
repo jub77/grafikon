@@ -8,7 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.actions.ActionUtils;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Train;

@@ -13,7 +13,7 @@ import javax.swing.DefaultListModel;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.actions.ActionUtils;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
