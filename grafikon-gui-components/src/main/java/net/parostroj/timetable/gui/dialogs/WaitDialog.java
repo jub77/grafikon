@@ -3,7 +3,7 @@
  *
  * Created on 3. duben 2008, 22:03
  */
-package net.parostroj.timetable.gui.utils;
+package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;

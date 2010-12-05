@@ -4,7 +4,7 @@ import java.awt.Frame;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.parostroj.timetable.gui.utils.WaitDialog;
+import net.parostroj.timetable.gui.dialogs.WaitDialog;
 
 /**
  * Action handler - executes model actions.
