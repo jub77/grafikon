@@ -3,9 +3,11 @@ package net.parostroj.timetable.gui.components;
 import static net.parostroj.timetable.gui.components.GTViewSettings.*;
 
 import java.awt.*;
-import java.awt.Frame;
 import java.awt.event.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,6 +28,18 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableView.class.getName());
 
+    static {
+        ToolTipManager.sharedInstance().setReshowDelay(0);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+    }
+    
+    private interface ToolTipHelper {
+
+        public List<TrainsCycleItem> getEngineCycles(TimeInterval interval);
+        public List<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
+        public List<TrainsCycleItem> getDriverCycles(TimeInterval interval);
+    }
+
     private final static int MIN_WIDTH = 1000;
     private final static int MAX_WIDTH = 10000;
     private final static int WIDTH_STEPS = 10;
@@ -41,6 +55,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
+    
+    private TextTemplate toolTipTemplateLine;
+    private TextTemplate toolTipTemplateNode;
+    private TimeInterval lastToolTipInterval;
+    private Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
 
     /** Creates new form TrainGraphicalTimetableView */
     public GraphicalTimetableView() {
@@ -62,6 +81,32 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         trainRegionCollector = new TrainRegionCollector(SELECTION_RADIUS);
 
         this.addSizesToMenu();
+
+        // tool tips
+        ToolTipManager.sharedInstance().registerComponent(this);
+        try {
+            toolTipTemplateLine = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.line"), TextTemplate.Language.GROOVY);
+            toolTipTemplateNode = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.node"), TextTemplate.Language.GROOVY);
+        } catch (GrafikonException e) {
+            LOG.error("Error creating template for time interval.", e);
+        }
+        toolTipformattingMap.put("helper", new ToolTipHelper() {
+
+            @Override
+            public List<TrainsCycleItem> getEngineCycles(TimeInterval interval) {
+                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
+            }
+
+            @Override
+            public List<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) {
+                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.TRAIN_UNIT_CYCLE, interval);
+            }
+
+            @Override
+            public List<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
+                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
+            }
+        }); 
     }
 
     private EditRoutesDialog getRouteDialog() {
@@ -502,6 +547,29 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         }
     }//GEN-LAST:event_formMouseClicked
 
+    @Override
+    public String getToolTipText(MouseEvent event) {
+        if (trainRegionCollector == null)
+            return null;
+        List<TimeInterval> intervals = trainRegionCollector.getTrainForPoint(event.getX(), event.getY());
+        
+        if (lastToolTipInterval == null) {
+            if (!intervals.isEmpty())
+                lastToolTipInterval = intervals.get(0);
+        } else {
+            lastToolTipInterval = null;
+        }
+        return lastToolTipInterval !=null ? this.formatTimeInterval() : null;
+    }
+
+    private String formatTimeInterval() {
+        toolTipformattingMap.put("interval", lastToolTipInterval);
+        if (lastToolTipInterval.isLineOwner())
+            return toolTipTemplateLine.evaluate(toolTipformattingMap);
+        else
+            return toolTipTemplateNode.evaluate(toolTipformattingMap);
+    }
+    
     private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
         int oldIndex = list.indexOf(oldInterval);
         if (oldIndex == -1)
