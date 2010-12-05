@@ -464,83 +464,83 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
 
-private void withTracksMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withTracksMenuItemActionPerformed
-    this.settings.set(Key.TYPE, Type.WITH_TRACKS);
-    this.recreateDraw();
-}//GEN-LAST:event_withTracksMenuItemActionPerformed
+    private void withTracksMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withTracksMenuItemActionPerformed
+        this.settings.set(Key.TYPE, Type.WITH_TRACKS);
+        this.recreateDraw();
+    }//GEN-LAST:event_withTracksMenuItemActionPerformed
 
-private void classicMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classicMenuItemActionPerformed
-    this.settings.set(Key.TYPE, Type.CLASSIC);
-    this.recreateDraw();
-}//GEN-LAST:event_classicMenuItemActionPerformed
+    private void classicMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classicMenuItemActionPerformed
+        this.settings.set(Key.TYPE, Type.CLASSIC);
+        this.recreateDraw();
+    }//GEN-LAST:event_classicMenuItemActionPerformed
 
-private void routesEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_routesEditMenuItemActionPerformed
-    if (diagram == null) {
-        return;
-    }
-    getRouteDialog().setLocationRelativeTo(this.getParent());
-    getRouteDialog().showDialog(diagram);
-}//GEN-LAST:event_routesEditMenuItemActionPerformed
+    private void routesEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_routesEditMenuItemActionPerformed
+        if (diagram == null) {
+            return;
+        }
+        getRouteDialog().setLocationRelativeTo(this.getParent());
+        getRouteDialog().showDialog(diagram);
+    }//GEN-LAST:event_routesEditMenuItemActionPerformed
 
-private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-    // selection of the train
-    if (trainRegionCollector != null) {
-        List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());
-        if (trainSelector != null) {
-            if (selectedIntervals.isEmpty())
-                trainSelector.selectTrainInterval(null);
-            else {
-                TimeInterval oldInterval = trainSelector.getSelectedTrainInterval();
-                if (oldInterval == null)
-                    trainSelector.selectTrainInterval(selectedIntervals.get(0));
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // selection of the train
+        if (trainRegionCollector != null) {
+            List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());
+            if (trainSelector != null) {
+                if (selectedIntervals.isEmpty())
+                    trainSelector.selectTrainInterval(null);
                 else {
-                    TimeInterval newSelection = this.getNextSelected(selectedIntervals, oldInterval);
-                    trainSelector.selectTrainInterval(newSelection);
+                    TimeInterval oldInterval = trainSelector.getSelectedTrainInterval();
+                    if (oldInterval == null)
+                        trainSelector.selectTrainInterval(selectedIntervals.get(0));
+                    else {
+                        TimeInterval newSelection = this.getNextSelected(selectedIntervals, oldInterval);
+                        trainSelector.selectTrainInterval(newSelection);
+                    }
                 }
             }
         }
-    }
-}//GEN-LAST:event_formMouseClicked
+    }//GEN-LAST:event_formMouseClicked
 
-private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
-    int oldIndex = list.indexOf(oldInterval);
-    if (oldIndex == -1)
-        return list.get(0);
-    else {
-        Selection selection = settings.get(Key.SELECTION, Selection.class);
-        if (selection == Selection.INTERVAL) {
-            oldIndex += 1;
-            if (oldIndex >= list.size())
-                oldIndex = 0;
-            return list.get(oldIndex);
-        } else {
-            int newIndex = oldIndex;
-            Train oldTrain = oldInterval.getTrain();
-            Train selectedTrain = oldTrain;
-            do {
-                newIndex++;
-                if (newIndex >= list.size())
-                    newIndex = 0;
-                selectedTrain = list.get(newIndex).getTrain();
-            } while (selectedTrain == oldTrain && newIndex != oldIndex);
-            return list.get(newIndex);
+    private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
+        int oldIndex = list.indexOf(oldInterval);
+        if (oldIndex == -1)
+            return list.get(0);
+        else {
+            Selection selection = settings.get(Key.SELECTION, Selection.class);
+            if (selection == Selection.INTERVAL) {
+                oldIndex += 1;
+                if (oldIndex >= list.size())
+                    oldIndex = 0;
+                return list.get(oldIndex);
+            } else {
+                int newIndex = oldIndex;
+                Train oldTrain = oldInterval.getTrain();
+                Train selectedTrain = oldTrain;
+                do {
+                    newIndex++;
+                    if (newIndex >= list.size())
+                        newIndex = 0;
+                    selectedTrain = list.get(newIndex).getTrain();
+                } while (selectedTrain == oldTrain && newIndex != oldIndex);
+                return list.get(newIndex);
+            }
         }
     }
-}
 
-private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesCheckBoxMenuItemActionPerformed
-    settings.set(Key.ARRIVAL_DEPARTURE_DIGITS, addigitsCheckBoxMenuItem.isSelected());
-    settings.set(Key.EXTENDED_LINES, extendedLinesCheckBoxMenuItem.isSelected());
-    settings.set(Key.TECHNOLOGICAL_TIME, techTimeCheckBoxMenuItem.isSelected());
-    settings.set(Key.IGNORE_TIME_LIMITS, ignoreTimeLimitsCheckBoxMenuItem.isSelected());
-    settings.set(Key.TRAIN_NAMES, trainNamesCheckBoxMenuItem.isSelected());
-    if (evt.getSource() == ignoreTimeLimitsCheckBoxMenuItem) {
-        this.setTimeRange();
-        this.setGTWidth(settings);
-    }
-    // recreate draw
-    this.recreateDraw();
-}//GEN-LAST:event_preferencesCheckBoxMenuItemActionPerformed
+    private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesCheckBoxMenuItemActionPerformed
+        settings.set(Key.ARRIVAL_DEPARTURE_DIGITS, addigitsCheckBoxMenuItem.isSelected());
+        settings.set(Key.EXTENDED_LINES, extendedLinesCheckBoxMenuItem.isSelected());
+        settings.set(Key.TECHNOLOGICAL_TIME, techTimeCheckBoxMenuItem.isSelected());
+        settings.set(Key.IGNORE_TIME_LIMITS, ignoreTimeLimitsCheckBoxMenuItem.isSelected());
+        settings.set(Key.TRAIN_NAMES, trainNamesCheckBoxMenuItem.isSelected());
+        if (evt.getSource() == ignoreTimeLimitsCheckBoxMenuItem) {
+            this.setTimeRange();
+            this.setGTWidth(settings);
+        }
+        // recreate draw
+        this.recreateDraw();
+    }//GEN-LAST:event_preferencesCheckBoxMenuItemActionPerformed
 
     @Override
     public void paint(Graphics g) {
