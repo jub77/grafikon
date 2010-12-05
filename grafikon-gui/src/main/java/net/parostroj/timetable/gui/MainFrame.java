@@ -252,6 +252,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 JMenuItem removed = lastOpened.remove(file);
                 if (removed != null) {
                     fileMenu.remove(removed);
+                    refreshLastOpenedFiles();
                 }
             }
         });
@@ -272,17 +273,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                     openItem = lastOpened.get(file);
                     fileMenu.remove(openItem);
                 }
-                int menuItems = fileMenu.getItemCount();
-                int fileItems = lastOpened.size();
-                fileMenu.add(openItem, menuItems - 1 - fileItems);
-                // regenerate accelerators
-                for (int i = fileItems; i > 0; i--) {
-                    JMenuItem item = fileMenu.getItem(menuItems - i - 1);
-                    item.setText(Integer.toString(fileItems - i + 1) + " " + item.getText().substring(2));
-                    item.setMnemonic(Character.forDigit(fileItems - i + 1, 10));
-                }
+                fileMenu.add(openItem, fileMenu.getItemCount() - 1 - lastOpened.size());
+                refreshLastOpenedFiles();
             }
         });
+    }
+    
+    private void refreshLastOpenedFiles() {
+        int menuItems = fileMenu.getItemCount();
+        int fileItems = lastOpened.size();
+        // regenerate mnemonics
+        for (int i = fileItems; i > 0; i--) {
+            JMenuItem item = fileMenu.getItem(menuItems - i - 2);
+            item.setText(String.format("%d %s", fileItems - i + 1, item.getText().substring(2)));
+            item.setMnemonic(Character.forDigit(fileItems - i + 1, 10));
+        }
     }
 
     private void setTitleChanged(boolean b) {

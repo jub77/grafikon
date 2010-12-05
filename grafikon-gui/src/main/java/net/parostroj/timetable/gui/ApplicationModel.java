@@ -278,8 +278,11 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setLengthUnit(LengthUnit.getByKey(prefs.getString("unit", "mm")));
         for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
             String filename = prefs.getString("last.opened." + i, null);
-            if (filename != null)
-                this.addLastOpenedFile(new File(filename));
+            if (filename != null) {
+                File file = new File(filename);
+                if (file.exists())
+                    this.addLastOpenedFile(new File(filename));
+            }
         }
     }
 
@@ -333,5 +336,11 @@ public class ApplicationModel implements StorableGuiData {
             this.lastOpenedFiles.addFirst(file);
         }
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ADD_LAST_OPENED, this, file));
+    }
+    
+    public void removeLastOpenedFile(File file) {
+        if (this.lastOpenedFiles.remove(file)) {
+            this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, file));
+        }
     }
 }

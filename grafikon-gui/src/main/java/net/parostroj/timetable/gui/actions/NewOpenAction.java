@@ -112,6 +112,9 @@ public class NewOpenAction extends AbstractAction {
                     } catch (LSException e) {
                         LOG.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
+                            // remove from last opened
+                            model.removeLastOpenedFile(selectedFile);
+                            // create error message
                             errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
                         } else if (e.getCause() instanceof IOException) {
                             errorMessage = ResourceLoader.getString("dialog.error.loading");
