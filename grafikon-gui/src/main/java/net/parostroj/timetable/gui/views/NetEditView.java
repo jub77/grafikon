@@ -22,6 +22,10 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.dialogs.CreateLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
@@ -196,7 +200,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            SaveImageDialog saveDialog = this.getDialog();
+            SaveImageDialog saveDialog = getDialog();
             dialog.setLocationRelativeTo(NetEditView.this);
             Dimension graphSize = netView.getGraphSize();
             dialog.setSaveSize(new Dimension(graphSize.width + 10, graphSize.height + 10));
@@ -205,47 +209,72 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             if (!dialog.isSave())
                 return;
 
-            Dimension saveSize = dialog.getSaveSize();
-
-            if (dialog.getType() == SaveImageDialog.Type.PNG) {
-                BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2d = img.createGraphics();
-                g2d.setColor(Color.white);
-                g2d.fillRect(0, 0, saveSize.width, saveSize.height);
-
-                netView.paintGraph(g2d);
-
-                try {
-                    ImageIO.write(img, "png", dialog.getSaveFile());
-                } catch (IOException e) {
-                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
-                    JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+            ActionContext actionContext = new ActionContext(NetEditView.this);
+            ModelAction action = new EventDispatchAfterModelAction(actionContext) {
+                
+                private boolean error;
+                
+                @Override
+                protected void backgroundAction() {
+                    setWaitDialogVisible(true);
+                    setWaitMessage(ResourceLoader.getString("wait.message.image.save"));
+                    long time = System.currentTimeMillis();
+                    try {
+                        Dimension saveSize = dialog.getSaveSize();
+    
+                        if (dialog.getType() == SaveImageDialog.Type.PNG) {
+                            BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
+                            Graphics2D g2d = img.createGraphics();
+                            g2d.setColor(Color.white);
+                            g2d.fillRect(0, 0, saveSize.width, saveSize.height);
+    
+                            netView.paintGraph(g2d);
+    
+                            try {
+                                ImageIO.write(img, "png", dialog.getSaveFile());
+                            } catch (IOException e) {
+                                LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                                error = true;
+                            }
+                        } else if (dialog.getType() == SaveImageDialog.Type.SVG) {
+                            DOMImplementation domImpl =
+                                    GenericDOMImplementation.getDOMImplementation();
+    
+                            // Create an instance of org.w3c.dom.Document.
+                            String svgNS = "http://www.w3.org/2000/svg";
+                            Document document = domImpl.createDocument(svgNS, "svg", null);
+    
+                            SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
+                            SVGGraphics2D g2d = new SVGGraphics2D(context, false);
+    
+                            g2d.setSVGCanvasSize(saveSize);
+    
+                            netView.paintGraph(g2d);
+    
+                            // write to ouput - do not use css style
+                            boolean useCSS = false;
+                            try {
+                                Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
+                                g2d.stream(out, useCSS);
+                            } catch (IOException e) {
+                                LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                                error = true;
+                            }
+                        }
+                    } finally {
+                        LOG.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
+                        setWaitDialogVisible(false);
+                    }
                 }
-            } else if (dialog.getType() == SaveImageDialog.Type.SVG) {
-                DOMImplementation domImpl =
-                        GenericDOMImplementation.getDOMImplementation();
-
-                // Create an instance of org.w3c.dom.Document.
-                String svgNS = "http://www.w3.org/2000/svg";
-                Document document = domImpl.createDocument(svgNS, "svg", null);
-
-                SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
-                SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-
-                g2d.setSVGCanvasSize(saveSize);
-
-                netView.paintGraph(g2d);
-
-                // write to ouput - do not use css style
-                boolean useCSS = false;
-                try {
-                    Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
-                    g2d.stream(out, useCSS);
-                } catch (IOException e) {
-                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
-                    JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+                
+                @Override
+                protected void eventDispatchActionAfter() {
+                    if (error) {
+                        JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-            }
+            };
+            ActionHandler.getInstance().execute(action);
         }
 
         private SaveImageDialog getDialog() {
