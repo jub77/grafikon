@@ -49,6 +49,8 @@ public class Main {
                     if (file.exists()) {
                         netParostrojLogger.log(Level.FINE, "Loading: " + file.getName());
                         frame.forceLoad(file);
+                    } else {
+                        netParostrojLogger.log(Level.FINE, "File " + file.getPath() + " doesn't exist");
                     }
                 }
             }
