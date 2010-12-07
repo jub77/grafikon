@@ -343,6 +343,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         editRoutesMenuItem.setEnabled(notNullDiagram);
         trainTimetableListByRoutesMenuItem.setEnabled(notNullDiagram);
         removeWeightsMenuItem.setEnabled(notNullDiagram);
+        executeScriptMenuItem.setEnabled(notNullDiagram);
     }
     
     /** This method is called from within the constructor to
@@ -425,6 +426,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         recalculateMenuItem = new javax.swing.JMenuItem();
         recalculateStopsMenuItem = new javax.swing.JMenuItem();
         removeWeightsMenuItem = new javax.swing.JMenuItem();
+        executeScriptMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
@@ -772,6 +774,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         removeWeightsMenuItem.setAction(new RemoveWeightsAction(model));
         removeWeightsMenuItem.setText(ResourceLoader.getString("menu.special.remove.weights")); // NOI18N
         specialMenu.add(removeWeightsMenuItem);
+
+        executeScriptMenuItem.setAction(new ExecuteScriptAction(model));
+        executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
+        specialMenu.add(executeScriptMenuItem);
 
         menuBar.add(specialMenu);
 
@@ -1160,6 +1166,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem editRoutesMenuItem;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenuItem epListMenuItem;
+    private javax.swing.JMenuItem executeScriptMenuItem;
     private javax.swing.JMenuItem fileImportMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem fileOpenMenuItem;
