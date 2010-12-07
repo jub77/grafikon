@@ -2,13 +2,12 @@ package net.parostroj.timetable.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
+
 import javax.swing.RepaintManager;
 import javax.swing.UIManager;
+
+import net.parostroj.timetable.gui.ApplicationStarter.AfterStartAction;
 import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 
 /**
@@ -35,11 +34,25 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (AppPreferences.getPreferences().getBoolean("debug", false))
             setDebug();
         setLookAndFeel();
-        ApplicationStarter starter = new ApplicationStarter(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
+        ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
+        starter.setAction(new AfterStartAction<MainFrame>() {
+
+            @Override
+            public void action(MainFrame frame) {
+                if (args.length > 0) {
+                    // trying to load file
+                    File file = new File(args[0]);
+                    if (file.exists()) {
+                        netParostrojLogger.log(Level.FINE, "Loading: " + file.getName());
+                        frame.forceLoad(file);
+                    }
+                }
+            }
+        });
         starter.start();
     }
 
