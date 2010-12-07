@@ -422,6 +422,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
         recalculateStopsMenuItem = new javax.swing.JMenuItem();
+        removeWeightsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
@@ -765,6 +766,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         recalculateStopsMenuItem.setAction(new RecalculateStopsAction(model));
         recalculateStopsMenuItem.setText(ResourceLoader.getString("menu.special.recalculate.stops")); // NOI18N
         specialMenu.add(recalculateStopsMenuItem);
+
+        removeWeightsMenuItem.setAction(new RemoveWeightsAction(model));
+        removeWeightsMenuItem.setText(ResourceLoader.getString("menu.special.remove.weights")); // NOI18N
+        specialMenu.add(removeWeightsMenuItem);
 
         menuBar.add(specialMenu);
 
@@ -1177,6 +1182,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem programSettingsMenuItem;
     private javax.swing.JMenuItem recalculateMenuItem;
     private javax.swing.JMenuItem recalculateStopsMenuItem;
+    private javax.swing.JMenuItem removeWeightsMenuItem;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.JMenuItem spListMenuItem;
