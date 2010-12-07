@@ -15,29 +15,38 @@ import org.slf4j.LoggerFactory;
  * 
  * @author jub
  */
-public class ApplicationStarter {
+public class ApplicationStarter<T extends JFrame> {
+    
+    public static interface AfterStartAction<T> {
+
+        public void action(T frame);
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationStarter.class.getName());
     
-    private Class<? extends JFrame> applicationClass;
-    
+    private Class<T> applicationClass;
     private Image image;
-    
     private int x,y;
+    private AfterStartAction<T> action;
     
-    private ApplicationStarter(Class<? extends JFrame> applicationClass, int x, int y) {
+    private ApplicationStarter(Class<T> applicationClass, int x, int y) {
         this.applicationClass = applicationClass;
         this.x = x;
         this.y =y;
     }
 
-    public ApplicationStarter(Class<? extends JFrame> applicationClass, int x, int y, Image image) {
+    public ApplicationStarter(Class<T> applicationClass, int x, int y, Image image) {
         this(applicationClass, x, y);
         this.image = image;
     }
     
-    public ApplicationStarter(Class<? extends JFrame> applicationClass, int x, int y, URL url) {
+    public ApplicationStarter(Class<T> applicationClass, int x, int y, URL url) {
         this(applicationClass, x, y);
         this.image = this.loadImage(url);
+    }
+    
+    public void setAction(AfterStartAction<T> action) {
+        this.action = action;
     }
     
     private Image loadImage(URL url) {
@@ -54,7 +63,7 @@ public class ApplicationStarter {
             LOG.trace("End starter.");
     }
     
-    private JFrame getApplicationInstance(SplashScreenInfo splash) throws ApplicationStarterException {
+    private T getApplicationInstance(SplashScreenInfo splash) throws ApplicationStarterException {
         try {
             return applicationClass.getConstructor(SplashScreenInfo.class).newInstance(splash);
         } catch (NoSuchMethodException e) {
@@ -74,11 +83,19 @@ public class ApplicationStarter {
         LOG.debug("Using Java 1.6 splash screen.");
         SplashScreen splash = SplashScreen.getSplashScreen();
         SplashScreenInfoOrig info = new SplashScreenInfoOrig(splash, x, y);
-        final JFrame frm = this.getApplicationInstance(info);
+        final T frm = this.getApplicationInstance(info);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 frm.setVisible(true);
+                SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        if (action != null)
+                            action.action(frm);
+                    }
+                });
             }
         });
     }
@@ -88,13 +105,21 @@ public class ApplicationStarter {
         final SplashScreenFrame spl = new SplashScreenFrame(x, y, image);
         spl.setVisible(true);
         LOG.trace("Splash initialized.");
-        final JFrame frm = this.getApplicationInstance(spl);
+        final T frm = this.getApplicationInstance(spl);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 spl.setVisible(false);
                 spl.dispose();
                 frm.setVisible(true);
+                SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        if (action != null)
+                            action.action(frm);
+                    }
+                });
             }
         });
     }

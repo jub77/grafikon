@@ -1127,6 +1127,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
     }
+    
+    public void forceLoad(File file) {
+        NewOpenAction action = new NewOpenAction(model, this, false);
+        action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
+    }
 
     @Override
     public void setVisible(boolean b) {
