@@ -41,12 +41,14 @@ public class ExitAction extends AbstractAction {
 
             private int result = JOptionPane.NO_OPTION;
             private String errorMessage;
+            private long time;
 
             @Override
             protected void eventDispatchActionBefore() {
                 context.setDelay(0);
                 context.setLocationComponent(parent);
                 result = ModelUtils.checkModelChangedContinue(model, parent);
+                time = System.currentTimeMillis();
             }
 
             @Override
@@ -82,6 +84,9 @@ public class ExitAction extends AbstractAction {
                 }
                 // dispose main window - it should close application
                 parent.dispose();
+                
+                LOG.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
+                
                 // close application by force (possible problems with web start)
                 if (exit)
                     System.exit(0);
