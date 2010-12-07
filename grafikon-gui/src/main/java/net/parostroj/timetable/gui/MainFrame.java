@@ -311,36 +311,38 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
    
     private void updateView() {
-        fileSaveMenuItem.setEnabled(model.getDiagram() != null);
-        fileSaveAsMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByDcMenuItem.setEnabled(model.getDiagram() != null);
-        recalculateMenuItem.setEnabled(model.getDiagram() != null);
-        recalculateStopsMenuItem.setEnabled(model.getDiagram() != null);
-        nodeTimetableListMenuItem.setEnabled(model.getDiagram() != null);
-        ecListMenuItem.setEnabled(model.getDiagram() != null);
-        dcListMenuItem.setEnabled(model.getDiagram() != null);
-        tucListMenuItem.setEnabled(model.getDiagram() != null);
-        settingsMenuItem.setEnabled(model.getDiagram() != null);
-        allHtmlMenuItem.setEnabled(model.getDiagram() != null);
-        imagesMenuItem.setEnabled(model.getDiagram() != null);
-        textItemsMenuItem.setEnabled(model.getDiagram() != null);
-        infoMenuItem.setEnabled(model.getDiagram() != null);
-        spListMenuItem.setEnabled(model.getDiagram() != null);
-        epListMenuItem.setEnabled(model.getDiagram() != null);
-        trainTypesMenuItem.setEnabled(model.getDiagram() != null);
-        lineClassesMenuItem.setEnabled(model.getDiagram() != null);
-        weightTablesMenuItem.setEnabled(model.getDiagram() != null);
-        penaltyTableMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByTimeFilteredMenuItem.setEnabled(model.getDiagram() != null);
-        fileImportMenuItem.setEnabled(model.getDiagram() != null);
-        dcListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByDcSelectMenuItem.setEnabled(model.getDiagram() != null);
-        nodeTimetableListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        editRoutesMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByRoutesMenuItem.setEnabled(model.getDiagram() != null);
+        boolean notNullDiagram = model.getDiagram() != null;
+        fileSaveMenuItem.setEnabled(notNullDiagram);
+        fileSaveAsMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByDcMenuItem.setEnabled(notNullDiagram);
+        recalculateMenuItem.setEnabled(notNullDiagram);
+        recalculateStopsMenuItem.setEnabled(notNullDiagram);
+        nodeTimetableListMenuItem.setEnabled(notNullDiagram);
+        ecListMenuItem.setEnabled(notNullDiagram);
+        dcListMenuItem.setEnabled(notNullDiagram);
+        tucListMenuItem.setEnabled(notNullDiagram);
+        settingsMenuItem.setEnabled(notNullDiagram);
+        allHtmlMenuItem.setEnabled(notNullDiagram);
+        imagesMenuItem.setEnabled(notNullDiagram);
+        textItemsMenuItem.setEnabled(notNullDiagram);
+        infoMenuItem.setEnabled(notNullDiagram);
+        spListMenuItem.setEnabled(notNullDiagram);
+        epListMenuItem.setEnabled(notNullDiagram);
+        trainTypesMenuItem.setEnabled(notNullDiagram);
+        lineClassesMenuItem.setEnabled(notNullDiagram);
+        weightTablesMenuItem.setEnabled(notNullDiagram);
+        penaltyTableMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByTimeFilteredMenuItem.setEnabled(notNullDiagram);
+        fileImportMenuItem.setEnabled(notNullDiagram);
+        dcListSelectMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByDcSelectMenuItem.setEnabled(notNullDiagram);
+        nodeTimetableListSelectMenuItem.setEnabled(notNullDiagram);
+        ecListSelectMenuItem.setEnabled(notNullDiagram);
+        tucListSelectMenuItem.setEnabled(notNullDiagram);
+        editRoutesMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByRoutesMenuItem.setEnabled(notNullDiagram);
+        removeWeightsMenuItem.setEnabled(notNullDiagram);
     }
     
     /** This method is called from within the constructor to
