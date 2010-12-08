@@ -72,6 +72,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
 
     public void setScriptText(String text) {
         scriptTextArea.setText(text);
+        scriptTextArea.setCaretPosition(0);
     }
     
     public Language getScriptLanguage() {

@@ -56,11 +56,6 @@ public class SettingsDialog extends javax.swing.JDialog {
             lengthUnitComboBox.addItem(unit);
         }
 
-        scriptLanguageComboBox.setPrototypeDisplayValue("MMMMMMMMMM");
-        for (Script.Language lang : Script.Language.values()) {
-            scriptLanguageComboBox.addItem(lang);
-        }
-
         pack();
     }
 
@@ -112,9 +107,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             changesTrackingCheckBox.setSelected(diagram.getChangesTracker().isTrackingEnabled());
 
             // script
-            scriptTextArea.setText(trainsData.getRunningTimeScript().getSourceCode());
-            scriptTextArea.setCaretPosition(0);
-            scriptLanguageComboBox.setSelectedItem(trainsData.getRunningTimeScript().getLanguage());
+            scriptEditBox.setScript(trainsData.getRunningTimeScript());
 
             // route length
             Double routeLengthRatio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
@@ -190,9 +183,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         scaleComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         ratioComboBox = new javax.swing.JComboBox();
-        javax.swing.JPanel panel1 = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
@@ -203,8 +193,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         stationTransferTextField = new javax.swing.JTextField();
         changesTrackingCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel11 = new javax.swing.JLabel();
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        scriptTextArea = new javax.swing.JTextArea();
         javax.swing.JPanel routeLengthPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel12 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel14 = new javax.swing.JLabel();
@@ -227,7 +215,10 @@ public class SettingsDialog extends javax.swing.JDialog {
         fromTimeTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel17 = new javax.swing.JLabel();
         toTimeTextField = new javax.swing.JTextField();
-        scriptLanguageComboBox = new javax.swing.JComboBox();
+        scriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
+        javax.swing.JPanel panel1 = new javax.swing.JPanel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
@@ -259,30 +250,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 2, 5, 10);
         getContentPane().add(ratioComboBox, gridBagConstraints);
-
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-        panel1.add(okButton);
-
-        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-        panel1.add(cancelButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
-        getContentPane().add(panel1, gridBagConstraints);
 
         jLabel3.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -370,25 +337,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         getContentPane().add(jLabel11, gridBagConstraints);
-
-        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        scriptTextArea.setColumns(20);
-        scriptTextArea.setFont(new java.awt.Font("Monospaced", 0, 11));
-        scriptTextArea.setRows(5);
-        scrollPane.setViewportView(scriptTextArea);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
-        getContentPane().add(scrollPane, gridBagConstraints);
 
         routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -498,19 +446,47 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(timeRangePanel, gridBagConstraints);
 
+        scriptEditBox.setColumns(80);
+        scriptEditBox.setRows(8);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(scriptEditBox, gridBagConstraints);
+
+        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+        panel1.add(okButton);
+
+        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+        panel1.add(cancelButton);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 10, 0, 10);
-        getContentPane().add(scriptLanguageComboBox, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        getContentPane().add(panel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        boolean recalculate = false;
+        boolean recalculateUpate = false;
         boolean clear = false;
 
         // get templates values
@@ -541,11 +517,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
         if (s != null && !s.equals(diagram.getAttribute(TrainDiagram.ATTR_SCALE))) {
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
-            recalculate = true;
+            recalculateUpate = true;
         }
         if (sp != ((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).doubleValue()) {
             diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
-            recalculate = true;
+            recalculateUpate = true;
         }
 
         // set templates
@@ -591,20 +567,17 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // set running time script
-        boolean langSame = diagram.getTrainsData().getRunningTimeScript().getLanguage() == scriptLanguageComboBox.getSelectedItem();
-        if (!langSame || (scriptTextArea.getText() != null && !scriptTextArea.getText().equals("") &&
-                !scriptTextArea.getText().equals(diagram.getTrainsData().getRunningTimeScript().getSourceCode()))) {
-            try {
-                diagram.getTrainsData().setRunningTimeScript(
-                        Script.createScript(scriptTextArea.getText(),
-                        (Script.Language) scriptLanguageComboBox.getSelectedItem()));
-            } catch (GrafikonException e) {
-                JOptionPane.showMessageDialog(this.getParent(), String.format(ResourceLoader.getString("dialog.error.script"), e.getCause().getMessage()),
-                        ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-                LOG.debug("Error setting script.", e);
-                return;
+        try {
+            Script newScript = scriptEditBox.getScript();
+            if (!diagram.getTrainsData().getRunningTimeScript().equals(newScript) && newScript != null) {
+                diagram.getTrainsData().setRunningTimeScript(newScript);
+                recalculateUpate = true;
             }
-            recalculate = true;
+        } catch (GrafikonException e) {
+            JOptionPane.showMessageDialog(this.getParent(), String.format(ResourceLoader.getString("dialog.error.script"), e.getCause().getMessage()),
+                    ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+            LOG.debug("Error setting script.", e);
+            return;
         }
 
         // weight -> length conversion
@@ -664,7 +637,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.updateValues();
 
         this.setVisible(false);
-        this.recalculate = recalculate;
+        this.recalculate = recalculateUpate;
         this.diagramChanged = true;
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -705,8 +678,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JTextField rlRatioTextField;
     private javax.swing.JTextField rlUnitTextField;
     private javax.swing.JComboBox scaleComboBox;
-    private javax.swing.JComboBox scriptLanguageComboBox;
-    private javax.swing.JTextArea scriptTextArea;
+    private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
     private javax.swing.JComboBox sortComboBox;
     private javax.swing.JTextField stationTransferTextField;
     private javax.swing.JPanel timeRangePanel;
