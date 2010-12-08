@@ -17,11 +17,9 @@ public final class ScriptEngineScript extends Script {
     private static final Logger LOG = LoggerFactory.getLogger(ScriptEngineScript.class);
     
     private final CompiledScript script;
-    private final Language language;
 
     protected ScriptEngineScript(String sourceCode, Language language) throws GrafikonException {
-        super(sourceCode);
-        this.language = language;
+        super(sourceCode, language);
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(language == Language.GROOVY ? "groovy" : "javascript");
         Compilable cEngine = (Compilable) engine;
@@ -30,11 +28,6 @@ public final class ScriptEngineScript extends Script {
         } catch (ScriptException e) {
             throw new GrafikonException("Couldn't create script.", e, GrafikonException.Type.SCRIPT);
         }
-    }
-
-    @Override
-    public Language getLanguage() {
-        return language;
     }
 
     @Override
