@@ -1,12 +1,17 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.Font;
+import java.awt.event.ItemEvent;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 /**
  * Editing component for scripts.
@@ -14,6 +19,15 @@ import net.parostroj.timetable.model.Script.Language;
  * @author jub
  */
 public class ScriptEditBox extends javax.swing.JPanel {
+
+    private static final Map<Language, String> HIGHLIGHT;
+
+    static {
+        Map<Language, String> h = new EnumMap<Language, String>(Language.class);
+        h.put(Language.GROOVY, SyntaxConstants.SYNTAX_STYLE_GROOVY);
+        h.put(Language.JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+        HIGHLIGHT = Collections.unmodifiableMap(h);
+    }
 
     /** Creates new form ScriptEditBox */
     public ScriptEditBox() {
@@ -25,6 +39,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
 
         Border border = new CompoundBorder(new EmptyBorder(5, 5, 0, 5), scrollPane.getBorder());
         scrollPane.setBorder(border);
+        scriptTextArea.setTabsEmulated(true);
     }
 
     public void setColumns(int columns) {
@@ -90,30 +105,40 @@ public class ScriptEditBox extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scrollPane = new javax.swing.JScrollPane();
-        scriptTextArea = new javax.swing.JTextArea();
         javax.swing.JPanel panel = new javax.swing.JPanel();
         languageComboBox = new javax.swing.JComboBox();
+        scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
+        scriptTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
 
         setLayout(new java.awt.BorderLayout());
 
-        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setViewportView(scriptTextArea);
-
-        add(scrollPane, java.awt.BorderLayout.CENTER);
-
         panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
+        languageComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                languageComboBoxItemStateChanged(evt);
+            }
+        });
         panel.add(languageComboBox);
 
         add(panel, java.awt.BorderLayout.PAGE_END);
+
+        scrollPane.setLineNumbersEnabled(false);
+        scrollPane.setViewportView(scriptTextArea);
+
+        add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_languageComboBoxItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            scriptTextArea.setSyntaxEditingStyle(HIGHLIGHT.get(evt.getItem()));
+        }
+    }//GEN-LAST:event_languageComboBoxItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox languageComboBox;
-    private javax.swing.JTextArea scriptTextArea;
-    private javax.swing.JScrollPane scrollPane;
+    private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea scriptTextArea;
+    private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 }
