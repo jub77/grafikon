@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.actions.execution.ModelActionUtilities;
 import net.parostroj.timetable.gui.dialogs.ScriptDialog;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
@@ -47,8 +47,15 @@ public class ExecuteScriptAction extends AbstractAction {
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", model.getDiagram());
             try {
+                parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                long time = System.currentTimeMillis();
                 // execute
-                selectedScript.evaluateWithException(binding);
+                try {
+                    selectedScript.evaluateWithException(binding);
+                } finally {
+                    parent.setCursor(Cursor.getDefaultCursor());
+                    LOG.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
+                }
             } catch (GrafikonException ex) {
                 LOG.error("Error executing script.", ex);
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
