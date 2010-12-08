@@ -131,7 +131,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
 
     private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_languageComboBoxItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            scriptTextArea.setSyntaxEditingStyle(HIGHLIGHT.get(evt.getItem()));
+            scriptTextArea.setSyntaxEditingStyle(HIGHLIGHT.get((Language) evt.getItem()));
         }
     }//GEN-LAST:event_languageComboBoxItemStateChanged
 
