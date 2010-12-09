@@ -14,6 +14,8 @@ import java.util.*;
 
 import javax.swing.*;
 
+import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
+import net.parostroj.timetable.actions.scripts.ScriptDescription;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
 import net.parostroj.timetable.gui.actions.execution.*;
@@ -49,6 +51,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private EngineClassesDialog engineClassesDialog;
     private Locale locale;
     private OutputAction outputAction;
+    private ExecuteScriptAction executeScriptAction;
     
     private Map<File, JMenuItem> lastOpened;
     
@@ -92,6 +95,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
 
         outputAction = new OutputAction(model, this);
+        executeScriptAction = new ExecuteScriptAction(model);
 
         initComponents();
         
@@ -218,7 +222,16 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         LSFileFactory.getInstance();
         
         // initialize groovy
-        new GroovyShell().parse("");        
+        new GroovyShell().parse("");
+        
+        // add predefined scripts
+        for (ScriptDescription sd : PredefinedScriptsLoader.getPredefinedScripts()) {
+            JMenuItem item = new JMenuItem();
+            item.setAction(executeScriptAction);
+            item.setText(sd.getName());
+            item.setActionCommand(sd.getId());
+            scriptsMenu.add(item);
+        }
     }
 
     @Override
@@ -344,6 +357,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByRoutesMenuItem.setEnabled(notNullDiagram);
         removeWeightsMenuItem.setEnabled(notNullDiagram);
         executeScriptMenuItem.setEnabled(notNullDiagram);
+        scriptsMenu.setEnabled(notNullDiagram);
     }
     
     /** This method is called from within the constructor to
@@ -427,6 +441,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         recalculateStopsMenuItem = new javax.swing.JMenuItem();
         removeWeightsMenuItem = new javax.swing.JMenuItem();
         executeScriptMenuItem = new javax.swing.JMenuItem();
+        scriptsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
@@ -457,7 +472,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         applicationPanelLayout.setVerticalGroup(
             applicationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, applicationPanelLayout.createSequentialGroup()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -775,9 +790,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         removeWeightsMenuItem.setText(ResourceLoader.getString("menu.special.remove.weights")); // NOI18N
         specialMenu.add(removeWeightsMenuItem);
 
-        executeScriptMenuItem.setAction(new ExecuteScriptAction(model));
+        executeScriptMenuItem.setAction(executeScriptAction);
         executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
+        executeScriptMenuItem.setActionCommand("");
         specialMenu.add(executeScriptMenuItem);
+
+        scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
+        specialMenu.add(scriptsMenu);
 
         menuBar.add(specialMenu);
 
@@ -1192,6 +1211,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem recalculateMenuItem;
     private javax.swing.JMenuItem recalculateStopsMenuItem;
     private javax.swing.JMenuItem removeWeightsMenuItem;
+    private javax.swing.JMenu scriptsMenu;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.JMenuItem spListMenuItem;

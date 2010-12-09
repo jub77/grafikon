@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 
+import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
+import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
@@ -38,6 +40,34 @@ public class ExecuteScriptAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if ("".equals(e.getActionCommand())) {
+            editScriptExecution(e);
+        } else {
+            predefinedExecution(e);
+        }
+    }
+    
+    private void predefinedExecution(ActionEvent e) {
+        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
+        parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        long time = System.currentTimeMillis();
+        try {
+            try {
+                ScriptAction scriptAction = PredefinedScriptsLoader.getScriptAction(e.getActionCommand());
+                scriptAction.execute(model.getDiagram());
+            } finally {
+                parent.setCursor(Cursor.getDefaultCursor());
+                LOG.debug("Script {} finished in {}ms", e.getActionCommand(), System.currentTimeMillis() - time);
+            }
+        } catch (GrafikonException ex) {
+            LOG.error("Error executing script.", ex);
+            String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+            ActionUtils.showError(message, parent);
+        }
+        model.setModelChanged(true);
+    }
+
+    private void editScriptExecution(ActionEvent e) {
         Component parent = ActionUtils.getTopLevelComponent(e.getSource());
         model.getDiagram();
         ScriptDialog dialog = new ScriptDialog((Frame)parent, true);
