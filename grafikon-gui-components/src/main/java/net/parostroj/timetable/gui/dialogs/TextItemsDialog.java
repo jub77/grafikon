@@ -224,6 +224,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
                 textArea.setSyntaxEditingStyle(selectedItem.getType().equals("bbcode") ?
                         SyntaxConstants.SYNTAX_STYLE_BBCODE :
                         SyntaxConstants.SYNTAX_STYLE_HTML);
+                textArea.setCaretPosition(0);
             } else {
                 textArea.setText("");
                 selectedItem = null;
