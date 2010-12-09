@@ -228,7 +228,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         for (ScriptDescription sd : PredefinedScriptsLoader.getPredefinedScripts()) {
             JMenuItem item = new JMenuItem();
             item.setAction(executeScriptAction);
-            item.setText(sd.getName());
+            item.setText(sd.getLocalizedName());
             item.setActionCommand(sd.getId());
             scriptsMenu.add(item);
         }

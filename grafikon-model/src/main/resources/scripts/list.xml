@@ -13,15 +13,15 @@
         <location>remove_weights.groovy</location>
     </script>
     <script>
-        <id>show_length_remove</id>
+        <id>hide_length</id>
         <name>Do not show length</name>
         <language>GROOVY</language>
-        <location>show_length_remove.groovy</location>
+        <location>hide_length.groovy</location>
     </script>
     <script>
-        <id>show_length_set</id>
+        <id>show_length</id>
         <name>Show length</name>
         <language>GROOVY</language>
-        <location>show_length_set.groovy</location>
+        <location>show_length.groovy</location>
     </script>
 </scripts>

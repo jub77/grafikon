@@ -1,6 +1,7 @@
 package net.parostroj.timetable.actions.scripts;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 import javax.xml.bind.annotation.XmlType;
 
@@ -48,6 +49,16 @@ public class ScriptDescription {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getLocalizedName() {
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle("scripts.names");
+            return bundle.getString(getId());
+        } catch (Exception e) {
+            LOG.error("Error getting name.", e);
+            return getName();
+        }
     }
 
     public void setDescription(String description) {
