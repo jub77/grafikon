@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -29,6 +31,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         // create model and set it
         itemsModel = new WrapperListModel<TextItem>(false);
         itemList.setModel(itemsModel);
+        textArea.setTabsEmulated(true);
     }
 
     @Override
@@ -77,8 +80,8 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        textArea = new javax.swing.JTextArea();
+        scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
+        textArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         javax.swing.JScrollPane listScrollPane = new javax.swing.JScrollPane();
         itemList = new javax.swing.JList();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
@@ -97,13 +100,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
         textPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
         textPanel.setLayout(new java.awt.BorderLayout(5, 0));
 
-        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setLineNumbersEnabled(false);
 
         textArea.setColumns(60);
-        textArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
-        textArea.setLineWrap(true);
         textArea.setRows(25);
-        textArea.setWrapStyleWord(true);
+        textArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textArea.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 textAreaCaretUpdate(evt);
@@ -220,6 +221,9 @@ public class TextItemsDialog extends javax.swing.JDialog {
             if (wrapper != null) {
                 selectedItem = (TextItem) wrapper.getElement();
                 textArea.setText(selectedItem.getText());
+                textArea.setSyntaxEditingStyle(selectedItem.getType().equals("bbcode") ?
+                        SyntaxConstants.SYNTAX_STYLE_BBCODE :
+                        SyntaxConstants.SYNTAX_STYLE_HTML);
             } else {
                 textArea.setText("");
                 selectedItem = null;
@@ -228,10 +232,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         }
         this.updateButtons();
     }//GEN-LAST:event_itemListValueChanged
-
-    private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_textAreaCaretUpdate
-        changed = true;
-    }//GEN-LAST:event_textAreaCaretUpdate
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
@@ -263,13 +263,18 @@ public class TextItemsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_downButtonActionPerformed
 
+    private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_textAreaCaretUpdate
+        changed = true;
+    }//GEN-LAST:event_textAreaCaretUpdate
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
     private javax.swing.JList itemList;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JTextArea textArea;
+    private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
+    private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea;
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
