@@ -1,6 +1,5 @@
 package net.parostroj.timetable.actions.scripts;
 
-import java.io.File;
 import java.util.ResourceBundle;
 
 import javax.xml.bind.annotation.XmlType;
