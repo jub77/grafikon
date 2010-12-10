@@ -83,7 +83,7 @@ public class ScriptDescription {
     
     public Script getScript() {
         if (_cachedScript == null) {
-            String sLoc = PredefinedScriptsLoader.SCRIPTS_LOCATION + File.separator + getLocation();
+            String sLoc = PredefinedScriptsLoader.SCRIPTS_LOCATION + "/" + getLocation();
             String src = PredefinedScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
                 _cachedScript = Script.createScript(src, getLanguage());
