@@ -299,7 +299,7 @@ public class CreateTrainView extends javax.swing.JPanel {
                     (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
                     commentTextField.getText(),
                     dieselCheckBox.isSelected(),
-                    electricCheckBox.isSelected());
+                    electricCheckBox.isSelected(), true);
             // execute command
             model.applyCommand(createCommand);
             // hide dialog
