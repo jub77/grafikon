@@ -25,6 +25,8 @@
     table.tt tr.fline td.totalv {border-width: 0.4mm 0mm 0.4mm 0mm;}
     table.tt tr.line td {font-size: 3.5mm;}
     div.symbol {width: 7mm; float: left;}
+    table.tt tr.cline {height: 4mm;}
+    table.tt tr.cline td {font-size: 3mm; border-width:0mm; margin: 0mm; padding: 0mm}
 
     table.wl {}
     table.wl tr {height: 4mm;}
@@ -128,7 +130,7 @@
   TIMETABLE_HEADER_ROUTE = 4
   TIMETABLE_HEADER_WEIGHT = 4
   TIMETABLE_LINE = 5
-  TIMETABLE_COMMENT = 5
+  TIMETABLE_COMMENT = 4
 
   PAGE_LENGTH = 185
 %>
@@ -585,7 +587,7 @@
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
-  <tr class="line"><td colspan="${colspan}"><div class="symbol">${comment[0]}</div><div>= ${comment[1]}</div></td></tr><%
+  <tr class="cline"><td colspan="${colspan}"><div class="symbol">${comment[0]}</div><div>= ${comment[1]}</div></td></tr><%
   } %>
 </table><%
       }
