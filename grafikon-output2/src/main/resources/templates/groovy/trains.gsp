@@ -34,14 +34,14 @@
 
     table.tt tr td.tc-d3-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2 { width: 7mm; border-right-width: 0.2mm; }
-    table.tt tr td.tc-d3-2a { width: 4mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-2a { width: 6mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-3 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-4 { width: 13mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-5 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-6 { width: 13mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-7 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-8 { width: 7mm; border-right-width: 0.2mm; }
-    table.tt tr td.tc-d3-9 { width: 20mm; }
+    table.tt tr td.tc-d3-9 { width: 18mm; }
 
     table.tt tr td.tc-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-2 { width: 8mm; border-right-width: 0.2mm; }
