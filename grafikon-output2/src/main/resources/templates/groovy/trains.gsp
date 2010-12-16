@@ -697,9 +697,13 @@
   // returns names of routes
   def getRouteNames(trains) {
     def result = ""
+    def routeNames = [] as Set
     if (trains.routes != null && !trains.routes.isEmpty()) {
       for (route in trains.routes) {
-        result = add(result,"<br>",route.name)
+        if (!routeNames.contains(route.name)) {
+            result = add(result,"<br>",route.name)
+            routeNames << route.name
+        }
       }
     }
     return result
