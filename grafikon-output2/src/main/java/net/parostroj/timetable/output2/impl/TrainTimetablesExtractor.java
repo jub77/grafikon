@@ -57,6 +57,9 @@ public class TrainTimetablesExtractor {
         if (unit != null && !"".equals(unit))
             timetables.setRouteLengthUnit(unit);
 
+        // route info (lower priority)
+        timetables.setRouteNumbers((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
+        timetables.setRouteStations((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
         // validity
         timetables.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
 

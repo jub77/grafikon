@@ -12,11 +12,13 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlRootElement(name="train")
-@XmlType(propOrder={"routeLengthUnit", "routes", "validity", "cycle", "trainTimetables", "texts"})
+@XmlType(propOrder={"routeLengthUnit", "routes", "routeNumbers", "routeStations", "validity", "cycle", "trainTimetables", "texts"})
 public class TrainTimetables {
 
     private String routeLengthUnit;
     private List<NetPartRouteInfo> routes;
+    private String routeNumbers;
+    private String routeStations;
     private String validity;
     private DriverCycle cycle;
     private List<TrainTimetable> trainTimetables;
@@ -64,6 +66,22 @@ public class TrainTimetables {
 
     public void setRoutes(List<NetPartRouteInfo> routes) {
         this.routes = routes;
+    }
+
+    public String getRouteNumbers() {
+        return routeNumbers;
+    }
+
+    public void setRouteNumbers(String routeNumbers) {
+        this.routeNumbers = routeNumbers;
+    }
+
+    public String getRouteStations() {
+        return routeStations;
+    }
+
+    public void setRouteStations(String routeStations) {
+        this.routeStations = routeStations;
     }
 
     public String getValidity() {

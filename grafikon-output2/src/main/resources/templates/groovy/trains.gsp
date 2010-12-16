@@ -705,6 +705,8 @@
           routeNames << route.name
         }
       }
+    } else {
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")      
     }
     return result
   }
@@ -719,6 +721,8 @@
         stationsStr = add(stationsStr," - ",route.segments.last().name)
         result = add(result,"<br>",stationsStr)
       }
+    } else {
+      result = (trains.routeStations == null) ? "-" : trains.routeStations.replace("\n","<br>")
     }
     return result
   }
