@@ -3,10 +3,12 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
+
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
@@ -14,7 +16,14 @@ import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.TrainsCycleEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +63,100 @@ public class FloatingDialogsFactory {
                     case TECHNOLOGICAL:
                         panel.updateTrain((Train) event.getSource());
                         break;
+                }
+            }
+
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                switch (event.getType()) {
+                    case TRAIN_ADDED:
+                        panel.updateTrain((Train)event.getObject());
+                        break;
+                    case TRAIN_REMOVED:
+                        panel.removeTrain((Train)event.getObject());
+                        break;
+                }
+            }
+
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                switch (event.getType()) {
+                    case SELECTED_TRAIN_CHANGED:
+                        panel.updateSelectedTrain((Train)event.getObject());
+                        break;
+                    case SET_DIAGRAM_CHANGED:
+                        panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
+                        panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
+                        break;
+                }
+            }
+
+
+        });
+
+        return dialog;
+    }
+
+    private static FloatingDialog createTrainsWithZeroWeightsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+        final TrainsWithZeroWeightsPanel panel = new TrainsWithZeroWeightsPanel();
+        panel.addTrainSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    JList list = (JList)e.getSource();
+                    Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
+                    if (wrapper != null) {
+                        if (wrapper.getElement() != model.getSelectedTrain()) {
+                            model.setSelectedTrain((Train) wrapper.getElement());
+                        }
+                    }
+                }
+            }
+        });
+        final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainzeroweights.title", "train.zeroweights") {
+            @Override
+            public void setVisible(boolean b) {
+                if (b) {
+                    panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
+                    panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
+                } else {
+                    panel.removeAllTrains();
+                }
+                super.setVisible(b);
+            }
+        };
+        mediator.addColleague(new ApplicationGTEventColleague(true){
+
+            @Override
+            public void receiveMessage(Object message) {
+                // do not check if the dialog is not visible
+                if (!dialog.isVisible()) {
+                    return;
+                }
+                super.receiveMessage(message);
+            }
+            
+            @Override
+            public void processTrainEvent(TrainEvent event) {
+                switch (event.getType()) {
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().getName().equals("weight"))
+                            panel.updateTrain((Train) event.getSource());
+                        break;
+                    case TIME_INTERVAL_LIST:
+                        panel.updateTrain((Train) event.getSource());
+                        break;
+                }
+            }
+            
+            @Override
+            public void processTrainsCycleEvent(TrainsCycleEvent event) {
+                if (event.getSource().getType() == TrainsCycleType.ENGINE_CYCLE) {
+                    TrainsCycle cycle = event.getSource();
+                    for (TrainsCycleItem item : cycle) {
+                        panel.updateTrain(item.getTrain());
+                    }
                 }
             }
 
@@ -201,6 +304,7 @@ public class FloatingDialogsFactory {
         public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
         FloatingDialogsList list = new FloatingDialogsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
+        list.add(createTrainsWithZeroWeightsDialog(frame, mediator, model));
         list.add(createEventsViewerDialog(frame, mediator, model));
         list.add(createChangesTrackedDialog(frame, mediator, model));
         list.add(createGTViewDialog(frame, mediator, model));
