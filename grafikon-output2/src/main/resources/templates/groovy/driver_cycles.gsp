@@ -117,8 +117,12 @@ def getRouteNames(cycle, cycles) {
   if (cycle.routes == null || cycle.routes.isEmpty()) {
     result = (cycles.routeNumbers == null) ? "-" : cycles.routeNumbers.replace("\n","<br>")
   } else {
+    def routeNames = [] as Set
     for (route in cycle.routes) {
-      result = add(result,"<br>",route.name)
+      if (!routeNames.contains(route.name)) {
+        result = add(result,"<br>",route.name)
+        routeNames << route.name
+      }
     }
   }
   return result

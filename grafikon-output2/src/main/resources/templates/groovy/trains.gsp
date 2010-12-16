@@ -701,8 +701,8 @@
     if (trains.routes != null && !trains.routes.isEmpty()) {
       for (route in trains.routes) {
         if (!routeNames.contains(route.name)) {
-            result = add(result,"<br>",route.name)
-            routeNames << route.name
+          result = add(result,"<br>",route.name)
+          routeNames << route.name
         }
       }
     }
