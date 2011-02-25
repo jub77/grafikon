@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui.dialogs;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,15 @@ public class TrainTypeImport extends Import {
             LOG.trace(message);
             return null;
         }
+        
+        // get category
+        TrainTypeCategory checkedCategory = this.getTrainTypeCategory(importedType.getCategory());
+        if (checkedCategory == null) {
+            String message = "Category missing: " + importedType.getCategory();
+            this.addError(importedType, message);
+            LOG.trace(message);
+            return null;
+        }
 
         // create new type
         TrainType type = getDiagram().createTrainType(this.getId(importedType));
@@ -41,7 +52,7 @@ public class TrainTypeImport extends Import {
         type.setColor(importedType.getColor());
         type.setDesc(importedType.getDesc());
         type.setPlatform(importedType.isPlatform());
-        type.setCategory(importedType.getCategory());
+        type.setCategory(checkedCategory);
         type.setTrainCompleteNameTemplate(importedType.getTrainCompleteNameTemplate());
         type.setTrainNameTemplate(importedType.getTrainNameTemplate());
 
