@@ -11,9 +11,12 @@ import javax.swing.AbstractListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
 import org.slf4j.Logger;
@@ -217,6 +220,16 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         boolean enabled = weightTable.getSelectedRow() != -1;
         deleteRowButton.setEnabled(enabled);
     }
+    
+    private boolean deleteAllowed(TrainTypeCategory category) {
+        if (category == null)
+            return false;
+        for (TrainType type : diagram.getTrainTypes()) {
+            if (type.getCategory() == category)
+                return false;
+        }
+        return true;
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -383,6 +396,10 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         if (!trainTypeCategoriesList.isSelectionEmpty()) {
             int selected = trainTypeCategoriesList.getSelectedIndex();
+            if (!this.deleteAllowed((TrainTypeCategory)listModel.getElementAt(selected))) {
+                ActionUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
+                return;
+            }
             listModel.removeTrainTypeCategory(selected);
             if (selected >= listModel.getSize()) {
                 selected--;

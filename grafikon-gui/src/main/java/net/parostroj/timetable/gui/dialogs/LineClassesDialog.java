@@ -9,10 +9,8 @@ import javax.swing.AbstractListModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.WeightTableRow;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -104,6 +102,18 @@ public class LineClassesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+    }
+    
+    private boolean deleteAllowed(LineClass lineClass) {
+        if (lineClass == null)
+            return false;
+        for (Line line : model.getDiagram().getNet().getLines()) {
+            if (line.getLineClass(TimeIntervalDirection.FORWARD) == lineClass)
+                return false;
+            if (line.getLineClass(TimeIntervalDirection.BACKWARD) == lineClass)
+                return false;
+        }
+        return true;
     }
 
     /** This method is called from within the constructor to
@@ -210,6 +220,10 @@ public class LineClassesDialog extends javax.swing.JDialog {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         if (!lineClassesList.isSelectionEmpty()) {
             int selected = lineClassesList.getSelectedIndex();
+            if (!this.deleteAllowed((LineClass)listModel.getElementAt(selected))) {
+                ActionUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
+                return;
+            }
             listModel.removeLineClass(selected);
             if (selected >= listModel.getSize()) {
                 selected--;
