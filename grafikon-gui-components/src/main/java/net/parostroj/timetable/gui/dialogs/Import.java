@@ -39,6 +39,18 @@ public abstract class Import {
         }
         return null;
     }
+    
+    protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
+        if (match == ImportMatch.ID) {
+            return diagram.getPenaltyTable().getTrainTypeCategoryById(origCategory.getId());
+        } else {
+            for (TrainTypeCategory category : diagram.getPenaltyTable().getTrainTypeCategories()) {
+                if (category.getName().equals(origCategory.getName()))
+                    return category;
+            }
+        }
+        return null;
+    }
 
     protected Train getTrain(Train origTrain) {
         if (match == ImportMatch.ID) {
