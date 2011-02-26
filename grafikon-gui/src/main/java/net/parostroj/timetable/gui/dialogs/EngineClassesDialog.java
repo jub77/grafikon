@@ -5,7 +5,10 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.Map;
+
 import javax.swing.AbstractListModel;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -41,14 +44,13 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             return model.getDiagram().getEngineClasses().get(index);
         }
 
-        public void updateInfo() {
-            this.fireContentsChanged(this, 0, getSize());
-        }
-
         public void addEngineClass(EngineClass clazz) {
-            int size = getSize();
-            model.getDiagram().addEngineClass(clazz);
-            this.fireIntervalAdded(this, size, size);
+            this.addEngineClass(clazz, getSize());
+        }
+        
+        public void addEngineClass(EngineClass clazz, int position) {
+            model.getDiagram().addEngineClass(clazz, position);
+            this.fireIntervalAdded(this, position, position);
         }
 
         public void removeEngineClass(int index) {
@@ -195,7 +197,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel.updateInfo();
+        engineClassesList.setModel(listModel);
         tableModel.updateInfo();
         this.enableDisable();
     }
@@ -208,6 +210,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+        copyButton.setEnabled(enabled);
         this.enableDisableDeleteRow();
     }
 
@@ -230,6 +233,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         newButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        copyButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         scrollPane2 = new javax.swing.JScrollPane();
@@ -258,6 +262,13 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
+            }
+        });
+
+        copyButton.setText(ResourceLoader.getString("button.copy")); // NOI18N
+        copyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyButtonActionPerformed(evt);
             }
         });
 
@@ -303,20 +314,21 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(copyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(newButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(nameTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -330,8 +342,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -339,11 +350,14 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(copyButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(upButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton)))
+                        .addComponent(downButton))
+                    .addComponent(scrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newRowButton)
@@ -438,7 +452,35 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_deleteRowButtonActionPerformed
 
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        if (!engineClassesList.isSelectionEmpty()) {
+            int selected = engineClassesList.getSelectedIndex();
+            EngineClass copiedClazz = (EngineClass)listModel.getElementAt(selected);
+            
+            // get new name
+            String newName = JOptionPane.showInputDialog(this, null, copiedClazz.getName());
+            if (newName != null & !newName.equals("")) {
+                // create new LineClass
+                EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
+                // copy all data
+                for (WeightTableRow row : copiedClazz.getWeightTable()) {
+                    WeightTableRow newRow = clazz.createWeightTableRow(row.getSpeed());
+                    for (Map.Entry<LineClass, Integer> entry : row.getWeights().entrySet()) {
+                        newRow.setWeightInfo(entry.getKey(), entry.getValue());
+                    }
+                    clazz.addWeightTableRow(newRow);
+                }
+                listModel.addEngineClass(clazz, selected + 1);
+                nameTextField.setText("");
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
+                engineClassesList.setSelectedIndex(selected + 1);
+                engineClassesList.ensureIndexIsVisible(selected + 1);
+            }
+        }
+    }//GEN-LAST:event_copyButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton copyButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteRowButton;
     private javax.swing.JButton downButton;
