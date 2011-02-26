@@ -1,8 +1,9 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.helpers.TextItemWrapper;
-import net.parostroj.timetable.gui.helpers.Wrapper;
-import net.parostroj.timetable.gui.helpers.WrapperListModel;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -30,6 +31,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         // create model and set it
         itemsModel = new WrapperListModel<TextItem>(false);
         itemList.setModel(itemsModel);
+        textArea.setTabsEmulated(true);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     private void fillList() {
         for (TextItem item : diagram.getTextItems()) {
-            itemsModel.addWrapper(new TextItemWrapper(item));
+            itemsModel.addWrapper(new Wrapper<TextItem>(item));
         }
     }
 
@@ -78,8 +80,8 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        textArea = new javax.swing.JTextArea();
+        scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
+        textArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         javax.swing.JScrollPane listScrollPane = new javax.swing.JScrollPane();
         itemList = new javax.swing.JList();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
@@ -98,13 +100,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
         textPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
         textPanel.setLayout(new java.awt.BorderLayout(5, 0));
 
-        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setLineNumbersEnabled(false);
 
         textArea.setColumns(60);
-        textArea.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
-        textArea.setLineWrap(true);
         textArea.setRows(25);
-        textArea.setWrapStyleWord(true);
+        textArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textArea.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 textAreaCaretUpdate(evt);
@@ -207,7 +207,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         item.setType((String)typeComboBox.getSelectedItem());
         item.setText("");
         diagram.addTextItem(item);
-        TextItemWrapper wrapper = new TextItemWrapper(item);
+        Wrapper<TextItem> wrapper = new Wrapper<TextItem>(item);
         itemsModel.addWrapper(wrapper);
         nameTextField.setText("");
         itemList.setSelectedValue(wrapper, true);
@@ -217,10 +217,14 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void itemListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_itemListValueChanged
         if (!evt.getValueIsAdjusting()) {
             writeChangedValueBack();
-            TextItemWrapper wrapper = (TextItemWrapper)itemList.getSelectedValue();
+            Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
             if (wrapper != null) {
-                selectedItem = wrapper.getElement();
-                textArea.setText(wrapper.getElement().getText());
+                selectedItem = (TextItem) wrapper.getElement();
+                textArea.setText(selectedItem.getText());
+                textArea.setSyntaxEditingStyle(selectedItem.getType().equals("bbcode") ?
+                        SyntaxConstants.SYNTAX_STYLE_BBCODE :
+                        SyntaxConstants.SYNTAX_STYLE_HTML);
+                textArea.setCaretPosition(0);
             } else {
                 textArea.setText("");
                 selectedItem = null;
@@ -230,15 +234,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
         this.updateButtons();
     }//GEN-LAST:event_itemListValueChanged
 
-    private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_textAreaCaretUpdate
-        changed = true;
-    }//GEN-LAST:event_textAreaCaretUpdate
-
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        TextItemWrapper wrapper = (TextItemWrapper)itemList.getSelectedValue();
+        Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
         if (wrapper != null) {
-            itemsModel.removeWrapper(wrapper);
-            diagram.removeTextItem(wrapper.getElement());
+            itemsModel.removeObject((TextItem) wrapper.getElement());
+            diagram.removeTextItem((TextItem) wrapper.getElement());
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
@@ -264,15 +264,19 @@ public class TextItemsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_downButtonActionPerformed
 
+    private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_textAreaCaretUpdate
+        changed = true;
+    }//GEN-LAST:event_textAreaCaretUpdate
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
     private javax.swing.JList itemList;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JTextArea textArea;
+    private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
+    private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea;
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
-
 }

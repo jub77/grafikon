@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.TimeConverter;
@@ -55,7 +56,7 @@ public class EngineCyclesExtractor {
         if (previous != null) {
             int time = current.getStartTime() - previous.getEndTime();
             // recalculate to real seconds
-            Double timeScale = (Double)current.getTrain().getTrainDiagram().getAttribute("time.scale");
+            Double timeScale = (Double)current.getTrain().getTrainDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE);
             time = (int)Math.round((1.0d / timeScale) * time);
             row.setWait(time);
         }

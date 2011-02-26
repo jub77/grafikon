@@ -2,8 +2,8 @@ package net.parostroj.timetable.model.changes;
 
 import java.util.Arrays;
 import java.util.MissingResourceException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Details of diagram change.
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class DiagramChangeDescription {
 
-    private static final Logger LOG = Logger.getLogger(DiagramChangeDescription.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DiagramChangeDescription.class.getName());
 
     private String description;
     private Parameter[] params;
@@ -57,10 +57,10 @@ public class DiagramChangeDescription {
                 String desc = DiagramChange.getStringWithException(description);
                 _cachedOutput = String.format(desc, (Object[])this.convertParams());
             } catch (MissingResourceException e) {
-                LOG.log(Level.WARNING, "Key not found: {0}", e.getKey());
+                LOG.warn("Key not found: {}", e.getKey());
                 _cachedOutput = DiagramChange.getString("not_found");
             } catch (Exception e) {
-                LOG.log(Level.WARNING, "Not enough parameters for key: {0}", description);
+                LOG.warn("Not enough parameters for key: {}", description);
                 _cachedOutput = DiagramChange.getString("not_found");
             }
         }

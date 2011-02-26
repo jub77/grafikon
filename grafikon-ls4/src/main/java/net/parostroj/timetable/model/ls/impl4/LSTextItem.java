@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing text items.
@@ -71,7 +72,7 @@ public class LSTextItem {
         this.attributes = attributes;
     }
 
-    public TextItem createTextItem(TrainDiagram diagram) {
+    public TextItem createTextItem(TrainDiagram diagram) throws LSException {
         TextItem item = new TextItem(id, diagram);
         item.setAttributes(attributes.createAttributes(diagram));
         item.setText(text);

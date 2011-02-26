@@ -2,15 +2,13 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView.TrainColors;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for all graphical timetable draws.
@@ -18,7 +16,8 @@ import net.parostroj.timetable.utils.TransformUtil;
  * @author jub
  */
 abstract public class GTDraw {
-    private static final Logger LOG = Logger.getLogger(GTDraw.class.getName());
+
+    private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
     
     // basic display
     private static final Stroke HOURS_STROKE = new BasicStroke(1.8f);
@@ -27,78 +26,71 @@ abstract public class GTDraw {
     
     // extended display
     private static final Stroke HALF_HOURS_STROKE_EXT = new BasicStroke(1.1f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{15f,7f},0f);
-
     private static final int MINIMAL_SPACE = 25;
 
     protected Point start;
-    
     protected Dimension size;
-    
     protected int gapStationX;
-
     protected int borderX;
-
     protected int borderY;
-    
     protected Route route;
-
     protected int positionX = 0;
-    
     protected HighlightedTrains hTrains;
-    
-    private GraphicalTimetableView.TrainColors colors;
-    
+    private GTViewSettings.TrainColors colors;
     private TrainColorChooser trainColorChooser;
-    
     private TrainRegionCollector trainRegionCollector;
-    
-    protected Map<GTDrawPreference,Boolean> preferences;
-
+    protected GTViewSettings preferences;
     protected Map<Node,Integer> positions;
-
     protected List<Node> stations;
-
     protected Color background = Color.white;
+    protected int startTime;
+    protected int endTime;
+    protected double timeStep;
 
-    public GTDraw(int borderX, int borderY, int gapStationX, Dimension size, Route route, GraphicalTimetableView.TrainColors colors, TrainColorChooser chooser, HighlightedTrains hTrains, TrainRegionCollector collector) {
-        this.gapStationX = gapStationX;
-        this.borderX = borderX;
-        this.borderY = borderY;
+    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector) {
+        this.gapStationX = config.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
+        this.borderX = config.get(GTViewSettings.Key.BORDER_X, Integer.class);
+        this.borderY = config.get(GTViewSettings.Key.BORDER_Y, Integer.class);
         this.route = route;
-        this.colors = colors;
-        this.trainColorChooser = chooser;
-        this.hTrains = hTrains;
+        this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
+        this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
+        this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
         this.trainRegionCollector = collector;
         
         // update start
-        this.updateStart();
+        this.start = new Point(borderX, borderY);
+        this.start.translate(gapStationX, 0);
+
+        // start and end time
+        Integer st = config.get(GTViewSettings.Key.START_TIME, Integer.class);
+        Integer et = config.get(GTViewSettings.Key.END_TIME, Integer.class);
+        boolean ignore = config.getOption(GTViewSettings.Key.IGNORE_TIME_LIMITS);
+        startTime = (st != null && !ignore) ? st : 0;
+        endTime = (et != null && !ignore) ? et : TimeInterval.DAY;
         
         // compute size
-        this.setSize(size);
+        Dimension configSize = config.get(GTViewSettings.Key.SIZE, Dimension.class);
+        this.size = new Dimension(configSize.width - (borderX * 2 + gapStationX), configSize.height - borderY * 2);
         
         // create preferences
-        preferences = new EnumMap<GTDrawPreference, Boolean>(GTDrawPreference.class);
+        preferences = config;
+
+        // time step
+        timeStep = (double) size.width / (endTime - startTime);
     }
     
     public void draw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
-      
-        if (positions == null) {
+        if (positions == null)
             this.computePositions();
-        }
-        
+
         this.paintHours(g);
-
         this.paintStations(g);
-        
         g.setColor(Color.BLACK);
-        
         this.paintTrains(g);
-
         this.paintStationNames(g, stations, positions);
-        
         this.finishCollecting();
     }
     
@@ -108,140 +100,96 @@ abstract public class GTDraw {
     
     protected abstract void paintTrains(Graphics2D g);
 
-    public void setPreference(GTDrawPreference key, boolean value) {
-        preferences.put(key, Boolean.valueOf(value));
-    }
-
-    public boolean getPreference(GTDrawPreference key) {
-        Boolean value = preferences.get(key);
-        return Boolean.TRUE.equals(value);
-    }
-
-    public void setGapStationX(int gapStationX) {
-        this.gapStationX = gapStationX;
-    }
-
-    public void setRoute(Route route) {
-        this.route = route;
-    }
-
-    public void setSize(Dimension size) {
-        this.size = new Dimension(size.width - (borderX * 2 + gapStationX), size.height - borderY * 2);
-        // clear stations and positions of nodes
-        this.positions = null;
-        this.stations = null;
-    }
-
-    public void setBorderX(int borderX) {
-        this.borderX = borderX;
-    }
-
-    public void setBorderY(int borderY) {
-        this.borderY = borderY;
-    }
-
-    public void setBackground(Color background) {
-        this.background = background;
-    }
-
-    private void updateStart() {
-        this.start = new Point(borderX, borderY);
-        this.start.translate(gapStationX, 0);
+    public Route getRoute() {
+        return route;
     }
 
     public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
 
-    public Route getRoute() {
-        return route;
-    }
-
-    public void setHTrains(HighlightedTrains hTrains) {
-        this.hTrains = hTrains;
-    }
-
-    public void setTrainColors(TrainColors colors, TrainColorChooser trainColorChooser) {
-        this.colors = colors;
-        this.trainColorChooser = trainColorChooser;
-    }
-
     protected void paintHours(Graphics2D g) {
         int yEnd = start.y + size.height;
-        
-        double step = ((double)size.width) / 24 / 2;
-        
-        double xCurr = start.x;
+        // half hour step
+        double step = 1800 * timeStep;
+        int time = 0;
 
         // draw hours
         for (int i = 0; i <= 48; i++) {
-            
-            if ((i & 1) == 0) {
-                // hours
-                g.setColor(Color.orange);
-                g.setStroke(HOURS_STROKE);
-            } else {
-                // half hours
-                g.setColor(Color.orange);
-                if (preferences.get(GTDrawPreference.EXTENDED_LINES) == Boolean.TRUE)
-                    g.setStroke(HALF_HOURS_STROKE_EXT);
-                else
-                    g.setStroke(HALF_HOURS_STROKE);
-            }
-            
-            if (((i & 1) != 1) || step >= MINIMAL_SPACE)
-                // draw line
-                g.drawLine((int)xCurr, start.y, (int)xCurr, yEnd);
+            if (isTimeVisible(time)) {
+                int xLocation = this.getX(time);
+                if ((i & 1) == 0) {
+                    // hours
+                    g.setColor(Color.orange);
+                    g.setStroke(HOURS_STROKE);
+                } else {
+                    // half hours
+                    g.setColor(Color.orange);
+                    if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE)
+                        g.setStroke(HALF_HOURS_STROKE_EXT);
+                    else
+                        g.setStroke(HALF_HOURS_STROKE);
+                }
 
-            if ((i & 1) == 0) {
-                // draw hours
-                g.setColor(Color.black);
-                g.drawString(Integer.toString(i / 2), (int)xCurr - 5, start.y - 3);
+                if (((i & 1) != 1) || step >= MINIMAL_SPACE)
+                    // draw line
+                    g.drawLine(xLocation, start.y, xLocation, yEnd);
+
+                if ((i & 1) == 0) {
+                    // draw hours
+                    g.setColor(Color.black);
+                    String text = Integer.toString(i / 2);
+                    Rectangle2D rr = g.getFont().getStringBounds(text, g.getFontRenderContext());
+                    g.drawString(text, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
+                }
             }
 
-            xCurr = xCurr + step;
+            // half an hour
+            time += 1800;
         }
         
         // 10 minutes
-        double tenMinutesStep = ((double)size.width) / (24 * 6);
+        double tenMinutesStep = 600 * timeStep;
+        time = 0;
         if (tenMinutesStep >= MINIMAL_SPACE) {
-            xCurr = start.x;
             g.setColor(Color.orange);
             g.setStroke(TEN_MINUTES_STROKE);
             for (int i = 0; i <= 24*6; i++) {
-                if (i % 3 !=0) {
+                if ((i % 3 !=0) && this.isTimeVisible(time)) {
+                    int xLocation = this.getX(time);
                     // draw line
-                    g.drawLine((int)xCurr, start.y, (int)xCurr, yEnd);
+                    g.drawLine(xLocation, start.y, xLocation, yEnd);
                 }
-                xCurr = xCurr + tenMinutesStep;
+                time += 600;
             }
         }
     }
     
-    abstract protected Line2D createTrainLine(TimeInterval interval, Interval i, double timeStep);
-    
-    protected void paintTrainsOnLine(Line line, Graphics2D g, double timeStep, Stroke trainStroke) {
+    abstract protected Line2D createTrainLine(TimeInterval interval, Interval i);
+
+    protected void paintTrainsOnLine(Line line, Graphics2D g, Stroke trainStroke) {
         g.setStroke(trainStroke);
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL) &&
-                        (preferences.get(GTDrawPreference.TRAIN_NAMES) == Boolean.TRUE);
-                boolean paintMinutes = preferences.get(GTDrawPreference.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
+                        (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
+                boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
 
                 Interval normalized = interval.getInterval().normalize();
                 g.setColor(this.getIntervalColor(interval));
-                this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized, timeStep);
+                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd()))
+                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
-                if (overMidnight != null) {
-                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight, timeStep);
+                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
                 }
             }
         }
         g.setColor(Color.BLACK);
     }
 
-    private void paintTrainOnLineWithInterval(Graphics2D g, boolean paintTrainName, boolean paintMinutes, TimeInterval interval, Interval i, double timeStep) {
-        Line2D line2D = this.createTrainLine(interval, i, timeStep);
+    private void paintTrainOnLineWithInterval(Graphics2D g, boolean paintTrainName, boolean paintMinutes, TimeInterval interval, Interval i) {
+        Line2D line2D = this.createTrainLine(interval, i);
 
         // add shape to collector
         if (this.isCollectorCollecting(interval.getTrain()))
@@ -257,6 +205,7 @@ abstract public class GTDraw {
     }
 
     protected void paintStationNames(Graphics2D g, List<Node> stations, Map<Node, Integer> positions) {
+        int yShift = (int) (this.getDigitSize(g).getHeight() / 2);
         for (Node s : stations) {
             // ignore signals
             if (s.getType() == NodeType.SIGNAL)
@@ -277,11 +226,11 @@ abstract public class GTDraw {
                 }
             }
             Rectangle r = new Rectangle((int)b.getX() - 2, (int)b.getY(), (int)b.getWidth() + 4, (int)b.getHeight());
-            r.setLocation(10 + 0 + positionX - 3, y + 12 + (int)r.getY());
+            r.setLocation(10 + 0 + positionX - 3, y + yShift + (int)r.getY());
             g.setColor(background);
             g.fill(r);
             g.setColor(Color.black);
-            g.drawString(transName, 10 + 0 + positionX, y + 12);
+            g.drawString(transName, 10 + 0 + positionX, y + yShift);
         }
     }
 
@@ -312,7 +261,7 @@ abstract public class GTDraw {
                 try {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "Error transform name shape.", e);
+                    LOG.error("Error transform name shape.", e);
                 }
             }
         }
@@ -334,7 +283,7 @@ abstract public class GTDraw {
     
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
         // check if I should draw end time
-        boolean endTime = true;
+        boolean endTimeCheck = true;
         if (!interval.getNextTrainInterval().isStop()) {
             Train train = interval.getTrain();
             int ind = train.getTimeIntervalList().indexOf(interval);
@@ -342,7 +291,7 @@ abstract public class GTDraw {
                 TimeInterval nextLineInterval = train.getTimeIntervalList().get(ind + 2);
                 Node endNode2 = nextLineInterval.getTo();
                 if (stations.contains(endNode2))
-                    endTime = false;
+                    endTimeCheck = false;
             }
         }
         
@@ -360,7 +309,7 @@ abstract public class GTDraw {
         g.setColor(Color.BLACK);
         if (interval.getFrom().getType() != NodeType.SIGNAL)
             g.drawString(TimeConverter.getLastDigitOfMinutes(interval.getStart()), (int)startP.getX(), (int)startP.getY());
-        if (interval.getTo().getType() != NodeType.SIGNAL && endTime)
+        if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck)
             g.drawString(TimeConverter.getLastDigitOfMinutes(interval.getEnd()), (int)endP.getX(), (int)endP.getY());
     }
     
@@ -392,5 +341,18 @@ abstract public class GTDraw {
         if (trainRegionCollector == null)
             return false;
         return trainRegionCollector.isCollecting(train);
+    }
+
+    protected int getX(int time) {
+        int x = (int)(start.x + (time - startTime) * timeStep);
+        return x;
+    }
+
+    protected boolean isTimeVisible(int time1, int time2) {
+        return isTimeVisible(time1) || isTimeVisible(time2);
+    }
+
+    protected boolean isTimeVisible(int time) {
+        return startTime <= time && time <= endTime;
     }
 }

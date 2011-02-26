@@ -5,14 +5,20 @@
  */
 package net.parostroj.timetable.gui;
 
+import groovy.lang.GroovyShell;
+
 import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.*;
+
+import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
+import net.parostroj.timetable.actions.scripts.ScriptDescription;
 import net.parostroj.timetable.gui.actions.*;
+import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
+import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.*;
@@ -22,7 +28,8 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main frame for the application.
@@ -31,7 +38,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
     
-    private static final Logger LOG = Logger.getLogger(MainFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -44,10 +51,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private EngineClassesDialog engineClassesDialog;
     private Locale locale;
     private OutputAction outputAction;
+    private ExecuteScriptAction executeScriptAction;
+    
+    private Map<File, JMenuItem> lastOpened;
     
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
-        // remove hg revision if it is SNAPSHOT
         info.setText("Starting Grafikon ...\n" + version);
         this.initializeFrame();
     }
@@ -67,6 +76,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
      */
     private void initializeFrame() {
         model = new ApplicationModel();
+        lastOpened = new HashMap<File, JMenuItem>();
 
         // set local before anything else
         String loadedLocale = null;
@@ -81,10 +91,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "Cannot load preferences.", e);
+            LOG.warn("Cannot load preferences.", e);
         }
 
         outputAction = new OutputAction(model, this);
+        executeScriptAction = new ExecuteScriptAction(model);
 
         initComponents();
         
@@ -145,6 +156,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             item.addActionListener(oLangListener);
             outputLbuttonGroup.add(item);
         }
+
+        // look and feel
+        ActionListener lafListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lafRadioButtonMenuItemActionPerformed(e);
+            }
+        };
+        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
+            item.setActionCommand(laf.getClassName());
+            item.addActionListener(lafListener);
+            lookAndFeelbuttonGroup.add(item);
+            lookAndFeelMenu.add(item);
+        }
         
         model.addListener(this);
         model.addListener(statusBar);
@@ -180,7 +206,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             AppPreferences.getPreferences().load();
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error loading preferences.", e);
+            LOG.error("Error loading preferences.", e);
         }
         
         this.setSelectedLocale();
@@ -191,20 +217,89 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
         fcf.getFileChooser(FileChooserFactory.Type.GTM);
+        
+        // preload FileLoadSave
+        LSFileFactory.getInstance();
+        
+        // initialize groovy
+        new GroovyShell().parse("");
+        
+        // add predefined scripts
+        for (ScriptDescription sd : PredefinedScriptsLoader.getPredefinedScripts()) {
+            JMenuItem item = new JMenuItem();
+            item.setAction(executeScriptAction);
+            item.setText(sd.getLocalizedName());
+            item.setActionCommand(sd.getId());
+            scriptsMenu.add(item);
+        }
     }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
-        if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            this.updateView();
-            tabbedPane.setEnabled(model.getDiagram() != null);
-            this.setTitleChanged(false);
+        switch (event.getType()) {
+            case SET_DIAGRAM_CHANGED:
+                this.updateView();
+                tabbedPane.setEnabled(model.getDiagram() != null);
+                this.setTitleChanged(false);
+                break;
+            case MODEL_CHANGED:
+                this.setTitleChanged(true);
+                break;
+            case MODEL_SAVED:
+                this.setTitleChanged(false);
+                break;
+            case ADD_LAST_OPENED:
+                this.addLastOpenedFile((File) event.getObject());
+                break;
+            case REMOVE_LAST_OPENED:
+                this.removeLastOpened((File) event.getObject());
+                break;
         }
-        if (event.getType() == ApplicationModelEventType.MODEL_CHANGED) {
-            this.setTitleChanged(true);
-        }
-        if (event.getType() == ApplicationModelEventType.MODEL_SAVED) {
-            this.setTitleChanged(false);
+    }
+
+    private void removeLastOpened(final File file) {
+        ModelActionUtilities.runLaterInEDT(new Runnable() {
+            
+            @Override
+            public void run() {
+                JMenuItem removed = lastOpened.remove(file);
+                if (removed != null) {
+                    fileMenu.remove(removed);
+                    refreshLastOpenedFiles();
+                }
+            }
+        });
+    }
+
+    private void addLastOpenedFile(final File file) {
+        ModelActionUtilities.runLaterInEDT(new Runnable() {
+            
+            @Override
+            public void run() {
+                JMenuItem openItem = null;
+                if (!lastOpened.containsKey(file)) {
+                    openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, false));
+                    openItem.setText("x " + file.getName());
+                    openItem.setActionCommand("open:" + file.getAbsoluteFile());
+                    lastOpened.put(file, openItem);
+                } else {
+                    openItem = lastOpened.get(file);
+                    fileMenu.remove(openItem);
+                }
+                fileMenu.add(openItem, fileMenu.getItemCount() - 1 - lastOpened.size());
+                refreshLastOpenedFiles();
+            }
+        });
+    }
+    
+    private void refreshLastOpenedFiles() {
+        int menuItems = fileMenu.getItemCount();
+        int fileItems = lastOpened.size();
+        // regenerate mnemonics
+        for (int i = fileItems; i > 0; i--) {
+            JMenuItem item = fileMenu.getItem(menuItems - i - 2);
+            item.setText(String.format("%d %s", fileItems - i + 1, item.getText().substring(2)));
+            item.setMnemonic(Character.forDigit(fileItems - i + 1, 10));
         }
     }
 
@@ -229,35 +324,40 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
    
     private void updateView() {
-        fileSaveMenuItem.setEnabled(model.getDiagram() != null);
-        fileSaveAsMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByDcMenuItem.setEnabled(model.getDiagram() != null);
-        recalculateMenuItem.setEnabled(model.getDiagram() != null);
-        recalculateStopsMenuItem.setEnabled(model.getDiagram() != null);
-        nodeTimetableListMenuItem.setEnabled(model.getDiagram() != null);
-        ecListMenuItem.setEnabled(model.getDiagram() != null);
-        dcListMenuItem.setEnabled(model.getDiagram() != null);
-        tucListMenuItem.setEnabled(model.getDiagram() != null);
-        settingsMenuItem.setEnabled(model.getDiagram() != null);
-        allHtmlMenuItem.setEnabled(model.getDiagram() != null);
-        imagesMenuItem.setEnabled(model.getDiagram() != null);
-        textItemsMenuItem.setEnabled(model.getDiagram() != null);
-        infoMenuItem.setEnabled(model.getDiagram() != null);
-        spListMenuItem.setEnabled(model.getDiagram() != null);
-        epListMenuItem.setEnabled(model.getDiagram() != null);
-        trainTypesMenuItem.setEnabled(model.getDiagram() != null);
-        lineClassesMenuItem.setEnabled(model.getDiagram() != null);
-        weightTablesMenuItem.setEnabled(model.getDiagram() != null);
-        penaltyTableMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByTimeFilteredMenuItem.setEnabled(model.getDiagram() != null);
-        fileImportMenuItem.setEnabled(model.getDiagram() != null);
-        dcListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        trainTimetableListByDcSelectMenuItem.setEnabled(model.getDiagram() != null);
-        nodeTimetableListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        ecListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        tucListSelectMenuItem.setEnabled(model.getDiagram() != null);
-        editRoutesMenuItem.setEnabled(model.getDiagram() != null);
+        boolean notNullDiagram = model.getDiagram() != null;
+        fileSaveMenuItem.setEnabled(notNullDiagram);
+        fileSaveAsMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByDcMenuItem.setEnabled(notNullDiagram);
+        recalculateMenuItem.setEnabled(notNullDiagram);
+        recalculateStopsMenuItem.setEnabled(notNullDiagram);
+        nodeTimetableListMenuItem.setEnabled(notNullDiagram);
+        ecListMenuItem.setEnabled(notNullDiagram);
+        dcListMenuItem.setEnabled(notNullDiagram);
+        tucListMenuItem.setEnabled(notNullDiagram);
+        settingsMenuItem.setEnabled(notNullDiagram);
+        allHtmlMenuItem.setEnabled(notNullDiagram);
+        imagesMenuItem.setEnabled(notNullDiagram);
+        textItemsMenuItem.setEnabled(notNullDiagram);
+        infoMenuItem.setEnabled(notNullDiagram);
+        spListMenuItem.setEnabled(notNullDiagram);
+        epListMenuItem.setEnabled(notNullDiagram);
+        trainTypesMenuItem.setEnabled(notNullDiagram);
+        lineClassesMenuItem.setEnabled(notNullDiagram);
+        weightTablesMenuItem.setEnabled(notNullDiagram);
+        penaltyTableMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByTimeFilteredMenuItem.setEnabled(notNullDiagram);
+        fileImportMenuItem.setEnabled(notNullDiagram);
+        dcListSelectMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByDcSelectMenuItem.setEnabled(notNullDiagram);
+        nodeTimetableListSelectMenuItem.setEnabled(notNullDiagram);
+        ecListSelectMenuItem.setEnabled(notNullDiagram);
+        tucListSelectMenuItem.setEnabled(notNullDiagram);
+        editRoutesMenuItem.setEnabled(notNullDiagram);
+        trainTimetableListByRoutesMenuItem.setEnabled(notNullDiagram);
+        removeWeightsMenuItem.setEnabled(notNullDiagram);
+        executeScriptMenuItem.setEnabled(notNullDiagram);
+        scriptsMenu.setEnabled(notNullDiagram);
     }
     
     /** This method is called from within the constructor to
@@ -271,6 +371,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         languageButtonGroup = new javax.swing.ButtonGroup();
         outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
+        lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
         applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
@@ -280,7 +381,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         netPane = new net.parostroj.timetable.gui.panes.NetPane();
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
-        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem fileNewMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator3 = new javax.swing.JSeparator();
         fileOpenMenuItem = new javax.swing.JMenuItem();
@@ -289,6 +390,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator1 = new javax.swing.JSeparator();
         fileImportMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator5 = new javax.swing.JSeparator();
+        languageMenu = new javax.swing.JMenu();
+        systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        lookAndFeelMenu = new javax.swing.JMenu();
+        javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
+        javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        diagramMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
         editRoutesMenuItem = new javax.swing.JMenuItem();
         imagesMenuItem = new javax.swing.JMenuItem();
@@ -298,12 +407,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lineClassesMenuItem = new javax.swing.JMenuItem();
         weightTablesMenuItem = new javax.swing.JMenuItem();
         penaltyTableMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
-        languageMenu = new javax.swing.JMenu();
-        systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        programSettingsMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
         trainTimetableListMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListMenuItem = new javax.swing.JMenuItem();
@@ -317,6 +420,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         epListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
         trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
+        trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
         nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
         ecListSelectMenuItem = new javax.swing.JMenuItem();
         tucListSelectMenuItem = new javax.swing.JMenuItem();
@@ -330,15 +434,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
         recalculateStopsMenuItem = new javax.swing.JMenuItem();
+        removeWeightsMenuItem = new javax.swing.JMenuItem();
+        executeScriptMenuItem = new javax.swing.JMenuItem();
+        scriptsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem resizeColumnsMenuItem = new javax.swing.JMenuItem();
         showGTViewMenuItem = new javax.swing.JCheckBoxMenuItem();
+        programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -363,9 +472,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         applicationPanelLayout.setVerticalGroup(
             applicationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, applicationPanelLayout.createSequentialGroup()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabbedPane.getAccessibleContext().setAccessibleName(ResourceLoader.getString("tab.trains")); // NOI18N
@@ -402,79 +511,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(fileImportMenuItem);
         fileMenu.add(separator5);
 
-        settingsMenuItem.setText(ResourceLoader.getString("menu.file.settings")); // NOI18N
-        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settingsMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(settingsMenuItem);
-
-        editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
-        editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editRoutesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(editRoutesMenuItem);
-
-        imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
-        imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                imagesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(imagesMenuItem);
-
-        textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
-        textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textItemsMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(textItemsMenuItem);
-
-        infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
-        infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                infoMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(infoMenuItem);
-
-        trainTypesMenuItem.setText(ResourceLoader.getString("menu.file.traintypes")); // NOI18N
-        trainTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainTypesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(trainTypesMenuItem);
-
-        lineClassesMenuItem.setText(ResourceLoader.getString("menu.file.lineclasses")); // NOI18N
-        lineClassesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lineClassesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(lineClassesMenuItem);
-
-        weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
-        weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                weightTablesMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(weightTablesMenuItem);
-
-        penaltyTableMenuItem.setText(ResourceLoader.getString("menu.file.penaltytable")); // NOI18N
-        penaltyTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                penaltyTableMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(penaltyTableMenuItem);
-        fileMenu.add(separator2);
-
         languageMenu.setText(ResourceLoader.getString("menu.language")); // NOI18N
 
         languageButtonGroup.add(systemLanguageRadioButtonMenuItem);
@@ -489,13 +525,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(languageMenu);
 
-        programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
-        programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        lookAndFeelMenu.setText(ResourceLoader.getString("menu.lookandfeel")); // NOI18N
+
+        lookAndFeelbuttonGroup.add(systemLAFRadioButtonMenuItem);
+        systemLAFRadioButtonMenuItem.setSelected(true);
+        systemLAFRadioButtonMenuItem.setText(ResourceLoader.getString("menu.lookandfeel.system")); // NOI18N
+        systemLAFRadioButtonMenuItem.setActionCommand("system");
+        systemLAFRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                programSettingsMenuItemActionPerformed(evt);
+                lafRadioButtonMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(programSettingsMenuItem);
+        lookAndFeelMenu.add(systemLAFRadioButtonMenuItem);
+
+        fileMenu.add(lookAndFeelMenu);
+        fileMenu.add(separator2);
         fileMenu.add(separator4);
 
         exitMenuItem.setAction(new ExitAction(model, this));
@@ -504,8 +548,84 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         menuBar.add(fileMenu);
 
+        diagramMenu.setText(ResourceLoader.getString("menu.diagram")); // NOI18N
+
+        settingsMenuItem.setText(ResourceLoader.getString("menu.file.settings")); // NOI18N
+        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(settingsMenuItem);
+
+        editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
+        editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editRoutesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(editRoutesMenuItem);
+
+        imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
+        imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imagesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(imagesMenuItem);
+
+        textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
+        textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textItemsMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(textItemsMenuItem);
+
+        infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
+        infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(infoMenuItem);
+
+        trainTypesMenuItem.setText(ResourceLoader.getString("menu.file.traintypes")); // NOI18N
+        trainTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trainTypesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(trainTypesMenuItem);
+
+        lineClassesMenuItem.setText(ResourceLoader.getString("menu.file.lineclasses")); // NOI18N
+        lineClassesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineClassesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(lineClassesMenuItem);
+
+        weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
+        weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                weightTablesMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(weightTablesMenuItem);
+
+        penaltyTableMenuItem.setText(ResourceLoader.getString("menu.file.penaltytable")); // NOI18N
+        penaltyTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                penaltyTableMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(penaltyTableMenuItem);
+
+        menuBar.add(diagramMenu);
+
         actionMenu.setAction(outputAction);
-        actionMenu.setText(ResourceLoader.getString("menu.action")); // NOI18N
+        actionMenu.setText(ResourceLoader.getString("menu.outputs")); // NOI18N
         actionMenu.setActionCommand("stations_select");
 
         trainTimetableListMenuItem.setAction(outputAction);
@@ -559,6 +679,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByDcSelectMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc.select")); // NOI18N
         trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
+
+        trainTimetableListByRoutesMenuItem.setAction(outputAction);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
+        trainTimetableListByRoutesMenuItem.setText(bundle.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
+        trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
+        actionMenu.add(trainTimetableListByRoutesMenuItem);
 
         nodeTimetableListSelectMenuItem.setAction(outputAction);
         nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
@@ -636,6 +762,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(outputTypeMenu);
 
+        genTitlePageTTCheckBoxMenuItem.setSelected(true);
+        genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        actionMenu.add(genTitlePageTTCheckBoxMenuItem);
+
         menuBar.add(actionMenu);
 
         viewsMenu.setText(ResourceLoader.getString("menu.views")); // NOI18N
@@ -650,6 +785,18 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         recalculateStopsMenuItem.setAction(new RecalculateStopsAction(model));
         recalculateStopsMenuItem.setText(ResourceLoader.getString("menu.special.recalculate.stops")); // NOI18N
         specialMenu.add(recalculateStopsMenuItem);
+
+        removeWeightsMenuItem.setAction(new RemoveWeightsAction(model));
+        removeWeightsMenuItem.setText(ResourceLoader.getString("menu.special.remove.weights")); // NOI18N
+        specialMenu.add(removeWeightsMenuItem);
+
+        executeScriptMenuItem.setAction(executeScriptAction);
+        executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
+        executeScriptMenuItem.setActionCommand("");
+        specialMenu.add(executeScriptMenuItem);
+
+        scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
+        specialMenu.add(scriptsMenu);
 
         menuBar.add(specialMenu);
 
@@ -688,6 +835,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         settingsMenu.add(showGTViewMenuItem);
 
+        programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
+        programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                programSettingsMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(programSettingsMenuItem);
+
         menuBar.add(settingsMenu);
 
         helpMenu.setText(ResourceLoader.getString("menu.help")); // NOI18N
@@ -718,131 +873,158 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    settingsDialog.setLocationRelativeTo(this);
-    settingsDialog.setTrainDiagram(model.getDiagram());
-    settingsDialog.setVisible(true);
-    // check and send event if neccessary
-    if (settingsDialog.isDiagramChanged()) {
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED,model));
-        model.setModelChanged(true);
-    }
-}//GEN-LAST:event_settingsMenuItemActionPerformed
+    private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
+        settingsDialog.setLocationRelativeTo(this);
+        settingsDialog.setTrainDiagram(model.getDiagram());
+        settingsDialog.setVisible(true);
+        // check if recalculate should be executed
+        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        if (settingsDialog.isRecalculate()) {
+            ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
+                
+                @Override
+                public void execute(Train train) throws Exception {
+                    train.recalculate();
+                }
+            }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
+            ActionHandler.getInstance().execute(action);
+        }
+        // check and send event if neccessary
+        if (settingsDialog.isDiagramChanged()) {
+            ModelAction action = new EventDispatchModelAction(context) {
+                
+                @Override
+                protected void eventDispatchAction() {
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
+                    // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
+                    model.setModelChanged(true);
+                }
+            };
+            ActionHandler.getInstance().execute(action);
+        }
+    }//GEN-LAST:event_settingsMenuItemActionPerformed
 
-private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
-    imagesDialog.setLocationRelativeTo(this);
-    imagesDialog.setVisible(true);
-}//GEN-LAST:event_imagesMenuItemActionPerformed
+    private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
+        imagesDialog.setLocationRelativeTo(this);
+        imagesDialog.setVisible(true);
+    }//GEN-LAST:event_imagesMenuItemActionPerformed
 
-private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
-    infoDialog.setLocationRelativeTo(this);
-    infoDialog.updateValues();
-    infoDialog.setVisible(true);
-}//GEN-LAST:event_infoMenuItemActionPerformed
+    private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoMenuItemActionPerformed
+        infoDialog.setLocationRelativeTo(this);
+        infoDialog.updateValues();
+        infoDialog.setVisible(true);
+    }//GEN-LAST:event_infoMenuItemActionPerformed
 
-private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
-    if (systemLanguageRadioButtonMenuItem.isSelected())
-        locale = null;
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
-    }
-}//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
+    private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageRadioButtonMenuItemActionPerformed
+        if (systemLanguageRadioButtonMenuItem.isSelected())
+            locale = null;
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
+        }
+    }//GEN-LAST:event_languageRadioButtonMenuItemActionPerformed
 
-private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
-    if (oSystemLRadioButtonMenuItem.isSelected())
-        model.setOutputLocale(null);
-    else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-        model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
-    }
-}//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
+    private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputLanguageRadioButtonMenuItemActionPerformed
+        if (oSystemLRadioButtonMenuItem.isSelected())
+            model.setOutputLocale(null);
+        else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
+            model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
+        }
+    }//GEN-LAST:event_outputLanguageRadioButtonMenuItemActionPerformed
 
-private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
-    trainTypesDialog.updateValues();
-    trainTypesDialog.setLocationRelativeTo(this);
-    trainTypesDialog.setVisible(true);
-}//GEN-LAST:event_trainTypesMenuItemActionPerformed
+    private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainTypesMenuItemActionPerformed
+        trainTypesDialog.updateValues();
+        trainTypesDialog.setLocationRelativeTo(this);
+        trainTypesDialog.setVisible(true);
+    }//GEN-LAST:event_trainTypesMenuItemActionPerformed
 
-private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
-    lineClassesDialog.updateValues();
-    lineClassesDialog.setLocationRelativeTo(this);
-    lineClassesDialog.setVisible(true);
-}//GEN-LAST:event_lineClassesMenuItemActionPerformed
+    private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineClassesMenuItemActionPerformed
+        lineClassesDialog.updateValues();
+        lineClassesDialog.setLocationRelativeTo(this);
+        lineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_lineClassesMenuItemActionPerformed
 
-private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
-    engineClassesDialog.updateValues();
-    engineClassesDialog.setLocationRelativeTo(this);
-    engineClassesDialog.setVisible(true);
-}//GEN-LAST:event_weightTablesMenuItemActionPerformed
+    private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weightTablesMenuItemActionPerformed
+        engineClassesDialog.updateValues();
+        engineClassesDialog.setLocationRelativeTo(this);
+        engineClassesDialog.setVisible(true);
+    }//GEN-LAST:event_weightTablesMenuItemActionPerformed
 
-private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
-    trainsPane.editColumns();
-}//GEN-LAST:event_columnsMenuItemActionPerformed
+    private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnsMenuItemActionPerformed
+        trainsPane.editColumns();
+    }//GEN-LAST:event_columnsMenuItemActionPerformed
 
-private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
-    trainsPane.sortColumns();
-}//GEN-LAST:event_sortColumnsMenuItemActionPerformed
+    private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortColumnsMenuItemActionPerformed
+        trainsPane.sortColumns();
+    }//GEN-LAST:event_sortColumnsMenuItemActionPerformed
 
-private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
-    trainsPane.resizeColumns();
-}//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
+    private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resizeColumnsMenuItemActionPerformed
+        trainsPane.resizeColumns();
+    }//GEN-LAST:event_resizeColumnsMenuItemActionPerformed
 
-private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
-    TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
-    dialog.setTrainDiagram(model.getDiagram());
-    dialog.updateValues();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+    private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_penaltyTableMenuItemActionPerformed
+        TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
+        dialog.setTrainDiagram(model.getDiagram());
+        dialog.updateValues();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_penaltyTableMenuItemActionPerformed
 
-}//GEN-LAST:event_penaltyTableMenuItemActionPerformed
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        // show about dialog
+        ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
+        LSFileFactory f = LSFileFactory.getInstance();
+        FileLoadSave fls = null;
+        try {
+            fls = f.createLatestForSave();
+        } catch (LSException e) {
+            LOG.warn("Cannot create FileLoadSave", e);
+        }
+        AboutDialog dialog = new AboutDialog(this, true,
+                String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
+                getClass().getResource(aboutBundle.getString("image")), true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
-private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-    // show about dialog
-    ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
-    LSFileFactory f = LSFileFactory.getInstance();
-    FileLoadSave fls = null;
-    try {
-        fls = f.createLatestForSave();
-    } catch (LSException e) {
-        LOG.log(Level.WARNING, "Cannot create FileLoadSave", e);
-    }
-    AboutDialog dialog = new AboutDialog(this, true,
-            String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
-            getClass().getResource(aboutBundle.getString("image")), true);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-}//GEN-LAST:event_aboutMenuItemActionPerformed
+    private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
+        // get output type
+        OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
+        model.setOutputCategory(type);
+    }//GEN-LAST:event_outputTypeActionPerformed
 
-private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputTypeActionPerformed
-    // get output type
-    OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
-    model.setOutputCategory(type);
-}//GEN-LAST:event_outputTypeActionPerformed
+    private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
+        EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
+        editRoutesDialog.setLocationRelativeTo(this);
+        editRoutesDialog.showDialog(model.getDiagram());
+    }//GEN-LAST:event_editRoutesMenuItemActionPerformed
 
-private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editRoutesMenuItemActionPerformed
-    EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
-    editRoutesDialog.setLocationRelativeTo(this);
-    editRoutesDialog.showDialog(model.getDiagram());
-}//GEN-LAST:event_editRoutesMenuItemActionPerformed
+    private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
+        TextItemsDialog dialog = new TextItemsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }//GEN-LAST:event_textItemsMenuItemActionPerformed
 
-private void textItemsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textItemsMenuItemActionPerformed
-    TextItemsDialog dialog = new TextItemsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model.getDiagram());
-    dialog.dispose();
-}//GEN-LAST:event_textItemsMenuItemActionPerformed
+    private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
+        // program settings
+        ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model);
+        dialog.dispose();
+    }//GEN-LAST:event_programSettingsMenuItemActionPerformed
 
-private void programSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programSettingsMenuItemActionPerformed
-    // program settings
-    ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
-    dialog.setLocationRelativeTo(this);
-    dialog.showDialog(model);
-    dialog.dispose();
-}//GEN-LAST:event_programSettingsMenuItemActionPerformed
+    private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
+        boolean state = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        trainsPane.setVisibilityOfGTView(state);
+    }//GEN-LAST:event_showGTViewMenuItemActionPerformed
 
-private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGTViewMenuItemActionPerformed
-    boolean state = ((JCheckBoxMenuItem) evt.getSource()).getState();
-    trainsPane.setVisibilityOfGTView(state);
-}//GEN-LAST:event_showGTViewMenuItemActionPerformed
+    private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        model.getProgramSettings().setGenerateTitlePageTT(selected);
+    }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
+
+    private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
+    }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
 
     private void setSelectedLocale() {
         if (locale == null)
@@ -887,7 +1069,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             this.saveToPreferences(prefs);
             prefs.save();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error saving preferences.", ex);
+            LOG.error("Error saving preferences.", ex);
         }
     }
 
@@ -919,6 +1101,9 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 
         // save output type
         prefs.setString("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
+
+        // save look and feel
+        prefs.setString("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
         
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -953,7 +1138,19 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
         }
 
-        showGTViewMenuItem.setState(prefs.getBoolean("trains.show.gtview", true));
+        // load look and feel
+        String laf = prefs.getString("look.and.feel", "system");
+        e = lookAndFeelbuttonGroup.getElements();
+        while (e.hasMoreElements()) {
+            AbstractButton button = e.nextElement();
+            if (button.getActionCommand().equals(laf)) {
+                button.setSelected(true);
+                break;
+            }
+        }
+
+        showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
+        genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -961,6 +1158,11 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         trainUnitCyclesPane.loadFromPreferences(prefs);
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
+    }
+    
+    public void forceLoad(File file) {
+        NewOpenAction action = new NewOpenAction(model, this, false);
+        action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
     }
 
     @Override
@@ -976,21 +1178,27 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JPanel applicationPanel;
     private javax.swing.JMenuItem dcListMenuItem;
     private javax.swing.JMenuItem dcListSelectMenuItem;
+    private javax.swing.JMenu diagramMenu;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
     private javax.swing.JMenuItem ecListMenuItem;
     private javax.swing.JMenuItem ecListSelectMenuItem;
     private javax.swing.JMenuItem editRoutesMenuItem;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenuItem epListMenuItem;
+    private javax.swing.JMenuItem executeScriptMenuItem;
     private javax.swing.JMenuItem fileImportMenuItem;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JMenuItem fileSaveMenuItem;
+    private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
     private javax.swing.JMenuItem imagesMenuItem;
     private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenuItem lineClassesMenuItem;
+    private javax.swing.JMenu lookAndFeelMenu;
+    private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
     private net.parostroj.timetable.gui.panes.NetPane netPane;
     private javax.swing.JMenuItem nodeTimetableListMenuItem;
     private javax.swing.JMenuItem nodeTimetableListSelectMenuItem;
@@ -1002,6 +1210,8 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem programSettingsMenuItem;
     private javax.swing.JMenuItem recalculateMenuItem;
     private javax.swing.JMenuItem recalculateStopsMenuItem;
+    private javax.swing.JMenuItem removeWeightsMenuItem;
+    private javax.swing.JMenu scriptsMenu;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.JMenuItem spListMenuItem;
@@ -1011,6 +1221,7 @@ private void showGTViewMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JMenuItem textItemsMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
     private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
+    private javax.swing.JMenuItem trainTimetableListByRoutesMenuItem;
     private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
     private javax.swing.JMenuItem trainTimetableListMenuItem;
     private javax.swing.JMenuItem trainTypesMenuItem;

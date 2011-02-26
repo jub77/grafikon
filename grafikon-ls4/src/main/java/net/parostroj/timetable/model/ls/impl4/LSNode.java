@@ -10,6 +10,7 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing nodes.
@@ -112,7 +113,7 @@ public class LSNode {
         this.y = y;
     }
 
-    public Node createNode(TrainDiagram diagram) {
+    public Node createNode(TrainDiagram diagram) throws LSException {
         Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
         node.setAttributes(attributes.createAttributes());
         node.setPositionX(x);

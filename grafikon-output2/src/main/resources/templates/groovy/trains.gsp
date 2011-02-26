@@ -25,6 +25,8 @@
     table.tt tr.fline td.totalv {border-width: 0.4mm 0mm 0.4mm 0mm;}
     table.tt tr.line td {font-size: 3.5mm;}
     div.symbol {width: 7mm; float: left;}
+    table.tt tr.cline {height: 4mm;}
+    table.tt tr.cline td {font-size: 3mm; border-width:0mm; margin: 0mm; padding: 0mm}
 
     table.wl {}
     table.wl tr {height: 4mm;}
@@ -32,14 +34,14 @@
 
     table.tt tr td.tc-d3-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2 { width: 7mm; border-right-width: 0.2mm; }
-    table.tt tr td.tc-d3-2a { width: 4mm; border-right-width: 0.2mm; }
+    table.tt tr td.tc-d3-2a { width: 6mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-3 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-4 { width: 13mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-5 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-6 { width: 13mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-7 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-8 { width: 7mm; border-right-width: 0.2mm; }
-    table.tt tr td.tc-d3-9 { width: 20mm; }
+    table.tt tr td.tc-d3-9 { width: 18mm; }
 
     table.tt tr td.tc-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-2 { width: 8mm; border-right-width: 0.2mm; }
@@ -92,6 +94,30 @@
     div.text-page span.strike {text-decoration: line-through;}
     div.text-page div.center {text-align: center;}
     div.text-page img {max-width: 125mm; max-height: 180mm;}
+
+    table.titlepage {width: 125mm;}
+    td.company {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.space1 {height: 15mm; font-size: 4mm; text-align: center;}
+    td.gtitle {height: 15mm; font-size: 8mm; text-align: center; font-weight: bold;}
+    td.numbers {height: 15mm; font-size: 12mm; text-align: center; font-weight: bold;}
+    td.line {height: 5mm; font-size: 4mm; text-align: center;}
+    td.stations {height: 15mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.valid {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
+    td.cycle {height: 8mm; font-size: 5mm; text-align: center; vertical-align: top; font-weight: bold;}
+    td.space2 {height: 58mm; font-size: 5mm; text-align: center; vertical-align: top;}
+    td.publish {height: 5mm; font-size: 3mm; text-align: center;}
+
+    table.list2 {font-size: 4mm; width: 120mm; padding-left: 5mm;}
+    tr.listh {height: 5mm; font-size: 3mm;}
+    td.ctrainh {width: 25mm; text-align: center;}
+    td.cdepartureh {width: 15mm; text-align: center;}
+    td.cfromtoh {width: 22mm; text-align: center;}
+    td.cnoteh {width: 53mm; padding-left: 5mm;}
+    td.ctrain {vertical-align: bottom;}
+    td.cdeparture {vertical-align: bottom; text-align: center; font-weight: bold;}
+    td.cfromto {vertical-align: bottom; text-align: center;}
+    td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
+    td.move {vertical-align: bottom;}
   </style>
 </head>
 <%
@@ -104,7 +130,7 @@
   TIMETABLE_HEADER_ROUTE = 4
   TIMETABLE_HEADER_WEIGHT = 4
   TIMETABLE_LINE = 5
-  TIMETABLE_COMMENT = 5
+  TIMETABLE_COMMENT = 4
 
   PAGE_LENGTH = 185
 %>
@@ -113,6 +139,8 @@
   trainPages = createTrainPages(trains.trainTimetables)
   pages = addIndexPages(trainPages)
   addTextPages(trains.texts, pages)
+  if (title_page)
+    addTitlePages(pages)
   printPages(pages)
 %>
 </body>
@@ -122,8 +150,12 @@
     def index = false
     def empty = false
     def text = false
+    def title = false
+    def cycle = false
     def trains = []
     def textStr
+    def numbered = true
+    def numberShown = true
 
     static def emptyPage() {
       def aPage = new Page()
@@ -222,6 +254,23 @@
     }
   }
 
+  def addTitlePages(pages) {
+    // title page
+    def titlePage = new Page()
+    titlePage.title = true
+    titlePage.numbered = false
+    titlePage.numberShown = false
+    pages.add(0, titlePage)
+    def secondPage = new Page()
+    secondPage.numbered = false
+    secondPage.numberShown = false
+    if (trains.cycle != null)
+      secondPage.cycle = true
+    else
+      secondPage.empty = true
+    pages.add(1, secondPage);
+  }
+
   // reorder pages
   def reorderPages(pages) {
     def result = []
@@ -251,7 +300,8 @@
   def numberPages(pages) {
     def i = 1
     for (page in pages) {
-      page.number = i++
+      if (page.numbered)
+        page.number = i++
     }
   }
 
@@ -282,10 +332,10 @@
     %>
 <table class="two-pages${hasNext ? " page-break" :""}" cellspacing="0" cellpadding="0">
 <tr>
-    <td class="header-l-l">${pageLeft.number}</td>
-    <td class="header-l-r">OstraMo</td>
-    <td class="header-r-l">OstraMo</td>
-    <td class="header-r-r">${pageRight.number}</td>
+    <td class="header-l-l">${pageLeft.numberShown ? pageLeft.number : "&nbsp;"}</td>
+    <td class="header-l-r">${pageLeft.numberShown ? header_publisher : "&nbsp"}</td>
+    <td class="header-r-l">${pageRight.numberShown ? header_publisher : "&nbsp"}</td>
+    <td class="header-r-r">${pageRight.numberShown ? pageRight.number : "&nbsp;"}</td>
 </tr>
 <tr>
 <td colspan="2" class="page-left">
@@ -302,6 +352,10 @@
   def printPage(page) {
     if (page.empty) {
       // do nothing
+    } else if (page.title) {
+      show_title(page)
+    } else if (page.cycle) {
+      show_cycle(page)
     } else if (page.text) {
       show_text(page)
     } else if (page.index) {
@@ -377,15 +431,19 @@
     <td colspan="${colspan}">
       <table cellpadding="0" cellspacing="0" class="wl"><%
         def fwt = true
-        if (train.weightData != null)
-        for (wr in train.weightData) { %>
+        if (train.weightData != null) {
+        lastEngine = null
+        for (wr in train.weightData) { 
+          currentEngine = concat(wr.engines, ", ") %>
         <tr>
-          <td>${wr.engine != null ? ((train.diesel ? diesel_unit : engine) + " " + wr.engine + ". &nbsp;") : ""}</td>
-          <td>${(wr.weight != null && (fwt || wr.engine != null)) ? norm_load + ": &nbsp;" : ""}</td>
+          <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
+          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? norm_load + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
           <td align="right">${wr.weight != null ? wr.weight + " " + tons : ""}</td>
         </tr><%
           fwt = false
+          lastEngine = currentEngine
+        }
         }
         if (train.lengthData != null) {%>
         <tr>
@@ -529,7 +587,7 @@
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
-  <tr class="line"><td colspan="${colspan}"><div class="symbol">${comment[0]}</div><div>= ${comment[1]}</div></td></tr><%
+  <tr class="cline"><td colspan="${colspan}"><div class="symbol">${comment[0]}</div><div>= ${comment[1]}</div></td></tr><%
   } %>
 </table><%
       }
@@ -620,6 +678,91 @@
     return list
   }
 
+  def show_title(page) {
+    %>
+<table class="titlepage" border="0" cellspacing="0">
+  <tr><td class="company">${company}<br>${company_part}</td></tr>
+  <tr><td class="space1">&nbsp;</td></tr>
+  <tr><td class="gtitle">${train_timetable}</td></tr>
+  <tr><td class="numbers">${getRouteNames(trains)}</td></tr>
+  <tr><td class="line">${for_line}</td></tr>
+  <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
+  <tr><td class="valid"><% if (trains.validity != null) { %>${validity_from} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycle"><% if (trains.cycle != null) { %>${cycle}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="space2">&nbsp;</td></tr>
+  <tr><td class="publish">${publisher}</td></tr>
+</table><%
+  }
+
+  // returns names of routes
+  def getRouteNames(trains) {
+    def result = ""
+    def routeNames = [] as Set
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        if (!routeNames.contains(route.name)) {
+          result = add(result,"<br>",route.name)
+          routeNames << route.name
+        }
+      }
+    } else {
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")      
+    }
+    return result
+  }
+
+  // returns paths of routes
+  def getRoutePaths(trains) {
+    def result = ""
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        def stationsStr = null
+        stationsStr = add(stationsStr," - ",route.segments.first().name)
+        stationsStr = add(stationsStr," - ",route.segments.last().name)
+        result = add(result,"<br>",stationsStr)
+      }
+    } else {
+      result = (trains.routeStations == null) ? "-" : trains.routeStations.replace("\n","<br>")
+    }
+    return result
+  }
+
+  def add(str, delimiter, value) {
+    if (str == null || str.isEmpty())
+      str = value
+    else
+      str += delimiter + value
+    return str
+  }
+
+  def show_cycle(page) {
+    %>
+<table class="list2" border="0" cellspacing="0" align="center">
+  <tr class="listh">
+    <td class="ctrainh">${column_train}</td>
+    <td class="cdepartureh">${column_departure}</td>
+    <td class="cfromtoh">${column_from_to}</td>
+    <td class="cnoteh">${column_note}</td>
+  </tr><% lastNode = null;
+          for (item in trains.cycle.rows) {
+            if (lastNode != null && lastNode != item.from) {
+              %>
+  <tr>
+    <td colspan="4" class="move">&#151;  ${move_to_station} ${item.from} &#151; </td>
+  </tr><%
+            }
+        %>
+  <tr>
+    <td class="ctrain">${item.trainName}</td>
+    <td class="cdeparture">${item.fromTime}</td>
+    <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
+    <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
+  </tr><% lastNode = item.to
+          }
+        %>
+</table><%
+  }
+
   def show_text(page) {
     %>
 <div class="text-page"><%
@@ -675,5 +818,15 @@
     }
     m.appendTail(result)
     return result.toString()
+  }
+
+  def concat(strs, delim) {
+    result = strs.inject("") {
+      str, item ->
+        if (str != "")
+          str += delim
+        str + item
+    }
+    return result
   }
 %>

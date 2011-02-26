@@ -228,75 +228,72 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-    Set<Train> selectedTrains = this.getSelectedTrains();
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        Set<Train> selectedTrains = this.getSelectedTrains();
+    
+        model.setSelectedTrain(null);           // no train selected
+    
+        for (Train deletedTrain : selectedTrains) {
+            this.deleteTrain(deletedTrain, model.getDiagram());
+        }
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-    model.setSelectedTrain(null);           // no train selected
-
-    for (Train deletedTrain : selectedTrains) {
-        this.deleteTrain(deletedTrain, model.getDiagram());
+    private Set<Train> getSelectedTrains() {
+        TreePath[] paths = trainTree.getSelectionPaths();
+        Set<Train> selected = new HashSet<Train>();
+        if (paths != null) {
+            for (TreePath path : paths) {
+                TrainTreeNode node = (TrainTreeNode)path.getLastPathComponent();
+                Set<Train> trains = node.getTrains(model.getDiagram());
+                selected.addAll(trains);
+            }
+        }
+        return selected;
     }
-}//GEN-LAST:event_deleteButtonActionPerformed
 
-private Set<Train> getSelectedTrains() {
-    TreePath[] paths = trainTree.getSelectionPaths();
-    Set<Train> selected = new HashSet<Train>();
-    if (paths != null) {
-        for (TreePath path : paths) {
-            TrainTreeNode node = (TrainTreeNode)path.getLastPathComponent();
-            Set<Train> trains = node.getTrains(model.getDiagram());
-            selected.addAll(trains);
+    private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
+        // remove train from engine cycle
+        if (!deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
+            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE), ApplicationModelEventType.MODIFIED_ENGINE_CYCLE);
+        }
+        if (!deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty()) {
+            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE), ApplicationModelEventType.MODIFIED_TRAIN_UNIT_CYCLE);
+        }
+        if (!deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE).isEmpty()) {
+            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE), ApplicationModelEventType.MODIFIED_DRIVER_CYCLE);
+        }
+    
+        diagram.removeTrain(deletedTrain);    // remove from list of trains
+        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
+    }
+
+    private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModelEventType eventType) {
+        for (TrainsCycleItem item : new LinkedList<TrainsCycleItem>(items)) {
+            TrainsCycle cycle = item.getCycle();
+            item.getCycle().removeItem(item);
+            model.fireEvent(new ApplicationModelEvent(eventType, model, cycle));
         }
     }
 
-    return selected;
-}
-
-private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
-    // remove train from engine cycle
-    if (!deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
-        this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE), ApplicationModelEventType.MODIFIED_ENGINE_CYCLE);
-    }
-    if (!deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty()) {
-        this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE), ApplicationModelEventType.MODIFIED_TRAIN_UNIT_CYCLE);
-    }
-    if (!deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE).isEmpty()) {
-        this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE), ApplicationModelEventType.MODIFIED_DRIVER_CYCLE);
-    }
-
-    diagram.removeTrain(deletedTrain);    // remove from list of trains
-    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
-
-}
-
-private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModelEventType eventType) {
-    for (TrainsCycleItem item : new LinkedList<TrainsCycleItem>(items)) {
-        TrainsCycle cycle = item.getCycle();
-        item.getCycle().removeItem(item);
-        model.fireEvent(new ApplicationModelEvent(eventType, model, cycle));
-    }
-}
-
-private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
-    // call create new train dialog
-    Frame f = (Frame)this.getTopLevelAncestor();
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        // call create new train dialog
+        Frame f = (Frame)this.getTopLevelAncestor();
+        
+        CreateTrainDialog create = new CreateTrainDialog((Frame)this.getTopLevelAncestor(), model);
     
-    CreateTrainDialog create = new CreateTrainDialog((Frame)this.getTopLevelAncestor(), model);
+        create.setLocationRelativeTo(f);
+        create.setVisible(true);
+    }//GEN-LAST:event_createButtonActionPerformed
 
-    create.setLocationRelativeTo(f);
-    create.setVisible(true);
-}//GEN-LAST:event_createButtonActionPerformed
+    private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_treeTypeActionPerformed
+        if (evt.getSource() == flatMenuItem)
+            treeType = TrainListView.TreeType.FLAT;
+        else
+            treeType = TrainListView.TreeType.TYPES;
+        // update list
+        this.updateViewDiagramChanged();
+    }//GEN-LAST:event_treeTypeActionPerformed
 
-private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_treeTypeActionPerformed
-    if (evt.getSource() == flatMenuItem)
-        treeType = TrainListView.TreeType.FLAT;
-    else
-        treeType = TrainListView.TreeType.TYPES;
-    // update list
-    this.updateViewDiagramChanged();
-}//GEN-LAST:event_treeTypeActionPerformed
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
@@ -306,5 +303,4 @@ private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JPopupMenu treePopupMenu;
     private javax.swing.JMenuItem typesMenuItem;
     // End of variables declaration//GEN-END:variables
-    
 }

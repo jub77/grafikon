@@ -1,14 +1,13 @@
 package net.parostroj.timetable.model.ls.impl3;
 
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainType;
 import java.awt.Color;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Language;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainTypeCategory;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
 
 /**
@@ -111,17 +110,21 @@ public class LSTrainType {
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
     }
     
-    public TrainType createTrainType(TrainDiagram diagram) {
+    public TrainType createTrainType(TrainDiagram diagram) throws LSException {
         TrainType type = diagram.createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
         type.setDesc(desc);
         type.setPlatform(platform);
         type.setCategory(this.convertToCategory(diagram));
-        type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
-            TextTemplate.createTextTemplate(trainCompleteNameTemplate, Language.MVEL): null);
-        type.setTrainNameTemplate(trainNameTemplate != null ?
-            TextTemplate.createTextTemplate(trainNameTemplate, Language.MVEL) : null);
+        try {
+            type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL): null);
+            type.setTrainNameTemplate(trainNameTemplate != null ?
+                TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL) : null);
+        } catch (GrafikonException e) {
+            throw new LSException(e);
+        }
         return type;
     }
 

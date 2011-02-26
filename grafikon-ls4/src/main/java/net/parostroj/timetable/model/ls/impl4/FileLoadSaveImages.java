@@ -2,11 +2,12 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.*;
 import java.nio.channels.*;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.model.TimetableImage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for loading/saving images from/to gtm.
@@ -15,7 +16,7 @@ import net.parostroj.timetable.model.TimetableImage;
  */
 public class FileLoadSaveImages {
 
-    private static final Logger LOG = Logger.getLogger(FileLoadSaveImages.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FileLoadSaveImages.class.getName());
     private final String location;
     
     public FileLoadSaveImages(String location) {
@@ -34,7 +35,7 @@ public class FileLoadSaveImages {
         ZipEntry entry = new ZipEntry(location + image.getFilename());
         if (image.getImageFile() == null) {
             // skip images without image file
-            LOG.warning(String.format("Skipping image %s because the gtm doesn't contain a file.", image.getFilename()));
+            LOG.warn("Skipping image {} because the gtm doesn't contain a file.", image.getFilename());
             return;
         }
         FileInputStream is = new FileInputStream(image.getImageFile());

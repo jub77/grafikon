@@ -3,7 +3,6 @@
  *
  * Created on 3. září 2007, 19:49
  */
-
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -16,8 +15,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class CreateTrainDialog extends javax.swing.JDialog {
     
-    private ApplicationModel model;
-    
     /**
      * Creates new form CreateTrainDialog.
      * 
@@ -27,7 +24,6 @@ public class CreateTrainDialog extends javax.swing.JDialog {
     public CreateTrainDialog(java.awt.Frame parent, ApplicationModel model) {
         super(parent, true);
         initComponents();
-        this.model = model;
         createTrainView.setModel(model);
         
         // fix size

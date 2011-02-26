@@ -26,26 +26,17 @@ import net.parostroj.timetable.utils.IdGenerator;
 public class CreateTrainCommand extends Command {
     
     private String number;
-    
     private TrainType type;
-    
     private int topSpeed;
-    
     private Node from;
-    
     private Node to;
-    
     private List<Node> through;
-    
     private int time;
-    
     private int defaultStop;
-    
     private String description;
-    
     private boolean diesel;
-    
     private boolean electric;
+    private boolean showLength;
 
     /**
      * creates instance of create train command.
@@ -60,8 +51,10 @@ public class CreateTrainCommand extends Command {
      * @param description description
      * @param diesel if the train is electric
      * @param electric if the train is diesel
+     * @param through list of nodes through which this train goes
+     * @param showLength show max. length in timetable 
      */
-    public CreateTrainCommand(String number, TrainType type, int topSpeed, Node from, Node to, List<Node> through, int time, int defaultStop, String description, boolean diesel, boolean electric) {
+    public CreateTrainCommand(String number, TrainType type, int topSpeed, Node from, Node to, List<Node> through, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength) {
         this.number = number;
         this.type = type;
         this.topSpeed = topSpeed;
@@ -73,6 +66,7 @@ public class CreateTrainCommand extends Command {
         this.description = description;
         this.diesel = diesel;
         this.electric = electric;
+        this.showLength = showLength;
     }
 
     @Override
@@ -96,6 +90,8 @@ public class CreateTrainCommand extends Command {
         train.setDescription(description);
         train.setAttribute("diesel", diesel);
         train.setAttribute("electric", electric);
+        if (showLength)
+            train.setAttribute("show.station.length", Boolean.TRUE);
         
         // add train to diagram
         model.getDiagram().addTrain(train);

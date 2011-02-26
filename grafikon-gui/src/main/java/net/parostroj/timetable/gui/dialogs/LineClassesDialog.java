@@ -9,10 +9,8 @@ import javax.swing.AbstractListModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.WeightTableRow;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -66,9 +64,8 @@ public class LineClassesDialog extends javax.swing.JDialog {
             }
             // remove line class from lines
             for (Line line : model.getDiagram().getNet().getLines()) {
-                LineClass lClass = (LineClass) line.getAttribute("line.class");
-                if (lClass == clazz)
-                    line.removeAttribute("line.class");
+                line.removeAttribute(Line.ATTR_CLASS);
+                line.removeAttribute(Line.ATTR_CLASS_BACK);
             }
             // remove line class
             model.getDiagram().getNet().removeLineClass(clazz);
@@ -105,6 +102,18 @@ public class LineClassesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+    }
+    
+    private boolean deleteAllowed(LineClass lineClass) {
+        if (lineClass == null)
+            return false;
+        for (Line line : model.getDiagram().getNet().getLines()) {
+            if (line.getLineClass(TimeIntervalDirection.FORWARD) == lineClass)
+                return false;
+            if (line.getLineClass(TimeIntervalDirection.BACKWARD) == lineClass)
+                return false;
+        }
+        return true;
     }
 
     /** This method is called from within the constructor to
@@ -198,58 +207,62 @@ public class LineClassesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-    if (nameTextField != null && !"".equals(nameTextField.getText())) {
-        // create new LineClass
-        LineClass lineClass = new LineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
-        listModel.addLineClass(lineClass);
-        nameTextField.setText("");
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_newButtonActionPerformed
-
-private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-    if (!lineClassesList.isSelectionEmpty()) {
-        int selected = lineClassesList.getSelectedIndex();
-        listModel.removeLineClass(selected);
-        if (selected >= listModel.getSize()) {
-            selected--;
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        if (nameTextField != null && !"".equals(nameTextField.getText())) {
+            // create new LineClass
+            LineClass lineClass = new LineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
+            listModel.addLineClass(lineClass);
+            nameTextField.setText("");
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
         }
-        lineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_deleteButtonActionPerformed
+    }//GEN-LAST:event_newButtonActionPerformed
 
-private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-    // move selected line class up
-    if (!lineClassesList.isSelectionEmpty()) {
-        int selected = lineClassesList.getSelectedIndex();
-        selected -= 1;
-        if (selected < 0)
-            return;
-        listModel.moveLineClass(selected + 1, selected);
-        lineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_upButtonActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        if (!lineClassesList.isSelectionEmpty()) {
+            int selected = lineClassesList.getSelectedIndex();
+            if (!this.deleteAllowed((LineClass)listModel.getElementAt(selected))) {
+                ActionUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
+                return;
+            }
+            listModel.removeLineClass(selected);
+            if (selected >= listModel.getSize()) {
+                selected--;
+            }
+            lineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
+        }
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
-    // move selected line class down
-    if (!lineClassesList.isSelectionEmpty()) {
-        int selected = lineClassesList.getSelectedIndex();
-        selected += 1;
-        if (selected >= listModel.getSize())
-            return;
-        listModel.moveLineClass(selected - 1, selected);
-        lineClassesList.setSelectedIndex(selected);
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
-    }
-}//GEN-LAST:event_downButtonActionPerformed
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        // move selected line class up
+        if (!lineClassesList.isSelectionEmpty()) {
+            int selected = lineClassesList.getSelectedIndex();
+            selected -= 1;
+            if (selected < 0)
+                return;
+            listModel.moveLineClass(selected + 1, selected);
+            lineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
+        }
+    }//GEN-LAST:event_upButtonActionPerformed
 
-private void lineClassesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lineClassesListValueChanged
-    if (!evt.getValueIsAdjusting())
-        this.updateEnabled();
-}//GEN-LAST:event_lineClassesListValueChanged
+    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        // move selected line class down
+        if (!lineClassesList.isSelectionEmpty()) {
+            int selected = lineClassesList.getSelectedIndex();
+            selected += 1;
+            if (selected >= listModel.getSize())
+                return;
+            listModel.moveLineClass(selected - 1, selected);
+            lineClassesList.setSelectedIndex(selected);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
+        }
+    }//GEN-LAST:event_downButtonActionPerformed
+
+    private void lineClassesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lineClassesListValueChanged
+        if (!evt.getValueIsAdjusting())
+            this.updateEnabled();
+    }//GEN-LAST:event_lineClassesListValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;

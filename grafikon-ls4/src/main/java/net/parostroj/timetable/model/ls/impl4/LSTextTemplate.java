@@ -1,8 +1,9 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Language;
 import net.parostroj.timetable.model.TextTemplate;
+import net.parostroj.timetable.model.GrafikonException;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for text template.
@@ -38,7 +39,11 @@ public class LSTextTemplate {
         this.template = template;
     }
 
-    public TextTemplate createTextTemplate() {
-        return TextTemplate.createTextTemplate(template, Language.valueOf(language));
+    public TextTemplate createTextTemplate() throws LSException {
+        try {
+            return TextTemplate.createTextTemplate(template, TextTemplate.Language.valueOf(language));
+        } catch (GrafikonException e) {
+            throw new LSException("Error reading template.", e);
+        }
     }
 }

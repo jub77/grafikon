@@ -23,22 +23,21 @@ public class GTDrawClassic extends GTDraw {
     private static final Stroke STATION_STROKE_ROUTE_SPLIT_EXT = new BasicStroke(1.3f);
     
 
-    public GTDrawClassic(int borderX, int borderY, int gapStationX, Dimension size, Route route, GraphicalTimetableView.TrainColors colors,TrainColorChooser chooser, HighlightedTrains hTrains, TrainRegionCollector collector) {
-        super(borderX, borderY, gapStationX, size,route,colors,chooser,hTrains,collector);
+    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector) {
+        super(config ,route, collector);
     }
-    
+
     @Override
     protected void computePositions() {
         positions = new HashMap<Node, Integer>();
-        
         stations = new LinkedList<Node>();
-        
+
         int completeLength = 0;
         for (RouteSegment segment : route.getSegments()) {
             if (segment.asLine() != null)
                 completeLength = completeLength + segment.asLine().getLength();
         }
-        
+
         int incrementalLength = 0;
         for (RouteSegment segment : route.getSegments()) {
             if (segment.asLine() != null)
@@ -58,7 +57,7 @@ public class GTDrawClassic extends GTDraw {
             // skip over signals
             if (s.getType() == NodeType.SIGNAL)
                 continue;
-            if (preferences.get(GTDrawPreference.EXTENDED_LINES) == Boolean.TRUE) {
+            if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(STATION_STROKE_STOP_EXT);
@@ -81,20 +80,18 @@ public class GTDrawClassic extends GTDraw {
 
     @Override
     protected void paintTrains(Graphics2D g) {
-        double timeStep = (double)size.width / (24 * 3600);
-        
         for (RouteSegment part : route.getSegments()) {
             // only segments for lines
             if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, timeStep, TRAIN_STROKE);
+                this.paintTrainsOnLine(part.asLine(), g, TRAIN_STROKE);
             }
         }
     }
 
     @Override
-    protected Line2D createTrainLine(TimeInterval interval, Interval i, double timeStep) {
-        int x1 = (int)(start.x + i.getStart() * timeStep);
-        int x2 = (int)(start.x + i.getEnd() * timeStep);
+    protected Line2D createTrainLine(TimeInterval interval, Interval i) {
+        int x1 = this.getX(i.getStart());
+        int x2 = this.getX(i.getEnd());
         int y1 = start.y + positions.get(interval.getFrom());
         int y2 = start.y + positions.get(interval.getTo());
 

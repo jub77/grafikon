@@ -51,10 +51,10 @@
     <tr><td class="company">${company}<br>${company_part}</td></tr>
     <tr><td class="space1"></td></tr>
     <tr><td class="gtitle">${train_timetable}</td></tr>
-    <tr><td class="numbers">${cycles.routeNumbers != null ? cycles.routeNumbers.replace("\n","<br>") : "&nbsp;"}</td></tr>
+    <tr><td class="numbers">${getRouteNames(c, cycles)}</td></tr>
     <tr><td class="line">${for_line}</td></tr>
-    <tr><td class="stations">${cycles.routeStations != null ? cycles.routeStations.replace("\n","<br>") : "&nbsp;"}</td></tr>
-    <tr><td class="valid">${validity_from} ${cycles.validity != null ? cycles.validity : "&nbsp;"}</td></tr>
+    <tr><td class="stations">${getRoutePaths(c, cycles)}</td></tr>
+    <tr><td class="valid"><% if (cycles.validity != null) { %>${validity_from} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
     <tr><td class="cycle">${cycle}: ${c.name}</td></tr>
     <tr><td class="space2">&nbsp;</td></tr>
     <tr><td class="publish">${publisher}</td></tr>
@@ -109,3 +109,46 @@
 <% } %>
 </body>
 </html>
+
+<%
+// returns names of routes for driver cycle
+def getRouteNames(cycle, cycles) {
+  def result = null
+  if (cycle.routes == null || cycle.routes.isEmpty()) {
+    result = (cycles.routeNumbers == null) ? "-" : cycles.routeNumbers.replace("\n","<br>")
+  } else {
+    def routeNames = [] as Set
+    for (route in cycle.routes) {
+      if (!routeNames.contains(route.name)) {
+        result = add(result,"<br>",route.name)
+        routeNames << route.name
+      }
+    }
+  }
+  return result
+}
+
+// returns paths of routes for driver cycle
+def getRoutePaths(cycle,cycles) {
+  def result = null
+  if (cycle.routes == null || cycle.routes.isEmpty()) {
+    result = (cycles.routeStations == null) ? "-" : cycles.routeStations.replace("\n","<br>")
+  } else {
+    for (route in cycle.routes) {
+      def stationsStr = null
+      stationsStr = add(stationsStr," - ",route.segments.first().name)
+      stationsStr = add(stationsStr," - ",route.segments.last().name)
+      result = add(result,"<br>",stationsStr)
+    }
+  }
+  return result
+}
+
+def add(str, delimiter, value) {
+  if (str == null || str.isEmpty())
+    str = value
+  else
+    str += delimiter + value
+  return str
+}
+%>

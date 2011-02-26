@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import java.util.zip.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for loading/saving train diagram.
@@ -17,7 +18,7 @@ import java.util.zip.*;
  */
 public class LSFileFactory {
 
-    private static final Logger LOG = Logger.getLogger(LSFileFactory.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(LSFileFactory.class.getName());
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
     private static final LSFileFactory instance = new LSFileFactory();
@@ -30,7 +31,7 @@ public class LSFileFactory {
             ServiceLoader<FileLoadSave> loader = ServiceLoader.load(FileLoadSave.class);
             for (FileLoadSave fls : loader) {
                 List<ModelVersion> versions = fls.getLoadVersions();
-                LOG.fine("REGISTERED: " + fls.getClass().getName());
+                LOG.debug("REGISTERED: {}", fls.getClass().getName());
                 for (ModelVersion version : versions) {
                     cacheLoad.put(version, fls.getClass());
                 }

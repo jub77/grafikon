@@ -98,5 +98,4 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
     private javax.swing.JPanel okPanel;
     private javax.swing.JPanel typesPanel;
     // End of variables declaration//GEN-END:variables
-
 }

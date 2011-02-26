@@ -70,7 +70,7 @@ public class RouteBuilder {
     private Route createRouteInternal(String id, Net net, Node from, Node to) {
         List<Line> lines = net.getRoute(from, to);
         // no route between nodes - return null
-        if (lines == null || lines.size() == 0)
+        if (lines == null || lines.isEmpty())
             return null;
         // create route
         Route route = new Route(id);

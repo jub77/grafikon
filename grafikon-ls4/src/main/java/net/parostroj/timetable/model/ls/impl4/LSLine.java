@@ -12,6 +12,7 @@ import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing lines.
@@ -104,7 +105,7 @@ public class LSLine {
         this.to = to;
     }
 
-    public Line createLine(TrainDiagram diagram) {
+    public Line createLine(TrainDiagram diagram) throws LSException {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());

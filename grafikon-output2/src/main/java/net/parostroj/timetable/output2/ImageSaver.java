@@ -10,9 +10,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.TrainDiagram;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Saves html needed for HTML pages with output.
@@ -22,7 +23,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 public class ImageSaver {
 
     private static final Set<String> PREDEFINED_IMAGES;
-    private static final Logger LOG = Logger.getLogger(ImageSaver.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ImageSaver.class.getName());
 
     private TrainDiagram diagram;
 
@@ -53,11 +54,11 @@ public class ImageSaver {
         if (resLocation != null)
             this.saveImage(new File(directory,image), resLocation);
         else
-            LOG.warning(String.format("Image %s not found.", image));
+            LOG.warn("Image {} not found.", image);
     }
 
     private void saveImage(File location, URL resLocation) throws IOException {
-        LOG.finer(String.format("Saving file %s.", location.getName()));
+        LOG.trace("Saving file {}.", location.getName());
         InputStream s = resLocation.openStream();
         OutputStream os = new FileOutputStream(location);
         try {

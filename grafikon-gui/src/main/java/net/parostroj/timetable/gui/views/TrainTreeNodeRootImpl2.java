@@ -68,7 +68,7 @@ public class TrainTreeNodeRootImpl2 implements TrainTreeNodeRoot {
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<?> children() {
         return Collections.enumeration(children);
     }
 

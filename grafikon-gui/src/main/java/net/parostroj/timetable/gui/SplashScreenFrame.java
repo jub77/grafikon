@@ -8,10 +8,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Splash frame.
@@ -20,7 +20,7 @@ import javax.swing.JPanel;
  */
 public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
-    private static final Logger LOG = Logger.getLogger(SplashScreenFrame.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SplashScreenFrame.class.getName());
     private Dimension splSize;
     private ImagePanel imagePanel;
 
@@ -44,7 +44,7 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
             this.setSplashPosition();
         } catch (InterruptedException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -68,7 +68,7 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
 class ImagePanel extends JPanel {
 
-    private static final Logger LOG = Logger.getLogger(ImagePanel.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ImagePanel.class.getName());
     private Image image;
     private int x;
     private int y;
@@ -86,7 +86,7 @@ class ImagePanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        LOG.finer("Splash paint start.");
+        LOG.trace("Splash paint start.");
         super.paint(g);
         g.drawImage(image, 0, 0, null);
 
@@ -98,11 +98,11 @@ class ImagePanel extends JPanel {
             for (String str : text) {
                 g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
                 g.setColor(Color.BLACK);
-                LOG.finest(String.format("Text %d,%d,%s", x, posY, str));
+                LOG.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;
             }
         }
-        LOG.finer("Splash paint end.");
+        LOG.trace("Splash paint end.");
     }
 }

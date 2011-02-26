@@ -167,7 +167,7 @@ public class TransformVisitor implements EventVisitor {
                 break;
             case TRACK_ATTRIBUTE:
                 aC = event.getAttributeChange();
-                RouteSegmentEvent<?,Track> rse = (RouteSegmentEvent<?, Track>)event;
+                RouteSegmentEvent<?,?> rse = (RouteSegmentEvent<?, ?>)event;
                 change.addDescription(new DiagramChangeDescription(desc,
                         new Parameter(aC.getName(), true),
                         new Parameter(rse.getTrack().getNumber())));
