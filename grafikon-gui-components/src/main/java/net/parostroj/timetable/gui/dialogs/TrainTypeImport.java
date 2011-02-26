@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.util.logging.Logger;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
 
 /**
  * Imports train types.
@@ -33,13 +34,22 @@ public class TrainTypeImport extends Import {
             return;
         }
 
+        // get category
+        TrainTypeCategory checkedCategory = this.getTrainTypeCategory(importedType.getCategory());
+        if (checkedCategory == null) {
+            String message = "Category missing: " + importedType.getCategory();
+            this.addError(importedType, message);
+            LOG.finer(message);
+            return;
+        }
+
         // create new type
         TrainType type = getDiagram().createTrainType(this.getId(importedType));
         type.setAbbr(importedType.getAbbr());
         type.setColor(importedType.getColor());
         type.setDesc(importedType.getDesc());
         type.setPlatform(importedType.isPlatform());
-        type.setCategory(importedType.getCategory());
+        type.setCategory(checkedCategory);
         type.setTrainCompleteNameTemplate(importedType.getTrainCompleteNameTemplate());
         type.setTrainNameTemplate(importedType.getTrainNameTemplate());
 
