@@ -44,10 +44,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
             }
         }
 
-        public void updateInfo() {
-            this.fireContentsChanged(this, 0, getSize());
-        }
-
         public void addLineClass(LineClass clazz) {
             int size = getSize();
             model.getDiagram().getNet().addLineClass(clazz);
@@ -93,7 +89,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel.updateInfo();
+        lineClassesList.setModel(listModel);
         this.updateEnabled();
     }
     

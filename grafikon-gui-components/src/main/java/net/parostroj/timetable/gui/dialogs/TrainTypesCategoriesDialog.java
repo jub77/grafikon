@@ -45,10 +45,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
             return getCategories().get(index);
         }
 
-        public void updateInfo() {
-            this.fireContentsChanged(this, 0, getSize());
-        }
-
         public void addTrainTypeCategory(TrainTypeCategory category) {
             int size = getSize();
             diagram.getPenaltyTable().addTrainTypeCategory(category);
@@ -200,7 +196,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel.updateInfo();
+        trainTypeCategoriesList.setModel(listModel);
         tableModel.updateInfo();
         this.enableDisable();
     }
