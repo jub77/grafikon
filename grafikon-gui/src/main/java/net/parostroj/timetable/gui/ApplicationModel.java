@@ -275,7 +275,8 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setUserName(prefs.getString("user.name", null));
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
-        programSettings.setLengthUnit(LengthUnit.getByKey(prefs.getString("unit", "mm")));
+        LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
+        programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
         for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
             String filename = prefs.getString("last.opened." + i, null);
             if (filename != null) {
