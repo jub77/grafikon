@@ -65,7 +65,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             // use default values
             LOG.warn("Wrong GTView settings - using default values.");
         }
-        graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
+        if (gtvs != null)
+            graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));
         if (scrollPane.isVisible())
             splitPane.setDividerLocation(dividerLoc);

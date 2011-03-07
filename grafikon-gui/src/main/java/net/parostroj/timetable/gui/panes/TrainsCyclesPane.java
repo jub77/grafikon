@@ -153,7 +153,8 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
         try {
             GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null));
-            graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
+            if (gtvs != null)
+                graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         } catch (Exception e) {
             LOG.warn("Wrong GTView settings - using default values.");
         }

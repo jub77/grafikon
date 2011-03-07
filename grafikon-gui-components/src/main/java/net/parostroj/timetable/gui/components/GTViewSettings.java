@@ -111,15 +111,17 @@ public class GTViewSettings {
 
     public static GTViewSettings parseStorageString(String str) {
         GTViewSettings settings = new GTViewSettings();
-        String[] split = str.split(",");
-        settings.set(Key.TYPE, Type.valueOf(split[0]));
-        settings.set(Key.VIEW_SIZE, Integer.parseInt(split[1]));
-        settings.setOption(Key.TRAIN_NAMES, Boolean.parseBoolean(split[2]));
-        settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]));
-        settings.setOption(Key.EXTENDED_LINES, Boolean.parseBoolean(split[4]));
-        settings.setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
-        if (split.length > 6)
-            settings.setOption(Key.IGNORE_TIME_LIMITS, Boolean.parseBoolean(split[6]));
+        if (str != null) {
+            String[] split = str.split(",");
+            settings.set(Key.TYPE, Type.valueOf(split[0]));
+            settings.set(Key.VIEW_SIZE, Integer.parseInt(split[1]));
+            settings.setOption(Key.TRAIN_NAMES, Boolean.parseBoolean(split[2]));
+            settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]));
+            settings.setOption(Key.EXTENDED_LINES, Boolean.parseBoolean(split[4]));
+            settings.setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
+            if (split.length > 6)
+                settings.setOption(Key.IGNORE_TIME_LIMITS, Boolean.parseBoolean(split[6]));
+        }
         return settings;
     }
 }

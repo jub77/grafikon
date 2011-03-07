@@ -1115,15 +1115,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
-        if (!prefs.contains("main.maximized")) {
-            return;
-        }
         if (prefs.getBoolean("main.maximized", false)) {
             // setting maximized state
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } else {
-            // set position
-            GuiUtils.setPosition(prefs.getString("main.position", null), this);
+            if (prefs.contains("main.position"))
+                // set position
+                GuiUtils.setPosition(prefs.getString("main.position", null), this);
         }
 
         // load output type
