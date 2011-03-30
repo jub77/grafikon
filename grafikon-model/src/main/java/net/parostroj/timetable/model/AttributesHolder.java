@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model;
 
+import java.util.Set;
+
 /**
  * Interface for class that hold attributes.
  *
@@ -12,4 +14,6 @@ public interface AttributesHolder {
     public void setAttribute(String key, Object value);
 
     public Object removeAttribute(String key);
+    
+    public Set<String> getAttributeKeys();
 }

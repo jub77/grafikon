@@ -378,6 +378,11 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         return oldValue;
     }
     
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
+    }
+
     public boolean isNodeOwner() {
         return (owner instanceof Node);
     }

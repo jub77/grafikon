@@ -1,10 +1,7 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
@@ -395,6 +392,11 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (returnValue != null)
             this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(key, returnValue, null)));
         return returnValue;
+    }
+    
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
     }
 
     @Override

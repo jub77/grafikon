@@ -6,6 +6,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainsCycleEvent;
@@ -218,6 +219,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (o != null)
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(key, o, null)));
         return o;
+    }
+
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
     }
 
     public TrainsCycleType getType() {

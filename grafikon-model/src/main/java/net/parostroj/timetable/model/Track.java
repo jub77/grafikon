@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Track in the station.
@@ -145,5 +146,10 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
         this.fireAttributeChanged(key, oldValue, value);
     }
     
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
+    }
+
     abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);
 }

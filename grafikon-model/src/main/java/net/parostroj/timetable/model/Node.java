@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.NodeEvent;
@@ -238,6 +239,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         Object oldValue = attributes.get(key);
         attributes.put(key, value);
         this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(key, oldValue, value)));
+    }
+
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
     }
 
     @Override

@@ -311,6 +311,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
+    }
+
     /**
      * @return <code>true</code> if there are overlapping intervals for the train
      */

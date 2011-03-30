@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEvent;
@@ -306,6 +307,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
+    }
+
+    @Override
+    public Set<String> getAttributeKeys() {
+        return attributes.keySet();
     }
 
     public List<EngineClass> getEngineClasses() {
