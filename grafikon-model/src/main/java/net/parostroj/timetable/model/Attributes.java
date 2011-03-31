@@ -1,13 +1,13 @@
 package net.parostroj.timetable.model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Class for attributes (train or node).
  *
  * @author jub
  */
-public class Attributes extends HashMap<String, Object> {
+public class Attributes extends LinkedHashMap<String, Object> {
 
     /**
      * Default constructor.
