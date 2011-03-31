@@ -22,22 +22,6 @@ public class Attributes implements Map<String, Object> {
         values = new HashMap<String, Object>();
     }
     
-    public void set(String name, Object value) {
-        if (!names.contains(name))
-            names.add(name);
-        values.put(name, value);
-    }
-    
-    public Object get(String name) {
-        return values.get(name);
-    }
-    
-    public Object remove(String name) {
-        if (names.contains(name))
-            names.remove(name);
-        return values.remove(name);
-    }
-
     /**
      * Copy constructor (shallow copy).
      *
@@ -46,7 +30,43 @@ public class Attributes implements Map<String, Object> {
     public Attributes(Attributes attributes) {
         values = new HashMap<String, Object>(attributes.values);
     }
-    
+
+    public void set(String name, Object value) {
+        if (!names.contains(name))
+            names.add(name);
+        Object oldValue = this.get(name);
+        values.put(name, value);
+        this.fireChange(name, oldValue, value);
+    }
+
+    public Object get(String name) {
+        return values.get(name);
+    }
+
+    public Object remove(String name) {
+        if (names.contains(name))
+            names.remove(name);
+        Object o = values.remove(name);
+        if (o != null)
+            this.fireChange(name, o, null);
+        return o;
+    }
+
+    public int size() {
+        return values.size();
+    }
+
+    public void clear() {
+        List<String> namesCopy = new LinkedList<String>(names);
+        for (String name : namesCopy) {
+            this.remove(name);
+        }
+    }
+
+    public List<String> names() {
+        return Collections.unmodifiableList(names);
+    }
+
     public void addListener(AttributesListener listener) {
         listeners.add(listener);
     }
@@ -54,26 +74,13 @@ public class Attributes implements Map<String, Object> {
     public void removeListener(AttributesListener listener) {
         listeners.remove(listeners);
     }
-    
-    public int size() {
-        return values.size();
-    }
-    
-    public void clear() {
-        names.clear();
-        values.clear();
-    }
-    
-    public List<String> names() {
-        return Collections.unmodifiableList(names);
-    }
-    
-    protected void fire(String name, Object oldV, Object newV) {
+
+    protected void fireChange(String name, Object oldV, Object newV) {
         AttributeChange change = new AttributeChange(name, oldV, newV);
-        this.fire(change);
+        this.fireChange(change);
     }
-    
-    protected void fire(AttributeChange change) {
+
+    protected void fireChange(AttributeChange change) {
         for (AttributesListener l : listeners)
             l.attributeChanged(this, change);
     }
