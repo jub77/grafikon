@@ -3,10 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.LineEvent;
-import net.parostroj.timetable.model.events.LineListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -39,6 +36,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Ending point. */
     private Node to;
     private GTListenerSupport<LineListener, LineEvent> listenerSupport;
+    private AttributesListener attributesListener;
 
     /**
      * creates track with specified length.
@@ -73,7 +71,17 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new LineEvent(Line.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     /**
@@ -381,17 +389,12 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
     @Override
     public Object removeAttribute(String key) {
-        Object returnValue = attributes.remove(key);
-        if (returnValue != null)
-            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(key, returnValue, null)));
-        return returnValue;
+        return attributes.remove(key);
     }
     
     @Override

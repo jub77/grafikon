@@ -21,6 +21,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     private String type;
     private Attributes attributes;
     private GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
+    private AttributesListener attributesListener;
 
     public TextItem(String id, TrainDiagram diagram) {
         this.id = id;
@@ -101,7 +102,17 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TextItemEvent(TextItem.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     /**

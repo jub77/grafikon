@@ -2,10 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.NodeEvent;
-import net.parostroj.timetable.model.events.NodeListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -37,6 +34,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Y position in gui. */
     private int positionY;
     private GTListenerSupport<NodeListener, NodeEvent> listenerSupport;
+    private AttributesListener attributesListener;
 
     /**
      * Initialization.
@@ -218,15 +216,22 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new NodeEvent(Node.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        Object returnValue = this.attributes.remove(key);
-        if (returnValue != null)
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(key, returnValue, null)));
-        return returnValue;
+        return this.attributes.remove(key);
     }
 
     @Override
@@ -236,9 +241,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
     @Override

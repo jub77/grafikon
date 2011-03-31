@@ -29,6 +29,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private Attributes attributes;
     private List<TrainsCycleItem> items;
     private GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
+    private AttributesListener attributesListener;
 
     /**
      * creates instance
@@ -198,7 +199,17 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TrainsCycleEvent(TrainsCycle.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override
@@ -208,17 +219,12 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
     @Override
     public Object removeAttribute(String key) {
-        Object o = attributes.remove(key);
-        if (o != null)
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(key, o, null)));
-        return o;
+        return attributes.remove(key);
     }
 
     public TrainsCycleType getType() {

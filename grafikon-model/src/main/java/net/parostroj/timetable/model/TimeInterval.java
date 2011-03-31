@@ -33,6 +33,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public static final int NO_SPEED = -1;
     /** Direction of the time interval regarding the underlying line. */
     private TimeIntervalDirection direction;
+    private AttributesListener attributesListener;
 
     /**
      * creates instance of an time interval.
@@ -351,7 +352,18 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                train.fireEvent(new TrainEvent(train,
+                        change,train.getTimeIntervalList().indexOf(this)));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override
@@ -361,21 +373,12 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        train.fireEvent(new TrainEvent(train,
-                new AttributeChange(key, oldValue, value),
-                train.getTimeIntervalList().indexOf(this)));
     }
 
     @Override
     public Object removeAttribute(String key) {
-        Object oldValue = attributes.remove(key);
-        if (oldValue != null)
-            train.fireEvent(new TrainEvent(train,
-                    new AttributeChange(key, oldValue, null),
-                    train.getTimeIntervalList().indexOf(this)));
-        return oldValue;
+        return attributes.remove(key);
     }
     
     public boolean isNodeOwner() {

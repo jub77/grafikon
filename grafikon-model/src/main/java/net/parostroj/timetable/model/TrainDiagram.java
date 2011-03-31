@@ -3,12 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.changes.ChangesTracker;
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListener;
-import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -50,6 +45,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private ChangesTrackerImpl changesTracker;
     private GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
     private GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent> listenerSupportAll;
+    private AttributesListener attributesListener;
 
     /**
      * Default constructor.
@@ -284,21 +280,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     @Override
     public void setAttribute(String key, Object value) {
-        if (value == null)
-            this.removeAttribute(key);
-        else {
-            Object oldValue = attributes.get(key);
-            attributes.set(key, value);
-            this.fireEvent(new TrainDiagramEvent(this, new AttributeChange(key, oldValue, value)));
-        }
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        Object o = attributes.remove(key);
-        if (o != null)
-            this.fireEvent(new TrainDiagramEvent(this, new AttributeChange(key, o, null)));
-        return o;
+        return attributes.remove(key);
     }
 
     public Attributes getAttributes() {
@@ -306,7 +293,17 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     public List<EngineClass> getEngineClasses() {

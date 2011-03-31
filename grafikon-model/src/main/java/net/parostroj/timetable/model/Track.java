@@ -3,6 +3,8 @@ package net.parostroj.timetable.model;
 import java.util.Collections;
 import java.util.List;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+
 /**
  * Track in the station.
  *
@@ -17,6 +19,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
     private TimeIntervalList intervalList;
     /** Attributes. */
     private Attributes attributes;
+    private AttributesListener attributesListener;
 
     /**
      * Constructor.
@@ -123,7 +126,17 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue());
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override

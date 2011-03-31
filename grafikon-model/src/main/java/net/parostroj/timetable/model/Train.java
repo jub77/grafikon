@@ -2,12 +2,12 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.TrainEvent.TimeIntervalListType;
-import net.parostroj.timetable.model.events.TrainListener;
-import net.parostroj.timetable.utils.*;
+import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.ReferenceHolder;
+import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -44,6 +44,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     private String _cachedCompleteName;
     private Map<String,Object> _cachedBinding;
     private GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
+    private AttributesListener attributesListener;
     private boolean attached;
 
     /* Technological times. */
@@ -287,7 +288,17 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      */
     public void setAttributes(Attributes attributes) {
         this.clearCachedData();
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+            
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TrainEvent(Train.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override
@@ -297,18 +308,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
 
     @Override
     public Object removeAttribute(String key) {
-        Object o = attributes.remove(key);
-        if (o != null)
-            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, o, null)));
-        return o;
+        return attributes.remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
         this.clearCachedData();
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, oldValue, value)));
     }
 
     /**
