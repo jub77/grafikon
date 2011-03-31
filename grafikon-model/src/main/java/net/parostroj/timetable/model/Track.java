@@ -141,7 +141,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
     @Override
     public void setAttribute(String key, Object value) {
         Object oldValue = attributes.get(key);
-        attributes.put(key, value);
+        attributes.set(key, value);
         this.fireAttributeChanged(key, oldValue, value);
     }
     

@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.save.version02;
 
-import java.util.Map;
 import net.parostroj.timetable.model.Attributes;
 
 /**
@@ -22,8 +21,8 @@ public class LSAttributes {
         int size = attributes.size();
         attribute = new LSAttributesItem[size];
         int i = 0;
-        for (Map.Entry<String,Object> entry : attributes.entrySet()) {
-            LSAttributesItem lItem = new LSAttributesItem(entry.getKey(), entry.getValue());
+        for (String name : attributes.names()) {
+            LSAttributesItem lItem = new LSAttributesItem(name, attributes.get(name));
             attribute[i++] = lItem;
         }
     }
@@ -40,7 +39,7 @@ public class LSAttributes {
         Attributes attributes = new Attributes();
         if (attribute != null)
             for (LSAttributesItem lItem : attribute) {
-                attributes.put(lItem.getKey(), lItem.convertValue());
+                attributes.set(lItem.getKey(), lItem.convertValue());
             }
         return attributes;
     }

@@ -2,9 +2,10 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
@@ -31,9 +32,10 @@ public class LSAttributes {
 
     public LSAttributes(Attributes attributes) {
         this.attributes = new LinkedList<LSAttributesItem>();
-        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-            if (entry.getValue() != null) {
-                LSAttributesItem lItem = new LSAttributesItem(entry.getKey(), entry.getValue());
+        for (String name : attributes.names()) {
+            Object value = attributes.get(name);
+            if (value != null) {
+                LSAttributesItem lItem = new LSAttributesItem(name, value);
                 this.attributes.add(lItem);
             }
         }
@@ -58,7 +60,7 @@ public class LSAttributes {
             for (LSAttributesItem lItem : this.attributes) {
                 Object value = lItem.convertValue(diagram);
                 if (value != null)
-                    lAttributes.put(lItem.getKey(), value);
+                    lAttributes.set(lItem.getKey(), value);
                 else
                     LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValue());
             }

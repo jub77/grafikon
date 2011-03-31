@@ -87,7 +87,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     @Override
     public void setAttribute(String key, Object value) {
         Object oldValue = attributes.get(key);
-        attributes.put(key, value);
+        attributes.set(key, value);
         this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(key, oldValue, value)));
     }
 

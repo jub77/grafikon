@@ -1,18 +1,41 @@
 package net.parostroj.timetable.model;
 
-import java.util.LinkedHashMap;
+import java.util.*;
+
+import net.parostroj.timetable.model.events.AttributeChange;
 
 /**
  * Class for attributes (train or node).
  *
  * @author jub
  */
-public class Attributes extends LinkedHashMap<String, Object> {
+public class Attributes implements Map<String, Object> {
+    
+    private Set<AttributesListener> listeners = new HashSet<AttributesListener>();
+    private Map<String, Object> values;
+    private List<String> names = new LinkedList<String>();
 
     /**
      * Default constructor.
      */
     public Attributes() {
+        values = new HashMap<String, Object>();
+    }
+    
+    public void set(String name, Object value) {
+        if (!names.contains(name))
+            names.add(name);
+        values.put(name, value);
+    }
+    
+    public Object get(String name) {
+        return values.get(name);
+    }
+    
+    public Object remove(String name) {
+        if (names.contains(name))
+            names.remove(name);
+        return values.remove(name);
     }
 
     /**
@@ -21,6 +44,89 @@ public class Attributes extends LinkedHashMap<String, Object> {
      * @param attributes copied attributes
      */
     public Attributes(Attributes attributes) {
-        super(attributes);
+        values = new HashMap<String, Object>(attributes.values);
+    }
+    
+    public void addListener(AttributesListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(AttributesListener listener) {
+        listeners.remove(listeners);
+    }
+    
+    public int size() {
+        return values.size();
+    }
+    
+    public void clear() {
+        names.clear();
+        values.clear();
+    }
+    
+    public List<String> names() {
+        return Collections.unmodifiableList(names);
+    }
+    
+    protected void fire(String name, Object oldV, Object newV) {
+        AttributeChange change = new AttributeChange(name, oldV, newV);
+        this.fire(change);
+    }
+    
+    protected void fire(AttributeChange change) {
+        for (AttributesListener l : listeners)
+            l.attributeChanged(this, change);
+    }
+
+    // -------------- Map methods ----------------
+    
+    @Override
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return values.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return values.containsValue(value);
+    }
+
+    @Override
+    public Object get(Object key) {
+        return values.get(key);
+    }
+
+    @Override
+    public Object put(String key, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object remove(Object key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void putAll(Map<? extends String, ? extends Object> m) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return values.keySet();
+    }
+
+    @Override
+    public Collection<Object> values() {
+        return values.values();
+    }
+
+    @Override
+    public Set<java.util.Map.Entry<String, Object>> entrySet() {
+        return values.entrySet();
     }
 }

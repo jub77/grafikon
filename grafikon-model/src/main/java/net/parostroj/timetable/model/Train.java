@@ -307,7 +307,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     public void setAttribute(String key, Object value) {
         this.clearCachedData();
         Object oldValue = attributes.get(key);
-        attributes.put(key, value);
+        attributes.set(key, value);
         this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(key, oldValue, value)));
     }
 

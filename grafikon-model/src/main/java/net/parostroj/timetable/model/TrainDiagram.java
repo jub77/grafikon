@@ -288,7 +288,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             this.removeAttribute(key);
         else {
             Object oldValue = attributes.get(key);
-            attributes.put(key, value);
+            attributes.set(key, value);
             this.fireEvent(new TrainDiagramEvent(this, new AttributeChange(key, oldValue, value)));
         }
     }
