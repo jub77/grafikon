@@ -395,11 +395,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
     
     @Override
-    public Set<String> getAttributeKeys() {
-        return attributes.keySet();
-    }
-
-    @Override
     public LineTrack findTrackById(String id) {
         for (LineTrack track : getTracks()) {
             if (track.getId().equals(id)) {

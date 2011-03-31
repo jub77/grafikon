@@ -242,11 +242,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public Set<String> getAttributeKeys() {
-        return attributes.keySet();
-    }
-
-    @Override
     public String toString() {
         return getName();
     }

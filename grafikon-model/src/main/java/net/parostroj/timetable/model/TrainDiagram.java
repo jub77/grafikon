@@ -309,11 +309,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.attributes = attributes;
     }
 
-    @Override
-    public Set<String> getAttributeKeys() {
-        return attributes.keySet();
-    }
-
     public List<EngineClass> getEngineClasses() {
         return Collections.unmodifiableList(engineClasses);
     }

@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.Set;
-
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.TextItemEvent;
 import net.parostroj.timetable.model.events.TextItemListener;
@@ -104,11 +102,6 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
 
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
-    }
-
-    @Override
-    public Set<String> getAttributeKeys() {
-        return attributes.keySet();
     }
 
     /**

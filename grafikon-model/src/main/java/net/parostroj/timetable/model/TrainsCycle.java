@@ -221,11 +221,6 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         return o;
     }
 
-    @Override
-    public Set<String> getAttributeKeys() {
-        return attributes.keySet();
-    }
-
     public TrainsCycleType getType() {
         return type;
     }
