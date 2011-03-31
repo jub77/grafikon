@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TextItemEvent;
 import net.parostroj.timetable.model.events.TextItemListener;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;

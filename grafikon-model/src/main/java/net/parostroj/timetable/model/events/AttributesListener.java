@@ -1,6 +1,6 @@
-package net.parostroj.timetable.model;
+package net.parostroj.timetable.model.events;
 
-import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.Attributes;
 
 /**
  * Listener for attributes.

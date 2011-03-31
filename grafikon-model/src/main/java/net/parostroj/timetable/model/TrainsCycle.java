@@ -7,10 +7,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
-import net.parostroj.timetable.model.events.TrainsCycleListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;

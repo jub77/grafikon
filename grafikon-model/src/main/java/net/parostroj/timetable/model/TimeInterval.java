@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.HashSet;
 import java.util.Set;
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TrainEvent;
 
 /**

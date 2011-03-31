@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.AttributesListener;
 
 /**
  * Class for attributes (train or node).
