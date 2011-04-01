@@ -29,7 +29,10 @@ public class Attributes implements Map<String, Object> {
      * @param attributes copied attributes
      */
     public Attributes(Attributes attributes) {
-        values = new HashMap<String, Object>(attributes.values);
+        this();
+        for (String name : attributes.names) {
+            this.set(name, attributes.get(name));
+        }
     }
 
     public void set(String name, Object value) {
