@@ -14,6 +14,7 @@ import net.parostroj.timetable.utils.TimeConverter;
 public class TrainUnitCyclesExtractor {
 
     private List<TrainsCycle> cycles;
+    private AttributesExtractor ae = new AttributesExtractor();
 
     public TrainUnitCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
@@ -34,6 +35,7 @@ public class TrainUnitCyclesExtractor {
         for (TrainsCycleItem item : cycle.getItems()) {
             outputCycle.getRows().add(createRow(item));
         }
+        outputCycle.setAttributes(ae.extract(cycle.getAttributes()));
         return outputCycle;
     }
 

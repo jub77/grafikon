@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -10,11 +11,12 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "description", "rows"})
+@XmlType(propOrder = {"name", "description", "attributes", "rows"})
 public class TrainUnitCycle {
 
     private String name;
     private String description;
+    private List<Attribute> attributes;
     private List<TrainUnitCycleRow> rows;
 
     public String getDescription() {
@@ -42,5 +44,14 @@ public class TrainUnitCycle {
 
     public void setRows(List<TrainUnitCycleRow> rows) {
         this.rows = rows;
+    }
+
+    @XmlElement(name = "attribute")
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }
