@@ -9,11 +9,9 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.views.TCDelegate;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -45,6 +43,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         for (EngineClass c : model.getDiagram().getEngineClasses()) {
             this.engineClassComboBox.addItem(c);
         }
+        attributesPanel.startEditing(new Attributes(cycle.getAttributes()));
         this.engineClassComboBox.setSelectedItem(clazz != null ? clazz : noneEngineClass);
     }
 
@@ -61,10 +60,11 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         descTextField = new javax.swing.JTextField();
-        javax.swing.JButton okButton = new javax.swing.JButton();
-        javax.swing.JButton cancelButton = new javax.swing.JButton();
         engineClassComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
+        attributesPanel = new net.parostroj.timetable.gui.components.AttributesPanel();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
@@ -77,6 +77,8 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         jLabel2.setText(ResourceLoader.getString("ec.details.description") + ": "); // NOI18N
 
         descTextField.setColumns(15);
+
+        jLabel3.setText(ResourceLoader.getString("ec.details.engineclass") + ": "); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -92,29 +94,28 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText(ResourceLoader.getString("ec.details.engineclass") + ": "); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(attributesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                            .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                            .addComponent(engineClassComboBox, 0, 183, Short.MAX_VALUE))))
+                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                            .addComponent(descTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                            .addComponent(engineClassComboBox, 0, 286, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -132,7 +133,9 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(engineClassComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -193,14 +196,17 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
         
         this.setVisible(false);
+        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing());
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // do nothing
         this.setVisible(false);
+        attributesPanel.stopEditing();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;
     private javax.swing.JTextField descTextField;
     private javax.swing.JComboBox engineClassComboBox;
     private javax.swing.JTextField nameTextField;
