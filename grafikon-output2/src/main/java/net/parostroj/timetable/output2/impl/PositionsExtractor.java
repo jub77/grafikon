@@ -14,13 +14,14 @@ import net.parostroj.timetable.utils.TransformUtil;
 public class PositionsExtractor {
 
     private TrainDiagram diagram;
+    private AttributesExtractor ae = new AttributesExtractor();
+
 
     public PositionsExtractor(TrainDiagram diagram) {
         this.diagram = diagram;
     }
 
     public List<Position> getStartPositionsEngines() {
-        AttributesExtractor ae = new AttributesExtractor();
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
             if (!ecCycle.isEmpty()) {
@@ -38,14 +39,13 @@ public class PositionsExtractor {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem start = tucCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, start.getTrain().getName()));
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
     }
 
     public List<Position> getEndPositionsEngines() {
-        AttributesExtractor ae = new AttributesExtractor();
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
             if (!ecCycle.isEmpty()) {
@@ -63,7 +63,7 @@ public class PositionsExtractor {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem end = tucCycle.getItems().get(tucCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, end.getTrain().getName()));
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
