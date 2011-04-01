@@ -10,11 +10,12 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "description", "rows"})
+@XmlType(propOrder = {"name", "description", "attributes", "rows"})
 public class EngineCycle {
 
     private String name;
     private String description;
+    private List<Attribute> attributes;
     private List<EngineCycleRow> rows;
 
     public String getDescription() {
@@ -33,7 +34,7 @@ public class EngineCycle {
         this.name = name;
     }
 
-    @XmlElement(name="row")
+    @XmlElement(name = "row")
     public List<EngineCycleRow> getRows() {
         if (rows == null)
             rows = new LinkedList<EngineCycleRow>();
@@ -42,5 +43,14 @@ public class EngineCycle {
 
     public void setRows(List<EngineCycleRow> rows) {
         this.rows = rows;
+    }
+
+    @XmlElement(name = "attribute")
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }

@@ -17,6 +17,7 @@ import net.parostroj.timetable.utils.TransformUtil;
 public class EngineCyclesExtractor {
 
     private List<TrainsCycle> cycles;
+    private AttributesExtractor attributesExtractor = new AttributesExtractor();
 
     public EngineCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
@@ -34,6 +35,7 @@ public class EngineCyclesExtractor {
         EngineCycle outputCycle = new EngineCycle();
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(TransformUtil.getEngineCycleDescription(cycle));
+        outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
         TrainsCycleItem current = null;
         TrainsCycleItem previous = null;

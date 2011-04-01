@@ -20,12 +20,13 @@ public class PositionsExtractor {
     }
 
     public List<Position> getStartPositionsEngines() {
+        AttributesExtractor ae = new AttributesExtractor();
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem start = ecCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, start.getTrain().getName()));
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;
@@ -44,12 +45,13 @@ public class PositionsExtractor {
     }
 
     public List<Position> getEndPositionsEngines() {
+        AttributesExtractor ae = new AttributesExtractor();
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem end = ecCycle.getItems().get(ecCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, end.getTrain().getName()));
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;

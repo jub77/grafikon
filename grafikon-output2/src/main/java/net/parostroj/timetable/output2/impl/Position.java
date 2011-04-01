@@ -1,5 +1,8 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -7,13 +10,14 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "trainName"})
+@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "trainName", "attributes"})
 public class Position {
 
     private String cycleName;
     private String cycleDescription;
     private String stationName;
     private String trainName;
+    private List<Attribute> attributes;
 
     public Position() {
     }
@@ -23,6 +27,11 @@ public class Position {
         this.cycleDescription = cycleDescription;
         this.stationName = stationName;
         this.trainName = trainName;
+    }
+
+    public Position(String cycleName, String cycleDescription, String stationName, String trainName, List<Attribute> attributes) {
+        this(cycleName, cycleDescription, stationName, trainName);
+        this.attributes = attributes;
     }
 
     public String getCycleDescription() {
@@ -55,5 +64,14 @@ public class Position {
 
     public void setTrainName(String trainName) {
         this.trainName = trainName;
+    }
+
+    @XmlElement(name = "attribute")
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }
