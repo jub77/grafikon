@@ -10,12 +10,13 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "description", "routes", "rows"})
+@XmlType(propOrder={"name", "description", "routes", "attributes", "rows"})
 public class DriverCycle {
 
     private String name;
     private String description;
     private List<NetPartRouteInfo> routes;
+    private List<Attribute> attributes;
     private List<DriverCycleRow> rows;
 
     public String getDescription() {
@@ -54,5 +55,14 @@ public class DriverCycle {
 
     public void setRoutes(List<NetPartRouteInfo> routes) {
         this.routes = routes;
+    }
+
+    @XmlElement(name = "attribute")
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }

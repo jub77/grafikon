@@ -18,6 +18,7 @@ public class DriverCyclesExtractor {
 
     private List<TrainsCycle> cycles;
     private TrainDiagram diagram;
+    private AttributesExtractor ae = new AttributesExtractor();
 
     private RoutesExtractor routesExtractor;
 
@@ -50,6 +51,7 @@ public class DriverCyclesExtractor {
         }
         if (this.routesExtractor != null)
             this.addNetPartRouteInfos(outputCycle, cycle);
+        outputCycle.setAttributes(ae.extract(cycle.getAttributes()));
         return outputCycle;
     }
 
