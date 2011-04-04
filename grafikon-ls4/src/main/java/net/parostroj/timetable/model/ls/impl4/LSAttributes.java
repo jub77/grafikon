@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,12 +33,15 @@ public class LSAttributes {
 
     public LSAttributes(Attributes attributes) {
         this.attributes = new LinkedList<LSAttributesItem>();
-        for (String name : attributes.names()) {
-            Object value = attributes.get(name);
-            if (value != null) {
-                LSAttributesItem lItem = new LSAttributesItem(name, value);
-                this.attributes.add(lItem);
-            }
+        this.addAttributes(attributes.getAttributesMap(), null);
+        for (String category : attributes.getCategories())
+            this.addAttributes(attributes.getAttributesMap(category), category);
+    }
+    
+    private void addAttributes(Map<String, Object> map, String category) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() != null)
+                this.attributes.add(new LSAttributesItem(entry.getKey(), entry.getValue(), category));
         }
     }
 
@@ -60,7 +64,7 @@ public class LSAttributes {
             for (LSAttributesItem lItem : this.attributes) {
                 Object value = lItem.convertValue(diagram);
                 if (value != null)
-                    lAttributes.set(lItem.getKey(), value);
+                    lAttributes.set(lItem.getKey(), value, lItem.getCategory());
                 else
                     LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValue());
             }

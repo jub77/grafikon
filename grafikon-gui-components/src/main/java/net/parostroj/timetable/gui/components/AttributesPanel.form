@@ -31,7 +31,7 @@
         <Component class="javax.swing.JTable" name="attributesTable">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new net.parostroj.timetable.gui.components.AttributesTableModel()" type="code"/>
+              <Connection code="new net.parostroj.timetable.gui.components.AttributesTableModel(category)" type="code"/>
             </Property>
             <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
               <JTableSelectionModel selectionMode="0"/>

@@ -17,11 +17,14 @@ import net.parostroj.timetable.model.events.AttributesListener;
  */
 public class AttributesTableModel extends AbstractTableModel {
 
-    public static final String USER_PREFIX = "user.";
-
     private Attributes attributes;
     private AttributesListener listener;
     private List<String> userNames;
+    private String category;
+
+    public AttributesTableModel(String category) {
+        this.category = category;
+    }
 
     @Override
     public String getColumnName(int column) {
@@ -54,15 +57,15 @@ public class AttributesTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         String name = userNames.get(rowIndex);
         if (columnIndex == 0) {
-            return name.replace(USER_PREFIX, "");
+            return name;
         } else {
-            return attributes.get(name);
+            return attributes.get(name, category);
         }
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        this.attributes.set(userNames.get(rowIndex), value);
+        this.attributes.set(userNames.get(rowIndex), value, category);
     }
 
     public Attributes getAttributes() {
@@ -73,7 +76,7 @@ public class AttributesTableModel extends AbstractTableModel {
         if (this.attributes != null)
             throw new IllegalStateException("Already editing");
         this.attributes = attributes;
-        this.userNames = this.getUserNames(attributes.names());
+        this.userNames = new LinkedList<String>(attributes.getAttributesMap(category).keySet());
         this.listener = new AttributesListener() {
 
             @Override
@@ -110,15 +113,6 @@ public class AttributesTableModel extends AbstractTableModel {
         int position = userNames.indexOf(name);
         userNames.remove(name);
         this.fireTableRowsDeleted(position, position);
-    }
-    
-    private List<String> getUserNames(List<String> names) {
-        List<String> result = new LinkedList<String>();
-        for (String name : names) {
-            if (name.startsWith(USER_PREFIX))
-                result.add(name);
-        }
-        return result;
     }
     
     public List<String> getUserNames() {

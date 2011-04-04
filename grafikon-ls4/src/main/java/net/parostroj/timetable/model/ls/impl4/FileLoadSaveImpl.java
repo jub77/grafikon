@@ -22,7 +22,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    private static final ModelVersion METADATA_MODEL_VERSION = new ModelVersion(4, 3);
+    private static final ModelVersion METADATA_MODEL_VERSION;
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
@@ -42,8 +42,10 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 new ModelVersion(4, 0),
                 new ModelVersion(4, 1),
                 new ModelVersion(4, 2),
-                new ModelVersion(4, 3));
+                new ModelVersion(4, 3),
+                new ModelVersion(4, 4));
         VERSIONS = Collections.unmodifiableList(versions);
+        METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }
 
     public FileLoadSaveImpl() throws LSException {

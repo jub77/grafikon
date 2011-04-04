@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -23,6 +24,7 @@ import net.parostroj.timetable.model.Attributes;
 public class AttributesPanel extends javax.swing.JPanel {
 
     private AttributesTableModel attributesTableModel;
+    private String category;
 
     /** Creates new form AttributesPanel */
     public AttributesPanel() {
@@ -36,6 +38,14 @@ public class AttributesPanel extends javax.swing.JPanel {
                 }
             }
         });
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     /** This method is called from within the constructor to
@@ -56,7 +66,7 @@ public class AttributesPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        attributesTable.setModel(new net.parostroj.timetable.gui.components.AttributesTableModel());
+        attributesTable.setModel(new net.parostroj.timetable.gui.components.AttributesTableModel(category));
         attributesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(attributesTable);
 
@@ -93,7 +103,7 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         if (this.attributesTableModel != null) {
-            this.attributesTableModel.getAttributes().set(AttributesTableModel.USER_PREFIX + nameTextField.getText(), "");
+            this.attributesTableModel.getAttributes().set(nameTextField.getText(), "", category);
         }
         nameTextField.setText("");
     }//GEN-LAST:event_addButtonActionPerformed
@@ -102,7 +112,7 @@ public class AttributesPanel extends javax.swing.JPanel {
         int row = attributesTable.getSelectedRow();
         if (row != -1) {
             String name = attributesTableModel.getUserNames().get(row);
-            attributesTableModel.getAttributes().remove(name);
+            attributesTableModel.getAttributes().remove(name, category);
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
@@ -111,7 +121,7 @@ public class AttributesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nameTextFieldCaretUpdate
 
     public void startEditing(Attributes attributes) {
-        attributesTableModel = new AttributesTableModel();
+        attributesTableModel = new AttributesTableModel(category);
         attributesTableModel.startEditing(attributes);
         attributesTable.setModel(attributesTableModel);
         this.updateColumns();
@@ -137,17 +147,20 @@ public class AttributesPanel extends javax.swing.JPanel {
         return attributesTableModel.getAttributes();
     }
     
-    public static void updateAttributes(Attributes to, Attributes from) {
+    public static void updateAttributes(Attributes to, Attributes from, String category) {
+        Map<String, Object> fromMap = from.getAttributesMap(category); 
+        Map<String, Object> toMap = to.getAttributesMap(category); 
         // update modified ...
-        for (String name : from.names()) {
-            if ((from.get(name) != null && !from.get(name).equals(to.get(name))) || (from.get(name) == null && to.get(name) != null)){
-                to.set(name, from.get(name));
+        for (String name : fromMap.keySet()) {
+            if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
+                    || (fromMap.get(name) == null && toMap.get(name) != null)){
+                to.set(name, fromMap.get(name), category);
             }
         }
         // remove deleted
-        for (String name : new LinkedList<String>(to.names())) {
-            if (!from.containsKey(name)) {
-                to.remove(name);
+        for (String name : new LinkedList<String>(toMap.keySet())) {
+            if (!fromMap.containsKey(name)) {
+                to.remove(name, category);
             }
         }
     }

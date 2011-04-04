@@ -20,7 +20,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * @author jub
  */
 public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
-
+    
     private TCDelegate delegate;
     private ApplicationModel model;
     private static final EngineClass noneEngineClass = new EngineClass(null, ResourceLoader.getString("ec.details.engineclass.none"));
@@ -29,6 +29,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
     public TCDetailsViewDialogEngineClass(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        attributesPanel.setCategory(TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }
     
     public void updateValues(TCDelegate delegate, ApplicationModel model) {
@@ -196,7 +197,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
         
         this.setVisible(false);
-        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing());
+        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing(), TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

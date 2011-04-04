@@ -14,13 +14,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author jub
  */
-@XmlType(propOrder = {"key", "value", "type"})
+@XmlType(propOrder = {"key", "value", "type", "category"})
 public class LSAttributesItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
     private String key;
     private String value;
     private String type;
+    private String category;
 
     /**
      * Default constructor.
@@ -28,8 +29,9 @@ public class LSAttributesItem {
     public LSAttributesItem() {
     }
 
-    public LSAttributesItem(String key, Object value) {
+    public LSAttributesItem(String key, Object value, String category) {
         this.key = key;
+        this.category = category;
         if (value instanceof String) {
             this.value = (String) value;
             this.type = "string";
@@ -86,6 +88,14 @@ public class LSAttributesItem {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Object convertValue(TrainDiagram diagram) throws LSException {

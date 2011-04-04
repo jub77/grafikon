@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,10 +28,9 @@ public class LSAttributes {
 
     public LSAttributes(Attributes attributes) {
         this.attributes = new LinkedList<LSAttributesItem>();
-        for (String name : attributes.names()) {
-            Object value = attributes.get(name);
-            if (value != null) {
-                LSAttributesItem lItem = new LSAttributesItem(name, value);
+        for (Map.Entry<String, Object> entry : attributes.getAttributesMap().entrySet()) {
+            if (entry.getValue() != null) {
+                LSAttributesItem lItem = new LSAttributesItem(entry.getKey(), entry.getValue());
                 this.attributes.add(lItem);
             }
         }

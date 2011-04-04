@@ -19,6 +19,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class TCDetailsViewDialog extends javax.swing.JDialog {
 
+    public static final String USER_ATTR_CATEGORY = "user";
+    
     private TCDelegate delegate;
     private ApplicationModel model;
 
@@ -26,6 +28,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     public TCDetailsViewDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        attributesPanel.setCategory(TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }
     
     public void updateValues(TCDelegate delegate, ApplicationModel model) {
@@ -142,7 +145,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
         
         this.setVisible(false);
-        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing());
+        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing(), USER_ATTR_CATEGORY);
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

@@ -10,11 +10,17 @@ public class AttributeChange {
     private String name;
     private Object oldValue;
     private Object newValue;
+    private String category;
 
     public AttributeChange(String name, Object oldValue, Object newValue) {
+        this(name, oldValue, newValue, null);
+    }
+
+    public AttributeChange(String name, Object oldValue, Object newValue, String category) {
         this.name = name;
         this.oldValue = oldValue;
         this.newValue = newValue;
+        this.category = category;
     }
 
     public AttributeChange() {
@@ -44,10 +50,20 @@ public class AttributeChange {
         this.oldValue = oldValue;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder('[');
         b.append(name);
+        if (category != null)
+            b.append(',').append(category);
         b.append(';');
         b.append(oldValue);
         b.append("->");

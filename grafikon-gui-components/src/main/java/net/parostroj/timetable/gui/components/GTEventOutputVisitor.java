@@ -244,9 +244,10 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     private String convertAttribute(AttributeChange change) {
+        String categoryStr = change.getCategory() == null ? "" : "[" + change.getCategory() + "]";
         if (change.getNewValue() == null)
-            return change.getName() + " (removed)";
+            return categoryStr + change.getName() + " (removed)";
         else
-            return change.getName();
+            return categoryStr + change.getName();
     }
 }
