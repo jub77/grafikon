@@ -33,12 +33,20 @@ public abstract class Script {
     public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
     public static Script createScript(String sourceCode, Language language) throws GrafikonException {
+        return createScript(sourceCode, language, true);
+    }
+
+    public static Script createScript(String sourceCode, Language language, boolean initizalize) throws GrafikonException {
         switch (language) {
             case GROOVY: case JAVASCRIPT:
-                return new ScriptEngineScript(sourceCode, language);
+                return new ScriptEngineScript(sourceCode, language, initizalize);
             default:
                 throw new IllegalArgumentException("No script for language available.");
         }
+    }
+    
+    public void freeResources() {
+        // nothing
     }
 
     @Override

@@ -16,15 +16,20 @@ public final class ScriptEngineScript extends Script {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScriptEngineScript.class);
     
-    private final CompiledScript script;
+    private CompiledScript script;
 
-    protected ScriptEngineScript(String sourceCode, Language language) throws GrafikonException {
+    protected ScriptEngineScript(String sourceCode, Language language, boolean initialize) throws GrafikonException {
         super(sourceCode, language);
+        if (initialize)
+            initialize();
+    }
+    
+    private void initialize() throws GrafikonException {
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName(language == Language.GROOVY ? "groovy" : "javascript");
+        ScriptEngine engine = manager.getEngineByName(this.getLanguage() == Language.GROOVY ? "groovy" : "javascript");
         Compilable cEngine = (Compilable) engine;
         try {
-            script = cEngine.compile(sourceCode);
+            script = cEngine.compile(this.getSourceCode());
         } catch (ScriptException e) {
             throw new GrafikonException("Couldn't create script.", e, GrafikonException.Type.SCRIPT);
         }
@@ -43,9 +48,16 @@ public final class ScriptEngineScript extends Script {
     @Override
     public Object evaluateWithException(Map<String, Object> binding) throws GrafikonException {
         try {
+            if (script == null)
+                initialize();
             return script.eval(new SimpleBindings(binding));
         } catch (ScriptException e) {
             throw new GrafikonException("Couldn't evaluate script.", e, GrafikonException.Type.SCRIPT);
         }
+    }
+    
+    @Override
+    public void freeResources() {
+        script = null;
     }
 }
