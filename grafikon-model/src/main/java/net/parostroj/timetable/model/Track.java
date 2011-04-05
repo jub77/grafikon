@@ -30,7 +30,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
     public Track(String id) {
         this.id = id;
         intervalList = new TimeIntervalList();
-        attributes = new Attributes();
+        this.setAttributes(new Attributes());
     }
 
     /**

@@ -18,7 +18,7 @@ public class DiagramChange {
         DIAGRAM("diagram"), NET("net"), TRAIN("train"), TRAIN_TYPE("train_type"),
         NODE("node"), LINE("line"), TEXT_ITEM("text_item"), IMAGE("image"),
         TRAINS_CYCLE("trains_cycle"), ENGINE_CLASS("engine_class"),
-        LINE_CLASS("line_class"), ROUTE("route");
+        LINE_CLASS("line_class"), ROUTE("route"), OUTPUT_TEMPLATE("output_template");
 
         private String key;
 

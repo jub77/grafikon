@@ -7,8 +7,8 @@ import net.parostroj.timetable.model.events.*;
  * 
  * @author jub
  */
-class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener,
-        NetListener, TrainTypeListener, TextItemListener, EngineClassListener {
+class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, NetListener, TrainTypeListener,
+        TextItemListener, EngineClassListener, OutputTemplateListener {
 
     private TrainDiagram diagram;
 
@@ -43,6 +43,11 @@ class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener,
 
     @Override
     public void engineClassChanged(EngineClassEvent event) {
+        diagram.fireNestedEvent(event);
+    }
+
+    @Override
+    public void outputTemplateChanged(OutputTemplateEvent event) {
         diagram.fireNestedEvent(event);
     }
 }

@@ -131,6 +131,14 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
+    public void visit(OutputTemplateEvent event) {
+        change = new DiagramChange(DiagramChange.Type.OUTPUT_TEMPLATE, event.getSource().getId());
+        change.setObject(event.getSource().getName());
+        change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
+    }
+
+    @Override
     public void visit(EngineClassEvent event) {
         change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, event.getSource().getId());
         change.setObject(event.getSource().getName());

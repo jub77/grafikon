@@ -27,7 +27,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     public TextItem(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributes = new Attributes();
+        this.setAttributes(new Attributes());
         listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(new GTEventSender<TextItemListener, TextItemEvent>() {
 
             @Override
@@ -117,7 +117,8 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     }
 
     /**
-     * adds listener to train.
+     * adds listener.
+     * 
      * @param listener listener
      */
     public void addListener(TextItemListener listener) {
@@ -125,7 +126,8 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     }
 
     /**
-     * removes listener from train.
+     * removes listener.
+     * 
      * @param listener listener
      */
     public void removeListener(TextItemListener listener) {

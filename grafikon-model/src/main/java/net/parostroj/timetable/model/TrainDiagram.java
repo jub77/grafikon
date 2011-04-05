@@ -38,6 +38,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private List<EngineClass> engineClasses;
     /** List of text items. */
     private List<TextItem> textItems;
+    /** List of output templates. */
+    private List<OutputTemplate> outputTemplates;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
 
@@ -58,10 +60,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
+        this.outputTemplates = new LinkedList<OutputTemplate>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.net = new Net(IdGenerator.getInstance().getId());
         this.trainTypes = new LinkedList<TrainType>();
-        this.attributes = new Attributes();
+        this.setAttributes(new Attributes());
         this.setTrainsData(data);
         this.listener = new GTListenerTrainDiagramImpl(this);
         this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(new GTEventSender<TrainDiagramListener, TrainDiagramEvent>() {
@@ -337,15 +340,29 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public List<TextItem> getTextItems() {
         return Collections.unmodifiableList(textItems);
     }
+    
+    public List<OutputTemplate> getOutputTemplates() {
+        return Collections.unmodifiableList(outputTemplates);
+    }
 
     public void addTextItem(TextItem item) {
         this.addTextItem(item, textItems.size());
     }
 
+    public void addOutputTemplate(OutputTemplate template) {
+        this.addOutputTemplate(template, outputTemplates.size());
+    }
+    
     public void addTextItem(TextItem item, int position) {
         item.addListener(listener);
         textItems.add(position, item);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_ADDED, item));
+    }
+
+    public void addOutputTemplate(OutputTemplate template, int position) {
+        template.addListener(listener);
+        outputTemplates.add(position, template);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_ADDED, template));
     }
 
     public void removeTextItem(TextItem item) {
@@ -354,11 +371,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_REMOVED, item));
     }
 
+    public void removeOutputTemplate(OutputTemplate template) {
+        outputTemplates.remove(template);
+        template.removeListener(listener);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_REMOVED, template));
+    }
+
     public void moveTextItem(int from, int to) {
         TextItem moved = textItems.remove(from);
         if (moved != null) {
             textItems.add(to, moved);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_MOVED, moved));
+        }
+    }
+
+    public void moveOutputTemplate(int from, int to) {
+        OutputTemplate moved = outputTemplates.remove(from);
+        if (moved != null) {
+            outputTemplates.add(to, moved);
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_MOVED, moved));
         }
     }
 
@@ -374,6 +405,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for (TextItem item : textItems) {
             if (item.getId().equals(id))
                 return item;
+        }
+        return null;
+    }
+    
+    public OutputTemplate getOutputTemplateById(String id) {
+        for (OutputTemplate template : outputTemplates) {
+            if (template.getId().equals(id))
+                return template;
         }
         return null;
     }
@@ -529,6 +568,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for (TextItem item : textItems) {
             item.accept(visitor);
         }
+        for (OutputTemplate template : outputTemplates) {
+            template.accept(visitor);
+        }
         for(Train train : trains) {
             train.accept(visitor);
         }
@@ -565,6 +607,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (object != null)
             return object;
         object = getTextItemById(id);
+        if (object != null)
+            return object;
+        object = getOutputTemplateById(id);
         if (object != null)
             return object;
         object = getImageById(id);

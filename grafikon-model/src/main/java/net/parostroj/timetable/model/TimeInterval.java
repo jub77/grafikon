@@ -55,7 +55,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         this.speed = speed;
         this.direction = direction;
         this.track = track;
-        this.attributes = new Attributes();
+        this.setAttributes(new Attributes());
         this.id = id;
     }
 

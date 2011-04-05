@@ -87,6 +87,11 @@ public class TrainDiagramBuilder {
         TextItem item = lsTextItem.createTextItem(diagram);
         diagram.addTextItem(item);
     }
+    
+    public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
+        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram);
+        diagram.addOutputTemplate(template);
+    }
 
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {
         diagram.getChangesTracker().addVersion(lsChangeSet.getVersion(), lsChangeSet.getAuthor(), lsChangeSet.getDate());

@@ -50,7 +50,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      */
     Line(String id, TrainDiagram diagram, int length, Node from, Node to, int topSpeed) {
         tracks = new ArrayList<LineTrack>();
-        attributes = new Attributes();
+        this.setAttributes(new Attributes());
         this.length = length;
         this.from = from;
         this.to = to;

@@ -223,6 +223,23 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
+    public void visit(OutputTemplateEvent event) {
+        try {
+            str.append("OutputTemplateEvent[");
+            str.append(event.getSource().getName());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+            }
+        } catch (IOException e) {
+            LOG.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void visit(EngineClassEvent event) {
         try {
             str.append("EngineClassEvent[");

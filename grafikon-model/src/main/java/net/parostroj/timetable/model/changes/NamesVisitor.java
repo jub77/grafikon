@@ -87,4 +87,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(LineClass lineClass) {
         name = lineClass.getName();
     }
+
+    @Override
+    public void visit(OutputTemplate template) {
+        name = template.getName();
+    }
 }

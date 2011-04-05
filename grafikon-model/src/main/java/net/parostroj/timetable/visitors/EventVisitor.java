@@ -26,4 +26,6 @@ public interface EventVisitor {
     public void visit(TextItemEvent event);
 
     public void visit(EngineClassEvent event);
+    
+    public void visit(OutputTemplateEvent event);
 }

@@ -86,6 +86,11 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
+    public void visit(OutputTemplateEvent event) {
+        tracked = true;
+    }
+
+    @Override
     public void visit(EngineClassEvent event) {
         tracked = true;
     }

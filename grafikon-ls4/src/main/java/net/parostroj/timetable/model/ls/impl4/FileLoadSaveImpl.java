@@ -30,6 +30,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_TRAIN_TYPES = "train_types/";
     private static final String DATA_TRAINS = "trains/";
     private static final String DATA_TEXT_ITEMS = "text_items/";
+    private static final String DATA_OUTPUT_TEMPLATES = "output_templates/";
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
@@ -125,6 +126,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder.setTrainType(lss.load(zipInput, LSTrainType.class));
                 } else if (entry.getName().startsWith(DATA_TEXT_ITEMS)) {
                     builder.setTextItem(lss.load(zipInput, LSTextItem.class));
+                } else if (entry.getName().startsWith(DATA_OUTPUT_TEMPLATES)) {
+                    builder.setOutputTemplate(lss.load(zipInput, LSOutputTemplate.class));
                 } else if (entry.getName().startsWith(DATA_TRAINS)) {
                     builder.setTrain(lss.load(zipInput, LSTrain.class));
                 } else if (entry.getName().startsWith(DATA_ENGINE_CLASSES)) {
@@ -192,6 +195,11 @@ public class FileLoadSaveImpl implements FileLoadSave {
             // save text items
             for (TextItem item : diagram.getTextItems()) {
                 this.save(zipOutput, this.createEntryName(DATA_TEXT_ITEMS, "xml", cnt++), new LSTextItem(item));
+            }
+            cnt = 0;
+            // save output templates
+            for (OutputTemplate template : diagram.getOutputTemplates()) {
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), new LSOutputTemplate(template));
             }
             cnt = 0;
             // save diagram change sets

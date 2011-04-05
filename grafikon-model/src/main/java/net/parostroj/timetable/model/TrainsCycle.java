@@ -39,7 +39,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.id = id;
         this.name = name;
         this.description = description;
-        this.attributes = new Attributes();
+        this.setAttributes(new Attributes());
         this.type = type;
         this.items = new LinkedList<TrainsCycleItem>();
         listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(new GTEventSender<TrainsCycleListener, TrainsCycleEvent>() {

@@ -64,7 +64,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         this.id = id;
         this.diagram = diagram;
         timeIntervalList = new TimeIntervalList();
-        attributes = new Attributes();
+        this.setAttributes(new Attributes());
         cycles = new EnumMap<TrainsCycleType, List<TrainsCycleItem>>(TrainsCycleType.class);
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
 

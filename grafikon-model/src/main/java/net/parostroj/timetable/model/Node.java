@@ -41,7 +41,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      */
     private void init() {
         tracks = new LinkedList<NodeTrack>();
-        attributes = new Attributes();
+        this.setAttributes(new Attributes());
         listenerSupport = new GTListenerSupport<NodeListener, NodeEvent>(new GTEventSender<NodeListener, NodeEvent>() {
 
             @Override
