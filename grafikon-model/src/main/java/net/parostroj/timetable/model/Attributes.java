@@ -50,7 +50,15 @@ public class Attributes implements Map<String, Object> {
     }
     
     public Object get(String name) {
-        return this.get(name, null);
+        return this.get(name, (String)null);
+    }
+    
+    public <T> T get(String name, String category, Class<T> clazz) {
+        return clazz.cast(this.get(name, category));
+    }
+
+    public <T> T get(String name, Class<T> clazz) {
+        return clazz.cast(this.get(name));
     }
     
     public Object get(String name, String category) {
