@@ -19,15 +19,22 @@ public final class TextTemplateMvel extends TextTemplate {
     
     private CompiledTemplate compiledTemplate;
 
-    protected TextTemplateMvel(String template) {
+    protected TextTemplateMvel(String template, boolean initialize) {
         super(template);
-        TemplateCompiler compiler = new TemplateCompiler(template);
+        if (initialize)
+            initialize();
+    }
+    
+    private void initialize() {
+        TemplateCompiler compiler = new TemplateCompiler(this.getTemplate());
         compiledTemplate = compiler.compile();
     }
 
     @Override
     public String evaluateWithException(Map<String, Object> binding) throws GrafikonException {
         try {
+            if (compiledTemplate == null)
+                initialize();
             return TemplateRuntime.execute(compiledTemplate, binding).toString();
         } catch (Exception e) {
             throw new GrafikonException("Error evaluating template: " + e.getMessage(), e, GrafikonException.Type.TEXT_TEMPLATE);
@@ -47,5 +54,10 @@ public final class TextTemplateMvel extends TextTemplate {
     @Override
     public Language getLanguage() {
         return Language.MVEL;
+    }
+    
+    @Override
+    public void freeResources() {
+        compiledTemplate = null;
     }
 }

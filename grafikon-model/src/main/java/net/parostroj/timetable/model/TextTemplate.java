@@ -58,11 +58,15 @@ public abstract class TextTemplate {
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
+        return createTextTemplate(template, language, true);
+    }
+
+    public static TextTemplate createTextTemplate(String template, Language language, boolean initialize) throws GrafikonException {
         switch(language) {
             case MVEL:
-                return new TextTemplateMvel(template);
+                return new TextTemplateMvel(template, initialize);
             case GROOVY:
-                return new TextTemplateGroovy(template);
+                return new TextTemplateGroovy(template, initialize);
             case PLAIN:
                 return new TextTemplatePlain(template);
             default:
@@ -70,6 +74,10 @@ public abstract class TextTemplate {
         }
     }
 
+    public void freeResources() {
+        // nothing
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
