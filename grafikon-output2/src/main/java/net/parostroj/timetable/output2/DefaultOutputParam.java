@@ -11,4 +11,5 @@ public interface DefaultOutputParam {
     public static final String OUTPUT_STREAM = "output.stream";
     public static final String OUTPUT_FILE = "output.file";
     public static final String TEMPLATE_STREAM = "template.stream";
+    public static final String TEXT_TEMPLATE = "text.template";
 }
