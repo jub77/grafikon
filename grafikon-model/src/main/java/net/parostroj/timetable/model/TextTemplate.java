@@ -1,5 +1,9 @@
 package net.parostroj.timetable.model;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Map;
 
@@ -47,6 +51,16 @@ public abstract class TextTemplate {
     public String evaluate(Object object) {
         return this.evaluate(this.getBinding(object));
     }
+    
+    public void evaluate(OutputStream output, Map<String, Object> binding) throws GrafikonException {
+        try {
+            this.evaluate(new OutputStreamWriter(output, "utf-8"), binding);
+        } catch (UnsupportedEncodingException e) {
+            throw new GrafikonException("Error creating writer.", e);
+        }
+    }
+
+    public abstract void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException;
 
     public abstract Language getLanguage();
     

@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.io.*;
 import java.util.Map;
 
 import org.mvel2.templates.CompiledTemplate;
@@ -59,5 +60,15 @@ public final class TextTemplateMvel extends TextTemplate {
     @Override
     public void freeResources() {
         compiledTemplate = null;
+    }
+
+    @Override
+    public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
+        try {
+            output.write(this.evaluateWithException(binding));
+            output.flush();
+        } catch (IOException e) {
+            throw new GrafikonException("Error writing output.", e);
+        }
     }
 }

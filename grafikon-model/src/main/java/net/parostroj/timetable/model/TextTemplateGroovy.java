@@ -1,9 +1,12 @@
 package net.parostroj.timetable.model;
 
+import groovy.lang.Writable;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 import groovy.text.TemplateEngine;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -66,5 +69,16 @@ public final class TextTemplateGroovy extends TextTemplate {
     @Override
     public void freeResources() {
         templateGString = null;
+    }
+
+    @Override
+    public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
+        Writable result = templateGString.make(binding);
+        try {
+            result.writeTo(output);
+            output.flush();
+        } catch (IOException e) {
+            throw new GrafikonException("Error writing output.", e);
+        }
     }
 }
