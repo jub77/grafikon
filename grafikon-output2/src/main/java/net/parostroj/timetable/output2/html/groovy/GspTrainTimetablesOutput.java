@@ -1,18 +1,23 @@
 package net.parostroj.timetable.output2.html.groovy;
 
-import groovy.lang.Writable;
 import groovy.text.Template;
-import java.io.*;
+
+import java.io.File;
+import java.io.OutputStream;
 import java.util.*;
+
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.util.SelectionHelper;
+import net.parostroj.timetable.output2.DefaultOutputParam;
+import net.parostroj.timetable.output2.ImageSaver;
+import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.TrainTimetables;
 import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 
 /**
  * Implements html output for train timetables.
@@ -50,10 +55,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
 
             Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
-            Writable result = template.make(map);
-            Writer writer = new OutputStreamWriter(stream, "utf-8");
-            result.writeTo(writer);
-            writer.flush();
+            this.writeOutput(stream, template, map);
 
             // write images if possible
             if (params.paramExist(DefaultOutputParam.OUTPUT_FILE)) {
@@ -65,7 +67,8 @@ public class GspTrainTimetablesOutput extends GspOutput {
                     saver.saveImage(image, file);
                 }
             }
-
+        } catch (OutputException e) {
+            throw e;
         } catch (Exception e) {
             throw new OutputException(e);
         }

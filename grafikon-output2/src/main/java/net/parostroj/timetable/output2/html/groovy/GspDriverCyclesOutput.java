@@ -1,16 +1,20 @@
 package net.parostroj.timetable.output2.html.groovy;
 
-import groovy.lang.Writable;
 import groovy.text.Template;
-import java.io.*;
-import java.util.*;
+
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
-import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.DriverCycles;
 import net.parostroj.timetable.output2.impl.DriverCyclesExtractor;
-import net.parostroj.timetable.output2.util.SelectionHelper;
 import net.parostroj.timetable.output2.util.ResourceHelper;
+import net.parostroj.timetable.output2.util.SelectionHelper;
 
 /**
  * Implements html output for driver cycles.
@@ -36,10 +40,9 @@ public class GspDriverCyclesOutput extends GspOutput {
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
 
             Template template = this.getTemplate(params, "templates/groovy/driver_cycles.gsp", this.getClass().getClassLoader());
-            Writable result = template.make(map);
-            Writer writer = new OutputStreamWriter(stream, "utf-8");
-            result.writeTo(writer);
-            writer.flush();
+            this.writeOutput(stream, template, map);
+        } catch (OutputException e) {
+            throw e;
         } catch (Exception e) {
             throw new OutputException(e);
         }

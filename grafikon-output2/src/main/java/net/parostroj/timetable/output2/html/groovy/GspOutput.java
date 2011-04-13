@@ -1,16 +1,16 @@
 package net.parostroj.timetable.output2.html.groovy;
 
+import groovy.lang.Writable;
 import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import net.parostroj.timetable.output2.DefaultOutputParam;
+import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithLocale;
 
@@ -64,5 +64,19 @@ public abstract class GspOutput extends OutputWithLocale {
             is.close();
         }
         return template;
+    }
+    
+    protected void writeOutput(OutputStream stream, Template template, Map<String, Object> binding) throws OutputException {
+        Writable result = template.make(binding);
+        Writer writer;
+        try {
+            writer = new OutputStreamWriter(stream, "utf-8");
+            result.writeTo(writer);
+            writer.flush();
+        } catch (UnsupportedEncodingException e) {
+            throw new OutputException("Error creating output.", e);
+        } catch (IOException e) {
+            throw new OutputException("Error writing output.", e);
+        }
     }
 }
