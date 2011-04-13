@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.EngineCycle;
@@ -40,8 +42,13 @@ public class GspEngineCyclesOutput extends GspOutput {
             map.put("cycles", cycles);
             ResourceHelper.addTextsToMap(map, "ec_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.getTemplate(params, "templates/groovy/engine_cycles.gsp", this.getClass().getClassLoader());
-            this.writeOutput(stream, template, map);
+            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+                textTemplate.evaluate(stream, map);
+            } else {
+                Template template = this.getTemplate(params, "templates/groovy/engine_cycles.gsp", this.getClass().getClassLoader());
+                this.writeOutput(stream, template, map);
+            }
         } catch (OutputException e) {
             throw e;
         } catch (Exception e) {

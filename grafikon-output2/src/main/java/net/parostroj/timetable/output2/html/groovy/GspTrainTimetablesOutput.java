@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.*;
 
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.ImageSaver;
 import net.parostroj.timetable.output2.OutputException;
@@ -54,8 +51,13 @@ public class GspTrainTimetablesOutput extends GspOutput {
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
             ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
 
-            Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
-            this.writeOutput(stream, template, map);
+            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+                textTemplate.evaluate(stream, map);
+            } else {
+                Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
+                this.writeOutput(stream, template, map);
+            }
 
             // write images if possible
             if (params.paramExist(DefaultOutputParam.OUTPUT_FILE)) {

@@ -32,6 +32,10 @@ public class OutputParam {
     public Object getValue() {
         return value;
     }
+    
+    public <T> T getValue(Class<T> clazz) {
+        return clazz.cast(value);
+    }
 
     public void setValue(Object value) {
         this.value = value;
