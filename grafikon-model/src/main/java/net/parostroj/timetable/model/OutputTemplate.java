@@ -15,7 +15,6 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private final TrainDiagram diagram;
 
     private String name;
-    private String output;
     private TextTemplate template;
     
     private Attributes attributes;
@@ -57,16 +56,6 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     
     public String getName() {
         return name;
-    }
-
-    public void setOutput(String output) {
-        String oldOutput = this.output;
-        this.output = output;
-        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange("output", oldOutput, output)));
-    }
-
-    public String getOutput() {
-        return output;
     }
 
     public void setTemplate(TextTemplate template) {

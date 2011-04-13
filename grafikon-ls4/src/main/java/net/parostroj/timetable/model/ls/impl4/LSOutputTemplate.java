@@ -13,12 +13,11 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "output_template")
-@XmlType(propOrder = {"id", "name", "output", "template", "attributes"})
+@XmlType(propOrder = {"id", "name", "template", "attributes"})
 public class LSOutputTemplate {
     
     private String id;
     private String name;
-    private String output;
     private LSTextTemplate template;
     private LSAttributes attributes;
     
@@ -28,7 +27,6 @@ public class LSOutputTemplate {
     public LSOutputTemplate(OutputTemplate template) {
         this.id = template.getId();
         this.name = template.getName();
-        this.output = template.getOutput();
         this.template = new LSTextTemplate(template.getTemplate());
         this.attributes = new LSAttributes(template.getAttributes());
     }
@@ -47,14 +45,6 @@ public class LSOutputTemplate {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = output;
     }
 
     public LSTextTemplate getTemplate() {
@@ -76,7 +66,6 @@ public class LSOutputTemplate {
     public OutputTemplate createOutputTemplate(TrainDiagram diagram) throws LSException {
         OutputTemplate outputTemplate = new OutputTemplate(id, diagram);
         outputTemplate.setName(name);
-        outputTemplate.setOutput(output);
         if (this.template != null)
             outputTemplate.setTemplate(this.template.createTextTemplate());
         outputTemplate.setAttributes(attributes.createAttributes(diagram));
