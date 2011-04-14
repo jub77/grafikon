@@ -40,6 +40,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
         Border border = new CompoundBorder(new EmptyBorder(5, 5, 0, 5), scrollPane.getBorder());
         scrollPane.setBorder(border);
         scriptTextArea.setTabsEmulated(true);
+        scriptTextArea.setTabSize(4);
     }
 
     public void setColumns(int columns) {
