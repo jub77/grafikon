@@ -603,6 +603,22 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genTitlePageTTCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="ouputTemplatesMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="gt_texts.properties" key="menu.action.user.output.templates" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ouputTemplatesMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="viewsMenu">
@@ -661,7 +677,6 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="gt_texts.properties" key="menu.special.execute.script" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                 </Property>
-                <Property name="actionCommand" type="java.lang.String" value=""/>
               </Properties>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="scriptsMenu">
@@ -850,7 +865,7 @@
             <Component class="net.parostroj.timetable.gui.panes.TrainsPane" name="trainsPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Vlaky">
+                  <JTabbedPaneConstraints tabName="Trains">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="gt_texts.properties" key="tab.trains" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -861,7 +876,7 @@
             <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="engineCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Ob&#x11b;hy HV">
+                  <JTabbedPaneConstraints tabName="Engines">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="gt_texts.properties" key="tab.engine.cycles" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -872,7 +887,7 @@
             <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="trainUnitCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Ob&#x11b;hy souprav">
+                  <JTabbedPaneConstraints tabName="Train units">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="gt_texts.properties" key="tab.trainunit.cycle" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -883,7 +898,7 @@
             <Component class="net.parostroj.timetable.gui.panes.TrainsCyclesPane" name="driverCyclesPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Turnusy">
+                  <JTabbedPaneConstraints tabName="Engineers">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="gt_texts.properties" key="tab.driver.cycles" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -894,7 +909,7 @@
             <Component class="net.parostroj.timetable.gui.panes.NetPane" name="netPane">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="S&#xed;&#x165;">
+                  <JTabbedPaneConstraints tabName="Net">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="gt_texts.properties" key="tab.net" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
                     </Property>

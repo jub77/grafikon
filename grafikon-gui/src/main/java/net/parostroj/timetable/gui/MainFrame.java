@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
 
@@ -52,9 +52,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private Locale locale;
     private OutputAction outputAction;
     private ExecuteScriptAction executeScriptAction;
-    
+
     private Map<File, JMenuItem> lastOpened;
-    
+
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
         info.setText("Starting Grafikon ...\n" + version);
@@ -98,9 +98,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         executeScriptAction = new ExecuteScriptAction(model);
 
         initComponents();
-        
+
         this.addWindowListener(new MainFrameWindowListener(model, this));
-        
+
         trainsPane.setModel(model);
         engineCyclesPane.setModel(model, new EngineCycleDelegate(),new TrainColorChooser() {
             @Override
@@ -129,7 +129,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                     return Color.gray;
             }
         });
-        
+
         // add languages to menu
         LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
         List<LanguageMenuBuilder.LanguageMenuItem> languages = languageMenuBuilder.createLanguageMenuItems();
@@ -171,36 +171,36 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             lookAndFeelbuttonGroup.add(item);
             lookAndFeelMenu.add(item);
         }
-        
+
         model.addListener(this);
         model.addListener(statusBar);
-        
+
         settingsDialog = new SettingsDialog(this, true);
-        
+
         imagesDialog = new EditImagesDialog(this, true);
         imagesDialog.setModel(model);
-        
+
         infoDialog = new EditInfoDialog(this, true);
         infoDialog.setModel(model);
 
         floatingDialogsList = FloatingDialogsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
-        
+
         trainTypesDialog = new TrainTypesDialog(this, true);
         trainTypesDialog.setModel(model);
-        
+
         lineClassesDialog = new LineClassesDialog(this, true);
         lineClassesDialog.setModel(model);
-        
+
         engineClassesDialog = new EngineClassesDialog(this, true);
         engineClassesDialog.setModel(model);
 
         netPane.setModel(model);
-        
+
         this.updateView();
 
         model.setDiagram(null);
-        
+
         // apply preferences
         try {
             AppPreferences.getPreferences().load();
@@ -208,7 +208,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         } catch (IOException e) {
             LOG.error("Error loading preferences.", e);
         }
-        
+
         this.setSelectedLocale();
         this.setSelectedTemplateLocale();
 
@@ -217,13 +217,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
         fcf.getFileChooser(FileChooserFactory.Type.GTM);
-        
+
         // preload FileLoadSave
         LSFileFactory.getInstance();
-        
+
         // initialize groovy
         new GroovyShell().parse("");
-        
+
         // add predefined scripts
         for (ScriptDescription sd : PredefinedScriptsLoader.getPredefinedScripts()) {
             JMenuItem item = new JMenuItem();
@@ -259,7 +259,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void removeLastOpened(final File file) {
         ModelActionUtilities.runLaterInEDT(new Runnable() {
-            
+
             @Override
             public void run() {
                 JMenuItem removed = lastOpened.remove(file);
@@ -273,7 +273,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void addLastOpenedFile(final File file) {
         ModelActionUtilities.runLaterInEDT(new Runnable() {
-            
+
             @Override
             public void run() {
                 JMenuItem openItem = null;
@@ -291,7 +291,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
     }
-    
+
     private void refreshLastOpenedFiles() {
         int menuItems = fileMenu.getItemCount();
         int fileItems = lastOpened.size();
@@ -306,7 +306,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void setTitleChanged(boolean b) {
         this.setTitle(this.getTitleString(b));
     }
-    
+
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
         String version = getVersion(false);
@@ -322,7 +322,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
         return title;
     }
-   
+
     private void updateView() {
         boolean notNullDiagram = model.getDiagram() != null;
         fileSaveMenuItem.setEnabled(notNullDiagram);
@@ -358,8 +358,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         removeWeightsMenuItem.setEnabled(notNullDiagram);
         executeScriptMenuItem.setEnabled(notNullDiagram);
         scriptsMenu.setEnabled(notNullDiagram);
+        ouputTemplatesMenuItem.setEnabled(notNullDiagram);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -435,6 +436,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        javax.swing.JSeparator jSeparator5 = new javax.swing.JSeparator();
+        ouputTemplatesMenuItem = new javax.swing.JMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         recalculateMenuItem = new javax.swing.JMenuItem();
@@ -770,6 +773,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
+        actionMenu.add(jSeparator5);
+
+        ouputTemplatesMenuItem.setText(ResourceLoader.getString("menu.action.user.output.templates")); // NOI18N
+        ouputTemplatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ouputTemplatesMenuItemActionPerformed(evt);
+            }
+        });
+        actionMenu.add(ouputTemplatesMenuItem);
 
         menuBar.add(actionMenu);
 
@@ -792,7 +804,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         executeScriptMenuItem.setAction(executeScriptAction);
         executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
-        executeScriptMenuItem.setActionCommand("");
         specialMenu.add(executeScriptMenuItem);
 
         scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
@@ -881,7 +892,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
         if (settingsDialog.isRecalculate()) {
             ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
-                
+
                 @Override
                 public void execute(Train train) throws Exception {
                     train.recalculate();
@@ -892,7 +903,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // check and send event if neccessary
         if (settingsDialog.isDiagramChanged()) {
             ModelAction action = new EventDispatchModelAction(context) {
-                
+
                 @Override
                 protected void eventDispatchAction() {
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
@@ -1026,6 +1037,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
     }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
 
+    private void ouputTemplatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ouputTemplatesMenuItemActionPerformed
+        // output templates list dialog
+        OutputTemplateListDialog dialog = new OutputTemplateListDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }//GEN-LAST:event_ouputTemplatesMenuItemActionPerformed
+
     private void setSelectedLocale() {
         if (locale == null)
             systemLanguageRadioButtonMenuItem.setSelected(true);
@@ -1085,10 +1104,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             String positionStr = GuiUtils.getPosition(this);
             prefs.setString("main.position", positionStr);
         }
-        
+
         // save to preferences last file chooser directories
         FileChooserFactory.getInstance().saveToPreferences(prefs);
-        
+
         // save locales
         if (locale != null)
             prefs.setString("locale.program", locale.toString());
@@ -1104,7 +1123,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // save look and feel
         prefs.setString("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
-        
+
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
         model.saveToPreferences(prefs);
@@ -1112,7 +1131,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.saveToPreferences(prefs);
         engineCyclesPane.saveToPreferences(prefs);
     }
-    
+
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         if (prefs.getBoolean("main.maximized", false)) {
@@ -1157,7 +1176,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
     }
-    
+
     public void forceLoad(File file) {
         NewOpenAction action = new NewOpenAction(model, this, false);
         action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
@@ -1170,7 +1189,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // set focus back on the frame
         this.requestFocus();
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem allHtmlMenuItem;
     private javax.swing.JPanel applicationPanel;
@@ -1202,6 +1221,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem nodeTimetableListSelectMenuItem;
     private javax.swing.JMenu oLanguageMenu;
     private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
+    private javax.swing.JMenuItem ouputTemplatesMenuItem;
     private javax.swing.ButtonGroup outputLbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
     private javax.swing.JMenuItem penaltyTableMenuItem;
