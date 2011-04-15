@@ -84,6 +84,7 @@ public class Attributes implements Map<String, Object> {
         }
     }
 
+    @Override
     public void clear() {
         this.clear(null);
     }
@@ -117,7 +118,7 @@ public class Attributes implements Map<String, Object> {
     }
 
     public void removeListener(AttributesListener listener) {
-        listeners.remove(listeners);
+        listeners.remove(listener);
     }
 
     protected void fireChange(String name, Object oldV, Object newV, String category) {
