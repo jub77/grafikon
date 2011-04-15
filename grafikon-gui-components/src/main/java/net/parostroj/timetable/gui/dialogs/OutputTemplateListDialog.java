@@ -6,7 +6,14 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.model.GrafikonException;
+import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.IdGenerator;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for editing list of output templates.
@@ -16,16 +23,43 @@ import net.parostroj.timetable.model.TrainDiagram;
 public class OutputTemplateListDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
+    private WrapperListModel<OutputTemplate> templatesModel;
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        templatesModel = new WrapperListModel<OutputTemplate>(false);
+        templateList.setModel(templatesModel);
     }
 
     public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
+        this.fillList();
         this.setVisible(true);
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b)
+            updateButtons();
+        super.setVisible(b);
+    }
+
+    private void fillList() {
+        for (OutputTemplate template : diagram.getOutputTemplates()) {
+            templatesModel.addWrapper(new Wrapper<OutputTemplate>(template));
+        }
+    }
+
+    private void updateButtons() {
+        boolean selected = templateList.getSelectedValue() != null;
+        downButton.setEnabled(selected);
+        upButton.setEnabled(selected);
+        deleteButton.setEnabled(selected);
+        editButton.setEnabled(selected);
+        // create button
+        newButton.setEnabled(!"".equals(nameTextField.getText().trim()));
     }
 
     /** This method is called from within the constructor to
@@ -59,6 +93,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         controlPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
         nameTextField.setColumns(10);
+        nameTextField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                nameTextFieldCaretUpdate(evt);
+            }
+        });
         controlPanel.add(nameTextField);
 
         newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
@@ -104,7 +143,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         buttonPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
 
         okPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        okPanel.setLayout(new java.awt.GridLayout());
+        okPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -124,6 +163,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         templateList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        templateList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                templateListValueChanged(evt);
+            }
+        });
         scrollPane.setViewportView(templateList);
 
         listPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -134,19 +178,49 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
-        // TODO add your handling code here:
+        int index = templateList.getSelectedIndex();
+        if (index != -1 && index != (templatesModel.getSize() - 1)) {
+            Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
+            diagram.moveTextItem(index, index + 1);
+            index++;
+            templatesModel.addWrapper(wrapper, index);
+            templateList.setSelectedIndex(index);
+        }
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-        // TODO add your handling code here:
+        int index = templateList.getSelectedIndex();
+        if (index != -1 && index != 0) {
+            Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
+            diagram.moveTextItem(index, index - 1);
+            index--;
+            templatesModel.addWrapper(wrapper, index);
+            templateList.setSelectedIndex(index);
+        }
     }//GEN-LAST:event_upButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+        Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
+        if (wrapper != null) {
+            templatesModel.removeObject((OutputTemplate) wrapper.getElement());
+            diagram.removeOutputTemplate((OutputTemplate) wrapper.getElement());
+        }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        // TODO add your handling code here:
+        OutputTemplate template = new OutputTemplate(IdGenerator.getInstance().getId(), diagram);
+        template.setName(nameTextField.getText().trim());
+        try {
+            template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.PLAIN));
+        } catch (GrafikonException e) {
+            LoggerFactory.getLogger(this.getClass()).error("Error creating template.", e);
+        }
+        diagram.addOutputTemplate(template);
+        Wrapper<OutputTemplate> wrapper = new Wrapper<OutputTemplate>(template);
+        templatesModel.addWrapper(wrapper);
+        nameTextField.setText("");
+        templateList.setSelectedValue(wrapper, true);
+        this.updateButtons();
     }//GEN-LAST:event_newButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -156,6 +230,14 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_editButtonActionPerformed
+
+    private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_nameTextFieldCaretUpdate
+        this.updateButtons();
+    }//GEN-LAST:event_nameTextFieldCaretUpdate
+
+    private void templateListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_templateListValueChanged
+        this.updateButtons();
+    }//GEN-LAST:event_templateListValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
