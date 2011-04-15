@@ -47,6 +47,8 @@ class EventToChangeConvert {
         map.put(GTEventType.TRAIN_REMOVED, DiagramChange.Type.TRAIN);
         map.put(GTEventType.TRAIN_TYPE_ADDED, DiagramChange.Type.TRAIN_TYPE);
         map.put(GTEventType.TRAIN_TYPE_REMOVED, DiagramChange.Type.TRAIN_TYPE);
+        map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, DiagramChange.Type.OUTPUT_TEMPLATE);
+        map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Type.OUTPUT_TEMPLATE);
         return map;
     }
 
@@ -80,6 +82,8 @@ class EventToChangeConvert {
         map.put(GTEventType.TRAIN_TYPE_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TRAIN_TYPE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.WEIGHT_TABLE_MODIFIED, DiagramChange.Action.MODIFIED);
+        map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, DiagramChange.Action.ADDED);
+        map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
         return map;
     }
 
@@ -126,6 +130,9 @@ class EventToChangeConvert {
         map.put(GTEventType.TRAIN_TYPE_MOVED, null); // nothing
         map.put(GTEventType.TRAIN_TYPE_REMOVED, null); // nothing
         map.put(GTEventType.WEIGHT_TABLE_MODIFIED, "weight_table");
+        map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, null); // nothing
+        map.put(GTEventType.OUTPUT_TEMPLATE_MOVED, null); // nothing
+        map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, null); // nothing
         return map;
     }
 
@@ -199,4 +206,7 @@ class EventToChangeConvert {
     map.put(GTEventType.TRAIN_TYPE_MOVED, null);
     map.put(GTEventType.TRAIN_TYPE_REMOVED, null);
     map.put(GTEventType.WEIGHT_TABLE_MODIFIED, null);
+    map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, null);
+    map.put(GTEventType.OUTPUT_TEMPLATE_MOVED, null);
+    map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, null);
  */
