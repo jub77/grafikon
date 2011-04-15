@@ -7,10 +7,10 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Font;
 import java.awt.event.ItemEvent;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -50,7 +50,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         templateTextArea.setTabSize(4);
     }
 
-    public void setTemplateLanguages(Set<Language> languages) {
+    public void setTemplateLanguages(Collection<Language> languages) {
         languageComboBox.removeAllItems();
         for (Language language : languages) {
             languageComboBox.addItem(language);
@@ -125,20 +125,12 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scrollPane = new javax.swing.JScrollPane();
-        templateTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         javax.swing.JPanel panel = new javax.swing.JPanel();
         languageComboBox = new javax.swing.JComboBox();
+        scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
+        templateTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
 
         setLayout(new java.awt.BorderLayout());
-
-        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        templateTextArea.setColumns(20);
-        templateTextArea.setRows(5);
-        scrollPane.setViewportView(templateTextArea);
-
-        add(scrollPane, java.awt.BorderLayout.CENTER);
 
         panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -150,6 +142,14 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         panel.add(languageComboBox);
 
         add(panel, java.awt.BorderLayout.PAGE_END);
+
+        scrollPane.setLineNumbersEnabled(false);
+
+        templateTextArea.setColumns(20);
+        templateTextArea.setRows(5);
+        scrollPane.setViewportView(templateTextArea);
+
+        add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_languageComboBoxItemStateChanged
@@ -161,7 +161,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox languageComboBox;
-    private javax.swing.JScrollPane scrollPane;
+    private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea templateTextArea;
     // End of variables declaration//GEN-END:variables
 }
