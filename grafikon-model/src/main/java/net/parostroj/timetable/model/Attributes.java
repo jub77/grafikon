@@ -91,7 +91,10 @@ public class Attributes implements Map<String, Object> {
     
     public void clear(String category) {
         if (this.mapExistsForCategory(category)) {
-            this.getMapForCategory(category).clear();
+            Set<String> keys = new HashSet<String>(this.getMapForCategory(category).keySet());
+            for (String key : keys) {
+                this.remove(key, category);
+            }
         }
     }
     
@@ -150,6 +153,39 @@ public class Attributes implements Map<String, Object> {
             return false;
     }
 
+    public void merge(Attributes from) {
+        // add/remove ...
+        for (String category : from.getCategories()) {
+            this.merge(from, category);
+        }
+        // remove ...
+        for (String category : this.getCategories()) {
+            if (!from.getCategories().contains(category)) {
+                this.merge(from, category);
+            }
+        }
+        // default category
+        this.merge(from, null);
+    }
+
+    public void merge(Attributes from, String category) {
+        Map<String, Object> fromMap = from.getAttributesMap(category);
+        Map<String, Object> toMap = this.getAttributesMap(category);
+        // update modified ...
+        for (String name : fromMap.keySet()) {
+            if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
+                    || (fromMap.get(name) == null && toMap.get(name) != null)){
+                this.set(name, fromMap.get(name), category);
+            }
+        }
+        // remove deleted
+        for (String name : new LinkedList<String>(toMap.keySet())) {
+            if (!fromMap.containsKey(name)) {
+                this.remove(name, category);
+            }
+        }
+    }
+
     // ------------ Map methods ------------
     @Override
     public int size() {
@@ -163,7 +199,7 @@ public class Attributes implements Map<String, Object> {
 
     @Override
     public boolean containsKey(Object key) {
-        return values.containsKey(key);
+        return values.containsKey((String) key);
     }
 
     @Override
@@ -173,7 +209,7 @@ public class Attributes implements Map<String, Object> {
 
     @Override
     public Object get(Object key) {
-        return values.get(key);
+        return values.get((String) key);
     }
 
     @Override
