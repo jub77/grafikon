@@ -9,7 +9,6 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -197,7 +196,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
         
         this.setVisible(false);
-        AttributesPanel.updateAttributes(cycle.getAttributes(), attributesPanel.stopEditing(), TCDetailsViewDialog.USER_ATTR_CATEGORY);
+        cycle.getAttributes().merge(attributesPanel.stopEditing(), TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
