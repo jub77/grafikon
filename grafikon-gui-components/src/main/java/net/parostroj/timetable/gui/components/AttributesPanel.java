@@ -5,9 +5,6 @@
  */
 package net.parostroj.timetable.gui.components;
 
-import java.util.LinkedList;
-import java.util.Map;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -145,24 +142,6 @@ public class AttributesPanel extends javax.swing.JPanel {
     
     public Attributes getAttributes() {
         return attributesTableModel.getAttributes();
-    }
-    
-    public static void updateAttributes(Attributes to, Attributes from, String category) {
-        Map<String, Object> fromMap = from.getAttributesMap(category); 
-        Map<String, Object> toMap = to.getAttributesMap(category); 
-        // update modified ...
-        for (String name : fromMap.keySet()) {
-            if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
-                    || (fromMap.get(name) == null && toMap.get(name) != null)){
-                to.set(name, fromMap.get(name), category);
-            }
-        }
-        // remove deleted
-        for (String name : new LinkedList<String>(toMap.keySet())) {
-            if (!fromMap.containsKey(name)) {
-                to.remove(name, category);
-            }
-        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
