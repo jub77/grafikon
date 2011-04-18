@@ -9,7 +9,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -106,6 +106,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         locationButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle(ResourceLoader.getString("ot.title")); // NOI18N
 
         buttonPanel.setLayout(new java.awt.BorderLayout());
 
@@ -319,26 +320,90 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_locationButtonActionPerformed
 
     private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputButtonActionPerformed
-        Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
-        if (wrapper != null) {
-            try {
-                this.generateOutput((OutputTemplate) wrapper.getElement());
-            } catch (OutputException e) {
-                LOG.error(e.getMessage(), e);
-                ActionUtils.showError(e.getMessage(), this);
+        ActionContext c = new ActionContext();
+        c.setLocationComponent(this);
+        ModelAction action = new EventDispatchAfterModelAction(c) {
+
+            private String errorMessage;
+            private OutputTemplate errorTemplate;
+
+            @Override
+            protected void backgroundAction() {
+                long time = System.currentTimeMillis();
+                setWaitMessage(ResourceLoader.getString("ot.message.wait"));
+                setWaitDialogVisible(true);
+                try {
+                    Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
+                    if (wrapper != null) {
+                        try {
+                            errorTemplate = (OutputTemplate) wrapper.getElement();
+                            generateOutput((OutputTemplate) wrapper.getElement());
+                        } catch (OutputException e) {
+                            LOG.error(e.getMessage(), e);
+                            errorMessage = e.getMessage();
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage(), e);
+                    errorMessage = ResourceLoader.getString("ot.message.error");
+                } finally {
+                    setWaitDialogVisible(false);
+                }
+                time = System.currentTimeMillis() - time;
+                LOG.debug("Generated in {}ms", time);
             }
-        }
+            
+            @Override
+            protected void eventDispatchActionAfter() {
+                if (errorMessage != null) {
+                    ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, OutputTemplateListDialog.this);
+                }
+            }
+        };
+        ActionHandler.getInstance().execute(action);
     }//GEN-LAST:event_outputButtonActionPerformed
 
     private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputAllButtonActionPerformed
-        try {
-            for (OutputTemplate template : diagram.getOutputTemplates()) {
-                this.generateOutput(template);
+        ActionContext c = new ActionContext();
+        c.setLocationComponent(this);
+        ModelAction action = new EventDispatchAfterModelAction(c) {
+
+            private String errorMessage;
+            private OutputTemplate errorTemplate;
+
+            @Override
+            protected void backgroundAction() {
+                long time = System.currentTimeMillis();
+                setWaitMessage(ResourceLoader.getString("ot.message.wait"));
+                setWaitDialogVisible(true);
+                try {
+                    try {
+                        for (OutputTemplate template : diagram.getOutputTemplates()) {
+                            errorTemplate = template;
+                            generateOutput(template);
+                        }
+                    } catch (OutputException e) {
+                        LOG.error(e.getMessage(), e);
+                        errorMessage = e.getMessage();
+                    }
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage(), e);
+                    errorMessage = ResourceLoader.getString("ot.message.error");
+                } finally {
+                    setWaitDialogVisible(false);
+                }
+                time = System.currentTimeMillis() - time;
+                LOG.debug("Generated in {}ms", time);
             }
-        } catch (OutputException e) {
-            LOG.error(e.getMessage(), e);
-            ActionUtils.showError(e.getMessage(), this);
-        }
+            
+            @Override
+            protected void eventDispatchActionAfter() {
+                if (errorMessage != null) {
+                    ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, OutputTemplateListDialog.this);
+                }
+            }
+        };
+        ActionHandler.getInstance().execute(action);
     }//GEN-LAST:event_outputAllButtonActionPerformed
 
     private void generateOutput(OutputTemplate template) throws OutputException {
