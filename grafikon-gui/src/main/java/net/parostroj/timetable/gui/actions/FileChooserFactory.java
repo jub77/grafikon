@@ -109,7 +109,8 @@ public class FileChooserFactory {
                 this.getFileChooser(Type.TEMPLATE).getCurrentDirectory().getAbsolutePath());
         prefs.setString("last.directory.output",
                 this.getFileChooser(Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.html.dir",
-                this.getFileChooser(Type.OUTPUT_DIRECTORY).getCurrentDirectory().getAbsolutePath());
+        JFileChooser dChooser = this.getFileChooser(Type.OUTPUT_DIRECTORY);
+        File oDir = dChooser.getSelectedFile() == null ? dChooser.getCurrentDirectory() : dChooser.getSelectedFile();
+        prefs.setString("last.directory.html.dir", oDir.getAbsolutePath());
     }
 }
