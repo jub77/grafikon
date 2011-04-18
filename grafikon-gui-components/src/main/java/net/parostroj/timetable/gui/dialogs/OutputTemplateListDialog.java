@@ -6,16 +6,18 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
+
 import javax.swing.JFileChooser;
+
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
-import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.IdGenerator;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -24,10 +26,12 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 public class OutputTemplateListDialog extends javax.swing.JDialog {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
     private WrapperListModel<OutputTemplate> templatesModel;
-    private File templateLocation;
+    private File outputDirectory;
     private JFileChooser chooser;
 
     /** Creates new form TextTemplateListDialog */
@@ -41,8 +45,8 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     public void showDialog(TrainDiagram diagram, JFileChooser chooser) {
         this.diagram = diagram;
         this.chooser = chooser;
-        this.templateLocation = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
-        this.locationTextField.setText(this.templateLocation.getPath());
+        this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
+        this.locationTextField.setText(this.outputDirectory.getPath());
         this.fillList();
         this.setVisible(true);
     }
@@ -270,7 +274,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         try {
             template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
         } catch (GrafikonException e) {
-            LoggerFactory.getLogger(this.getClass()).error("Error creating template.", e);
+            LOG.error("Error creating template.", e);
         }
         template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, "diagram");
         diagram.addOutputTemplate(template);
@@ -290,6 +294,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         dialog.setLocationRelativeTo(this);
         // get template
         OutputTemplate template = (OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement();
+        dialog.setTitle(template.getName());
         dialog.showDialog(this.copyTemplate(template));
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
@@ -307,27 +312,72 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void locationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locationButtonActionPerformed
         int returnValue = chooser.showOpenDialog(getParent());
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            this.templateLocation = chooser.getSelectedFile();
+            this.outputDirectory = chooser.getSelectedFile();
             // update text string
-            locationTextField.setText(this.templateLocation.getPath());
+            locationTextField.setText(this.outputDirectory.getPath());
         }
     }//GEN-LAST:event_locationButtonActionPerformed
 
     private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputButtonActionPerformed
-        // TODO add your handling code here:
+        Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
+        if (wrapper != null) {
+            try {
+                this.generateOutput((OutputTemplate) wrapper.getElement());
+            } catch (OutputException e) {
+                LOG.error(e.getMessage(), e);
+                ActionUtils.showError(e.getMessage(), this);
+            }
+        }
     }//GEN-LAST:event_outputButtonActionPerformed
 
     private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputAllButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            for (OutputTemplate template : diagram.getOutputTemplates()) {
+                this.generateOutput(template);
+            }
+        } catch (OutputException e) {
+            LOG.error(e.getMessage(), e);
+            ActionUtils.showError(e.getMessage(), this);
+        }
     }//GEN-LAST:event_outputAllButtonActionPerformed
 
+    private void generateOutput(OutputTemplate template) throws OutputException {
+        String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
+        OutputFactory factory = OutputFactory.newInstance("groovy");
+        Output output = factory.createOutput(type);
+        generateOutput(output, this.getFile(template.getName()), template.getTemplate(), type, null);
+        if ("trains".equals(type)) {
+            // for each driver circulation
+            for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
+                generateOutput(output, this.getFile(template.getName() + "_" + cycle.getName()), template.getTemplate(), type, cycle);
+            }
+        }
+    }
+    
+    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type, Object param) throws OutputException {
+        OutputParams params = new OutputParams();
+        params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
+        params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
+        params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
+        // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
+        if ("trains".equals(type) && param != null) {
+            params.setParam("driver_cycle", param);
+        }
+        output.write(params);
+    }
+    
+    private File getFile(String name) {
+        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        return new File(outputDirectory, name + ".html");
+    }
+    
     private OutputTemplate copyTemplate(OutputTemplate template) {
         OutputTemplate copy = new OutputTemplate(template.getId(), null);
         try {
             copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
                     template.getTemplate().getLanguage()));
         } catch (GrafikonException e) {
-            LoggerFactory.getLogger(this.getClass()).error("Error creating copy of template.", e);
+            LOG.error("Error creating copy of template.", e);
         }
         copy.setName(template.getName());
         copy.setAttributes(new Attributes(template.getAttributes()));
