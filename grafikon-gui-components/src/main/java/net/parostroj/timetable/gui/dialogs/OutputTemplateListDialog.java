@@ -5,9 +5,12 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.io.File;
+import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TextTemplate;
@@ -24,6 +27,8 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
     private WrapperListModel<OutputTemplate> templatesModel;
+    private File templateLocation;
+    private JFileChooser chooser;
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
@@ -33,8 +38,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         templateList.setModel(templatesModel);
     }
 
-    public void showDialog(TrainDiagram diagram) {
+    public void showDialog(TrainDiagram diagram, JFileChooser chooser) {
         this.diagram = diagram;
+        this.chooser = chooser;
+        this.templateLocation = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
+        this.locationTextField.setText(this.templateLocation.getPath());
         this.fillList();
         this.setVisible(true);
     }
@@ -58,6 +66,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         upButton.setEnabled(selected);
         deleteButton.setEnabled(selected);
         editButton.setEnabled(selected);
+        outputButton.setEnabled(selected);
         // create button
         newButton.setEnabled(!"".equals(nameTextField.getText().trim()));
     }
@@ -72,18 +81,25 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         buttonPanel = new javax.swing.JPanel();
-        controlPanel = new javax.swing.JPanel();
+        javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
         newButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
-        okPanel = new javax.swing.JPanel();
+        outputButton = new javax.swing.JButton();
+        outputAllButton = new javax.swing.JButton();
+        javax.swing.JPanel okPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
-        listPanel = new javax.swing.JPanel();
+        javax.swing.JPanel listPanel = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         templateList = new javax.swing.JList();
+        javax.swing.JPanel locationPanel = new javax.swing.JPanel();
+        javax.swing.JPanel locationPanel1 = new javax.swing.JPanel();
+        locationTextField = new javax.swing.JTextField();
+        javax.swing.JPanel locationPanel2 = new javax.swing.JPanel();
+        locationButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -140,6 +156,22 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(editButton);
 
+        outputButton.setText(ResourceLoader.getString("ot.button.output")); // NOI18N
+        outputButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputButtonActionPerformed(evt);
+            }
+        });
+        controlPanel.add(outputButton);
+
+        outputAllButton.setText(ResourceLoader.getString("ot.button.outputall")); // NOI18N
+        outputAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputAllButtonActionPerformed(evt);
+            }
+        });
+        controlPanel.add(outputAllButton);
+
         buttonPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
 
         okPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -174,6 +206,31 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
 
         getContentPane().add(listPanel, java.awt.BorderLayout.CENTER);
 
+        locationPanel.setLayout(new java.awt.BorderLayout());
+
+        locationPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 0));
+        locationPanel1.setLayout(new java.awt.BorderLayout());
+
+        locationTextField.setEditable(false);
+        locationPanel1.add(locationTextField, java.awt.BorderLayout.CENTER);
+
+        locationPanel.add(locationPanel1, java.awt.BorderLayout.CENTER);
+
+        locationPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 5));
+        locationPanel2.setLayout(new java.awt.BorderLayout());
+
+        locationButton.setText(ResourceLoader.getString("button.select") + "..."); // NOI18N
+        locationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                locationButtonActionPerformed(evt);
+            }
+        });
+        locationPanel2.add(locationButton, java.awt.BorderLayout.CENTER);
+
+        locationPanel.add(locationPanel2, java.awt.BorderLayout.EAST);
+
+        getContentPane().add(locationPanel, java.awt.BorderLayout.PAGE_START);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -181,7 +238,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         int index = templateList.getSelectedIndex();
         if (index != -1 && index != (templatesModel.getSize() - 1)) {
             Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
-            diagram.moveTextItem(index, index + 1);
+            diagram.moveOutputTemplate(index, index + 1);
             index++;
             templatesModel.addWrapper(wrapper, index);
             templateList.setSelectedIndex(index);
@@ -192,7 +249,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         int index = templateList.getSelectedIndex();
         if (index != -1 && index != 0) {
             Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
-            diagram.moveTextItem(index, index - 1);
+            diagram.moveOutputTemplate(index, index - 1);
             index--;
             templatesModel.addWrapper(wrapper, index);
             templateList.setSelectedIndex(index);
@@ -211,7 +268,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         OutputTemplate template = new OutputTemplate(IdGenerator.getInstance().getId(), diagram);
         template.setName(nameTextField.getText().trim());
         try {
-            template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.PLAIN));
+            template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error("Error creating template.", e);
         }
@@ -228,7 +285,14 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        // TODO add your handling code here:
+        OutputTemplateDialog dialog = new OutputTemplateDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        // get template
+        OutputTemplate template = (OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement();
+        dialog.showDialog(this.copyTemplate(template));
+        if (dialog.getTemplate() != null) {
+            this.mergeTemplate(template, dialog.getTemplate());
+        }
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_nameTextFieldCaretUpdate
@@ -239,17 +303,58 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         this.updateButtons();
     }//GEN-LAST:event_templateListValueChanged
 
+    private void locationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locationButtonActionPerformed
+        int returnValue = chooser.showOpenDialog(getParent());
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            this.templateLocation = chooser.getSelectedFile();
+            // update text string
+            locationTextField.setText(this.templateLocation.getPath());
+        }
+    }//GEN-LAST:event_locationButtonActionPerformed
+
+    private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_outputButtonActionPerformed
+
+    private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputAllButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_outputAllButtonActionPerformed
+
+    private OutputTemplate copyTemplate(OutputTemplate template) {
+        OutputTemplate copy = new OutputTemplate(template.getId(), null);
+        try {
+            copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
+                    template.getTemplate().getLanguage()));
+        } catch (GrafikonException e) {
+            LoggerFactory.getLogger(this.getClass()).error("Error creating copy of template.", e);
+        }
+        copy.setName(template.getName());
+        copy.setAttributes(new Attributes(template.getAttributes()));
+        return copy;
+    }
+
+    private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {
+        if (!template.getName().equals(fromTemplate.getName())) {
+            template.setName(fromTemplate.getName());
+        }
+        if (!template.getTemplate().equals(fromTemplate.getTemplate())) {
+            template.setTemplate(fromTemplate.getTemplate());
+        }
+        template.getAttributes().merge(fromTemplate.getAttributes());
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
-    private javax.swing.JPanel controlPanel;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
-    private javax.swing.JPanel listPanel;
+    private javax.swing.JButton locationButton;
+    private javax.swing.JTextField locationTextField;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel okPanel;
+    private javax.swing.JButton outputAllButton;
+    private javax.swing.JButton outputButton;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList templateList;
     private javax.swing.JButton upButton;
