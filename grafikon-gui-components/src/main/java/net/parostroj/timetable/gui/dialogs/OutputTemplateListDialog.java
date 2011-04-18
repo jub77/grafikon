@@ -272,6 +272,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error("Error creating template.", e);
         }
+        template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, "diagram");
         diagram.addOutputTemplate(template);
         Wrapper<OutputTemplate> wrapper = new Wrapper<OutputTemplate>(template);
         templatesModel.addWrapper(wrapper);

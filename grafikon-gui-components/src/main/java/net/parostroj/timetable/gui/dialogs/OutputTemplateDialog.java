@@ -13,6 +13,7 @@ import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TextTemplate.Language;
+import net.parostroj.timetable.output2.OutputFactory;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -45,6 +46,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private void init() {
         textTemplateEditBox.setTemplateLanguages(Collections.singleton(Language.GROOVY));
+        for (String type : OutputFactory.newInstance("groovy").getOutputTypes()) {
+            outputTypeComboBox.addItem(type);
+        }
     }
 
     public OutputTemplate getTemplate() {
@@ -53,6 +57,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private void updateValues() {
         textTemplateEditBox.setTemplate(this.template.getTemplate());
+        outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE));
     }
 
     /** This method is called from within the constructor to
@@ -70,6 +75,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
+        outputTypeComboBox = new javax.swing.JComboBox();
         verifyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -98,6 +104,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         controlPanel.add(buttonPanel, java.awt.BorderLayout.EAST);
 
+        verifyPanel.add(outputTypeComboBox);
+
         verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
         verifyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -117,6 +125,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         try {
             TextTemplate textTemplate = this.convertToTemplate();
             this.template.setTemplate(textTemplate);
+            this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
             this.setVisible(false);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
@@ -146,6 +155,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton okButton;
+    private javax.swing.JComboBox outputTypeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
     // End of variables declaration//GEN-END:variables
