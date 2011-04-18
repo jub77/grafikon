@@ -5,10 +5,8 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.io.File;
 import java.util.Collections;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.GrafikonException;
