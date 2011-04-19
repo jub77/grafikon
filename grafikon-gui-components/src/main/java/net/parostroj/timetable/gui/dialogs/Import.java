@@ -114,6 +114,18 @@ public abstract class Import {
             return null;
         }
     }
+    
+    protected OutputTemplate getOutputTemplate(OutputTemplate origTemplate) {
+        if (match == ImportMatch.ID)
+            return diagram.getOutputTemplateById(origTemplate.getId());
+        else {
+            for (OutputTemplate template : diagram.getOutputTemplates()) {
+                if (template.getName().equals(origTemplate.getName()))
+                    return template;
+            }
+            return null;
+        }
+    }
 
     protected String getId(ObjectWithId oid) {
         if (match == ImportMatch.ID) {
@@ -177,6 +189,8 @@ public abstract class Import {
                 return new LineClassImport(diagram, library, match);
             case ENGINE_CLASSES:
                 return new EngineClassImport(diagram, library, match);
+            case OUTPUT_TEMPLATES:
+                return new OutputTemplateImport(diagram, library, match);
         }
         return null;
     }

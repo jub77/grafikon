@@ -16,7 +16,8 @@ public enum ImportComponents {
     TRAIN_TYPES("import.train_types", TrainType.class),
     LINE_CLASSES("import.line_classes", LineClass.class),
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
-    TRAINS("import.trains", Train.class);
+    TRAINS("import.trains", Train.class),
+    OUTPUT_TEMPLATES("import.output_templates", OutputTemplate.class);
 
     private String key;
     private Class<?> clazz;
@@ -58,6 +59,10 @@ public enum ImportComponents {
                 break;
             case ENGINE_CLASSES:
                 map.addAll(diagram.getEngineClasses());
+                break;
+            case OUTPUT_TEMPLATES:
+                map.addAll(diagram.getOutputTemplates());
+                break;
         }
         return map;
     }
