@@ -27,4 +27,8 @@ public abstract class AbstractModelAction implements ModelAction {
     protected void setWaitMessage(String message) {
         context.setDescription(message);
     }
+    
+    protected void setWaitProgress(int progress) {
+        context.setProgress(progress);
+    }
 }

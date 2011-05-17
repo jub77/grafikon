@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
     
     private static final Logger LOG = LoggerFactory.getLogger(WaitDialog.class.getName());
+    private static final int WIDTH = 300;
     
     private int level = 0;
     
@@ -33,6 +35,13 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     public WaitDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        Dimension size = messageLabel.getPreferredSize();
+        size.width = WIDTH;
+        messageLabel.setPreferredSize(size);
+        size = progressBar.getPreferredSize();
+        size.width = WIDTH;
+        progressBar.setPreferredSize(size);
+        pack();
     }
 
     /** Creates new form WaitDiag */
@@ -52,36 +61,37 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         messageLabel = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         messageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         messageLabel.setText("Wait ...");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        getContentPane().add(messageLabel, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(messageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(messageLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        progressBar.setStringPainted(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+        getContentPane().add(progressBar, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel messageLabel;
+    private javax.swing.JProgressBar progressBar;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -109,6 +119,9 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
                     
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        progressBar.setValue(context.getProgress());
+                        progressBar.setVisible(context.isShowProgress());
+                        pack();
                         if (context.getLocationComponent() != null)
                             setLocationRelativeTo(context.getLocationComponent());
                         setVisible(true);
@@ -117,10 +130,11 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
                 timer.setRepeats(false);
                 timer.start();
             }
-        }
-        if ("description".equals(evt.getPropertyName())) {
+        } else if ("description".equals(evt.getPropertyName())) {
             if (evt.getNewValue() != null)
                 messageLabel.setText((String) evt.getNewValue());
+        } else if ("progress".equals(evt.getPropertyName())) {
+            progressBar.setValue((Integer)evt.getNewValue());
         }
     }
 }
