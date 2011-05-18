@@ -74,23 +74,30 @@ public class RecalculateAction extends AbstractAction {
                 if (size == 0)
                     return;
                 setWaitMessage(message);
+                setWaitProgress(0);
+                getActionContext().setShowProgress(true);
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis(); 
                 try {
                     List<Train> batch = new LinkedList<Train>();
                     Iterator<Train> iterator = diagram.getTrains().iterator();
-                    int cnt = 0;
+                    int totalCount = diagram.getTrains().size();
+                    int counter = 0;
+                    int batchCounter = 0;
                     while (iterator.hasNext()) {
                         Train train = iterator.next();
                         batch.add(train);
-                        if (++cnt == CHUNK_SIZE) {
+                        if (++batchCounter == CHUNK_SIZE) {
                             processChunk(batch);
-                            cnt = 0;
+                            counter += batchCounter;
+                            batchCounter = 0;
                             batch = new LinkedList<Train>();
+                            setWaitProgress(100 * counter / totalCount);
                         }
                     }
                     if (batch.size() > 0) {
                         processChunk(batch);
+                        setWaitProgress(100);
                     }
                 } finally {
                     LOG.debug("{} finished in {}ms", actionName, System.currentTimeMillis() - time);
