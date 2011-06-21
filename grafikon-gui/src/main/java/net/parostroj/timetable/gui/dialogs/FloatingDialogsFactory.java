@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -301,13 +302,29 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-        public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingDialog createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+        FloatingDialog dialog = new FloatingDialog(frame, new JPanel(), "dialog.circulationview.title", "circulationview") {
+            @Override
+            public void saveToPreferences(AppPreferences prefs) {
+                super.saveToPreferences(prefs);
+            }
+            
+            @Override
+            public void loadFromPreferences(AppPreferences prefs) {
+                super.loadFromPreferences(prefs);
+            }
+        };
+        return dialog;
+    }
+
+    public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
         FloatingDialogsList list = new FloatingDialogsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
         list.add(createTrainsWithZeroWeightsDialog(frame, mediator, model));
         list.add(createEventsViewerDialog(frame, mediator, model));
         list.add(createChangesTrackedDialog(frame, mediator, model));
         list.add(createGTViewDialog(frame, mediator, model));
+        list.add(createCirculationViewDialog(frame, mediator, model));
         return list;
     }
 }
