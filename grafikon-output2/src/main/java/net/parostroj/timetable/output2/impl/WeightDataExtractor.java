@@ -77,7 +77,7 @@ public class WeightDataExtractor {
                         eClasses2 = this.convertItemList(itemNext.third);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
-                        else if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStationOrStop())
+                        else if (weight != null && item.first.isStop() && item.first.getOwnerAsNode().getType().isStation())
                             process = true;
                     }
                     if (process) {
