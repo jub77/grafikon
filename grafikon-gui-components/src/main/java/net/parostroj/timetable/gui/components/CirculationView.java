@@ -5,10 +5,16 @@
  */
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Collection;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * View with circulations of certain type.
@@ -16,9 +22,10 @@ import net.parostroj.timetable.model.TrainsCycle;
  * @author jub
  */
 public class CirculationView extends javax.swing.JPanel {
-    
+
+    private static TrainsCycleType TYPE = TrainsCycleType.DRIVER_CYCLE; 
+
     private TrainDiagram diagram;
-    private String message;
 
     /** Creates new form CirculationView */
     public CirculationView() {
@@ -29,18 +36,26 @@ public class CirculationView extends javax.swing.JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         if (diagram != null) {
-            g.setColor(Color.black);
-            g.drawString(diagram.toString(), 10, 15);
-            
-            if (message != null) {
-                g.drawString(message, 10, 30);
-            }
+            paintCirculations((Graphics2D) g, diagram.getCycles(TYPE));
         }
     }
 
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
         this.repaint();
+    }
+    
+    private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
+        Rectangle2D bounds = g.getFont().getStringBounds("M", g.getFontRenderContext());
+        int start = 0;
+        for (TrainsCycle circulation : circulations) {
+            start += bounds.getHeight();
+            paintCirculation(g, circulation, new Point((int)bounds.getWidth(), start));
+        }
+    }
+    
+    private void paintCirculation(Graphics2D g, TrainsCycle circulation, Point2D position) {
+        g.drawString(circulation.getName(), (int)position.getX(), (int)position.getY());
     }
 
     /** This method is called from within the constructor to
@@ -59,17 +74,14 @@ public class CirculationView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public void circulationRemoved(TrainsCycle circulation) {
-        message = "Removed: " + circulation.getName();
         this.repaint();
     }
 
     public void circulationAdded(TrainsCycle circulation) {
-        message = "Added: " + circulation.getName();
         this.repaint();
     }
 
     public void circulationUpdated(TrainsCycle circulation) {
-        message = "Updated: " + circulation.getName();
         this.repaint();
     }
 }
