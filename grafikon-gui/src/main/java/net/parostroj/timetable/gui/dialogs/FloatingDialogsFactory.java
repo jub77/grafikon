@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,6 +20,7 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.model.events.TrainsCycleEvent;
@@ -303,7 +303,29 @@ public class FloatingDialogsFactory {
     }
 
     private static FloatingDialog createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
-        FloatingDialog dialog = new FloatingDialog(frame, new JPanel(), "dialog.circulationview.title", "circulationview") {
+        final CirculationViewPanel panel = new CirculationViewPanel();
+        mediator.addColleague(new ApplicationGTEventColleague(true) {
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)
+                    panel.setDiagram(event.getModel().getDiagram());
+            }
+
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                if (event.getType() == GTEventType.TRAINS_CYCLE_ADDED) {
+                    panel.circulationAdded((TrainsCycle) event.getObject());
+                } else if (event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
+                    panel.circulationRemoved((TrainsCycle) event.getObject());
+                }
+            }
+
+            @Override
+            public void processTrainsCycleEvent(TrainsCycleEvent event) {
+                panel.circulationUpdated(event.getSource());
+            }
+        });
+        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulationview") {
             @Override
             public void saveToPreferences(AppPreferences prefs) {
                 super.saveToPreferences(prefs);
