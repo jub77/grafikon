@@ -5,10 +5,10 @@
  */
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
@@ -26,6 +26,8 @@ public class CirculationView extends javax.swing.JPanel {
     private static TrainsCycleType TYPE = TrainsCycleType.DRIVER_CYCLE; 
 
     private TrainDiagram diagram;
+    private int count = 0;
+    private Dimension charSize = null;
 
     /** Creates new form CirculationView */
     public CirculationView() {
@@ -42,20 +44,43 @@ public class CirculationView extends javax.swing.JPanel {
 
     public void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
-        this.repaint();
+        this.repaintAndUpdateSize();
     }
     
     private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
-        Rectangle2D bounds = g.getFont().getStringBounds("M", g.getFontRenderContext());
-        int start = 0;
-        for (TrainsCycle circulation : circulations) {
-            start += bounds.getHeight();
-            paintCirculation(g, circulation, new Point((int)bounds.getWidth(), start));
-        }
+            int start = 0;
+            for (TrainsCycle circulation : circulations) {
+                start += charSize.height;
+                paintCirculation(g, circulation, new Point(charSize.width, start));
+            }
     }
     
-    private void paintCirculation(Graphics2D g, TrainsCycle circulation, Point2D position) {
-        g.drawString(circulation.getName(), (int)position.getX(), (int)position.getY());
+    private void paintCirculation(Graphics2D g, TrainsCycle circulation, Point position) {
+        g.drawString(circulation.getName(), position.x, position.y);
+    }
+    
+    private void repaintAndUpdateSize() {
+        int newCount;
+        if (diagram == null) {
+            newCount = 0;
+        } else {
+            newCount = diagram.getCycles(TYPE).size();
+        }
+        if (newCount != count) {
+            count = newCount;
+            this.revalidate();
+        }
+        this.repaint();
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+        if (charSize == null) {
+            Graphics2D g = (Graphics2D) this.getGraphics();
+            Rectangle2D bounds = g.getFont().getStringBounds("M", g.getFontRenderContext());
+            charSize = new Dimension((int)bounds.getWidth(), (int)bounds.getHeight());
+        }
+        return new Dimension(100, charSize.height * count);
     }
 
     /** This method is called from within the constructor to
@@ -74,14 +99,14 @@ public class CirculationView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public void circulationRemoved(TrainsCycle circulation) {
-        this.repaint();
+        this.repaintAndUpdateSize();
     }
 
     public void circulationAdded(TrainsCycle circulation) {
-        this.repaint();
+        this.repaintAndUpdateSize();
     }
 
     public void circulationUpdated(TrainsCycle circulation) {
-        this.repaint();
+        this.repaintAndUpdateSize();
     }
 }

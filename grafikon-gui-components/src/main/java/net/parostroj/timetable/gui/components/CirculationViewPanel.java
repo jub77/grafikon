@@ -46,26 +46,13 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        circulationView = new net.parostroj.timetable.gui.components.CirculationView();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         javax.swing.JButton saveButton = new javax.swing.JButton();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
+        circulationView = new net.parostroj.timetable.gui.components.CirculationView();
 
         setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout circulationViewLayout = new javax.swing.GroupLayout(circulationView);
-        circulationView.setLayout(circulationViewLayout);
-        circulationViewLayout.setHorizontalGroup(
-            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        circulationViewLayout.setVerticalGroup(
-            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 263, Short.MAX_VALUE)
-        );
-
-        add(circulationView, java.awt.BorderLayout.CENTER);
-
-        buttonPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         saveButton.setText(ResourceLoader.getString("gt.save")); // NOI18N
@@ -77,6 +64,24 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         buttonPanel.add(saveButton);
 
         add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        javax.swing.GroupLayout circulationViewLayout = new javax.swing.GroupLayout(circulationView);
+        circulationView.setLayout(circulationViewLayout);
+        circulationViewLayout.setHorizontalGroup(
+            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 380, Short.MAX_VALUE)
+        );
+        circulationViewLayout.setVerticalGroup(
+            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 247, Short.MAX_VALUE)
+        );
+
+        scrollPane.setViewportView(circulationView);
+
+        add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
