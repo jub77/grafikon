@@ -67,18 +67,6 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
         scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        javax.swing.GroupLayout circulationViewLayout = new javax.swing.GroupLayout(circulationView);
-        circulationView.setLayout(circulationViewLayout);
-        circulationViewLayout.setHorizontalGroup(
-            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 380, Short.MAX_VALUE)
-        );
-        circulationViewLayout.setVerticalGroup(
-            circulationViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 247, Short.MAX_VALUE)
-        );
-
         scrollPane.setViewportView(circulationView);
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
