@@ -25,7 +25,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Trains. */
     private List<Train> trains;
     /** Cycles. */
-    private Map<TrainsCycleType, List<TrainsCycle>> cycles;
+    private Map<String, List<TrainsCycle>> cycles;
     /** List of images for trains timetable. */
     private List<TimetableImage> images;
     /** Train types available. */
@@ -56,7 +56,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.id = id;
         this.routes = new ArrayList<Route>();
         this.trains = new ArrayList<Train>();
-        this.cycles = new EnumMap<TrainsCycleType, List<TrainsCycle>>(TrainsCycleType.class);
+        this.cycles = new HashMap<String, List<TrainsCycle>>();
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
@@ -164,15 +164,15 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    public Map<TrainsCycleType, List<TrainsCycle>> getCyclesMap() {
-        EnumMap<TrainsCycleType, List<TrainsCycle>> modMap = new EnumMap<TrainsCycleType, List<TrainsCycle>>(TrainsCycleType.class);
-        for (Map.Entry<TrainsCycleType, List<TrainsCycle>> entry : cycles.entrySet()) {
+    public Map<String, List<TrainsCycle>> getCyclesMap() {
+        Map<String, List<TrainsCycle>> modMap = new HashMap<String, List<TrainsCycle>>();
+        for (Map.Entry<String, List<TrainsCycle>> entry : cycles.entrySet()) {
             modMap.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
         return Collections.unmodifiableMap(cycles);
     }
 
-    public List<TrainsCycle> getCycles(TrainsCycleType type) {
+    public List<TrainsCycle> getCycles(String type) {
         return Collections.unmodifiableList(this.getCyclesIntern(type));
     }
 
@@ -190,7 +190,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycle getCycleById(String id) {
-        for (Map.Entry<TrainsCycleType, List<TrainsCycle>> entry : cycles.entrySet()) {
+        for (Map.Entry<String, List<TrainsCycle>> entry : cycles.entrySet()) {
             for (TrainsCycle cycle : entry.getValue()) {
                 if (cycle.getId().equals(id))
                     return cycle;
@@ -199,7 +199,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
+    public TrainsCycle getCycleByIdAndType(String id, String type) {
         for (TrainsCycle cycle : getCyclesIntern(type)) {
             if (cycle.getId().equals(id))
                 return cycle;
@@ -207,7 +207,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    private List<TrainsCycle> getCyclesIntern(TrainsCycleType type) {
+    private List<TrainsCycle> getCyclesIntern(String type) {
         if (!cycles.containsKey(type)) {
             cycles.put(type, new ArrayList<TrainsCycle>());
         }

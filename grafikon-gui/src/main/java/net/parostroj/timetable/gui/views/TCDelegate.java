@@ -26,7 +26,7 @@ public interface TCDelegate {
     
     public TrainsCycle getSelectedCycle(ApplicationModel model);
     
-    public TrainsCycleType getType();
+    public String getType();
     
     public void fireEvent(Action action, ApplicationModel model, TrainsCycle cycle);
     

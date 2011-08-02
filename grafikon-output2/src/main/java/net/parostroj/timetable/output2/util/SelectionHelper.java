@@ -88,7 +88,7 @@ public class SelectionHelper {
         }
     }
 
-    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
+    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, String type) {
         OutputParam param = params.getParam("cycles");
         if (param != null && param.getValue() != null) {
             return getList((List<?>) param.getValue(), TrainsCycle.class);

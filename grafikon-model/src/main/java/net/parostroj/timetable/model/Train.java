@@ -36,7 +36,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /** Top speed. */
     private int topSpeed = NO_TOP_SPEED;
     /** Cycles. */
-    private Map<TrainsCycleType, List<TrainsCycleItem>> cycles;
+    private Map<String, List<TrainsCycleItem>> cycles;
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
@@ -65,7 +65,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         this.diagram = diagram;
         timeIntervalList = new TimeIntervalList();
         this.setAttributes(new Attributes());
-        cycles = new EnumMap<TrainsCycleType, List<TrainsCycleItem>>(TrainsCycleType.class);
+        cycles = new HashMap<String, List<TrainsCycleItem>>();
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
 
             @Override
@@ -220,9 +220,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /**
      * @return map with trains cycle items
      */
-    public Map<TrainsCycleType, List<TrainsCycleItem>> getCyclesMap() {
-        EnumMap<TrainsCycleType, List<TrainsCycleItem>> modMap = new EnumMap<TrainsCycleType, List<TrainsCycleItem>>(TrainsCycleType.class);
-        for (Map.Entry<TrainsCycleType, List<TrainsCycleItem>> entry : cycles.entrySet()) {
+    public Map<String, List<TrainsCycleItem>> getCyclesMap() {
+        Map<String, List<TrainsCycleItem>> modMap = new HashMap<String, List<TrainsCycleItem>>();
+        for (Map.Entry<String, List<TrainsCycleItem>> entry : cycles.entrySet()) {
             modMap.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
         return Collections.unmodifiableMap(cycles);
@@ -232,7 +232,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type type of the cycles
      * @return list with trains cycle items of specified type (list cannot be modified)
      */
-    public List<TrainsCycleItem> getCycles(TrainsCycleType type) {
+    public List<TrainsCycleItem> getCycles(String type) {
         return Collections.unmodifiableList(this.getCyclesIntern(type));
     }
 
@@ -240,7 +240,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type type of the cycles
      * @return list with trains cycle items - for internal use only, the list can be modified
      */
-    private List<TrainsCycleItem> getCyclesIntern(TrainsCycleType type) {
+    private List<TrainsCycleItem> getCyclesIntern(String type) {
         if (!cycles.containsKey(type)) {
             cycles.put(type, new LinkedList<TrainsCycleItem>());
         }
@@ -251,7 +251,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param item train cycle item to be added
      */
     protected void addCycleItem(TrainsCycleItem item) {
-        TrainsCycleType cycleType = item.getCycle().getType();
+        String cycleType = item.getCycle().getType();
         _cachedCycles.addCycleItem(timeIntervalList, this.getCyclesIntern(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
@@ -261,7 +261,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param item train cycle item to be removed
      */
     protected void removeCycleItem(TrainsCycleItem item) {
-        TrainsCycleType cycleType = item.getCycle().getType();
+        String cycleType = item.getCycle().getType();
         this.getCyclesIntern(cycleType).remove(item);
         _cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));
@@ -272,7 +272,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param interval time interval
      * @return list of train cycle items that covers given interval (empty list if there are none)
      */
-    public List<TrainsCycleItem> getCycleItemsForInterval(TrainsCycleType type, TimeInterval interval) {
+    public List<TrainsCycleItem> getCycleItemsForInterval(String type, TimeInterval interval) {
         return _cachedCycles.get(interval, type);
     }
 
@@ -902,7 +902,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type trains cycle type
      * @return covered
      */
-    public boolean isCovered(TrainsCycleType type) {
+    public boolean isCovered(String type) {
         return _cachedCycles.isCovered(timeIntervalList, type);
     }
 
@@ -913,7 +913,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param interval time interval
      * @return covered
      */
-    public boolean isCovered(TrainsCycleType type, TimeInterval interval) {
+    public boolean isCovered(String type, TimeInterval interval) {
         return !_cachedCycles.get(interval, type).isEmpty();
     }
 
@@ -939,7 +939,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type trains cycle type
      * @return interval
      */
-    public Tuple<TimeInterval> getFirstUncoveredPart(TrainsCycleType type) {
+    public Tuple<TimeInterval> getFirstUncoveredPart(String type) {
         List<Tuple<TimeInterval>> tuples = _cachedCycles.getUncovered(timeIntervalList, type);
         return tuples.isEmpty() ? null : tuples.get(0);
     }
@@ -950,7 +950,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type trains cycle type
      * @return list of intervals
      */
-    public List<Tuple<TimeInterval>> getAllUncoveredParts(TrainsCycleType type) {
+    public List<Tuple<TimeInterval>> getAllUncoveredParts(String type) {
         return _cachedCycles.getUncovered(timeIntervalList, type);
     }
 
@@ -960,7 +960,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param type trains cycle type
      * @return list of intervals
      */
-    public List<Pair<TimeInterval, Boolean>> getRouteCoverage(TrainsCycleType type) {
+    public List<Pair<TimeInterval, Boolean>> getRouteCoverage(String type) {
         return _cachedCycles.getCoverage(timeIntervalList, type);
     }
 

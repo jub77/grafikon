@@ -109,7 +109,7 @@ public class DriverCycleDelegate implements TCDelegate {
     }
 
     @Override
-    public TrainsCycleType getType() {
+    public String getType() {
         return TrainsCycleType.DRIVER_CYCLE;
     }
 

@@ -171,8 +171,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
             }
             cnt = 0;
             // save trains cycles
-            Map<TrainsCycleType, List<TrainsCycle>> cyclesMap = diagram.getCyclesMap();
-            for (Map.Entry<TrainsCycleType, List<TrainsCycle>> entry : cyclesMap.entrySet()) {
+            Map<String, List<TrainsCycle>> cyclesMap = diagram.getCyclesMap();
+            for (Map.Entry<String, List<TrainsCycle>> entry : cyclesMap.entrySet()) {
                 for (TrainsCycle cycle : entry.getValue()) {
                     this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
                 }

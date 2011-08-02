@@ -98,7 +98,7 @@ public class TrainUnitCycleDelegate implements TCDelegate {
     }
 
     @Override
-    public TrainsCycleType getType() {
+    public String getType() {
         return TrainsCycleType.TRAIN_UNIT_CYCLE;
     }
 

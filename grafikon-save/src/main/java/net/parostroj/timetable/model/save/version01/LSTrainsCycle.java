@@ -8,7 +8,6 @@ package net.parostroj.timetable.model.save.version01;
 
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * Storage object for engine cycle.
@@ -27,7 +26,7 @@ public class LSTrainsCycle {
 
     private String type;
 
-    public LSTrainsCycle(TrainsCycle trainsCycle, LSTransformationData data, TrainsCycleType type) {
+    public LSTrainsCycle(TrainsCycle trainsCycle, LSTransformationData data, String type) {
         this.name = trainsCycle.getName();
         this.description = trainsCycle.getDescription();
         this.comment = (String)trainsCycle.getAttribute("comment");
@@ -37,7 +36,7 @@ public class LSTrainsCycle {
         for (TrainsCycleItem item : trainsCycle) {
             items[i++] = new LSTrainsCycleItem(data.getIdForObject(item.getTrain()),item.getComment());
         }
-        this.type = type.name();
+        this.type = type;
     }
     
     public LSTrainsCycle() {}

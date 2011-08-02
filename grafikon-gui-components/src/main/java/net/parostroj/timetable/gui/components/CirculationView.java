@@ -23,7 +23,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
  */
 public class CirculationView extends javax.swing.JPanel {
 
-    private static TrainsCycleType TYPE = TrainsCycleType.DRIVER_CYCLE; 
+    private static String TYPE = TrainsCycleType.DRIVER_CYCLE; 
 
     private TrainDiagram diagram;
     private int count = 0;

@@ -153,7 +153,7 @@ public class FloatingDialogsFactory {
             
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
-                if (event.getSource().getType() == TrainsCycleType.ENGINE_CYCLE) {
+                if (TrainsCycleType.ENGINE_CYCLE.equals(event.getSource().getType())) {
                     TrainsCycle cycle = event.getSource();
                     for (TrainsCycleItem item : cycle) {
                         panel.updateTrain(item.getTrain());

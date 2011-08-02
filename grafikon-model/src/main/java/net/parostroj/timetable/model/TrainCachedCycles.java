@@ -13,10 +13,10 @@ import net.parostroj.timetable.utils.Tuple;
  */
 class TrainCachedCycles {
     
-    private Map<TimeInterval, Map<TrainsCycleType, List<TrainsCycleItem>>> map;
+    private Map<TimeInterval, Map<String, List<TrainsCycleItem>>> map;
     
     public TrainCachedCycles() {
-        map = new HashMap<TimeInterval, Map<TrainsCycleType, List<TrainsCycleItem>>>();
+        map = new HashMap<TimeInterval, Map<String, List<TrainsCycleItem>>>();
     }
     
     public void add(List<TimeInterval> intervals, TrainsCycleItem item) {
@@ -32,9 +32,9 @@ class TrainCachedCycles {
     }
     
     private void add(TimeInterval interval, TrainsCycleItem item) {
-        Map<TrainsCycleType, List<TrainsCycleItem>> types = map.get(interval);
+        Map<String, List<TrainsCycleItem>> types = map.get(interval);
         if (types == null) {
-            types = new EnumMap<TrainsCycleType, List<TrainsCycleItem>>(TrainsCycleType.class);
+            types = new HashMap<String, List<TrainsCycleItem>>();
             map.put(interval, types);
         }
         List<TrainsCycleItem> list = types.get(item.getCycle().getType());
@@ -46,28 +46,28 @@ class TrainCachedCycles {
     }
     
     public void remove(TrainsCycleItem item) {
-        for (Map<TrainsCycleType, List<TrainsCycleItem>> types : map.values()) {
+        for (Map<String, List<TrainsCycleItem>> types : map.values()) {
             List<TrainsCycleItem> items = types.get(item.getCycle().getType());
             if (items != null)
                 items.remove(item);
         }
     }
     
-    public List<TrainsCycleItem> get(TimeInterval interval, TrainsCycleType type) {
+    public List<TrainsCycleItem> get(TimeInterval interval, String type) {
         List<TrainsCycleItem> items = null;
-        Map<TrainsCycleType, List<TrainsCycleItem>> types = map.get(interval);
+        Map<String, List<TrainsCycleItem>> types = map.get(interval);
         if (types != null) {
             items = types.get(type);
         }
         return items != null ? Collections.unmodifiableList(items) : Collections.<TrainsCycleItem>emptyList();
     }
     
-    public boolean isCovered(TimeInterval interval, TrainsCycleType type) {
+    public boolean isCovered(TimeInterval interval, String type) {
         List<TrainsCycleItem> list = this.get(interval, type);
         return !list.isEmpty();
     }
     
-    public boolean isCovered(TimeInterval interval, TrainsCycleType type, TrainsCycleItem ignored) {
+    public boolean isCovered(TimeInterval interval, String type, TrainsCycleItem ignored) {
         if (ignored == null)
             return isCovered(interval, type);
         else {
@@ -80,7 +80,7 @@ class TrainCachedCycles {
         }
     }
     
-    public boolean isCovered(List<TimeInterval> intervals, TrainsCycleType type) {
+    public boolean isCovered(List<TimeInterval> intervals, String type) {
         for (TimeInterval interval : intervals) {
             if (!this.isCovered(interval, type))
                 return false;
@@ -88,7 +88,7 @@ class TrainCachedCycles {
         return true;
     }
     
-    public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, TrainsCycleType type) {
+    public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, String type) {
         TimeInterval last = null;
         ResultList<Tuple<TimeInterval>> result = new ResultList<Tuple<TimeInterval>>();
         Tuple<TimeInterval> current = null;
@@ -113,7 +113,7 @@ class TrainCachedCycles {
         return result.get();
     }
     
-    public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, TrainsCycleType type) {
+    public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, String type) {
         List<Pair<TimeInterval, Boolean>> result = new LinkedList<Pair<TimeInterval,Boolean>>();
         for (TimeInterval interval : intervals)
             result.add(new Pair<TimeInterval, Boolean>(interval, this.isCovered(interval, type)));
@@ -129,7 +129,7 @@ class TrainCachedCycles {
         if (overlapping)
             return true;
         
-        TrainsCycleType type = newItem.getCycle().getType();
+        String type = newItem.getCycle().getType();
 
         // test not overlapping cycle item
         boolean in = false;

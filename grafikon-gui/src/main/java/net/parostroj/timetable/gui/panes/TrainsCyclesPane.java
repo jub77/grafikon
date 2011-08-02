@@ -22,6 +22,8 @@ import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,15 +132,13 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     }
 
     private String getKey(String suffix) {
-        String prefix = null;
-        switch(delegate.getType()) {
-            case DRIVER_CYCLE:
-                prefix = "driver"; break;
-            case ENGINE_CYCLE:
-                prefix = "engine"; break;
-            case TRAIN_UNIT_CYCLE:
-                prefix = "trainunit"; break;
-        }
+        String prefix = "";
+        if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType()))
+            prefix = "driver";
+        else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))
+            prefix = "engine";
+        else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))
+            prefix = "trainunit";
         return String.format("cycles.%s.%s", prefix, suffix);
     }
 

@@ -88,7 +88,7 @@ public class TransformUtil {
     }
     
     public static String getEngineCycleDescription(TrainsCycle ec) {
-        if (ec.getType() != TrainsCycleType.ENGINE_CYCLE)
+        if (!TrainsCycleType.ENGINE_CYCLE.equals(ec.getType()))
             throw new IllegalArgumentException("Engine cycle expected.");
         
         String result = (ec.getDescription() != null) ? ec.getDescription().trim() : "";

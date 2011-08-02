@@ -11,6 +11,8 @@ package net.parostroj.timetable.model;
  * 
  * @author jub
  */
-public enum TrainsCycleType {
-    ENGINE_CYCLE, DRIVER_CYCLE, TRAIN_UNIT_CYCLE;
+public interface TrainsCycleType {
+    public static final String ENGINE_CYCLE = "ENGINE_CYCLE";
+    public static final String DRIVER_CYCLE = "DRIVER_CYCLE";
+    public static final String TRAIN_UNIT_CYCLE = "TRAIN_UNIT_CYCLE";
 }
