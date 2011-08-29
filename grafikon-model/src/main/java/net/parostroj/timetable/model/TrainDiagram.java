@@ -87,6 +87,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addListenerWithNested(changesTracker);
+        // add default trains cycle types
+        this.addCyclesType(TrainsCycleType.DRIVER_CYCLE);
+        this.addCyclesType(TrainsCycleType.ENGINE_CYCLE);
+        this.addCyclesType(TrainsCycleType.TRAIN_UNIT_CYCLE);
     }
 
     /**
@@ -171,6 +175,32 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
         return Collections.unmodifiableMap(cycles);
     }
+    
+    public Set<String> getCyclesTypes() {
+        return Collections.unmodifiableSet(cycles.keySet());
+    }
+    
+    public void addCyclesType(String type) {
+        if (!cycles.containsKey(type)) {
+            cycles.put(type, new ArrayList<TrainsCycle>());
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_ADDED, type));
+        }
+    }
+    
+    public void removeCyclesType(String type) {
+        List<TrainsCycle> removed = cycles.get(type);
+        if (removed != null) {
+            // remove all cycles ...
+            List<TrainsCycle> copy = new ArrayList<TrainsCycle>(removed);
+            for (TrainsCycle cycle : copy) {
+                this.removeCycle(cycle);
+            }
+        }
+        cycles.remove(type);
+        if (removed != null) {
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_REMOVED, type));
+        }
+    }
 
     public List<TrainsCycle> getCycles(String type) {
         return Collections.unmodifiableList(this.getCyclesIntern(type));
@@ -208,9 +238,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     private List<TrainsCycle> getCyclesIntern(String type) {
-        if (!cycles.containsKey(type)) {
-            cycles.put(type, new ArrayList<TrainsCycle>());
-        }
+        if (type == null)
+            throw new IllegalArgumentException("Type cannot be null");
+        if (!cycles.containsKey(type))
+            throw new IllegalArgumentException("Unknown type.");
         return cycles.get(type);
     }
 
