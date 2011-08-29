@@ -44,7 +44,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 new ModelVersion(4, 1),
                 new ModelVersion(4, 2),
                 new ModelVersion(4, 3),
-                new ModelVersion(4, 4));
+                new ModelVersion(4, 4),
+                new ModelVersion(4, 5));
         VERSIONS = Collections.unmodifiableList(versions);
         METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }

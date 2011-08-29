@@ -29,6 +29,10 @@ public class TrainDiagramBuilder {
         this.diagram.setTrainsData(data);
         this.diagram.setAttributes(attributes);
         trackChanges = lsDiagram.isChangesTracking();
+        // circulation types
+        for (String cType : lsDiagram.getCycleTypes()) {
+            this.diagram.addCyclesType(cType);
+        }
     }
     
     public void setTrainsData(LSTrainsData lsData) throws LSException {

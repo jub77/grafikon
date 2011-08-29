@@ -1,8 +1,12 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.TrainDiagram;
 
 /**
@@ -11,13 +15,14 @@ import net.parostroj.timetable.model.TrainDiagram;
  * @author jub
  */
 @XmlRootElement(name = "train_diagram")
-@XmlType(propOrder = {"id", "trainsData", "attributes", "changesTracking"})
+@XmlType(propOrder = {"id", "trainsData", "attributes", "changesTracking", "cycleTypes"})
 public class LSTrainDiagram {
     
     private String id;
     private LSTrainsData trainsData;
     private LSAttributes attributes;
     private boolean changesTracking;
+    private Set<String> cycleTypes;
     
     public LSTrainDiagram() {
     }
@@ -27,6 +32,7 @@ public class LSTrainDiagram {
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
         changesTracking = diagram.getChangesTracker().isTrackingEnabled();
+        cycleTypes = diagram.getCyclesTypes();
     }
 
     public LSAttributes getAttributes() {
@@ -61,4 +67,17 @@ public class LSTrainDiagram {
     public void setChangesTracking(boolean changesTracking) {
         this.changesTracking = changesTracking;
     }
+    
+    
+    @XmlElement(name = "cycle_type")
+    public Set<String> getCycleTypes() {
+        if (cycleTypes == null)
+            cycleTypes = new HashSet<String>();
+        return cycleTypes;
+    }
+    
+    public void setCycleTypes(Set<String> cycleTypes) {
+        this.cycleTypes = cycleTypes;
+    }
 }
+
