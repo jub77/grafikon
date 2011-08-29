@@ -5,17 +5,22 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import java.awt.Component;
 import java.awt.Color;
-import java.util.*;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.swing.ButtonModel;
 import javax.swing.DefaultListModel;
+
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
-import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
+import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
@@ -29,9 +34,8 @@ import net.parostroj.timetable.utils.Tuple;
  *
  * @author jub
  */
-public class TCTrainListView extends javax.swing.JPanel implements ApplicationModelListener, TrainSelector {
+public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, TrainSelector {
 
-    private ApplicationModel model;
     private TCDelegate delegate;
     private TrainSort sort;
     private TrainFilter filter;
@@ -41,67 +45,60 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
     public TCTrainListView() {
         initComponents();
         coverageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        allTrainsList.setModel(new DefaultListModel());
+        ecTrainsList.setModel(new DefaultListModel());
     }
 
-    public void setModel(ApplicationModel model, TCDelegate delegate) {
-        model.addListener(this);
-        this.model = model;
+    public void setModel(TCDelegate delegate) {
         this.delegate = delegate;
+        this.delegate.addListener(this);
         this.overlappingCheckBoxMenuItem.setEnabled(delegate.isOverlappingEnabled());
         overlappingEnabled = false;
         overlappingCheckBoxMenuItem.setSelected(false);
 
         this.updateListAllTrains();
     }
-
+    
     @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        TCDelegate.Action action = delegate.transformEventType(event.getType());
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                if (model.getDiagram() != null) {
+    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+        switch (action) {
+            case REFRESH:
+                if (delegate.getTrainDiagram() != null) {
                     this.sort = new TrainSort(
                             new TrainComparator(
                             TrainComparator.Type.ASC,
-                            model.getDiagram().getTrainsData().getTrainSortPattern()));
+                            delegate.getTrainDiagram().getTrainsData().getTrainSortPattern()));
                 }
                 this.updateListAllTrains();
                 break;
             case NEW_TRAIN:
                 this.updateListAllTrains();
                 break;
-            case DELETE_TRAIN:
+            case DELETED_TRAIN:
                 this.updateListCycle();
                 this.updateListAllTrains();
                 break;
-            default:
-                // do nothing
+            case SELECTED_CHANGED:
+                addButton.setEnabled(delegate.getSelectedCycle() != null && !allTrainsList.isSelectionEmpty());
+                this.updateListCycle();
+                this.updateErrors();
                 break;
-        }
-        if (action != null) {
-            switch (action) {
-                case SELECTED_CHANGED:
-                    addButton.setEnabled(delegate.getSelectedCycle(model) != null && !allTrainsList.isSelectionEmpty());
-                    this.updateListCycle();
-                    this.updateErrors();
-                    break;
-                case DELETE_CYCLE:
-                    this.updateListAllTrains();
-                    break;
-                default:
+            case DELETED_CYCLE:
+                this.updateListAllTrains();
+                break;
+            default:
                 // nothing
-            }
         }
     }
 
     private void updateListAllTrains() {
         // left list with available trains
-        if (model.getDiagram() == null) {
+        if (delegate.getTrainDiagram() == null) {
             allTrainsList.setModel(new DefaultListModel());
         } else {
             // get all trains (sort)
             List<Train> getTrains = new ArrayList<Train>();
-            for (Train train : model.getDiagram().getTrains()) {
+            for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
                     if (filter == null || filter.filter(train))
                         getTrains.add(train);
@@ -120,11 +117,11 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
 
     private void updateListCycle() {
         // right list with assign trains
-        if (delegate.getSelectedCycle(model) == null) {
+        if (delegate.getSelectedCycle() == null) {
             ecTrainsList.setModel(new DefaultListModel());
         } else {
             DefaultListModel m = new DefaultListModel();
-            for (TrainsCycleItem item : delegate.getSelectedCycle(model)) {
+            for (TrainsCycleItem item : delegate.getSelectedCycle()) {
                 m.addElement(new TrainsCycleItemWrapper(item));
             }
             ecTrainsList.setModel(m);
@@ -132,9 +129,9 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
     }
 
     private void updateErrors() {
-        TrainsCycle selectedCycle = delegate.getSelectedCycle(model);
+        TrainsCycle selectedCycle = delegate.getSelectedCycle();
         if (selectedCycle != null) {
-            infoTextArea.setText(delegate.getTrainCycleErrors(selectedCycle, model.getDiagram()));
+            infoTextArea.setText(delegate.getTrainCycleErrors(selectedCycle));
         } else {
             infoTextArea.setText("");
         }
@@ -425,7 +422,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                 ecTrainsList.setSelectedValue(selected, true);
                 ecTrainsList.repaint();
             }
-            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
     }//GEN-LAST:event_downButtonActionPerformed
 
@@ -447,7 +444,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                 ecTrainsList.setSelectedValue(selected, true);
                 ecTrainsList.repaint();
             }
-            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
     }//GEN-LAST:event_upButtonActionPerformed
 
@@ -458,9 +455,9 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
             if (selected != null) {
                 TrainsCycleItem item = selected.getItem();
                 item.getCycle().removeItem(item);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, item.getTrain()));
+                delegate.fireUpdatedTrain(item.getTrain());
     
-                delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+                delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
             }
         }
         if (selectedValues.length > 0) {
@@ -472,13 +469,13 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         Object[] selectedValues = allTrainsList.getSelectedValues();
-        boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
+        boolean warning = delegate.showCorrectionWarning();
         StringBuilder trainsStr = null;
         for (Object objectSelected : selectedValues) {
             Wrapper<?> selected = (Wrapper<?>) objectSelected;
             if (selected != null) {
                 Train t = (Train) selected.getElement();
-                TrainsCycle cycle = delegate.getSelectedCycle(model);
+                TrainsCycle cycle = delegate.getSelectedCycle();
                 if (cycle != null) {
                     TrainsCycleItem item = null;
                     if (overlappingEnabled) {
@@ -500,8 +497,8 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                         }
                     }
     
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, t));
-                    delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+                    delegate.fireUpdatedTrain(t);
+                    delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
                 }
             }
         }
@@ -543,8 +540,8 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                     // recalculate if needed (engine class depedency)
                     if (train.checkNeedSpeedRecalculate()) {
                         train.recalculate();
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-                        if (model.getProgramSettings().isWarningAutoECCorrection()) {
+                        delegate.fireUpdatedTrain(train);
+                        if (delegate.showCorrectionWarning()) {
                             ActionUtils.showWarning(
                                     String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
                                     ActionUtils.getTopLevelComponent(this));
@@ -554,7 +551,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
                     this.updateSelectedTrainsCycleItem(item);
                 }
             }
-            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, delegate.getSelectedCycle(model));
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
     }//GEN-LAST:event_changeButtonActionPerformed
 
@@ -624,7 +621,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
     private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_allTrainsListValueChanged
         // until now nothing here
         if (!evt.getValueIsAdjusting()) {
-            addButton.setEnabled(!allTrainsList.isSelectionEmpty() && delegate.getSelectedCycle(model) != null);
+            addButton.setEnabled(!allTrainsList.isSelectionEmpty() && delegate.getSelectedCycle() != null);
         }
     }//GEN-LAST:event_allTrainsListValueChanged
 
@@ -652,7 +649,7 @@ public class TCTrainListView extends javax.swing.JPanel implements ApplicationMo
         } else if ("C".equals(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
-            dialog.setTrainTypes(model.getDiagram(), selectedTypes);
+            dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
             dialog.setLocationRelativeTo((java.awt.Frame)ActionUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
 

@@ -6,13 +6,14 @@
 package net.parostroj.timetable.gui.views;
 
 import java.util.List;
+
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import net.parostroj.timetable.actions.TrainsCycleSort;
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.views.TCDelegate.Action;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -22,9 +23,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class TCListView extends javax.swing.JPanel implements ApplicationModelListener, ListSelectionListener {
-    
-    private ApplicationModel model;
+public class TCListView extends javax.swing.JPanel implements TCDelegate.Listener, ListSelectionListener {
     
     private TCDelegate delegate;
     
@@ -34,45 +33,36 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
         ecList.addListSelectionListener(this);
     }
     
-    public void setModel(ApplicationModel model, TCDelegate delegate) {
-        this.model = model;
+    public void setModel(TCDelegate delegate) {
         this.delegate = delegate;
-        model.addListener(this);
-        
+        this.delegate.addListener(this);
+
         this.updateView();
     }
-
+    
     @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        TCDelegate.Action action = delegate.transformEventType(event.getType());
-        switch(event.getType()) {
-            case SET_DIAGRAM_CHANGED:
+    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+        switch (action) {
+            case REFRESH:
                 this.updateView();
+                break;
+            case NEW_CYCLE: case DELETED_CYCLE:
+                this.updateView();
+                break;
+            case MODIFIED_CYCLE:
+                ecList.repaint();
+                break;
+            case SELECTED_CHANGED:
                 break;
             default:
                 // nothing
         }
-        
-        if (action != null) {
-            switch (action) {
-                case NEW_CYCLE: case DELETE_CYCLE:
-                    this.updateView();
-                    break;
-                case MODIFIED_CYCLE:
-                    ecList.repaint();
-                    break;
-                case SELECTED_CHANGED:
-                    break;
-                default:
-                    // nothing
-                }
-        }
     }
     
     private void updateView() {
-        if (model.getDiagram() != null) {
+        if (delegate.getTrainDiagram() != null && delegate.getType() != null) {
             // set list
-            List<TrainsCycle> sorted = (new TrainsCycleSort(TrainsCycleSort.Type.ASC)).sort(model.getDiagram().getCycles(delegate.getType()));
+            List<TrainsCycle> sorted = (new TrainsCycleSort(TrainsCycleSort.Type.ASC)).sort(delegate.getTrainDiagram().getCycles(delegate.getType()));
             DefaultListModel listModel = new DefaultListModel();
             for (TrainsCycle cycle : sorted) {
                 listModel.addElement(cycle);
@@ -82,8 +72,14 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
             ecList.setModel(new DefaultListModel());
         }
         
-        boolean modelExists = model.getDiagram() != null;
-        createButton.setEnabled(modelExists);
+        this.updateButtonStatus();
+    }
+    
+    private void updateButtonStatus() {
+        boolean status = delegate.getTrainDiagram() != null &&
+            delegate.getType() != null && newNameTextField.getText().length() > 0;
+        
+        createButton.setEnabled(status);
     }
 
     @Override
@@ -93,11 +89,10 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
         // set selected engine
         Object[] selectedValues = ecList.getSelectedValues();
         if (selectedValues.length == 1)
-            delegate.setSelectedCycle(model,(TrainsCycle)ecList.getSelectedValue());
+            delegate.setSelectedCycle((TrainsCycle)ecList.getSelectedValue());
         else
-            delegate.setSelectedCycle(model, null);
+            delegate.setSelectedCycle(null);
         deleteButton.setEnabled(selectedValues.length > 0);
-
     }
             
     /** This method is called from within the constructor to
@@ -121,8 +116,14 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
         scrollPane.setViewportView(ecList);
 
         newNameTextField.setColumns(10);
+        newNameTextField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                newNameTextFieldCaretUpdate(evt);
+            }
+        });
 
         createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
+        createButton.setEnabled(false);
         createButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
@@ -142,11 +143,11 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(createButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(createButton, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(newNameTextField)
-            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
+            .addComponent(newNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,28 +169,32 @@ public class TCListView extends javax.swing.JPanel implements ApplicationModelLi
             TrainsCycle cycle = (TrainsCycle)selectedObject;
             if (cycle != null) {
                 // remove from diagram
-                model.getDiagram().removeCycle(cycle);
+                delegate.getTrainDiagram().removeCycle(cycle);
                 // fire event
-                delegate.fireEvent(TCDelegate.Action.DELETE_CYCLE, model, cycle);
+                delegate.fireEvent(TCDelegate.Action.DELETED_CYCLE, cycle);
             }
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         // get name from text field (ignore shorter than one character
-        if (newNameTextField.getText().length() > 0) {
+        if (newNameTextField.getText().length() > 0 && delegate.getType() != null) {
             TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getType());
-            model.getDiagram().addCycle(cycle);
+            delegate.getTrainDiagram().addCycle(cycle);
             
             // clear field
             newNameTextField.setText("");
             // fire event
-            delegate.fireEvent(TCDelegate.Action.NEW_CYCLE, model, cycle);
+            delegate.fireEvent(TCDelegate.Action.NEW_CYCLE, cycle);
             // set selected
             ecList.setSelectedValue(cycle, true);
-            delegate.fireEvent(TCDelegate.Action.SELECTED_CHANGED, model, cycle);
+            delegate.fireEvent(TCDelegate.Action.SELECTED_CHANGED, cycle);
         }
     }//GEN-LAST:event_createButtonActionPerformed
+
+    private void newNameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_newNameTextFieldCaretUpdate
+        this.updateButtonStatus();
+    }//GEN-LAST:event_newNameTextFieldCaretUpdate
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;

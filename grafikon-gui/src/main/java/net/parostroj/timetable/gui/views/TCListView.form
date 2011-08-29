@@ -17,9 +17,9 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="createButton" max="32767" attributes="0"/>
+              <Component id="createButton" pref="72" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="deleteButton" max="32767" attributes="0"/>
+              <Component id="deleteButton" pref="82" max="32767" attributes="0"/>
           </Group>
           <Component id="newNameTextField" alignment="0" pref="160" max="32767" attributes="0"/>
           <Component id="scrollPane" alignment="0" pref="160" max="32767" attributes="0"/>
@@ -67,12 +67,16 @@
       <Properties>
         <Property name="columns" type="int" value="10"/>
       </Properties>
+      <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="newNameTextFieldCaretUpdate"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="createButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="button.new" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createButtonActionPerformed"/>

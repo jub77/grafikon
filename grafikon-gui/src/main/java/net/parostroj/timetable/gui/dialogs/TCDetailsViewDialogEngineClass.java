@@ -34,7 +34,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
     public void updateValues(TCDelegate delegate, ApplicationModel model) {
         this.delegate = delegate;
         this.model = model;
-        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        TrainsCycle cycle = delegate.getSelectedCycle();
         EngineClass clazz = (EngineClass)cycle.getAttribute("engine.class");
         this.nameTextField.setText(cycle.getName());
         this.descTextField.setText(cycle.getDescription());
@@ -147,7 +147,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // write values back and close
-        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        TrainsCycle cycle = delegate.getSelectedCycle();
         if (nameTextField.getText() != null && !"".equals(nameTextField.getText())
                 && !nameTextField.getText().equals(cycle.getName()))
             cycle.setName(nameTextField.getText().trim());
@@ -193,7 +193,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         }
         
         // event
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
+        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, cycle);
         
         this.setVisible(false);
         cycle.getAttributes().merge(attributesPanel.stopEditing(), TCDetailsViewDialog.USER_ATTR_CATEGORY);

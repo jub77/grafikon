@@ -917,6 +917,17 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="net.parostroj.timetable.gui.panes.CirculationPane" name="circulationPane">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Circulations">
+                    <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="gt_texts.properties" key="tab.circulations" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+                    </Property>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Component class="net.parostroj.timetable.gui.StatusBar" name="statusBar">

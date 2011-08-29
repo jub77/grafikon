@@ -5,9 +5,8 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.views.TCDelegate.Action;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -16,9 +15,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * 
  * @author jub
  */
-public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationModelListener {
-    
-    private ApplicationModel model;
+public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Listener {
     
     private TCDelegate delegate;
     
@@ -27,25 +24,23 @@ public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationMod
         initComponents();
     }
     
-    public void setModel(ApplicationModel model, TCDelegate delegate) {
-        model.addListener(this);
-        this.model = model;
+    public void setModel(TCDelegate delegate) {
         this.delegate = delegate;
+        this.delegate.addListener(this);
     }
-
+    
     @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        TCDelegate.Action action = delegate.transformEventType(event.getType());
-        if (action != null)
-            switch (action) {
-                case SELECTED_CHANGED:
-                    this.updateValues((TrainsCycle)event.getObject());
-                    break;
-                case MODIFIED_CYCLE:
-                    if (delegate.getSelectedCycle(model) == (TrainsCycle)event.getObject())
-                        this.updateValues((TrainsCycle)event.getObject());
-                    break;
-            }
+    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+        switch (action) {
+            case REFRESH:
+            case SELECTED_CHANGED:
+                this.updateValues(cycle);
+                break;
+            case MODIFIED_CYCLE:
+                if (delegate.getSelectedCycle() == cycle)
+                    this.updateValues(cycle);
+                break;
+        }
     }
     
     private void updateValues(TrainsCycle cycle) {
@@ -54,7 +49,7 @@ public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationMod
             descriptionTextField.setText("");
         } else {
             nameTextField.setText(cycle.getName());
-            descriptionTextField.setText(delegate.getCycleDescription(model));
+            descriptionTextField.setText(delegate.getCycleDescription());
         }
         editButton.setEnabled(cycle != null);
     }
@@ -120,7 +115,8 @@ public class TCDetailsView2 extends javax.swing.JPanel implements ApplicationMod
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // call dialog
-        delegate.showEditDialog(editButton, model);
+        if (delegate.getSelectedCycle() != null)
+            delegate.showEditDialog(editButton);
     }//GEN-LAST:event_editButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

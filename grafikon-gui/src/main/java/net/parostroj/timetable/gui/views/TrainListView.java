@@ -252,27 +252,22 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
     }
 
     private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
-        // TODO - ensure that all types of cycles are included
-        // remove train from engine cycle
-        if (!deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE).isEmpty()) {
-            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.ENGINE_CYCLE), ApplicationModelEventType.MODIFIED_ENGINE_CYCLE);
-        }
-        if (!deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty()) {
-            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE), ApplicationModelEventType.MODIFIED_TRAIN_UNIT_CYCLE);
-        }
-        if (!deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE).isEmpty()) {
-            this.removeTrainFromCycles(deletedTrain.getCycles(TrainsCycleType.DRIVER_CYCLE), ApplicationModelEventType.MODIFIED_DRIVER_CYCLE);
+        // remove train from cycles
+        for (String type : model.getDiagram().getCyclesTypes()) {
+            if (!deletedTrain.getCycles(type).isEmpty()) {
+                this.removeTrainFromCycles(deletedTrain.getCycles(type));
+            }
         }
     
         diagram.removeTrain(deletedTrain);    // remove from list of trains
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
     }
 
-    private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModelEventType eventType) {
+    private void removeTrainFromCycles(List<TrainsCycleItem> items) {
         for (TrainsCycleItem item : new LinkedList<TrainsCycleItem>(items)) {
             TrainsCycle cycle = item.getCycle();
             item.getCycle().removeItem(item);
-            model.fireEvent(new ApplicationModelEvent(eventType, model, cycle));
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETED_CYCLE, model, cycle));
         }
     }
 

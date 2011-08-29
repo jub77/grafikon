@@ -6,21 +6,17 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
+
 import javax.swing.JScrollPane;
+
 import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.StorableGuiData;
-import net.parostroj.timetable.gui.components.GTViewScrollPane;
-import net.parostroj.timetable.gui.components.GTViewSettings;
+import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
-import net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave;
-import net.parostroj.timetable.gui.components.HighlightedTrains;
-import net.parostroj.timetable.gui.components.TrainColorChooser;
-import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.views.TCDelegate;
+import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 
@@ -32,12 +28,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData {
+public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData, TCDelegate.Listener {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainsCyclesPane.class.getName());
     private TCDelegate delegate;
 
-    private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, ApplicationModelListener {
+    private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, TCDelegate.Listener {
 
         private TrainColorChooser chooserDelegate;
         private TrainSelector selectorDelegate;
@@ -58,12 +54,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
-        public void modelChanged(ApplicationModelEvent event) {
-            if (delegate.transformEventType(event.getType()) == TCDelegate.Action.SELECTED_CHANGED) {
-                last = delegate.getSelectedCycle(event.getModel());
+        public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+            if (action == TCDelegate.Action.SELECTED_CHANGED) {
+                last = delegate.getSelectedCycle();
                 graphicalTimetableView.repaint();
-            } else if (delegate.transformEventType(event.getType()) == TCDelegate.Action.MODIFIED_CYCLE) {
-                if (event.getObject() == last) {
+            } else if (action == TCDelegate.Action.MODIFIED_CYCLE) {
+                if (cycle == last) {
                     graphicalTimetableView.repaint();
                 }
             }
@@ -101,38 +97,31 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         JScrollPane scrollPane = new GTViewScrollPane(graphicalTimetableView);
         splitPane.setBottomComponent(scrollPane);
     }
+    
+    @Override
+    public void tcEvent(Action action, TrainsCycle cycle, Train train) {
+        if (action == Action.REFRESH)
+            graphicalTimetableView.setTrainDiagram(delegate.getTrainDiagram());
+    }
 
-    public void setModel(final ApplicationModel model, final TCDelegate delegate, TrainColorChooser chooser) {
+    public void setModel(TCDelegate delegate, TrainColorChooser chooser) {
         this.delegate = delegate;
         HighligterAndSelector hts = new HighligterAndSelector(chooser, trainListView);
-        listView.setModel(model, delegate);
-        detailsView.setModel(model, delegate);
-        trainListView.setModel(model, delegate);
-        model.addListener(new ApplicationModelListener() {
-
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                switch (event.getType()) {
-                    case SET_DIAGRAM_CHANGED:
-                        graphicalTimetableView.setTrainDiagram(model.getDiagram());
-                        break;
-                    default:
-                        // nothing
-                        break;
-                }
-            }
-        });
         GTViewSettings settings = graphicalTimetableView.getSettings();
         settings.set(GTViewSettings.Key.TRAIN_COLORS, TrainColors.BY_COLOR_CHOOSER);
         settings.set(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, hts);
         settings.set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setSettings(settings);
-        model.addListener(hts);
+        delegate.addListener(hts);
+        delegate.addListener(this);
         graphicalTimetableView.setTrainSelector(hts);
+        trainListView.setModel(delegate);
+        listView.setModel(delegate);
+        detailsView.setModel(delegate);
     }
-
+    
     private String getKey(String suffix) {
-        String prefix = "";
+        String prefix = "custom";
         if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType()))
             prefix = "driver";
         else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))

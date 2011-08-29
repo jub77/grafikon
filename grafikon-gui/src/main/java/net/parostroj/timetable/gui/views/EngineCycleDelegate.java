@@ -6,74 +6,34 @@
 package net.parostroj.timetable.gui.views;
 
 import java.util.List;
+
 import javax.swing.JComponent;
+
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialogEngineClass;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.*;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.TransformUtil;
+import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Implementation of the interface for engine cycle.
  * 
  * @author jub
  */
-public class EngineCycleDelegate implements TCDelegate {
+public class EngineCycleDelegate extends TCDelegate {
     
     private TCDetailsViewDialogEngineClass editDialog;
 
-    public EngineCycleDelegate() {
+    public EngineCycleDelegate(ApplicationModel model) {
+        super(model);
     }
 
     @Override
-    public void setSelectedCycle(ApplicationModel model, TrainsCycle cycle) {
-        model.setSelectedEngineCycle(cycle);
-    }
-
-    @Override
-    public TrainsCycle getSelectedCycle(ApplicationModel model) {
-        return model.getSelectedEngineCycle();
-    }
-
-    @Override
-    public void fireEvent(Action action, ApplicationModel model, TrainsCycle cycle) {
-        ApplicationModelEvent event = null;
-        switch (action) {
-        case SELECTED_CHANGED:
-            event = new ApplicationModelEvent(ApplicationModelEventType.SELECTED_ENGINE_CYCLE_CHANGED, model, cycle);
-            break;
-        case DELETE_CYCLE:
-            event = new ApplicationModelEvent(ApplicationModelEventType.DELETE_ENGINE_CYCLE, model, cycle);
-            break;
-        case MODIFIED_CYCLE:
-            event = new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_ENGINE_CYCLE, model, cycle);
-            break;
-        case NEW_CYCLE:
-            event = new ApplicationModelEvent(ApplicationModelEventType.NEW_ENGINE_CYCLE, model, cycle);
-            break;
-        }
-        if (event != null)
-            model.fireEvent(event);
-    }
-
-    @Override
-    public Action transformEventType(ApplicationModelEventType type) {
-        switch (type) {
-        case DELETE_ENGINE_CYCLE:
-            return TCDelegate.Action.DELETE_CYCLE;
-        case NEW_ENGINE_CYCLE:
-            return TCDelegate.Action.NEW_CYCLE;
-        case MODIFIED_ENGINE_CYCLE:
-            return TCDelegate.Action.MODIFIED_CYCLE;
-        case SELECTED_ENGINE_CYCLE_CHANGED:
-            return TCDelegate.Action.SELECTED_CHANGED;
-        }
-        return null;
-    }
-
-    @Override
-    public String getTrainCycleErrors(TrainsCycle cycle, TrainDiagram diagram) {
+    public String getTrainCycleErrors(TrainsCycle cycle) {
         StringBuilder result = new StringBuilder();
         List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
         for (Tuple<TrainsCycleItem> item : conflicts) {
@@ -91,17 +51,7 @@ public class EngineCycleDelegate implements TCDelegate {
     }
 
     @Override
-    public List<TrainsCycleItem> getTrainCycles(Train train) {
-        return train.getCycles(TrainsCycleType.ENGINE_CYCLE);
-    }
-
-    @Override
-    public String getType() {
-        return TrainsCycleType.ENGINE_CYCLE;
-    }
-
-    @Override
-    public void showEditDialog(JComponent component, ApplicationModel model) {
+    public void showEditDialog(JComponent component) {
         if (editDialog == null)
             editDialog = new TCDetailsViewDialogEngineClass((java.awt.Frame)component.getTopLevelAncestor(), true);
         editDialog.setLocationRelativeTo(component);
@@ -110,13 +60,18 @@ public class EngineCycleDelegate implements TCDelegate {
     }
 
     @Override
-    public String getCycleDescription(ApplicationModel model) {
-        TrainsCycle cycle = getSelectedCycle(model);
+    public String getCycleDescription() {
+        TrainsCycle cycle = getSelectedCycle();
         return TransformUtil.getEngineCycleDescription(cycle);
     }
 
     @Override
     public boolean isOverlappingEnabled() {
         return true;
+    }
+
+    @Override
+    public String getType() {
+        return TrainsCycleType.ENGINE_CYCLE;
     }
 }

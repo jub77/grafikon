@@ -102,7 +102,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.addWindowListener(new MainFrameWindowListener(model, this));
 
         trainsPane.setModel(model);
-        engineCyclesPane.setModel(model, new EngineCycleDelegate(),new TrainColorChooser() {
+        engineCyclesPane.setModel(new EngineCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
                 if (!interval.getTrain().isCovered(TrainsCycleType.ENGINE_CYCLE, interval))
@@ -111,7 +111,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                     return Color.gray;
             }
         });
-        trainUnitCyclesPane.setModel(model, new TrainUnitCycleDelegate(),new TrainColorChooser() {
+        trainUnitCyclesPane.setModel(new TrainUnitCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
                 if (!interval.getTrain().isCovered(TrainsCycleType.TRAIN_UNIT_CYCLE, interval))
@@ -120,7 +120,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                     return Color.gray;
             }
         });
-        driverCyclesPane.setModel(model, new DriverCycleDelegate(),new TrainColorChooser() {
+        driverCyclesPane.setModel(new DriverCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
                 if (!interval.getTrain().isCovered(TrainsCycleType.DRIVER_CYCLE, interval))
@@ -129,6 +129,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                     return Color.gray;
             }
         });
+        circulationPane.setModel(model);
 
         // add languages to menu
         LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
@@ -380,6 +381,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
         driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
         netPane = new net.parostroj.timetable.gui.panes.NetPane();
+        circulationPane = new net.parostroj.timetable.gui.panes.CirculationPane();
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -464,6 +466,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         tabbedPane.addTab(ResourceLoader.getString("tab.trainunit.cycle"), trainUnitCyclesPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.driver.cycles"), driverCyclesPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.net"), netPane); // NOI18N
+        tabbedPane.addTab(ResourceLoader.getString("tab.circulations"), circulationPane); // NOI18N
 
         javax.swing.GroupLayout applicationPanelLayout = new javax.swing.GroupLayout(applicationPanel);
         applicationPanel.setLayout(applicationPanelLayout);
@@ -804,7 +807,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         executeScriptMenuItem.setAction(executeScriptAction);
         executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
-        executeScriptMenuItem.setActionCommand("");
         specialMenu.add(executeScriptMenuItem);
 
         scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
@@ -1194,6 +1196,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem allHtmlMenuItem;
     private javax.swing.JPanel applicationPanel;
+    private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
     private javax.swing.JMenuItem dcListMenuItem;
     private javax.swing.JMenuItem dcListSelectMenuItem;
     private javax.swing.JMenu diagramMenu;

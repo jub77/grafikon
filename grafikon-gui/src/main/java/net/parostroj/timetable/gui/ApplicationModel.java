@@ -13,7 +13,6 @@ import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
-import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -29,9 +28,6 @@ public class ApplicationModel implements StorableGuiData {
     
     private Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
-    private TrainsCycle selectedEngineCycle;
-    private TrainsCycle selectedDriverCycle;
-    private TrainsCycle selectedTrainUnitCycle;
     private TrainDiagram diagram;
     private Queue<Command> commandQueue;
     private boolean modelChanged;
@@ -87,36 +83,6 @@ public class ApplicationModel implements StorableGuiData {
         this.outputCategory = outputCategory;
     }
 
-    public TrainsCycle getSelectedEngineCycle() {
-        return selectedEngineCycle;
-    }
-
-    public void setSelectedEngineCycle(TrainsCycle selectedEngineCycle) {
-        this.selectedEngineCycle = selectedEngineCycle;
-
-        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_ENGINE_CYCLE_CHANGED,this,selectedEngineCycle));
-    }
-
-    public TrainsCycle getSelectedDriverCycle() {
-        return selectedDriverCycle;
-    }
-
-    public void setSelectedDriverCycle(TrainsCycle selectedDriverCycle) {
-        this.selectedDriverCycle = selectedDriverCycle;
-
-        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_DRIVER_CYCLE_CHANGED,this,selectedDriverCycle));
-    }
-
-    public TrainsCycle getSelectedTrainUnitCycle() {
-        return selectedTrainUnitCycle;
-    }
-
-    public void setSelectedTrainUnitCycle(TrainsCycle selectedTrainUnitCycle) {
-        this.selectedTrainUnitCycle = selectedTrainUnitCycle;
-
-        this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SELECTED_TRAIN_UNIT_CYCLE_CHANGED,this,selectedTrainUnitCycle));
-    }
-
     /**
      * @return train diagram
      */
@@ -136,9 +102,6 @@ public class ApplicationModel implements StorableGuiData {
     public void setDiagram(TrainDiagram diagram) {
         // set selected train to null
         this.setSelectedTrain(null);
-        this.setSelectedEngineCycle(null);
-        this.setSelectedDriverCycle(null);
-        this.setSelectedTrainUnitCycle(null);
 
         this.diagram = diagram;
 
@@ -212,10 +175,10 @@ public class ApplicationModel implements StorableGuiData {
 
     private void checkModelChanged(ApplicationModelEvent event) {
         switch(event.getType()) {
-            case DELETE_DRIVER_CYCLE: case DELETE_ENGINE_CYCLE: case DELETE_TRAIN: case DELETE_TRAIN_UNIT_CYCLE:
-            case MODIFIED_DRIVER_CYCLE: case MODIFIED_ENGINE_CYCLE: case MODIFIED_LINE: case MODIFIED_NODE:
-            case MODIFIED_TRAIN: case MODIFIED_TRAIN_NAME_TYPE: case MODIFIED_TRAIN_UNIT_CYCLE:
-            case NEW_DRIVER_CYCLE: case NEW_ENGINE_CYCLE: case NEW_TRAIN: case NEW_TRAIN_UNIT_CYCLE:
+            case DELETED_CYCLE: case NEW_CYCLE: case DELETE_TRAIN:
+            case MODIFIED_LINE: case MODIFIED_NODE:
+            case MODIFIED_TRAIN: case MODIFIED_TRAIN_NAME_TYPE:
+            case NEW_TRAIN: case MODIFIED_CYCLE:
             case ROUTES_MODIFIED: case NEW_LINE: case NEW_NODE: case MODIFIED_TRAIN_ATTRIBUTE:
             case TRAIN_TYPES_CHANGED: case LINE_CLASSES_CHANGED: case ENGINE_CLASSES_CHANGED: case DELETE_LINE:
             case DELETE_NODE:

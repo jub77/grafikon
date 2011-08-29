@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -21,7 +20,6 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     public static final String USER_ATTR_CATEGORY = "user";
     
     private TCDelegate delegate;
-    private ApplicationModel model;
 
     /** Creates new form TCDetailsViewDialog */
     public TCDetailsViewDialog(java.awt.Frame parent, boolean modal) {
@@ -30,12 +28,11 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         attributesPanel.setCategory(TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }
     
-    public void updateValues(TCDelegate delegate, ApplicationModel model) {
+    public void updateValues(TCDelegate delegate) {
         this.delegate = delegate;
-        this.model = model;
-        this.nameTextField.setText(delegate.getSelectedCycle(model).getName());
-        this.descTextField.setText(delegate.getSelectedCycle(model).getDescription());
-        attributesPanel.startEditing(new Attributes(delegate.getSelectedCycle(model).getAttributes()));
+        this.nameTextField.setText(delegate.getSelectedCycle().getName());
+        this.descTextField.setText(delegate.getSelectedCycle().getDescription());
+        attributesPanel.startEditing(new Attributes(delegate.getSelectedCycle().getAttributes()));
     }
 
     /** This method is called from within the constructor to
@@ -128,7 +125,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // write values back and close
-        TrainsCycle cycle = delegate.getSelectedCycle(model);
+        TrainsCycle cycle = delegate.getSelectedCycle();
         if (nameTextField.getText() != null && !"".equals(nameTextField.getText().trim())
                 && !nameTextField.getText().equals(cycle.getName()))
             cycle.setName(nameTextField.getText());
@@ -141,7 +138,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         }
         
         // event
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, model, cycle);
+        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, cycle);
         
         this.setVisible(false);
         cycle.getAttributes().merge(attributesPanel.stopEditing(), USER_ATTR_CATEGORY);
