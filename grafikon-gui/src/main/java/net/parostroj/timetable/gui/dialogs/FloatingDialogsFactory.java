@@ -20,7 +20,6 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.model.events.TrainsCycleEvent;
@@ -313,10 +312,19 @@ public class FloatingDialogsFactory {
 
             @Override
             public void processTrainDiagramEvent(TrainDiagramEvent event) {
-                if (event.getType() == GTEventType.TRAINS_CYCLE_ADDED) {
-                    panel.circulationAdded((TrainsCycle) event.getObject());
-                } else if (event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
-                    panel.circulationRemoved((TrainsCycle) event.getObject());
+                switch (event.getType()) {
+                    case TRAINS_CYCLE_ADDED:
+                        panel.circulationAdded((TrainsCycle) event.getObject());
+                        break;
+                    case TRAINS_CYCLE_REMOVED:
+                        panel.circulationRemoved((TrainsCycle) event.getObject());
+                        break;
+                    case CYCLE_TYPE_ADDED:
+                        panel.typeAdded((TrainsCycleType) event.getObject());
+                        break;
+                    case CYCLE_TYPE_REMOVED:
+                        panel.typeRemoved((TrainsCycleType) event.getObject());
+                        break;
                 }
             }
 

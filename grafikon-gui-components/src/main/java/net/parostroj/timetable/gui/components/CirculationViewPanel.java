@@ -5,9 +5,11 @@
  */
 package net.parostroj.timetable.gui.components;
 
+import java.awt.event.ItemEvent;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * Panel with circulation view and buttons.
@@ -21,8 +23,18 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         initComponents();
     }
     
+    private void updateListOfTypes(TrainDiagram diagram) {
+        typeComboBox.removeAllItems();
+        if (diagram != null) {
+            for (String type : diagram.getCyclesTypes()) {
+                typeComboBox.addItem(type);
+            }
+        }
+    }
+    
     public void setDiagram(TrainDiagram diagram) {
         circulationView.setDiagram(diagram);
+        this.updateListOfTypes(diagram);
     }
     
     public void circulationRemoved(TrainsCycle circulation) {
@@ -36,6 +48,14 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     public void circulationUpdated(TrainsCycle circulation) {
         circulationView.circulationUpdated(circulation);
     }
+    
+    public void typeAdded(TrainsCycleType type) {
+        typeComboBox.addItem(type.getName());
+    }
+
+    public void typeRemoved(TrainsCycleType type) {
+        typeComboBox.removeItem(type.getName());
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -47,13 +67,28 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
+        javax.swing.JPanel leftPanel = new javax.swing.JPanel();
+        typeComboBox = new javax.swing.JComboBox();
+        javax.swing.JPanel rightPanel = new javax.swing.JPanel();
         javax.swing.JButton saveButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         circulationView = new net.parostroj.timetable.gui.components.CirculationView();
 
         setLayout(new java.awt.BorderLayout());
 
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        buttonPanel.setLayout(new java.awt.BorderLayout());
+
+        leftPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        typeComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmmmm");
+        typeComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                typeComboBoxItemStateChanged(evt);
+            }
+        });
+        leftPanel.add(typeComboBox);
+
+        buttonPanel.add(leftPanel, java.awt.BorderLayout.CENTER);
 
         saveButton.setText(ResourceLoader.getString("gt.save")); // NOI18N
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -61,7 +96,9 @@ public class CirculationViewPanel extends javax.swing.JPanel {
                 saveButtonActionPerformed(evt);
             }
         });
-        buttonPanel.add(saveButton);
+        rightPanel.add(saveButton);
+
+        buttonPanel.add(rightPanel, java.awt.BorderLayout.EAST);
 
         add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
@@ -75,7 +112,16 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_typeComboBoxItemStateChanged
+        if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            circulationView.setType(null);
+        } else {
+            circulationView.setType((String) typeComboBox.getSelectedItem());
+        }
+    }//GEN-LAST:event_typeComboBoxItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
+    private javax.swing.JComboBox typeComboBox;
     // End of variables declaration//GEN-END:variables
 }

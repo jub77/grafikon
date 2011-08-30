@@ -14,7 +14,6 @@ import java.util.Collection;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * View with circulations of certain type.
@@ -23,11 +22,10 @@ import net.parostroj.timetable.model.TrainsCycleType;
  */
 public class CirculationView extends javax.swing.JPanel {
 
-    private static String TYPE = TrainsCycleType.DRIVER_CYCLE; 
-
     private TrainDiagram diagram;
     private int count = 0;
     private Dimension charSize = null;
+    private String type;
 
     /** Creates new form CirculationView */
     public CirculationView() {
@@ -37,12 +35,13 @@ public class CirculationView extends javax.swing.JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (diagram != null) {
-            paintCirculations((Graphics2D) g, diagram.getCycles(TYPE));
+        if (diagram != null && type != null) {
+            paintCirculations((Graphics2D) g, diagram.getCycles(type));
         }
     }
 
     public void setDiagram(TrainDiagram diagram) {
+        this.type = null;
         this.diagram = diagram;
         this.repaintAndUpdateSize();
     }
@@ -61,10 +60,10 @@ public class CirculationView extends javax.swing.JPanel {
     
     private void repaintAndUpdateSize() {
         int newCount;
-        if (diagram == null) {
+        if (diagram == null || type == null) {
             newCount = 0;
         } else {
-            newCount = diagram.getCycles(TYPE).size();
+            newCount = diagram.getCycles(type).size();
         }
         if (newCount != count) {
             count = newCount;
@@ -107,6 +106,11 @@ public class CirculationView extends javax.swing.JPanel {
     }
 
     public void circulationUpdated(TrainsCycle circulation) {
+        this.repaintAndUpdateSize();
+    }
+
+    public void setType(String type) {
+        this.type = type;
         this.repaintAndUpdateSize();
     }
 }
