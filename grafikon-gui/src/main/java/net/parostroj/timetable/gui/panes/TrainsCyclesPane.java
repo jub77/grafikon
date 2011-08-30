@@ -62,6 +62,8 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
                 if (cycle == last) {
                     graphicalTimetableView.repaint();
                 }
+            } else if (action == TCDelegate.Action.REFRESH) {
+                graphicalTimetableView.repaint();
             }
         }
 
