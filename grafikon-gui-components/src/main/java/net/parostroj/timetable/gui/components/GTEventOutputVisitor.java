@@ -46,8 +46,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Text item: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof TimetableImage)
                     str.append("    Image: ").append(event.getObject().toString()).append('\n');
-                if (event.getType() == GTEventType.CYCLE_TYPE_ADDED || event.getType() == GTEventType.CYCLE_TYPE_REMOVED)
-                    str.append("    Cycle type: ").append((String)event.getObject());
+                if (event.getObject() instanceof TrainsCycleType)
+                    str.append("    Cycle type: ").append(((TrainsCycleType)event.getObject()).getName());
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
