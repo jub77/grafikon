@@ -335,6 +335,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         nodeTimetableListMenuItem.setEnabled(notNullDiagram);
         ecListMenuItem.setEnabled(notNullDiagram);
         dcListMenuItem.setEnabled(notNullDiagram);
+        ccListMenuItem.setEnabled(notNullDiagram);
         tucListMenuItem.setEnabled(notNullDiagram);
         settingsMenuItem.setEnabled(notNullDiagram);
         allHtmlMenuItem.setEnabled(notNullDiagram);
@@ -421,6 +422,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainTimetableListByDcMenuItem = new javax.swing.JMenuItem();
         trainTimetableListByTimeFilteredMenuItem = new javax.swing.JMenuItem();
         epListMenuItem = new javax.swing.JMenuItem();
+        ccListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
         trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
         trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
@@ -679,6 +681,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         epListMenuItem.setText(ResourceLoader.getString("menu.acion.eplist")); // NOI18N
         epListMenuItem.setActionCommand("ends");
         actionMenu.add(epListMenuItem);
+
+        ccListMenuItem.setAction(outputAction);
+        ccListMenuItem.setText(ResourceLoader.getString("menu.acion.cclist")); // NOI18N
+        ccListMenuItem.setActionCommand("custom_cycles");
+        actionMenu.add(ccListMenuItem);
         actionMenu.add(jSeparator2);
 
         trainTimetableListByDcSelectMenuItem.setAction(outputAction);
@@ -1198,6 +1205,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem allHtmlMenuItem;
     private javax.swing.JPanel applicationPanel;
+    private javax.swing.JMenuItem ccListMenuItem;
     private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
     private javax.swing.JMenuItem dcListMenuItem;
     private javax.swing.JMenuItem dcListSelectMenuItem;
