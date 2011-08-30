@@ -217,7 +217,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (diagram != null) {
             for (String t : diagram.getCyclesTypes()) {
                 if (!TrainsCycleType.isDefaultType(t))
-                typesComboBox.addItem(t);
+                    typesComboBox.addItem(t);
             }
         }
         if (typesComboBox.getItemCount() > 0) {
