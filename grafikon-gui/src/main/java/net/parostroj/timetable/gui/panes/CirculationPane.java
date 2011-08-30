@@ -28,9 +28,7 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class CirculationPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private TrainsCycle selected;
     private String type;
-    private TCDetailsViewDialog editDialog;
     private TrainDiagram diagram;
     private TCDelegate delegate;
 
@@ -142,6 +140,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     public void setModel(ApplicationModel model) {
         this.delegate = new TCDelegate(model) {
 
+            private TCDetailsViewDialog editDialog;
+
             @Override
             public String getTrainCycleErrors(TrainsCycle cycle) {
                 StringBuilder result = new StringBuilder();
@@ -174,11 +174,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
             @Override
             public String getCycleDescription() {
-                if (selected != null) {
-                    return selected.getDescription();
-                } else {
-                    return null;
-                }
+                return getSelectedCycle().getDescription();
             }
 
             @Override
