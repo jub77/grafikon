@@ -12,10 +12,7 @@ import java.util.UUID;
 
 import javax.swing.JComponent;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.views.TCDelegate;
@@ -29,7 +26,7 @@ import net.parostroj.timetable.utils.Tuple;
  *
  * @author jub
  */
-public class CirculationPane extends javax.swing.JPanel {
+public class CirculationPane extends javax.swing.JPanel implements StorableGuiData {
 
     private TrainsCycle selected;
     private String type;
@@ -243,4 +240,14 @@ public class CirculationPane extends javax.swing.JPanel {
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainsCyclesPane;
     private javax.swing.JComboBox typesComboBox;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void saveToPreferences(AppPreferences prefs) {
+        trainsCyclesPane.saveToPreferences(prefs);
+    }
+
+    @Override
+    public void loadFromPreferences(AppPreferences prefs) {
+        trainsCyclesPane.loadFromPreferences(prefs);
+    }
 }

@@ -1133,6 +1133,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.saveToPreferences(prefs);
         driverCyclesPane.saveToPreferences(prefs);
         engineCyclesPane.saveToPreferences(prefs);
+        circulationPane.saveToPreferences(prefs);
     }
 
     @Override
@@ -1178,6 +1179,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.loadFromPreferences(prefs);
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
+        circulationPane.loadFromPreferences(prefs);
     }
 
     public void forceLoad(File file) {
