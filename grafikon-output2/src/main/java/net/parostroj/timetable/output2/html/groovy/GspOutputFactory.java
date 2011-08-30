@@ -29,6 +29,7 @@ public class GspOutputFactory extends OutputFactory {
         OUTPUT_TYPES.put("driver_cycles", GspDriverCyclesOutput.class);
         OUTPUT_TYPES.put("trains", GspTrainTimetablesOutput.class);
         OUTPUT_TYPES.put("diagram", GspDiagramOutput.class);
+        OUTPUT_TYPES.put("custom_cycles", GspCustomCyclesOutput.class);
     }
 
     public GspOutputFactory() {

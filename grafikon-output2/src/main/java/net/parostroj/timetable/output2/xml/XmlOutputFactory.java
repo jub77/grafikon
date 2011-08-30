@@ -28,6 +28,7 @@ public class XmlOutputFactory extends OutputFactory {
         OUTPUT_TYPES.put("engine_cycles", XmlEngineCyclesOutput.class);
         OUTPUT_TYPES.put("driver_cycles", XmlDriverCyclesOutput.class);
         OUTPUT_TYPES.put("trains", XmlTrainTimetablesOutput.class);
+        OUTPUT_TYPES.put("custom_cycles", XmlCustomCyclesOutput.class);
     }
 
     private Charset getCharset() {
