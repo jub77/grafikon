@@ -1,6 +1,9 @@
 package net.parostroj.timetable.actions;
 
+import java.util.UUID;
+
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.units.LengthUnit;
 
 /**
@@ -41,5 +44,10 @@ public class AfterLoadCheck {
         // length unit
         if (diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT) == null)
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LENGTH_UNIT);
+
+        // add default trains cycle types (if already defined - no action)
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
     }
 }

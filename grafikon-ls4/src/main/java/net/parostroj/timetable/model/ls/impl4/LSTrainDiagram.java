@@ -22,7 +22,7 @@ public class LSTrainDiagram {
     private LSTrainsData trainsData;
     private LSAttributes attributes;
     private boolean changesTracking;
-    private Set<String> cycleTypes;
+    private Set<LSTrainsCycleType> cycleTypes;
     
     public LSTrainDiagram() {
     }
@@ -32,7 +32,10 @@ public class LSTrainDiagram {
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
         changesTracking = diagram.getChangesTracker().isTrackingEnabled();
-        cycleTypes = diagram.getCyclesTypes();
+        for (String typeName : diagram.getCyclesTypes()) {
+            LSTrainsCycleType lsType = new LSTrainsCycleType(diagram.getCyclesType(typeName));
+            getCycleTypes().add(lsType);
+        }
     }
 
     public LSAttributes getAttributes() {
@@ -70,13 +73,13 @@ public class LSTrainDiagram {
     
     
     @XmlElement(name = "cycle_type")
-    public Set<String> getCycleTypes() {
+    public Set<LSTrainsCycleType> getCycleTypes() {
         if (cycleTypes == null)
-            cycleTypes = new HashSet<String>();
+            cycleTypes = new HashSet<LSTrainsCycleType>();
         return cycleTypes;
     }
     
-    public void setCycleTypes(Set<String> cycleTypes) {
+    public void setCycleTypes(Set<LSTrainsCycleType> cycleTypes) {
         this.cycleTypes = cycleTypes;
     }
 }

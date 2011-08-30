@@ -86,6 +86,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_CYCLE, model, cycle));
                 break;
         }
+        this.handleEvent(action, cycle, train);
         // call listeners
         for (Listener listener : listeners) {
             listener.tcEvent(action, cycle, train);
@@ -125,4 +126,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
     public TrainDiagram getTrainDiagram() {
         return model.getDiagram();
     }
+    
+    public void handleEvent(Action action, TrainsCycle cycle, Train train) {}
 }

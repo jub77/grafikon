@@ -50,12 +50,6 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             }
         });
     }
-    
-    public static boolean isDefaultType(String type) {
-        return TrainsCycleType.DRIVER_CYCLE.equals(type) ||
-            TrainsCycleType.ENGINE_CYCLE.equals(type) ||
-            TrainsCycleType.TRAIN_UNIT_CYCLE.equals(type);
-    }
 
     @Override
     public String getId() {

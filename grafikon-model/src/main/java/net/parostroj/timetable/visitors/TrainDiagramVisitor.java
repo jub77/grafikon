@@ -38,4 +38,6 @@ public interface TrainDiagramVisitor {
     public void visit(LineClass lineClass);
     
     public void visit(OutputTemplate template);
+    
+    public void visit(TrainsCycleType type);
 }

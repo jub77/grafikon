@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JComponent;
 
@@ -100,8 +101,8 @@ public class CirculationPane extends javax.swing.JPanel {
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         String name = newNameTextField.getText();
-        if (!delegate.getTrainDiagram().getCyclesTypes().contains(name) && !TrainsCycle.isDefaultType(name)) {
-            diagram.addCyclesType(name);
+        if (!delegate.getTrainDiagram().getCyclesTypes().contains(name) && !TrainsCycleType.isDefaultType(name)) {
+            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), name));
             typesComboBox.addItem(name);
             typesComboBox.setSelectedItem(name);
         }
@@ -203,6 +204,11 @@ public class CirculationPane extends javax.swing.JPanel {
             public String getType() {
                 return type;
             }
+            
+            public void handleEvent(Action action, TrainsCycle cycle, Train train) {
+                if (action == Action.REFRESH)
+                    type = null;
+            }
         };
         trainsCyclesPane.setModel(this.delegate, new TrainColorChooser() {
 
@@ -221,7 +227,7 @@ public class CirculationPane extends javax.swing.JPanel {
         typesComboBox.removeAllItems();
         if (diagram != null) {
             for (String t : diagram.getCyclesTypes()) {
-                if (!TrainsCycle.isDefaultType(t))
+                if (!TrainsCycleType.isDefaultType(t))
                 typesComboBox.addItem(t);
             }
         }

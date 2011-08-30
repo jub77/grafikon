@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
+import java.util.UUID;
+
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
@@ -30,9 +32,13 @@ public class TrainDiagramBuilder {
         this.diagram.setAttributes(attributes);
         trackChanges = lsDiagram.isChangesTracking();
         // circulation types
-        for (String cType : lsDiagram.getCycleTypes()) {
-            this.diagram.addCyclesType(cType);
+        for (LSTrainsCycleType cType : lsDiagram.getCycleTypes()) {
+            this.diagram.addCyclesType(cType.createTrainsCycleType(diagram));
         }
+        // add default trains cycle types (if already defined - no action)
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
     }
     
     public void setTrainsData(LSTrainsData lsData) throws LSException {
