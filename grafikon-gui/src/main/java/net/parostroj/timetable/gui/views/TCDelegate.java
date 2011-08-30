@@ -29,7 +29,7 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 public abstract class TCDelegate implements ApplicationModelListener {
 
     public enum Action {
-        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN; 
+        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE; 
     }
     
     public interface Listener {
@@ -112,7 +112,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
     public void modelChanged(ApplicationModelEvent event) {
         switch (event.getType()) {
             case SET_DIAGRAM_CHANGED:
-                this.fireEvent(Action.REFRESH, null);
+                this.fireEvent(Action.DIAGRAM_CHANGE, null);
                 break;
             case NEW_TRAIN:
                 this.fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
@@ -127,5 +127,9 @@ public abstract class TCDelegate implements ApplicationModelListener {
         return model.getDiagram();
     }
     
-    public void handleEvent(Action action, TrainsCycle cycle, Train train) {}
+    public void handleEvent(Action action, TrainsCycle cycle, Train train) {
+        // default behaviour -> DIAGRAM_CHANGE initiates REFRESH
+        if (action == Action.DIAGRAM_CHANGE)
+            this.fireEvent(Action.REFRESH, null);
+    }
 }

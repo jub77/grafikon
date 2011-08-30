@@ -140,17 +140,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     }//GEN-LAST:event_typesComboBoxItemStateChanged
 
     public void setModel(ApplicationModel model) {
-        model.addListener(new ApplicationModelListener() {
-
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    diagram = event.getModel().getDiagram();
-                    updateTypes();
-                }
-            }
-        });
-        
         this.delegate = new TCDelegate(model) {
 
             @Override
@@ -203,8 +192,11 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             }
             
             public void handleEvent(Action action, TrainsCycle cycle, Train train) {
-                if (action == Action.REFRESH)
-                    type = null;
+                if (action == Action.DIAGRAM_CHANGE) {
+                    diagram = delegate.getTrainDiagram();
+                    updateTypes();
+                    this.fireEvent(Action.REFRESH, null);
+                }
             }
         };
         trainsCyclesPane.setModel(this.delegate, new TrainColorChooser() {
@@ -231,6 +223,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (typesComboBox.getItemCount() > 0) {
             typesComboBox.setSelectedIndex(0);
         }
+        deleteButton.setEnabled(type != null);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
