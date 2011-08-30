@@ -14,6 +14,8 @@ import java.util.Set;
 
 import javax.swing.ButtonModel;
 import javax.swing.DefaultListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
@@ -47,6 +49,27 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         coverageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         allTrainsList.setModel(new DefaultListModel());
         ecTrainsList.setModel(new DefaultListModel());
+        ecTrainsList.getModel().addListDataListener(new ListDataListener() {
+            
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+                this.changed();
+            }
+            
+            @Override
+            public void intervalAdded(ListDataEvent e) {
+                this.changed();
+            }
+            
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                this.changed();
+            }
+            
+            private void changed() {
+                sortButton.setEnabled(ecTrainsList.getModel().getSize() >= 2);
+            }
+        });
     }
 
     public void setModel(TCDelegate delegate) {
@@ -118,9 +141,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private void updateListCycle() {
         // right list with assign trains
         if (delegate.getSelectedCycle() == null) {
-            ecTrainsList.setModel(new DefaultListModel());
+            ((DefaultListModel)ecTrainsList.getModel()).clear();
         } else {
-            DefaultListModel m = new DefaultListModel();
+            DefaultListModel m = (DefaultListModel)ecTrainsList.getModel();
+            m.clear();
             for (TrainsCycleItem item : delegate.getSelectedCycle()) {
                 m.addElement(new TrainsCycleItemWrapper(item));
             }
@@ -199,6 +223,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageTextPane = new net.parostroj.timetable.gui.views.ColorTextPane();
+        sortButton = new javax.swing.JButton();
         selectionButton = new javax.swing.JButton();
 
         filterbuttonGroup.add(allRadioButtonMenuItem);
@@ -336,6 +361,14 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         coverageTextPane.setEditable(false);
         coverageScrollPane.setViewportView(coverageTextPane);
 
+        sortButton.setText(ResourceLoader.getString("button.sort")); // NOI18N
+        sortButton.setEnabled(false);
+        sortButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortButtonActionPerformed(evt);
+            }
+        });
+
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
         selectionButton.setText(bundle.getString("ec.list.selection")); // NOI18N
         selectionButton.addActionListener(new java.awt.event.ActionListener() {
@@ -352,6 +385,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(sortButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(selectionButton, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -362,22 +396,22 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(detailsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
+                .addComponent(detailsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(toComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(changeButton))
-            .addComponent(errorsScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+            .addComponent(errorsScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -386,9 +420,11 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         .addComponent(upButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(downButton)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sortButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(selectionButton))
-                    .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
+                    .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -641,6 +677,29 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         filterMenu.show(selectionButton, 3, 3);
     }//GEN-LAST:event_selectionButtonActionPerformed
 
+    private void sortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortButtonActionPerformed
+        // sort items in cycle by time
+        DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
+        int size = m.getSize();
+        for (int j = size - 2; j >= 0; j--) {
+            for (int i = 0; i <= j; i++) {
+                TrainsCycleItemWrapper item1 = (TrainsCycleItemWrapper) m.get(i);
+                TrainsCycleItemWrapper item2 = (TrainsCycleItemWrapper) m.get(i + 1);
+                if (item2.getItem().getStartTime() < item1.getItem().getStartTime()) {
+                    m.remove(i);
+                    // move to new place
+                    m.add(i + 1, item1);
+                    item1.getItem().getCycle().moveItem(i, i + 1);
+                }
+            }
+        }
+        this.updateErrors();
+        ecTrainsList.getSelectionModel().clearSelection();
+        ecTrainsList.repaint();
+        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
+        
+    }//GEN-LAST:event_sortButtonActionPerformed
+
     private void setFilter(String type, Component component) {
         if ("P".equals(type)) {
             filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.PASSENGER);
@@ -683,6 +742,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JButton selectionButton;
+    private javax.swing.JButton sortButton;
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables

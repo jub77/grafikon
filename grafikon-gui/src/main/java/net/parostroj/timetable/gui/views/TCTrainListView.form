@@ -105,22 +105,23 @@
               <Component id="scrollPane1" pref="270" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="sortButton" max="32767" attributes="1"/>
                   <Component id="selectionButton" min="0" max="32767" attributes="1"/>
                   <Component id="downButton" alignment="0" max="32767" attributes="1"/>
                   <Component id="upButton" alignment="0" max="32767" attributes="1"/>
                   <Component id="removeButton" alignment="0" max="32767" attributes="1"/>
                   <Component id="addButton" alignment="0" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="scrollPane2" pref="270" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="detailsTextField" pref="523" max="32767" attributes="0"/>
+              <Component id="detailsTextField" pref="543" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <Component id="coverageScrollPane" pref="478" max="32767" attributes="0"/>
+              <Component id="coverageScrollPane" pref="482" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="fromComboBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -128,14 +129,14 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="changeButton" min="-2" max="-2" attributes="0"/>
           </Group>
-          <Component id="errorsScrollPane" alignment="1" pref="615" max="32767" attributes="0"/>
+          <Component id="errorsScrollPane" alignment="1" pref="629" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scrollPane2" pref="169" max="32767" attributes="2"/>
+                  <Component id="scrollPane2" pref="173" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="1">
                       <Component id="addButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -144,10 +145,12 @@
                       <Component id="upButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="downButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="sortButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="selectionButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="scrollPane1" alignment="0" pref="169" max="32767" attributes="2"/>
+                  <Component id="scrollPane1" alignment="0" pref="173" max="32767" attributes="2"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -359,6 +362,17 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="sortButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="net/parostroj/timetable/gui/components_texts.properties" key="button.sort" replaceFormat="ResourceLoader.getString(&quot;{key}&quot;)"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortButtonActionPerformed"/>
+      </Events>
+    </Component>
     <Component class="javax.swing.JButton" name="selectionButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
