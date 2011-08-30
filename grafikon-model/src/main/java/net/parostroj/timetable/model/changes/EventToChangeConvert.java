@@ -43,6 +43,8 @@ class EventToChangeConvert {
         map.put(GTEventType.TEXT_ITEM_REMOVED, DiagramChange.Type.TEXT_ITEM);
         map.put(GTEventType.TRAINS_CYCLE_ADDED, DiagramChange.Type.TRAINS_CYCLE);
         map.put(GTEventType.TRAINS_CYCLE_REMOVED, DiagramChange.Type.TRAINS_CYCLE);
+        map.put(GTEventType.CYCLE_TYPE_ADDED, DiagramChange.Type.CYCLE_TYPE);
+        map.put(GTEventType.CYCLE_TYPE_REMOVED, DiagramChange.Type.CYCLE_TYPE);
         map.put(GTEventType.TRAIN_ADDED, DiagramChange.Type.TRAIN);
         map.put(GTEventType.TRAIN_REMOVED, DiagramChange.Type.TRAIN);
         map.put(GTEventType.TRAIN_TYPE_ADDED, DiagramChange.Type.TRAIN_TYPE);
@@ -77,6 +79,8 @@ class EventToChangeConvert {
         map.put(GTEventType.TRACK_REMOVED, DiagramChange.Action.MODIFIED);
         map.put(GTEventType.TRAINS_CYCLE_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TRAINS_CYCLE_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.CYCLE_TYPE_ADDED, DiagramChange.Action.ADDED);
+        map.put(GTEventType.CYCLE_TYPE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.TRAIN_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.TRAIN_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.TRAIN_TYPE_ADDED, DiagramChange.Action.ADDED);
@@ -124,6 +128,8 @@ class EventToChangeConvert {
         map.put(GTEventType.TRACK_REMOVED, null); // nothing
         map.put(GTEventType.TRAINS_CYCLE_ADDED, null); // nothing
         map.put(GTEventType.TRAINS_CYCLE_REMOVED, null); // nothing
+        map.put(GTEventType.CYCLE_TYPE_ADDED, null);
+        map.put(GTEventType.CYCLE_TYPE_REMOVED, null);
         map.put(GTEventType.TRAIN_ADDED, null); // nothing
         map.put(GTEventType.TRAIN_REMOVED, null); // nothing
         map.put(GTEventType.TRAIN_TYPE_ADDED, null); // nothing
@@ -200,6 +206,8 @@ class EventToChangeConvert {
     map.put(GTEventType.TRACK_REMOVED, null);
     map.put(GTEventType.TRAINS_CYCLE_ADDED, null);
     map.put(GTEventType.TRAINS_CYCLE_REMOVED, null);
+    map.put(GTEventType.CYCLE_TYPE_ADDED, null);
+    map.put(GTEventType.CYCLE_TYPE_REMOVED, null);
     map.put(GTEventType.TRAIN_ADDED, null);
     map.put(GTEventType.TRAIN_REMOVED, null);
     map.put(GTEventType.TRAIN_TYPE_ADDED, null);
