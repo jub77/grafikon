@@ -35,7 +35,7 @@ public class CustomCyclesExtractor {
         CustomCycle outputCycle = new CustomCycle();
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
-        outputCycle.setType(cycle.getType().getName());
+        outputCycle.setType(cycle.getType().getDescriptionText());
         outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
         TrainsCycleItem current = null;
