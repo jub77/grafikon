@@ -678,7 +678,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }//GEN-LAST:event_selectionButtonActionPerformed
 
     private void sortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortButtonActionPerformed
-        // sort items in cycle by time
+        // sort items in cycle by time (using bubble sort - the number of elements is small
+        // so it is a suitable method)
         DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
         int size = m.getSize();
         for (int j = size - 2; j >= 0; j--) {
