@@ -105,14 +105,14 @@
               <Component id="scrollPane1" pref="270" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="sortButton" max="32767" attributes="1"/>
+                  <Component id="removeButton" pref="77" max="32767" attributes="1"/>
+                  <Component id="upButton" pref="77" max="32767" attributes="1"/>
+                  <Component id="downButton" pref="77" max="32767" attributes="1"/>
+                  <Component id="sortButton" pref="77" max="32767" attributes="1"/>
                   <Component id="selectionButton" min="0" max="32767" attributes="1"/>
-                  <Component id="downButton" alignment="0" max="32767" attributes="1"/>
-                  <Component id="upButton" alignment="0" max="32767" attributes="1"/>
-                  <Component id="removeButton" alignment="0" max="32767" attributes="1"/>
-                  <Component id="addButton" alignment="0" max="32767" attributes="1"/>
+                  <Component id="addButton" alignment="0" pref="77" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="scrollPane2" pref="270" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
@@ -139,11 +139,11 @@
                   <Component id="scrollPane2" pref="173" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="1">
                       <Component id="addButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="removeButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="upButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="downButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="sortButton" min="-2" max="-2" attributes="0"/>
