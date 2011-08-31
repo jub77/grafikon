@@ -172,8 +172,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return Collections.unmodifiableMap(modMap);
     }
     
-    public Set<String> getCyclesTypes() {
+    public Set<String> getCycleTypeNames() {
         return Collections.unmodifiableSet(cycles.keySet());
+    }
+    
+    public Collection<TrainsCycleType> getCycleTypes() {
+        return Collections.unmodifiableCollection(cycles.values());
     }
     
     public void addCyclesType(TrainsCycleType type) {

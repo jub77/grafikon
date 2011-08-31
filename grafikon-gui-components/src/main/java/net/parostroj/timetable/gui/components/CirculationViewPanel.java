@@ -6,7 +6,9 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.event.ItemEvent;
+
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
@@ -26,8 +28,8 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private void updateListOfTypes(TrainDiagram diagram) {
         typeComboBox.removeAllItems();
         if (diagram != null) {
-            for (String type : diagram.getCyclesTypes()) {
-                typeComboBox.addItem(type);
+            for (TrainsCycleType type : diagram.getCycleTypes()) {
+                typeComboBox.addItem(new Wrapper<TrainsCycleType>(type));
             }
         }
     }
@@ -50,11 +52,11 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }
     
     public void typeAdded(TrainsCycleType type) {
-        typeComboBox.addItem(type.getName());
+        typeComboBox.addItem(new Wrapper<TrainsCycleType>(type));
     }
 
     public void typeRemoved(TrainsCycleType type) {
-        typeComboBox.removeItem(type.getName());
+        typeComboBox.removeItem(new Wrapper<TrainsCycleType>(type));
     }
 
     /** This method is called from within the constructor to
@@ -118,7 +120,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         if (evt.getStateChange() == ItemEvent.DESELECTED) {
             circulationView.setType(null);
         } else {
-            circulationView.setType((String) typeComboBox.getSelectedItem());
+            circulationView.setType((TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement());
         }
     }//GEN-LAST:event_typeComboBoxItemStateChanged
 

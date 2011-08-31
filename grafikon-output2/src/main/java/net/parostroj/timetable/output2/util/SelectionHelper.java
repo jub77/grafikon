@@ -118,7 +118,7 @@ public class SelectionHelper {
         } else {
             // collect all non-default
             List<TrainsCycle> result = new LinkedList<TrainsCycle>();
-            for (String aType : diagram.getCyclesTypes()) {
+            for (String aType : diagram.getCycleTypeNames()) {
                 if (!TrainsCycleType.isDefaultType(aType))
                     result.addAll(diagram.getCycles(aType));
             }

@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.views.TCDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.TimeConverter;
@@ -96,10 +97,12 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         String name = newNameTextField.getText();
-        if (!delegate.getTrainDiagram().getCyclesTypes().contains(name) && !TrainsCycleType.isDefaultType(name)) {
-            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), name, name));
-            typesComboBox.addItem(name);
-            typesComboBox.setSelectedItem(name);
+        if (!delegate.getTrainDiagram().getCycleTypeNames().contains(name) && !TrainsCycleType.isDefaultType(name)) {
+            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name, name); 
+            diagram.addCyclesType(type);
+            Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>(type);
+            typesComboBox.addItem(wrapper);
+            typesComboBox.setSelectedItem(wrapper);
         }
         newNameTextField.setText("");
     }//GEN-LAST:event_createButtonActionPerformed
@@ -107,8 +110,9 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // test if empty
         if (diagram.getCycles(delegate.getType()).isEmpty()) {
+            TrainsCycleType cycleType = diagram.getCyclesType(delegate.getType());
             diagram.removeCyclesType(delegate.getType());
-            typesComboBox.removeItem(delegate.getType());
+            typesComboBox.removeItem(new Wrapper<TrainsCycleType>(cycleType));
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
@@ -119,7 +123,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void typesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_typesComboBoxItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // select circulation type
-            String selectedItem = (String)typesComboBox.getSelectedItem();
+            String selectedItem = ((TrainsCycleType) ((Wrapper<?>) typesComboBox.getSelectedItem()).getElement()).getName();
             String oldType = type;
             type = selectedItem;
             if (oldType == null || !oldType.equals(type)) {
@@ -211,9 +215,9 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void updateTypes() {
         typesComboBox.removeAllItems();
         if (diagram != null) {
-            for (String t : diagram.getCyclesTypes()) {
-                if (!TrainsCycleType.isDefaultType(t))
-                    typesComboBox.addItem(t);
+            for (TrainsCycleType t : diagram.getCycleTypes()) {
+                if (!TrainsCycleType.isDefaultType(t.getName()))
+                    typesComboBox.addItem(new Wrapper<TrainsCycleType>(t));
             }
         }
         if (typesComboBox.getItemCount() > 0) {

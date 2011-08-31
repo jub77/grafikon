@@ -9,6 +9,7 @@ package net.parostroj.timetable.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.ResourceBundle;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -34,6 +35,8 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private String description;
     private Attributes attributes;
     private List<TrainsCycle> cycles;
+    
+    private String _cachedDescription;
 
     public TrainsCycleType(String id) {
         this.id = id;
@@ -73,10 +76,12 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         this.description = description;
     }
 
+    @Override
     public Attributes getAttributes() {
         return attributes;
     }
 
+    @Override
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
     }
@@ -102,6 +107,16 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     
     public void setCycles(List<TrainsCycle> cycles) {
         this.cycles = cycles;
+    }
+    
+    public String getDescriptionText() {
+        if (_cachedDescription == null) {
+            if (isDefaultType(name))
+                _cachedDescription = ResourceBundle.getBundle("net.parostroj.timetable.model.cycle_type_texts").getString(name);
+            else
+                _cachedDescription = (description != null) ? description : name;
+        }
+        return _cachedDescription;
     }
 
     @Override

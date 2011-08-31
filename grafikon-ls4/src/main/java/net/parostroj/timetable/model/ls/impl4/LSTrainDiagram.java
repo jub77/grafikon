@@ -32,7 +32,7 @@ public class LSTrainDiagram {
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
         changesTracking = diagram.getChangesTracker().isTrackingEnabled();
-        for (String typeName : diagram.getCyclesTypes()) {
+        for (String typeName : diagram.getCycleTypeNames()) {
             LSTrainsCycleType lsType = new LSTrainsCycleType(diagram.getCyclesType(typeName));
             getCycleTypes().add(lsType);
         }

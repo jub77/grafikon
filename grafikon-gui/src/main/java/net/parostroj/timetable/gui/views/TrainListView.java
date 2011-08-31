@@ -253,7 +253,7 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
 
     private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
         // remove train from cycles
-        for (String type : model.getDiagram().getCyclesTypes()) {
+        for (String type : model.getDiagram().getCycleTypeNames()) {
             if (!deletedTrain.getCycles(type).isEmpty()) {
                 this.removeTrainFromCycles(deletedTrain.getCycles(type));
             }

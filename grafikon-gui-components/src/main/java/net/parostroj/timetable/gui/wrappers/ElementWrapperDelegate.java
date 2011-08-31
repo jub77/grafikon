@@ -36,6 +36,8 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate {
             return ((Train) element).getName();
         else if (element instanceof OutputTemplate)
             return ((OutputTemplate)element).getName();
+        else if (element instanceof TrainsCycleType)
+            return ((TrainsCycleType)element).getDescriptionText();
         else
             return super.toString(element);
     }
