@@ -57,6 +57,8 @@
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="typeComboBoxItemStateChanged"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JSlider" name="sizeSlider">
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="rightPanel">

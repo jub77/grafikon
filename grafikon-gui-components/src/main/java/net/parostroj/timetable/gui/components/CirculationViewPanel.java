@@ -69,6 +69,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         javax.swing.JPanel leftPanel = new javax.swing.JPanel();
         typeComboBox = new javax.swing.JComboBox();
+        sizeSlider = new javax.swing.JSlider();
         javax.swing.JPanel rightPanel = new javax.swing.JPanel();
         javax.swing.JButton saveButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
@@ -87,6 +88,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             }
         });
         leftPanel.add(typeComboBox);
+        leftPanel.add(sizeSlider);
 
         buttonPanel.add(leftPanel, java.awt.BorderLayout.CENTER);
 
@@ -122,6 +124,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
+    private javax.swing.JSlider sizeSlider;
     private javax.swing.JComboBox typeComboBox;
     // End of variables declaration//GEN-END:variables
 }
