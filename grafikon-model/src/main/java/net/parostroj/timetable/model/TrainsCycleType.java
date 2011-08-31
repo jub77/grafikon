@@ -31,6 +31,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     private final String id;
     private String name;
+    private String description;
     private Attributes attributes;
     private List<TrainsCycle> cycles;
 
@@ -40,11 +41,18 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         this.setAttributes(new Attributes());
     }
     
-    public TrainsCycleType(String id, String name) {
+/*    public TrainsCycleType(String id, String name) {
         this(id);
         this.name = name;
-    }
+    }*/
     
+    public TrainsCycleType(String id, String name, String description) {
+        //this(id, name);
+        this.id = "";
+        this.name = "";
+        this.description = description;
+    }
+
     @Override
     public String getId() {
         return id;
@@ -56,6 +64,14 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Attributes getAttributes() {

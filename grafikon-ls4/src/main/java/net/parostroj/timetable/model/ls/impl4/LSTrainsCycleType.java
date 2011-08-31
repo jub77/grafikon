@@ -11,11 +11,12 @@ import net.parostroj.timetable.model.ls.LSException;
  * 
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "attributes"})
+@XmlType(propOrder = {"id", "name", "description", "attributes"})
 public class LSTrainsCycleType {
 
     private String id;
     private String name;
+    private String description;
     private LSAttributes attributes;
 
     public LSTrainsCycleType() {}
@@ -23,6 +24,7 @@ public class LSTrainsCycleType {
     public LSTrainsCycleType(TrainsCycleType type) {
         this.id = type.getId();
         this.name = type.getName();
+        this.description = type.getDescription();
         this.attributes = new LSAttributes(type.getAttributes());
     }
 
@@ -50,8 +52,16 @@ public class LSTrainsCycleType {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public TrainsCycleType createTrainsCycleType(TrainDiagram diagram) throws LSException {
-        TrainsCycleType type = new TrainsCycleType(id, name);
+        TrainsCycleType type = new TrainsCycleType(id, name, description);
         type.setAttributes(attributes.createAttributes(diagram));
         return type;
     }

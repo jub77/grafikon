@@ -32,9 +32,9 @@ public class TrainDiagramBuilder {
         // fill penalty table with predefined values
         LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getPenaltyTable());
         // add default trains cycle types (if already defined - no action)
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE, TrainsCycleType.DRIVER_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE, TrainsCycleType.ENGINE_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE, TrainsCycleType.TRAIN_UNIT_CYCLE));
     }
     
     public void setTrainsData(LSTrainsData lsData) throws LSException {
