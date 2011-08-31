@@ -47,7 +47,6 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public TrainsCycleType(String id, String name) {
         this(id);
         this.name = name;
-        this.description = name;
     }
     
     public TrainsCycleType(String id, String name, String description) {
