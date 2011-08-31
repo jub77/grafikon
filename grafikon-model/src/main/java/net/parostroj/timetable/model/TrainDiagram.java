@@ -208,13 +208,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public void addCycle(TrainsCycle cycle) {
         cycle.addListener(listener);
-        this.getCyclesIntern(cycle.getType()).add(cycle);
+        this.getCyclesIntern(cycle.getType().getName()).add(cycle);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_ADDED, cycle));
     }
 
     public void removeCycle(TrainsCycle cycle) {
         cycle.clear();
-        this.getCyclesIntern(cycle.getType()).remove(cycle);
+        this.getCyclesIntern(cycle.getType().getName()).remove(cycle);
         cycle.removeListener(listener);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_REMOVED, cycle));
     }

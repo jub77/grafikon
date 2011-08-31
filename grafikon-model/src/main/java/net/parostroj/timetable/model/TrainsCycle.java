@@ -22,7 +22,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private final String id;
     private String name;
     private String description;
-    private String type;
+    private TrainsCycleType type;
     private Attributes attributes;
     private List<TrainsCycleItem> items;
     private GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
@@ -34,8 +34,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
      * @param id id
      * @param name name of the cycle
      * @param description description
+     * @param type type
      */
-    public TrainsCycle(String id, String name, String description, String type) {
+    public TrainsCycle(String id, String name, String description, TrainsCycleType type) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -224,12 +225,12 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         return attributes.remove(key);
     }
 
-    public String getType() {
+    public TrainsCycleType getType() {
         return type;
     }
 
-    public void setType(String type) {
-        String oldType = this.type;
+    public void setType(TrainsCycleType type) {
+        TrainsCycleType oldType = this.type;
         this.type = type;
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("type", oldType, type)));
     }

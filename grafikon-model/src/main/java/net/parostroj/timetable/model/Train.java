@@ -251,7 +251,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param item train cycle item to be added
      */
     protected void addCycleItem(TrainsCycleItem item) {
-        String cycleType = item.getCycle().getType();
+        String cycleType = item.getCycle().getType().getName();
         _cachedCycles.addCycleItem(timeIntervalList, this.getCyclesIntern(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
@@ -261,7 +261,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param item train cycle item to be removed
      */
     protected void removeCycleItem(TrainsCycleItem item) {
-        String cycleType = item.getCycle().getType();
+        String cycleType = item.getCycle().getType().getName();
         this.getCyclesIntern(cycleType).remove(item);
         _cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));
@@ -925,7 +925,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @return covered
      */
     public boolean isCovered(TrainsCycle cycle, TimeInterval interval) {
-        List<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType());
+        List<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType().getName());
         for (TrainsCycleItem item : list) {
             if (item.getCycle() == cycle)
                 return true;

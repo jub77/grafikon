@@ -179,7 +179,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         // get name from text field (ignore shorter than one character
         if (newNameTextField.getText().length() > 0 && delegate.getType() != null) {
-            TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getType());
+            TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(),"", delegate.getTrainDiagram().getCyclesType(delegate.getType()));
             delegate.getTrainDiagram().addCycle(cycle);
             
             // clear field

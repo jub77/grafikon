@@ -48,6 +48,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Image: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof TrainsCycleType)
                     str.append("    Cycle type: ").append(((TrainsCycleType)event.getObject()).getName());
+                if (event.getObject() instanceof TrainsCycle)
+                    str.append("    Cycle: ").append(((TrainsCycle)event.getObject()).getName());
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);

@@ -31,7 +31,7 @@ public class LSTrainsCycle {
         this.id = cycle.getId();
         this.name = cycle.getName();
         this.description = cycle.getDescription();
-        this.type = cycle.getType();
+        this.type = cycle.getType().getName();
         this.attributes = new LSAttributes(cycle.getAttributes());
         this.items = new LinkedList<LSTrainsCycleItem>();
         for (TrainsCycleItem item : cycle) {
@@ -90,7 +90,7 @@ public class LSTrainsCycle {
     }
     
     public TrainsCycle createTrainsCycle(TrainDiagram diagram) {
-        TrainsCycle cycle = new TrainsCycle(id, name, description, type);
+        TrainsCycle cycle = new TrainsCycle(id, name, description, diagram.getCyclesType(type));
         cycle.setAttributes(attributes.createAttributes(diagram));
         for (LSTrainsCycleItem item : items) {
             cycle.addItem(item.createTrainsCycleItem(cycle, diagram));

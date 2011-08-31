@@ -40,7 +40,7 @@ class TrainCachedCycles {
         List<TrainsCycleItem> list = types.get(item.getCycle().getType());
         if (list == null) {
             list = new LinkedList<TrainsCycleItem>();
-            types.put(item.getCycle().getType(), list);
+            types.put(item.getCycle().getType().getName(), list);
         }
         list.add(item);
     }
@@ -129,7 +129,7 @@ class TrainCachedCycles {
         if (overlapping)
             return true;
         
-        String type = newItem.getCycle().getType();
+        String type = newItem.getCycle().getType().getName();
 
         // test not overlapping cycle item
         boolean in = false;

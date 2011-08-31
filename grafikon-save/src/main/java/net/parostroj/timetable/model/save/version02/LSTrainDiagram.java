@@ -73,7 +73,7 @@ public class LSTrainDiagram {
         i = 0;
         for (List<TrainsCycle> lCycles : diagram.getCyclesMap().values()) {
             for (TrainsCycle cycle : lCycles) {
-                LSTrainsCycle lsCycle = new LSTrainsCycle(cycle, data, cycle.getType());
+                LSTrainsCycle lsCycle = new LSTrainsCycle(cycle, data, cycle.getType().getName());
                 cycles[i++] = lsCycle;
             }
         }
