@@ -46,8 +46,8 @@ public class AfterLoadCheck {
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LENGTH_UNIT);
 
         // add default trains cycle types (if already defined - no action)
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE, TrainsCycleType.DRIVER_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE, TrainsCycleType.ENGINE_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE, TrainsCycleType.TRAIN_UNIT_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
+        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
     }
 }

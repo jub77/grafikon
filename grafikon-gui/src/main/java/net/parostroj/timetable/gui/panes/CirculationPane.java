@@ -98,7 +98,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         String name = newNameTextField.getText();
         if (!delegate.getTrainDiagram().getCycleTypeNames().contains(name) && !TrainsCycleType.isDefaultType(name)) {
-            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name, name); 
+            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name); 
             diagram.addCyclesType(type);
             Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>(type);
             typesComboBox.addItem(wrapper);
