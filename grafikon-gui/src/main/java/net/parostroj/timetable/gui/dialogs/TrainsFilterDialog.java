@@ -22,6 +22,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * @author jub
  */
 public class TrainsFilterDialog extends javax.swing.JDialog {
+    
+    private static final int COLUMNS = 3;
 
     private List<Pair<TrainType,JCheckBox>> typesList;
     private Set<TrainType> selectedTypes;
@@ -36,7 +38,7 @@ public class TrainsFilterDialog extends javax.swing.JDialog {
         if (diagram == null)
             return;
         typesPanel.removeAll();
-        typesPanel.setLayout(new GridLayout(diagram.getTrainTypes().size(), 1));
+        typesPanel.setLayout(new GridLayout((diagram.getTrainTypes().size() - 1) / COLUMNS + 1, COLUMNS));
         typesList = new LinkedList<Pair<TrainType, JCheckBox>>();
         for (TrainType type : diagram.getTrainTypes()) {
             JCheckBox checkBox = new JCheckBox(type.getAbbr() + " (" + type.getDesc() + ")");
