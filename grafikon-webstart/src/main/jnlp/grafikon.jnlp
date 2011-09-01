@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.11" href="grafikon.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.12" href="grafikon.jnlp">
     <information>
-        <title>Grafikon 0.11</title>
+        <title>Grafikon 0.12</title>
         <vendor>jub</vendor>
-        <description>Grafikon 0.11</description>
-        <description kind="short">Grafikon 0.11</description>
+        <description>Grafikon 0.12</description>
+        <description kind="short">Grafikon 0.12</description>
         <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
         <icon href="grafikon.gif"/>
         <icon href="splashscreen.png" kind="splash"/>
