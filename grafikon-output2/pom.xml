@@ -6,7 +6,6 @@
         <artifactId>grafikon</artifactId>
         <version>1</version>
     </parent>
-    <groupId>net.parostroj</groupId>
     <artifactId>grafikon-output2</artifactId>
     <version>${grafikon.version}</version>
     <packaging>jar</packaging>
