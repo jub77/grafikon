@@ -338,7 +338,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
+                fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
             }
         };
         this.attributes.addListener(attributesListener);
