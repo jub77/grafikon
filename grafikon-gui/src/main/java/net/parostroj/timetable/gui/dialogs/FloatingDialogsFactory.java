@@ -15,10 +15,7 @@ import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Mediator;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
@@ -324,6 +321,12 @@ public class FloatingDialogsFactory {
                         break;
                     case CYCLE_TYPE_REMOVED:
                         panel.typeRemoved((TrainsCycleType) event.getObject());
+                        break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().getName().equals(TrainDiagram.ATTR_FROM_TIME)
+                                || event.getAttributeChange().getName().equals(TrainDiagram.ATTR_TO_TIME)) {
+                            panel.timeLimitsUpdated();
+                        }
                         break;
                 }
             }

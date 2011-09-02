@@ -5,13 +5,11 @@
  */
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
+import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
@@ -22,11 +20,20 @@ import net.parostroj.timetable.model.TrainsCycleType;
  * @author jub
  */
 public class CirculationView extends javax.swing.JPanel {
+    
+    private static final int DESC_SIZE = 15;
+    private static final int BORDER = 5;
+    
+    private static final Color COLOR_1 = new Color(210, 210, 210);
+    private static final Color COLOR_2 = new Color(230, 230, 230);
 
     private TrainDiagram diagram;
     private int count = 0;
+    private int lowerLimit = -1;
+    private int upperLimit = -1;
     private Dimension charSize = null;
     private TrainsCycleType type;
+    private int hour = 40;
 
     /** Creates new form CirculationView */
     public CirculationView() {
@@ -48,26 +55,66 @@ public class CirculationView extends javax.swing.JPanel {
     }
     
     private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
-            int start = 0;
-            for (TrainsCycle circulation : circulations) {
-                start += charSize.height;
-                paintCirculation(g, circulation, new Point(charSize.width, start));
-            }
+        int start = BORDER + charSize.height;
+        paintTimeTimeline(g);
+        for (TrainsCycle circulation : circulations) {
+            start += charSize.height;
+            paintCirculation(g, circulation, new Point(BORDER, start));
+        }
     }
     
+    private void paintTimeTimeline(Graphics2D g) {
+        int start = BORDER + (DESC_SIZE + 1) * charSize.width;
+        Dimension size = this.getPreferredSize();
+        int end = size.width - BORDER;
+        int x = start - (int)((lowerLimit / (double) 3600) * hour);
+        int oldX = start;
+        int height = size.height - 2 * BORDER - charSize.height;
+        boolean odd = true;
+        for (int h = 0; h <= 24; h++) {
+            g.setColor(odd ? COLOR_1 : COLOR_2);
+            boolean digits = x >= start; 
+            if (x > start) {
+                if (x > end) {
+                    x = end;
+                }
+                digits = x <= end;
+                g.fillRect(oldX, BORDER + charSize.height, x - oldX, height);
+                oldX = x;
+            }
+            if (digits) {
+                g.setColor(Color.BLACK);
+                String hStr = Integer.valueOf(h).toString();
+                Rectangle2D bounds = g.getFont().getStringBounds(hStr, g.getFontRenderContext());
+                g.drawString(hStr, x - (int)bounds.getWidth() / 2, BORDER + charSize.height);
+                if (x == end)
+                    break;
+            }
+            odd = !odd;
+            x += hour;
+        }
+    }
+
     private void paintCirculation(Graphics2D g, TrainsCycle circulation, Point position) {
+        g.setColor(Color.BLACK);
         g.drawString(circulation.getName(), position.x, position.y);
     }
     
     private void repaintAndUpdateSize() {
-        int newCount;
-        if (diagram == null || type == null) {
-            newCount = 0;
-        } else {
+        int newCount = 0, newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
+        if (diagram != null && type != null) {
             newCount = diagram.getCycles(type.getName()).size();
+            Integer value = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            if (value != null)
+                newLowerLimit = value.intValue();
+            value = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            if (value != null)
+                newUpperLimit = value.intValue();
         }
-        if (newCount != count) {
+        if (newCount != count || newLowerLimit != lowerLimit || newUpperLimit != upperLimit) {
             count = newCount;
+            lowerLimit = newLowerLimit;
+            upperLimit = newUpperLimit;
             this.revalidate();
         }
         this.repaint();
@@ -80,7 +127,18 @@ public class CirculationView extends javax.swing.JPanel {
             Rectangle2D bounds = g.getFont().getStringBounds("M", g.getFontRenderContext());
             charSize = new Dimension((int)bounds.getWidth(), (int)bounds.getHeight());
         }
-        return new Dimension(100, charSize.height * count);
+        return this.getSizeImpl();
+    }
+    
+    private Dimension getSizeImpl() {
+        if (diagram == null || type == null)
+            return new Dimension(0, 0);
+        else {
+            int height = charSize.height * (count + 1) + BORDER * 2;
+            int width = charSize.width * (DESC_SIZE + 1) + BORDER * 2
+                    + (int)(hour * ((upperLimit - lowerLimit) / (double) 3600));
+            return new Dimension(width, height);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -112,6 +170,10 @@ public class CirculationView extends javax.swing.JPanel {
 
     public void setType(TrainsCycleType type) {
         this.type = type;
+        this.repaintAndUpdateSize();
+    }
+
+    public void timeLimitsUpdated() {
         this.repaintAndUpdateSize();
     }
 }

@@ -58,6 +58,10 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     public void typeRemoved(TrainsCycleType type) {
         typeComboBox.removeItem(new Wrapper<TrainsCycleType>(type));
     }
+    
+    public void timeLimitsUpdated() {
+        circulationView.timeLimitsUpdated();
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
