@@ -13,10 +13,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
 
 /**
  * View with circulations of certain type.
@@ -161,16 +158,29 @@ public class CirculationView extends javax.swing.JPanel {
         }
         
         // testing - row delimiters
-        g.setColor(Color.RED);
-        for (int i = 0; i < layout.rows; i++) {
-            int p = layout.getRow(i) + layout.row;
-            g.drawLine(0, p, layout.size.width, p);
+        g.setColor(new Color(170, 170, 170));
+        for (int i = 0; i <= layout.rows; i++) {
+            int p = layout.getRow(i);
+            g.drawLine(layout.border, p, layout.size.width - 2 * layout.border, p);
         }
     }
 
     private void paintCirculation(Graphics2D g, TrainsCycle circulation, int row) {
         g.setColor(Color.BLACK);
-        g.drawString(circulation.getName(), layout.border, layout.getRow(row) + layout.row - layout.rowGapT);
+        int textY = layout.getRow(row) + layout.row - layout.rowGapT;
+        g.drawString(circulation.getName(), layout.border, textY);
+        // rectangle for each item
+        int y = layout.getRow(row) + layout.rowGap;
+        int height = layout.row - 2 * layout.rowGap;
+        for (TrainsCycleItem item : circulation) {
+            int x = layout.border + layout.description + (int) (layout.step * (item.getStartTime() - layout.fromTime));
+            int width = (int) ((item.getEndTime() - item.getStartTime()) * layout.step);
+            g.setColor(Color.RED);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            g.drawRect(x, y, width, height);
+            g.drawString(item.getTrain().getName(), x + layout.letter.width / 8, textY);
+        }
     }
     
     private void repaintAndUpdateSize() {
