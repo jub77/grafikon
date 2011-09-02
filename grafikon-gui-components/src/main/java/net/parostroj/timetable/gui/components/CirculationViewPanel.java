@@ -121,9 +121,9 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_typeComboBoxItemStateChanged
-        if (evt.getStateChange() == ItemEvent.DESELECTED) {
+        if (evt.getStateChange() == ItemEvent.DESELECTED && typeComboBox.getSelectedItem() == null) {
             circulationView.setType(null);
-        } else {
+        } else if (evt.getStateChange() == ItemEvent.SELECTED){
             circulationView.setType((TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement());
         }
     }//GEN-LAST:event_typeComboBoxItemStateChanged
