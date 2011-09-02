@@ -157,11 +157,11 @@ public class CirculationView extends javax.swing.JPanel {
             }
         }
         
-        // testing - row delimiters
+        // row delimiters
         g.setColor(new Color(170, 170, 170));
         for (int i = 0; i <= layout.rows; i++) {
             int p = layout.getRow(i);
-            g.drawLine(layout.border, p, layout.size.width - 2 * layout.border, p);
+            g.drawLine(layout.border, p, layout.size.width - layout.border, p);
         }
     }
 
