@@ -108,7 +108,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         sizeSlider.setMinorTickSpacing(1);
         sizeSlider.setPaintTicks(true);
         sizeSlider.setSnapToTicks(true);
-        sizeSlider.setValue(3);
+        sizeSlider.setValue(5);
         sizeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sizeSliderStateChanged(evt);
