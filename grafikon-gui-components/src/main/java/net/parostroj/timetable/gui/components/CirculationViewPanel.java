@@ -62,6 +62,14 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     public void timeLimitsUpdated() {
         circulationView.timeLimitsUpdated();
     }
+    
+    public void setSizeSlider(int size) {
+        sizeSlider.setValue(size);
+    }
+    
+    public int geSizeSlider() {
+        return sizeSlider.getValue();
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -94,6 +102,18 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             }
         });
         leftPanel.add(typeComboBox);
+
+        sizeSlider.setMajorTickSpacing(5);
+        sizeSlider.setMaximum(10);
+        sizeSlider.setMinorTickSpacing(1);
+        sizeSlider.setPaintTicks(true);
+        sizeSlider.setSnapToTicks(true);
+        sizeSlider.setValue(3);
+        sizeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sizeSliderStateChanged(evt);
+            }
+        });
         leftPanel.add(sizeSlider);
 
         buttonPanel.add(leftPanel, java.awt.BorderLayout.CENTER);
@@ -127,6 +147,12 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             circulationView.setType((TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement());
         }
     }//GEN-LAST:event_typeComboBoxItemStateChanged
+
+    private void sizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sizeSliderStateChanged
+        if (!sizeSlider.getValueIsAdjusting()) {
+            circulationView.setStepWidth(sizeSlider.getValue());
+        }
+    }//GEN-LAST:event_sizeSliderStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.CirculationView circulationView;

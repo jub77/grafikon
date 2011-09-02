@@ -340,11 +340,13 @@ public class FloatingDialogsFactory {
             @Override
             public void saveToPreferences(AppPreferences prefs) {
                 super.saveToPreferences(prefs);
+                prefs.setInt(createStorageKey("size"), panel.geSizeSlider());
             }
             
             @Override
             public void loadFromPreferences(AppPreferences prefs) {
                 super.loadFromPreferences(prefs);
+                panel.setSizeSlider(prefs.getInt(createStorageKey("size"), panel.geSizeSlider()));
             }
         };
         return dialog;

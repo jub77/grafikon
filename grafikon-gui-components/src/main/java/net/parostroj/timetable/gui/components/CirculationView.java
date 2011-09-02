@@ -26,9 +26,8 @@ public class CirculationView extends javax.swing.JPanel {
 
         public static final double BORDER = 1d;
         public static final double TITLE = 1.2d;
-        public static final double ROW = 2.0d;
+        public static final double ROW = 2.5d;
         public static final int DESCRIPTION = 15;
-        public static final double STEP = 8 / 3600d;
         
         public boolean init;
         public int title;
@@ -42,10 +41,9 @@ public class CirculationView extends javax.swing.JPanel {
         public Dimension size = new Dimension(0, 0);
         public Dimension letter;
         public int titleGap;
-        public int titleGapT;
         public int rowGap;
-        public int rowGapT;
         public int textOffset;
+        public int stepWidth;
         
         public int getRow(int rowIndex) {
             return border + rowIndex * this.row + this.title;
@@ -64,12 +62,10 @@ public class CirculationView extends javax.swing.JPanel {
             this.border = (int) (this.letter.height * BORDER);
             this.row = (int) (this.letter.height * ROW);
             this.description = this.letter.width * (DESCRIPTION + 1);
-            this.step = this.letter.width * STEP;
+            this.step = this.letter.width * ((stepWidth * 1.5d + 4) / 3600d);
             this.title = (int) (this.letter.height * TITLE);
             this.titleGap = (this.title - this.letter.height) / 2;
-            this.titleGapT = (int) (this.titleGap + textOffset);
             this.rowGap = (this.row - this.letter.height) / 2;
-            this.rowGapT = (int) (this.rowGap + textOffset);
             this.updateSize(rows, fromTime, toTime);
         }
         
@@ -142,7 +138,7 @@ public class CirculationView extends javax.swing.JPanel {
             x += layout.step * 3600;
         }
         int seconds = 0;
-        int titleTextPos = layout.border + layout.title - layout.titleGapT;
+        int titleTextPos = layout.border + layout.title - layout.titleGap - layout.textOffset;
         for (int i = 0; i <= 24; i++) {
             g.setColor(Color.BLACK);
             seconds = i * 3600;
@@ -167,7 +163,7 @@ public class CirculationView extends javax.swing.JPanel {
 
     private void paintCirculation(Graphics2D g, TrainsCycle circulation, int row) {
         g.setColor(Color.BLACK);
-        int textY = layout.getRow(row) + layout.row - layout.rowGapT;
+        int textY = layout.getRow(row) + layout.row - layout.rowGap - layout.textOffset;
         g.drawString(circulation.getName(), layout.border, textY);
         // rectangle for each item
         int y = layout.getRow(row) + layout.rowGap;
@@ -245,5 +241,12 @@ public class CirculationView extends javax.swing.JPanel {
 
     public void timeLimitsUpdated() {
         this.repaintAndUpdateSize();
+    }
+    
+    public void setStepWidth(int size) {
+        this.layout.stepWidth = size;
+        this.layout.updateValues((Graphics2D) this.getGraphics());
+        this.revalidate();
+        this.repaint();
     }
 }
