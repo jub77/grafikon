@@ -5,7 +5,11 @@
  */
 package net.parostroj.timetable.gui.components;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
@@ -21,19 +25,77 @@ import net.parostroj.timetable.model.TrainsCycleType;
  */
 public class CirculationView extends javax.swing.JPanel {
     
-    private static final int DESC_SIZE = 15;
-    private static final int BORDER = 5;
+    private static class Layout {
+
+        public static final double BORDER = 1d;
+        public static final double TITLE = 1.2d;
+        public static final double ROW = 2.0d;
+        public static final int DESCRIPTION = 15;
+        public static final double STEP = 8 / 3600d;
+        
+        public boolean init;
+        public int title;
+        public int border;
+        public int row;
+        public int description;
+        public double step;
+        public int rows;
+        public int fromTime;
+        public int toTime;
+        public Dimension size = new Dimension(0, 0);
+        public Dimension letter;
+        public int titleGap;
+        public int titleGapT;
+        public int rowGap;
+        public int rowGapT;
+        public int textOffset;
+        
+        public int getRow(int rowIndex) {
+            return border + rowIndex * this.row + this.title;
+        }
+        
+        public void updateValues(Graphics2D g) {
+            if (!this.init) {
+                TextLayout tl1 = new TextLayout("M", g.getFont(), g.getFontRenderContext());
+                TextLayout tl2 = new TextLayout("Čy", g.getFont(), g.getFontRenderContext());
+                Rectangle2D b1 = tl1.getBounds();
+                Rectangle2D b2 = tl2.getBounds();
+                this.textOffset = (int) (b2.getHeight() + b2.getY());
+                this.letter = new Dimension((int) b1.getWidth(), (int) b2.getHeight());
+                this.init = true;
+            }
+            this.border = (int) (this.letter.height * BORDER);
+            this.row = (int) (this.letter.height * ROW);
+            this.description = this.letter.width * (DESCRIPTION + 1);
+            this.step = this.letter.width * STEP;
+            this.title = (int) (this.letter.height * TITLE);
+            this.titleGap = (this.title - this.letter.height) / 2;
+            this.titleGapT = (int) (this.titleGap + textOffset);
+            this.rowGap = (this.row - this.letter.height) / 2;
+            this.rowGapT = (int) (this.rowGap + textOffset);
+            this.updateSize(rows, fromTime, toTime);
+        }
+        
+        public void updateSize(int rows, int fromTime, int toTime) {
+            if (rows == 0) {
+                size = new Dimension(0, 0);
+            } else {
+                this.rows = rows;
+                this.fromTime = fromTime;
+                this.toTime = toTime;
+                int height = 2 * border + rows * row + title;
+                int width = 2 * border + description + (int) ((toTime - fromTime) * step);
+                size = new Dimension(width, height);
+            }
+        }
+    }
     
     private static final Color COLOR_1 = new Color(210, 210, 210);
     private static final Color COLOR_2 = new Color(230, 230, 230);
 
     private TrainDiagram diagram;
-    private int count = 0;
-    private int lowerLimit = -1;
-    private int upperLimit = -1;
-    private Dimension charSize = null;
     private TrainsCycleType type;
-    private int hour = 40;
+    private Layout layout = new Layout();
 
     /** Creates new form CirculationView */
     public CirculationView() {
@@ -55,49 +117,60 @@ public class CirculationView extends javax.swing.JPanel {
     }
     
     private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
-        int start = BORDER + charSize.height;
         paintTimeTimeline(g);
+        int row = 0;
         for (TrainsCycle circulation : circulations) {
-            start += charSize.height;
-            paintCirculation(g, circulation, new Point(BORDER, start));
+            paintCirculation(g, circulation, row++);
         }
     }
     
     private void paintTimeTimeline(Graphics2D g) {
-        int start = BORDER + (DESC_SIZE + 1) * charSize.width;
-        Dimension size = this.getPreferredSize();
-        int end = size.width - BORDER;
-        int x = start - (int)((lowerLimit / (double) 3600) * hour);
-        int oldX = start;
-        int height = size.height - 2 * BORDER - charSize.height;
+        int startX = layout.border + layout.description;
+        int startY = layout.border;
+        int end = layout.size.width - layout.border;
+        int x = startX - (int)(layout.fromTime * layout.step);
+        int oldX = startX;
+        int height = layout.size.height - 2 * layout.border;
         boolean odd = true;
         for (int h = 0; h <= 24; h++) {
             g.setColor(odd ? COLOR_1 : COLOR_2);
-            boolean digits = x >= start; 
-            if (x > start) {
+            if (x > startX) {
                 if (x > end) {
                     x = end;
                 }
-                digits = x <= end;
-                g.fillRect(oldX, BORDER + charSize.height, x - oldX, height);
+                g.fillRect(oldX, startY, x - oldX, height);
                 oldX = x;
             }
-            if (digits) {
-                g.setColor(Color.BLACK);
-                String hStr = Integer.valueOf(h).toString();
-                Rectangle2D bounds = g.getFont().getStringBounds(hStr, g.getFontRenderContext());
-                g.drawString(hStr, x - (int)bounds.getWidth() / 2, BORDER + charSize.height);
-                if (x == end)
-                    break;
-            }
             odd = !odd;
-            x += hour;
+            x += layout.step * 3600;
+        }
+        int seconds = 0;
+        int titleTextPos = layout.border + layout.title - layout.titleGapT;
+        for (int i = 0; i <= 24; i++) {
+            g.setColor(Color.BLACK);
+            seconds = i * 3600;
+            if (seconds >= layout.fromTime && seconds <= layout.toTime) {
+                String hStr = Integer.toString(i);
+                g.setColor(Color.BLACK);
+                Rectangle2D bounds = g.getFont().getStringBounds(hStr, g.getFontRenderContext());
+                int pos = startX + (int) ((seconds - layout.fromTime) * layout.step);
+                g.drawString(hStr, pos - (int)bounds.getWidth() / 2, titleTextPos);
+                g.setColor(Color.BLACK);
+                g.drawLine(pos, layout.border + layout.title, pos, layout.size.height - layout.border);
+            }
+        }
+        
+        // testing - row delimiters
+        g.setColor(Color.RED);
+        for (int i = 0; i < layout.rows; i++) {
+            int p = layout.getRow(i) + layout.row;
+            g.drawLine(0, p, layout.size.width, p);
         }
     }
 
-    private void paintCirculation(Graphics2D g, TrainsCycle circulation, Point position) {
+    private void paintCirculation(Graphics2D g, TrainsCycle circulation, int row) {
         g.setColor(Color.BLACK);
-        g.drawString(circulation.getName(), position.x, position.y);
+        g.drawString(circulation.getName(), layout.border, layout.getRow(row) + layout.row - layout.rowGapT);
     }
     
     private void repaintAndUpdateSize() {
@@ -111,10 +184,9 @@ public class CirculationView extends javax.swing.JPanel {
             if (value != null)
                 newUpperLimit = value.intValue();
         }
-        if (newCount != count || newLowerLimit != lowerLimit || newUpperLimit != upperLimit) {
-            count = newCount;
-            lowerLimit = newLowerLimit;
-            upperLimit = newUpperLimit;
+        if (newCount != layout.rows || newLowerLimit != layout.fromTime 
+                || newUpperLimit != layout.toTime) {
+            layout.updateSize(newCount, newLowerLimit, newUpperLimit);
             this.revalidate();
         }
         this.repaint();
@@ -122,25 +194,13 @@ public class CirculationView extends javax.swing.JPanel {
     
     @Override
     public Dimension getPreferredSize() {
-        if (charSize == null) {
+        if (!layout.init) {
             Graphics2D g = (Graphics2D) this.getGraphics();
-            Rectangle2D bounds = g.getFont().getStringBounds("M", g.getFontRenderContext());
-            charSize = new Dimension((int)bounds.getWidth(), (int)bounds.getHeight());
+            layout.updateValues(g);
         }
-        return this.getSizeImpl();
+        return layout.size;
     }
     
-    private Dimension getSizeImpl() {
-        if (diagram == null || type == null)
-            return new Dimension(0, 0);
-        else {
-            int height = charSize.height * (count + 1) + BORDER * 2;
-            int width = charSize.width * (DESC_SIZE + 1) + BORDER * 2
-                    + (int)(hour * ((upperLimit - lowerLimit) / (double) 3600));
-            return new Dimension(width, height);
-        }
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
