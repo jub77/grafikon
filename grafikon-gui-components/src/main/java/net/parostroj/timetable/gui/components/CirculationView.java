@@ -43,7 +43,7 @@ public class CirculationView extends javax.swing.JPanel {
         public int titleGap;
         public int rowGap;
         public int textOffset;
-        public int stepWidth;
+        public int stepWidth = 5;
         
         public int getRow(int rowIndex) {
             return border + rowIndex * this.row + this.title;
