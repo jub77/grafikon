@@ -24,10 +24,10 @@ public class CirculationView extends javax.swing.JPanel {
     
     private static class Layout {
 
-        public static final double BORDER = 1d;
-        public static final double TITLE = 1.2d;
-        public static final double ROW = 2.5d;
-        public static final int DESCRIPTION = 15;
+        private static final double BORDER = 1d;
+        private static final double TITLE = 1.2d;
+        private static final double ROW = 2.5d;
+        private static final int DESCRIPTION = 15;
         
         public boolean init;
         public int title;

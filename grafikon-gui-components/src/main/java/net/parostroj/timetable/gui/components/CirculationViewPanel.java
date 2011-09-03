@@ -35,6 +35,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }
     
     public void setDiagram(TrainDiagram diagram) {
+        saveButton.setEnabled(diagram != null);
         circulationView.setDiagram(diagram);
         this.updateListOfTypes(diagram);
     }
@@ -85,7 +86,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         typeComboBox = new javax.swing.JComboBox();
         sizeSlider = new javax.swing.JSlider();
         javax.swing.JPanel rightPanel = new javax.swing.JPanel();
-        javax.swing.JButton saveButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         circulationView = new net.parostroj.timetable.gui.components.CirculationView();
 
@@ -119,6 +120,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         buttonPanel.add(leftPanel, java.awt.BorderLayout.CENTER);
 
         saveButton.setText(ResourceLoader.getString("gt.save")); // NOI18N
+        saveButton.setEnabled(false);
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -156,6 +158,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
+    private javax.swing.JButton saveButton;
     private javax.swing.JSlider sizeSlider;
     private javax.swing.JComboBox typeComboBox;
     // End of variables declaration//GEN-END:variables
