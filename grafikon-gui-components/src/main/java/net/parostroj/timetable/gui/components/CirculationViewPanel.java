@@ -5,8 +5,14 @@
  */
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Dialog;
 import java.awt.event.ItemEvent;
 
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
+import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -19,6 +25,8 @@ import net.parostroj.timetable.model.TrainsCycleType;
  * @author jub
  */
 public class CirculationViewPanel extends javax.swing.JPanel {
+
+    private SaveImageDialog dialog;
 
     /** Creates new form CirculationViewPanel */
     public CirculationViewPanel() {
@@ -38,14 +46,17 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         saveButton.setEnabled(diagram != null);
         circulationView.setDiagram(diagram);
         this.updateListOfTypes(diagram);
+        this.enabledDisableSave();
     }
     
     public void circulationRemoved(TrainsCycle circulation) {
         circulationView.circulationRemoved(circulation);
+        this.enabledDisableSave();
     }
     
     public void circulationAdded(TrainsCycle circulation) {
         circulationView.circulationAdded(circulation);
+        this.enabledDisableSave();
     }
     
     public void circulationUpdated(TrainsCycle circulation) {
@@ -72,6 +83,10 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         return sizeSlider.getValue();
     }
 
+    private void enabledDisableSave() {
+        saveButton.setEnabled(circulationView.getCount() > 0);
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -140,6 +155,18 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        if (dialog == null)
+            dialog = new SaveImageDialog((Dialog)this.getTopLevelAncestor(), true);
+        dialog.setLocationRelativeTo(this.getParent());
+        dialog.setSaveSize(circulationView.getPreferredSize());
+        dialog.setSizeChangeEnabled(false);
+        dialog.setVisible(true);
+        if (!dialog.isSave()) {
+            return;
+        }
+        ActionContext actionContext = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        SaveImageAction action = new SaveImageAction(actionContext, dialog, circulationView);
+        ActionHandler.getInstance().execute(action);
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_typeComboBoxItemStateChanged
@@ -148,6 +175,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         } else if (evt.getStateChange() == ItemEvent.SELECTED){
             circulationView.setType((TrainsCycleType) ((Wrapper<?>) typeComboBox.getSelectedItem()).getElement());
         }
+        this.enabledDisableSave();
     }//GEN-LAST:event_typeComboBoxItemStateChanged
 
     private void sizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sizeSliderStateChanged

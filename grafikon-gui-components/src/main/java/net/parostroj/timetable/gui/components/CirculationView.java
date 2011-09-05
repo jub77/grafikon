@@ -14,13 +14,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
 
 /**
  * View with circulations of certain type.
  *
  * @author jub
  */
-public class CirculationView extends javax.swing.JPanel {
+public class CirculationView extends javax.swing.JPanel implements SaveImageAction.Image {
     
     private static class Layout {
 
@@ -72,6 +73,7 @@ public class CirculationView extends javax.swing.JPanel {
         public void updateSize(int rows, int fromTime, int toTime) {
             if (rows == 0) {
                 size = new Dimension(0, 0);
+                this.rows = 0;
             } else {
                 this.rows = rows;
                 this.fromTime = fromTime;
@@ -96,9 +98,14 @@ public class CirculationView extends javax.swing.JPanel {
     }
 
     @Override
+    public void paintImage(Graphics g) {
+        this.paint(g);
+    }
+    
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (diagram != null && type != null) {
+        if (diagram != null && type != null && layout.rows > 0) {
             paintCirculations((Graphics2D) g, diagram.getCycles(type.getName()));
         }
     }
@@ -196,6 +203,10 @@ public class CirculationView extends javax.swing.JPanel {
             this.revalidate();
         }
         this.repaint();
+    }
+    
+    public int getCount() {
+        return layout.rows;
     }
     
     @Override

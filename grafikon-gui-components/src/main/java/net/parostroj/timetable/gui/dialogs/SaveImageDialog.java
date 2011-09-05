@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.DefaultComboBoxModel;
@@ -94,7 +95,16 @@ public class SaveImageDialog extends javax.swing.JDialog {
     public SaveImageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+        init();
+    }
+    
+    public SaveImageDialog(Dialog dialog, boolean modal) {
+        super(dialog, modal);
+        initComponents();
+        init();
+    }
+    
+    private void init() {
         xTextField.setValue(Integer.valueOf(DEFAULT_WIDTH));
         yTextField.setValue(Integer.valueOf(DEFAULT_HEIGHT));
         
