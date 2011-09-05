@@ -5,16 +5,13 @@
  */
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
-import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
+import net.parostroj.timetable.model.*;
 
 /**
  * View with circulations of certain type.
@@ -29,6 +26,9 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         private static final double TITLE = 1.2d;
         private static final double ROW = 2.5d;
         private static final int DESCRIPTION = 15;
+        private static final double SMALL_FONT = 0.8d;
+        private static final int START_WIDTH = 7;
+        private static final double STEP_RATIO = 2.0d;
         
         public boolean init;
         public int title;
@@ -41,10 +41,14 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         public int toTime;
         public Dimension size = new Dimension(0, 0);
         public Dimension letter;
+        public Dimension letterSmall;
         public int titleGap;
         public int rowGap;
+        public int rowGapSmall;
         public int textOffset;
+        public int textOffsetSmall;
         public int stepWidth = 5;
+        public Font smallFont;
         
         public int getRow(int rowIndex) {
             return border + rowIndex * this.row + this.title;
@@ -54,19 +58,27 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             if (!this.init) {
                 TextLayout tl1 = new TextLayout("M", g.getFont(), g.getFontRenderContext());
                 TextLayout tl2 = new TextLayout("Čy", g.getFont(), g.getFontRenderContext());
+                
+                smallFont = g.getFont().deriveFont(g.getFont().getSize() * (float)SMALL_FONT);
+                TextLayout stl = new TextLayout("Čy", smallFont, g.getFontRenderContext());
+                
                 Rectangle2D b1 = tl1.getBounds();
                 Rectangle2D b2 = tl2.getBounds();
+                Rectangle2D bs = stl.getBounds();
                 this.textOffset = (int) (b2.getHeight() + b2.getY());
+                this.textOffsetSmall = (int) (bs.getHeight() + bs.getY());
                 this.letter = new Dimension((int) b1.getWidth(), (int) b2.getHeight());
+                this.letterSmall = new Dimension((int) bs.getWidth(), (int) bs.getHeight());
                 this.init = true;
             }
             this.border = (int) (this.letter.height * BORDER);
             this.row = (int) (this.letter.height * ROW);
             this.description = this.letter.width * (DESCRIPTION + 1);
-            this.step = this.letter.width * ((stepWidth * 1.5d + 4) / 3600d);
+            this.step = this.letter.width * ((stepWidth * STEP_RATIO + START_WIDTH) / 3600d);
             this.title = (int) (this.letter.height * TITLE);
             this.titleGap = (this.title - this.letter.height) / 2;
             this.rowGap = (this.row - this.letter.height) / 2;
+            this.rowGapSmall = (this.row - this.letterSmall.height * 2) / 2;
             this.updateSize(rows, fromTime, toTime);
         }
         
@@ -87,6 +99,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     
     private static final Color COLOR_1 = new Color(210, 210, 210);
     private static final Color COLOR_2 = new Color(230, 230, 230);
+    private static final Color COLOR_LINE = new Color(170, 170, 170);
 
     private TrainDiagram diagram;
     private TrainsCycleType type;
@@ -157,13 +170,13 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
                 Rectangle2D bounds = tl.getBounds();
                 int pos = startX + (int) ((seconds - layout.fromTime) * layout.step);
                 g.drawString(hStr, pos - (int)bounds.getWidth() / 2, titleTextPos);
-                g.setColor(Color.BLACK);
+                g.setColor(COLOR_LINE);
                 g.drawLine(pos, layout.border + layout.title, pos, layout.size.height - layout.border);
             }
         }
         
         // row delimiters
-        g.setColor(new Color(170, 170, 170));
+        g.setColor(COLOR_LINE);
         for (int i = 0; i <= layout.rows; i++) {
             int p = layout.getRow(i);
             g.drawLine(layout.border, p, layout.size.width - layout.border, p);
@@ -173,10 +186,13 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     private void paintCirculation(Graphics2D g, TrainsCycle circulation, int row) {
         g.setColor(Color.BLACK);
         int textY = layout.getRow(row) + layout.row - layout.rowGap - layout.textOffset;
+        int partY = layout.getRow(row) + layout.rowGapSmall + layout.letterSmall.height - layout.textOffsetSmall;
         g.drawString(circulation.getName(), layout.border, textY);
         // rectangle for each item
-        int y = layout.getRow(row) + layout.rowGap;
-        int height = layout.row - 2 * layout.rowGap;
+        int y = layout.getRow(row) + layout.row - layout.rowGapSmall - layout.letterSmall.height;
+        int height = layout.letterSmall.height;
+        Font backup = g.getFont();
+        g.setFont(layout.smallFont);
         for (TrainsCycleItem item : circulation) {
             int x = layout.border + layout.description + (int) (layout.step * (item.getStartTime() - layout.fromTime));
             int width = (int) ((item.getEndTime() - item.getStartTime()) * layout.step);
@@ -184,8 +200,9 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             g.fillRect(x, y, width, height);
             g.setColor(Color.BLACK);
             g.drawRect(x, y, width, height);
-            g.drawString(item.getTrain().getName(), x + layout.letter.width / 8, textY);
+            g.drawString(item.getTrain().getName(), x, partY);
         }
+        g.setFont(backup);
     }
     
     private void repaintAndUpdateSize() {
