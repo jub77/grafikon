@@ -128,23 +128,24 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         int startX = layout.border + layout.description;
         int startY = layout.border;
         int end = layout.size.width - layout.border;
-        int x = startX - (int)(layout.fromTime * layout.step);
         int oldX = startX;
         int height = layout.size.height - 2 * layout.border;
+        int seconds = 0;
         boolean odd = true;
         for (int h = 0; h <= 24; h++) {
+            int x = startX + (int) ((seconds - layout.fromTime) * layout.step);
             g.setColor(odd ? COLOR_1 : COLOR_2);
             if (x > startX) {
                 if (x > end) {
                     x = end;
                 }
-                g.fillRect(oldX, startY, x - oldX, height);
+                g.fillRect(oldX, startY, x - oldX + 1, height);
                 oldX = x;
             }
             odd = !odd;
-            x += layout.step * 3600;
+            seconds += 3600;
         }
-        int seconds = 0;
+        seconds = 0;
         int titleTextPos = layout.border + layout.title - layout.titleGap - layout.textOffset;
         for (int i = 0; i <= 24; i++) {
             g.setColor(Color.BLACK);
@@ -152,7 +153,8 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             if (seconds >= layout.fromTime && seconds <= layout.toTime) {
                 String hStr = Integer.toString(i);
                 g.setColor(Color.BLACK);
-                Rectangle2D bounds = g.getFont().getStringBounds(hStr, g.getFontRenderContext());
+                TextLayout tl = new TextLayout(hStr, g.getFont(), g.getFontRenderContext());
+                Rectangle2D bounds = tl.getBounds();
                 int pos = startX + (int) ((seconds - layout.fromTime) * layout.step);
                 g.drawString(hStr, pos - (int)bounds.getWidth() / 2, titleTextPos);
                 g.setColor(Color.BLACK);
