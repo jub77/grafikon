@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
+import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.util.List;
 import java.util.Map;
@@ -205,12 +206,11 @@ abstract public class GTDraw {
     }
 
     protected void paintStationNames(Graphics2D g, List<Node> stations, Map<Node, Integer> positions) {
-        int yShift = (int) (this.getDigitSize(g).getHeight() / 2);
         for (Node s : stations) {
             // ignore signals
             if (s.getType() == NodeType.SIGNAL)
                 continue;
-            String name = TransformUtil.transformStation(s, null, null);
+            String name = TransformUtil.transformStation(s, null, null).trim();
             int y = start.y + positions.get(s);
             // draw name of the station
             Font f = g.getFont();
@@ -225,12 +225,14 @@ abstract public class GTDraw {
                     transName += "...";
                 }
             }
-            Rectangle r = new Rectangle((int)b.getX() - 2, (int)b.getY(), (int)b.getWidth() + 4, (int)b.getHeight());
-            r.setLocation(10 + 0 + positionX - 3, y + yShift + (int)r.getY());
+            TextLayout tl = new TextLayout(transName, g.getFont(), g.getFontRenderContext());
+            Rectangle2D r = tl.getBounds();
+            Rectangle r2 = new Rectangle(10 + positionX, (int) (y + r.getY() - 2 + r.getHeight() / 2),
+                    (int) (r.getWidth() + 4), (int) (r.getHeight() + 4));
             g.setColor(background);
-            g.fill(r);
+            g.fill(r2);
             g.setColor(Color.black);
-            g.drawString(transName, 10 + 0 + positionX, y + yShift);
+            g.drawString(transName, (int) (r2.getX() + 2), (int) (r2.getY() + 2 - r.getY()));
         }
     }
 
