@@ -10,27 +10,29 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "trainName", "attributes"})
+@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "track", "trainName", "attributes"})
 public class Position {
 
     private String cycleName;
     private String cycleDescription;
     private String stationName;
     private String trainName;
+    private String track;
     private List<Attribute> attributes;
 
     public Position() {
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String trainName) {
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String trainName) {
         this.cycleName = cycleName;
         this.cycleDescription = cycleDescription;
         this.stationName = stationName;
         this.trainName = trainName;
+        this.track = track;
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String trainName, List<Attribute> attributes) {
-        this(cycleName, cycleDescription, stationName, trainName);
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String trainName, List<Attribute> attributes) {
+        this(cycleName, cycleDescription, stationName, track, trainName);
         this.attributes = attributes;
     }
 
@@ -73,5 +75,13 @@ public class Position {
 
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
+    }
+    
+    public String getTrack() {
+        return track;
+    }
+    
+    public void setTrack(String track) {
+        this.track = track;
     }
 }

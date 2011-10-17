@@ -27,7 +27,8 @@ public class PositionsExtractor {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem start = ecCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
+                String startTrack = start.getFromInterval().getTrack().getNumber();
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, startTrack, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;
@@ -39,7 +40,8 @@ public class PositionsExtractor {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem start = tucCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
+                String startTrack = start.getFromInterval().getTrack().getNumber();
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, startTrack, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
@@ -51,7 +53,8 @@ public class PositionsExtractor {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem end = ecCycle.getItems().get(ecCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
+                String endTrack = end.getToInterval().getTrack().getNumber();
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, endTrack, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;
@@ -63,7 +66,8 @@ public class PositionsExtractor {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem end = tucCycle.getItems().get(tucCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
+                String endTrack = end.getToInterval().getTrack().getNumber();
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, endTrack, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
