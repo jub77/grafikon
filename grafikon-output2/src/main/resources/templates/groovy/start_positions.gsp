@@ -40,6 +40,7 @@
         <td>${engine.cycleDescription}</td>
         <td>${engine.stationName}</td>
         <td>${engine.track}</td>
+        <td>${engine.time}</td>
         <td>${engine.trainName}</td>
     </tr>
 <% } %>
@@ -53,6 +54,7 @@
         <td>${train_unit.cycleDescription}</td>
         <td>${train_unit.stationName}</td>
         <td>${train_unit.track}</td>
+        <td>${train_unit.time}</td>
         <td>${train_unit.trainName}</td>
     </tr>
 <% } %>

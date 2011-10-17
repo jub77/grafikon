@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "track", "trainName", "attributes"})
+@XmlType(propOrder = {"cycleName", "cycleDescription", "stationName", "track", "time", "trainName", "attributes"})
 public class Position {
 
     private String cycleName;
@@ -18,21 +18,23 @@ public class Position {
     private String stationName;
     private String trainName;
     private String track;
+    private String time;
     private List<Attribute> attributes;
 
     public Position() {
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String track, String trainName) {
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, String trainName) {
         this.cycleName = cycleName;
         this.cycleDescription = cycleDescription;
         this.stationName = stationName;
         this.trainName = trainName;
         this.track = track;
+        this.time = time;
     }
 
-    public Position(String cycleName, String cycleDescription, String stationName, String track, String trainName, List<Attribute> attributes) {
-        this(cycleName, cycleDescription, stationName, track, trainName);
+    public Position(String cycleName, String cycleDescription, String stationName, String track, String time, String trainName, List<Attribute> attributes) {
+        this(cycleName, cycleDescription, stationName, track, time, trainName);
         this.attributes = attributes;
     }
 
@@ -76,12 +78,20 @@ public class Position {
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
     }
-    
+
     public String getTrack() {
         return track;
     }
-    
+
     public void setTrack(String track) {
         this.track = track;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

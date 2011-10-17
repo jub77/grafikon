@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
 
 /**
@@ -28,7 +29,8 @@ public class PositionsExtractor {
                 TrainsCycleItem start = ecCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
                 String startTrack = start.getFromInterval().getTrack().getNumber();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, startTrack, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
+                String startTime = TimeConverter.convertFromIntToText(start.getStartTime());
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;
@@ -41,7 +43,8 @@ public class PositionsExtractor {
                 TrainsCycleItem start = tucCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
                 String startTrack = start.getFromInterval().getTrack().getNumber();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, startTrack, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
+                String startTime = TimeConverter.convertFromIntToText(start.getStartTime());
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
@@ -54,7 +57,8 @@ public class PositionsExtractor {
                 TrainsCycleItem end = ecCycle.getItems().get(ecCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
                 String endTrack = end.getToInterval().getTrack().getNumber();
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, endTrack, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
+                String endTime = TimeConverter.convertFromIntToText(end.getEndTime());
+                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
             }
         }
         return result;
@@ -67,7 +71,8 @@ public class PositionsExtractor {
                 TrainsCycleItem end = tucCycle.getItems().get(tucCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
                 String endTrack = end.getToInterval().getTrack().getNumber();
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, endTrack, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
+                String endTime = TimeConverter.convertFromIntToText(end.getEndTime());
+                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
             }
         }
         return result;
