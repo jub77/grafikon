@@ -37,7 +37,7 @@ class TrainCachedCycles {
             types = new HashMap<String, List<TrainsCycleItem>>();
             map.put(interval, types);
         }
-        List<TrainsCycleItem> list = types.get(item.getCycle().getType());
+        List<TrainsCycleItem> list = types.get(item.getCycle().getType().getName());
         if (list == null) {
             list = new LinkedList<TrainsCycleItem>();
             types.put(item.getCycle().getType().getName(), list);
@@ -47,7 +47,7 @@ class TrainCachedCycles {
     
     public void remove(TrainsCycleItem item) {
         for (Map<String, List<TrainsCycleItem>> types : map.values()) {
-            List<TrainsCycleItem> items = types.get(item.getCycle().getType());
+            List<TrainsCycleItem> items = types.get(item.getCycle().getType().getName());
             if (items != null)
                 items.remove(item);
         }
