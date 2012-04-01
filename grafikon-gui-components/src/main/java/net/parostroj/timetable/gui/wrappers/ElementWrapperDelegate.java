@@ -44,13 +44,13 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate {
 
     private String toStringRoute(Route route) {
         StringBuilder builder = new StringBuilder();
-        // net part
-        if (route.isNetPart()) {
-            builder.append("* ");
-        }
         // name
         if (route.getName() != null && !"".equals(route.getName())) {
             builder.append(route.getName()).append(' ');
+        }
+        // net part
+        if (route.isNetPart()) {
+            builder.append("* ");
         }
         // nodes
         builder.append('[');
