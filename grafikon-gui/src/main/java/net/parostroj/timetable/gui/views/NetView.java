@@ -45,6 +45,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         jGraph.setDisconnectable(false);
         jGraph.setEdgeLabelsMovable(false);
         jGraph.getSelectionModel().setSelectionMode(GraphSelectionModel.SINGLE_GRAPH_SELECTION);
+        jGraph.setDoubleBuffered(false);
     }
 
     public void setGraphCallbacks(GraphSelectionListener listener, BasicMarqueeHandler handler) {
