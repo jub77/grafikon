@@ -17,6 +17,7 @@ public class Route implements ObjectWithId, Visitable {
     private String name;
     private final String id;
     private boolean netPart;
+    private String _cachedToString;
 
     /**
      * initializes routes.
@@ -91,7 +92,12 @@ public class Route implements ObjectWithId, Visitable {
     }
 
     public void setName(String name) {
+        this.clearCached();
         this.name = name;
+    }
+
+    private void clearCached() {
+        this._cachedToString = null;
     }
 
     public boolean isNetPart() {
@@ -99,6 +105,7 @@ public class Route implements ObjectWithId, Visitable {
     }
 
     public void setNetPart(boolean netPart) {
+        this.clearCached();
         this.netPart = netPart;
     }
 
@@ -121,6 +128,7 @@ public class Route implements ObjectWithId, Visitable {
      * @param route route to be added
      */
     public void add(Route route) {
+        this.clearCached();
         List<RouteSegment> addSegments = route.getSegments();
         if ((segments.size() > 0) && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
@@ -153,24 +161,27 @@ public class Route implements ObjectWithId, Visitable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        if (name != null && !"".equals(name)) {
-            builder.append(name).append(' ');
-        }
-        builder.append('[');
-        boolean first = true;
-        for (RouteSegment segment : segments) {
-            if (segment.asNode() != null) {
-                if (!first) {
-                    builder.append(',');
-                } else {
-                    first = false;
-                }
-                builder.append(segment);
+        if (_cachedToString == null) {
+            StringBuilder builder = new StringBuilder();
+            if (name != null && !"".equals(name)) {
+                builder.append(name).append(' ');
             }
+            builder.append('[');
+            boolean first = true;
+            for (RouteSegment segment : segments) {
+                if (segment.asNode() != null) {
+                    if (!first) {
+                        builder.append(',');
+                    } else {
+                        first = false;
+                    }
+                    builder.append(segment);
+                }
+            }
+            builder.append(']');
+            _cachedToString = builder.toString();
         }
-        builder.append(']');
-        return builder.toString();
+        return _cachedToString;
     }
 
     /**
