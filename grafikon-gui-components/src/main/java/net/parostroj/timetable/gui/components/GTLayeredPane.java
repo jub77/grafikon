@@ -7,17 +7,23 @@ import javax.swing.OverlayLayout;
 
 
 public class GTLayeredPane extends JLayeredPane {
+    
+    private JScrollPane scrollPane;
 
     public GTLayeredPane(GraphicalTimetableView view) {
         super();
         this.setLayout(new OverlayLayout(this));
         
-        JScrollPane sc = new JScrollPane();
-        sc.setViewportView(view);
+        scrollPane = new JScrollPane();
+        scrollPane.setViewportView(view);
         
-        Insets borderInsets = sc.getBorder().getBorderInsets(sc);
+        Insets borderInsets = scrollPane.getBorder().getBorderInsets(scrollPane);
         
-        this.add(sc, JLayeredPane.DEFAULT_LAYER);
+        this.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
         this.add(new GTStationNamesOverlay(view, borderInsets.top), JLayeredPane.PALETTE_LAYER);
+    }
+    
+    public JScrollPane getScrollPane() {
+        return scrollPane;
     }
 }
