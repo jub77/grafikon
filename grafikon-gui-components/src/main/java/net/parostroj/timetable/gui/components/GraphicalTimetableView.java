@@ -44,6 +44,20 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         public List<TrainsCycleItem> getDriverCycles(TimeInterval interval);
     }
 
+    private static class RouteRadioButtonMenuItem extends JRadioButtonMenuItem {
+
+        private final Route route;
+
+        public RouteRadioButtonMenuItem(Wrapper<Route> routeWrapper) {
+            super(routeWrapper.toString());
+            this.route = routeWrapper.getElement();
+        }
+
+        public Route getRoute() {
+            return route;
+        }
+    }
+
     private final static int MIN_WIDTH = 1000;
     private final static int MAX_WIDTH = 10000;
     private final static int WIDTH_STEPS = 10;
@@ -732,6 +746,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
             }
         }
     }
+    
+    public GTDraw getGtDraw() {
+        return draw;
+    }
+    
+    public void setDisableStationNames(Boolean disable) {
+        settings.setOption(Key.DISABLE_STATION_NAMES, disable);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
@@ -749,18 +771,4 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private javax.swing.ButtonGroup typesButtonGroup;
     private javax.swing.JRadioButtonMenuItem withTracksMenuItem;
     // End of variables declaration//GEN-END:variables
-}
-
-class RouteRadioButtonMenuItem extends JRadioButtonMenuItem {
-
-    private final Route route;
-
-    public RouteRadioButtonMenuItem(Wrapper<Route> routeWrapper) {
-        super(routeWrapper.toString());
-        this.route = routeWrapper.getElement();
-    }
-
-    public Route getRoute() {
-        return route;
-    }
 }

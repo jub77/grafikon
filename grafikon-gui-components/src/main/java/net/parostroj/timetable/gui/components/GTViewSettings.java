@@ -40,7 +40,8 @@ public class GTViewSettings {
         HIGHLIGHTED_TRAINS(HighlightedTrains.class),
         START_TIME(Integer.class),
         END_TIME(Integer.class),
-        IGNORE_TIME_LIMITS(Boolean.class);
+        IGNORE_TIME_LIMITS(Boolean.class),
+        DISABLE_STATION_NAMES(Boolean.class);
 
         private Class<?> valueClass;
 

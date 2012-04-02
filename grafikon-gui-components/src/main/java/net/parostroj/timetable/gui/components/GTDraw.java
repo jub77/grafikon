@@ -5,6 +5,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.util.List;
 import java.util.Map;
+
+import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -91,8 +93,16 @@ abstract public class GTDraw {
         this.paintStations(g);
         g.setColor(Color.BLACK);
         this.paintTrains(g);
-        this.paintStationNames(g, stations, positions);
+        if (preferences.getOption(Key.DISABLE_STATION_NAMES) != Boolean.TRUE) {
+            this.paintStationNames(g, stations, positions);
+        }
         this.finishCollecting();
+    }
+    
+    public void paintStationNames(Graphics g) {
+        if (positions == null)
+            this.computePositions();
+        this.paintStationNames((Graphics2D) g, stations, positions);
     }
     
     protected abstract void computePositions();
