@@ -9,6 +9,7 @@ import java.awt.Color;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.gui.components.GTLayeredPane;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
@@ -28,9 +29,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public TrainsPane() {
         initComponents();
         
-        scrollPane.getViewport().addChangeListener(graphicalTimetableView);
-        scrollPane.getHorizontalScrollBar().setBlockIncrement(1000);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(100);
+        scrollPane.getScrollPane().getHorizontalScrollBar().setBlockIncrement(1000);
+        scrollPane.getScrollPane().getHorizontalScrollBar().setUnitIncrement(100);
     }
 
     public void resizeColumns() {
@@ -101,8 +101,8 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     private void initComponents() {
 
         splitPane = new javax.swing.JSplitPane();
-        scrollPane = new javax.swing.JScrollPane();
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
+        scrollPane = new GTLayeredPane(graphicalTimetableView);
         panel = new javax.swing.JPanel();
         trainListView = new net.parostroj.timetable.gui.views.TrainListView();
         trainView = new net.parostroj.timetable.gui.views.TrainView();
@@ -120,8 +120,6 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             graphicalTimetableViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 172, Short.MAX_VALUE)
         );
-
-        scrollPane.setViewportView(graphicalTimetableView);
 
         splitPane.setBottomComponent(scrollPane);
 
@@ -157,7 +155,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave graphicalTimetableView;
     private javax.swing.JPanel panel;
-    private javax.swing.JScrollPane scrollPane;
+    private GTLayeredPane scrollPane;
     private javax.swing.JSplitPane splitPane;
     private net.parostroj.timetable.gui.views.TrainListView trainListView;
     private net.parostroj.timetable.gui.views.TrainView trainView;
