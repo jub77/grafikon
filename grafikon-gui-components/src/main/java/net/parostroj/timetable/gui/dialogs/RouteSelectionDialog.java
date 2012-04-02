@@ -69,6 +69,7 @@ public class RouteSelectionDialog extends JDialog {
             getList().setSelectedIndex(index);
             getList().ensureIndexIsVisible(index);
         }
+        this.pack();
     }
 
     protected void onCancel() {

@@ -5,6 +5,8 @@ import java.util.*;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate.Type;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
@@ -20,6 +22,8 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     private ThroughNodesDialog tnDialog;
     private TrainDiagram diagram;
     private WrapperListModel<Route> routes;
+    
+    private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(Type.FULL);
 
     /** Creates new form EditRoutesDialog */
     public EditRoutesDialog(java.awt.Frame parent, boolean modal) {
@@ -48,15 +52,16 @@ public class EditRoutesDialog extends javax.swing.JDialog {
                 toComboBox.addItem(n);
             }
         }
-        routes = new WrapperListModel<Route>(Wrapper.getWrapperList(diagram.getRoutes()));
+        routes = new WrapperListModel<Route>();
+        for (Route r : diagram.getRoutes()) {
+            routes.addWrapper(new Wrapper<Route>(r, RW_DELEGATE));
+        }
         routesList.setModel(routes);
 
         deleteButton.setEnabled(routesList.getSelectedIndex() != -1);
 
         throughNodes = new ArrayList<Node>();
         throughTextField.setText(throughNodes.toString());
-
-        this.pack();
     }
 
     /** This method is called from within the constructor to
@@ -234,7 +239,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         }
         // net part
         newRoute.setNetPart(netPartCheckBox.isSelected());
-        routes.addWrapper(Wrapper.getWrapper(newRoute));
+        routes.addWrapper(new Wrapper<Route>(newRoute, RW_DELEGATE));
         int newIndex = routes.getIndexOfObject(newRoute);
         routesList.setSelectedIndex(newIndex);
         routesList.ensureIndexIsVisible(newIndex);

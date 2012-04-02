@@ -71,6 +71,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             w = new Wrapper<T>(o, new TrainWrapperDelegate(
                     TrainWrapperDelegate.Type.NAME,
                     new TrainComparator(TrainComparator.Type.ASC, ((Train)o).getTrainDiagram().getTrainsData().getTrainSortPattern())));
+        } else if (o instanceof Route) {
+            w = new Wrapper<T>(o, new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT));
         } else {
             w = new Wrapper<T>(o);
         }
