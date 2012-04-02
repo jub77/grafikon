@@ -1,21 +1,25 @@
 package net.parostroj.timetable.gui.components;
 
-import static net.parostroj.timetable.gui.components.GTViewSettings.*;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.parostroj.timetable.gui.components.GTViewSettings.Key;
+import net.parostroj.timetable.gui.components.GTViewSettings.Selection;
+import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
+import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
+import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +49,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private final static int WIDTH_STEPS = 10;
     private final static int INITIAL_WIDTH = 4;
     private final static int SELECTION_RADIUS = 5;
+    private static final int ROUTE_COUNT = 20;
 
     protected GTViewSettings settings;
 
@@ -60,6 +65,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
     private Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
+
+    private JMenuItem routesMenuItem;
 
     /** Creates new form TrainGraphicalTimetableView */
     public GraphicalTimetableView() {
@@ -107,8 +114,28 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
             }
         }); 
+        routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes") + "...");
+        routesMenu.add(routesMenuItem);
+        routesMenuItem.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // show list of routes
+                RouteSelectionDialog dialog = new RouteSelectionDialog((Frame)GraphicalTimetableView.this.getTopLevelAncestor(), true);
+                dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
+                dialog.setListValues(diagram.getRoutes(), getRoute());
+                dialog.setListener(new RouteSelectionDialog.RSListener() {
+                    @Override
+                    public void routeSelected(Route route) {
+                        // set selected route
+                        setRoute(route);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
     }
-
+    
     private EditRoutesDialog getRouteDialog() {
         if (editRoutesDialog == null)
             editRoutesDialog = new EditRoutesDialog((Frame)this.getTopLevelAncestor(), true);
@@ -627,8 +654,23 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private void createMenuForRoutes(List<Route> routes) {
         routesGroup = new ButtonGroup();
         routesMenu.removeAll();
+        // sort routes
+        routes = new ArrayList<Route>(routes);
+        Collections.sort(routes, new Comparator<Route>() {
+            @Override
+            public int compare(Route o1, Route o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
+        int i = 0;
         for (Route lRoute : routes) {
-            RouteRadioButtonMenuItem item = new RouteRadioButtonMenuItem(lRoute);
+            if (i++ >= ROUTE_COUNT) {
+                // add item for list of routes
+                routesMenu.add(new javax.swing.JSeparator());
+                routesMenu.add(routesMenuItem);
+                break;
+            }
+            RouteRadioButtonMenuItem item = new RouteRadioButtonMenuItem(Wrapper.getWrapper(lRoute));
             routesMenu.add(item);
             routesGroup.add(item);
             if (lRoute == this.getRoute())
@@ -644,6 +686,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     }
 
     private void activateRouteMenuItem(Route route) {
+        routesGroup.clearSelection();
         for (int i =0; i < routesMenu.getItemCount(); i++) {
             JMenuItem item = routesMenu.getItem(i);
             if (item instanceof RouteRadioButtonMenuItem) {
@@ -712,9 +755,9 @@ class RouteRadioButtonMenuItem extends JRadioButtonMenuItem {
 
     private final Route route;
 
-    public RouteRadioButtonMenuItem(Route route) {
-        super(route.toString());
-        this.route = route;
+    public RouteRadioButtonMenuItem(Wrapper<Route> routeWrapper) {
+        super(routeWrapper.toString());
+        this.route = routeWrapper.getElement();
     }
 
     public Route getRoute() {
