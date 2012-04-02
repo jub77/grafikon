@@ -28,9 +28,6 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     /** Creates new form TrainsPane */
     public TrainsPane() {
         initComponents();
-        
-        scrollPane.getScrollPane().getHorizontalScrollBar().setBlockIncrement(1000);
-        scrollPane.getScrollPane().getHorizontalScrollBar().setUnitIncrement(100);
     }
 
     public void resizeColumns() {

@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JList;
-import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -270,7 +269,7 @@ public class FloatingDialogsFactory {
 
     private static FloatingDialog createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
-        JScrollPane scrollPane = new GTViewScrollPane(gtView);
+        GTLayeredPane scrollPane = new GTLayeredPane(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         gtView.setTrainSelector(hts);

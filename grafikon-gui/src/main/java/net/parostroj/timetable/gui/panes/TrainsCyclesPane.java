@@ -7,8 +7,6 @@ package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
 
-import javax.swing.JScrollPane;
-
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.*;
@@ -96,7 +94,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     public TrainsCyclesPane() {
         initComponents();
         graphicalTimetableView = new GraphicalTimetableViewWithSave();
-        JScrollPane scrollPane = new GTViewScrollPane(graphicalTimetableView);
+        GTLayeredPane scrollPane = new GTLayeredPane(graphicalTimetableView);
         splitPane.setBottomComponent(scrollPane);
     }
     
