@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -80,6 +81,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     // get values and provide save
                     GTDraw drawFile = null;
                     GTViewSettings config = getSettings();
+                    config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
                     TrainDiagram diagram = getDiagram();
                     if (diagram != null) {
                         Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
