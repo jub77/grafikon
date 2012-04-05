@@ -16,8 +16,8 @@ public class GTLayeredPane extends JLayeredPane {
         
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(view);
-        scrollPane.getHorizontalScrollBar().setBlockIncrement(1000);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(100);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         
         Insets borderInsets = scrollPane.getBorder().getBorderInsets(scrollPane);
         

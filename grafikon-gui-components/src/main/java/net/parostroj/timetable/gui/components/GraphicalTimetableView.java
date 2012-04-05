@@ -6,8 +6,6 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.components.GTViewSettings.Selection;
@@ -28,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class GraphicalTimetableView extends javax.swing.JPanel implements ChangeListener {
+public class GraphicalTimetableView extends javax.swing.JPanel implements Scrollable {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableView.class.getName());
 
@@ -63,14 +61,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private final static int WIDTH_STEPS = 10;
     private final static int INITIAL_WIDTH = 4;
     private final static int SELECTION_RADIUS = 5;
-    private static final int ROUTE_COUNT = 20;
+    private final static int ROUTE_COUNT = 20;
+    private final static int WIDTH_TO_HEIGHT_RATIO = 5;
 
     protected GTViewSettings settings;
 
     private GTDraw draw;
     private TrainRegionCollector trainRegionCollector;
     private TrainSelector trainSelector;
-    private int shift;
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
@@ -79,6 +77,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
     private Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
+    private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
     private JMenuItem routesMenuItem;
 
@@ -313,12 +312,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         double ratio = (double)(end - start) / TimeInterval.DAY;
         int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
         newWidth = (int) (newWidth * ratio);
-        Dimension d = this.getPreferredSize();
-        d.width = newWidth;
-        this.setPreferredSize(d);
+        int newHeight = newWidth / WIDTH_TO_HEIGHT_RATIO;
+        preferredSize = new Dimension(newWidth, newHeight);
         this.revalidate();
     }
-
+    
     public void setTrainSelector(TrainSelector trainSelector) {
         this.trainSelector = trainSelector;
     }
@@ -330,7 +328,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
         this.recreateDraw();
         this.activateRouteMenuItem(route);
     }
-
+    
     private void setTimeRange() {
         if (diagram == null) {
             settings.remove(Key.START_TIME);
@@ -362,7 +360,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
             } else if (settings.get(Key.TYPE) == Type.WITH_TRACKS) {
                 draw = new GTDrawWithNodeTracks(config, drawnRoute, trainRegionCollector);
             }
-            this.setShiftX(shift);
         }
         this.repaint();
     }
@@ -379,13 +376,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
 
     protected TrainDiagram getDiagram() {
         return diagram;
-    }
-
-    private void setShiftX(int shift) {
-        if (draw != null) {
-            draw.setPositionX(shift);
-        }
-        this.shift = shift;
     }
 
     /**
@@ -734,25 +724,62 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Change
 
     }
 
-    @Override
-    public void stateChanged(ChangeEvent e) {
-        int oldShift = this.shift;
-        if (e.getSource() instanceof JViewport) {
-            int newShift = ((JViewport)e.getSource()).getViewPosition().x;
-            if (newShift != oldShift) {
-                this.setShiftX(newShift);
-                this.repaint(oldShift + 10,0,100,this.getHeight());
-                this.repaint(newShift + 10,0,100,this.getHeight());
-            }
-        }
-    }
-    
     public GTDraw getGtDraw() {
         return draw;
     }
     
     public void setDisableStationNames(Boolean disable) {
         settings.setOption(Key.DISABLE_STATION_NAMES, disable);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension pSize = new Dimension(preferredSize);
+        if (getParent() instanceof JViewport) {
+            JViewport viewport = (JViewport) getParent();
+            Dimension eSize = viewport.getExtentSize();
+            pSize.height = eSize.height;
+            if (eSize.width > pSize.width)
+                pSize.width = eSize.width;
+        }
+        return pSize;
+    }
+    
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        int value = 0;
+        if (orientation == SwingConstants.VERTICAL) {
+            value = visibleRect.height / 10;
+        } else {
+            value = visibleRect.width / 10;
+        }
+        return value;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        int value = 0;
+        if (orientation == SwingConstants.VERTICAL) {
+            value = visibleRect.height;
+        } else {
+            value = visibleRect.width;
+        }
+        return value;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
