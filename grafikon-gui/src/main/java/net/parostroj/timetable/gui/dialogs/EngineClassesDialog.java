@@ -29,6 +29,13 @@ import org.slf4j.LoggerFactory;
 public class EngineClassesDialog extends javax.swing.JDialog {
 
     private class EngineClassesListModel extends AbstractListModel {
+        
+        public void refresh() {
+            int size = getSize();
+            if (size > 0) {
+                this.fireContentsChanged(this, 0, size - 1);
+            }
+        }
 
         @Override
         public int getSize() {
@@ -197,7 +204,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        engineClassesList.setModel(listModel);
+        listModel.refresh();
         tableModel.updateInfo();
         this.enableDisable();
     }
