@@ -14,6 +14,12 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.TimeConverter;
+import javax.swing.JCheckBox;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.GroupLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * Dialog for copying trains.
@@ -23,23 +29,20 @@ import net.parostroj.timetable.utils.TimeConverter;
 public class CopyTrainDialog extends javax.swing.JDialog {
     
     private Train train;
-    
+    private boolean reversed;
     private ApplicationModel model;
     
-    /** Creates new form CopyTrainDialog */
-    public CopyTrainDialog(Frame parent, boolean modal) {
+    public CopyTrainDialog(Frame parent, boolean modal, ApplicationModel model, Train train) {
         super(parent, modal);
         initComponents();
-    }
-    
-    public CopyTrainDialog(Frame parent, boolean modal, ApplicationModel model, Train train) {
-        this(parent, modal);
         this.train = train;
         this.model = model;
-        nameTextField.setText(train.getNumber());
-        timeTextField.setText(TimeConverter.convertFromIntToText(train.getStartTime()));
-        
-        setTitle(String.format(ResourceLoader.getString("copy.train.title"), train.getName()));
+        this.reversed = false;
+        if (train != null) {
+            nameTextField.setText(train.getNumber());
+            timeTextField.setText(TimeConverter.convertFromIntToText(train.getStartTime()));
+            setTitle(String.format(ResourceLoader.getString("copy.train.title"), train.getName()));
+        }
         pack();
     }
     
@@ -81,47 +84,58 @@ public class CopyTrainDialog extends javax.swing.JDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
+        
+        JCheckBox checkBox = new JCheckBox(ResourceLoader.getString("copy.train.reversed")); // NOI18N
+        checkBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reversed = ((JCheckBox) e.getSource()).isSelected();
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(timeTextField)
-                            .addComponent(nameTextField))))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel2))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(checkBox)
+                        .addComponent(timeTextField)
+                        .addComponent(nameTextField))
+                    .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(89)
+                    .addComponent(okButton)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(cancelButton)
+                    .addGap(10))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(timeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(timeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(checkBox)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton))
+                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        getContentPane().setLayout(layout);
 
         pack();
+        this.setResizable(false);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -135,7 +149,9 @@ public class CopyTrainDialog extends javax.swing.JDialog {
             // select midnight if the time is not correct
             time = 0;
         TrainBuilder builder = new TrainBuilder();
-        Train newTrain = builder.createTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train);
+        Train newTrain = reversed ?
+                builder.createReverseTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train) :
+                builder.createTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train);
 
         // add train to diagram
         model.getDiagram().addTrain(newTrain);
@@ -152,6 +168,4 @@ public class CopyTrainDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField timeTextField;
-    // End of variables declaration//GEN-END:variables
-    
 }
