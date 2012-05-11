@@ -1,6 +1,7 @@
 package net.parostroj.timetable.actions;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -49,6 +50,39 @@ public class TrainBuilder {
 
         // move to new time
         train.move(time);
+
+        return train;
+    }
+    
+    public Train createReverseTrain(String id, String number, int time, Train copiedTrain) {
+        // create train
+        Train train = copiedTrain.getTrainDiagram().createTrain(id);
+        train.setNumber(number);
+        train.setType(copiedTrain.getType());
+        train.setDescription(copiedTrain.getDescription());
+        train.setTopSpeed(copiedTrain.getTopSpeed());
+        train.setAttributes(new Attributes(copiedTrain.getAttributes()));
+        
+        // get original intervals in reverse order
+        LinkedList<TimeInterval> reverseIntervals = new LinkedList<TimeInterval>();
+        for (TimeInterval interval : copiedTrain.getTimeIntervalList()) {
+            reverseIntervals.addFirst(interval);
+        }
+        
+        int currentTime = time;
+        
+        // create time intervals
+        for (TimeInterval originalInterval : reverseIntervals) {
+            TimeInterval interval = null;
+            if (originalInterval.isNodeOwner()) {
+                interval = originalInterval.getOwnerAsNode().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getLength());
+            } else {
+                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0, 0);
+            }
+            currentTime = interval.getEnd();
+            train.addInterval(interval);
+        }
+        train.recalculate();
 
         return train;
     }

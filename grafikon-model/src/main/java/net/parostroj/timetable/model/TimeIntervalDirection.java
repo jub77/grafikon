@@ -35,6 +35,13 @@ public enum TimeIntervalDirection {
     public int getNumerical() {
         return numerical;
     }
+    
+    /**
+     * @return reverse direction
+     */
+    public TimeIntervalDirection reverse() {
+        return (this == FORWARD) ? BACKWARD : FORWARD;
+    }
 
     /**
      * converts boolean value to this enum.
