@@ -144,7 +144,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         yTextField.setValue(size.height);
     }
     
-    public Type getType() {
+    public Type getImageType() {
         return (Type)typeComboBox.getSelectedItem();
     }
 
@@ -266,18 +266,18 @@ public class SaveImageDialog extends javax.swing.JDialog {
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // set specific file name filter
         JFileChooser fileChooser = getFileChooser();
-        fileChooser.setFileFilter(this.getType().getFilter());
+        fileChooser.setFileFilter(this.getImageType().getFilter());
         // show save dialog    
         int result = fileChooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             saveFile = fileChooser.getSelectedFile();
-            if (!saveFile.getName().toLowerCase().endsWith("." + this.getType().getExtension()))
-                saveFile = new File(saveFile.getAbsolutePath()+"." + this.getType().getExtension());
+            if (!saveFile.getName().toLowerCase().endsWith("." + this.getImageType().getExtension()))
+                saveFile = new File(saveFile.getAbsolutePath()+"." + this.getImageType().getExtension());
             this.save = true;
         } else {
             this.save = false;
         }
-        fileChooser.removeChoosableFileFilter(this.getType().getFilter());
+        fileChooser.removeChoosableFileFilter(this.getImageType().getFilter());
         this.setVisible(false);
     }//GEN-LAST:event_saveButtonActionPerformed
     

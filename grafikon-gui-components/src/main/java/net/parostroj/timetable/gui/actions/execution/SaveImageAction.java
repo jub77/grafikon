@@ -53,7 +53,7 @@ public class SaveImageAction extends EventDispatchAfterModelAction {
         long time = System.currentTimeMillis();
         try {
             Dimension saveSize = dialog.getSaveSize();
-            if (dialog.getType() == SaveImageDialog.Type.PNG) {
+            if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                 BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g2d = img.createGraphics();
                 g2d.setColor(Color.white);
@@ -66,7 +66,7 @@ public class SaveImageAction extends EventDispatchAfterModelAction {
                     LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
                     error = true;
                 }
-            } else if (dialog.getType() == SaveImageDialog.Type.SVG) {
+            } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
                 DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 
                 // Create an instance of org.w3c.dom.Document.
