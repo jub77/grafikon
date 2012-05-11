@@ -78,7 +78,7 @@ public class DriverCycleDelegate extends TCDelegate {
 
     @Override
     public boolean isOverlappingEnabled() {
-        return false;
+        return true;
     }
 
     @Override
