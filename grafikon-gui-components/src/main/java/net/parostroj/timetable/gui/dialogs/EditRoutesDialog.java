@@ -6,7 +6,6 @@ import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
-import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate.Type;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
@@ -23,7 +22,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     private TrainDiagram diagram;
     private WrapperListModel<Route> routes;
     
-    private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(Type.FULL);
+    private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(RouteWrapperDelegate.Type.FULL);
 
     /** Creates new form EditRoutesDialog */
     public EditRoutesDialog(java.awt.Frame parent, boolean modal) {
