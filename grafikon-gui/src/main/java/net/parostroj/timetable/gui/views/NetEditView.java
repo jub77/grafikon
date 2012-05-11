@@ -222,7 +222,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     try {
                         Dimension saveSize = dialog.getSaveSize();
     
-                        if (dialog.getType() == SaveImageDialog.Type.PNG) {
+                        if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                             BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
                             Graphics2D g2d = img.createGraphics();
                             g2d.setColor(Color.white);
@@ -236,7 +236,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
                             }
-                        } else if (dialog.getType() == SaveImageDialog.Type.SVG) {
+                        } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
                             DOMImplementation domImpl =
                                     GenericDOMImplementation.getDOMImplementation();
     
