@@ -33,7 +33,10 @@ public class GspTrainTimetablesOutput extends GspOutput {
             // title page
             boolean titlePage = false;
             if (params.paramExistWithValue("title.page"))
-                titlePage = (Boolean)params.getParam("title.page").getValue();
+                titlePage = params.getParam("title.page").getValue(Boolean.class);
+            String pageSort = "both_sides"; //"one_side";
+            if (params.paramExistWithValue("page.sort"))
+                pageSort = params.getParam("page.sort").getValue(String.class);
 
             // extract tts
             List<Train> trains = SelectionHelper.selectTrains(params, diagram);
@@ -48,6 +51,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             map.put("trains", timetables);
             map.put("images", images);
             map.put("title_page", titlePage);
+            map.put("page_sort", pageSort);
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
             ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
 

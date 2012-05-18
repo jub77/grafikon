@@ -239,6 +239,7 @@ public class OutputAction extends AbstractAction {
         params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
         if (type != null && type.getOutputType().equals("trains")) {
             params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
+            params.setParam("page.sort", model.getProgramSettings().isTwoSidedPrint() ? "two_sides" : "one_side");
         }
         return params;
     }

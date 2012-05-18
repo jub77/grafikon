@@ -12,6 +12,7 @@ public class ProgramSettings {
     private String userName;
     private boolean generateTitlePageTT;
     private boolean warningAutoECCorrection;
+    private boolean twoSidedPrint;
     private LengthUnit lengthUnit;
 
     public String getUserName() {
@@ -39,6 +40,14 @@ public class ProgramSettings {
 
     public void setGenerateTitlePageTT(boolean generateTitlePageTT) {
         this.generateTitlePageTT = generateTitlePageTT;
+    }
+
+    public boolean isTwoSidedPrint() {
+        return twoSidedPrint;
+    }
+
+    public void setTwoSidedPrint(boolean twoSidedPrint) {
+        this.twoSidedPrint = twoSidedPrint;
     }
 
     public boolean isWarningAutoECCorrection() {

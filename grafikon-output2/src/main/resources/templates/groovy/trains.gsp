@@ -141,7 +141,7 @@
   addTextPages(trains.texts, pages)
   if (title_page)
     addTitlePages(pages)
-  printPages(pages)
+  printPages(pages, page_sort)
 %>
 </body>
 </html><%
@@ -272,26 +272,39 @@
   }
 
   // reorder pages
-  def reorderPages(pages) {
+  def reorderPages(pages, sort) {
     def result = []
-    int left = pages.size
-    int right = 1
+    if (sort == "one_side") {  // print on one side of paper first half, then second half
+      int left = pages.size
+      int right = 1
 
-    while (right < (pages.size / 2)) {
+      while (right < (pages.size / 2)) {
         result.add(pages[left-1])
         result.add(pages[right-1])
         left -= 2
         right +=2
-    }
+      }
 
-    left = pages.size / 2
-    right = (pages.size / 2) + 1
+      left = pages.size / 2
+      right = (pages.size / 2) + 1
 
-    while (right < pages.size) {
+      while (right < pages.size) {
         result.add(pages[left-1])
         result.add(pages[right-1])
         left -= 2
         right += 2
+      }
+    } else if (sort == "two_sides") { // print on both sides of the paper
+      int left = pages.size
+      int right = 1
+      boolean odd = true
+      while (right <= (pages.size / 2)) {
+        result.add(pages[(odd ? left : right) - 1])
+        result.add(pages[(odd ? right : left) - 1])
+        left--
+        right++
+        odd = !odd
+      }
     }
     return result
   }
@@ -315,10 +328,10 @@
   }
 
   // print all pages
-  def printPages(pages) {
+  def printPages(pages, sort) {
     addEmptyPages(pages)
     numberPages(pages)
-    pages = reorderPages(pages)
+    pages = reorderPages(pages, sort)
     def i = pages.iterator()
     while (i.hasNext()) {
       def left = i.next()

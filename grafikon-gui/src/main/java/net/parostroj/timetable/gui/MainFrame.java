@@ -783,6 +783,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
+        
+        twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
+        twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                twoSidedPrintCheckBoxMenuItemActionPerformed(e);
+            }
+        });
+        actionMenu.add(twoSidesPrintCheckBoxMenuItem);
         actionMenu.add(jSeparator5);
 
         ouputTemplatesMenuItem.setText(ResourceLoader.getString("menu.action.user.output.templates")); // NOI18N
@@ -1044,6 +1052,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         model.getProgramSettings().setGenerateTitlePageTT(selected);
     }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
 
+    private void twoSidedPrintCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+        model.getProgramSettings().setTwoSidedPrint(selected);
+    }
+
     private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
     }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
 
@@ -1179,6 +1192,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
         genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
+        twoSidesPrintCheckBoxMenuItem.setSelected(prefs.getBoolean("two.sided.print", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -1263,5 +1277,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem tucListSelectMenuItem;
     private javax.swing.JMenu viewsMenu;
     private javax.swing.JMenuItem weightTablesMenuItem;
+    private JCheckBoxMenuItem twoSidesPrintCheckBoxMenuItem;
     // End of variables declaration//GEN-END:variables
 }

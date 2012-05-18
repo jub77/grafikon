@@ -223,6 +223,7 @@ public class ApplicationModel implements StorableGuiData {
         else
             prefs.remove("user.name");
         prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
+        prefs.setBoolean("two.sided.print", programSettings.isTwoSidedPrint());
         prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
         prefs.setString("unit", programSettings.getLengthUnit().getKey());
         prefs.removeWithPrefix("last.opened.");
@@ -237,6 +238,7 @@ public class ApplicationModel implements StorableGuiData {
         deserializeOutputTemplates(prefs.getString("output.templates", ""));
         programSettings.setUserName(prefs.getString("user.name", null));
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
+        programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
