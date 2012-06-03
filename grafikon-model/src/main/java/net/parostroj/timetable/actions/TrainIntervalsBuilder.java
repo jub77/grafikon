@@ -100,7 +100,7 @@ public class TrainIntervalsBuilder {
 
             // set track and attributes
             createdInterval.setTrack(interval.getTrack());
-            createdInterval.setAttributes(interval.getAttributes());
+            createdInterval.setAttributes(new Attributes(interval.getAttributes()));
 
             // add created interval to train and set current time
             time = createdInterval.getEnd();

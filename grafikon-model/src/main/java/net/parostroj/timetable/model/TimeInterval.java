@@ -361,7 +361,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 train.fireEvent(new TrainEvent(train,
-                        change,train.getTimeIntervalList().indexOf(this)));
+                        change,train.getTimeIntervalList().indexOf(TimeInterval.this)));
             }
         };
         this.attributes.addListener(attributesListener);
