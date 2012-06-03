@@ -6,17 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 
 /**
  * List model with wrappers around object with ids.
  *
  * @author jub
  */
-public class WrapperListModel<T> extends AbstractListModel {
+public class WrapperListModel<T> extends AbstractListModel implements ComboBoxModel {
 
     private Set<T> set;
     private List<Wrapper<T>> list;
     private boolean sorted;
+    private Wrapper<T> selectedItem;
 
     public WrapperListModel() {
         this.list = new ArrayList<Wrapper<T>>();
@@ -162,5 +164,32 @@ public class WrapperListModel<T> extends AbstractListModel {
     @Override
     public Object getElementAt(int index) {
         return list.get(index);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setSelectedItem(Object anItem) {
+        selectedItem = (Wrapper<T>) anItem;
+    }
+
+    @Override
+    public Object getSelectedItem() {
+        return selectedItem;
+    }
+    
+    public T getSelectedObject() {
+        return selectedItem != null ? selectedItem.getElement() : null;
+    }
+    
+    public Wrapper<T> getSelectedWrapper() {
+        return selectedItem;
+    }
+    
+    public void setSelectedObject(T object) {
+        int index = getIndexOfObject(object);
+        if (index != -1)
+            setSelectedItem(getIndex(index));
+        else
+            setSelectedItem(null);
     }
 }
