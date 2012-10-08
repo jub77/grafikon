@@ -42,6 +42,7 @@ public class NodeTimetableWriter {
             str.append(TimeConverter.formatIntToText(item.getEnd(), FORMAT));
             str.append(" [track: ");
             str.append(item.getTrack().toString()).append("]\n");
+            f.close();
         }
     }
 }

@@ -90,6 +90,8 @@ class DiagramChangeSetImpl implements DiagramChangeSet {
                 return addedAction == DiagramChange.Action.REMOVED;
             case MODIFIED:
                 return addedAction == DiagramChange.Action.REMOVED;
+            default:
+                break;
         }
         return false;
     }

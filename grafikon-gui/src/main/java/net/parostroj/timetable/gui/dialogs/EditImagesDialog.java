@@ -67,6 +67,8 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             case SET_DIAGRAM_CHANGED:
                 this.updateValues();
                 break;
+            default:
+                break;
         }
     }
     
@@ -215,11 +217,18 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
                 TimetableImage image = model.getDiagram().createImage(IdGenerator.getInstance().getId(), fileName, img.getWidth(), img.getHeight());
 
                 File tempFile = File.createTempFile("gt_", ".temp");
-                FileChannel ic = new FileInputStream(chooser.getSelectedFile()).getChannel();
-                FileChannel oc = new FileOutputStream(tempFile).getChannel();
-                ic.transferTo(0, ic.size(), oc);
-                ic.close();
-                oc.close();
+                FileChannel ic = null;
+                FileChannel oc = null;
+                try {
+                    ic = new FileInputStream(chooser.getSelectedFile()).getChannel();
+                    oc = new FileOutputStream(tempFile).getChannel();
+                    ic.transferTo(0, ic.size(), oc);
+                } finally {
+                    if (ic != null)
+                        ic.close();
+                    if (oc != null)
+                        oc.close();
+                }
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
                 model.getDiagram().addImage(image);

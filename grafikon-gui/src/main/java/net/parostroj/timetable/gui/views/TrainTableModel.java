@@ -282,6 +282,8 @@ class TrainTableModel extends AbstractTableModel {
                 }
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
+            default:
+                break;
         }
         editBlock = false;
     }

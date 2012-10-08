@@ -87,8 +87,12 @@ public class TransformVisitor implements EventVisitor {
                     case SPEED: case STOP_TIME: case TRACK:
                         dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event))));
                         break;
+                    default:
+                        break;
                 }
                 change.addDescription(dcd);
+                break;
+            default:
                 break;
         }
     }
@@ -118,6 +122,8 @@ public class TransformVisitor implements EventVisitor {
             case CYCLE_ITEM_UPDATED:
                 Train t = event.getNewCycleItem() != null ? event.getNewCycleItem().getTrain() : event.getOldCycleItem().getTrain();
                 change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
+                break;
+            default:
                 break;
         }
     }
@@ -179,6 +185,8 @@ public class TransformVisitor implements EventVisitor {
                 change.addDescription(new DiagramChangeDescription(desc,
                         new Parameter(aC.getName(), true),
                         new Parameter(rse.getTrack().getNumber())));
+                break;
+            default:
                 break;
         }
         return desc;

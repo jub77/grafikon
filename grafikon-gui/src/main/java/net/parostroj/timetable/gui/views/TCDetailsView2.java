@@ -40,6 +40,8 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
                 if (delegate.getSelectedCycle() == cycle)
                     this.updateValues(cycle);
                 break;
+            default:
+                break;
         }
     }
     

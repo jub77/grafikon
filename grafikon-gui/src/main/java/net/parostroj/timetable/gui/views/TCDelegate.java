@@ -85,6 +85,8 @@ public abstract class TCDelegate implements ApplicationModelListener {
             case MODIFIED_CYCLE:
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_CYCLE, model, cycle));
                 break;
+            default:
+                break;
         }
         this.handleEvent(action, cycle, train);
         // call listeners
@@ -119,6 +121,8 @@ public abstract class TCDelegate implements ApplicationModelListener {
                 break;
             case DELETE_TRAIN:
                 this.fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
+                break;
+            default:
                 break;
         }
     }

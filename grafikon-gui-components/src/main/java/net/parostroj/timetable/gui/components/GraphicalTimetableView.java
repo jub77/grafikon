@@ -199,6 +199,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                                     TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE.equals(name))
                                 repaint();
                             break;
+                        default:
+                            break;
                     }
                 }
 
@@ -273,6 +275,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                     this.repaint();
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -284,6 +288,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                     recreateDraw();
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -293,6 +299,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 if (event.getAttributeChange().getName().equals("color") || event.getAttributeChange().getName().equals("trainNameTemplate"))
                     // repaint
                     this.repaint();
+                break;
+            default:
                 break;
         }
     }

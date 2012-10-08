@@ -190,6 +190,9 @@ public class ApplicationModel implements StorableGuiData {
             case MODEL_SAVED:
                 this.setModelChanged(false);
                 break;
+            default:
+                // nothing changed for other events
+                break;
         }
     }
 

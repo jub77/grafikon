@@ -58,7 +58,9 @@ public class TimeConverter {
         int minutes = getMinutes(time);
         Formatter formatter = new Formatter();
         formatter.format("%1$d:%2$02d", hours, minutes);
-        return formatter.toString();
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
     /**
@@ -72,7 +74,9 @@ public class TimeConverter {
         int minutes = getMinutes(time);
         Formatter formatter = new Formatter();
         formatter.format("%1$d:%2$02d", hours, minutes);
-        return formatter.toString();
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
     /**
@@ -103,7 +107,9 @@ public class TimeConverter {
         Formatter formatter = new Formatter();
         String format = "%1$d" + delimiter + "%2$02d";
         formatter.format(format, hours, minutes);
-        return formatter.toString();
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
     
     /**
@@ -163,7 +169,9 @@ public class TimeConverter {
         normalizeTime(time);
         Formatter formatter = new Formatter();
         formatter.format("%1$02d", getMinutes(time));
-        return formatter.toString();
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
     /**
@@ -194,7 +202,9 @@ public class TimeConverter {
         if (minutes != 0)
             format = format + " %2$d " + delimiter2;
         formatter.format(format, hours, minutes);
-        return formatter.toString();
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
     /**

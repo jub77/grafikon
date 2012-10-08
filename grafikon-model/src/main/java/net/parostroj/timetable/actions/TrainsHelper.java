@@ -366,6 +366,8 @@ public class TrainsHelper {
                     return node.getType() == NodeType.STATION_BRANCH;
                 case FIRST_STATION:
                     return node.getType().isStation();
+                default:
+                    break;
             }
             // last station is always true regardless of the type (including LAST_STATION type) 
             return interval.isLast();

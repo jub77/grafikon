@@ -40,6 +40,7 @@ public class TrainTimetableWriter {
                 } else {
                     str.append('\n');
                 }
+                f.close();
             }
         }
     }

@@ -35,6 +35,7 @@ public class NodeTimetableByTracksWriter {
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
                 str.append(TimeConverter.formatIntToText(interval.getStart(), FORMAT));
                 str.append(" ").append(TimeConverter.formatIntToText(interval.getEnd(), FORMAT)).append("\n");
+                f.close();
             }
         }
     }

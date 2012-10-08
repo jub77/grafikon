@@ -35,12 +35,17 @@ public class LoadSaveImages {
             if (image.getImageFile() == null)
                 // skip images without image file
                 continue;
-            FileChannel ic = new FileInputStream(image.getImageFile()).getChannel();
-            entry.setSize(ic.size());
+            FileChannel ic = null;
+            File imageFile = image.getImageFile();
+            entry.setSize(imageFile.length());
             os.putNextEntry(entry);
             WritableByteChannel oc = Channels.newChannel(os);
-            ic.transferTo(0, ic.size(), oc);
-            ic.close();
+            try {
+                ic = new FileInputStream(imageFile).getChannel();
+                ic.transferTo(0, ic.size(), oc);
+            } finally {
+                ic.close();
+            }
         }
     }
     
@@ -58,9 +63,13 @@ public class LoadSaveImages {
                 File tempFile = File.createTempFile("gt_", ".temp");
                 InputStream is = zipFile.getInputStream(entry);
                 ReadableByteChannel ic = Channels.newChannel(is);
-                FileChannel oc = new FileOutputStream(tempFile).getChannel();
-                oc.transferFrom(ic, 0, entry.getSize());
-                oc.close();
+                FileChannel oc = null;
+                try {
+                    oc = new FileOutputStream(tempFile).getChannel();
+                    oc.transferFrom(ic, 0, entry.getSize());
+                } finally {
+                    oc.close();
+                }
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
             }

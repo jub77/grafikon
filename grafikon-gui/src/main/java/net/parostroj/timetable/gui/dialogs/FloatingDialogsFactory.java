@@ -59,6 +59,8 @@ public class FloatingDialogsFactory {
                     case TECHNOLOGICAL:
                         panel.updateTrain((Train) event.getSource());
                         break;
+                    default:
+                        break;
                 }
             }
 
@@ -70,6 +72,8 @@ public class FloatingDialogsFactory {
                         break;
                     case TRAIN_REMOVED:
                         panel.removeTrain((Train)event.getObject());
+                        break;
+                    default:
                         break;
                 }
             }
@@ -83,6 +87,8 @@ public class FloatingDialogsFactory {
                     case SET_DIAGRAM_CHANGED:
                         panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
                         panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -143,6 +149,8 @@ public class FloatingDialogsFactory {
                     case TIME_INTERVAL_LIST:
                         panel.updateTrain((Train) event.getSource());
                         break;
+                    default:
+                        break;
                 }
             }
             
@@ -165,6 +173,8 @@ public class FloatingDialogsFactory {
                     case TRAIN_REMOVED:
                         panel.removeTrain((Train)event.getObject());
                         break;
+                    default:
+                        break;
                 }
             }
 
@@ -177,6 +187,8 @@ public class FloatingDialogsFactory {
                     case SET_DIAGRAM_CHANGED:
                         panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
                         panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -326,6 +338,8 @@ public class FloatingDialogsFactory {
                                 || event.getAttributeChange().getName().equals(TrainDiagram.ATTR_TO_TIME)) {
                             panel.timeLimitsUpdated();
                         }
+                        break;
+                    default:
                         break;
                 }
             }

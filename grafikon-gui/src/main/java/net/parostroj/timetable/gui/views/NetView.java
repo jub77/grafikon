@@ -84,6 +84,8 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
             // redraw line
             this.updateLine((Line)event.getObject());
             break;
+        default:
+            break;
         }
     }
 
@@ -232,6 +234,8 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
                         this.updateLine(seg.asLine());
                     }
                 }
+            default:
+                break;
         }
     }
 }

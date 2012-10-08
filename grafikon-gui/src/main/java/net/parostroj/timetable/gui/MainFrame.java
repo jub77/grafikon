@@ -255,6 +255,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             case REMOVE_LAST_OPENED:
                 this.removeLastOpened((File) event.getObject());
                 break;
+            default:
+                // nothing for the rest
+                break;
         }
     }
 

@@ -39,6 +39,7 @@ public class LineTimetableWriter {
                 str.append(" ").append(TimeConverter.formatIntToText(interval.getEnd(), FORMAT));
                 str.append(" [direction: ").append(interval.getTo().getAbbr()).append("]");
                 str.append('\n');
+                f.close();
             }
         }
     }
