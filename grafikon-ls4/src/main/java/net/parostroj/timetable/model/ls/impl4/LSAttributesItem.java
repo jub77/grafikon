@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * One item for LSAttributes.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"key", "value", "type", "category"})
@@ -145,6 +145,8 @@ public class LSAttributesItem {
                 return diagram.getEngineClassById(value);
             } else if (type.equals("model.line.class")) {
                 return diagram.getNet().getLineClassById(value);
+            } else if (type.equals("model.object")) {
+                return diagram.getObjectById(value);
             } else {
                 LOG.warn("Not recognized model type: {}", type);
                 return null;
@@ -162,7 +164,8 @@ public class LSAttributesItem {
             lKey = "model.line.class";
             lValue = object.getId();
         } else {
-            LOG.warn("Not recognized class: {}", object.getClass().getName());
+            lKey = "model.object";
+            lValue = object.getId();
         }
         return new Pair<String, String>(lKey, lValue);
     }

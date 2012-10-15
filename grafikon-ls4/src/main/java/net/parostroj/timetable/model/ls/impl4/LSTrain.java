@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing trains.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "train")
@@ -152,12 +152,12 @@ public class LSTrain {
     public void setStart(int start) {
         this.start = start;
     }
-    
+
     public Train createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
         train.setType(diagram.getTrainTypeById(type));
-        train.setAttributes(attributes.createAttributes());
+        train.setAttributes(attributes.createAttributes(diagram));
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
         // build time interval list
