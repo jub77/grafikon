@@ -1,6 +1,9 @@
 package net.parostroj.timetable.model;
 
-public class Group implements ObjectWithId {
+import net.parostroj.timetable.visitors.TrainDiagramVisitor;
+import net.parostroj.timetable.visitors.Visitable;
+
+public class Group implements ObjectWithId, Visitable {
 
     /** ID. */
     private final String id;
@@ -22,5 +25,10 @@ public class Group implements ObjectWithId {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void accept(TrainDiagramVisitor visitor) {
+        visitor.visit(this);
     }
 }

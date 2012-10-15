@@ -128,12 +128,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public Route getRouteById(String id) {
-        for (Route route : routes) {
-            if (route.getId().equals(id)) {
-                return route;
-            }
-        }
-        return null;
+        return getById(id, routes);
     }
 
     /**
@@ -158,12 +153,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public Train getTrainById(String id) {
-        for (Train train : trains) {
-            if (train.getId().equals(id)) {
-                return train;
-            }
-        }
-        return null;
+        return getById(id, trains);
     }
 
     public Map<String, List<TrainsCycle>> getCyclesMap() {
@@ -227,18 +217,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public TrainsCycle getCycleById(String id) {
         for (TrainsCycleType type : cycles.values()) {
-            for (TrainsCycle cycle : type.getCycles()) {
-                if (cycle.getId().equals(id))
-                    return cycle;
-            }
+            TrainsCycle found = getById(id, type.getCycles());
+            if (found != null)
+                return found;
         }
         return null;
     }
 
     public TrainsCycle getCycleByIdAndType(String id, String type) {
-        for (TrainsCycle cycle : getCyclesIntern(type)) {
-            if (cycle.getId().equals(id))
-                return cycle;
+        return getById(id, getCyclesIntern(type));
+    }
+
+    public Group getGroupById(String id) {
+        return getById(id, groups);
+    }
+
+    private <T extends ObjectWithId> T getById(String id, Collection<T> items) {
+        for (T item : items) {
+            if (item.getId().equals(id))
+                return item;
         }
         return null;
     }
@@ -300,12 +297,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainType getTrainTypeById(String id) {
-        for (TrainType type : trainTypes) {
-            if (type.getId().equals(id)) {
-                return type;
-            }
-        }
-        return null;
+        return getById(id, trainTypes);
     }
 
     @Override
@@ -449,35 +441,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public EngineClass getEngineClassById(String id) {
-        for (EngineClass ec : engineClasses) {
-            if (ec.getId().equals(id))
-                return ec;
-        }
-        return null;
+        return getById(id, engineClasses);
     }
 
     public TextItem getTextItemById(String id) {
-        for (TextItem item : textItems) {
-            if (item.getId().equals(id))
-                return item;
-        }
-        return null;
+        return getById(id, textItems);
     }
 
     public OutputTemplate getOutputTemplateById(String id) {
-        for (OutputTemplate template : outputTemplates) {
-            if (template.getId().equals(id))
-                return template;
-        }
-        return null;
+        return getById(id, outputTemplates);
     }
 
     public TimetableImage getImageById(String id) {
-        for (TimetableImage image : images) {
-            if (image.getId().equals(id))
-                return image;
-        }
-        return null;
+        return getById(id, images);
     }
 
     public TrainsData getTrainsData() {
@@ -645,6 +621,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for (TimetableImage image : images) {
             image.accept(visitor);
         }
+        for (Group group : groups) {
+            group.accept(visitor);
+        }
         visitor.visitAfter(this);
     }
 
@@ -676,6 +655,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (object != null)
             return object;
         object = getImageById(id);
+        if (object != null)
+            return object;
+        object = getGroupById(id);
         return object;
     }
 }
