@@ -41,7 +41,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of output templates. */
     private final List<OutputTemplate> outputTemplates;
     /** Groups. */
-    private List<Group> groups;
+    private final List<Group> groups;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
 
@@ -63,6 +63,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
         this.outputTemplates = new LinkedList<OutputTemplate>();
+        this.groups = new LinkedList<Group>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.net = new Net(IdGenerator.getInstance().getId());
         this.trainTypes = new LinkedList<TrainType>();
