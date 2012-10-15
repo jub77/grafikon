@@ -7,10 +7,10 @@ public class Group implements ObjectWithId {
     /** Name */
     private String name;
 
-    public Group(String id) {
+    Group(String id) {
         this.id = id;
     }
-    
+
     @Override
     public String getId() {
         return id;
