@@ -3,6 +3,12 @@ package net.parostroj.timetable.utils;
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.Group;
 
+/**
+ * Filter by groups. If the group is null, it returns true for items with no
+ * group specified.
+ *
+ * @author jub
+ */
 public class GroupFilter<T extends AttributesHolder> implements Filter<T> {
 
     private final Class<T> clazz;
