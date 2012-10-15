@@ -19,6 +19,7 @@ public class Route implements ObjectWithId, Visitable {
     private String name;
     private final String id;
     private boolean netPart;
+    private boolean trainRoute;
     private String _cachedToString;
 
     /**
@@ -109,6 +110,15 @@ public class Route implements ObjectWithId, Visitable {
     public void setNetPart(boolean netPart) {
         this.clearCached();
         this.netPart = netPart;
+    }
+
+    public boolean isTrainRoute() {
+        return trainRoute;
+    }
+
+    public void setTrainRoute(boolean trainRoute) {
+        this.clearCached();
+        this.trainRoute = trainRoute;
     }
 
     @Override
