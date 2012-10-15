@@ -14,6 +14,7 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder {
 
     Group(String id) {
         this.id = id;
+        this.setAttributes(new Attributes());
     }
 
     @Override
@@ -57,5 +58,10 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder {
     @Override
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
