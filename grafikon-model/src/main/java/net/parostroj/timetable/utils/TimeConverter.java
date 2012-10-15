@@ -17,7 +17,7 @@ public class TimeConverter {
      * @return normalized time
      */
     public static int normalizeTime(int time) {
-        while (time < 0 || time >= TimeInterval.DAY) {
+        while (!isNormalizedTime(time)) {
             if (time < 0)
                 time += TimeInterval.DAY;
             else if (time >= TimeInterval.DAY)
