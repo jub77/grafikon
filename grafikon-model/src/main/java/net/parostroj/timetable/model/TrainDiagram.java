@@ -21,32 +21,34 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Net. */
     private Net net;
     /** Predefined routes. */
-    private List<Route> routes;
+    private final List<Route> routes;
     /** Trains. */
-    private List<Train> trains;
+    private final List<Train> trains;
     /** Cycles. */
-    private Map<String, TrainsCycleType> cycles;
+    private final Map<String, TrainsCycleType> cycles;
     /** List of images for trains timetable. */
-    private List<TimetableImage> images;
+    private final List<TimetableImage> images;
     /** Train types available. */
-    private List<TrainType> trainTypes;
+    private final List<TrainType> trainTypes;
     /** Attributes. */
     private Attributes attributes;
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
-    private List<EngineClass> engineClasses;
+    private final List<EngineClass> engineClasses;
     /** List of text items. */
-    private List<TextItem> textItems;
+    private final List<TextItem> textItems;
     /** List of output templates. */
-    private List<OutputTemplate> outputTemplates;
+    private final List<OutputTemplate> outputTemplates;
+    /** Groups. */
+    private List<Group> groups;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
 
-    private GTListenerTrainDiagramImpl listener;
-    private ChangesTrackerImpl changesTracker;
-    private GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
-    private GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent> listenerSupportAll;
+    private final GTListenerTrainDiagramImpl listener;
+    private final ChangesTrackerImpl changesTracker;
+    private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
+    private final GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent> listenerSupportAll;
     private AttributesListener attributesListener;
 
     /**
@@ -171,26 +173,26 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
         return Collections.unmodifiableMap(modMap);
     }
-    
+
     public Set<String> getCycleTypeNames() {
         return Collections.unmodifiableSet(cycles.keySet());
     }
-    
+
     public Collection<TrainsCycleType> getCycleTypes() {
         return Collections.unmodifiableCollection(cycles.values());
     }
-    
+
     public void addCyclesType(TrainsCycleType type) {
         if (!cycles.containsKey(type.getName())) {
             cycles.put(type.getName(), type);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_ADDED, type));
         }
     }
-    
+
     public TrainsCycleType getCyclesType(String typeName) {
         return cycles.get(typeName);
     }
-    
+
     public void removeCyclesType(String typeName) {
         TrainsCycleType removed = cycles.get(typeName);
         if (removed != null) {
@@ -294,7 +296,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             trainTypes.add(to, moved);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_MOVED, moved));
         }
-        
+
     }
 
     public TrainType getTrainTypeById(String id) {
@@ -335,7 +337,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
@@ -375,7 +377,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public List<TextItem> getTextItems() {
         return Collections.unmodifiableList(textItems);
     }
-    
+
     public List<OutputTemplate> getOutputTemplates() {
         return Collections.unmodifiableList(outputTemplates);
     }
@@ -387,7 +389,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void addOutputTemplate(OutputTemplate template) {
         this.addOutputTemplate(template, outputTemplates.size());
     }
-    
+
+    public List<Group> getGroups() {
+        return Collections.unmodifiableList(groups);
+    }
+
+    public void addGroup(Group group) {
+        this.addGroup(group, groups.size());
+    }
+
+    public void addGroup(Group group, int position) {
+        groups.add(position, group);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.GROUP_ADDED, group));
+    }
+
+    public void removeGroup(Group group) {
+        groups.remove(group);
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.GROUP_REMOVED, group));
+    }
+
     public void addTextItem(TextItem item, int position) {
         item.addListener(listener);
         textItems.add(position, item);
@@ -443,7 +463,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
         return null;
     }
-    
+
     public OutputTemplate getOutputTemplateById(String id) {
         for (OutputTemplate template : outputTemplates) {
             if (template.getId().equals(id))
