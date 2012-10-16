@@ -26,6 +26,10 @@ public class GroupsComboBox extends JComboBox {
         this.allOption = allOption;
     }
 
+    public void updateGroups(TrainDiagram diagram, Group selection) {
+        updateGroups(diagram, selection == null ? Type.NONE : Type.GROUP, selection);
+    }
+
     public void updateGroups(TrainDiagram diagram, Type type, Group selection) {
         // clear
         removeAllItems();
