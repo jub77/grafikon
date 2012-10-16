@@ -6,18 +6,19 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Create train dialog.
- * 
+ *
  * @author jub
  */
 public class CreateTrainDialog extends javax.swing.JDialog {
-    
+
     /**
      * Creates new form CreateTrainDialog.
-     * 
+     *
      * @param parent parent window
      * @param model model
      */
@@ -25,11 +26,11 @@ public class CreateTrainDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
         createTrainView.setModel(model);
-        
+
         // fix size
         this.setResizable(false);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -56,9 +57,12 @@ public class CreateTrainDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.views.CreateTrainView createTrainView;
     // End of variables declaration//GEN-END:variables
-    
+
+    public void updateView(Group selectedGroup) {
+        createTrainView.updateView(selectedGroup);
+    }
 }

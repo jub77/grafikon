@@ -289,6 +289,8 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         Frame f = (Frame) this.getTopLevelAncestor();
 
         CreateTrainDialog create = new CreateTrainDialog((Frame) this.getTopLevelAncestor(), model);
+        // TODO missing selected group
+        create.updateView(null);
 
         create.setLocationRelativeTo(f);
         create.setVisible(true);
