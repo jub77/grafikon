@@ -371,6 +371,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
             train.setNumber(numberTextField.getText());
         if (!descriptionTextField.getText().equals(train.getDescription()))
             train.setDescription(descriptionTextField.getText());
+        Group sGroup = groupsComboBox.getSelectedGroup().second;
+        Group aGroup = train.getAttributes().get(Train.ATTR_GROUP, Group.class);
+        if (sGroup == null && aGroup != null)
+            train.removeAttribute(Train.ATTR_GROUP);
+        else if (sGroup != null && !sGroup.equals(aGroup))
+            train.setAttribute(Train.ATTR_GROUP, sGroup);
 
         // weight
         Integer oldWI = (Integer) train.getAttribute("weight");
