@@ -81,7 +81,7 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         treePopupMenu.add(groupsMenu);
 
         JPanel panel = new JPanel();
-        panel.setBorder(new EmptyBorder(5, 5, 0, 0));
+        panel.setBorder(new EmptyBorder(5, 5, 0, 5));
         add(panel, BorderLayout.CENTER);
 
         trainTree = new javax.swing.JTree();

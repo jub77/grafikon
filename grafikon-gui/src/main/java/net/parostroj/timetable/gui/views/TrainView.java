@@ -219,7 +219,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(3)
+                    .addGap(1)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addComponent(trainTableScrollPane, Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
@@ -233,12 +233,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                                     .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(jLabel3)
                                     .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(techTimeTextField, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                                    .addComponent(techTimeTextField, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                                     .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(copyButton)
                                     .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(editButton))
-                                .addComponent(trainTextField, GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))))
+                                .addComponent(trainTextField, GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE))))
                     .addGap(5))
         );
         layout.setVerticalGroup(
@@ -257,7 +257,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                         .addComponent(jLabel3)
                         .addComponent(techTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(2)
-                    .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                    .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addGap(5))
         );
         this.setLayout(layout);

@@ -15,16 +15,17 @@ import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.awt.BorderLayout;
 
 /**
  * Trains pane.
- * 
+ *
  * @author jub
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainsPane.class.getName());
-    
+
     /** Creates new form TrainsPane */
     public TrainsPane() {
         initComponents();
@@ -37,10 +38,10 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public void sortColumns() {
         trainView.sortColumns();
     }
-    
+
     /**
      * sets model.
-     * 
+     *
      * @param model application model
      */
     public void setModel(final ApplicationModel model) {
@@ -51,7 +52,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
                 graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         graphicalTimetableView.setTrainSelector(hts);
     }
-    
+
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
@@ -74,7 +75,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
         trainView.loadFromPreferences(prefs);
     }
-    
+
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setInt("trains.divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
@@ -88,7 +89,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public void editColumns() {
         trainView.editColumns();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -117,36 +118,15 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             graphicalTimetableViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 172, Short.MAX_VALUE)
         );
+        setLayout(new BorderLayout(0, 0));
 
         splitPane.setBottomComponent(scrollPane);
 
-        javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
-        panel.setLayout(panelLayout);
-        panelLayout.setHorizontalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLayout.createSequentialGroup()
-                .addComponent(trainListView, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(trainView, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
-        );
-        panelLayout.setVerticalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(trainView, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-            .addComponent(trainListView, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-        );
-
         splitPane.setLeftComponent(panel);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
-        );
+        panel.setLayout(new BorderLayout(0, 0));
+        panel.add(trainListView, BorderLayout.WEST);
+        panel.add(trainView);
+        add(splitPane);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
