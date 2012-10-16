@@ -88,6 +88,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
             timeAfterTextField.setText(Integer.toString(train.getTimeAfter() / 60));
+
+            groupsComboBox.updateGroups(model.getDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
         }
         pack();
         setMinimumSize(getSize());
