@@ -18,6 +18,8 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  * Dialog for editing groups.
@@ -94,6 +96,13 @@ public class GroupsDialog extends JDialog {
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         list = new JList();
+        list.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    updateButtons();
+                }
+            }
+        });
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(list);
 
@@ -143,7 +152,8 @@ public class GroupsDialog extends JDialog {
     private void deleteGroup() {
         int index = list.getSelectedIndex();
         if (index != -1) {
-            Wrapper<Group> wrapper = groupsModel.getIndex(index);
+            Wrapper<Group> wrapper = groupsModel.removeIndex(index);
+            list.setSelectedIndex(index < groupsModel.getSize() ? index : groupsModel.getSize() - 1);
             GroupRemoval removal = new GroupRemoval(diagram);
             removal.removeGroup(wrapper.getElement());
         }

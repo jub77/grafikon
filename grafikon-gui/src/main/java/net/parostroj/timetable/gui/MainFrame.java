@@ -341,6 +341,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         ccListMenuItem.setEnabled(notNullDiagram);
         tucListMenuItem.setEnabled(notNullDiagram);
         settingsMenuItem.setEnabled(notNullDiagram);
+        groupsMenuItem.setEnabled(notNullDiagram);
         allHtmlMenuItem.setEnabled(notNullDiagram);
         imagesMenuItem.setEnabled(notNullDiagram);
         textItemsMenuItem.setEnabled(notNullDiagram);
@@ -406,6 +407,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         diagramMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
+        groupsMenuItem = new javax.swing.JMenuItem();
         editRoutesMenuItem = new javax.swing.JMenuItem();
         imagesMenuItem = new javax.swing.JMenuItem();
         textItemsMenuItem = new javax.swing.JMenuItem();
@@ -633,6 +635,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         diagramMenu.add(penaltyTableMenuItem);
 
+        groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
+        groupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                groupsMenuItemActionPerformed(e);
+            }
+        });
+        diagramMenu.add(groupsMenuItem);
+
         menuBar.add(diagramMenu);
 
         actionMenu.setAction(outputAction);
@@ -786,7 +796,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
-        
+
         twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
         twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -935,6 +945,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             ActionHandler.getInstance().execute(action);
         }
     }//GEN-LAST:event_settingsMenuItemActionPerformed
+
+    private void groupsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        GroupsDialog dialog = new GroupsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }
 
     private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
         imagesDialog.setLocationRelativeTo(this);
@@ -1262,6 +1279,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenuItem removeWeightsMenuItem;
     private javax.swing.JMenu scriptsMenu;
     private javax.swing.JMenuItem settingsMenuItem;
+    private javax.swing.JMenuItem groupsMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.JMenuItem spListMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
