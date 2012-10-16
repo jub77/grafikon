@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public class ElementWrapperDelegate extends BasicWrapperDelegate {
-    
+
     @Override
     public String toString(Object element) {
         if (element instanceof EngineClass)
@@ -38,6 +38,8 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate {
             return ((OutputTemplate)element).getName();
         else if (element instanceof TrainsCycleType)
             return ((TrainsCycleType)element).getDescriptionText();
+        else if (element instanceof Group)
+            return ((Group)element).getName();
         else
             return super.toString(element);
     }
