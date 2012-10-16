@@ -6,37 +6,127 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
-import net.parostroj.timetable.gui.*;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.ApplicationModelEvent;
+import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.ResourceLoader;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
+import javax.swing.border.EmptyBorder;
 
 /**
  * View with list of trains.
- * 
+ *
  * @author jub
  */
 public class TrainListView extends javax.swing.JPanel implements ApplicationModelListener, TreeSelectionListener {
-    
+
     private ApplicationModel model;
-    
-    public static enum TreeType { FLAT, TYPES }
-    
+
+    public static enum TreeType {
+        FLAT, TYPES
+    }
+
     private TreeType treeType = TreeType.TYPES;
     private boolean selecting = false;
-    
+
     /**
      * Creates new form TrainListView.
      */
     public TrainListView() {
-        initComponents();
+        setLayout(new BorderLayout(0, 0));
+
+        treePopupMenu = new javax.swing.JPopupMenu();
+        typesMenuItem = new javax.swing.JMenuItem();
+        flatMenuItem = new javax.swing.JMenuItem();
+
+        typesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
+        typesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                treeTypeActionPerformed(evt);
+            }
+        });
+        treePopupMenu.add(typesMenuItem);
+
+        flatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
+        flatMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                treeTypeActionPerformed(evt);
+            }
+        });
+        treePopupMenu.add(flatMenuItem);
+
+        groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.groups")); // NOI18N
+        treePopupMenu.add(groupsMenu);
+
+        JPanel panel = new JPanel();
+        panel.setBorder(new EmptyBorder(5, 5, 0, 0));
+        add(panel, BorderLayout.CENTER);
+
+        trainTree = new javax.swing.JTree();
         trainTree.setModel(null);
         trainTree.addTreeSelectionListener(this);
         trainTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        panel.setLayout(new BorderLayout(0, 0));
+        scrollPane = new javax.swing.JScrollPane();
+        panel.add(scrollPane);
+
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        trainTree.setComponentPopupMenu(treePopupMenu);
+        trainTree.setModel(null);
+        scrollPane.setViewportView(trainTree);
+
+        JPanel buttonPanel = new JPanel();
+        add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        createButton = new javax.swing.JButton();
+        buttonPanel.add(createButton);
+
+        createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
+        deleteButton = new javax.swing.JButton();
+        buttonPanel.add(deleteButton);
+
+        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
+
+        menuButton = new javax.swing.JButton("v");
+        buttonPanel.add(menuButton);
+        menuButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                treePopupMenu.show(menuButton, 3, 3);
+            }
+        });
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
     }
 
     public void setModel(ApplicationModel model) {
@@ -44,77 +134,79 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         this.model.addListener(this);
         this.updateViewDiagramChanged();
     }
-    
+
     private void updateViewDiagramChanged() {
         if (model.getDiagram() != null) {
-            TrainTreeNodeRoot root = treeType == TreeType.TYPES ?
-                new TrainTreeNodeRootImpl1(ResourceLoader.getString("trainlist.trains"), model.getDiagram()):
-                new TrainTreeNodeRootImpl2(ResourceLoader.getString("trainlist.trains"), model.getDiagram());
+            TrainTreeNodeRoot root = treeType == TreeType.TYPES ? new TrainTreeNodeRootImpl1(
+                    ResourceLoader.getString("trainlist.trains"), model.getDiagram()) : new TrainTreeNodeRootImpl2(
+                    ResourceLoader.getString("trainlist.trains"), model.getDiagram());
             DefaultTreeModel treeModel = new DefaultTreeModel(root);
             trainTree.setModel(treeModel);
             createButton.setEnabled(true);
             deleteButton.setEnabled(false);
+            menuButton.setEnabled(true);
         } else {
             trainTree.setModel(null);
             createButton.setEnabled(false);
             deleteButton.setEnabled(false);
+            menuButton.setEnabled(false);
         }
     }
-    
+
     @Override
     public void modelChanged(ApplicationModelEvent event) {
         switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                this.updateViewDiagramChanged();
-                break;
-            case NEW_TRAIN:
-                this.addAndSelectTrain((Train)event.getObject());
-                break;
-            case DELETE_TRAIN:
-                this.deleteAndDeselectTrain((Train)event.getObject());
-                break;
-            case SELECTED_TRAIN_CHANGED:
-                if (!selecting) {
-                    this.selectTrain((Train)event.getObject());
-                }
-                break;
-            case MODIFIED_TRAIN_NAME_TYPE:
-                this.modifyAndSelectTrain((Train)event.getObject());
-                break;
-            case TRAIN_TYPES_CHANGED:
-                this.updateViewDiagramChanged();
-                break;
-            default:
-                // do nothing
-                break;
+        case SET_DIAGRAM_CHANGED:
+            this.updateViewDiagramChanged();
+            break;
+        case NEW_TRAIN:
+            this.addAndSelectTrain((Train) event.getObject());
+            break;
+        case DELETE_TRAIN:
+            this.deleteAndDeselectTrain((Train) event.getObject());
+            break;
+        case SELECTED_TRAIN_CHANGED:
+            if (!selecting) {
+                this.selectTrain((Train) event.getObject());
+            }
+            break;
+        case MODIFIED_TRAIN_NAME_TYPE:
+            this.modifyAndSelectTrain((Train) event.getObject());
+            break;
+        case TRAIN_TYPES_CHANGED:
+            this.updateViewDiagramChanged();
+            break;
+        default:
+            // do nothing
+            break;
         }
     }
-    
+
     private void addAndSelectTrain(Train train) {
-        TreePath p = ((TrainTreeNodeRoot)trainTree.getModel().getRoot()).addTrain(train);
-        ((DefaultTreeModel)trainTree.getModel()).reload((TreeNode)p.getParentPath().getLastPathComponent());
+        TreePath p = ((TrainTreeNodeRoot) trainTree.getModel().getRoot()).addTrain(train);
+        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
     }
-    
+
     private void deleteAndDeselectTrain(Train train) {
-        TreePath p = ((TrainTreeNodeRoot)trainTree.getModel().getRoot()).removeTrain(train);
-        ((DefaultTreeModel)trainTree.getModel()).reload((TreeNode)p.getParentPath().getLastPathComponent());
+        TreePath p = ((TrainTreeNodeRoot) trainTree.getModel().getRoot()).removeTrain(train);
+        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
     }
-    
+
     private void modifyAndSelectTrain(Train train) {
-        TreePath p = ((TrainTreeNodeRoot)trainTree.getModel().getRoot()).removeTrain(train);
-        ((DefaultTreeModel)trainTree.getModel()).reload((TreeNode)p.getParentPath().getLastPathComponent());
-        p = ((TrainTreeNodeRoot)trainTree.getModel().getRoot()).addTrain(train);
-        ((DefaultTreeModel)trainTree.getModel()).reload((TreeNode)p.getParentPath().getLastPathComponent());
+        TreePath p = ((TrainTreeNodeRoot) trainTree.getModel().getRoot()).removeTrain(train);
+        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
+        p = ((TrainTreeNodeRoot) trainTree.getModel().getRoot()).addTrain(train);
+        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
     }
-    
+
     private void selectTrain(Train train) {
         TreePath p = null;
         if (trainTree.getModel() != null)
-            p = ((TrainTreeNodeRoot)trainTree.getModel().getRoot()).getTrainPath(train);
+            p = ((TrainTreeNodeRoot) trainTree.getModel().getRoot()).getTrainPath(train);
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
     }
@@ -128,7 +220,7 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
                 if (model.getSelectedTrain() != null)
                     model.setSelectedTrain(null);
             } else {
-                TrainTreeNodeTrain trainNode = (TrainTreeNodeTrain)selected;
+                TrainTreeNodeTrain trainNode = (TrainTreeNodeTrain) selected;
                 if (model.getSelectedTrain() != trainNode.getTrain())
                     model.setSelectedTrain(trainNode.getTrain());
             }
@@ -148,102 +240,23 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
             this.updateViewDiagramChanged();
         }
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        treePopupMenu = new javax.swing.JPopupMenu();
-        typesMenuItem = new javax.swing.JMenuItem();
-        flatMenuItem = new javax.swing.JMenuItem();
-        scrollPane = new javax.swing.JScrollPane();
-        trainTree = new javax.swing.JTree();
-        createButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-
-        typesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
-        typesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                treeTypeActionPerformed(evt);
-            }
-        });
-        treePopupMenu.add(typesMenuItem);
-
-        flatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
-        flatMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                treeTypeActionPerformed(evt);
-            }
-        });
-        treePopupMenu.add(flatMenuItem);
-
-        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        trainTree.setComponentPopupMenu(treePopupMenu);
-        trainTree.setModel(null);
-        scrollPane.setViewportView(trainTree);
-
-        createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createButtonActionPerformed(evt);
-            }
-        });
-
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(createButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addContainerGap(275, Short.MAX_VALUE))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(createButton)
-                    .addComponent(deleteButton))
-                .addGap(11, 11, 11))
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_deleteButtonActionPerformed
         Set<Train> selectedTrains = this.getSelectedTrains();
-    
-        model.setSelectedTrain(null);           // no train selected
-    
+
+        model.setSelectedTrain(null); // no train selected
+
         for (Train deletedTrain : selectedTrains) {
             this.deleteTrain(deletedTrain, model.getDiagram());
         }
-    }//GEN-LAST:event_deleteButtonActionPerformed
+    }// GEN-LAST:event_deleteButtonActionPerformed
 
     private Set<Train> getSelectedTrains() {
         TreePath[] paths = trainTree.getSelectionPaths();
         Set<Train> selected = new HashSet<Train>();
         if (paths != null) {
             for (TreePath path : paths) {
-                TrainTreeNode node = (TrainTreeNode)path.getLastPathComponent();
+                TrainTreeNode node = (TrainTreeNode) path.getLastPathComponent();
                 Set<Train> trains = node.getTrains(model.getDiagram());
                 selected.addAll(trains);
             }
@@ -258,8 +271,8 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
                 this.removeTrainFromCycles(deletedTrain.getCycles(type));
             }
         }
-    
-        diagram.removeTrain(deletedTrain);    // remove from list of trains
+
+        diagram.removeTrain(deletedTrain); // remove from list of trains
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
     }
 
@@ -271,32 +284,33 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         }
     }
 
-    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_createButtonActionPerformed
         // call create new train dialog
-        Frame f = (Frame)this.getTopLevelAncestor();
-        
-        CreateTrainDialog create = new CreateTrainDialog((Frame)this.getTopLevelAncestor(), model);
-    
+        Frame f = (Frame) this.getTopLevelAncestor();
+
+        CreateTrainDialog create = new CreateTrainDialog((Frame) this.getTopLevelAncestor(), model);
+
         create.setLocationRelativeTo(f);
         create.setVisible(true);
-    }//GEN-LAST:event_createButtonActionPerformed
+    }// GEN-LAST:event_createButtonActionPerformed
 
-    private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_treeTypeActionPerformed
+    private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_treeTypeActionPerformed
         if (evt.getSource() == flatMenuItem)
             treeType = TrainListView.TreeType.FLAT;
         else
             treeType = TrainListView.TreeType.TYPES;
         // update list
         this.updateViewDiagramChanged();
-    }//GEN-LAST:event_treeTypeActionPerformed
+    }// GEN-LAST:event_treeTypeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton createButton;
-    private javax.swing.JButton deleteButton;
-    private javax.swing.JMenuItem flatMenuItem;
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JTree trainTree;
-    private javax.swing.JPopupMenu treePopupMenu;
-    private javax.swing.JMenuItem typesMenuItem;
-    // End of variables declaration//GEN-END:variables
+    private final javax.swing.JButton createButton;
+    private final javax.swing.JButton deleteButton;
+    private final javax.swing.JMenuItem flatMenuItem;
+    private final javax.swing.JScrollPane scrollPane;
+    private final javax.swing.JTree trainTree;
+    private final javax.swing.JPopupMenu treePopupMenu;
+    private final javax.swing.JMenuItem typesMenuItem;
+    private final javax.swing.JMenu groupsMenu;
+    private final javax.swing.JButton menuButton;
 }
