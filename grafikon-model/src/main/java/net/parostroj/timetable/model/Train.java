@@ -16,7 +16,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Train implements AttributesHolder, ObjectWithId, Visitable {
+public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, Visitable {
 
     /** No top speed constant. */
     public static final int NO_TOP_SPEED = Line.NO_SPEED;
@@ -32,27 +32,27 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /** Train type. */
     private TrainType type;
     /** List of time intervals. */
-    private TimeIntervalList timeIntervalList;
+    private final TimeIntervalList timeIntervalList;
     /** Top speed. */
     private int topSpeed = NO_TOP_SPEED;
     /** Cycles. */
-    private Map<String, List<TrainsCycleItem>> cycles;
+    private final Map<String, List<TrainsCycleItem>> cycles;
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
     private String _cachedName;
     private String _cachedCompleteName;
     private Map<String,Object> _cachedBinding;
-    private GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
+    private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
     private AttributesListener attributesListener;
     private boolean attached;
 
     /* Technological times. */
     private TimeInterval timeBefore;
     private TimeInterval timeAfter;
-    
+
     /* Cached map for train cycles. */
-    private TrainCachedCycles _cachedCycles;
+    private final TrainCachedCycles _cachedCycles;
 
     /**
      * Constructor.
@@ -292,7 +292,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainEvent(Train.this, change));
@@ -1046,7 +1046,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         public Node get(int index) {
             return getAt(index);
         }
-        
+
         public Node getFirst() {
             return getFirstInterval().getOwnerAsNode();
         }

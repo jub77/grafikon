@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import net.parostroj.timetable.actions.GroupRemoval;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -143,7 +144,8 @@ public class GroupsDialog extends JDialog {
         int index = list.getSelectedIndex();
         if (index != -1) {
             Wrapper<Group> wrapper = groupsModel.getIndex(index);
-            diagram.removeGroup(wrapper.getElement());
+            GroupRemoval removal = new GroupRemoval(diagram);
+            removal.removeGroup(wrapper.getElement());
         }
     }
 
