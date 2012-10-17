@@ -97,7 +97,7 @@ public class TrainIntervalsBuilder {
                         interval.getId(), train, time,
                         interval.getDirection(), interval.getSpeed(),
                         this.computeFromSpeed(interval, timeIntervals, i),
-                        this.computeToSpeed(interval, timeIntervals, i));
+                        this.computeToSpeed(interval, timeIntervals, i), interval.getAddedTime());
             }
 
             // set track and attributes

@@ -279,7 +279,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         int runnningTime = interval.getOwnerAsLine().computeRunningTime(
                 interval.getTrain(), interval.getSpeed(),
                 this.computeFromSpeed(interval, i),
-                this.computeToSpeed(interval, i));
+                this.computeToSpeed(interval, i), interval.getAddedTime());
         interval.setLength(runnningTime);
         if (interval.isAttached())
             interval.updateInOwner();

@@ -84,6 +84,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
                 interval.getEnd(), interval.getSpeed(), interval.getDirection(),
                 interval.getTrack());
+        this.setAddedTime(interval.getAddedTime());
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
 
