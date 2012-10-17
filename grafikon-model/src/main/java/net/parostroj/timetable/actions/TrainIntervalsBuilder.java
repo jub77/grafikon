@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builder for creating trains.
- * 
+ *
  * @author jub
  */
 public class TrainIntervalsBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainIntervalsBuilder.class.getName());
-    private Train train;
+    private final Train train;
     private TimeInterval lastInterval;
-    private int startTime;
+    private final int startTime;
     private boolean finished;
-    private List<TimeInterval> timeIntervals;
+    private final List<TimeInterval> timeIntervals;
 
     public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
         this.train = train;
@@ -51,7 +51,7 @@ public class TrainIntervalsBuilder {
         timeIntervals.add(lastInterval);
     }
 
-    public void addLine(String intervalId, Line line, LineTrack track, int speed, Attributes attributes) {
+    public void addLine(String intervalId, Line line, LineTrack track, int speed, Integer addedTime, Attributes attributes) {
         if (intervalId == null) {
             LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
@@ -67,6 +67,8 @@ public class TrainIntervalsBuilder {
                 intervalId, train, line, 0, 0, speed,
                 lastInterval.getOwner().asNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
                 track);
+        if (addedTime != null)
+            lastInterval.setAddedTime(addedTime);
         lastInterval.setAttributes(attributes);
         timeIntervals.add(lastInterval);
     }
@@ -108,7 +110,7 @@ public class TrainIntervalsBuilder {
 
             i++;
         }
-        
+
         finished = true;
     }
 

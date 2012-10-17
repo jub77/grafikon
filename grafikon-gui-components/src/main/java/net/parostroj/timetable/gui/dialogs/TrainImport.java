@@ -70,7 +70,7 @@ public class TrainImport extends Import {
             } else {
                 // line
                 Line line = (Line)seg.first;
-                builder.addLine(this.getId(seg.third), line, (LineTrack)seg.second, seg.third.getSpeed(), seg.third.getAttributes());
+                builder.addLine(this.getId(seg.third), line, (LineTrack)seg.second, seg.third.getSpeed(), seg.third.getAddedTime(), seg.third.getAttributes());
             }
         }
         builder.finish();
