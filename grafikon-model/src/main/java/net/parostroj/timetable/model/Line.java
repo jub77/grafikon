@@ -117,7 +117,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         int end = start + computedTime;
 
         LineTrack selectedTrack = null;
-        TimeInterval interval = new TimeInterval(null, train, this, start, end, speed, direction, null);
+        TimeInterval interval = new TimeInterval(null, train, this, start, end, speed, direction, null, addedTime);
 
         // check which track is free for adding
         for (LineTrack lineTrack : tracks) {
@@ -133,7 +133,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             selectedTrack = tracks.get(0);
         }
 
-        return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack);
+        return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack, addedTime);
     }
 
     /**

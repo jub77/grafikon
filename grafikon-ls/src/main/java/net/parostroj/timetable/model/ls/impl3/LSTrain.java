@@ -168,7 +168,7 @@ public class LSTrain {
                 LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
                 Line line = diagram.getNet().getLineById(linePart.getLineId());
                 LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
-                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), null, linePart.getAttributes().createAttributes());
+                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), 0, linePart.getAttributes().createAttributes());
             }
         }
         builder.finish();

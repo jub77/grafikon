@@ -51,7 +51,7 @@ public class TrainIntervalsBuilder {
         timeIntervals.add(lastInterval);
     }
 
-    public void addLine(String intervalId, Line line, LineTrack track, int speed, Integer addedTime, Attributes attributes) {
+    public void addLine(String intervalId, Line line, LineTrack track, int speed, int addedTime, Attributes attributes) {
         if (intervalId == null) {
             LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
@@ -66,9 +66,7 @@ public class TrainIntervalsBuilder {
         lastInterval = new TimeInterval(
                 intervalId, train, line, 0, 0, speed,
                 lastInterval.getOwner().asNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
-                track);
-        if (addedTime != null)
-            lastInterval.setAddedTime(addedTime);
+                track, addedTime);
         lastInterval.setAttributes(attributes);
         timeIntervals.add(lastInterval);
     }
