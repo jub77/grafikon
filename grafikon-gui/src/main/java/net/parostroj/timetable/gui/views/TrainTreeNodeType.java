@@ -16,17 +16,17 @@ import net.parostroj.timetable.model.Train;
 
 /**
  *  Node for JTree with type.
- * 
+ *
  * @author jub
  */
 public class TrainTreeNodeType implements TrainTreeNode {
 
-    private List<TrainTreeNodeTrain> children;
-    private TrainType trainType;
-    private TrainTreeNodeRoot parent;
-    private TrainTreeNodeSort sort;
+    private final List<TrainTreeNodeTrain> children;
+    private final TrainType trainType;
+    private final TreeNode parent;
+    private final TrainTreeNodeSort sort;
 
-    public TrainTreeNodeType(TrainDiagram diagram, TrainType trainType, TrainTreeNodeRoot parent) {
+    public TrainTreeNodeType(TrainDiagram diagram, TrainType trainType, TreeNode parent) {
         this.sort = new TrainTreeNodeSort(new TrainComparator(TrainComparator.Type.ASC, diagram.getTrainsData().getTrainSortPattern()));
         this.trainType = trainType;
         this.children = new LinkedList<TrainTreeNodeTrain>();
@@ -38,7 +38,7 @@ public class TrainTreeNodeType implements TrainTreeNode {
                 children.add(nodeTrain);
             }
         }
-        children = sort.sort(children);
+        sort.sortInPlace(children);
     }
 
     @Override
@@ -75,14 +75,14 @@ public class TrainTreeNodeType implements TrainTreeNode {
     public Enumeration<?> children() {
         return Collections.enumeration(children);
     }
-    
+
     public TreePath addTrain(TreePath path, Train train) {
         if (trainType != train.getType())
             return null;
         // add train
         TrainTreeNodeTrain newNode = new TrainTreeNodeTrain(train, this);
         children.add(newNode);
-        children = sort.sort(children);
+        sort.sortInPlace(children);
         return path.pathByAddingChild(this).pathByAddingChild(newNode);
     }
 
@@ -97,7 +97,7 @@ public class TrainTreeNodeType implements TrainTreeNode {
         }
         if (found != null) {
             children.remove(found);
-            children = sort.sort(children);
+            sort.sortInPlace(children);
             return path.pathByAddingChild(this).pathByAddingChild(found);
         } else
             return null;
@@ -127,10 +127,8 @@ public class TrainTreeNodeType implements TrainTreeNode {
     public Set<Train> getTrains(TrainDiagram diagram) {
         // filter by train type
         Set<Train> trainSet = new HashSet<Train>();
-        for (Train train : diagram.getTrains()) {
-            if (train.getType() == this.trainType) {
-                trainSet.add(train);
-            }
+        for (TrainTreeNodeTrain node : children) {
+            trainSet.add(node.getTrain());
         }
         return trainSet;
     }
