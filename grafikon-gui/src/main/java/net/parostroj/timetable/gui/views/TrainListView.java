@@ -5,47 +5,52 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import java.awt.Frame;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.BorderLayout;
-import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import javax.swing.border.EmptyBorder;
 
 /**
  * View with list of trains.
  *
  * @author jub
  */
-public class TrainListView extends javax.swing.JPanel implements ApplicationModelListener, TreeSelectionListener {
+public class TrainListView extends javax.swing.JPanel implements TreeSelectionListener {
 
     private ApplicationModel model;
+    private ButtonGroup groupsBG;
+    private final ItemListener groupL;
 
     public static enum TreeType {
         FLAT, TYPES
+    }
+
+    private static class GroupMenuItem extends javax.swing.JRadioButtonMenuItem {
+
+        private final GroupSelect groupSelect;
+
+        public GroupMenuItem(String text, GroupSelect groupSelect) {
+            super(text);
+            this.groupSelect = groupSelect;
+        }
+
+        public GroupSelect getGroupSelect() {
+            return groupSelect;
+        }
     }
 
     private TreeType treeType = TreeType.TYPES;
@@ -79,6 +84,14 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
 
         groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.groups")); // NOI18N
         treePopupMenu.add(groupsMenu);
+
+        groupL = new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                // TODO handle selection of group ...
+            }
+        };
 
         JPanel panel = new JPanel();
         panel.setBorder(new EmptyBorder(5, 5, 0, 5));
@@ -129,9 +142,102 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
         });
     }
 
+    private void updateGroupsMenu(boolean added, Group group) {
+        if (added) {
+            addToGroupsMenu(new GroupMenuItem(group.getName(), new GroupSelect(GroupSelect.Type.GROUP, group)), null);
+        } else {
+            GroupMenuItem item = findByGroup(group);
+            if (item.isSelected())
+                groupsMenu.getItem(0).setSelected(true);
+            removeFromGroupsMenu(item);
+        }
+    }
+
+    private GroupMenuItem findByGroup(Group group) {
+        for (MenuElement e : groupsMenu.getPopupMenu().getSubElements()) {
+            if (e instanceof GroupMenuItem) {
+                GroupMenuItem item = (GroupMenuItem) e;
+                if (group.equals(item.getGroupSelect().getGroup()))
+                    return item;
+            }
+        }
+        return null;
+    }
+
+    private void addToGroupsMenu(JMenuItem item, Integer position) {
+        if (position == null)
+            groupsMenu.add(item);
+        else
+            groupsMenu.insert(item, position);
+        groupsBG.add(item);
+        item.addItemListener(groupL);
+    }
+
+    private void removeFromGroupsMenu(JMenuItem item) {
+        item.removeItemListener(groupL);
+        groupsBG.remove(item);
+        groupsMenu.remove(item);
+    }
+
+    private void buildGroupsMenu() {
+        groupsMenu.removeAll();
+        groupsBG = new ButtonGroup();
+
+        // all and none
+        addToGroupsMenu(new GroupMenuItem("<" + ResourceLoader.getString("groups.all") + ">", new GroupSelect(GroupSelect.Type.ALL, null)), null);
+        addToGroupsMenu(new GroupMenuItem("<" + ResourceLoader.getString("groups.none") + ">", new GroupSelect(GroupSelect.Type.NONE, null)), null);
+
+        // fill groups
+        if (model != null && model.getDiagram() != null)
+            for (Group group : model.getDiagram().getGroups()) {
+                addToGroupsMenu(new GroupMenuItem(group.getName(), new GroupSelect(GroupSelect.Type.GROUP, group)), null);
+            }
+
+        // select first
+        groupsMenu.getItem(0).setSelected(true);
+    }
+
     public void setModel(ApplicationModel model) {
         this.model = model;
-        this.model.addListener(this);
+        this.model.getMediator().addColleague(new ApplicationGTEventColleague(true) {
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                switch (event.getType()) {
+                    case SET_DIAGRAM_CHANGED:
+                        updateViewDiagramChanged();
+                        break;
+                    case NEW_TRAIN:
+                        addAndSelectTrain((Train) event.getObject());
+                        break;
+                    case DELETE_TRAIN:
+                        deleteAndDeselectTrain((Train) event.getObject());
+                        break;
+                    case SELECTED_TRAIN_CHANGED:
+                        if (!selecting) {
+                            selectTrain((Train) event.getObject());
+                        }
+                        break;
+                    case MODIFIED_TRAIN_NAME_TYPE:
+                        modifyAndSelectTrain((Train) event.getObject());
+                        break;
+                    case TRAIN_TYPES_CHANGED:
+                        updateViewDiagramChanged();
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
+            }
+
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                if (event.getType() == GTEventType.GROUP_ADDED) {
+                    updateGroupsMenu(true, (Group) event.getObject());
+                } else if (event.getType() == GTEventType.GROUP_REMOVED) {
+                    updateGroupsMenu(false, (Group) event.getObject());
+                }
+            }
+        });
         this.updateViewDiagramChanged();
     }
 
@@ -151,35 +257,7 @@ public class TrainListView extends javax.swing.JPanel implements ApplicationMode
             deleteButton.setEnabled(false);
             menuButton.setEnabled(false);
         }
-    }
-
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        switch (event.getType()) {
-        case SET_DIAGRAM_CHANGED:
-            this.updateViewDiagramChanged();
-            break;
-        case NEW_TRAIN:
-            this.addAndSelectTrain((Train) event.getObject());
-            break;
-        case DELETE_TRAIN:
-            this.deleteAndDeselectTrain((Train) event.getObject());
-            break;
-        case SELECTED_TRAIN_CHANGED:
-            if (!selecting) {
-                this.selectTrain((Train) event.getObject());
-            }
-            break;
-        case MODIFIED_TRAIN_NAME_TYPE:
-            this.modifyAndSelectTrain((Train) event.getObject());
-            break;
-        case TRAIN_TYPES_CHANGED:
-            this.updateViewDiagramChanged();
-            break;
-        default:
-            // do nothing
-            break;
-        }
+        buildGroupsMenu();
     }
 
     private void addAndSelectTrain(Train train) {
