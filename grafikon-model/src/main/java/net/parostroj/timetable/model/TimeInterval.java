@@ -49,8 +49,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param speed speed for line time interval
      * @param direction direction of the line time interval
      * @param track track
+     * @param addedTime added time
      */
-    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track) {
+    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track, int addedTime) {
         this.train = train;
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
@@ -59,6 +60,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         this.track = track;
         this.setAttributes(new Attributes());
         this.id = id;
+        this.addedTime = addedTime;
     }
 
     /**
@@ -72,7 +74,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param track track
      */
     public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Track track) {
-        this(id, train, owner, start, end, NO_SPEED, null, track);
+        this(id, train, owner, start, end, NO_SPEED, null, track, 0);
     }
 
     /**
@@ -83,8 +85,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public TimeInterval(String id, TimeInterval interval) {
         this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
                 interval.getEnd(), interval.getSpeed(), interval.getDirection(),
-                interval.getTrack());
-        this.setAddedTime(interval.getAddedTime());
+                interval.getTrack(), interval.getAddedTime());
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
 
