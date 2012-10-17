@@ -22,7 +22,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Length in mm. */
     private int length;
     /** List of node tracks. */
-    private List<LineTrack> tracks;
+    private final List<LineTrack> tracks;
     /** Top speed for the track. */
     private int topSpeed = UNLIMITED_SPEED;
     /** Unlimited spedd. */
@@ -32,10 +32,10 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Attributes. */
     private Attributes attributes;
     /** Starting point. */
-    private Node from;
+    private final Node from;
     /** Ending point. */
-    private Node to;
-    private GTListenerSupport<LineListener, LineEvent> listenerSupport;
+    private final Node to;
+    private final GTListenerSupport<LineListener, LineEvent> listenerSupport;
     private AttributesListener attributesListener;
 
     /**
@@ -75,7 +75,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new LineEvent(Line.this, change));
@@ -112,8 +112,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("length", oldLength, length)));
     }
 
-    public TimeInterval createTimeInterval(String intervalId, Train train, int start, TimeIntervalDirection direction, int speed, int fromSpeed, int toSpeed) {
-        int computedTime = this.computeRunningTime(train, speed, fromSpeed, toSpeed);
+    public TimeInterval createTimeInterval(String intervalId, Train train, int start, TimeIntervalDirection direction, int speed, int fromSpeed, int toSpeed, int addedTime) {
+        int computedTime = this.computeRunningTime(train, speed, fromSpeed, toSpeed, addedTime);
         int end = start + computedTime;
 
         LineTrack selectedTrack = null;
@@ -254,7 +254,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param toSpeed to speed
      * @return pair running time and speed
      */
-    public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed) {
+    public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed, int addedTime) {
         Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
         double timeScale = (Double) diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
@@ -278,6 +278,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         binding.put("timeScale", timeScale);
         binding.put("scale", scale.getRatio());
         binding.put("length", length);
+        binding.put("addedTime", addedTime);
         binding.put("penaltySolver", ps);
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
@@ -369,7 +370,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     /**
      * returns line track with specified number.
-     * 
+     *
      * @param number number
      * @return line track
      */
@@ -396,7 +397,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     public Object removeAttribute(String key) {
         return attributes.remove(key);
     }
-    
+
     @Override
     public LineTrack findTrackById(String id) {
         for (LineTrack track : getTracks()) {
@@ -406,15 +407,15 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
         return null;
     }
-    
+
     public void addListener(LineListener listener) {
         this.listenerSupport.addListener(listener);
     }
-    
+
     public void removeListener(LineListener listener) {
         this.listenerSupport.removeListener(listener);
     }
-    
+
     void fireTrackAttributeChanged(String attributeName, LineTrack track, Object oldValue, Object newValue) {
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(attributeName, oldValue, newValue), track));
     }

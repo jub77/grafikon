@@ -22,7 +22,7 @@ public class TrainBuilder {
 
     /**
      * creates new train with the same data and same route.
-     * 
+     *
      * @param id id
      * @param number number of the name train
      * @param time new start time
@@ -53,7 +53,7 @@ public class TrainBuilder {
 
         return train;
     }
-    
+
     public Train createReverseTrain(String id, String number, int time, Train copiedTrain) {
         // create train
         Train train = copiedTrain.getTrainDiagram().createTrain(id);
@@ -62,22 +62,22 @@ public class TrainBuilder {
         train.setDescription(copiedTrain.getDescription());
         train.setTopSpeed(copiedTrain.getTopSpeed());
         train.setAttributes(new Attributes(copiedTrain.getAttributes()));
-        
+
         // get original intervals in reverse order
         LinkedList<TimeInterval> reverseIntervals = new LinkedList<TimeInterval>();
         for (TimeInterval interval : copiedTrain.getTimeIntervalList()) {
             reverseIntervals.addFirst(interval);
         }
-        
+
         int currentTime = time;
-        
+
         // create time intervals
         for (TimeInterval originalInterval : reverseIntervals) {
             TimeInterval interval = null;
             if (originalInterval.isNodeOwner()) {
                 interval = originalInterval.getOwnerAsNode().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getLength());
             } else {
-                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0, 0);
+                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0, 0, 0);
             }
             currentTime = interval.getEnd();
             train.addInterval(interval);
@@ -133,7 +133,7 @@ public class TrainBuilder {
                         train, time,
                         direction, pair.second,
                         this.computeFromSpeed(pair, data, i),
-                        this.computeToSpeed(pair, data, i));
+                        this.computeToSpeed(pair, data, i), 0);
             }
 
             // add created interval to train and set current time
