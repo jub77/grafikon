@@ -10,7 +10,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Enumeration with columns for train view table.
- * 
+ *
  * @author jub
  */
 public enum TrainTableColumn {
@@ -20,6 +20,7 @@ public enum TrainTableColumn {
     STOP("train.table.stop", 50, 50, 50, "flo", Integer.class, false, null),
     REAL_STOP("train.table.real.stop", 50, 50, 50, "w", Double.class, false, null),
     SPEED("train.table.speed", 50, 50, 50, "e", Integer.class, false, null),
+    ADDED_TIME("train.table.added.time", 50, 50, 50, "e", Integer.class, false, null),
     PLATFORM("train.table.platform", 50, 50, 50, "t", String.class, false, new TrackCellEditor()),
     WEIGHT("train.table.weight", 50, 100, 50, "w", Integer.class, false, null),
     LENGTH("train.table.length", 50, 100, 50, "w", Integer.class, false, null),
@@ -28,7 +29,7 @@ public enum TrainTableColumn {
     COMMENT("train.table.comment", 1, Integer.MAX_VALUE, 150, "", String.class, false, null),
     OCCUPIED_ENTRY("train.table.occupied.track", 30, 30, 30, "fo", Boolean.class, false, null),
     SHUNT("train.table.shunt", 30, 30, 30, "fo", Boolean.class, false, null);
-    
+
     private int index;
     private String key;
     private int minWidth;
@@ -47,7 +48,7 @@ public enum TrainTableColumn {
     private static class Counter {
         static AtomicInteger CNT = new AtomicInteger(0);
     }
-    
+
     private TrainTableColumn(String key, int minWidth, int maxWidth, int prefWidth, String forbidden, Class<?> clazz, boolean rightAling, TableCellEditor editor) {
         this.index = Counter.CNT.getAndIncrement();
         this.key = key;
@@ -113,7 +114,7 @@ public enum TrainTableColumn {
     public TableCellEditor getEditor() {
         return editor;
     }
-    
+
     public boolean isAllowedToEdit(int row, int max, TimeInterval interval) {
         if (all)
             return false;
@@ -131,7 +132,7 @@ public enum TrainTableColumn {
         }
         return true;
     }
-    
+
     public TableColumn createTableColumn() {
         TableColumn tableColumn = new TableColumn(this.getIndex(), this.getPrefWidth());
         tableColumn.setMinWidth(this.getMinWidth());

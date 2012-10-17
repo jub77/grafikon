@@ -603,15 +603,16 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
      *
      * @param lineInterval line interval
      * @param speed velocity to be set
-     * @param modelInfo model info
+     * @param addedTime added time
      */
-    public void changeSpeed(TimeInterval lineInterval, int speed) {
+    public void changeSpeedAndAddedTime(TimeInterval lineInterval, int speed, int addedTime) {
         int index = timeIntervalList.indexOf(lineInterval);
         if (index == -1 || !lineInterval.isLineOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
         int computedSpeed = lineInterval.getOwnerAsLine().computeSpeed(this, lineInterval, speed);
         lineInterval.setSpeed(computedSpeed);
+        lineInterval.setAddedTime(addedTime);
 
         int changedIndex = index;
 
