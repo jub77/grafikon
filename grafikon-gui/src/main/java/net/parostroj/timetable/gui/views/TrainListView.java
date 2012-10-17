@@ -20,8 +20,7 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -239,6 +238,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     updateGroupsMenu(true, (Group) event.getObject());
                 } else if (event.getType() == GTEventType.GROUP_REMOVED) {
                     updateGroupsMenu(false, (Group) event.getObject());
+                }
+            }
+
+            @Override
+            public void processTrainEvent(TrainEvent event) {
+                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().getName().equals("group")) {
+                    // TODO handle change of group of train
                 }
             }
         });
