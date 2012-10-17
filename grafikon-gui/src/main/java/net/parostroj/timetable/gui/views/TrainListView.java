@@ -5,10 +5,11 @@
  */
 package net.parostroj.timetable.gui.views;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -20,7 +21,9 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -34,6 +37,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private ButtonGroup groupsBG;
     private final ItemListener groupL;
     private GroupSelect groupSelect;
+    private final MenuAdapter menuAdapter;
 
     public static enum TreeType {
         FLAT, TYPES
@@ -53,6 +57,28 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
+    private class MenuAdapter extends MouseAdapter implements ActionListener {
+
+        private int x = -1, y = -1;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (x == -1) {
+                x = 3;
+                y = 3;
+            }
+            treePopupMenu.show(menuButton, x, y);
+            x = -1;
+            y = -1;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            x = e.getX();
+            y = e.getY();
+        }
+    }
+
     private TreeType treeType = TreeType.TYPES;
     private boolean selecting = false;
 
@@ -63,8 +89,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         setLayout(new BorderLayout(0, 0));
 
         treePopupMenu = new javax.swing.JPopupMenu();
-        typesMenuItem = new javax.swing.JMenuItem();
-        flatMenuItem = new javax.swing.JMenuItem();
+        typesMenuItem = new javax.swing.JRadioButtonMenuItem();
+        flatMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.ButtonGroup typeButtonGroup = new ButtonGroup();
+        typeButtonGroup.add(typesMenuItem);
+        typeButtonGroup.add(flatMenuItem);
+        typesMenuItem.setSelected(true);
 
         typesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
         typesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -128,11 +158,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         menuButton = new javax.swing.JButton("v");
         buttonPanel.add(menuButton);
-        menuButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                treePopupMenu.show(menuButton, 3, 3);
-            }
-        });
+        menuAdapter = new MenuAdapter();
+        menuButton.addActionListener(menuAdapter);
+        menuButton.addMouseListener(menuAdapter);
+
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -395,11 +424,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
-    private final javax.swing.JMenuItem flatMenuItem;
+    private final javax.swing.JRadioButtonMenuItem flatMenuItem;
     private final javax.swing.JScrollPane scrollPane;
     private final javax.swing.JTree trainTree;
     private final javax.swing.JPopupMenu treePopupMenu;
-    private final javax.swing.JMenuItem typesMenuItem;
+    private final javax.swing.JRadioButtonMenuItem typesMenuItem;
     private final javax.swing.JMenu groupsMenu;
     private final javax.swing.JButton menuButton;
 }
