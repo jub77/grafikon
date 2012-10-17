@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Class for storing trains.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "train")
@@ -148,7 +148,7 @@ public class LSTrain {
     public void setStart(int start) {
         this.start = start;
     }
-    
+
     public Train createTrain(TrainDiagram diagram) {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
@@ -168,7 +168,7 @@ public class LSTrain {
                 LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
                 Line line = diagram.getNet().getLineById(linePart.getLineId());
                 LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
-                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAttributes().createAttributes());
+                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), null, linePart.getAttributes().createAttributes());
             }
         }
         builder.finish();
