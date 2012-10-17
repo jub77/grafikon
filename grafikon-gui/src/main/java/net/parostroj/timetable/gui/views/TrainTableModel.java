@@ -106,6 +106,11 @@ class TrainTableModel extends AbstractTableModel {
                 if (interval.getOwner() instanceof Line)
                     retValue = Integer.valueOf(interval.getSpeed());
                 break;
+            // added time
+            case ADDED_TIME:
+                if (interval.isLineOwner() && interval.getAddedTime() != 0)
+                    retValue = Integer.valueOf(interval.getAddedTime() / 60);
+                break;
             // platform
             case PLATFORM:
                 if (interval.getOwner() instanceof Node) {
@@ -213,10 +218,22 @@ class TrainTableModel extends AbstractTableModel {
                 int velocity = ((Integer)aValue).intValue();
                 if (velocity > 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
-                    train.changeSpeed(interval, velocity);
+                    train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
                     this.fireTableRowsUpdated(rowIndex, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
+                break;
+            case ADDED_TIME:
+                // added time
+                interval = train.getTimeIntervalList().get(rowIndex);
+                if (aValue != null) {
+                    int addedTime = ((Integer) aValue).intValue() * 60;
+                    train.changeSpeedAndAddedTime(interval, interval.getSpeed(), addedTime);
+                } else {
+                    train.changeSpeedAndAddedTime(interval, interval.getSpeed(), 0);
+                }
+                this.fireTableRowsUpdated(rowIndex, lastRow);
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 break;
             case PLATFORM:
                 // platform
@@ -247,7 +264,7 @@ class TrainTableModel extends AbstractTableModel {
                 if ("".equals(commentStr))
                     commentStr = null;
                 if (commentStr != null)
-                    interval.setAttribute("comment", (String)aValue);
+                    interval.setAttribute("comment", aValue);
                 else
                     interval.removeAttribute("comment");
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
