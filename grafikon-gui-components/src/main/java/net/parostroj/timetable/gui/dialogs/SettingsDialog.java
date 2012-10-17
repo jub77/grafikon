@@ -17,6 +17,7 @@ import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.awt.Insets;
 
 /**
  * Dialog for settings modification of the train diagram.
@@ -165,7 +166,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     public boolean isDiagramChanged() {
         return diagramChanged;
     }
-    
+
     public boolean isRecalculate() {
         return recalculate;
     }
@@ -227,12 +228,12 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel1.setText(ResourceLoader.getString("modelinfo.scales")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(5, 10, 5, 0);
         getContentPane().add(jLabel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 2, 5, 10);
+        gridBagConstraints.insets = new Insets(5, 2, 5, 10);
         getContentPane().add(scaleComboBox, gridBagConstraints);
 
         jLabel2.setText(ResourceLoader.getString("modelinfo.ratio")); // NOI18N
@@ -266,7 +267,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        gridBagConstraints.insets = new Insets(0, 10, 5, 5);
         getContentPane().add(nameTemplateEditBox, gridBagConstraints);
 
         jLabel4.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
@@ -284,7 +285,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        gridBagConstraints.insets = new Insets(0, 10, 5, 5);
         getContentPane().add(cNameTemplateEditBox, gridBagConstraints);
 
         jLabel5.setText(ResourceLoader.getString("modelinfo.sort")); // NOI18N
@@ -420,6 +421,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         fromTimeTextField.setColumns(7);
         fromTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 timeTextFieldFocusLost(evt);
             }
@@ -431,6 +433,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         toTimeTextField.setColumns(7);
         toTimeTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 timeTextFieldFocusLost(evt);
             }
@@ -479,7 +482,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         getContentPane().add(panel1, gridBagConstraints);
 
         pack();
