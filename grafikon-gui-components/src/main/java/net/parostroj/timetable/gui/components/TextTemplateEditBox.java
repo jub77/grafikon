@@ -17,7 +17,7 @@ import net.parostroj.timetable.model.TextTemplate;
  * @author jub
  */
 public class TextTemplateEditBox extends javax.swing.JPanel {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TextTemplateEditBox.class);
 
     private Collection<Language> languages;
@@ -87,15 +87,15 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
             language = languages.iterator().next();
         languageComboBox.setSelectedItem(language);
     }
-    
+
     public void setCaretPosition(int position) {
         templateTextField.setCaretPosition(position);
     }
-    
+
     public int getCaretPosition() {
         return templateTextField.getCaretPosition();
     }
-    
+
     public void insertText(String text) {
         try {
             int start = templateTextField.getSelectionStart();
@@ -108,7 +108,7 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
             LOG.warn("Error inserting text: {}", e.getMessage());
         }
     }
-    
+
     public void requestFocusForTemplateField() {
         templateTextField.requestFocusInWindow();
     }
@@ -128,18 +128,8 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
         add(templateTextField, java.awt.BorderLayout.CENTER);
 
-        languageComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                languageComboBoxActionPerformed(evt);
-            }
-        });
         add(languageComboBox, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void languageComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_languageComboBoxActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox languageComboBox;
