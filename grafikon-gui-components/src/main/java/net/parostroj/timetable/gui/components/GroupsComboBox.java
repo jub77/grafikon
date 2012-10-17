@@ -2,11 +2,11 @@ package net.parostroj.timetable.gui.components;
 
 import javax.swing.JComboBox;
 
+import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.Pair;
 
 /**
  * Combo box for group selection.
@@ -14,10 +14,6 @@ import net.parostroj.timetable.utils.Pair;
  * @author jub
  */
 public class GroupsComboBox extends JComboBox {
-
-    public static enum Type {
-        ALL, NONE, GROUP
-    }
 
     private final Wrapper<String> all = new Wrapper<String>("<" + ResourceLoader.getString("groups.all") + ">");
     private final Wrapper<String> none = new Wrapper<String>("<" + ResourceLoader.getString("groups.none") + ">");
@@ -38,7 +34,7 @@ public class GroupsComboBox extends JComboBox {
      * @param selection selected group (null -> none)
      */
     public void updateGroups(TrainDiagram diagram, Group selection) {
-        updateGroups(diagram, selection == null ? Type.NONE : Type.GROUP, selection);
+        updateGroups(diagram, selection == null ? new GroupSelect(Type.NONE) : new GroupSelect(Type.GROUP, selection));
     }
 
     /**
@@ -48,8 +44,8 @@ public class GroupsComboBox extends JComboBox {
      * @param type type
      * @param selection selected group (depends on type)
      */
-    public void updateGroups(TrainDiagram diagram, Type type, Group selection) {
-        if (type == Type.ALL && !allOption)
+    public void updateGroups(TrainDiagram diagram, GroupSelect groupSelect) {
+        if (groupSelect.getType() == Type.ALL && !allOption)
             throw new IllegalArgumentException("Cannot set ALL.");
         // clear
         removeAllItems();
@@ -60,7 +56,7 @@ public class GroupsComboBox extends JComboBox {
         for (Group group : diagram.getGroups()) {
             addItem(new Wrapper<Group>(group));
         }
-        switch (type) {
+        switch (groupSelect.getType()) {
             case ALL:
                 setSelectedItem(all);
                 break;
@@ -68,7 +64,7 @@ public class GroupsComboBox extends JComboBox {
                 setSelectedItem(none);
                 break;
             default:
-                Wrapper<Group> w = new Wrapper<Group>(selection);
+                Wrapper<Group> w = new Wrapper<Group>(groupSelect.getGroup());
                 setSelectedItem(w);
                 break;
         }
@@ -77,9 +73,9 @@ public class GroupsComboBox extends JComboBox {
     /**
      * @return selected group (type denotes special cases - all, none)
      */
-    public Pair<Type, Group> getSelectedGroup() {
+    public GroupSelect getGroupSelection() {
         Wrapper<?> selected = (Wrapper<?>) getSelectedItem();
         Type type = selected.equals(all) ? Type.ALL : (selected.equals(none) ? Type.NONE : Type.GROUP);
-        return new Pair<GroupsComboBox.Type, Group>(type, (Group) (type == Type.GROUP ? selected.getElement() : null));
+        return new GroupSelect(type, (Group) (type == Type.GROUP ? selected.getElement() : null));
     }
 }

@@ -17,6 +17,7 @@ import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
+import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
 import net.parostroj.timetable.model.Group;
@@ -82,7 +83,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         throughTextField.setText(throughNodes.toString());
 
         // update groups
-        groupComboBox.updateGroups(model.getDiagram(), selectedGroup != null ? GroupsComboBox.Type.GROUP : GroupsComboBox.Type.NONE, selectedGroup);
+        groupComboBox.updateGroups(model.getDiagram(), new GroupSelect(selectedGroup != null ? GroupSelect.Type.GROUP : GroupSelect.Type.NONE, selectedGroup));
     }
 
     /** This method is called from within the constructor to
@@ -305,7 +306,7 @@ public class CreateTrainView extends javax.swing.JPanel {
                 // midnight if cannot be parsed
                 start = 0;
 
-            Group group = groupComboBox.getSelectedGroup().second;
+            Group group = groupComboBox.getGroupSelection().getGroup();
 
             // create command ...
             CreateTrainCommand createCommand = new CreateTrainCommand(
