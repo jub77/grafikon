@@ -7,13 +7,11 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import javax.swing.ButtonModel;
-import javax.swing.DefaultListModel;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
@@ -29,9 +27,6 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * View with list of train on one side and list of train of the cycle
@@ -53,22 +48,22 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allTrainsList.setModel(new DefaultListModel());
         ecTrainsList.setModel(new DefaultListModel());
         ecTrainsList.getModel().addListDataListener(new ListDataListener() {
-            
+
             @Override
             public void intervalRemoved(ListDataEvent e) {
                 this.changed();
             }
-            
+
             @Override
             public void intervalAdded(ListDataEvent e) {
                 this.changed();
             }
-            
+
             @Override
             public void contentsChanged(ListDataEvent e) {
                 this.changed();
             }
-            
+
             private void changed() {
                 sortButton.setEnabled(ecTrainsList.getModel().getSize() >= 2);
             }
@@ -84,7 +79,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         this.updateListAllTrains();
     }
-    
+
     @Override
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         switch (action) {
@@ -131,7 +126,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 }
             }
             // sort them
-            getTrains = sort.sort(getTrains);
+            sort.sort(getTrains);
 
             DefaultListModel m = new DefaultListModel();
             for (Train train : getTrains) {
@@ -496,7 +491,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 TrainsCycleItem item = selected.getItem();
                 item.getCycle().removeItem(item);
                 delegate.fireUpdatedTrain(item.getTrain());
-    
+
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
             }
         }
@@ -536,7 +531,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                             trainsStr.append(t.getName());
                         }
                     }
-    
+
                     delegate.fireUpdatedTrain(t);
                     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
                 }
@@ -702,7 +697,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         ecTrainsList.getSelectionModel().clearSelection();
         ecTrainsList.repaint();
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-        
+
     }//GEN-LAST:event_sortButtonActionPerformed
 
     private void setFilter(String type, Component component) {
@@ -714,7 +709,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
             dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
-            dialog.setLocationRelativeTo((java.awt.Frame)ActionUtils.getTopLevelComponent(component));
+            dialog.setLocationRelativeTo(ActionUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
 
             this.selectedTypes = dialog.getSelectedTypes();
