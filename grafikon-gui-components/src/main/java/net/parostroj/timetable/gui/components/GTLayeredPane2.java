@@ -6,9 +6,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 
-import net.parostroj.timetable.gui.components.GTStationNamesOverlay;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
-import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 
 
@@ -32,14 +29,6 @@ public class GTLayeredPane2 extends JLayeredPane {
         this.add(new GTStationNamesOverlay(view, borderInsets.top), new Integer(400));
         buttonPanel = new GTVButtonPanel(view, borderInsets);
         this.add(buttonPanel, new Integer(600));
-
-        view.setRsListener(new GraphicalTimetableView.RSListener() {
-
-            @Override
-            public void routeSelected(Route route) {
-                buttonPanel.setSelectedRoute(route);
-            }
-        });
     }
 
     public JScrollPane getScrollPane() {
