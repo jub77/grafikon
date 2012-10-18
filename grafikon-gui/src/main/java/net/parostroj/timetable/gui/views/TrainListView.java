@@ -42,7 +42,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private final MenuAdapter menuAdapter;
 
     public static enum TreeType {
-        FLAT, TYPES
+        FLAT, TYPES, GROUPS_AND_TYPES
     }
 
     private static class GroupMenuItem extends javax.swing.JRadioButtonMenuItem {
@@ -91,28 +91,38 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         setLayout(new BorderLayout(0, 0));
 
         treePopupMenu = new javax.swing.JPopupMenu();
-        typesMenuItem = new javax.swing.JRadioButtonMenuItem();
-        flatMenuItem = new javax.swing.JRadioButtonMenuItem();
+        listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
+        listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
+        listGroupsMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.ButtonGroup typeButtonGroup = new ButtonGroup();
-        typeButtonGroup.add(typesMenuItem);
-        typeButtonGroup.add(flatMenuItem);
-        typesMenuItem.setSelected(true);
+        typeButtonGroup.add(listTypesMenuItem);
+        typeButtonGroup.add(listFlatMenuItem);
+        typeButtonGroup.add(listGroupsMenuItem);
+        listTypesMenuItem.setSelected(true);
 
-        typesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
-        typesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        listTypesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
+        listTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
-        treePopupMenu.add(typesMenuItem);
+        treePopupMenu.add(listTypesMenuItem);
 
-        flatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
-        flatMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        listFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
+        listFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
-        treePopupMenu.add(flatMenuItem);
+        treePopupMenu.add(listFlatMenuItem);
+
+        listGroupsMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups")); // NOI18N
+        listGroupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                treeTypeActionPerformed(evt);
+            }
+        });
+        treePopupMenu.add(listGroupsMenuItem);
 
         groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.groups")); // NOI18N
         treePopupMenu.add(groupsMenu);
@@ -277,7 +287,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             @Override
             public void processTrainEvent(TrainEvent event) {
                 if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().getName().equals("group")) {
-                    // TODO handle change of group of train
+                    modifyAndSelectTrain(event.getSource());
                 }
             }
         });
@@ -287,9 +297,18 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private void updateViewDiagramChanged() {
         if (model.getDiagram() != null) {
             TrainTreeNodeFactory factory = TrainTreeNodeFactory.getInstance();
-            TreeNode root = treeType == TreeType.TYPES ?
-                    factory.createTypeTree(model.getDiagram()) :
-                    factory.createFlatTree(model.getDiagram());
+            TreeNode root = null;
+            switch (treeType) {
+                case FLAT:
+                    root = factory.createFlatTree(model.getDiagram());
+                    break;
+                case GROUPS_AND_TYPES:
+                    root = factory.createGroupTree(model.getDiagram());
+                    break;
+                case TYPES:
+                    root = factory.createTypeTree(model.getDiagram());
+                    break;
+            }
             DefaultTreeModel treeModel = new DefaultTreeModel(root);
             trainTree.setModel(treeModel);
             createButton.setEnabled(true);
@@ -302,25 +321,26 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             menuButton.setEnabled(false);
         }
         buildGroupsMenu();
+        this.selectTrain(model.getSelectedTrain());
     }
 
     private void addAndSelectTrain(Train train) {
-        TreePath p = ((TrainTreeNode<?>) trainTree.getModel().getRoot()).addTrain(train);
-        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
+        TreePath p = getRootNode().addTrain(train);
+        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
     }
 
     private void deleteAndDeselectTrain(Train train) {
-        TreePath p = ((TrainTreeNode<?>) trainTree.getModel().getRoot()).removeTrain(train);
-        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
+        TreePath p = getRootNode().removeTrain(train);
+        getTreeModel().nodeStructureChanged((TreeNode) p.getParentPath().getLastPathComponent());
     }
 
     private void modifyAndSelectTrain(Train train) {
-        TreePath p = ((TrainTreeNode<?>) trainTree.getModel().getRoot()).removeTrain(train);
-        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
-        p = ((TrainTreeNode<?>) trainTree.getModel().getRoot()).addTrain(train);
-        ((DefaultTreeModel) trainTree.getModel()).reload((TreeNode) p.getParentPath().getLastPathComponent());
+        TreePath p = getRootNode().removeTrain(train);
+        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
+        p = getRootNode().addTrain(train);
+        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
     }
@@ -328,9 +348,17 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private void selectTrain(Train train) {
         TreePath p = null;
         if (trainTree.getModel() != null)
-            p = ((TrainTreeNode<?>) trainTree.getModel().getRoot()).getTrainPath(train);
+            p = getRootNode().getTrainPath(train);
         trainTree.setSelectionPath(p);
         trainTree.scrollPathToVisible(p);
+    }
+
+    private TrainTreeNode<?> getRootNode() {
+        return ((TrainTreeNode<?>) trainTree.getModel().getRoot());
+    }
+
+    private DefaultTreeModel getTreeModel() {
+        return (DefaultTreeModel) trainTree.getModel();
     }
 
     @Override
@@ -362,11 +390,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             this.treeType = treeType;
             switch (treeType) {
                 case FLAT:
-                    flatMenuItem.setSelected(true);
+                    listFlatMenuItem.setSelected(true);
                     break;
                 case TYPES:
-                    typesMenuItem.setSelected(true);
+                    listTypesMenuItem.setSelected(true);
                     break;
+                case GROUPS_AND_TYPES:
+                    listGroupsMenuItem.setSelected(true);
             }
             // update list
             this.updateViewDiagramChanged();
@@ -428,10 +458,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }// GEN-LAST:event_createButtonActionPerformed
 
     private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_treeTypeActionPerformed
-        if (evt.getSource() == flatMenuItem)
+        if (evt.getSource() == listFlatMenuItem)
             treeType = TrainListView.TreeType.FLAT;
-        else
+        else if (evt.getSource() == listTypesMenuItem)
             treeType = TrainListView.TreeType.TYPES;
+        else
+            treeType = TrainListView.TreeType.GROUPS_AND_TYPES;
         // update list
         this.updateViewDiagramChanged();
     }// GEN-LAST:event_treeTypeActionPerformed
@@ -439,11 +471,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
-    private final javax.swing.JRadioButtonMenuItem flatMenuItem;
+    private final javax.swing.JRadioButtonMenuItem listFlatMenuItem;
+    private final javax.swing.JRadioButtonMenuItem listGroupsMenuItem;
     private final javax.swing.JScrollPane scrollPane;
     private final javax.swing.JTree trainTree;
     private final javax.swing.JPopupMenu treePopupMenu;
-    private final javax.swing.JRadioButtonMenuItem typesMenuItem;
+    private final javax.swing.JRadioButtonMenuItem listTypesMenuItem;
     private final javax.swing.JMenu groupsMenu;
     private final javax.swing.JButton menuButton;
 }
