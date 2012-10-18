@@ -91,6 +91,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         setLayout(new BorderLayout(0, 0));
 
         treePopupMenu = new javax.swing.JPopupMenu();
+        javax.swing.JMenu listMenu = new javax.swing.JMenu(ResourceLoader.getString("trainlist.tree"));
+        treePopupMenu.add(listMenu);
         listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
         listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
         listGroupsMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -106,7 +108,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 treeTypeActionPerformed(evt);
             }
         });
-        treePopupMenu.add(listTypesMenuItem);
+        listMenu.add(listTypesMenuItem);
 
         listFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
         listFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -114,7 +116,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 treeTypeActionPerformed(evt);
             }
         });
-        treePopupMenu.add(listFlatMenuItem);
+        listMenu.add(listFlatMenuItem);
 
         listGroupsMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups")); // NOI18N
         listGroupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -122,7 +124,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 treeTypeActionPerformed(evt);
             }
         });
-        treePopupMenu.add(listGroupsMenuItem);
+        listMenu.add(listGroupsMenuItem);
 
         groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.groups")); // NOI18N
         treePopupMenu.add(groupsMenu);
