@@ -34,7 +34,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         ToolTipManager.sharedInstance().setReshowDelay(0);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
-    
+
+    public static interface RSListener {
+        public void routeSelected(Route route);
+    }
+
     private interface ToolTipHelper {
 
         public List<TrainsCycleItem> getEngineCycles(TimeInterval interval);
@@ -72,11 +76,12 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
-    
+    private RSListener rsListener;
+
     private TextTemplate toolTipTemplateLine;
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
-    private Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
+    private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
     private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
     private JMenuItem routesMenuItem;
@@ -126,11 +131,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             public List<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
             }
-        }); 
+        });
         routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes") + "...");
         routesMenu.add(routesMenuItem);
         routesMenuItem.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 // show list of routes
@@ -148,7 +153,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             }
         });
     }
-    
+
     private EditRoutesDialog getRouteDialog() {
         if (editRoutesDialog == null)
             editRoutesDialog = new EditRoutesDialog((Frame)this.getTopLevelAncestor(), true);
@@ -324,7 +329,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         preferredSize = new Dimension(newWidth, newHeight);
         this.revalidate();
     }
-    
+
     public void setTrainSelector(TrainSelector trainSelector) {
         this.trainSelector = trainSelector;
     }
@@ -335,8 +340,25 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         this.route = route;
         this.recreateDraw();
         this.activateRouteMenuItem(route);
+        if (rsListener != null) {
+            rsListener.routeSelected(route);
+        }
     }
-    
+
+    /**
+     * @return the rsListener
+     */
+    public RSListener getRsListener() {
+        return rsListener;
+    }
+
+    /**
+     * @param rsListener the rsListener to set
+     */
+    public void setRsListener(RSListener rsListener) {
+        this.rsListener = rsListener;
+    }
+
     private void setTimeRange() {
         if (diagram == null) {
             settings.remove(Key.START_TIME);
@@ -541,6 +563,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
         setDoubleBuffered(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 formMouseClicked(evt);
             }
@@ -591,7 +614,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (trainRegionCollector == null)
             return null;
         List<TimeInterval> intervals = trainRegionCollector.getTrainForPoint(event.getX(), event.getY());
-        
+
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty())
                 lastToolTipInterval = intervals.get(0);
@@ -608,7 +631,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         else
             return toolTipTemplateNode.evaluate(toolTipformattingMap);
     }
-    
+
     private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
         int oldIndex = list.indexOf(oldInterval);
         if (oldIndex == -1)
@@ -735,7 +758,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     public GTDraw getGtDraw() {
         return draw;
     }
-    
+
     public void setDisableStationNames(Boolean disable) {
         settings.setOption(Key.DISABLE_STATION_NAMES, disable);
     }
@@ -752,7 +775,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         }
         return pSize;
     }
-    
+
     @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();
