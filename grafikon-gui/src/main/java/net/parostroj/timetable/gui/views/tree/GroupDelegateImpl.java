@@ -16,7 +16,7 @@ public class GroupDelegateImpl extends CategoryDelegateImpl<Group> {
 
     @Override
     public String getNodeText(Group item) {
-        return item == null ? ResourceLoader.getString("groups.none") : item.getName();
+        return item == null ? "<" + ResourceLoader.getString("groups.none") + ">" : item.getName();
     }
 
     @Override
