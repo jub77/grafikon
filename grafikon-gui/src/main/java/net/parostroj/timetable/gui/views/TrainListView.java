@@ -93,6 +93,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         treePopupMenu = new javax.swing.JPopupMenu();
         javax.swing.JMenu listMenu = new javax.swing.JMenu(ResourceLoader.getString("trainlist.tree"));
         treePopupMenu.add(listMenu);
+        moveToGroupMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.move.to.group"));
+        treePopupMenu.add(moveToGroupMenuItem);
         listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
         listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
         listGroupsMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -316,11 +318,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             trainTree.setModel(treeModel);
             createButton.setEnabled(true);
             deleteButton.setEnabled(false);
+            moveToGroupMenuItem.setEnabled(false);
             menuButton.setEnabled(true);
         } else {
             trainTree.setModel(null);
             createButton.setEnabled(false);
             deleteButton.setEnabled(false);
+            moveToGroupMenuItem.setEnabled(false);
             menuButton.setEnabled(false);
         }
         buildGroupsMenu();
@@ -380,7 +384,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     model.setSelectedTrain(train);
             }
         }
-        deleteButton.setEnabled(!trainTree.isSelectionEmpty());
+        boolean selectionEmpty = trainTree.isSelectionEmpty();
+        deleteButton.setEnabled(!selectionEmpty);
+        moveToGroupMenuItem.setEnabled(!selectionEmpty);
         selecting = false;
     }
 
@@ -482,4 +488,5 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private final javax.swing.JRadioButtonMenuItem listTypesMenuItem;
     private final javax.swing.JMenu groupsMenu;
     private final javax.swing.JButton menuButton;
+    private final javax.swing.JMenuItem moveToGroupMenuItem;
 }
