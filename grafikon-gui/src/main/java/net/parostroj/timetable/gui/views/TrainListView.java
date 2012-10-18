@@ -197,6 +197,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 groupsMenu.getItem(0).setSelected(true);
             removeFromGroupsMenu(item);
         }
+        this.updateViewDiagramChanged();
     }
 
     private GroupMenuItem findByGroup(Group group) {
