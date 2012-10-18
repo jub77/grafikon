@@ -379,7 +379,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram(), groupSelect.getGroup());
         if (dialog.isSelected()) {
-            System.out.println(dialog.getSelected());
+            Set<Train> selectedTrains = this.getSelectedTrains();
+            Group group = dialog.getSelected();
+            for (Train train : selectedTrains) {
+                if (group == null)
+                    train.removeAttribute(Train.ATTR_GROUP);
+                else
+                    train.setAttribute(Train.ATTR_GROUP, group);
+            }
         }
     }
 
