@@ -20,6 +20,7 @@ import javax.swing.tree.*;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
+import net.parostroj.timetable.gui.dialogs.GroupChooserDialog;
 import net.parostroj.timetable.gui.views.tree.TrainTreeNode;
 import net.parostroj.timetable.gui.views.tree.TrainTreeNodeFactory;
 import net.parostroj.timetable.model.*;
@@ -94,6 +95,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         javax.swing.JMenu listMenu = new javax.swing.JMenu(ResourceLoader.getString("trainlist.tree"));
         treePopupMenu.add(listMenu);
         moveToGroupMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.move.to.group"));
+        moveToGroupMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                moveToGroup();
+            }
+        });
         treePopupMenu.add(moveToGroupMenuItem);
         listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
         listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -366,6 +372,15 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private DefaultTreeModel getTreeModel() {
         return (DefaultTreeModel) trainTree.getModel();
+    }
+
+    private void moveToGroup() {
+        GroupChooserDialog dialog = new GroupChooserDialog();
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram(), groupSelect.getGroup());
+        if (dialog.isSelected()) {
+            System.out.println(dialog.getSelected());
+        }
     }
 
     @Override
