@@ -3,8 +3,6 @@ package net.parostroj.timetable.gui.views.tree;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.tree.TreeNode;
-
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.*;
 
@@ -41,18 +39,33 @@ public class TrainTreeNodeFactory {
         return rootNode;
     }
 
-    public TreeNode createGroupTree(TrainDiagram diagram) {
+    public TrainTreeNode<TrainDiagram> createGroupTree(TrainDiagram diagram) {
         TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false);
         List<Group> groups = new LinkedList<Group>();
         groups.add(null);
         groups.addAll(diagram.getGroups());
         for (Group group : groups) {
-            TrainTreeNode<Group> groupNode = createGroupNode(rootNode, group);
+            TrainTreeNode<Group> groupNode = createGroupNode(rootNode, group, false);
             rootNode.getChildren().add(groupNode);
             for (TrainType trainType : diagram.getTrainTypes()) {
                 TrainTreeNode<TrainType> typeNode = createTrainTypeNode(groupNode, trainType);
                 groupNode.getChildren().add(typeNode);
             }
+        }
+        for (Train train : diagram.getTrains()) {
+            rootNode.addTrain(train);
+        }
+        return rootNode;
+    }
+
+    public TrainTreeNode<TrainDiagram> createGroupFlatTree(TrainDiagram diagram) {
+        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false);
+        List<Group> groups = new LinkedList<Group>();
+        groups.add(null);
+        groups.addAll(diagram.getGroups());
+        for (Group group : groups) {
+            TrainTreeNode<Group> groupNode = createGroupNode(rootNode, group, true);
+            rootNode.getChildren().add(groupNode);
         }
         for (Train train : diagram.getTrains()) {
             rootNode.addTrain(train);
@@ -68,8 +81,8 @@ public class TrainTreeNodeFactory {
         return new TrainTreeNodeImpl<TrainType>(parent, new TrainTypeDelegateImpl(true, createSort(type.getTrainDiagram())), type);
     }
 
-    public TrainTreeNode<Group> createGroupNode(TrainTreeNode<?> parent, Group group) {
-        return new TrainTreeNodeImpl<Group>(parent, new GroupDelegateImpl(false), group);
+    public TrainTreeNode<Group> createGroupNode(TrainTreeNode<?> parent, Group group, boolean containsTrains) {
+        return new TrainTreeNodeImpl<Group>(parent, new GroupDelegateImpl(containsTrains), group);
     }
 
     public TrainTreeNode<TrainDiagram> createRootNode(TrainDiagram diagram, boolean containTrains) {
