@@ -352,13 +352,20 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         Train train = model.getSelectedTrain();
+        boolean modifiedTypeName = false;
         // set values to train ...
-        if (train.getType() != typeComboBox.getSelectedItem())
+        if (train.getType() != typeComboBox.getSelectedItem()) {
             train.setType((TrainType)typeComboBox.getSelectedItem());
-        if (!train.getAttribute("diesel").equals(dieselCheckBox.isSelected()))
+            modifiedTypeName = true;
+        }
+        if (!train.getAttribute("diesel").equals(dieselCheckBox.isSelected())) {
             train.setAttribute("diesel", dieselCheckBox.isSelected());
-        if (!train.getAttribute("electric").equals(electricCheckBox.isSelected()))
+            modifiedTypeName = true;
+        }
+        if (!train.getAttribute("electric").equals(electricCheckBox.isSelected())) {
             train.setAttribute("electric", electricCheckBox.isSelected());
+            modifiedTypeName = true;
+        }
         if (showLengthCheckBox.isSelected() && !Boolean.TRUE.equals(train.getAttribute("show.station.length")))
             train.setAttribute("show.station.length", Boolean.TRUE);
         else if (!showLengthCheckBox.isSelected())
@@ -367,10 +374,14 @@ public class EditTrainDialog extends javax.swing.JDialog {
             train.setAttribute("empty", Boolean.TRUE);
         else if (!emptyCheckBox.isSelected())
             train.removeAttribute("empty");
-        if (!numberTextField.getText().equals(train.getNumber()))
+        if (!numberTextField.getText().equals(train.getNumber())) {
             train.setNumber(numberTextField.getText());
-        if (!descriptionTextField.getText().equals(train.getDescription()))
+            modifiedTypeName = true;
+        }
+        if (!descriptionTextField.getText().equals(train.getDescription())) {
             train.setDescription(descriptionTextField.getText());
+            modifiedTypeName = true;
+        }
         Group sGroup = groupsComboBox.getGroupSelection().getGroup();
         Group aGroup = train.getAttributes().get(Train.ATTR_GROUP, Group.class);
         if (sGroup == null && aGroup != null)
@@ -443,8 +454,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // fire changed event
         if (changed)
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-        // fire event
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE, model, train));
+        // fire event (modified attributes that affect name)
+        if (modifiedTypeName)
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE, model, train));
 
         this.setVisible(false);
     }//GEN-LAST:event_okButtonActionPerformed
