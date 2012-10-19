@@ -22,6 +22,7 @@
         <jsr311.version>1.1.1</jsr311.version>
         <slf4j.version>1.6.0</slf4j.version>
         <rsyntaxtextarea.version>1.4.1</rsyntaxtextarea.version>
+        <jxlayer.version>3.0.4</jxlayer.version>
         <grafikon.jnlp.version>${grafikon.version}</grafikon.jnlp.version>
     </properties>
 
