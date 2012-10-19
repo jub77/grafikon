@@ -76,7 +76,13 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         else
             splitPane.setLastDividerLocation(dividerLoc);
         String treeType = prefs.getString("trains.listtype", "TYPES");
-        trainListView.setTreeType(TreeType.valueOf(treeType));
+        TreeType treeTypeEnum = TreeType.TYPES;
+        try {
+            treeTypeEnum = TreeType.valueOf(treeType);
+        } catch (IllegalArgumentException e) {
+            // ignore unknown value
+        }
+        trainListView.setTreeType(treeTypeEnum);
 
         trainView.loadFromPreferences(prefs);
     }
