@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Trains pane.
- * 
+ *
  * @author jub
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainsPane.class.getName());
-    
+
     /** Creates new form TrainsPane */
     public TrainsPane() {
         initComponents();
@@ -37,10 +37,10 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public void sortColumns() {
         trainView.sortColumns();
     }
-    
+
     /**
      * sets model.
-     * 
+     *
      * @param model application model
      */
     public void setModel(final ApplicationModel model) {
@@ -51,7 +51,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
                 graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         graphicalTimetableView.setTrainSelector(hts);
     }
-    
+
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
@@ -70,11 +70,17 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         else
             splitPane.setLastDividerLocation(dividerLoc);
         String treeType = prefs.getString("trains.listtype", "TYPES");
-        trainListView.setTreeType(TreeType.valueOf(treeType));
+        TreeType treeTypeEnum = TreeType.TYPES;
+        try {
+            treeTypeEnum = TreeType.valueOf(treeType);
+        } catch (IllegalArgumentException e) {
+            // ignore unknown value
+        }
+        trainListView.setTreeType(treeTypeEnum);
 
         trainView.loadFromPreferences(prefs);
     }
-    
+
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setInt("trains.divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
@@ -88,7 +94,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     public void editColumns() {
         trainView.editColumns();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
