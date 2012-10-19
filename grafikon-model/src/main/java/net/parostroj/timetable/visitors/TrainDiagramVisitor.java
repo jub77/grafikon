@@ -36,8 +36,10 @@ public interface TrainDiagramVisitor {
     public void visit(TimetableImage image);
 
     public void visit(LineClass lineClass);
-    
+
     public void visit(OutputTemplate template);
-    
+
     public void visit(TrainsCycleType type);
+
+    public void visit(Group group);
 }

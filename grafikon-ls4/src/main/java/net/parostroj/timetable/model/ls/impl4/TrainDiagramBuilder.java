@@ -9,18 +9,18 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Builder for TrainDiagram.
- * 
+ *
  * @author jub
  */
 public class TrainDiagramBuilder {
-    
+
     private TrainDiagram diagram;
     private boolean trackChanges;
 
     public TrainDiagramBuilder(TrainDiagram diagram) {
         this.diagram = diagram;
     }
-    
+
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
@@ -35,12 +35,16 @@ public class TrainDiagramBuilder {
         for (LSTrainsCycleType cType : lsDiagram.getCycleTypes()) {
             this.diagram.addCyclesType(cType.createTrainsCycleType(diagram));
         }
+        // groups
+        for (LSGroup lsGroup : lsDiagram.getGroups()) {
+            this.diagram.addGroup(lsGroup.createGroup(diagram));
+        }
         // add default trains cycle types (if already defined - no action)
         diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
         diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
         diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
     }
-    
+
     public void setTrainsData(LSTrainsData lsData) throws LSException {
         TrainsData data = lsData.createTrainsData();
         this.diagram.setTrainsData(data);
@@ -50,7 +54,7 @@ public class TrainDiagramBuilder {
         PenaltyTable table = lSPenaltyTable.createPenaltyTable();
         this.diagram.setPenaltyTable(table);
     }
-    
+
     public void setNet(LSNet lsNet) throws LSException {
         Net net = lsNet.createNet();
         this.diagram.setNet(net);
@@ -74,7 +78,7 @@ public class TrainDiagramBuilder {
                 net.addLine(from, to, line);
             }
     }
-    
+
     public void setRoute(LSRoute lsRoute) throws LSException {
         Route route = lsRoute.createRoute(diagram.getNet());
         Route foundRoute = null;
@@ -83,7 +87,7 @@ public class TrainDiagramBuilder {
         }
         diagram.addRoute(route);
     }
-    
+
     public void setTrainType(LSTrainType lsType) throws LSException {
         TrainType type = lsType.createTrainType(diagram);
         TrainType foundTrainType = null;
@@ -92,12 +96,12 @@ public class TrainDiagramBuilder {
         }
         diagram.addTrainType(type);
     }
-    
+
     public void setTextItem(LSTextItem lsTextItem) throws LSException {
         TextItem item = lsTextItem.createTextItem(diagram);
         diagram.addTextItem(item);
     }
-    
+
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
         OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram);
         diagram.addOutputTemplate(template);
@@ -118,7 +122,7 @@ public class TrainDiagramBuilder {
         }
         diagram.addTrain(train);
     }
-    
+
     public void setEngineClass(LSEngineClass lsEngineClass) {
         EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet());
         EngineClass foundEc = null;
@@ -127,7 +131,7 @@ public class TrainDiagramBuilder {
         }
         diagram.addEngineClass(ec);
     }
-    
+
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
@@ -136,12 +140,12 @@ public class TrainDiagramBuilder {
         }
         diagram.addCycle(cycle);
     }
-    
+
     public void addImage(LSImage lsImage) {
         TimetableImage image = lsImage.createTimetableImage(diagram);
         diagram.addImage(image);
     }
-    
+
     public void addImageFile(String filename, File file) {
         for (TimetableImage image : diagram.getImages()) {
             if (image.getFilename().equals(filename)) {
@@ -150,7 +154,7 @@ public class TrainDiagramBuilder {
             }
         }
     }
-    
+
     public TrainDiagram getTrainDiagram() {
         // after load check
         (new AfterLoadCheck()).check(diagram);

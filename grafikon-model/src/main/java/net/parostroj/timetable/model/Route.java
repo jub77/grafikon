@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+
+import net.parostroj.timetable.utils.ClassFilter;
 import net.parostroj.timetable.utils.FilterIterable;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -13,10 +15,11 @@ import net.parostroj.timetable.visitors.Visitable;
 public class Route implements ObjectWithId, Visitable {
 
     /** Route parts. */
-    private List<RouteSegment> segments;
+    private final List<RouteSegment> segments;
     private String name;
     private final String id;
     private boolean netPart;
+    private boolean trainRoute;
     private String _cachedToString;
 
     /**
@@ -27,7 +30,7 @@ public class Route implements ObjectWithId, Visitable {
 
     /**
      * Constructor.
-     * 
+     *
      * @param id id
      */
     public Route(String id) {
@@ -38,7 +41,7 @@ public class Route implements ObjectWithId, Visitable {
 
     /**
      * Constructor with name.
-     * 
+     *
      * @param id id
      * @param name name
      */
@@ -109,11 +112,20 @@ public class Route implements ObjectWithId, Visitable {
         this.netPart = netPart;
     }
 
+    public boolean isTrainRoute() {
+        return trainRoute;
+    }
+
+    public void setTrainRoute(boolean trainRoute) {
+        this.clearCached();
+        this.trainRoute = trainRoute;
+    }
+
     @Override
     public String getId() {
         return id;
     }
-    
+
     /**
      * @param segment checked segment
      * @return if the route contains given segment
@@ -124,7 +136,7 @@ public class Route implements ObjectWithId, Visitable {
 
     /**
      * adds route at the end.
-     * 
+     *
      * @param route route to be added
      */
     public void add(Route route) {
@@ -141,7 +153,7 @@ public class Route implements ObjectWithId, Visitable {
 
     /**
      * checks duplicate nodes in route (true if there are at least one).
-     * 
+     *
      * @return if there are duplicate nodes
      */
     public boolean checkDuplicateNodes() {
@@ -188,14 +200,14 @@ public class Route implements ObjectWithId, Visitable {
      * @return iterable which consists only of lines of this route
      */
     public Iterable<Line> lines() {
-        return new FilterIterable<Line>(segments, Line.class);
+        return new FilterIterable<Line>(segments, new ClassFilter<Line>(Line.class));
     }
 
     /**
      * @return iterable which consists only of nodes of this route
      */
     public Iterable<Node> nodes() {
-        return new FilterIterable<Node>(segments, Node.class);
+        return new FilterIterable<Node>(segments, new ClassFilter<Node>(Node.class));
     }
 
     /**

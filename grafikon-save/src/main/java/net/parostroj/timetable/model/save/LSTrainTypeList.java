@@ -13,29 +13,29 @@ import net.parostroj.timetable.model.*;
 
 /**
  * List of train types.
- * 
+ *
  * @author jub
  */
 @XmlRootElement
 public class LSTrainTypeList {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(LSTrainTypeList.class);
 
-    private Map<TrainType, LSTrainType> mapping;
-    private Map<String, TrainType> mappingByKey;
-    private List<TrainType> trainTypeList;
+    private final Map<TrainType, LSTrainType> mapping;
+    private final Map<String, TrainType> mappingByKey;
+    private final List<TrainType> trainTypeList;
     private TrainsData data;
     private String trainNameTemplate;
     private String trainCompleteNameTemplate;
     private LSSortPattern trainSortPattern;
     private LSTrainType[] trainType;
-    
+
     public LSTrainTypeList() {
         mapping = new HashMap<TrainType, LSTrainType>();
         mappingByKey = new HashMap<String, TrainType>();
         trainTypeList = new LinkedList<TrainType>();
     }
-    
+
     public LSTrainTypeList(List<TrainType> list, TrainsData data) {
         this();
         trainType = new LSTrainType[list.size()];
@@ -49,17 +49,17 @@ public class LSTrainTypeList {
         trainCompleteNameTemplate = data.getTrainCompleteNameTemplate().getTemplate();
         trainSortPattern = new LSSortPattern(data.getTrainSortPattern());
     }
-    
+
     public List<TrainType> getTrainTypeList() {
         return trainTypeList;
     }
-    
+
     public TrainsData getTrainsData() {
         if (data == null)
             createData();
         return data;
     }
-    
+
     private void createData() {
         try {
             data = new TrainsData(
@@ -80,17 +80,18 @@ public class LSTrainTypeList {
                 "  penalty = penalty + penalty2 - penalty1;\n" +
                 "}\n" +
                 "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
+                "time = time + addedTime;\n" +
                 "time = ((int)((time + 40) / 60)) * 60;\n" +
                 "return time;\n", Script.Language.GROOVY));
         } catch (GrafikonException e) {
             LOG.error("Couldn't create trains data." ,e);
         }
     }
-    
+
     public TrainType getTrainType(String key) {
         return mappingByKey.get(key);
     }
-    
+
     public LSTrainType getLSTrainType(TrainType trainType) {
         return mapping.get(trainType);
     }

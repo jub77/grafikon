@@ -13,15 +13,15 @@ import net.parostroj.timetable.utils.IdGenerator;
 public class LSVisitorBuilder implements LSVisitor {
 
     private TrainDiagram diagram;
-    private Map<Integer, Object> ids = new HashMap<Integer, Object>();
-    private LSTrainTypeList trainTypeList;
+    private final Map<Integer, Object> ids = new HashMap<Integer, Object>();
+    private final LSTrainTypeList trainTypeList;
     // last node
     private Node lastNode;
     // last train
     private Train lastTrain;
     // last line
     private Line lastLine;
-    private List<Train> trains;
+    private final List<Train> trains;
 
     public LSVisitorBuilder(LSTrainTypeList list) {
         this.trainTypeList = list;
@@ -142,7 +142,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
         // add to the last train
         RouteSegment part = (RouteSegment) ids.get(lsInterval.getOwnerId());
-        TimeInterval interval = new TimeInterval(UUID.randomUUID().toString(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track);
+        TimeInterval interval = new TimeInterval(UUID.randomUUID().toString(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track, 0);
         if (lsInterval.getComment() != null && !lsInterval.getComment().equals(""))
             interval.setAttribute("comment", lsInterval.getComment());
 

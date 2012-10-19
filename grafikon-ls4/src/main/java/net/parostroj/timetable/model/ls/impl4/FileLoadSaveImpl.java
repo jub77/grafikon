@@ -35,7 +35,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
     private static final String DATA_CHANGES = "changes/";
-    private LSSerializer lss;
+    private final LSSerializer lss;
     private static final List<ModelVersion> VERSIONS;
 
     static {
@@ -45,7 +45,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 new ModelVersion(4, 2),
                 new ModelVersion(4, 3),
                 new ModelVersion(4, 4),
-                new ModelVersion(4, 5));
+                new ModelVersion(4, 5),
+                new ModelVersion(4, 6));
         VERSIONS = Collections.unmodifiableList(versions);
         METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }

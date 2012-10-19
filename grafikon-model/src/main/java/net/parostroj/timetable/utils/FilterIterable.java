@@ -10,19 +10,19 @@ import java.util.Iterator;
  */
 public class FilterIterable<T> implements Iterable<T> {
 
-    private Collection<?> collection;
-    private Class<T> clazz;
+    private final Collection<?> collection;
+    private final Filter<T> filter;
 
-    public FilterIterable(Collection<?> collection, Class<T> clazz) {
+    public FilterIterable(Collection<?> collection, Filter<T> filter) {
         this.collection = collection;
-        this.clazz = clazz;
+        this.filter = filter;
     }
 
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 
-            private Iterator<?> iterator = collection.iterator();
+            private final Iterator<?> iterator = collection.iterator();
             private T next;
 
             @Override
@@ -30,8 +30,8 @@ public class FilterIterable<T> implements Iterable<T> {
                 if (next == null) {
                     while (iterator.hasNext()) {
                         Object o = iterator.next();
-                        if (clazz.isInstance(o)) {
-                            next = clazz.cast(o);
+                        if (filter.is(o)) {
+                            next = filter.get(o);
                             break;
                         }
                     }
@@ -49,8 +49,8 @@ public class FilterIterable<T> implements Iterable<T> {
                     Object o = null;
                     do {
                         o = iterator.next();
-                    } while (!clazz.isInstance(o));
-                    return clazz.cast(o);
+                    } while (!filter.is(o));
+                    return filter.get(o);
                 }
             }
 
