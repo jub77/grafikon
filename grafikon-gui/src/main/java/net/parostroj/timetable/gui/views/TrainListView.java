@@ -17,9 +17,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
@@ -38,6 +42,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * @author jub
  */
 public class TrainListView extends javax.swing.JPanel implements TreeSelectionListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TrainListView.class);
 
     private ApplicationModel model;
     private ButtonGroup groupsBG;
@@ -421,15 +427,22 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         Train oldTrain = model.getSelectedTrain();
         List<Node> result = dialog.showDialog(model.getDiagram(), Arrays.asList(oldTrain.getStartNode(), oldTrain.getEndNode()));
         if (result != null) {
-            RouteBuilder rb = new RouteBuilder();
-            Route route = rb.createRoute(null, model.getDiagram().getNet(), result);
-            TrainBuilder builder = new TrainBuilder();
-            Train newTrain = builder.createTrain(oldTrain, route);
-            model.setSelectedTrain(null);
-            this.deleteTrain(oldTrain, oldTrain.getTrainDiagram());
-            model.getDiagram().addTrain(newTrain);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, newTrain));
-            model.setSelectedTrain(newTrain);
+            try {
+                RouteBuilder rb = new RouteBuilder();
+                Route route = rb.createRoute(null, model.getDiagram().getNet(), result);
+                if (route == null)
+                    throw new IllegalArgumentException("No route available.");
+                TrainBuilder builder = new TrainBuilder();
+                Train newTrain = builder.createTrain(oldTrain, route);
+                model.setSelectedTrain(null);
+                this.deleteTrain(oldTrain, oldTrain.getTrainDiagram());
+                model.getDiagram().addTrain(newTrain);
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, newTrain));
+                model.setSelectedTrain(newTrain);
+            } catch (Exception e) {
+                LOG.warn("Error changing route of the train.", e);
+                ActionUtils.showError(ResourceLoader.getString("dialog.error.title") + ": " + e.getMessage(), this);
+            }
         }
     }
 
