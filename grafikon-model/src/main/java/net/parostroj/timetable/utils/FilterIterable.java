@@ -8,12 +8,12 @@ import java.util.Iterator;
  *
  * @author jub
  */
-public class FilterIterable<T> implements Iterable<T> {
+public class FilterIterable<T, U> implements Iterable<T> {
 
-    private final Collection<?> collection;
-    private final Filter<T> filter;
+    private final Collection<U> collection;
+    private final Filter<T, U> filter;
 
-    public FilterIterable(Collection<?> collection, Filter<T> filter) {
+    public FilterIterable(Collection<U> collection, Filter<T, U> filter) {
         this.collection = collection;
         this.filter = filter;
     }
@@ -22,14 +22,14 @@ public class FilterIterable<T> implements Iterable<T> {
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 
-            private final Iterator<?> iterator = collection.iterator();
+            private final Iterator<U> iterator = collection.iterator();
             private T next;
 
             @Override
             public boolean hasNext() {
                 if (next == null) {
                     while (iterator.hasNext()) {
-                        Object o = iterator.next();
+                        U o = iterator.next();
                         if (filter.is(o)) {
                             next = filter.get(o);
                             break;
@@ -46,7 +46,7 @@ public class FilterIterable<T> implements Iterable<T> {
                     next = null;
                     return result;
                 } else {
-                    Object o = null;
+                    U o = null;
                     do {
                         o = iterator.next();
                     } while (!filter.is(o));
