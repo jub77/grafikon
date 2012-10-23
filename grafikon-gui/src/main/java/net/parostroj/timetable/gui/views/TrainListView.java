@@ -19,6 +19,7 @@ import javax.swing.tree.*;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
+import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
 import net.parostroj.timetable.gui.dialogs.GroupChooserDialog;
 import net.parostroj.timetable.gui.views.tree.TrainTreeNode;
@@ -413,7 +414,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }
 
     private void changeRoute() {
-
+        CreateRouteDialog dialog = new CreateRouteDialog();
+        dialog.setLocationRelativeTo(this);
+        List<Node> result = dialog.showDialog(model.getDiagram(), Arrays.asList(model.getSelectedTrain().getStartNode(), model.getSelectedTrain().getEndNode()));
+        if (result != null) {
+            // TODO handle change of route ...
+        }
     }
 
     @Override

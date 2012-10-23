@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.*;
 public class Wrapper<T> implements Comparable<Wrapper<T>> {
 
     private T wrappedElement;
-    private WrapperDelegate delegate;
+    private final WrapperDelegate delegate;
 
     public Wrapper(T element) {
         this.wrappedElement = element;

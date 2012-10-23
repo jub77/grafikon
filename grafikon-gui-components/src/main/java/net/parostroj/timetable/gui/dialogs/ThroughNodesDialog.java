@@ -1,9 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.swing.DefaultListModel;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -11,27 +8,27 @@ import net.parostroj.timetable.model.Node;
 
 /**
  * Dialog that allows to create list of nodes.
- * 
+ *
  * @author jub
  */
 public class ThroughNodesDialog extends javax.swing.JDialog {
-    
+
     private List<Node> nodes;
-    
+
     /** Creates new form ThroughNodesDialog */
     public ThroughNodesDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    
+
     /**
      * sets list of nodes.
-     * 
+     *
      * @param nodes list of nodes
      */
-    public void setNodes(List<Node> nodes, Set<Node> allNodes) {
+    public void setNodes(List<Node> nodes, Collection<Node> allNodes) {
         this.nodes = nodes;
-        
+
         // update values for nodes
         NodeSort sort = new NodeSort(NodeSort.Type.ASC);
         List<Node> sorted = sort.sort(allNodes);
@@ -39,14 +36,14 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
         for (Node node : sorted) {
             nodeComboBox.addItem(node);
         }
-        
+
         // update list
         DefaultListModel m = new DefaultListModel();
         for (Node n : nodes) {
             m.addElement(n);
         }
         nodeList.setModel(m);
-        
+
         this.pack();
     }
 
@@ -56,7 +53,7 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
     public List<Node> getNodes() {
         return nodes;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -174,7 +171,7 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
         }
         this.setVisible(false);
     }//GEN-LAST:event_okButtonActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
