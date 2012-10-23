@@ -1,11 +1,11 @@
 package net.parostroj.timetable.actions;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.utils.Tuple;
 
 /**
  * TrainCreator creates train with specified parameters for established route.
@@ -54,6 +54,56 @@ public class TrainBuilder {
         return train;
     }
 
+    public Train createTrain(Train copiedTrain, Route newRoute) {
+        Train newTrain = createTrain(copiedTrain.getId(), copiedTrain.getNumber(), copiedTrain.getType(),
+                copiedTrain.getTopSpeed(), newRoute, 0, copiedTrain.getTrainDiagram(), 0);
+        // copy train properties
+        newTrain.setAttributes(copiedTrain.getAttributes());
+        newTrain.setDescription(copiedTrain.getDescription());
+        newTrain.setTimeAfter(copiedTrain.getTimeAfter());
+        newTrain.setTimeBefore(copiedTrain.getTimeBefore());
+        // adjust time intervals which are to previous route parts
+        Iterator<TimeInterval> oldIter = copiedTrain.getTimeIntervalList().iterator();
+        Tuple<TimeInterval> first = null;
+        while (oldIter.hasNext()) {
+            Iterator<TimeInterval> newIter = newTrain.getTimeIntervalList().iterator();
+            TimeInterval oi = oldIter.next();
+            TimeInterval ni = newIter.next();
+            while (ni != null && !compare(ni, oi)) {
+                ni = newIter.hasNext() ? newIter.next() : null;
+
+            }
+            if (ni != null && compare(ni, oi)) {
+                ni.setAddedTime(oi.getAddedTime());
+                ni.setAttributes(oi.getAttributes());
+                if (!ni.isFirst() && !ni.isLast())
+                    ni.setLength(oi.getLength());
+                ni.setSpeed(oi.getSpeed());
+                ni.setTrack(oi.getTrack());
+                if (first == null) {
+                    first = new Tuple<TimeInterval>(ni, oi);
+                }
+            }
+        }
+        newTrain.recalculate();
+        // move if there is a common point
+        if (first != null) {
+            newTrain.move(first.second.getEnd() - first.first.getEnd());
+        }
+        return newTrain;
+    }
+
+    private boolean compare(TimeInterval i1, TimeInterval i2) {
+        if (i1.getOwner() == i2.getOwner()) {
+            if (i1.isNodeOwner())
+                return true;
+            else
+                return i1.getDirection() == i2.getDirection();
+        } else {
+            return false;
+        }
+    }
+
     public Train createReverseTrain(String id, String number, int time, Train copiedTrain) {
         // create train
         Train train = copiedTrain.getTrainDiagram().createTrain(id);
@@ -91,7 +141,7 @@ public class TrainBuilder {
      * creates train of specified type starting on specified time.
      *
      * @param id id
-     * @param name name
+     * @param number name
      * @param trainType train type
      * @param topSpeed top speed
      * @param route route
@@ -100,9 +150,9 @@ public class TrainBuilder {
      * @param defaultStop default stop time
      * @return created train
      */
-    public Train createTrain(String id, String name, TrainType trainType, int topSpeed, Route route, int time, TrainDiagram diagram, int defaultStop) {
+    public Train createTrain(String id, String number, TrainType trainType, int topSpeed, Route route, int time, TrainDiagram diagram, int defaultStop) {
         Train train = diagram.createTrain(id);
-        train.setNumber(name);
+        train.setNumber(number);
         train.setType(trainType);
         train.setTopSpeed(topSpeed);
 
