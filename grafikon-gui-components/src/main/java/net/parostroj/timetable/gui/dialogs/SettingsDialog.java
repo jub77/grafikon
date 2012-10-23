@@ -18,6 +18,7 @@ import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Insets;
+import java.awt.GridBagConstraints;
 
 /**
  * Dialog for settings modification of the train diagram.
@@ -228,7 +229,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel1.setText(ResourceLoader.getString("modelinfo.scales")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new Insets(5, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(jLabel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -241,7 +242,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 0);
         getContentPane().add(jLabel2, gridBagConstraints);
 
         ratioComboBox.setEditable(true);
@@ -258,7 +259,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 0);
         getContentPane().add(jLabel3, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -267,7 +268,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new Insets(0, 10, 5, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
         getContentPane().add(nameTemplateEditBox, gridBagConstraints);
 
         jLabel4.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
@@ -285,7 +286,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new Insets(0, 10, 5, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
         getContentPane().add(cNameTemplateEditBox, gridBagConstraints);
 
         jLabel5.setText(ResourceLoader.getString("modelinfo.sort")); // NOI18N
@@ -293,7 +294,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 0);
         getContentPane().add(jLabel5, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -309,7 +310,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 0);
         getContentPane().add(jLabel6, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -317,7 +318,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
+        gridBagConstraints.insets = new Insets(0, 5, 5, 10);
         getContentPane().add(stationTransferTextField, gridBagConstraints);
 
         changesTrackingCheckBox.setText(ResourceLoader.getString("modelinfo.tracking.changes")); // NOI18N
@@ -327,7 +328,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        gridBagConstraints.insets = new Insets(0, 2, 0, 10);
         getContentPane().add(changesTrackingCheckBox, gridBagConstraints);
 
         jLabel11.setText(ResourceLoader.getString("modelinfo.running.time.script")); // NOI18N
@@ -336,7 +337,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(jLabel11, gridBagConstraints);
 
         routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -363,7 +364,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         getContentPane().add(routeLengthPanel, gridBagConstraints);
 
         weightPerAxlePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -383,14 +383,13 @@ public class SettingsDialog extends javax.swing.JDialog {
         emptyWeightEditBox.setValueColumns(5);
         weightPerAxlePanel.add(emptyWeightEditBox);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        getContentPane().add(weightPerAxlePanel, gridBagConstraints);
+        gridBagConstraints_1 = new java.awt.GridBagConstraints();
+        gridBagConstraints_1.gridx = 0;
+        gridBagConstraints_1.gridy = 10;
+        gridBagConstraints_1.gridwidth = 3;
+        gridBagConstraints_1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints_1.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(weightPerAxlePanel, gridBagConstraints_1);
 
         lengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -411,7 +410,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         getContentPane().add(lengthPanel, gridBagConstraints);
 
         timeRangePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -446,7 +444,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         getContentPane().add(timeRangePanel, gridBagConstraints);
 
         scriptEditBox.setColumns(80);
@@ -685,5 +682,6 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JTextField stationTransferTextField;
     private javax.swing.JPanel timeRangePanel;
     private javax.swing.JTextField toTimeTextField;
+    private GridBagConstraints gridBagConstraints_1;
     // End of variables declaration//GEN-END:variables
 }
