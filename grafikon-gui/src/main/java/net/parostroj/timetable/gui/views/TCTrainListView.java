@@ -24,9 +24,7 @@ import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.utils.*;
 
 /**
  * View with list of train on one side and list of train of the cycle
@@ -38,7 +36,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private TCDelegate delegate;
     private TrainSort sort;
-    private TrainFilter filter;
+    private TrainTypeFilter filter;
     private boolean overlappingEnabled;
 
     /** Creates new form ECTrainListView */
@@ -702,9 +700,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void setFilter(String type, Component component) {
         if ("P".equals(type)) {
-            filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.PASSENGER);
+            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.PASSENGER);
         } else if ("F".equals(type)) {
-            filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.FREIGHT);
+            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.FREIGHT);
         } else if ("C".equals(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
@@ -713,7 +711,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             dialog.setVisible(true);
 
             this.selectedTypes = dialog.getSelectedTypes();
-            this.filter = TrainFilter.getTrainFilter(selectedTypes);
+            this.filter = TrainTypeFilter.getTrainFilter(selectedTypes);
         } else {
             filter = null;
         }

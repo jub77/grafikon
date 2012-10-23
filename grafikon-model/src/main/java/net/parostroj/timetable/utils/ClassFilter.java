@@ -7,7 +7,7 @@ package net.parostroj.timetable.utils;
  *
  * @param <T>
  */
-public class ClassFilter<T, U> implements Filter<T, U> {
+public class ClassFilter<T, U> implements ExtractionFilter<T, U> {
 
     private final Class<T> clazz;
 
