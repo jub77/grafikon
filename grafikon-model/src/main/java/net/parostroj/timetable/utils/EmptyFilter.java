@@ -5,21 +5,18 @@ package net.parostroj.timetable.utils;
  *
  * @author cz2b10k5
  */
-public class EmptyFilter<T> implements Filter<T> {
+public class EmptyFilter<T> implements Filter<T, T> {
 
-    private final Class<T> clazz;
-
-    public EmptyFilter(Class<T> clazz) {
-        this.clazz = clazz;
+    public EmptyFilter() {
     }
 
     @Override
-    public boolean is(Object item) {
+    public boolean is(T item) {
         return true;
     }
 
     @Override
-    public T get(Object item) {
-        return clazz.cast(item);
+    public T get(T item) {
+        return item;
     }
 }

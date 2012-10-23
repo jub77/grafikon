@@ -7,9 +7,9 @@ package net.parostroj.timetable.utils;
  *
  * @param <T>
  */
-public interface Filter<T> {
+public interface Filter<T, U> {
 
-    boolean is(Object item);
+    boolean is(U item);
 
-    T get(Object item);
+    T get(U item);
 }

@@ -200,14 +200,14 @@ public class Route implements ObjectWithId, Visitable {
      * @return iterable which consists only of lines of this route
      */
     public Iterable<Line> lines() {
-        return new FilterIterable<Line>(segments, new ClassFilter<Line>(Line.class));
+        return new FilterIterable<Line, RouteSegment>(segments, new ClassFilter<Line, RouteSegment>(Line.class));
     }
 
     /**
      * @return iterable which consists only of nodes of this route
      */
     public Iterable<Node> nodes() {
-        return new FilterIterable<Node>(segments, new ClassFilter<Node>(Node.class));
+        return new FilterIterable<Node, RouteSegment>(segments, new ClassFilter<Node, RouteSegment>(Node.class));
     }
 
     /**

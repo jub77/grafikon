@@ -7,7 +7,7 @@ package net.parostroj.timetable.utils;
  *
  * @param <T>
  */
-public class ClassFilter<T> implements Filter<T> {
+public class ClassFilter<T, U> implements Filter<T, U> {
 
     private final Class<T> clazz;
 
@@ -16,12 +16,12 @@ public class ClassFilter<T> implements Filter<T> {
     }
 
     @Override
-    public boolean is(Object item) {
+    public boolean is(U item) {
         return clazz.isInstance(item);
     }
 
     @Override
-    public T get(Object item) {
+    public T get(U item) {
         return clazz.cast(item);
     }
 }
