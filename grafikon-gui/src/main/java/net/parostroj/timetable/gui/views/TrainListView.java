@@ -100,7 +100,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 moveToGroup();
             }
         });
+        changeRouteMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.change.route"));
+        changeRouteMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeRoute();
+            }
+        });
         treePopupMenu.add(moveToGroupMenuItem);
+        treePopupMenu.add(changeRouteMenuItem);
         listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
         listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
         listGroupsMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -338,12 +345,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             createButton.setEnabled(true);
             deleteButton.setEnabled(false);
             moveToGroupMenuItem.setEnabled(false);
+            changeRouteMenuItem.setEnabled(false);
             menuButton.setEnabled(true);
         } else {
             trainTree.setModel(null);
             createButton.setEnabled(false);
             deleteButton.setEnabled(false);
             moveToGroupMenuItem.setEnabled(false);
+            changeRouteMenuItem.setEnabled(false);
             menuButton.setEnabled(false);
         }
         buildGroupsMenu();
@@ -403,6 +412,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
+    private void changeRoute() {
+
+    }
+
     @Override
     public void valueChanged(TreeSelectionEvent e) {
         selecting = true;
@@ -422,6 +435,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         boolean selectionEmpty = trainTree.isSelectionEmpty();
         deleteButton.setEnabled(!selectionEmpty);
         moveToGroupMenuItem.setEnabled(!selectionEmpty);
+        changeRouteMenuItem.setEnabled(model.getSelectedTrain() != null);
         selecting = false;
     }
 
@@ -530,4 +544,5 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private final javax.swing.JMenu groupsMenu;
     private final javax.swing.JButton menuButton;
     private final javax.swing.JMenuItem moveToGroupMenuItem;
+    private final javax.swing.JMenuItem changeRouteMenuItem;
 }
