@@ -162,7 +162,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     @Override
     public String toString() {
-        return train + "(" + getStart() + "," + getEnd() + ")";
+        return getOwner() + "(" + getStart() + "," + getEnd() + ")";
     }
 
     /**
