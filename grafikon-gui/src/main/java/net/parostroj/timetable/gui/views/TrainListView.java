@@ -17,6 +17,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
+import net.parostroj.timetable.actions.RouteBuilder;
+import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
@@ -416,9 +418,18 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private void changeRoute() {
         CreateRouteDialog dialog = new CreateRouteDialog();
         dialog.setLocationRelativeTo(this);
-        List<Node> result = dialog.showDialog(model.getDiagram(), Arrays.asList(model.getSelectedTrain().getStartNode(), model.getSelectedTrain().getEndNode()));
+        Train oldTrain = model.getSelectedTrain();
+        List<Node> result = dialog.showDialog(model.getDiagram(), Arrays.asList(oldTrain.getStartNode(), oldTrain.getEndNode()));
         if (result != null) {
-            // TODO handle change of route ...
+            RouteBuilder rb = new RouteBuilder();
+            Route route = rb.createRoute(null, model.getDiagram().getNet(), result);
+            TrainBuilder builder = new TrainBuilder();
+            Train newTrain = builder.createTrain(oldTrain, route);
+            model.setSelectedTrain(null);
+            this.deleteTrain(oldTrain, oldTrain.getTrainDiagram());
+            model.getDiagram().addTrain(newTrain);
+            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, newTrain));
+            model.setSelectedTrain(newTrain);
         }
     }
 
