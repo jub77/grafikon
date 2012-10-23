@@ -121,7 +121,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             List<Train> getTrains = new ArrayList<Train>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
-                    if (filter == null || filter.filter(train))
+                    if (filter == null || filter.is(train))
                         getTrains.add(train);
                 }
             }
