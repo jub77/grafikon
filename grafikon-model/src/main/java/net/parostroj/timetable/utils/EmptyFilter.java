@@ -5,7 +5,7 @@ package net.parostroj.timetable.utils;
  *
  * @author cz2b10k5
  */
-public class EmptyFilter<T> implements Filter<T, T> {
+public class EmptyFilter<T> implements ExtractionFilter<T, T> {
 
     public EmptyFilter() {
     }

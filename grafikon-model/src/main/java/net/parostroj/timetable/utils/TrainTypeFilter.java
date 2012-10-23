@@ -1,16 +1,15 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.utils;
 
 import java.util.Set;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.utils.Filter;
 
 /**
- * Class for filtering train according to some criteria.
+ * Class for filtering train according to types.
  *
  * @author jub
  */
-public abstract class TrainFilter implements Filter<Train, Train> {
+public abstract class TrainTypeFilter implements ExtractionFilter<Train, Train> {
 
     public static enum PredefinedType {
         FREIGHT("freight"), PASSENGER("passenger");
@@ -26,10 +25,10 @@ public abstract class TrainFilter implements Filter<Train, Train> {
         }
     }
 
-    public static TrainFilter getTrainFilter(PredefinedType type) {
+    public static TrainTypeFilter getTrainFilter(PredefinedType type) {
         switch (type) {
             case FREIGHT:
-                return new TrainFilter() {
+                return new TrainTypeFilter() {
                     @Override
                     public boolean is(Train train) {
                         return train.getType().getCategory().getKey().equals(PredefinedType.FREIGHT.getKey());
@@ -41,7 +40,7 @@ public abstract class TrainFilter implements Filter<Train, Train> {
                     }
                 };
             case PASSENGER:
-                return new TrainFilter() {
+                return new TrainTypeFilter() {
                     @Override
                     public boolean is(Train train) {
                         return train.getType().getCategory().getKey().equals(PredefinedType.PASSENGER.getKey());
@@ -57,8 +56,8 @@ public abstract class TrainFilter implements Filter<Train, Train> {
         }
     }
 
-    public static TrainFilter getTrainFilter(final Set<TrainType> types) {
-        return new TrainFilter() {
+    public static TrainTypeFilter getTrainFilter(final Set<TrainType> types) {
+        return new TrainTypeFilter() {
             @Override
             public boolean is(Train train) {
                 return types.contains(train.getType());

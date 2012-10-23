@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.Group;
  *
  * @author jub
  */
-public class GroupFilter<T extends AttributesHolder> implements Filter<T, T> {
+public class GroupFilter<T extends AttributesHolder> implements ExtractionFilter<T, T> {
 
     private final Group group;
 

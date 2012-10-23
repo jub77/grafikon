@@ -11,9 +11,9 @@ import java.util.Iterator;
 public class FilterIterable<T, U> implements Iterable<T> {
 
     private final Collection<U> collection;
-    private final Filter<T, U> filter;
+    private final ExtractionFilter<T, U> filter;
 
-    public FilterIterable(Collection<U> collection, Filter<T, U> filter) {
+    public FilterIterable(Collection<U> collection, ExtractionFilter<T, U> filter) {
         this.collection = collection;
         this.filter = filter;
     }
