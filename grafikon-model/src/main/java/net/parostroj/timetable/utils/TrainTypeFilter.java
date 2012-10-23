@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainType;
  *
  * @author jub
  */
-public abstract class TrainTypeFilter implements ExtractionFilter<Train, Train> {
+public abstract class TrainTypeFilter implements Filter<Train> {
 
     public static enum PredefinedType {
         FREIGHT("freight"), PASSENGER("passenger");
@@ -33,22 +33,12 @@ public abstract class TrainTypeFilter implements ExtractionFilter<Train, Train> 
                     public boolean is(Train train) {
                         return train.getType().getCategory().getKey().equals(PredefinedType.FREIGHT.getKey());
                     }
-
-                    @Override
-                    public Train get(Train train) {
-                        return train;
-                    }
                 };
             case PASSENGER:
                 return new TrainTypeFilter() {
                     @Override
                     public boolean is(Train train) {
                         return train.getType().getCategory().getKey().equals(PredefinedType.PASSENGER.getKey());
-                    }
-
-                    @Override
-                    public Train get(Train train) {
-                        return train;
                     }
                 };
             default:
@@ -61,11 +51,6 @@ public abstract class TrainTypeFilter implements ExtractionFilter<Train, Train> 
             @Override
             public boolean is(Train train) {
                 return types.contains(train.getType());
-            }
-
-            @Override
-            public Train get(Train train) {
-                return train;
             }
         };
     }
