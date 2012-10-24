@@ -392,16 +392,22 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private void deleteAndDeselectTrain(Train train) {
         TreePath p = getRootNode().removeTrain(train);
-        getTreeModel().nodeStructureChanged((TreeNode) p.getParentPath().getLastPathComponent());
+        if (p != null) {
+            getTreeModel().nodeStructureChanged((TreeNode) p.getParentPath().getLastPathComponent());
+        }
     }
 
     private void modifyAndSelectTrain(Train train) {
         TreePath p = getRootNode().removeTrain(train);
-        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
+        if (p != null) {
+            getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
+        }
         p = getRootNode().addTrain(train);
-        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
-        trainTree.setSelectionPath(p);
-        trainTree.scrollPathToVisible(p);
+        if (p != null) {
+            getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
+            trainTree.setSelectionPath(p);
+            trainTree.scrollPathToVisible(p);
+        }
     }
 
     private void selectTrain(Train train) {
