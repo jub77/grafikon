@@ -354,6 +354,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         penaltyTableMenuItem.setEnabled(notNullDiagram);
         trainTimetableListByTimeFilteredMenuItem.setEnabled(notNullDiagram);
         fileImportMenuItem.setEnabled(notNullDiagram);
+        fileImportGroupMenuItem.setEnabled(notNullDiagram);
         dcListSelectMenuItem.setEnabled(notNullDiagram);
         trainTimetableListByDcSelectMenuItem.setEnabled(notNullDiagram);
         nodeTimetableListSelectMenuItem.setEnabled(notNullDiagram);
@@ -522,6 +523,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileImportMenuItem.setAction(new ImportAction(model, this));
         fileImportMenuItem.setText(ResourceLoader.getString("menu.file.exportimport")); // NOI18N
         fileMenu.add(fileImportMenuItem);
+
+        fileImportGroupMenuItem = new JMenuItem(ResourceLoader.getString("menu.file.exportimport.trains")); // NOI18N
+        fileMenu.add(fileImportGroupMenuItem);
         fileMenu.add(separator5);
 
         languageMenu.setText(ResourceLoader.getString("menu.language")); // NOI18N
@@ -1299,5 +1303,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenu viewsMenu;
     private javax.swing.JMenuItem weightTablesMenuItem;
     private JCheckBoxMenuItem twoSidesPrintCheckBoxMenuItem;
+    private JMenuItem fileImportGroupMenuItem;
     // End of variables declaration//GEN-END:variables
 }
