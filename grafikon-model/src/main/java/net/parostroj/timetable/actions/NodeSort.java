@@ -3,8 +3,8 @@ package net.parostroj.timetable.actions;
 import java.text.Collator;
 import java.util.*;
 
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.utils.Filter;
 
 /**
  * Sorting of nodes.

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.utils;
+package net.parostroj.timetable.filters;
 
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.Group;
