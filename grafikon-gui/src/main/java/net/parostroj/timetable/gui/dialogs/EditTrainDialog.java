@@ -228,7 +228,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
+                        .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
