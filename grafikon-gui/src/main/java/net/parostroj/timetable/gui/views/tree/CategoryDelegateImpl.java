@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.Train;
 
 /**
@@ -18,19 +19,25 @@ public abstract class CategoryDelegateImpl<T> implements TrainTreeNodeDelegate<T
 
     private final boolean containTrains;
     private final TrainTreeNodeSort sort;
+    private final Filter<Train> filter;
 
-    public CategoryDelegateImpl(boolean containTrains, TrainTreeNodeSort sort) {
+    public CategoryDelegateImpl(boolean containTrains, TrainTreeNodeSort sort, Filter<Train> filter) {
         this.containTrains = containTrains;
         this.sort = sort;
+        this.filter = filter;
+    }
+
+    public CategoryDelegateImpl(boolean containTrains, TrainTreeNodeSort sort) {
+        this(containTrains, sort, null);
     }
 
     public CategoryDelegateImpl(boolean containsTrains) {
-        this(containsTrains, null);
+        this(containsTrains, null, null);
     }
 
     @Override
     public TreePath addTrain(TrainTreeNode<T> node, Train train) {
-        if (belongs(train, node.getItem())) {
+        if (belongs(train, node.getItem()) && ((filter != null && filter.is(train)) || filter == null)) {
             if (containTrains) {
                 TrainTreeNode<Train> trainNode = TrainTreeNodeFactory.getInstance().createTrainNode(node, train);
                 node.getChildren().add(trainNode);
