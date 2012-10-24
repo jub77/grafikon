@@ -428,7 +428,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private void moveToGroup() {
         GroupChooserDialog dialog = new GroupChooserDialog();
-        dialog.setLocationRelativeTo(this);
+        dialog.setLocationRelativeTo(menuButton);
         dialog.showDialog(model.getDiagram(), groupSelect.getGroup());
         if (dialog.isSelected()) {
             Set<Train> selectedTrains = this.getSelectedTrains();
@@ -444,7 +444,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private void changeRoute() {
         CreateRouteDialog dialog = new CreateRouteDialog();
-        dialog.setLocationRelativeTo(this);
+        dialog.setLocationRelativeTo(menuButton);
         Train oldTrain = model.getSelectedTrain();
         List<Node> result = dialog.showDialog(model.getDiagram(), Arrays.asList(oldTrain.getStartNode(), oldTrain.getEndNode()));
         if (result != null) {
