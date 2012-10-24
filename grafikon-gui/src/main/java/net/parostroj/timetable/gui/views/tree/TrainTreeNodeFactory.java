@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.parostroj.timetable.actions.TrainComparator;
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -19,16 +20,16 @@ public class TrainTreeNodeFactory {
         return INSTANCE;
     }
 
-    public TrainTreeNode<TrainDiagram> createFlatTree(TrainDiagram diagram) {
-        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, true);
+    public TrainTreeNode<TrainDiagram> createFlatTree(TrainDiagram diagram, Filter<Train> filter) {
+        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, true, filter);
         for (Train train : diagram.getTrains()) {
             rootNode.addTrain(train);
         }
         return rootNode;
     }
 
-    public TrainTreeNode<TrainDiagram> createTypeTree(TrainDiagram diagram) {
-        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false);
+    public TrainTreeNode<TrainDiagram> createTypeTree(TrainDiagram diagram, Filter<Train> filter) {
+        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false, filter);
         for (TrainType trainType : diagram.getTrainTypes()) {
             TrainTreeNode<TrainType> typeNode = createTrainTypeNode(rootNode, trainType);
             rootNode.getChildren().add(typeNode);
@@ -40,7 +41,7 @@ public class TrainTreeNodeFactory {
     }
 
     public TrainTreeNode<TrainDiagram> createGroupTree(TrainDiagram diagram) {
-        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false);
+        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false, null);
         List<Group> groups = new LinkedList<Group>();
         groups.add(null);
         groups.addAll(diagram.getGroups());
@@ -59,7 +60,7 @@ public class TrainTreeNodeFactory {
     }
 
     public TrainTreeNode<TrainDiagram> createGroupFlatTree(TrainDiagram diagram) {
-        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false);
+        TrainTreeNode<TrainDiagram> rootNode = createRootNode(diagram, false, null);
         List<Group> groups = new LinkedList<Group>();
         groups.add(null);
         groups.addAll(diagram.getGroups());
@@ -85,8 +86,8 @@ public class TrainTreeNodeFactory {
         return new TrainTreeNodeImpl<Group>(parent, new GroupDelegateImpl(containsTrains), group);
     }
 
-    public TrainTreeNode<TrainDiagram> createRootNode(TrainDiagram diagram, boolean containTrains) {
-        return new TrainTreeNodeImpl<TrainDiagram>(null, new RootDelegateImpl(containTrains, containTrains ? createSort(diagram) : null), diagram);
+    public TrainTreeNode<TrainDiagram> createRootNode(TrainDiagram diagram, boolean containTrains, Filter<Train> filter) {
+        return new TrainTreeNodeImpl<TrainDiagram>(null, new RootDelegateImpl(containTrains, containTrains ? createSort(diagram) : null, filter), diagram);
     }
 
     public TrainTreeNodeSort createSort(TrainDiagram diagram) {

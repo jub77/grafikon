@@ -17,14 +17,15 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.actions.TrainBuilder;
+import net.parostroj.timetable.filters.EmptyFilter;
+import net.parostroj.timetable.filters.Filter;
+import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.GroupSelect;
+import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
 import net.parostroj.timetable.gui.dialogs.GroupChooserDialog;
@@ -35,6 +36,9 @@ import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * View with list of trains.
@@ -169,7 +173,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     groupSelect = ((GroupMenuItem) e.getItem()).getGroupSelect();
-                    // TODO handle selection of group ...
+                    // selection of group regenerates tree with a new filter group
+                    updateViewDiagramChanged();
                 }
             }
         };
@@ -287,6 +292,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             public void processApplicationEvent(ApplicationModelEvent event) {
                 switch (event.getType()) {
                     case SET_DIAGRAM_CHANGED:
+                        buildGroupsMenu();
                         updateViewDiagramChanged();
                         break;
                     case NEW_TRAIN:
@@ -328,6 +334,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 }
             }
         });
+        this.buildGroupsMenu();
         this.updateViewDiagramChanged();
     }
 
@@ -337,13 +344,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             TreeNode root = null;
             switch (treeType) {
                 case FLAT:
-                    root = factory.createFlatTree(model.getDiagram());
+                    root = factory.createFlatTree(model.getDiagram(), createFilter());
                     break;
                 case GROUPS_AND_TYPES:
                     root = factory.createGroupTree(model.getDiagram());
                     break;
                 case TYPES:
-                    root = factory.createTypeTree(model.getDiagram());
+                    root = factory.createTypeTree(model.getDiagram(), createFilter());
                     break;
                 case GROUPS:
                     root = factory.createGroupFlatTree(model.getDiagram());
@@ -364,15 +371,23 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             changeRouteMenuItem.setEnabled(false);
             menuButton.setEnabled(false);
         }
-        buildGroupsMenu();
         this.selectTrain(model.getSelectedTrain());
+    }
+
+    private Filter<Train> createFilter() {
+        if (groupSelect.getType() == Type.ALL)
+            return new EmptyFilter<Train>();
+        else
+            return new GroupFilter<Train>(groupSelect.getGroup());
     }
 
     private void addAndSelectTrain(Train train) {
         TreePath p = getRootNode().addTrain(train);
-        getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
-        trainTree.setSelectionPath(p);
-        trainTree.scrollPathToVisible(p);
+        if (p != null) {
+            getTreeModel().reload((TreeNode) p.getParentPath().getLastPathComponent());
+            trainTree.setSelectionPath(p);
+            trainTree.scrollPathToVisible(p);
+        }
     }
 
     private void deleteAndDeselectTrain(Train train) {
