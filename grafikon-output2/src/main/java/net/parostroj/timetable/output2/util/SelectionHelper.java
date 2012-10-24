@@ -3,11 +3,11 @@ package net.parostroj.timetable.output2.util;
 import java.util.*;
 
 import net.parostroj.timetable.actions.*;
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.RoutesExtractor;
-import net.parostroj.timetable.utils.Filter;
 
 /**
  * Helper class for selection.

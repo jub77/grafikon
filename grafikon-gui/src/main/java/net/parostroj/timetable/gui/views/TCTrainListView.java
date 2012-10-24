@@ -17,6 +17,7 @@ import javax.swing.event.ListDataListener;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
+import net.parostroj.timetable.filters.TrainTypeFilter;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;

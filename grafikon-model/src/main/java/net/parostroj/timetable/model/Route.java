@@ -2,8 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.utils.ClassFilter;
-import net.parostroj.timetable.utils.FilterIterable;
+import net.parostroj.timetable.filters.ClassFilter;
+import net.parostroj.timetable.filters.FilterIterable;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
