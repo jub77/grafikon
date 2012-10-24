@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.events.TrainDiagramEvent;
  */
 public class ApplicationModelColleague extends AbstractColleague implements ApplicationModelListener {
 
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     public ApplicationModelColleague(ApplicationModel model) {
         this.model = model;
@@ -28,6 +28,7 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
                     tde.getType() == GTEventType.TEXT_ITEM_MOVED || tde.getType() == GTEventType.IMAGE_ADDED ||
                     tde.getType() == GTEventType.IMAGE_REMOVED || tde.getType() == GTEventType.OUTPUT_TEMPLATE_ADDED ||
                     tde.getType() == GTEventType.OUTPUT_TEMPLATE_MOVED || tde.getType() == GTEventType.OUTPUT_TEMPLATE_REMOVED ||
+                    tde.getType() == GTEventType.GROUP_ADDED || tde.getType() == GTEventType.GROUP_REMOVED ||
                     tde.getType() == GTEventType.CYCLE_TYPE_ADDED || tde.getType() == GTEventType.CYCLE_TYPE_REMOVED)
                 model.setModelChanged(true);
             if (tde.getType() == GTEventType.NESTED && tde.getLastNestedEvent() instanceof TextItemEvent)
