@@ -520,11 +520,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(fileSaveAsMenuItem);
         fileMenu.add(separator1);
 
-        fileImportMenuItem.setAction(new ImportAction(model, this));
+        fileImportMenuItem.setAction(new ImportAction(model, this, false));
         fileImportMenuItem.setText(ResourceLoader.getString("menu.file.exportimport")); // NOI18N
         fileMenu.add(fileImportMenuItem);
 
-        fileImportGroupMenuItem = new JMenuItem(ResourceLoader.getString("menu.file.exportimport.trains")); // NOI18N
+        fileImportGroupMenuItem = new JMenuItem();
+        fileImportGroupMenuItem.setAction(new ImportAction(model, this, true));
+        fileImportGroupMenuItem.setText(ResourceLoader.getString("menu.file.exportimport.trains")); // NOI18N
         fileMenu.add(fileImportGroupMenuItem);
         fileMenu.add(separator5);
 
