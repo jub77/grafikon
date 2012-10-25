@@ -14,28 +14,36 @@ import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
+import javax.swing.JLabel;
 
-public class GroupChooserDialog extends JDialog {
+public class GroupChooserFromToDialog extends JDialog {
 
-    private final JPanel contentPanel = new JPanel();
-    private final GroupsComboBox groupsComboBox;
+    private final GroupsComboBox fromGroupsComboBox;
+    private final GroupsComboBox toGroupsComboBox;
     private boolean ok;
 
     /**
      * Create the dialog.
      */
-    public GroupChooserDialog() {
+    public GroupChooserFromToDialog() {
         this.setModal(true);
         this.setTitle(ResourceLoader.getString("groups.title"));
         getContentPane().setLayout(new BorderLayout());
         FlowLayout fl_contentPanel = new FlowLayout();
         fl_contentPanel.setAlignment(FlowLayout.LEFT);
+        JPanel contentPanel = new JPanel();
         contentPanel.setLayout(fl_contentPanel);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-        groupsComboBox = new GroupsComboBox(false);
-        contentPanel.add(groupsComboBox);
+        fromGroupsComboBox = new GroupsComboBox(false);
+        contentPanel.add(fromGroupsComboBox);
+
+        JLabel label = new JLabel("->");
+        contentPanel.add(label);
+
+        toGroupsComboBox = new GroupsComboBox(false);
+        contentPanel.add(toGroupsComboBox);
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -60,21 +68,26 @@ public class GroupChooserDialog extends JDialog {
         pack();
     }
 
-    public void showDialog(TrainDiagram diagram, Group group) {
-        this.fillCombo(diagram, group);
+    public void showDialog(TrainDiagram fromDiagram, Group fromGroup, TrainDiagram toDiagram, Group toGroup) {
+        this.fillCombo(fromDiagram, fromGroup, toDiagram, toGroup);
         this.pack();
         this.setVisible(true);
     }
 
-    private void fillCombo(TrainDiagram diagram, Group group) {
-        groupsComboBox.updateGroups(diagram, group);
+    private void fillCombo(TrainDiagram fromDiagram, Group fromGroup, TrainDiagram toDiagram, Group toGroup) {
+        fromGroupsComboBox.updateGroups(fromDiagram, fromGroup);
+        toGroupsComboBox.updateGroups(toDiagram, toGroup);
     }
 
     public boolean isSelected() {
         return ok;
     }
 
-    public Group getSelected() {
-        return groupsComboBox.getGroupSelection().getGroup();
+    public Group getSelectedFrom() {
+        return fromGroupsComboBox.getGroupSelection().getGroup();
+    }
+
+    public Group getSelectedTo() {
+        return toGroupsComboBox.getGroupSelection().getGroup();
     }
 }

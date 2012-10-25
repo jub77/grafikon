@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.*;
  *
  * @author jub
  */
-public enum ImportComponents {
+public enum ImportComponent {
     NODES("import.stations", Node.class),
     TRAIN_TYPES("import.train_types", TrainType.class),
     LINE_CLASSES("import.line_classes", LineClass.class),
@@ -22,7 +22,7 @@ public enum ImportComponents {
     private String key;
     private Class<?> clazz;
 
-    private ImportComponents(String key, Class<?> clazz) {
+    private ImportComponent(String key, Class<?> clazz) {
         this.key = key;
         this.clazz = clazz;
     }
@@ -30,7 +30,7 @@ public enum ImportComponents {
     public String getKey() {
         return key;
     }
-    
+
     public Class<?> getComponentClass() {
         return clazz;
     }
@@ -67,7 +67,7 @@ public enum ImportComponents {
         return map;
     }
 
-    public List<Wrapper<ObjectWithId>> getListOfWrappers(Collection<ObjectWithId> objects) {
+    public List<Wrapper<ObjectWithId>> getListOfWrappers(Collection<? extends ObjectWithId> objects) {
         List<Wrapper<ObjectWithId>> list = new ArrayList<Wrapper<ObjectWithId>>(objects.size());
         for (ObjectWithId oid : objects) {
             list.add(this.getWrapper(oid));
@@ -82,9 +82,9 @@ public enum ImportComponents {
     public boolean sorted() {
         return this == NODES || this == TRAINS;
     }
-    
-    public static ImportComponents getByComponentClass(Class<?> clazz) {
-        for (ImportComponents comp : values()) {
+
+    public static ImportComponent getByComponentClass(Class<?> clazz) {
+        for (ImportComponent comp : values()) {
             if (comp.getComponentClass().equals(clazz))
                 return comp;
         }

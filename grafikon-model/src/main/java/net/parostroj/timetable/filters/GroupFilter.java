@@ -19,8 +19,7 @@ public class GroupFilter<T extends AttributesHolder> implements ExtractionFilter
 
     @Override
     public boolean is(T item) {
-        T t = this.get(item);
-        Group foundGroup = t.getAttributes().get("group", Group.class);
+        Group foundGroup = item.getAttributes().get("group", Group.class);
         if (group == null)
             return foundGroup == null;
         else

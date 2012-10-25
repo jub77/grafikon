@@ -176,7 +176,7 @@ public abstract class Import {
 
     protected abstract ObjectWithId importObjectImpl(ObjectWithId o);
 
-    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
+    public static Import getInstance(ImportComponent components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
             case NODES:
