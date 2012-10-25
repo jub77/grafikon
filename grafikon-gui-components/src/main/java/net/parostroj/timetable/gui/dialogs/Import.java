@@ -12,9 +12,9 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public abstract class Import {
 
-    private ImportMatch match;
-    private TrainDiagram diagram;
-    private TrainDiagram libraryDiagram;
+    private final ImportMatch match;
+    private final TrainDiagram diagram;
+    private final TrainDiagram libraryDiagram;
 
     private List<ObjectWithId> errors;
     private Set<ObjectWithId> importedObjects;
@@ -25,6 +25,25 @@ public abstract class Import {
         this.libraryDiagram = libraryDiagram;
         this.errors = new LinkedList<ObjectWithId>();
         this.importedObjects = new HashSet<ObjectWithId>();
+    }
+
+    protected ObjectWithId getObjectWithId(ObjectWithId orig) {
+        if (orig instanceof TrainType)
+            return this.getTrainType((TrainType) orig);
+        else if (orig instanceof Train)
+            return this.getTrain((Train) orig);
+        else if (orig instanceof Node)
+            return this.getNode((Node) orig);
+        else if (orig instanceof LineClass)
+            return this.getLineClass((LineClass) orig);
+        else if (orig instanceof EngineClass)
+            return this.getEngineClass((EngineClass) orig);
+        else if (orig instanceof Group)
+            return this.getGroup((Group) orig);
+        else if (orig instanceof OutputTemplate)
+            return this.getOutputTemplate((OutputTemplate) orig);
+        else
+            return null;
     }
 
     protected TrainType getTrainType(TrainType origType) {
@@ -39,7 +58,19 @@ public abstract class Import {
         }
         return null;
     }
-    
+
+    protected Group getGroup(Group origGroup) {
+        if (match == ImportMatch.ID) {
+            return diagram.getGroupById(origGroup.getId());
+        } else {
+            for (Group g : diagram.getGroups()) {
+                if (g.getName().equals(origGroup.getName()))
+                    return g;
+            }
+        }
+        return null;
+    }
+
     protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
         if (match == ImportMatch.ID) {
             return diagram.getPenaltyTable().getTrainTypeCategoryById(origCategory.getId());
@@ -114,7 +145,7 @@ public abstract class Import {
             return null;
         }
     }
-    
+
     protected OutputTemplate getOutputTemplate(OutputTemplate origTemplate) {
         if (match == ImportMatch.ID)
             return diagram.getOutputTemplateById(origTemplate.getId());
