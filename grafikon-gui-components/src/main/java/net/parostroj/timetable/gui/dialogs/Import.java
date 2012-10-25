@@ -2,6 +2,9 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -11,6 +14,8 @@ import net.parostroj.timetable.utils.IdGenerator;
  * @author jub
  */
 public abstract class Import {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Import.class);
 
     private final ImportMatch match;
     private final TrainDiagram diagram;
@@ -156,6 +161,23 @@ public abstract class Import {
             }
             return null;
         }
+    }
+
+    protected Attributes importAttributes(Attributes orig) {
+        Attributes dest = new Attributes();
+        // copy values
+        for (Map.Entry<String, Object> entry : orig.entrySet()) {
+            if (entry.getValue() instanceof ObjectWithId) {
+                ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
+                if (objectWithId == null)
+                    LOG.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId)entry.getValue()).getId(), entry.getValue().getClass());
+                else
+                    dest.set(entry.getKey(), objectWithId);
+            } else {
+                dest.set(entry.getKey(), entry.getValue());
+            }
+        }
+        return dest;
     }
 
     protected String getId(ObjectWithId oid) {
