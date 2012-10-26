@@ -16,6 +16,8 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
+import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -78,7 +80,7 @@ public class ImportAction extends AbstractAction {
 
         if (retVal == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = xmlFileChooser.getSelectedFile();
-            ModelAction loadAction = new LoadDiagramAction(context, selectedFile, parent, xmlFileChooser);
+            ModelAction loadAction = new LoadDiagramModelAction(context, selectedFile, parent, xmlFileChooser);
             handler.execute(loadAction);
         } else {
             // skip the rest

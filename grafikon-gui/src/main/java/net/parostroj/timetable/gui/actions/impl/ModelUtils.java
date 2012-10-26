@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.actions;
+package net.parostroj.timetable.gui.actions.impl;
 
 import java.awt.Component;
 import java.io.File;

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.actions;
+package net.parostroj.timetable.gui.actions.impl;
 
 /**
  * Element type of train diagram.
