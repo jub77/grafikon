@@ -22,18 +22,18 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * This action recalculates all trains.
- * 
+ *
  * @author jub
  */
 public class RecalculateAction extends AbstractAction {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(RecalculateAction.class);
-    
+
     public static interface TrainAction {
         public void execute(Train train) throws Exception;
     }
 
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     public RecalculateAction(ApplicationModel model) {
         this.model = model;
@@ -43,14 +43,14 @@ public class RecalculateAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(e.getSource()));
         ModelAction action = getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
-            
+
             @Override
             public void execute(Train train) throws Exception {
                 train.recalculate();
             }
         }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
         ModelAction action2 = new EventDispatchModelAction(context) {
-            
+
             @Override
             protected void eventDispatchAction() {
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
@@ -61,12 +61,12 @@ public class RecalculateAction extends AbstractAction {
         ActionHandler.getInstance().execute(action);
         ActionHandler.getInstance().execute(action2);
     }
-    
+
     public static ModelAction getAllTrainsAction(ActionContext context, final TrainDiagram diagram, final TrainAction trainAction, final String message, final String actionName) {
         ModelAction action = new CheckedModelAction(context) {
-            
+
             private static final int CHUNK_SIZE = 10;
-            private CyclicBarrier barrier = new CyclicBarrier(2);
+            private final CyclicBarrier barrier = new CyclicBarrier(2);
 
             @Override
             protected void action() {
@@ -77,7 +77,7 @@ public class RecalculateAction extends AbstractAction {
                 setWaitProgress(0);
                 getActionContext().setShowProgress(true);
                 setWaitDialogVisible(true);
-                long time = System.currentTimeMillis(); 
+                long time = System.currentTimeMillis();
                 try {
                     List<Train> batch = new LinkedList<Train>();
                     Iterator<Train> iterator = diagram.getTrains().iterator();
