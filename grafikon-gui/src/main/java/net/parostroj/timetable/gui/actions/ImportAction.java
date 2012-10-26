@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
 
@@ -19,9 +18,6 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.FileLoadSave;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -34,7 +30,28 @@ import org.slf4j.LoggerFactory;
  */
 public class ImportAction extends AbstractAction {
 
+    private final class TrainOidFilter implements Filter<ObjectWithId> {
+        private final Group group;
+
+        private TrainOidFilter(Group group) {
+            this.group = group;
+        }
+
+        @Override
+        public boolean is(ObjectWithId item) {
+            if (item instanceof Train) {
+                Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
+                if (group == null)
+                    return foundGroup == null;
+                else
+                    return group.equals(foundGroup);
+            } else
+                return true;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(ImportAction.class.getName());
+
     private final ImportDialog importDialog;
     private final GroupChooserFromToDialog groupDialog;
     private final ApplicationModel model;
@@ -61,43 +78,7 @@ public class ImportAction extends AbstractAction {
 
         if (retVal == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = xmlFileChooser.getSelectedFile();
-            ModelAction loadAction = new EventDispatchAfterModelAction(context) {
-
-                private String errorMessage;
-
-                @Override
-                protected void backgroundAction() {
-                    setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
-                    setWaitDialogVisible(true);
-                    long time = System.currentTimeMillis();
-                    try {
-                        try {
-                            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                            context.setAttribute("diagram", ls.load(selectedFile));
-                        } catch (LSException e) {
-                            LOG.warn("Error loading model.", e);
-                            if (e.getCause() instanceof FileNotFoundException)
-                                errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
-                            else
-                                errorMessage = ResourceLoader.getString("dialog.error.loading");
-                        } catch (Exception e) {
-                            LOG.warn("Error loading model.", e);
-                            errorMessage = ResourceLoader.getString("dialog.error.loading");
-                        }
-                    } finally {
-                        LOG.debug("Library loaded in {}ms", System.currentTimeMillis() - time);
-                        setWaitDialogVisible(false);
-                    }
-                }
-
-                @Override
-                protected void eventDispatchActionAfter() {
-                    if (errorMessage != null) {
-                        String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-                        ActionUtils.showError(text, parent);
-                    }
-                }
-            };
+            ModelAction loadAction = new LoadDiagramAction(context, selectedFile, parent, xmlFileChooser);
             handler.execute(loadAction);
         } else {
             // skip the rest
@@ -116,20 +97,7 @@ public class ImportAction extends AbstractAction {
                     groupDialog.showDialog(diagram, null, model.getDiagram(), null);
                     if (groupDialog.isSelected()) {
                         final Group group = groupDialog.getSelectedFrom();
-                        filter = new Filter<ObjectWithId>() {
-
-                            @Override
-                            public boolean is(ObjectWithId item) {
-                                if (item instanceof Train) {
-                                    Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
-                                    if (group == null)
-                                        return foundGroup == null;
-                                    else
-                                        return group.equals(foundGroup);
-                                } else
-                                    return true;
-                            }
-                        };
+                        filter = new TrainOidFilter(group);
                     } else {
                         cancelled = !groupDialog.isSelected();
                     }
