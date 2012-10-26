@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.actions;
+package net.parostroj.timetable.gui.actions.impl;
 
 import java.awt.Component;
 import java.io.File;
@@ -17,16 +17,16 @@ import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
-public class LoadDiagramAction extends EventDispatchAfterModelAction {
+public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoadDiagramAction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoadDiagramModelAction.class);
 
     private final File selectedFile;
     private final Component parent;
     private final JFileChooser xmlFileChooser;
     private String errorMessage;
 
-    public LoadDiagramAction(ActionContext context, File selectedFile, Component parent,
+    public LoadDiagramModelAction(ActionContext context, File selectedFile, Component parent,
             JFileChooser xmlFileChooser) {
         super(context);
         this.selectedFile = selectedFile;

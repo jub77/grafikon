@@ -8,7 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import net.parostroj.timetable.gui.actions.OutputCategory;
+
+import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;

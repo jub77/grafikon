@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.actions;
 
+import net.parostroj.timetable.gui.actions.impl.ElementType;
+
 /**
  * Output type. For each menu item there is enum item with information.
  *
