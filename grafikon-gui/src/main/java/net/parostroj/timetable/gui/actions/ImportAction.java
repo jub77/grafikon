@@ -271,6 +271,15 @@ public class ImportAction extends AbstractAction {
     private void processImportedObject(ObjectWithId o) {
         // process new trains
         if (o instanceof Train) {
+            // if train import -> move to appropriate group
+            if (trainImport) {
+                Group destGroup = groupDialog.getSelectedTo();
+                Train train = (Train) o;
+                if (destGroup == null)
+                    train.removeAttribute("group");
+                else
+                    train.setAttribute("group", destGroup);
+            }
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, o));
         } else if (o instanceof Node) {
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE, model, o));
