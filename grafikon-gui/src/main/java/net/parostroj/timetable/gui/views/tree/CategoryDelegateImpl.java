@@ -40,6 +40,11 @@ public abstract class CategoryDelegateImpl<T> implements TrainTreeNodeDelegate<T
         if (belongs(train, node.getItem()) && ((filter != null && filter.is(train)) || filter == null)) {
             if (containTrains) {
                 TrainTreeNode<Train> trainNode = TrainTreeNodeFactory.getInstance().createTrainNode(node, train);
+                // check if the train is not already there
+                for (TrainTreeNode<?> item : node.getChildren()) {
+                    if (item.getItem() == train)
+                        return null;
+                }
                 node.getChildren().add(trainNode);
                 this.sortChildren(node);
                 return new TreePath(node).pathByAddingChild(trainNode);
