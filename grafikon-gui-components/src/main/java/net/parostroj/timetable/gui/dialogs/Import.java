@@ -93,7 +93,9 @@ public abstract class Import {
             return diagram.getTrainById(origTrain.getId());
         } else {
             for (Train train : diagram.getTrains()) {
-                if (train.getNumber().equals(origTrain.getNumber())) {
+                // compare number and type
+                TrainType trainType = getTrainType(origTrain.getType());
+                if (train.getNumber().equals(origTrain.getNumber()) && train.getType().equals(trainType)) {
                     return train;
                 }
             }
