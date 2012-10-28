@@ -11,14 +11,18 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import net.parostroj.timetable.filters.ExtractionFilterIterable;
 import net.parostroj.timetable.filters.Filter;
+import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
-import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
+import net.parostroj.timetable.gui.actions.impl.Process;
+import net.parostroj.timetable.gui.commands.CommandException;
+import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -143,6 +147,20 @@ public class ImportAction extends AbstractAction {
                     size = list.size();
                     if (size == 0)
                         return;
+                    if (trainImport && groupDialog.isRemoveExistingTrains()) {
+                        // remove existing trains in group
+                        Process<ObjectWithId> deleteProcess = new Process<ObjectWithId>() {
+                            public void apply(ObjectWithId item) {
+                                DeleteTrainCommand dc = new DeleteTrainCommand((Train) item);
+                                try {
+                                    model.applyCommand(dc);
+                                } catch (CommandException e) {
+                                    LOG.error(e.getMessage(), e);
+                                }
+                            }
+                        };
+                        processItems(new ExtractionFilterIterable<ObjectWithId, Train>(model.getDiagram().getTrains(), new GroupFilter<ObjectWithId, Train>(groupDialog.getSelectedTo())), deleteProcess);
+                    }
                     // import new objects
                     Process<ObjectWithId> importProcess = new Process<ObjectWithId>() {
                         public void apply(ObjectWithId item) {
