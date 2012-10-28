@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.Group;
  *
  * @author jub
  */
-public class GroupFilter<T extends AttributesHolder> implements ExtractionFilter<T, T> {
+public class GroupFilter<R, T extends AttributesHolder> implements ExtractionFilter<R, T> {
 
     private final Group group;
 
@@ -26,9 +26,10 @@ public class GroupFilter<T extends AttributesHolder> implements ExtractionFilter
             return group.equals(foundGroup);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public T get(T item) {
-        return item;
+    public R get(T item) {
+        return (R) item;
     }
 
 }

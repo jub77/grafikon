@@ -380,7 +380,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         if (groupSelect.getType() == Type.ALL)
             return new EmptyFilter<Train>();
         else
-            return new GroupFilter<Train>(groupSelect.getGroup());
+            return new GroupFilter<Train, Train>(groupSelect.getGroup());
     }
 
     private void addAndSelectTrain(Train train) {
