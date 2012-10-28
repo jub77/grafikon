@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.filters.ClassFilter;
-import net.parostroj.timetable.filters.FilterIterable;
+import net.parostroj.timetable.filters.ExtractionFilterIterable;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -200,14 +200,14 @@ public class Route implements ObjectWithId, Visitable {
      * @return iterable which consists only of lines of this route
      */
     public Iterable<Line> lines() {
-        return new FilterIterable<Line, RouteSegment>(segments, new ClassFilter<Line, RouteSegment>(Line.class));
+        return new ExtractionFilterIterable<Line, RouteSegment>(segments, new ClassFilter<Line, RouteSegment>(Line.class));
     }
 
     /**
      * @return iterable which consists only of nodes of this route
      */
     public Iterable<Node> nodes() {
-        return new FilterIterable<Node, RouteSegment>(segments, new ClassFilter<Node, RouteSegment>(Node.class));
+        return new ExtractionFilterIterable<Node, RouteSegment>(segments, new ClassFilter<Node, RouteSegment>(Node.class));
     }
 
     /**
