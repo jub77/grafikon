@@ -115,11 +115,11 @@ class TrainTableModel extends AbstractTableModel {
             case PLATFORM:
                 if (interval.getOwner() instanceof Node) {
                     if (((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
-                        retValue = interval.getTrack().getNumber();
+                        retValue = interval.getTrack();
                 } else if (interval.getOwner() instanceof Line) {
                     // only for more than one track per line
                     if (((Line)interval.getOwner()).getTracks().size() > 1) {
-                        return interval.getTrack().getNumber();
+                        return interval.getTrack();
                     }
                 }
                 break;
@@ -237,19 +237,17 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case PLATFORM:
                 // platform
-                String platform = (String)aValue;
+                Track track = (Track) aValue;
                 interval = train.getTimeIntervalList().get(rowIndex);
                 if (interval.getOwner() instanceof Node) {
-                    Node node = (Node)interval.getOwner();
-                    NodeTrack newTrack = node.getNodeTrackByNumber(platform);
+                    NodeTrack newTrack = (NodeTrack) track;
                     if (newTrack != null) {
                         train.changeNodeTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
                         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     }
                 } else if (interval.getOwner() instanceof Line) {
-                    Line line = (Line)interval.getOwner();
-                    LineTrack newTrack = line.getLineTrackByNumber(platform);
+                    LineTrack newTrack = (LineTrack) track;
                     if (newTrack != null) {
                         train.changeLineTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
