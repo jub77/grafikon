@@ -24,6 +24,8 @@ import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.commands.CommandException;
+import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
@@ -539,22 +541,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }
 
     private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
-        // remove train from cycles
-        for (String type : model.getDiagram().getCycleTypeNames()) {
-            if (!deletedTrain.getCycles(type).isEmpty()) {
-                this.removeTrainFromCycles(deletedTrain.getCycles(type));
-            }
-        }
-
-        diagram.removeTrain(deletedTrain); // remove from list of trains
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, deletedTrain));
-    }
-
-    private void removeTrainFromCycles(List<TrainsCycleItem> items) {
-        for (TrainsCycleItem item : new LinkedList<TrainsCycleItem>(items)) {
-            TrainsCycle cycle = item.getCycle();
-            item.getCycle().removeItem(item);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETED_CYCLE, model, cycle));
+        DeleteTrainCommand deleteCommand = new DeleteTrainCommand(deletedTrain);
+        try {
+            model.applyCommand(deleteCommand);
+        } catch (CommandException e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 
