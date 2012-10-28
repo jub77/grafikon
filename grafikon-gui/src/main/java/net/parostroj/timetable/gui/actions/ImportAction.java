@@ -17,6 +17,7 @@ import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
+import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.model.*;
@@ -142,43 +143,51 @@ public class ImportAction extends AbstractAction {
                     size = list.size();
                     if (size == 0)
                         return;
-                    List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
-                    Iterator<ObjectWithId> iterator = list.iterator();
-                    int cnt = 0;
-                    while (iterator.hasNext()) {
-                        ObjectWithId o = iterator.next();
-                        batch.add(o);
-                        if (++cnt == CHUNK_SIZE) {
-                            processChunk(batch);
-                            cnt = 0;
-                            batch = new LinkedList<ObjectWithId>();
+                    // import new objects
+                    Process<ObjectWithId> importProcess = new Process<ObjectWithId>() {
+                        public void apply(ObjectWithId item) {
+                            Import i = imports.get(ImportComponent.getByComponentClass(item.getClass()));
+                            if (i != null) {
+                                if (item instanceof TrainType)
+                                    trainType = true;
+                                ObjectWithId imported = i.importObject(item);
+                                processImportedObject(imported);
+                            } else {
+                                LOG.warn("No import for class {}", item.getClass().getName());
+                            }
                         }
-                    }
-                    if (batch.size() > 0) {
-                        processChunk(batch);
-                    }
+                    };
+                    processItems(list, importProcess);
                 } finally {
                     LOG.debug("Import finished in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }
 
-            private void processChunk(final Collection<ObjectWithId> objects) {
+            private void processItems(Iterable<ObjectWithId> list, Process<ObjectWithId> importProcess) {
+                List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
+                int cnt = 0;
+                for (ObjectWithId o : list) {
+                    batch.add(o);
+                    if (++cnt == CHUNK_SIZE) {
+                        processChunk(batch, importProcess);
+                        cnt = 0;
+                        batch = new LinkedList<ObjectWithId>();
+                    }
+                }
+                if (batch.size() > 0) {
+                    processChunk(batch, importProcess);
+                }
+            }
+
+            private void processChunk(final Collection<ObjectWithId> objects, final Process<ObjectWithId> action) {
                 ModelActionUtilities.runLaterInEDT(new Runnable() {
 
                     @Override
                     public void run() {
                         try {
                             for (ObjectWithId o : objects) {
-                                Import i = imports.get(ImportComponent.getByComponentClass(o.getClass()));
-                                if (i != null) {
-                                    if (o instanceof TrainType)
-                                        trainType = true;
-                                    ObjectWithId imported = i.importObject(o);
-                                    processImportedObject(imported);
-                                } else {
-                                    LOG.warn("No import for class {}", o.getClass().getName());
-                                }
+                                action.apply(o);
                             }
                         } finally {
                             try {
