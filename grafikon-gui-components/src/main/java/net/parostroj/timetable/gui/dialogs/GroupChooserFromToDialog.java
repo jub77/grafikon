@@ -15,12 +15,14 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
 import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 
 public class GroupChooserFromToDialog extends JDialog {
 
     private final GroupsComboBox fromGroupsComboBox;
     private final GroupsComboBox toGroupsComboBox;
     private boolean ok;
+    private final JCheckBox removeEtCheckBox;
 
     /**
      * Create the dialog.
@@ -44,6 +46,9 @@ public class GroupChooserFromToDialog extends JDialog {
 
         toGroupsComboBox = new GroupsComboBox(false);
         contentPanel.add(toGroupsComboBox);
+
+        removeEtCheckBox = new JCheckBox(ResourceLoader.getString("groups.remove.existing.trains"));
+        contentPanel.add(removeEtCheckBox);
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -89,5 +94,9 @@ public class GroupChooserFromToDialog extends JDialog {
 
     public Group getSelectedTo() {
         return toGroupsComboBox.getGroupSelection().getGroup();
+    }
+
+    public boolean isRemoveExistingTrains() {
+        return removeEtCheckBox.isSelected();
     }
 }
