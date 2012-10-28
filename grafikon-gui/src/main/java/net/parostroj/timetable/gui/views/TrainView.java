@@ -6,11 +6,14 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
+import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
@@ -96,6 +99,22 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.model.addListener(this);
         ((TrainTableModel)trainTable.getModel()).setModel(model);
         getEditTrainDialog().setModel(model);
+        model.getMediator().addColleague(new Colleague() {
+            public void receiveMessage(Object message) {
+                IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
+                if (ism.getInterval() != null) {
+                    TimeInterval interval = ism.getInterval();
+                    int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
+                    int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED);
+                    trainTable.setRowSelectionInterval(row, row);
+                    if (column != -1)
+                        trainTable.setColumnSelectionInterval(column, column);
+                    Rectangle rect = trainTable.getCellRect(row, 0, true);
+                    trainTable.scrollRectToVisible(rect);
+                    trainTable.requestFocus();
+                }
+            }
+        }, IntervalSelectionMessage.class);
     }
 
 
