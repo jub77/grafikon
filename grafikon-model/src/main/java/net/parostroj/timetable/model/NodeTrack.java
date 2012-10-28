@@ -12,13 +12,13 @@ public class NodeTrack extends Track implements Visitable {
 
     /** Platform. */
     private boolean platform;
-    
+
     // node reference
     Node node;
 
     /**
      * Constructor.
-     * 
+     *
      * @param id id
      */
     public NodeTrack(String id) {
@@ -37,7 +37,7 @@ public class NodeTrack extends Track implements Visitable {
 
     @Override
     public String toString() {
-        return super.toString();
+        return super.toString() + (isPlatform() ?  " [" : "");
     }
 
     /**
