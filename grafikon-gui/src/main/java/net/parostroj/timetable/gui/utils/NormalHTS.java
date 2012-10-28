@@ -62,6 +62,7 @@ public class NormalHTS implements HighlightedTrains, TrainSelector, ApplicationM
             selected = interval.getTrain();
         model.setSelectedTrain(selected);
         selectedTimeInterval = interval;
+        model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
     }
 
     @Override

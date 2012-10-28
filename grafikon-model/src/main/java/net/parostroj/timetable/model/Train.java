@@ -190,7 +190,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
 
     @Override
     public String toString() {
-        return number + "(" + ((type != null) ? type.getDesc() : "<none>") + "," + topSpeed + ")";
+        return String.format("%s(%d)", getName(), topSpeed);
     }
 
     /**

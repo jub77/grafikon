@@ -1,10 +1,10 @@
 package net.parostroj.timetable.gui.views;
 
+import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
+import javax.swing.table.*;
+
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -155,5 +155,17 @@ public enum TrainTableColumn {
                 return column;
         }
         return null;
+    }
+
+    public static int getIndex(TableColumnModel model, TrainTableColumn column) {
+        Enumeration<TableColumn> e = model.getColumns();
+        int i = 0;
+        while (e.hasMoreElements()) {
+            TableColumn tc = e.nextElement();
+            if (tc.getModelIndex() == column.getIndex())
+                return i;
+            i++;
+        }
+        return -1;
     }
 }
