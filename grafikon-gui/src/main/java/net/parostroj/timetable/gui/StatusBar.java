@@ -43,10 +43,10 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     private void initComponents() {
 
         left = new javax.swing.JTextField();
-        left.setColumns(20);
+        left.setColumns(15);
         center = new javax.swing.JTextField();
         right = new javax.swing.JTextField();
-        right.setColumns(20);
+        right.setColumns(15);
 
         left.setEditable(false);
 
