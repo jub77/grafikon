@@ -844,6 +844,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         executeScriptMenuItem.setAction(executeScriptAction);
         executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
+        executeScriptMenuItem.setActionCommand("");
         specialMenu.add(executeScriptMenuItem);
 
         scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
