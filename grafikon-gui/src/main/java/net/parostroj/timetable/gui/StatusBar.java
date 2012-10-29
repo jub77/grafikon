@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui;
 
 import net.parostroj.timetable.utils.ResourceLoader;
+import java.awt.BorderLayout;
 
 /**
  * Status bar for the application.
@@ -13,7 +14,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  * @author jub
  */
 public class StatusBar extends javax.swing.JPanel implements ApplicationModelListener {
-    
+
     /** Creates new form StatusBar */
     public StatusBar() {
         initComponents();
@@ -32,7 +33,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 // nothings
         }
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -42,39 +43,27 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     private void initComponents() {
 
         left = new javax.swing.JTextField();
+        left.setColumns(20);
         center = new javax.swing.JTextField();
         right = new javax.swing.JTextField();
+        right.setColumns(20);
 
         left.setEditable(false);
 
         center.setEditable(false);
 
         right.setEditable(false);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(left, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(center, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(right, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(center)
-            .addComponent(left)
-            .addComponent(right)
-        );
+        setLayout(new BorderLayout(0, 0));
+        add(left, BorderLayout.WEST);
+        add(center, BorderLayout.CENTER);
+        add(right, BorderLayout.EAST);
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField center;
     private javax.swing.JTextField left;
     private javax.swing.JTextField right;
     // End of variables declaration//GEN-END:variables
-    
+
 }
