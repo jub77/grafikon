@@ -1,9 +1,7 @@
 package net.parostroj.timetable.gui;
 
 import net.parostroj.timetable.mediator.AbstractColleague;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TextItemEvent;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.*;
 
 /**
  * Colleague for application model.
@@ -31,7 +29,16 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
                     tde.getType() == GTEventType.GROUP_ADDED || tde.getType() == GTEventType.GROUP_REMOVED ||
                     tde.getType() == GTEventType.CYCLE_TYPE_ADDED || tde.getType() == GTEventType.CYCLE_TYPE_REMOVED)
                 model.setModelChanged(true);
-            if (tde.getType() == GTEventType.NESTED && tde.getLastNestedEvent() instanceof TextItemEvent)
+            if (tde.getType() == GTEventType.NESTED) {
+                GTEvent<?> nestedEvent = tde.getLastNestedEvent();
+                if (nestedEvent instanceof TextItemEvent ||
+                        (nestedEvent instanceof TrainEvent && ((TrainEvent) nestedEvent).getType() == GTEventType.ATTRIBUTE))
+                    model.setModelChanged(true);
+            }
+
+        } else if (message instanceof TrainEvent) {
+            TrainEvent te = (TrainEvent) message;
+            if (te.getType() == GTEventType.ATTRIBUTE)
                 model.setModelChanged(true);
         }
     }
