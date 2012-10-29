@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
+import java.util.*;
+
 import javax.swing.JComboBox;
 
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
@@ -53,8 +55,10 @@ public class GroupsComboBox extends JComboBox {
         if (allOption)
             addItem(all);
         addItem(none);
-        for (Group group : diagram.getGroups()) {
-            addItem(new Wrapper<Group>(group));
+        List<Group> groups = new ArrayList<Group>(diagram.getGroups());
+        this.sortGroups(groups);
+        for (Group group : groups) {
+            this.addItem(new Wrapper<Group>(group));
         }
         switch (groupSelect.getType()) {
             case ALL:
@@ -68,6 +72,14 @@ public class GroupsComboBox extends JComboBox {
                 setSelectedItem(w);
                 break;
         }
+    }
+
+    private void sortGroups(List<Group> groups) {
+        Collections.sort(groups, new Comparator<Group>() {
+            public int compare(Group o1, Group o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
     }
 
     /**
