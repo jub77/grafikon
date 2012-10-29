@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -42,14 +41,14 @@ public class RecalculateAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(e.getSource()));
-        ModelAction action = getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
+        ModelAction recalculateAction = getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
 
             @Override
             public void execute(Train train) throws Exception {
                 train.recalculate();
             }
         }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
-        ModelAction action2 = new EventDispatchModelAction(context) {
+        ModelAction eventAction = new EventDispatchModelAction(context) {
 
             @Override
             protected void eventDispatchAction() {
@@ -58,8 +57,8 @@ public class RecalculateAction extends AbstractAction {
                 model.setModelChanged(true);
             }
         };
-        ActionHandler.getInstance().execute(action);
-        ActionHandler.getInstance().execute(action2);
+        ActionHandler.getInstance().execute(recalculateAction);
+        ActionHandler.getInstance().execute(eventAction);
     }
 
     public static ModelAction getAllTrainsAction(ActionContext context, final TrainDiagram diagram, final TrainAction trainAction, final String message, final String actionName) {
@@ -80,12 +79,10 @@ public class RecalculateAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     List<Train> batch = new LinkedList<Train>();
-                    Iterator<Train> iterator = diagram.getTrains().iterator();
                     int totalCount = diagram.getTrains().size();
                     int counter = 0;
                     int batchCounter = 0;
-                    while (iterator.hasNext()) {
-                        Train train = iterator.next();
+                    for (Train train : diagram.getTrains()) {
                         batch.add(train);
                         if (++batchCounter == CHUNK_SIZE) {
                             processChunk(batch);

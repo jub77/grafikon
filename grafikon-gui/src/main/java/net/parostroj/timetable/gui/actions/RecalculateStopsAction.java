@@ -94,9 +94,9 @@ public class RecalculateStopsAction extends AbstractAction {
         };
         
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(event.getSource()));
-        ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
+        ModelAction recalculateAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
                 trainAction, ResourceLoader.getString("wait.message.recalculate"), "Recalculate stops");
-        ModelAction action2 = new EventDispatchModelAction(context) {
+        ModelAction eventAction = new EventDispatchModelAction(context) {
             
             @Override
             protected void eventDispatchAction() {
@@ -105,7 +105,7 @@ public class RecalculateStopsAction extends AbstractAction {
                 model.setModelChanged(true);
             }
         };
-        ActionHandler.getInstance().execute(action);
-        ActionHandler.getInstance().execute(action2);
+        ActionHandler.getInstance().execute(recalculateAction);
+        ActionHandler.getInstance().execute(eventAction);
     }
 }
