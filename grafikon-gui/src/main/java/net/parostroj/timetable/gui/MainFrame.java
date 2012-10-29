@@ -786,7 +786,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
-        
+
         twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
         twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -825,6 +825,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         executeScriptMenuItem.setAction(executeScriptAction);
         executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
+        executeScriptMenuItem.setActionCommand("");
         specialMenu.add(executeScriptMenuItem);
 
         scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
