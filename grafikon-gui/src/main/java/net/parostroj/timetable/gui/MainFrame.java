@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui;
 
 import groovy.lang.GroovyShell;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
@@ -383,7 +384,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
         lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
-        applicationPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
         engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
@@ -479,19 +479,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         tabbedPane.addTab(ResourceLoader.getString("tab.net"), netPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.circulations"), circulationPane); // NOI18N
 
-        javax.swing.GroupLayout applicationPanelLayout = new javax.swing.GroupLayout(applicationPanel);
-        applicationPanel.setLayout(applicationPanelLayout);
-        applicationPanelLayout.setHorizontalGroup(
-            applicationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(statusBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        applicationPanelLayout.setVerticalGroup(
-            applicationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, applicationPanelLayout.createSequentialGroup()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
+        getContentPane().add(statusBar, BorderLayout.SOUTH);
 
         tabbedPane.getAccessibleContext().setAccessibleName(ResourceLoader.getString("tab.trains")); // NOI18N
 
@@ -910,8 +900,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         setJMenuBar(menuBar);
 
-        getContentPane().add(applicationPanel);
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1238,7 +1226,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem allHtmlMenuItem;
-    private javax.swing.JPanel applicationPanel;
     private javax.swing.JMenuItem ccListMenuItem;
     private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
     private javax.swing.JMenuItem dcListMenuItem;
