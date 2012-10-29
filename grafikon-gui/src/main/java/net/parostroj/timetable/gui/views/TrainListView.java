@@ -56,6 +56,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private GroupSelect groupSelect;
     private final MenuAdapter menuAdapter;
     private TrainTreeHandler trainTreeHandler;
+    private TreeType treeType = TreeType.TYPES;
+    private boolean selecting = false;
 
     public static enum TreeType {
         FLAT, TYPES, GROUPS_AND_TYPES, GROUPS
@@ -96,9 +98,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             y = e.getY();
         }
     }
-
-    private TreeType treeType = TreeType.TYPES;
-    private boolean selecting = false;
 
     /**
      * Creates new form TrainListView.
