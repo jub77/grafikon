@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui;
 
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.ResourceLoader;
 import java.awt.BorderLayout;
 
@@ -18,20 +20,63 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     /** Creates new form StatusBar */
     public StatusBar() {
         initComponents();
+        updateLeft("");
+        updateCenter("");
+        updateRight("");
     }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {
+        // left
         switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                if (event.getModel().getDiagram() != null)
-                    left.setText(ResourceLoader.getString("status.bar.trains") + " " + event.getModel().getDiagram().getTrains().size());
-                else
-                    left.setText("");
+            case SET_DIAGRAM_CHANGED: case NEW_TRAIN: case DELETE_TRAIN:
+                this.updateTrainCount(event.getModel().getDiagram());
                 break;
             default:
-                // nothings
+                // nothing
+                break;
         }
+        // right
+        switch (event.getType()) {
+            case SET_DIAGRAM_CHANGED: case NEW_CYCLE: case DELETED_CYCLE:
+                this.updateCirculations(event.getModel().getDiagram());
+                break;
+            default:
+                // nothing
+                break;
+        }
+    }
+
+    private void updateCirculations(TrainDiagram diagram) {
+        if (diagram == null) {
+            updateLeft("");
+        } else {
+            int drivers = diagram.getCycles(TrainsCycleType.DRIVER_CYCLE).size();
+            int engines = diagram.getCycles(TrainsCycleType.ENGINE_CYCLE).size();
+            int trainUnits = diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).size();
+            String text = String.format("%d, %d, %d", engines, trainUnits, drivers);
+            updateLeft(text);
+        }
+    }
+
+    private void updateTrainCount(TrainDiagram diagram) {
+        if (diagram == null) {
+            updateRight("");
+        } else {
+            updateRight(ResourceLoader.getString("status.bar.trains") + " " + diagram.getTrains().size());
+        }
+    }
+
+    private void updateLeft(String text) {
+        left.setText(text);
+    }
+
+    private void updateRight(String text) {
+        right.setText(text);
+    }
+
+    private void updateCenter(String text) {
+        center.setText(text);
     }
 
     /** This method is called from within the constructor to
