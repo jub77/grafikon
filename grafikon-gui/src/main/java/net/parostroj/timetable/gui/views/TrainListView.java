@@ -192,6 +192,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         trainTree.setShowsRootHandles(true);
         panel.setLayout(new BorderLayout(0, 0));
         scrollPane = new javax.swing.JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panel.add(scrollPane);
 
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
