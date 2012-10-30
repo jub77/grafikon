@@ -73,7 +73,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                         boolean endl = false;
                         for (DiagramChangeDescription d : change.getDescriptions()) {
                             if (endl)
-                                b.append(' ');
+                                b.append(',');
                             else
                                 endl = true;
                             b.append(d.getFormattedDescription());
