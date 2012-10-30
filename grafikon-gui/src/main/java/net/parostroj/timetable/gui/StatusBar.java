@@ -5,17 +5,19 @@
  */
 package net.parostroj.timetable.gui;
 
-import net.parostroj.timetable.gui.components.GTEventOutputVisitor;
-import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.utils.ResourceLoader;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
+
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.changes.*;
+import net.parostroj.timetable.model.changes.DiagramChange.Action;
+import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Status bar for the application.
@@ -45,14 +47,43 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     public void setModel(ApplicationModel model) {
         model.getMediator().addColleague(new GTEventsReceiverColleague(true) {
 
+            private final TrackedCheckVisitor tcv = new TrackedCheckVisitor();
+            private final TransformVisitor tv = new TransformVisitor();
+
             @Override
             public void processGTEventAll(GTEvent<?> event) {
-                StringBuilder output = new StringBuilder();
-                GTEventOutputVisitor visitor = new GTEventOutputVisitor(output, false);
-                event.accept(visitor);
-                String text = output.toString();
-                if (!"".equals(text))
-                    updateCenter(output.toString());
+                event.accept(tcv);
+                if (!tcv.isTracked())
+                    return;
+                event.accept(tv);
+                DiagramChange change = tv.getChange();
+                String text = this.transformChange(change);
+                if (!"".equals(text)) {
+                    updateCenter(text);
+                }
+            }
+
+            private String transformChange(DiagramChange change) {
+                StringBuilder b = new StringBuilder();
+                b.append(change.getType()).append(": ");
+                b.append(change.getObject() != null ? change.getObject() : change.getType()).append(' ');
+                if (change.getAction() == Action.MODIFIED) {
+                    b.append('(');
+                    if (change.getDescriptions() != null) {
+                        boolean endl = false;
+                        for (DiagramChangeDescription d : change.getDescriptions()) {
+                            if (endl)
+                                b.append(' ');
+                            else
+                                endl = true;
+                            b.append(d.getFormattedDescription());
+                        }
+                    }
+                    b.append(')');
+                } else {
+                    b.append('(').append(change.getAction()).append(')');
+                }
+                return b.toString();
             }
         });
     }
