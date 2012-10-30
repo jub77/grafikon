@@ -237,6 +237,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             item.setActionCommand(sd.getId());
             scriptsMenu.add(item);
         }
+
+        statusBar.setModel(model);
     }
 
     @Override

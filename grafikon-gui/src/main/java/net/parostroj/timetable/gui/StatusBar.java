@@ -5,10 +5,17 @@
  */
 package net.parostroj.timetable.gui;
 
+import net.parostroj.timetable.gui.components.GTEventOutputVisitor;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
 
 /**
  * Status bar for the application.
@@ -17,12 +24,35 @@ import java.awt.BorderLayout;
  */
 public class StatusBar extends javax.swing.JPanel implements ApplicationModelListener {
 
+    private static final int TIMEOUT = 20000;
+
+    private final Timer timer;
+
     /** Creates new form StatusBar */
     public StatusBar() {
         initComponents();
         updateLeft("");
         updateCenter("");
         updateRight("");
+        timer = new Timer(TIMEOUT, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateCenter("");
+            }
+        });
+        timer.setRepeats(false);
+    }
+
+    public void setModel(ApplicationModel model) {
+        model.getMediator().addColleague(new GTEventsReceiverColleague(true) {
+
+            @Override
+            public void processGTEventAll(GTEvent<?> event) {
+                StringBuilder output = new StringBuilder();
+                GTEventOutputVisitor visitor = new GTEventOutputVisitor(output, false);
+                event.accept(visitor);
+                updateCenter(output.toString());
+            }
+        });
     }
 
     @Override
@@ -77,6 +107,14 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
 
     private void updateCenter(String text) {
         center.setText(text);
+        if (!"".equals(text)) {
+            // start timer
+            if (timer != null) {
+                timer.stop();
+                timer.setInitialDelay(TIMEOUT);
+                timer.start();
+            }
+        }
     }
 
     /** This method is called from within the constructor to
