@@ -50,7 +50,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 StringBuilder output = new StringBuilder();
                 GTEventOutputVisitor visitor = new GTEventOutputVisitor(output, false);
                 event.accept(visitor);
-                updateCenter(output.toString());
+                String text = output.toString();
+                if (!"".equals(text))
+                    updateCenter(output.toString());
             }
         });
     }
