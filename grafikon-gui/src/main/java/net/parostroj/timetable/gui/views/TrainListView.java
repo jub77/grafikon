@@ -232,7 +232,19 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private void updateGroupsMenu(boolean added, Group group) {
         if (added) {
-            addToGroupsMenu(new GroupMenuItem(group.getName(), new GroupSelect(GroupSelect.Type.GROUP, group)), null);
+            GroupMenuItem newItem = new GroupMenuItem(group.getName(), new GroupSelect(GroupSelect.Type.GROUP, group));
+            // skip first two items <all>,<none>
+            for (int i = 2; i < groupsMenu.getItemCount(); i++) {
+                JMenuItem item = groupsMenu.getItem(i);
+                if (newItem.getText().compareTo(item.getText()) < 0) {
+                    addToGroupsMenu(newItem, i);
+                    newItem = null;
+                    break;
+                }
+            }
+            if (newItem != null) {
+                addToGroupsMenu(newItem, null);
+            }
         } else {
             GroupMenuItem item = findByGroup(group);
             if (item.isSelected())
