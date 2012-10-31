@@ -61,6 +61,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
+        trainsSplitPane.setDividerLocation(prefs.getInt("trains.divider.2", trainsSplitPane.getDividerLocation()));
         GTViewSettings gtvs = null;
         try {
             gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
@@ -90,6 +91,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         prefs.setInt("trains.divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
+        prefs.setInt("trains.divider.2", trainsSplitPane.getDividerLocation());
         // save if the gtview in trains pane is visible
         prefs.setBoolean("trains.show.gtview", scrollPane.isVisible());
         prefs.setString("trains.gtv", graphicalTimetableView.getSettings().getStorageString());
@@ -112,37 +114,26 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         splitPane = new javax.swing.JSplitPane();
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
-        panel = new javax.swing.JPanel();
+        trainsSplitPane = new javax.swing.JSplitPane();
         trainListView = new net.parostroj.timetable.gui.views.TrainListView();
         trainView = new net.parostroj.timetable.gui.views.TrainView();
 
         splitPane.setDividerLocation(350);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        javax.swing.GroupLayout graphicalTimetableViewLayout = new javax.swing.GroupLayout(graphicalTimetableView);
-        graphicalTimetableView.setLayout(graphicalTimetableViewLayout);
-        graphicalTimetableViewLayout.setHorizontalGroup(
-            graphicalTimetableViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 4000, Short.MAX_VALUE)
-        );
-        graphicalTimetableViewLayout.setVerticalGroup(
-            graphicalTimetableViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
         setLayout(new BorderLayout(0, 0));
 
         splitPane.setBottomComponent(scrollPane);
 
-        splitPane.setLeftComponent(panel);
-        panel.setLayout(new BorderLayout(0, 0));
-        panel.add(trainListView, BorderLayout.WEST);
-        panel.add(trainView);
+        splitPane.setLeftComponent(trainsSplitPane);
+        trainsSplitPane.setLeftComponent(trainListView);
+        trainsSplitPane.setRightComponent(trainView);
         add(splitPane);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave graphicalTimetableView;
-    private javax.swing.JPanel panel;
+    private javax.swing.JSplitPane trainsSplitPane;
     private GTLayeredPane2 scrollPane;
     private javax.swing.JSplitPane splitPane;
     private net.parostroj.timetable.gui.views.TrainListView trainListView;
