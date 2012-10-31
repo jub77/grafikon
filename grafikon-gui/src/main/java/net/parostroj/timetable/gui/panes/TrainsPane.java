@@ -5,15 +5,17 @@
  */
 package net.parostroj.timetable.gui.panes;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GTLayeredPane2;
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.BorderLayout;
 
 /**
  * Trains pane.
@@ -61,7 +63,10 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
-        trainsSplitPane.setDividerLocation(prefs.getInt("trains.divider.2", trainsSplitPane.getDividerLocation()));
+        int div = prefs.getInt("trains.divider.2", trainsSplitPane.getDividerLocation());
+        int preferredWidth = trainListView.getPreferredSize().width;
+        if (preferredWidth < div)
+            trainsSplitPane.setDividerLocation(div);
         GTViewSettings gtvs = null;
         try {
             gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
