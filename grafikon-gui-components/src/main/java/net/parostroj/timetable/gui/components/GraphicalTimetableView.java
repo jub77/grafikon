@@ -573,7 +573,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         zoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // select zoom
-                GTViewZoomDialog dialog = new GTViewZoomDialog((Frame) getTopLevelAncestor(), true);
+                GTViewZoomDialog dialog = new GTViewZoomDialog((Window) getTopLevelAncestor(), true);
                 dialog.setLocationRelativeTo(getParent());
                 Float oldZoom = settings.get(Key.ZOOM, Float.class);
                 Float newZoom = dialog.showDialog(oldZoom);
