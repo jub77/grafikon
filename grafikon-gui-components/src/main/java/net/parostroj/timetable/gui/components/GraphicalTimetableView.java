@@ -141,7 +141,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             @Override
             public void actionPerformed(ActionEvent e) {
                 // show list of routes
-                RouteSelectionDialog dialog = new RouteSelectionDialog((Frame)GraphicalTimetableView.this.getTopLevelAncestor(), true);
+                RouteSelectionDialog dialog = new RouteSelectionDialog((Window) GraphicalTimetableView.this.getTopLevelAncestor(), true);
                 dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
                 dialog.setListValues(diagram.getRoutes(), getRoute());
                 dialog.setListener(new RouteSelectionDialog.RSListener() {
