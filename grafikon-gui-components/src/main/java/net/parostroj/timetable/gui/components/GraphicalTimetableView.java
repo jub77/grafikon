@@ -158,7 +158,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     private EditRoutesDialog getRouteDialog() {
         if (editRoutesDialog == null)
-            editRoutesDialog = new EditRoutesDialog((Frame)this.getTopLevelAncestor(), true);
+            editRoutesDialog = new EditRoutesDialog((Window)this.getTopLevelAncestor(), true);
         return editRoutesDialog;
     }
 
