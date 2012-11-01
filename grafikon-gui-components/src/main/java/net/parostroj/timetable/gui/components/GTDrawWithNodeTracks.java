@@ -3,8 +3,9 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
+
+import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.Interval;
 
 /**
  * Graphical timetable with node tracks.
@@ -12,26 +13,51 @@ import net.parostroj.timetable.model.Interval;
  * @author jub
  */
 public class GTDrawWithNodeTracks extends GTDraw {
-    
+
     // basic display
-    private static final Stroke TRAIN_STROKE = new BasicStroke(1.5f);
-    private static final Stroke TRAIN_SS_STROKE = new BasicStroke(5.0f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
-    private static final Stroke STATION_STROKE = new BasicStroke(1.1f);
-    private static final Stroke TECH_TIME_STROKE = new BasicStroke(1.1f);
-    
+    private static final float TRAIN_STROKE_WIDTH = 1.5f;
+    private static final float TRAIN_SS_STROKE_WIDTH = 5.0f;
+    private static final float STATION_STROKE_WIDTH = 1.1f;
+    private static final float TECH_TIME_STROKE_WIDTH = 1.1f;
+
     // extended display
-    private static final Stroke STATION_STROKE_STOP_EXT = new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{3f,3f},0f);
-    private static final Stroke STATION_STROKE_STOP_WITH_FREIGHT_EXT = new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{16f,5f},0f);
-    private static final Stroke STATION_STROKE_ROUTE_SPLIT_EXT = new BasicStroke(0.8f);
-    
-    private static final int TRACK_GAP = 5;
+    private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 0.8f;
+    private static final float STATION_STROKE_STOP_EXT_WIDTH = 1.0f;
+    private static final float SSSE_DASH_1 = 3f;
+    private static final float SSSE_DASH_2 = 3f;
+    private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.0f;
+    private static final float SSSWFE_DASH_1 = 16f;
+    private static final float SSSWFE_DASH_2 = 5f;
+
+    private static final int TRACK_GAP_WIDTH = 5;
+
+    private final Stroke trainStroke;
+    private final Stroke trainSsStroke;
+    private final Stroke stationStroke;
+    private final Stroke techTimeStroke;
+    private final Stroke stationStrokeRouteSplitExt;
+    private final Stroke stationStrokeStopExt;
+    private final Stroke stationStrokeStopWithFreightExt;
+
+    private final int trackGap;
 
     private Map<Track,Integer> trackPositions;
-    
+
     public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector) {
         super(config ,route, collector);
+        Float zoom = config.get(Key.ZOOM, Float.class);
+        trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
+        stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
+        trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        techTimeStroke = new BasicStroke(zoom * TECH_TIME_STROKE_WIDTH);
+        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
+        stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSE_DASH_1, zoom * SSSE_DASH_2 }, 0f);
+        stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSWFE_DASH_1, zoom * SSSWFE_DASH_2 }, 0f);
+        trackGap = (int) (zoom * TRACK_GAP_WIDTH);
     }
-    
+
     @Override
     protected void computePositions() {
         positions = new HashMap<Node, Integer>();
@@ -48,7 +74,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
         }
 
         double position = 0;
-        int height = size.height - trackGaps * TRACK_GAP;
+        int height = size.height - trackGaps * trackGap;
         double step = (double)height / (double)completeLength;
         for (RouteSegment segment : route.getSegments()) {
             if (segment.asLine() != null)
@@ -57,10 +83,10 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 Node node = segment.asNode();
                 stations.add(node);
                 int tracks = node.getTracks().size();
-                positions.put(node, (int)position + (((tracks - 1) * TRACK_GAP) / 2));
+                positions.put(node, (int)position + (((tracks - 1) * trackGap) / 2));
                 trackPositions.put(node.getTracks().get(0),(int)position);
                 for (int i = 1; i < tracks; i++) {
-                    position = position + TRACK_GAP;
+                    position = position + trackGap;
                     trackPositions.put(node.getTracks().get(i), (int)position);
                 }
             }
@@ -69,7 +95,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
     @Override
     protected void paintStations(Graphics2D g) {
-        g.setStroke(STATION_STROKE);
+        g.setStroke(stationStroke);
         g.setColor(Color.orange);
         for (Node s : stations) {
             // skip over signals ...
@@ -78,16 +104,16 @@ public class GTDrawWithNodeTracks extends GTDraw {
             if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
-                        g.setStroke(STATION_STROKE_STOP_EXT);
+                        g.setStroke(stationStrokeStopExt);
                         break;
                     case STOP_WITH_FREIGHT:
-                        g.setStroke(STATION_STROKE_STOP_WITH_FREIGHT_EXT);
+                        g.setStroke(stationStrokeStopWithFreightExt);
                         break;
                     case ROUTE_SPLIT:
-                        g.setStroke(STATION_STROKE_ROUTE_SPLIT_EXT);
+                        g.setStroke(stationStrokeRouteSplitExt);
                         break;
                     default:
-                        g.setStroke(STATION_STROKE);
+                        g.setStroke(stationStroke);
                         break;
                 }
             }
@@ -104,7 +130,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
             if (part.asNode() != null) {
                 this.paintTrainsInStation(part.asNode(), g);
             } else if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, TRAIN_STROKE);
+                this.paintTrainsOnLine(part.asLine(), g, trainStroke);
             }
         }
     }
@@ -119,18 +145,18 @@ public class GTDrawWithNodeTracks extends GTDraw {
         Line2D line2D = new Line2D.Float(x1, y1, x2, y2);
         return line2D;
     }
-    
+
     private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
                 if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE)
                     continue;
                 if (!interval.isBoundary()) {
-                    g.setStroke(TRAIN_STROKE);
+                    g.setStroke(trainStroke);
                 } else if (interval.isTechnological()) {
-                    g.setStroke(TECH_TIME_STROKE);
+                    g.setStroke(techTimeStroke);
                 } else {
-                    g.setStroke(TRAIN_SS_STROKE);
+                    g.setStroke(trainSsStroke);
                 }
                 g.setColor(this.getIntervalColor(interval));
 

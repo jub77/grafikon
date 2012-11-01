@@ -12,6 +12,7 @@ import net.parostroj.timetable.gui.components.GTViewSettings.Selection;
 import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
+import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
 import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -238,9 +239,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     protected GTViewSettings getDefaultViewSettings() {
         GTViewSettings config = (new GTViewSettings())
-                .set(Key.BORDER_X, 10)
-                .set(Key.BORDER_Y, 20)
-                .set(Key.STATION_GAP_X, 100)
+                .set(Key.BORDER_X, 1.5f)
+                .set(Key.BORDER_Y, 1.5f)
+                .set(Key.STATION_GAP_X, 12)
                 .set(Key.TYPE, Type.CLASSIC)
                 .set(Key.TRAIN_COLORS, TrainColors.BY_TYPE)
                 .set(Key.SELECTION, Selection.TRAIN)
@@ -249,7 +250,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)
                 .set(Key.TECHNOLOGICAL_TIME, Boolean.FALSE)
                 .set(Key.IGNORE_TIME_LIMITS, Boolean.FALSE)
-                .set(Key.VIEW_SIZE, INITIAL_WIDTH);
+                .set(Key.VIEW_SIZE, INITIAL_WIDTH)
+                .set(Key.ZOOM, 1.0f);
         return config;
     }
 
@@ -417,6 +419,13 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         return new GTViewSettings(settings);
     }
 
+    /**
+     * @return settings
+     */
+    GTViewSettings getSettingsInternal() {
+        return settings;
+    }
+
     public void setSettings(GTViewSettings settings) {
         if (settings == null)
             return;
@@ -462,19 +471,19 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
         popupMenu = new javax.swing.JPopupMenu();
         routesMenu = new javax.swing.JMenu();
-        routesEditMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem routesEditMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
         javax.swing.JMenu typesMenu = new javax.swing.JMenu();
         classicMenuItem = new javax.swing.JRadioButtonMenuItem();
         withTracksMenuItem = new javax.swing.JRadioButtonMenuItem();
         sizesMenu = new javax.swing.JMenu();
-        preferencesMenu = new javax.swing.JMenu();
+        javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
         addigitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         extendedLinesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         trainNamesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         techTimeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreTimeLimitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        typesButtonGroup = new javax.swing.ButtonGroup();
+        javax.swing.ButtonGroup typesButtonGroup = new javax.swing.ButtonGroup();
         routesGroup = new javax.swing.ButtonGroup();
 
         routesMenu.setText(ResourceLoader.getString("gt.routes")); // NOI18N
@@ -550,8 +559,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         });
         preferencesMenu.add(techTimeCheckBoxMenuItem);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
-        ignoreTimeLimitsCheckBoxMenuItem.setText(bundle.getString("gt.ignore.time.limits")); // NOI18N
+        ignoreTimeLimitsCheckBoxMenuItem.setText(ResourceLoader.getString("gt.ignore.time.limits")); // NOI18N
         ignoreTimeLimitsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 preferencesCheckBoxMenuItemActionPerformed(evt);
@@ -560,6 +568,22 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         preferencesMenu.add(ignoreTimeLimitsCheckBoxMenuItem);
 
         popupMenu.add(preferencesMenu);
+
+        javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom") + "...");
+        zoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // select zoom
+                GTViewZoomDialog dialog = new GTViewZoomDialog((Frame) getTopLevelAncestor(), true);
+                dialog.setLocationRelativeTo(getParent());
+                Float oldZoom = settings.get(Key.ZOOM, Float.class);
+                Float newZoom = dialog.showDialog(oldZoom);
+                if (newZoom != null && newZoom.floatValue() != oldZoom.floatValue()) {
+                    settings.set(Key.ZOOM, newZoom);
+                    recreateDraw();
+                }
+            }
+        });
+        popupMenu.add(zoomMenuItem);
 
         setDoubleBuffered(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -819,14 +843,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;
     protected javax.swing.JPopupMenu popupMenu;
-    private javax.swing.JMenu preferencesMenu;
-    private javax.swing.JMenuItem routesEditMenuItem;
     private javax.swing.ButtonGroup routesGroup;
     private javax.swing.JMenu routesMenu;
     private javax.swing.JMenu sizesMenu;
     private javax.swing.JCheckBoxMenuItem techTimeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem trainNamesCheckBoxMenuItem;
-    private javax.swing.ButtonGroup typesButtonGroup;
     private javax.swing.JRadioButtonMenuItem withTracksMenuItem;
     // End of variables declaration//GEN-END:variables
 }

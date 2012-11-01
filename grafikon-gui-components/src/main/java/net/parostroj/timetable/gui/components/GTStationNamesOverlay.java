@@ -5,7 +5,6 @@ import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
-
 public class GTStationNamesOverlay extends JPanel {
 
     private final GraphicalTimetableView view;
@@ -24,6 +23,9 @@ public class GTStationNamesOverlay extends JPanel {
         g.translate(0, topBorder);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (view != null && view.getGtDraw() != null) {
+            // set font size
+            g.setFont(g.getFont().deriveFont(view.getGtDraw().getFontSize()));
+            // draw
             view.getGtDraw().paintStationNames(g);
         }
     }
