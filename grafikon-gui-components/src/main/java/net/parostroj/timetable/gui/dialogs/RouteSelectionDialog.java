@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -21,11 +20,11 @@ public class RouteSelectionDialog extends JDialog {
     }
 
     private RSListener listener;
-    private JList list;
+    private final JList list;
     private WrapperListModel<Route> listModel;
 
-    public RouteSelectionDialog(Frame owner, boolean modal) {
-        super(owner, modal);
+    public RouteSelectionDialog(java.awt.Window owner, boolean modal) {
+        super(owner, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
 
         JPanel panel = new JPanel();
         getContentPane().add(panel, BorderLayout.SOUTH);
@@ -60,7 +59,7 @@ public class RouteSelectionDialog extends JDialog {
     public void setListener(RSListener listener) {
         this.listener = listener;
     }
-    
+
     public void setListValues(List<Route> routes, Route selected) {
         listModel = new WrapperListModel<Route>(Wrapper.getWrapperList(routes));
         getList().setModel(listModel);
