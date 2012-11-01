@@ -299,7 +299,7 @@ abstract public class GTDraw {
             g.setColor(background);
             g.fill(r2);
             g.setColor(Color.black);
-            g.drawString(transName, (float) (r2.getX() + 1), (float) (r2.getY() + 1 - r.getY()));
+            tl.draw(g, (float) (r2.getX() + 1), (float) (r2.getY() + 1 - r.getY()));
         }
     }
 
