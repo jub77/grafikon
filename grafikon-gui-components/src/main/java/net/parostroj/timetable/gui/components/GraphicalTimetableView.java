@@ -18,6 +18,7 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,11 +176,10 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             this.diagram = diagram;
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
-            this.currentListener = new TrainDiagramListener() {
+            this.currentListener = new TrainDiagramVisitEventListener(new AbstractEventVisitor() {
 
                 @Override
-                public void trainDiagramChanged(TrainDiagramEvent event) {
-                    // diagram events
+                public void visit(TrainDiagramEvent event) {
                     switch (event.getType()) {
                         case ROUTE_ADDED: case ROUTE_REMOVED:
                             routesChanged(event);
@@ -205,22 +205,26 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                                     TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE.equals(name))
                                 repaint();
                             break;
-                        case NESTED:
-                            if (event.getNestedEvent() instanceof TrainEvent) {
-                                TrainEvent tEvent = (TrainEvent) event.getNestedEvent();
-                                trainChanged(tEvent);
-                            } else if (event.getNestedEvent() instanceof LineEvent) {
-                                LineEvent lEvent = (LineEvent) event.getNestedEvent();
-                                lineChanged(lEvent);
-                            } else if (event.getNestedEvent() instanceof TrainTypeEvent) {
-                                trainTypeChanged((TrainTypeEvent)event.getNestedEvent());
-                            }
-                            break;
                         default:
                             break;
                     }
                 }
-            };
+
+                @Override
+                public void visit(TrainEvent event) {
+                    trainChanged(event);
+                }
+
+                @Override
+                public void visit(LineEvent event) {
+                    lineChanged(event);
+                }
+
+                @Override
+                public void visit(TrainTypeEvent event) {
+                    trainTypeChanged(event);
+                }
+            });
             this.diagram.addListenerWithNested(this.currentListener);
             this.setTimeRange();
             this.setGTWidth(settings);
