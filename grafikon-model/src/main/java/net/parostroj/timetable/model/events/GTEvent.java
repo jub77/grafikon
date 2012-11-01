@@ -6,7 +6,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
  * Common predecessor for events.
- * 
+ *
  * @author jub
  */
 public abstract class GTEvent<T extends ObjectWithId> implements Iterable<GTEvent<?>>{
@@ -16,13 +16,13 @@ public abstract class GTEvent<T extends ObjectWithId> implements Iterable<GTEven
     private final GTEventType type;
 
     private AttributeChange attributeChange;
-    
+
     public GTEvent(T source, GTEventType type) {
         this.source = source;
         this.nestedEvent = null;
         this.type = type;
     }
-    
+
     public GTEvent(T source, GTEvent<?> nestedEvent) {
         this.source = source;
         this.nestedEvent = nestedEvent;
@@ -50,6 +50,9 @@ public abstract class GTEvent<T extends ObjectWithId> implements Iterable<GTEven
         return nestedEvent != null;
     }
 
+    /**
+     * @return last nested event or this if there is no nested event present
+     */
     public GTEvent<?> getLastNestedEvent() {
         if (!isNested())
             return this;
