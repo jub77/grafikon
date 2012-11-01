@@ -2,14 +2,14 @@ package net.parostroj.timetable.mediator;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
+import net.parostroj.timetable.model.events.TrainDiagramListener;
 
 /**
  * TrainDiagram colleague - send messages for TrainDiagramEvent.
  *
  * @author jub
  */
-public class TrainDiagramCollegue extends AbstractColleague implements TrainDiagramListenerWithNested {
+public class TrainDiagramCollegue extends AbstractColleague implements TrainDiagramListener {
 
     private TrainDiagram diagram;
 
@@ -33,12 +33,6 @@ public class TrainDiagramCollegue extends AbstractColleague implements TrainDiag
     @Override
     public void receiveMessage(Object message) {
         // do not react to any event
-    }
-
-    @Override
-    public void trainDiagramChangedNested(TrainDiagramEvent event) {
-        // process and distribute all events
-        this.sendMessage(event);
     }
 
     @Override

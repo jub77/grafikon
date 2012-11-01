@@ -48,7 +48,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final GTListenerTrainDiagramImpl listener;
     private final ChangesTrackerImpl changesTracker;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
-    private final GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent> listenerSupportAll;
+    private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupportAll;
     private AttributesListener attributesListener;
 
     /**
@@ -77,14 +77,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 listener.trainDiagramChanged(event);
             }
         });
-        this.listenerSupportAll = new GTListenerSupport<TrainDiagramListenerWithNested, TrainDiagramEvent>(new GTEventSender<TrainDiagramListenerWithNested, TrainDiagramEvent>() {
+        this.listenerSupportAll = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(new GTEventSender<TrainDiagramListener, TrainDiagramEvent>() {
 
             @Override
-            public void fireEvent(TrainDiagramListenerWithNested listener, TrainDiagramEvent event) {
-                if (event.getNestedEvent() != null)
-                    listener.trainDiagramChangedNested(event);
-                else
-                    listener.trainDiagramChanged(event);
+            public void fireEvent(TrainDiagramListener listener, TrainDiagramEvent event) {
+                listener.trainDiagramChanged(event);
             }
         });
         this.net.addListener(listener);
@@ -488,11 +485,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         listenerSupport.removeListener(listener);
     }
 
-    public void addListenerWithNested(TrainDiagramListenerWithNested listener) {
+    public void addListenerWithNested(TrainDiagramListener listener) {
         listenerSupportAll.addListener(listener);
     }
 
-    public void removeListenerWithNested(TrainDiagramListenerWithNested listener) {
+    public void removeListenerWithNested(TrainDiagramListener listener) {
         listenerSupportAll.removeListener(listener);
     }
 

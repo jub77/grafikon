@@ -161,7 +161,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         return editRoutesDialog;
     }
 
-    private TrainDiagramListenerWithNested currentListener;
+    private TrainDiagramListener currentListener;
 
     public void setTrainDiagram(TrainDiagram diagram) {
         if (currentListener != null && this.diagram != null) {
@@ -175,7 +175,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             this.diagram = diagram;
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
-            this.currentListener = new TrainDiagramListenerWithNested() {
+            this.currentListener = new TrainDiagramListener() {
 
                 @Override
                 public void trainDiagramChanged(TrainDiagramEvent event) {
@@ -205,24 +205,19 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                                     TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE.equals(name))
                                 repaint();
                             break;
+                        case NESTED:
+                            if (event.getNestedEvent() instanceof TrainEvent) {
+                                TrainEvent tEvent = (TrainEvent) event.getNestedEvent();
+                                trainChanged(tEvent);
+                            } else if (event.getNestedEvent() instanceof LineEvent) {
+                                LineEvent lEvent = (LineEvent) event.getNestedEvent();
+                                lineChanged(lEvent);
+                            } else if (event.getNestedEvent() instanceof TrainTypeEvent) {
+                                trainTypeChanged((TrainTypeEvent)event.getNestedEvent());
+                            }
+                            break;
                         default:
                             break;
-                    }
-                }
-
-                @Override
-                public void trainDiagramChangedNested(TrainDiagramEvent event) {
-                    // other events
-                    if (event.getType() == GTEventType.NESTED) {
-                        if (event.getNestedEvent() instanceof TrainEvent) {
-                            TrainEvent tEvent = (TrainEvent) event.getNestedEvent();
-                            trainChanged(tEvent);
-                        } else if (event.getNestedEvent() instanceof LineEvent) {
-                            LineEvent lEvent = (LineEvent) event.getNestedEvent();
-                            lineChanged(lEvent);
-                        } else if (event.getNestedEvent() instanceof TrainTypeEvent) {
-                            trainTypeChanged((TrainTypeEvent)event.getNestedEvent());
-                        }
                     }
                 }
             };
