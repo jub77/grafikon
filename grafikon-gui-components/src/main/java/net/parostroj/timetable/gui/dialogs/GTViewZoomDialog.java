@@ -20,8 +20,8 @@ public class GTViewZoomDialog extends JDialog {
     private boolean ok;
     private final JSlider slider;
 
-    public GTViewZoomDialog(Frame owner, boolean modal) {
-        super(owner, modal);
+    public GTViewZoomDialog(Window owner, boolean modal) {
+        super(owner, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         JPanel panel = new JPanel();
