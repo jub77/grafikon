@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
+import java.nio.CharBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -120,11 +121,26 @@ abstract public class GTDraw {
         Integer gapx = preferences.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
         Float bx = preferences.get(GTViewSettings.Key.BORDER_X, Float.class);
         Float by = preferences.get(GTViewSettings.Key.BORDER_Y, Float.class);
-        // compute size from font
-        Rectangle2D rr = g.getFont().getStringBounds("M", g.getFontRenderContext());
-        this.borderX = (int) (rr.getWidth() * bx);
-        this.borderY = (int) (rr.getHeight() * by);
-        this.gapStationX = (int) (rr.getWidth() * gapx);
+        Rectangle2D mSize = getMSize(g);
+        this.borderX = (int) (mSize.getWidth() * bx);
+        this.borderY = (int) (mSize.getHeight() * by);
+        this.gapStationX = this.computeInitialGapX(g, gapx); // initial size ...
+        // correct gap by station names
+        int max = 0;
+        for (RouteSegment seg : getRoute().getSegments()) {
+            if (seg.isNode()) {
+                Node n = seg.asNode();
+                String name = TransformUtil.transformStation(n, null, null).trim();
+                Rectangle2D b = g.getFont().getStringBounds(name, g.getFontRenderContext());
+                int w = (int) (b.getWidth() + mSize.getWidth());
+                if (w > max) {
+                    max = w;
+                }
+            }
+        }
+        if (max < this.gapStationX) {
+            this.gapStationX = max;
+        }
         // update start
         this.start = new Point(this.borderX, this.borderY);
         this.start.translate(gapStationX, 0);
@@ -133,6 +149,11 @@ abstract public class GTDraw {
         this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
         // time step
         timeStep = (double) size.width / (endTime - startTime);
+    }
+
+    private int computeInitialGapX(Graphics2D g, int gapx) {
+        String w = CharBuffer.allocate(10).toString().replace('\0', 'M');
+        return (int) g.getFont().getStringBounds(w, g.getFontRenderContext()).getWidth();
     }
 
     public void paintStationNames(Graphics g) {
@@ -263,9 +284,9 @@ abstract public class GTDraw {
             Rectangle2D b = null;
             String transName = name;
             int nameLength = name.length();
-            while (b == null || b.getWidth() >= (gapStationX - 5)) {
+            while (b == null || b.getWidth() >= gapStationX) {
                 b = f.getStringBounds(transName, g.getFontRenderContext());
-                if (b.getWidth() >= (gapStationX - 5)) {
+                if (b.getWidth() >= gapStationX) {
                     nameLength -= 1;
                     transName = name.substring(0, nameLength);
                     transName += "...";
@@ -273,12 +294,12 @@ abstract public class GTDraw {
             }
             TextLayout tl = new TextLayout(transName, g.getFont(), g.getFontRenderContext());
             Rectangle2D r = tl.getBounds();
-            Rectangle r2 = new Rectangle(10 + positionX, (int) (y + r.getY() - 2 + r.getHeight() / 2),
-                    (int) (r.getWidth() + 4), (int) (r.getHeight() + 4));
+            Rectangle2D r2 = new Rectangle2D.Float(this.borderX + positionX, (float) (y + r.getY() - 1 + r.getHeight() / 2),
+                    (float) (r.getWidth() + 2), (float) (r.getHeight() + 2));
             g.setColor(background);
             g.fill(r2);
             g.setColor(Color.black);
-            g.drawString(transName, (int) (r2.getX() + 2), (int) (r2.getY() + 2 - r.getY()));
+            g.drawString(transName, (float) (r2.getX() + 1), (float) (r2.getY() + 1 - r.getY()));
         }
     }
 
@@ -321,12 +342,20 @@ abstract public class GTDraw {
     }
 
     private Rectangle2D digitSize;
+    private Rectangle2D mSize;
 
     private Rectangle2D getDigitSize(Graphics2D g) {
         if (digitSize == null) {
             digitSize = g.getFont().getStringBounds("0", g.getFontRenderContext());
         }
         return digitSize;
+    }
+
+    private Rectangle2D getMSize(Graphics2D g) {
+        if (mSize == null) {
+            mSize = g.getFont().getStringBounds("M", g.getFontRenderContext());
+        }
+        return mSize;
     }
 
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {

@@ -241,7 +241,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         GTViewSettings config = (new GTViewSettings())
                 .set(Key.BORDER_X, 1.5f)
                 .set(Key.BORDER_Y, 1.5f)
-                .set(Key.STATION_GAP_X, 12)
+                .set(Key.STATION_GAP_X, 15)
                 .set(Key.TYPE, Type.CLASSIC)
                 .set(Key.TRAIN_COLORS, TrainColors.BY_TYPE)
                 .set(Key.SELECTION, Selection.TRAIN)
