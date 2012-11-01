@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.nio.CharBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,10 @@ abstract public class GTDraw {
     protected int startTime;
     protected int endTime;
     protected double timeStep;
+
+    // caching
+    private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
+    private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
 
     public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector) {
         this.route = route;
@@ -149,6 +154,12 @@ abstract public class GTDraw {
         this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
         // time step
         timeStep = (double) size.width / (endTime - startTime);
+
+        // prepare cached minutes
+        this.prepareCached(g);
+    }
+
+    private void prepareCached(Graphics2D g) {
     }
 
     private int computeInitialGapX(Graphics2D g, int gapx) {
@@ -282,17 +293,20 @@ abstract public class GTDraw {
             // draw name of the station
             Font f = g.getFont();
             Rectangle2D b = null;
-            String transName = name;
-            int nameLength = name.length();
-            while (b == null || b.getWidth() >= gapStationX) {
-                b = f.getStringBounds(transName, g.getFontRenderContext());
-                if (b.getWidth() >= gapStationX) {
-                    nameLength -= 1;
-                    transName = name.substring(0, nameLength);
-                    transName += "...";
+            if (!nodeTexts.containsKey(s)) {
+                String transName = name;
+                int nameLength = name.length();
+                while (b == null || b.getWidth() >= gapStationX) {
+                    b = f.getStringBounds(transName, g.getFontRenderContext());
+                    if (b.getWidth() >= gapStationX) {
+                        nameLength -= 1;
+                        transName = name.substring(0, nameLength);
+                        transName += "...";
+                    }
                 }
+                nodeTexts.put(s, new TextLayout(transName, g.getFont(), g.getFontRenderContext()));
             }
-            TextLayout tl = new TextLayout(transName, g.getFont(), g.getFontRenderContext());
+            TextLayout tl = nodeTexts.get(s);
             Rectangle2D r = tl.getBounds();
             Rectangle2D r2 = new Rectangle2D.Float(this.borderX + positionX, (float) (y + r.getY() - 1 + r.getHeight() / 2),
                     (float) (r.getWidth() + 2), (float) (r.getHeight() + 2));
@@ -316,14 +330,18 @@ abstract public class GTDraw {
         newTransform.rotate(angle);
         g.setTransform(newTransform);
         // length of the text
-        String text = interval.getTrain().getName();
-        Rectangle2D rr = g.getFont().getStringBounds(text, g.getFontRenderContext());
+        Train train = interval.getTrain();
+        if (!trainTexts.containsKey(train)) {
+            trainTexts.put(train, new TextLayout(train.getName(), g.getFont(), g.getFontRenderContext()));
+        }
+        TextLayout layout = trainTexts.get(train);
+        Rectangle2D rr = layout.getBounds();
         Shape nameShape = null;
 
         int shift = (int)(length - rr.getWidth()) / 2;
         if (shift >= 0) {
-            g.drawString(text, shift, -5);
-            if (this.isCollectorCollecting(interval.getTrain())) {
+            layout.draw(g, shift, -5);
+            if (this.isCollectorCollecting(train)) {
                 Rectangle rec = rr.getBounds();
                 rec.translate(shift, -5);
                 nameShape = newTransform.createTransformedShape(rec);
@@ -435,5 +453,21 @@ abstract public class GTDraw {
 
     public float getFontSize() {
         return fontSize;
+    }
+
+    public void removedTrain(Train train) {
+        trainTexts.remove(train);
+    }
+
+    public void changedTextTrain(Train train) {
+        trainTexts.remove(train);
+    }
+
+    public void changedTextNode(Node node) {
+        nodeTexts.remove(node);
+    }
+
+    public void changedTextAllTrains() {
+        trainTexts.clear();
     }
 }

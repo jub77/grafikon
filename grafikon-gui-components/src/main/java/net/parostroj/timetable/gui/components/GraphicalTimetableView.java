@@ -192,6 +192,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                         case TRAIN_REMOVED:
                             if (trainRegionCollector != null)
                                 trainRegionCollector.deleteTrain((Train)event.getObject());
+                            draw.removedTrain((Train) event.getObject());
                             repaint();
                             break;
                         case ATTRIBUTE:
@@ -223,6 +224,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 @Override
                 public void visit(TrainTypeEvent event) {
                     trainTypeChanged(event);
+                }
+
+                @Override
+                public void visit(NodeEvent event) {
+                    nodeChanged(event);
                 }
             });
             this.diagram.addListenerWithNested(this.currentListener);
@@ -278,6 +284,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 break;
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("number") || event.getAttributeChange().getName().equals("type")) {
+                    draw.changedTextTrain(event.getSource());
                     this.repaint();
                 }
                 break;
@@ -299,10 +306,23 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         }
     }
 
+    private void nodeChanged(NodeEvent event) {
+        switch (event.getType()) {
+            case ATTRIBUTE:
+                if (event.getAttributeChange().getName().equals("name")) {
+                    draw.changedTextNode(event.getSource());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void trainTypeChanged(TrainTypeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("color") || event.getAttributeChange().getName().equals("trainNameTemplate"))
+                    draw.changedTextAllTrains();
                     // repaint
                     this.repaint();
                 break;
