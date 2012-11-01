@@ -25,8 +25,8 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(RouteWrapperDelegate.Type.FULL);
 
     /** Creates new form EditRoutesDialog */
-    public EditRoutesDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public EditRoutesDialog(java.awt.Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         tnDialog = new ThroughNodesDialog(null, true);
     }
