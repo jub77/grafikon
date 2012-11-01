@@ -36,4 +36,16 @@ public abstract class AbstractEventVisitor implements EventVisitor {
     @Override
     public void visit(TrainsCycleEvent event) {
     }
+
+    @Override
+    public void visit(OutputTemplateEvent event) {
+    }
+
+    @Override
+    public void visit(EngineClassEvent event) {
+    }
+
+    @Override
+    public void visit(TextItemEvent event) {
+    }
 }
