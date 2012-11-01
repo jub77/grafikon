@@ -15,21 +15,35 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for all graphical timetable draws.
- * 
+ *
  * @author jub
  */
 abstract public class GTDraw {
 
     private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
-    
+
     // basic display
-    private static final Stroke HOURS_STROKE = new BasicStroke(1.8f);
-    private static final Stroke HALF_HOURS_STROKE = new BasicStroke(.9f);
-    private static final Stroke TEN_MINUTES_STROKE = new BasicStroke(0.4f);
-    
+    private static final float HOURS_STROKE_WIDTH = 1.8f;
+    private static final float HALF_HOURS_STROKE_WIDTH = 0.9f;
+    private static final float TEN_MINUTES_STROKE_WIDTH = 0.4f;
+
     // extended display
-    private static final Stroke HALF_HOURS_STROKE_EXT = new BasicStroke(1.1f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{15f,7f},0f);
-    private static final int MINIMAL_SPACE = 25;
+    private static final float HALF_HOURS_STROKE_EXT_WIDTH = 1.1f;
+    private static final float HHSE_DASH_1 = 15f;
+    private static final float HHSE_DAST_2 = 7f;
+
+    // other
+    private static final int MINIMAL_SPACE_WIDTH = 25;
+    private static final float FONT_SIZE = 11f;
+
+    // strokes
+    protected final Stroke hoursStroke;
+    protected final Stroke halfHoursStroke;
+    protected final Stroke tenMinutesStroke;
+    protected final Stroke halfHoursExtStroke;
+
+    protected final float minimalSpace;
+    protected final float fontSize;
 
     protected Point start;
     protected Dimension size;
@@ -39,9 +53,9 @@ abstract public class GTDraw {
     protected Route route;
     protected int positionX = 0;
     protected HighlightedTrains hTrains;
-    private GTViewSettings.TrainColors colors;
-    private TrainColorChooser trainColorChooser;
-    private TrainRegionCollector trainRegionCollector;
+    private final GTViewSettings.TrainColors colors;
+    private final TrainColorChooser trainColorChooser;
+    private final TrainRegionCollector trainRegionCollector;
     protected GTViewSettings preferences;
     protected Map<Node,Integer> positions;
     protected List<Node> stations;
@@ -51,18 +65,11 @@ abstract public class GTDraw {
     protected double timeStep;
 
     public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector) {
-        this.gapStationX = config.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
-        this.borderX = config.get(GTViewSettings.Key.BORDER_X, Integer.class);
-        this.borderY = config.get(GTViewSettings.Key.BORDER_Y, Integer.class);
         this.route = route;
         this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
         this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
         this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
         this.trainRegionCollector = collector;
-        
-        // update start
-        this.start = new Point(borderX, borderY);
-        this.start.translate(gapStationX, 0);
 
         // start and end time
         Integer st = config.get(GTViewSettings.Key.START_TIME, Integer.class);
@@ -70,21 +77,30 @@ abstract public class GTDraw {
         boolean ignore = config.getOption(GTViewSettings.Key.IGNORE_TIME_LIMITS);
         startTime = (st != null && !ignore) ? st : 0;
         endTime = (et != null && !ignore) ? et : TimeInterval.DAY;
-        
-        // compute size
-        Dimension configSize = config.get(GTViewSettings.Key.SIZE, Dimension.class);
-        this.size = new Dimension(configSize.width - (borderX * 2 + gapStationX), configSize.height - borderY * 2);
-        
+
         // create preferences
         preferences = config;
 
-        // time step
-        timeStep = (double) size.width / (endTime - startTime);
+        // strokes
+        Float zoom = config.get(Key.ZOOM, Float.class);
+        hoursStroke = new BasicStroke(zoom * HOURS_STROKE_WIDTH);
+        halfHoursStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_WIDTH);
+        tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
+        halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DAST_2 }, 0f);
+        minimalSpace = zoom * MINIMAL_SPACE_WIDTH;
+        fontSize = zoom * FONT_SIZE;
     }
-    
+
     public void draw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // set font size
+        g.setFont(g.getFont().deriveFont(fontSize));
+
+        if (this.start == null)
+            this.updateStartAndSize(g);
 
         if (positions == null)
             this.computePositions();
@@ -98,17 +114,37 @@ abstract public class GTDraw {
         }
         this.finishCollecting();
     }
-    
+
+    private void updateStartAndSize(Graphics2D g) {
+        // read config
+        Integer gapx = preferences.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
+        Float bx = preferences.get(GTViewSettings.Key.BORDER_X, Float.class);
+        Float by = preferences.get(GTViewSettings.Key.BORDER_Y, Float.class);
+        // compute size from font
+        Rectangle2D rr = g.getFont().getStringBounds("M", g.getFontRenderContext());
+        this.borderX = (int) (rr.getWidth() * bx);
+        this.borderY = (int) (rr.getHeight() * by);
+        this.gapStationX = (int) (rr.getWidth() * gapx);
+        // update start
+        this.start = new Point(this.borderX, this.borderY);
+        this.start.translate(gapStationX, 0);
+        // compute size
+        Dimension configSize = preferences.get(GTViewSettings.Key.SIZE, Dimension.class);
+        this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
+        // time step
+        timeStep = (double) size.width / (endTime - startTime);
+    }
+
     public void paintStationNames(Graphics g) {
         if (positions == null)
             this.computePositions();
         this.paintStationNames((Graphics2D) g, stations, positions);
     }
-    
+
     protected abstract void computePositions();
-    
+
     protected abstract void paintStations(Graphics2D g);
-    
+
     protected abstract void paintTrains(Graphics2D g);
 
     public Route getRoute() {
@@ -132,17 +168,17 @@ abstract public class GTDraw {
                 if ((i & 1) == 0) {
                     // hours
                     g.setColor(Color.orange);
-                    g.setStroke(HOURS_STROKE);
+                    g.setStroke(hoursStroke);
                 } else {
                     // half hours
                     g.setColor(Color.orange);
                     if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE)
-                        g.setStroke(HALF_HOURS_STROKE_EXT);
+                        g.setStroke(halfHoursExtStroke);
                     else
-                        g.setStroke(HALF_HOURS_STROKE);
+                        g.setStroke(halfHoursStroke);
                 }
 
-                if (((i & 1) != 1) || step >= MINIMAL_SPACE)
+                if (((i & 1) != 1) || step >= minimalSpace)
                     // draw line
                     g.drawLine(xLocation, start.y, xLocation, yEnd);
 
@@ -158,13 +194,13 @@ abstract public class GTDraw {
             // half an hour
             time += 1800;
         }
-        
+
         // 10 minutes
         double tenMinutesStep = 600 * timeStep;
         time = 0;
-        if (tenMinutesStep >= MINIMAL_SPACE) {
+        if (tenMinutesStep >= minimalSpace) {
             g.setColor(Color.orange);
-            g.setStroke(TEN_MINUTES_STROKE);
+            g.setStroke(tenMinutesStroke);
             for (int i = 0; i <= 24*6; i++) {
                 if ((i % 3 !=0) && this.isTimeVisible(time)) {
                     int xLocation = this.getX(time);
@@ -175,7 +211,7 @@ abstract public class GTDraw {
             }
         }
     }
-    
+
     abstract protected Line2D createTrainLine(TimeInterval interval, Interval i);
 
     protected void paintTrainsOnLine(Line line, Graphics2D g, Stroke trainStroke) {
@@ -262,8 +298,8 @@ abstract public class GTDraw {
         String text = interval.getTrain().getName();
         Rectangle2D rr = g.getFont().getStringBounds(text, g.getFontRenderContext());
         Shape nameShape = null;
-        
-        int shift = (int)(length - rr.getWidth()) / 2; 
+
+        int shift = (int)(length - rr.getWidth()) / 2;
         if (shift >= 0) {
             g.drawString(text, shift, -5);
             if (this.isCollectorCollecting(interval.getTrain())) {
@@ -278,21 +314,21 @@ abstract public class GTDraw {
             }
         }
         g.setTransform(old);
-        
+
         if (nameShape != null) {
             this.addShapeToCollector(interval, nameShape);
         }
     }
-    
+
     private Rectangle2D digitSize;
-    
+
     private Rectangle2D getDigitSize(Graphics2D g) {
         if (digitSize == null) {
             digitSize = g.getFont().getStringBounds("0", g.getFontRenderContext());
         }
         return digitSize;
     }
-    
+
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
         // check if I should draw end time
         boolean endTimeCheck = true;
@@ -306,7 +342,7 @@ abstract public class GTDraw {
                     endTimeCheck = false;
             }
         }
-        
+
         boolean downDirection = line.getY1() < line.getY2();
         Point2D startP = line.getP1();
         Point2D endP = line.getP2();
@@ -324,7 +360,7 @@ abstract public class GTDraw {
         if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck)
             g.drawString(TimeConverter.getLastDigitOfMinutes(interval.getEnd()), (int)endP.getX(), (int)endP.getY());
     }
-    
+
     protected Color getIntervalColor(TimeInterval interval) {
         if (hTrains != null && hTrains.isHighlighedInterval(interval))
             return hTrains.getColor();
@@ -337,18 +373,18 @@ abstract public class GTDraw {
                 return Color.black;
         }
     }
-    
+
     protected void addShapeToCollector(TimeInterval interval, Shape shape) {
         if (trainRegionCollector != null) {
             trainRegionCollector.addRegion(interval, shape);
         }
     }
-    
+
     protected void finishCollecting() {
         if (trainRegionCollector != null)
             trainRegionCollector.finishCollecting();
     }
-    
+
     protected boolean isCollectorCollecting(Train train) {
         if (trainRegionCollector == null)
             return false;
@@ -366,5 +402,9 @@ abstract public class GTDraw {
 
     protected boolean isTimeVisible(int time) {
         return startTime <= time && time <= endTime;
+    }
+
+    public float getFontSize() {
+        return fontSize;
     }
 }

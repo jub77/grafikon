@@ -33,8 +33,8 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, TCDelegate.Listener {
 
-        private TrainColorChooser chooserDelegate;
-        private TrainSelector selectorDelegate;
+        private final TrainColorChooser chooserDelegate;
+        private final TrainSelector selectorDelegate;
 
         public HighligterAndSelector(TrainColorChooser chooser, TrainSelector selector) {
             this.chooserDelegate = chooser;
@@ -97,7 +97,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         GTLayeredPane scrollPane = new GTLayeredPane(graphicalTimetableView);
         splitPane.setBottomComponent(scrollPane);
     }
-    
+
     @Override
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         if (action == Action.REFRESH)
@@ -119,14 +119,14 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         listView.setModel(delegate);
         detailsView.setModel(delegate);
     }
-    
+
     private String getKey(String suffix) {
         String prefix = "custom";
         if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType()))
             prefix = "driver";
         else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))
             prefix = "engine";
-        else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))
+        else if (TrainsCycleType.TRAIN_UNIT_CYCLE.equals(delegate.getType()))
             prefix = "trainunit";
         return String.format("cycles.%s.%s", prefix, suffix);
     }
@@ -199,5 +199,5 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private net.parostroj.timetable.gui.views.TCTrainListView trainListView;
     // End of variables declaration//GEN-END:variables
 
-    private GraphicalTimetableViewWithSave graphicalTimetableView;
+    private final GraphicalTimetableViewWithSave graphicalTimetableView;
 }

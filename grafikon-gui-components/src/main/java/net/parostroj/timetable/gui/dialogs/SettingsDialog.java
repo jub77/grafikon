@@ -342,17 +342,16 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         routeLengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
-        jLabel12.setText(bundle.getString("modelinfo.route.length") + " -"); // NOI18N
+        jLabel12.setText(ResourceLoader.getString("modelinfo.route.length") + " -"); // NOI18N
         routeLengthPanel.add(jLabel12);
 
-        jLabel14.setText(bundle.getString("modelinfo.route.length.ratio") + ":"); // NOI18N
+        jLabel14.setText(ResourceLoader.getString("modelinfo.route.length.ratio") + ":"); // NOI18N
         routeLengthPanel.add(jLabel14);
 
         rlRatioTextField.setColumns(7);
         routeLengthPanel.add(rlRatioTextField);
 
-        jLabel13.setText(bundle.getString("modelinfo.route.length.unit") + ":"); // NOI18N
+        jLabel13.setText(ResourceLoader.getString("modelinfo.route.length.unit") + ":"); // NOI18N
         routeLengthPanel.add(jLabel13);
 
         rlUnitTextField.setColumns(5);
@@ -368,16 +367,16 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         weightPerAxlePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel7.setText(bundle.getString("modelinfo.weight.per.axle") + " - "); // NOI18N
+        jLabel7.setText(ResourceLoader.getString("modelinfo.weight.per.axle") + " - "); // NOI18N
         weightPerAxlePanel.add(jLabel7);
 
-        jLabel8.setText(bundle.getString("modelinfo.weight.per.axle.loaded") + ":"); // NOI18N
+        jLabel8.setText(ResourceLoader.getString("modelinfo.weight.per.axle.loaded") + ":"); // NOI18N
         weightPerAxlePanel.add(jLabel8);
 
         loadedWeightEditBox.setValueColumns(5);
         weightPerAxlePanel.add(loadedWeightEditBox);
 
-        jLabel9.setText(bundle.getString("modelinfo.weight.per.axle.empty") + ":"); // NOI18N
+        jLabel9.setText(ResourceLoader.getString("modelinfo.weight.per.axle.empty") + ":"); // NOI18N
         weightPerAxlePanel.add(jLabel9);
 
         emptyWeightEditBox.setValueColumns(5);
@@ -393,13 +392,13 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         lengthPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel10.setText(bundle.getString("modelinfo.axle.length") + ":"); // NOI18N
+        jLabel10.setText(ResourceLoader.getString("modelinfo.axle.length") + ":"); // NOI18N
         lengthPanel.add(jLabel10);
 
         lengthPerAxleEditBox.setValueColumns(5);
         lengthPanel.add(lengthPerAxleEditBox);
 
-        jLabel15.setText(bundle.getString("modelinfo.length.unit") + ":"); // NOI18N
+        jLabel15.setText(ResourceLoader.getString("modelinfo.length.unit") + ":"); // NOI18N
         lengthPanel.add(jLabel15);
 
         lengthPanel.add(lengthUnitComboBox);
@@ -414,7 +413,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         timeRangePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel16.setText(bundle.getString("modelinfo.from.time")); // NOI18N
+        jLabel16.setText(ResourceLoader.getString("modelinfo.from.time")); // NOI18N
         timeRangePanel.add(jLabel16);
 
         fromTimeTextField.setColumns(7);
@@ -426,7 +425,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         });
         timeRangePanel.add(fromTimeTextField);
 
-        jLabel17.setText(bundle.getString("modelinfo.to.time")); // NOI18N
+        jLabel17.setText(ResourceLoader.getString("modelinfo.to.time")); // NOI18N
         timeRangePanel.add(jLabel17);
 
         toTimeTextField.setColumns(7);

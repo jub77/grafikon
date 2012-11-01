@@ -3,8 +3,9 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
+
+import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.Interval;
 
 /**
  * Classic graphical timetable.
@@ -14,17 +15,35 @@ import net.parostroj.timetable.model.Interval;
 public class GTDrawClassic extends GTDraw {
 
     // basic display
-    private static final Stroke TRAIN_STROKE = new BasicStroke(2.5f);
-    private static final Stroke STATION_STROKE = new BasicStroke(1.6f);
-    
+    private static final float TRAIN_STROKE_WIDTH = 2.5f;
+    private static final float STATION_STROKE_WIDTH = 1.6f;
+
     // extended display
-    private static final Stroke STATION_STROKE_STOP_EXT = new BasicStroke(1.3f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{3f,3f},0f);
-    private static final Stroke STATION_STROKE_STOP_WITH_FREIGHT_EXT = new BasicStroke(1.3f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,1.0f,new float[]{16f,5f},0f);
-    private static final Stroke STATION_STROKE_ROUTE_SPLIT_EXT = new BasicStroke(1.3f);
-    
+    private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 1.3f;
+    private static final float STATION_STROKE_STOP_EXT_WIDTH = 1.3f;
+    private static final float SSSE_DASH_1 = 3f;
+    private static final float SSSE_DASH_2 = 3f;
+    private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.3f;
+    private static final float SSSWFE_DASH_1 = 13f;
+    private static final float SSSWFE_DASH_2 = 5f;
+
+    private final Stroke trainStroke;
+    private final Stroke stationStroke;
+    private final Stroke stationStrokeRouteSplitExt;
+    private final Stroke stationStrokeStopExt;
+    private final Stroke stationStrokeStopWithFreightExt;
 
     public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector) {
         super(config ,route, collector);
+
+        Float zoom = config.get(Key.ZOOM, Float.class);
+        trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
+        stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
+        stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
+        stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSE_DASH_1, zoom * SSSE_DASH_2 }, 0f);
+        stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSWFE_DASH_1, zoom * SSSWFE_DASH_2 }, 0f);
     }
 
     @Override
@@ -51,7 +70,7 @@ public class GTDrawClassic extends GTDraw {
 
     @Override
     protected void paintStations(Graphics2D g) {
-        g.setStroke(STATION_STROKE);
+        g.setStroke(stationStroke);
         g.setColor(Color.orange);
         for (Node s : stations) {
             // skip over signals
@@ -60,16 +79,16 @@ public class GTDrawClassic extends GTDraw {
             if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
-                        g.setStroke(STATION_STROKE_STOP_EXT);
+                        g.setStroke(stationStrokeStopExt);
                         break;
                     case STOP_WITH_FREIGHT:
-                        g.setStroke(STATION_STROKE_STOP_WITH_FREIGHT_EXT);
+                        g.setStroke(stationStrokeStopWithFreightExt);
                         break;
                     case ROUTE_SPLIT:
-                        g.setStroke(STATION_STROKE_ROUTE_SPLIT_EXT);
+                        g.setStroke(stationStrokeRouteSplitExt);
                         break;
                     default:
-                        g.setStroke(STATION_STROKE);
+                        g.setStroke(stationStroke);
                         break;
                 }
             }
@@ -83,7 +102,7 @@ public class GTDrawClassic extends GTDraw {
         for (RouteSegment part : route.getSegments()) {
             // only segments for lines
             if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, TRAIN_STROKE);
+                this.paintTrainsOnLine(part.asLine(), g, trainStroke);
             }
         }
     }
