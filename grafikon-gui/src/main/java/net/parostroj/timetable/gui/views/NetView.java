@@ -20,6 +20,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListener;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
 
 import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelEvent;
@@ -152,7 +153,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
                                     result.append(';');
                                 LengthUnit lengthUnit = model.getProgramSettings().getLengthUnit();
                                 BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
-                                result.append(cValue.toString()).append(lengthUnit.getUnitsOfString());
+                                result.append(UnitUtil.getStringValue("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
                                 int topSpeed = line.getTopSpeed();
                                 if (topSpeed != Line.UNLIMITED_SPEED)
                                     result.append(';').append(topSpeed).append("km/h");
