@@ -230,7 +230,9 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
+        LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit", "km"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
+        programSettings.setLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
         for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
             String filename = prefs.getString("last.opened." + i, null);
             if (filename != null) {
