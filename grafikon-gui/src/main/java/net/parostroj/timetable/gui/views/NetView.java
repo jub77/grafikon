@@ -155,8 +155,11 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
                                 BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
                                 result.append(UnitUtil.getStringValue("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
                                 int topSpeed = line.getTopSpeed();
-                                if (topSpeed != Line.UNLIMITED_SPEED)
-                                    result.append(';').append(topSpeed).append("km/h");
+                                if (topSpeed != Line.UNLIMITED_SPEED) {
+                                    lengthUnit = model.getProgramSettings().getSpeedLengthUnit();
+                                    BigDecimal sValue = lengthUnit.convertFrom(new BigDecimal(topSpeed), LengthUnit.KM);
+                                    result.append(';').append(UnitUtil.getStringValue("#0", sValue)).append(lengthUnit.getUnitsOfString()).append("/h");
+                                }
                                 return result.toString();
                             }
                         };
