@@ -36,7 +36,7 @@ public class UnitUtil {
 
     public static final String FORMAT_F = "#0.########";
 
-    public static String getStringValue(String formatPattern, BigDecimal value) {
+    public static String getStringValue(String formatPattern, Number value) {
         DecimalFormat format = new  DecimalFormat(formatPattern);
         format.setDecimalSeparatorAlwaysShown(false);
         format.setParseBigDecimal(true);
