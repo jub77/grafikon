@@ -26,6 +26,8 @@ public class UnitUtil {
             throw new IllegalArgumentException("Units has to have the same class.");
         if (to.getRatio() == null || from.getRatio() == null)
             return value;
+        if (from.equals(to) || (from.getRatio() != null && from.getRatio().equals(to.getRatio())))
+            return value;
         BigDecimal cRatio = from.getRatio().divide(to.getRatio(), Unit.MATH_CONTEXT);
         return value.multiply(cRatio, Unit.MATH_CONTEXT);
     }
@@ -36,7 +38,7 @@ public class UnitUtil {
 
     public static final String FORMAT_F = "#0.########";
 
-    public static String getStringValue(String formatPattern, Number value) {
+    public static String convertToString(String formatPattern, BigDecimal value) {
         DecimalFormat format = new  DecimalFormat(formatPattern);
         format.setDecimalSeparatorAlwaysShown(false);
         format.setParseBigDecimal(true);
