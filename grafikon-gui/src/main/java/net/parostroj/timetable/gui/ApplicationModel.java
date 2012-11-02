@@ -215,6 +215,7 @@ public class ApplicationModel implements StorableGuiData {
         prefs.setBoolean("two.sided.print", programSettings.isTwoSidedPrint());
         prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
         prefs.setString("unit", programSettings.getLengthUnit().getKey());
+        prefs.setString("unit.speed", programSettings.getSpeedLengthUnit().getKey());
         prefs.removeWithPrefix("last.opened.");
         int i = 0;
         for (File file : this.lastOpenedFiles) {
@@ -230,9 +231,9 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
-        LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit", "km"));
+        LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit.speed", "km"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
-        programSettings.setLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
+        programSettings.setSpeedLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
         for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
             String filename = prefs.getString("last.opened." + i, null);
             if (filename != null) {
