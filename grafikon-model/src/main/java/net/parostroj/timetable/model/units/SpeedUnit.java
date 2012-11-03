@@ -90,14 +90,4 @@ public enum SpeedUnit implements Unit {
         }
         return null;
     }
-
-    public static void main(String[] args) {
-        System.out.println("R m/s: " + MPS.getRatio());
-        System.out.println("R km/h: " + KMPH.getRatio());
-        System.out.println("R mph: " + MPH.getRatio());
-        System.out.println(UnitUtil.convert(new BigDecimal(1), KMPH, MPH));
-        System.out.println(UnitUtil.convert(new BigDecimal(1), KMPH, MPS));
-        System.out.println(UnitUtil.convert(new BigDecimal(1), MPS, KMPH));
-        System.out.println(UnitUtil.convert(new BigDecimal(1), MPS, MPH));
-    }
 }
