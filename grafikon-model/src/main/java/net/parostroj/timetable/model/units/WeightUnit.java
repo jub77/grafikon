@@ -14,8 +14,8 @@ public enum WeightUnit implements Unit {
     private BigDecimal ratio;
     private String key;
 
-    private WeightUnit(double ratio, String key) {
-        this.ratio = new BigDecimal(ratio);
+    private WeightUnit(long ratio, String key) {
+        this.ratio = BigDecimal.valueOf(ratio);
         this.key = key;
     }
 
