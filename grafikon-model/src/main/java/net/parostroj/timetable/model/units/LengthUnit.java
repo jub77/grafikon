@@ -24,7 +24,7 @@ public enum LengthUnit implements Unit {
     private boolean scaleDependent;
 
     private LengthUnit(String key) {
-        this(null, key, true);
+        this(null, key, false);
     }
 
     private LengthUnit(long ratio, String key) {
