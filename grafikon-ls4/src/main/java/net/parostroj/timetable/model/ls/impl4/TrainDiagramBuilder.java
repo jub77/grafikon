@@ -165,6 +165,8 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
-        return diagram;
+        TrainDiagram retValue = diagram;
+        diagram = null;
+        return retValue;
     }
 }
