@@ -10,18 +10,30 @@ import java.util.List;
  * @author jub
  */
 public enum LengthUnit implements Unit {
-    MM(new BigDecimal(1), "mm", true),
-    CM(new BigDecimal(10), "cm", true),
-    M(new BigDecimal(1000), "m", true),
-    KM(new BigDecimal(1000 * 1000), "km", true),
-    INCH(new BigDecimal(25.4), "inch", true),
-    YARD(new BigDecimal(914.4), "yard", true),
-    MILE(new BigDecimal(1609.344 * 1000), "mile", true),
-    AXLE(null, "axle", false);
+    MM(1, "mm"),
+    CM(10, "cm"),
+    M(1000, "m"),
+    KM(1000000, "km"),
+    INCH(BigDecimal.valueOf(254, 1), "inch"),
+    YARD(BigDecimal.valueOf(9144, 1), "yard"),
+    MILE(1609344, "mile"),
+    AXLE("axle");
 
     private BigDecimal ratio;
     private String key;
     private boolean scaleDependent;
+
+    private LengthUnit(String key) {
+        this(null, key, true);
+    }
+
+    private LengthUnit(long ratio, String key) {
+        this(BigDecimal.valueOf(ratio), key, true);
+    }
+
+    private LengthUnit(BigDecimal ratio, String key) {
+        this(ratio, key, true);
+    }
 
     private LengthUnit(BigDecimal ratio, String key, boolean scaleDependent) {
         this.ratio = ratio;
