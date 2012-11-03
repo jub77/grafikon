@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ResourceBundle;
 
 import javax.swing.text.NumberFormatter;
 
@@ -51,5 +52,9 @@ public class UnitUtil {
             LOG.error(e.getMessage(), e);
             return "-";
         }
+    }
+
+    static String getText(String key) {
+        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString(key);
     }
 }

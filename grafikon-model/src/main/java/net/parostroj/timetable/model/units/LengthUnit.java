@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.units;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Unit of length.
@@ -69,17 +68,17 @@ public enum LengthUnit implements Unit {
 
     @Override
     public String getUnitString() {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("unit." + key);
+        return UnitUtil.getText("unit." + key);
     }
 
     @Override
     public String getUnitsString() {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units." + key);
+        return UnitUtil.getText("units." + key);
     }
 
     @Override
     public String getUnitsOfString() {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString("units.of." + key);
+        return UnitUtil.getText("units.of." + key);
     }
 
     @Override
