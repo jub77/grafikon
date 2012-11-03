@@ -73,10 +73,10 @@ public enum WeightUnit implements Unit {
     }
 
     /**
-     * returns unit of length by key.
+     * returns unit of weight by key.
      *
      * @param key key
-     * @return length unit
+     * @return weight unit
      */
     public static WeightUnit getByKey(String key) {
         for (WeightUnit unit : values()) {
