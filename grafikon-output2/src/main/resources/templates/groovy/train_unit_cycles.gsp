@@ -62,7 +62,7 @@
           <td class="ctrain">${row.trainName}</td>
           <td class="cdeparture">${row.fromTime}</td>
           <td class="cfromto">${row.fromAbbr} - ${row.toAbbr}</td>
-          <td>${row.comment == null ? "&nbsp;" : row.comment}</td>
+          <td>${createComment(row)}</td>
         </tr><% } %>
       </table>
     </td>
@@ -75,6 +75,21 @@
       %><div class="break">&nbsp;</div>
 <%
     }
+  }
+
+  def createComment(row) {
+    def result = row.cycle.inject(row.comment) {
+      str, item ->
+        if (str == null)
+          str = ""
+        if (str != "")
+          str += ", "
+        def value = "${item.type}: ${item.name}"
+        if (item.fromAbbr != null)
+          value = "${value} (${item.fromAbbr} - ${item.toAbbr})"
+        str + value
+    }
+    return result == null ? "&nbsp;" : result
   }
 %>
 </body>
