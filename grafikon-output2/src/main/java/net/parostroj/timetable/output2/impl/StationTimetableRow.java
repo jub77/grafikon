@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "track", "technologicalTime", "occupied", "comment",
-    "engineTo", "engineFrom", "trainUnitTo", "trainUnitFrom", "length"})
+    "engine", "trainUnit", "cycle", "length"})
 public class StationTimetableRow {
 
     private String trainName;
@@ -23,10 +23,10 @@ public class StationTimetableRow {
     private boolean technologicalTime;
     private boolean occupied;
     private String comment;
-    private List<EngineTo> engineTo;
-    private List<EngineFrom> engineFrom;
-    private List<TrainUnitTo> trainUnitTo;
-    private List<TrainUnitFrom> trainUnitFrom;
+    private List<CycleFromTo> engine;
+    private List<CycleFromTo> trainUnit;
+    private List<CycleWithTypeFromTo> cycle;
+
     private LengthInfo length;
 
     public StationTimetableRow() {
@@ -122,48 +122,36 @@ public class StationTimetableRow {
         this.comment = comment;
     }
 
-    public List<EngineFrom> getEngineFrom() {
-        if (engineFrom == null) {
-            engineFrom = new LinkedList<EngineFrom>();
+    public List<CycleFromTo> getEngine() {
+        if (engine == null) {
+            engine = new LinkedList<CycleFromTo>();
         }
-        return engineFrom;
+        return engine;
     }
 
-    public void setEngineFrom(List<EngineFrom> engineFrom) {
-        this.engineFrom = engineFrom;
+    public void setEngine(List<CycleFromTo> engine) {
+        this.engine = engine;
     }
 
-    public List<EngineTo> getEngineTo() {
-        if (engineTo == null) {
-            engineTo = new LinkedList<EngineTo>();
+    public List<CycleFromTo> getTrainUnit() {
+        if (trainUnit == null) {
+            trainUnit = new LinkedList<CycleFromTo>();
         }
-        return engineTo;
+        return trainUnit;
     }
 
-    public void setEngineTo(List<EngineTo> engineTo) {
-        this.engineTo = engineTo;
+    public void setTrainUnit(List<CycleFromTo> trainUnit) {
+        this.trainUnit = trainUnit;
     }
 
-    public List<TrainUnitFrom> getTrainUnitFrom() {
-        if (trainUnitFrom == null) {
-            trainUnitFrom = new LinkedList<TrainUnitFrom>();
-        }
-        return trainUnitFrom;
+    public List<CycleWithTypeFromTo> getCycle() {
+        if (cycle == null)
+            cycle = new LinkedList<CycleWithTypeFromTo>();
+        return cycle;
     }
 
-    public void setTrainUnitFrom(List<TrainUnitFrom> trainUnitFrom) {
-        this.trainUnitFrom = trainUnitFrom;
-    }
-
-    public List<TrainUnitTo> getTrainUnitTo() {
-        if (trainUnitTo == null) {
-            trainUnitTo = new LinkedList<TrainUnitTo>();
-        }
-        return trainUnitTo;
-    }
-
-    public void setTrainUnitTo(List<TrainUnitTo> trainUnitTo) {
-        this.trainUnitTo = trainUnitTo;
+    public void setCycle(List<CycleWithTypeFromTo> cycle) {
+        this.cycle = cycle;
     }
 
     public LengthInfo getLength() {
