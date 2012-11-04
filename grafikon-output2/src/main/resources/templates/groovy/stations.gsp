@@ -54,6 +54,16 @@
             note_parts << "${train_unit}: ${train_unit_t.name} ${ends}"
           else
             note_parts << "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${train_unit_t.time})"
+    // other
+    if (row.cycle != null)
+      for (cycle_t in row.cycle)
+        if (cycle_t.in)
+          note_parts << "${cycle_t.type}: ${cycle_t.name} (${cycle_t.desc})"
+        else
+          if (cycle_t.trainName == null)
+            note_parts << "${cycle_t.type}: ${cycle_t.name} ${ends}"
+          else
+            note_parts << "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${cycle_t.time})"
     // comment
     if (row.comment != null)
       note_parts << row.comment
