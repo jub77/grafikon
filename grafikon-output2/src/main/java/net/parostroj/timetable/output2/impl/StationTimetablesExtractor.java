@@ -14,8 +14,8 @@ import net.parostroj.timetable.utils.*;
  */
 public class StationTimetablesExtractor {
 
-    private TrainDiagram diagram;
-    private List<Node> nodes;
+    private final TrainDiagram diagram;
+    private final List<Node> nodes;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes) {
         this.diagram = diagram;
@@ -41,7 +41,7 @@ public class StationTimetablesExtractor {
 
     /**
      * collects intervals for given station.
-     * 
+     *
      * @param node station
      * @return list of intervals
      */
@@ -77,42 +77,63 @@ public class StationTimetablesExtractor {
             return;
 
         row.setLength(this.getLength(interval));
-        this.addEngines(interval, row);
-        this.addTrainUnits(interval, row);
+        this.addEnginesAndTrainUnits(interval, TrainsCycleType.ENGINE_CYCLE, row.getEngine());
+        this.addEnginesAndTrainUnits(interval, TrainsCycleType.TRAIN_UNIT_CYCLE, row.getTrainUnit());
+        for (TrainsCycleType type : diagram.getCycleTypes()) {
+            if (!TrainsCycleType.isDefaultType(type.getName())) {
+                this.addCycles(interval, type, row.getCycle());
+            }
+        }
         row.setComment((String)interval.getAttribute("comment"));
         row.setOccupied(Boolean.TRUE.equals(interval.getAttribute("occupied")));
     }
 
-    private void addEngines(TimeInterval interval, StationTimetableRow row) {
+    private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles) {
         Train train = interval.getTrain();
-        for (TrainsCycleItem item : train.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
+        for (TrainsCycleItem item : train.getCycles(type.getName())) {
             if (item.getToInterval() == interval) {
                 // end
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
-                if (itemNext != null) {
-                    row.getEngineTo().add(new EngineTo(item.getCycle().getName(), itemNext.getTrain().getName(), TimeConverter.convertFromIntToText(itemNext.getStartTime())));
-                }
+                TrainsCycle cycle = item.getCycle();
+                cycles.add(new CycleWithTypeFromTo(false, cycle.getName(),
+                        cycle.getDescription(),
+                        itemNext != null ? itemNext.getTrain().getName() : null,
+                        itemNext != null ? TimeConverter.convertFromIntToText(itemNext.getStartTime()) : null,
+                        type.getName()));
             }
             if (item.getFromInterval() == interval) {
                 // start
-                row.getEngineFrom().add(new EngineFrom(item.getCycle().getName(), TransformUtil.getEngineCycleDescription(item.getCycle())));
+                TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
+                TrainsCycle cycle = item.getCycle();
+                cycles.add(new CycleWithTypeFromTo(true, cycle.getName(),
+                        cycle.getDescription(),
+                        itemPrev != null ? itemPrev.getTrain().getName() : null,
+                        itemPrev != null ? TimeConverter.convertFromIntToText(itemPrev.getEndTime()) : null,
+                        type.getName()));
             }
         }
     }
 
-    private void addTrainUnits(TimeInterval interval, StationTimetableRow row) {
+    private void addEnginesAndTrainUnits(TimeInterval interval, String type, List<CycleFromTo> cycles) {
         Train train = interval.getTrain();
-        for (TrainsCycleItem item : train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE)) {
-            // end
+        for (TrainsCycleItem item : train.getCycles(type)) {
             if (item.getToInterval() == interval) {
+                // end
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
-                if (itemNext != null) {
-                    row.getTrainUnitTo().add(new TrainUnitTo(item.getCycle().getName(), item.getCycle().getDescription(), itemNext.getTrain().getName(), TimeConverter.convertFromIntToText(itemNext.getStartTime())));
-                }
+                TrainsCycle cycle = item.getCycle();
+                cycles.add(new CycleFromTo(false, cycle.getName(),
+                        type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        itemNext != null ? itemNext.getTrain().getName() : null,
+                        itemNext != null ? TimeConverter.convertFromIntToText(itemNext.getStartTime()) : null));
             }
-            // start
             if (item.getFromInterval() == interval) {
-                row.getTrainUnitFrom().add(new TrainUnitFrom(item.getCycle().getName(), item.getCycle().getDescription()));
+                // start
+                TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
+                TrainsCycle cycle = item.getCycle();
+                cycles.add(new CycleFromTo(true, cycle.getName(),
+                        type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        itemPrev != null ? itemPrev.getTrain().getName() : null,
+                        itemPrev != null ? TimeConverter.convertFromIntToText(itemPrev.getEndTime()) : null));
             }
         }
     }

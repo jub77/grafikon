@@ -34,22 +34,26 @@
       length_unit_s = row.length.lengthInAxles ? " ${length_axles}" : row.length.lengthUnit
       note_parts << "[${row.length.length}${length_unit_s}]"
     }
-    // engine to
-    if (row.engineTo != null)
-      for (engine_t in row.engineTo)
-        note_parts << "${engine_to} ${engine_t.trainName} (${engine_t.time})"
-    // engine from
-    if (row.engineFrom != null)
-      for (engine_f in row.engineFrom)
-        note_parts << "${engine}: ${engine_f.cycleName} (${engine_f.cycleDescription})"
-    // train unit to
-    if (row.trainUnitTo != null)
-      for (train_unit_t in row.trainUnitTo)
-        note_parts << "${train_unit} ${move_to} ${train_unit_t.trainName} (${train_unit_t.time})"
-    // train unit from
-    if (row.trainUnitFrom != null)
-      for (train_unit_f in row.trainUnitFrom)
-        note_parts << "${train_unit}: ${train_unit_f.cycleName} (${train_unit_f.cycleDescription})"
+    // engine
+    if (row.engine != null)
+      for (engine_t in row.engine)
+        if (engine_t.in)
+          note_parts << "${engine}: ${engine_t.name} (${engine_t.desc})"
+        else
+          if (engine_t.trainName == null)
+            note_parts << "${engine}: ${engine_t.name} ${ends}"
+          else
+            note_parts << "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${engine_t.time})"
+    // train unit
+    if (row.trainUnit != null)
+      for (train_unit_t in row.trainUnit)
+        if (train_unit_t.in)
+          note_parts << "${train_unit}: ${train_unit_t.name} (${train_unit_t.desc})"
+        else
+          if (train_unit_t.trainName == null)
+            note_parts << "${train_unit}: ${train_unit_t.name} ${ends}"
+          else
+            note_parts << "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${train_unit_t.time})"
     // comment
     if (row.comment != null)
       note_parts << row.comment
