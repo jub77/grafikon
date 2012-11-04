@@ -1,5 +1,8 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -7,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"trainName", "fromTime", "toTime", "fromAbbr", "toAbbr", "comment"})
+@XmlType(propOrder={"trainName", "fromTime", "toTime", "fromAbbr", "toAbbr", "comment", "cycle"})
 public class TrainUnitCycleRow {
 
     private String trainName;
@@ -16,6 +19,7 @@ public class TrainUnitCycleRow {
     private String toTime;
     private String toAbbr;
     private String comment;
+    private List<TrainUnitCustomCycle> cycle;
 
     public String getComment() {
         return comment;
@@ -63,5 +67,15 @@ public class TrainUnitCycleRow {
 
     public void setToTime(String toTime) {
         this.toTime = toTime;
+    }
+
+    public List<TrainUnitCustomCycle> getCycle() {
+        if (cycle == null)
+            cycle = new LinkedList<TrainUnitCustomCycle>();
+        return cycle;
+    }
+
+    public void setCycle(List<TrainUnitCustomCycle> cycle) {
+        this.cycle = cycle;
     }
 }
