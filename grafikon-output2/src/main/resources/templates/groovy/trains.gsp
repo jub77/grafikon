@@ -118,6 +118,7 @@
     td.cfromto {vertical-align: bottom; text-align: center;}
     td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
     td.move {vertical-align: bottom;}
+    tr.listabbr {font-size: 3.25mm;}
   </style>
 </head>
 <%
@@ -446,7 +447,7 @@
         def fwt = true
         if (train.weightData != null) {
         lastEngine = null
-        for (wr in train.weightData) { 
+        for (wr in train.weightData) {
           currentEngine = concat(wr.engines, ", ") %>
         <tr>
           <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
@@ -719,7 +720,7 @@
         }
       }
     } else {
-      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")      
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")
     }
     return result
   }
@@ -757,7 +758,10 @@
     <td class="cfromtoh">${column_from_to}</td>
     <td class="cnoteh">${column_note}</td>
   </tr><% lastNode = null;
+          def abbrMap = [:]
           for (item in trains.cycle.rows) {
+            abbrMap[item.fromAbbr] = item.from
+            abbrMap[item.toAbbr] = item.to
             if (lastNode != null && lastNode != item.from) {
               %>
   <tr>
@@ -770,9 +774,24 @@
     <td class="cdeparture">${item.fromTime}</td>
     <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
     <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
-  </tr><% lastNode = item.to
+  </tr><%   lastNode = item.to
+          }%>
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4">
+      <table cellspacing="0" border="0"><%
+          abbrMap.sort().each {
+            %>
+        <tr class="listabbr">
+          <td>${it.key}</td><td>&nbsp;- ${it.value}</td>
+        </tr><%
           }
         %>
+      </table>
+    </td>
+  </tr>
 </table><%
   }
 
