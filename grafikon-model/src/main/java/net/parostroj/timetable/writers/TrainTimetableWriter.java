@@ -3,9 +3,9 @@ package net.parostroj.timetable.writers;
 import java.io.IOException;
 import java.util.Formatter;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * This class writes train timetable.
@@ -23,6 +23,8 @@ public class TrainTimetableWriter {
      * @param str appendable
      */
     public void writeTrainTimetable(Train train, Appendable str) throws IOException {
+    	TimeConverter c = train.getTrainDiagram().getTimeConverter();
+
         str.append("Train: ");
         str.append(train.getCompleteName()).append('\n');
         for (TimeInterval time : train.getTimeIntervalList()) {
@@ -31,12 +33,12 @@ public class TrainTimetableWriter {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", node.getName());
                 if (time.isFirst() || !time.isStop()) {
-                    str.append("      ").append(TimeConverter.formatIntToText(time.getEnd(), FORMAT)).append("\n");
+                    str.append("      ").append(c.formatIntToText(time.getEnd(), FORMAT)).append("\n");
                 } else if (time.isLast()) {
-                    str.append(TimeConverter.formatIntToText(time.getStart(), FORMAT)).append("\n");
+                    str.append(c.formatIntToText(time.getStart(), FORMAT)).append("\n");
                 } else if (time.isStop()) {
-                    str.append(TimeConverter.formatIntToText(time.getStart(), FORMAT)).append(" ");
-                    str.append(TimeConverter.formatIntToText(time.getEnd(), FORMAT)).append("\n");
+                    str.append(c.formatIntToText(time.getStart(), FORMAT)).append(" ");
+                    str.append(c.formatIntToText(time.getEnd(), FORMAT)).append("\n");
                 } else {
                     str.append('\n');
                 }

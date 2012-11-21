@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.components;
 import java.io.IOException;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.visitors.EventVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +85,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     @Override
     public void visit(NodeEvent event) {
         try {
+        	TimeConverter c = event.getSource().getTrainDiagram().getTimeConverter();
             str.append("NodeEvent[");
             str.append(event.getSource().getAbbr());
             str.append(']');
@@ -96,8 +96,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getInterval() != null) {
                     str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
                     str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(TimeConverter.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
-                    str.append("-").append(TimeConverter.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
+                    str.append("    Time:  ").append(c.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
+                    str.append("-").append(c.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
                     str.append('\n');
                 }
                 if (event.getTrack() != null)
@@ -113,6 +113,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     @Override
     public void visit(LineEvent event) {
         try {
+        	TimeConverter c = event.getSource().getTrainDiagram().getTimeConverter();
             str.append("LineEvent[");
             str.append(event.getSource().getFrom().getAbbr());
             str.append('-');
@@ -126,8 +127,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getInterval() != null) {
                     str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
                     str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(TimeConverter.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
-                    str.append("-").append(TimeConverter.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
+                    str.append("    Time:  ").append(c.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
+                    str.append("-").append(c.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
                     str.append('\n');
                     str.append("    Direction: ").append(event.getInterval().getFrom().getAbbr());
                     str.append("-").append(event.getInterval().getTo().getAbbr());

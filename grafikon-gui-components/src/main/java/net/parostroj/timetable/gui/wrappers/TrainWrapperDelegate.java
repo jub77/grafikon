@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.wrappers;
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Delegate for trains.
@@ -54,9 +53,9 @@ public class TrainWrapperDelegate implements WrapperDelegate {
                 return String.format("%s (%s[%s],%s[%s])",
                         train.getName(),
                         train.getStartNode().getName(),
-                        TimeConverter.convertFromIntToText(train.getStartTime()),
+                        train.getTrainDiagram().getTimeConverter().convertFromIntToText(train.getStartTime()),
                         train.getEndNode().getName(),
-                        TimeConverter.convertFromIntToText(train.getEndTime()));
+                        train.getTrainDiagram().getTimeConverter().convertFromIntToText(train.getEndTime()));
             default:
                 return train.getName();
         }

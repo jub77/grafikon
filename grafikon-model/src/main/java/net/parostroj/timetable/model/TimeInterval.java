@@ -5,7 +5,6 @@ import java.util.Set;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TrainEvent;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Time interval.
@@ -163,7 +162,8 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     @Override
     public String toString() {
-        return String.format("%s(%s,%s)", getOwner(), TimeConverter.convertFromIntToText(getStart()), TimeConverter.convertFromIntToText(getEnd()));
+    	TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
+        return String.format("%s(%s,%s)", getOwner(), converter.convertFromIntToText(getStart()), converter.convertFromIntToText(getEnd()));
     }
 
     /**
@@ -367,11 +367,13 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         owner.updateTimeInterval(this);
     }
 
-    public Attributes getAttributes() {
+    @Override
+	public Attributes getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Attributes attributes) {
+    @Override
+	public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
