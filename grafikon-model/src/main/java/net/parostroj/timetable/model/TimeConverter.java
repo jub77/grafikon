@@ -41,13 +41,17 @@ public class TimeConverter {
 	}
 
     /**
-     * adjusts time for rounding -> 1s - 20s down, 20s - 59s up.
+     * adjusts time for rounding - add 30s or 15s.
      *
      * @param time time
      * @return adjusted time
      */
     private int adjustTimeForRounding(int time) {
-        return time + 20;
+    	if (rounding == Rounding.MINUTE) {
+    		return time + 30;
+    	} else {
+    		return time + 15;
+    	}
     }
 
     /**
