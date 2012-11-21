@@ -11,7 +11,6 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Table model for train.
@@ -25,6 +24,7 @@ class TrainTableModel extends AbstractTableModel {
     private int lastRow;
     private ApplicationModel model;
     private boolean editBlock;
+    private TimeConverter converter;
 
     public TrainTableModel(ApplicationModel model, Train train) {
         this.setTrain(train);
@@ -36,11 +36,15 @@ class TrainTableModel extends AbstractTableModel {
     }
 
     public void setTrain(Train train) {
-        if (editBlock)
+        if (this.editBlock)
             return;
         this.train = train;
-        if (train != null)
-            lastRow = train.getTimeIntervalList().size() - 1;
+        if (train != null) {
+            this.lastRow = train.getTimeIntervalList().size() - 1;
+            this.converter = train.getTrainDiagram().getTimeConverter();
+        } else {
+        	this.converter = null;
+        }
 
         this.fireTableDataChanged();
     }
@@ -88,12 +92,12 @@ class TrainTableModel extends AbstractTableModel {
             // arrival
             case START:
                 if (!interval.isFirst())
-                    retValue = TimeConverter.convertFromIntToText(interval.getStart());
+                    retValue = converter.convertFromIntToText(interval.getStart());
                 break;
             // departure
             case END:
                 if (!interval.isLast())
-                    retValue = TimeConverter.convertFromIntToText(interval.getEnd());
+                    retValue = converter.convertFromIntToText(interval.getEnd());
                 break;
             // stop time
             case STOP:
@@ -186,7 +190,7 @@ class TrainTableModel extends AbstractTableModel {
         switch (column) {
             case END:
                 // departure
-                time = TimeConverter.convertFromTextToInt((String)aValue);
+                time = converter.convertFromTextToInt((String)aValue);
                 if (time != -1) {
                     if (rowIndex == 0) {
                         train.move(time);

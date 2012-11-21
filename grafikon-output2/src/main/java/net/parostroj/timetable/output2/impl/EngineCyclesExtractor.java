@@ -3,10 +3,11 @@ package net.parostroj.timetable.output2.impl;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
 
 /**
@@ -48,10 +49,11 @@ public class EngineCyclesExtractor {
     }
 
     private EngineCycleRow createRow(TrainsCycleItem current, TrainsCycleItem previous) {
+    	TimeConverter c = current.getTrain().getTrainDiagram().getTimeConverter();
         EngineCycleRow row = new EngineCycleRow();
         row.setTrainName(current.getTrain().getName());
-        row.setFromTime(TimeConverter.convertFromIntToText(current.getStartTime()));
-        row.setToTime(TimeConverter.convertFromIntToText(current.getEndTime()));
+        row.setFromTime(c.convertFromIntToText(current.getStartTime()));
+        row.setToTime(c.convertFromIntToText(current.getEndTime()));
         row.setFromAbbr(current.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(current.getToInterval().getOwnerAsNode().getAbbr());
         // set wait time - in real seconds (not the model ones)

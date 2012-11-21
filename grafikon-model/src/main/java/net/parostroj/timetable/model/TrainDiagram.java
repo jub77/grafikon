@@ -50,6 +50,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupportAll;
     private AttributesListener attributesListener;
+	private TimeConverter timeConverter;
 
     /**
      * Default constructor.
@@ -87,6 +88,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addListenerWithNested(changesTracker);
+        this.timeConverter = new TimeConverter();
     }
 
     /**
@@ -318,11 +320,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return attributes.remove(key);
     }
 
-    public Attributes getAttributes() {
+    @Override
+	public Attributes getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Attributes attributes) {
+    @Override
+	public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
@@ -503,6 +507,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (e.getNestedEvent() == null) {
             listenerSupport.fireEvent(e);
         }
+    }
+
+    /**
+     * @return time converter
+     */
+    public TimeConverter getTimeConverter() {
+    	return timeConverter;
     }
 
     // -------------------------- creational methods ---------------------------

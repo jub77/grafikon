@@ -16,10 +16,12 @@ public class StationTimetablesExtractor {
 
     private final TrainDiagram diagram;
     private final List<Node> nodes;
+    private final TimeConverter converter;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes) {
         this.diagram = diagram;
         this.nodes = nodes;
+        this.converter = diagram.getTimeConverter();
     }
 
     public List<StationTimetable> getStationTimetables() {
@@ -63,8 +65,8 @@ public class StationTimetablesExtractor {
         String toNodeName = TransformUtil.getToAbbr(interval);
         String endNodeName = (interval.isLast() || interval.isTechnological()) ? null : interval.getTrain().getEndNode().getAbbr();
 
-        String fromTime = (from == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getStart());
-        String toTime = (to == null && !interval.isTechnological()) ? null : TimeConverter.convertFromIntToText(interval.getEnd());
+        String fromTime = (from == null && !interval.isTechnological()) ? null : converter.convertFromIntToText(interval.getStart());
+        String toTime = (to == null && !interval.isTechnological()) ? null : converter.convertFromIntToText(interval.getEnd());
         StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
         this.addOtherData(interval, row);
         return row;
@@ -98,7 +100,7 @@ public class StationTimetablesExtractor {
                 cycles.add(new CycleWithTypeFromTo(false, cycle.getName(),
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
-                        itemNext != null ? TimeConverter.convertFromIntToText(itemNext.getStartTime()) : null,
+                        itemNext != null ? converter.convertFromIntToText(itemNext.getStartTime()) : null,
                         type.getName()));
             }
             if (item.getFromInterval() == interval) {
@@ -108,7 +110,7 @@ public class StationTimetablesExtractor {
                 cycles.add(new CycleWithTypeFromTo(true, cycle.getName(),
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
-                        itemPrev != null ? TimeConverter.convertFromIntToText(itemPrev.getEndTime()) : null,
+                        itemPrev != null ? converter.convertFromIntToText(itemPrev.getEndTime()) : null,
                         type.getName()));
             }
         }
@@ -124,7 +126,7 @@ public class StationTimetablesExtractor {
                 cycles.add(new CycleFromTo(false, cycle.getName(),
                         type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
-                        itemNext != null ? TimeConverter.convertFromIntToText(itemNext.getStartTime()) : null));
+                        itemNext != null ? converter.convertFromIntToText(itemNext.getStartTime()) : null));
             }
             if (item.getFromInterval() == interval) {
                 // start
@@ -133,7 +135,7 @@ public class StationTimetablesExtractor {
                 cycles.add(new CycleFromTo(true, cycle.getName(),
                         type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
-                        itemPrev != null ? TimeConverter.convertFromIntToText(itemPrev.getEndTime()) : null));
+                        itemPrev != null ? converter.convertFromIntToText(itemPrev.getEndTime()) : null));
             }
         }
     }

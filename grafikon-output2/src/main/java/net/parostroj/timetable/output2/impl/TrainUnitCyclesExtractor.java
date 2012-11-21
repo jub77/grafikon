@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Extracts information for train unit cycles.
@@ -40,10 +39,11 @@ public class TrainUnitCyclesExtractor {
     }
 
     private TrainUnitCycleRow createRow(TrainsCycleItem item) {
+    	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
         TrainUnitCycleRow row = new TrainUnitCycleRow();
         row.setTrainName(item.getTrain().getName());
-        row.setFromTime(TimeConverter.convertFromIntToText(item.getStartTime()));
-        row.setToTime(TimeConverter.convertFromIntToText(item.getEndTime()));
+        row.setFromTime(c.convertFromIntToText(item.getStartTime()));
+        row.setToTime(c.convertFromIntToText(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setComment((item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment());

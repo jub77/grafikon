@@ -3,7 +3,6 @@ package net.parostroj.timetable.writers;
 import java.io.IOException;
 import java.util.Formatter;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * This class writes line timetable.
@@ -21,6 +20,8 @@ public class LineTimetableWriter {
      * @param str appendable
      */
     public void writeLineTimetable(Line line, Appendable str) throws IOException {
+    	TimeConverter c = line.getTrainDiagram().getTimeConverter();
+
         // get end nodes ...
         Node ss = line.getFrom();
         Node st = line.getTo();
@@ -35,8 +36,8 @@ public class LineTimetableWriter {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
-                str.append(TimeConverter.formatIntToText(interval.getStart(), FORMAT));
-                str.append(" ").append(TimeConverter.formatIntToText(interval.getEnd(), FORMAT));
+                str.append(c.formatIntToText(interval.getStart(), FORMAT));
+                str.append(" ").append(c.formatIntToText(interval.getEnd(), FORMAT));
                 str.append(" [direction: ").append(interval.getTo().getAbbr()).append("]");
                 str.append('\n');
                 f.close();

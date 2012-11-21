@@ -6,7 +6,6 @@ import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -144,9 +143,9 @@ public class TrainTimetablesExtractor {
             row.setStation(nodeI.getOwnerAsNode().getName());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
             if (!nodeI.isFirst())
-                row.setArrival(TimeConverter.convertFromIntToText(nodeI.getStart()));
+                row.setArrival(diagram.getTimeConverter().convertFromIntToText(nodeI.getStart()));
             if (!nodeI.isLast())
-                row.setDeparture(TimeConverter.convertFromIntToText(nodeI.getEnd()));
+                row.setDeparture(diagram.getTimeConverter().convertFromIntToText(nodeI.getEnd()));
             if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());

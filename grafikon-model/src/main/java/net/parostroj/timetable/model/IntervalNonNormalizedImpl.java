@@ -1,10 +1,11 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.TimeUtil;
+
 
 /**
  * Time interval implementation - non normalized.
- * 
+ *
  * @author jub
  */
 final public class IntervalNonNormalizedImpl extends IntervalImpl {
@@ -13,9 +14,9 @@ final public class IntervalNonNormalizedImpl extends IntervalImpl {
 
     public IntervalNonNormalizedImpl(int start, int end) {
         super(start, end);
-        if (TimeConverter.isNormalizedTime(start))
+        if (TimeUtil.isNormalizedTime(start))
             throw new IllegalArgumentException("Start is normalized.");
-        int normalizedStart = TimeConverter.normalizeTime(start);
+        int normalizedStart = TimeUtil.normalizeTime(start);
         int computedEnd = normalizedStart + getLength();
         normalized = IntervalFactory.createInterval(normalizedStart, computedEnd);
     }
@@ -44,7 +45,7 @@ final public class IntervalNonNormalizedImpl extends IntervalImpl {
     public boolean isOverMidnight() {
         return normalized.isOverMidnight();
     }
-    
+
     @Override
     public Interval getNonNormalizedIntervalOverMidnight() {
         return normalized.getNonNormalizedIntervalOverMidnight();

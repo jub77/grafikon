@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.actions.NodeSort;
@@ -25,7 +28,6 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.TimeConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,14 +133,16 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
@@ -163,7 +167,8 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         throughButton.setText(ResourceLoader.getString("create.train.throughbutton")); // NOI18N
         throughButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 throughButtonActionPerformed(evt);
             }
         });
@@ -301,7 +306,7 @@ public class CreateTrainView extends javax.swing.JPanel {
             }
 
             // get start time
-            int start = TimeConverter.convertFromTextToInt(startTimeTextField.getText());
+            int start = model.getDiagram().getTimeConverter().convertFromTextToInt(startTimeTextField.getText());
             if (start == -1)
                 // midnight if cannot be parsed
                 start = 0;

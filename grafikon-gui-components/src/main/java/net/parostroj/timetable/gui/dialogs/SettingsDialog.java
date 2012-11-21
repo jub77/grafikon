@@ -13,7 +13,6 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.model.units.WeightUnit;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,13 +130,13 @@ public class SettingsDialog extends javax.swing.JDialog {
     }
 
     private void setTimeRange(Integer from, Integer to) {
-        fromTimeTextField.setText(TimeConverter.convertFromIntToText(from != null ? from : 0));
-        toTimeTextField.setText(TimeConverter.convertFromIntToTextNN(to != null ? to : TimeInterval.DAY));
+        fromTimeTextField.setText(diagram.getTimeConverter().convertFromIntToText(from != null ? from : 0));
+        toTimeTextField.setText(diagram.getTimeConverter().convertFromIntToTextNN(to != null ? to : TimeInterval.DAY));
     }
 
     private Tuple<Integer> getTimeRange() {
-        int from = TimeConverter.convertFromTextToInt(fromTimeTextField.getText());
-        int to = TimeConverter.convertFromTextToInt(toTimeTextField.getText());
+        int from = diagram.getTimeConverter().convertFromTextToInt(fromTimeTextField.getText());
+        int to = diagram.getTimeConverter().convertFromTextToInt(toTimeTextField.getText());
         Integer fromTime = from == -1 ? 0 : from;
         Integer toTime = to == -1 ? TimeInterval.DAY : to;
         if (toTime == 0)
@@ -459,7 +458,8 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
@@ -467,7 +467,8 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });

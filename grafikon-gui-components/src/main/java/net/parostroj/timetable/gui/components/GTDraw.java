@@ -10,7 +10,6 @@ import java.util.Map;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.TransformUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -402,10 +401,11 @@ abstract public class GTDraw {
             endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() + dSize.getHeight() - 2);
         }
         g.setColor(Color.BLACK);
+        TimeConverter c = this.getTimeConverter(interval);
         if (interval.getFrom().getType() != NodeType.SIGNAL)
-            g.drawString(TimeConverter.getLastDigitOfMinutes(interval.getStart()), (int)startP.getX(), (int)startP.getY());
+            g.drawString(c.getLastDigitOfMinutes(interval.getStart()), (int)startP.getX(), (int)startP.getY());
         if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck)
-            g.drawString(TimeConverter.getLastDigitOfMinutes(interval.getEnd()), (int)endP.getX(), (int)endP.getY());
+            g.drawString(c.getLastDigitOfMinutes(interval.getEnd()), (int)endP.getX(), (int)endP.getY());
     }
 
     protected Color getIntervalColor(TimeInterval interval) {
@@ -436,6 +436,10 @@ abstract public class GTDraw {
         if (trainRegionCollector == null)
             return false;
         return trainRegionCollector.isCollecting(train);
+    }
+
+    protected TimeConverter getTimeConverter(TimeInterval interval) {
+    	return interval.getTrain().getTrainDiagram().getTimeConverter();
     }
 
     protected int getX(int time) {
