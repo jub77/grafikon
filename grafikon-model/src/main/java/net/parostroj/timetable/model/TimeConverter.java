@@ -11,6 +11,35 @@ import net.parostroj.timetable.utils.TimeUtil;
  */
 public class TimeConverter {
 
+	public static enum Rounding {
+		MINUTE, HALF_MINUTE
+	}
+
+	private final Rounding rounding;
+
+	/**
+	 * creates time converter.
+	 */
+	public TimeConverter() {
+		this.rounding = Rounding.MINUTE;
+	}
+
+	/**
+	 * creates instance with specific rounding.
+	 *
+	 * @param rounding rounding
+	 */
+	public TimeConverter(Rounding rounding) {
+		this.rounding = rounding;
+	}
+
+	/**
+	 * @return rounding
+	 */
+	public Rounding getRounding() {
+		return rounding;
+	}
+
     /**
      * adjusts time for rounding -> 1s - 20s down, 20s - 59s up.
      *
