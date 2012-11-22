@@ -277,7 +277,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             throw new IllegalArgumentException("Line is not owner of the interval.");
         // compute running time
         int runnningTime = interval.getOwnerAsLine().computeRunningTime(
-                interval.getTrain(), interval.getSpeed(),
+                interval.getTrain(), interval.getStart(), interval.getSpeed(),
                 this.computeFromSpeed(interval, i),
                 this.computeToSpeed(interval, i), interval.getAddedTime());
         interval.setLength(runnningTime);
