@@ -66,11 +66,13 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         });
     }
 
-    public Attributes getAttributes() {
+    @Override
+	public Attributes getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Attributes attributes) {
+    @Override
+	public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
@@ -280,6 +282,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         binding.put("length", length);
         binding.put("addedTime", addedTime);
         binding.put("penaltySolver", ps);
+        binding.put("train", train);
+        binding.put("diagram", train.getTrainDiagram());
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
         if (!(result instanceof Number))

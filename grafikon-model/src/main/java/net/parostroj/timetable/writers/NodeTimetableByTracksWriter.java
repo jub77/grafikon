@@ -15,7 +15,7 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public class NodeTimetableByTracksWriter {
 
-    private static final String FORMAT = "%02d:%02d";
+    private static final String FORMAT = "%02d:%s";
 
     /**
      * writes node timetable.

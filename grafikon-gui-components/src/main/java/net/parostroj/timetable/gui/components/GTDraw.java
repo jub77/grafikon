@@ -27,6 +27,7 @@ abstract public class GTDraw {
     private static final float HOURS_STROKE_WIDTH = 1.8f;
     private static final float HALF_HOURS_STROKE_WIDTH = 0.9f;
     private static final float TEN_MINUTES_STROKE_WIDTH = 0.4f;
+    private static final float UNDERLINE_STROKE_WIDTH = 1.4f;
 
     // extended display
     private static final float HALF_HOURS_STROKE_EXT_WIDTH = 1.1f;
@@ -42,6 +43,7 @@ abstract public class GTDraw {
     protected final Stroke halfHoursStroke;
     protected final Stroke tenMinutesStroke;
     protected final Stroke halfHoursExtStroke;
+    protected final Stroke underlineStroke;
 
     protected final float minimalSpace;
     protected final float fontSize;
@@ -91,6 +93,7 @@ abstract public class GTDraw {
         hoursStroke = new BasicStroke(zoom * HOURS_STROKE_WIDTH);
         halfHoursStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_WIDTH);
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
+        underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DAST_2 }, 0f);
         minimalSpace = zoom * MINIMAL_SPACE_WIDTH;
@@ -402,10 +405,26 @@ abstract public class GTDraw {
         }
         g.setColor(Color.BLACK);
         TimeConverter c = this.getTimeConverter(interval);
-        if (interval.getFrom().getType() != NodeType.SIGNAL)
-            g.drawString(c.getLastDigitOfMinutes(interval.getStart()), (int)startP.getX(), (int)startP.getY());
-        if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck)
-            g.drawString(c.getLastDigitOfMinutes(interval.getEnd()), (int)endP.getX(), (int)endP.getY());
+        if (interval.getFrom().getType() != NodeType.SIGNAL) {
+            int xp = (int) startP.getX();
+            int yp = (int) startP.getY();
+            g.drawString(c.getLastDigitOfMinutes(interval.getStart()), xp, yp);
+            if (c.isHalfMinute(interval.getStart()))
+            	drawUnderscore(g, xp, yp, dSize.getWidth());
+        }
+        if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck) {
+            int xp = (int) endP.getX();
+            int yp = (int) endP.getY();
+            g.drawString(c.getLastDigitOfMinutes(interval.getEnd()), xp, yp);
+            if (c.isHalfMinute(interval.getEnd()))
+            	drawUnderscore(g, xp, yp, dSize.getWidth());
+        }
+    }
+
+    private void drawUnderscore(Graphics2D g, int xp, int yp, double wp) {
+    	yp = (int) (yp + wp / 4);
+    	g.setStroke(underlineStroke);
+    	g.drawLine(xp, yp, (int) (xp + wp), yp);
     }
 
     protected Color getIntervalColor(TimeInterval interval) {

@@ -88,7 +88,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addListenerWithNested(changesTracker);
-        this.timeConverter = new TimeConverter();
     }
 
     /**
@@ -513,8 +512,26 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      * @return time converter
      */
     public TimeConverter getTimeConverter() {
+    	if (timeConverter == null) {
+    		String type = this.getAttributes().get("time.converter", String.class);
+    		TimeConverter.Rounding rounding = TimeConverter.Rounding.MINUTE;
+    		if (type != null) {
+    			rounding = TimeConverter.Rounding.fromString(type);
+    		}
+    		timeConverter = new TimeConverter(rounding);
+    	}
     	return timeConverter;
     }
+
+    /**
+     * @param timeConverter time converter to set
+     */
+    public void setTimeConverter(TimeConverter timeConverter) {
+    	if (timeConverter == null)
+    		throw new IllegalArgumentException("Converter cannot be null.");
+    	this.setAttribute("time.converter", timeConverter.getRounding().getKey());
+		this.timeConverter = timeConverter;
+	}
 
     // -------------------------- creational methods ---------------------------
 

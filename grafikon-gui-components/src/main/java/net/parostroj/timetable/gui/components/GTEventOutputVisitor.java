@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GTEventOutputVisitor implements EventVisitor {
 
-    private static final String TIME_FORMAT = "%02d:%02d";
+    private static final String TIME_FORMAT = "%02d:%s";
     private static final Logger LOG = LoggerFactory.getLogger(GTEventOutputVisitor.class.getName());
 
     private Appendable str;

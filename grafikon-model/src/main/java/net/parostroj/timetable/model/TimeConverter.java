@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model;
 
-import java.util.Formatter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -12,17 +14,30 @@ import net.parostroj.timetable.utils.TimeUtil;
 public class TimeConverter {
 
 	public static enum Rounding {
-		MINUTE, HALF_MINUTE
+		MINUTE("minute"), HALF_MINUTE("half.minute");
+
+		private final String key;
+
+		private Rounding(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public static Rounding fromString(String str) {
+			for (Rounding r : values()) {
+				if (r.getKey().equals(str))
+					return r;
+			}
+			return null;
+		}
 	}
 
+	private final DecimalFormat minFormat;
+	private final DecimalFormat minFormat2;
 	private final Rounding rounding;
-
-	/**
-	 * creates time converter.
-	 */
-	public TimeConverter() {
-		this.rounding = Rounding.MINUTE;
-	}
 
 	/**
 	 * creates instance with specific rounding.
@@ -31,6 +46,12 @@ public class TimeConverter {
 	 */
 	public TimeConverter(Rounding rounding) {
 		this.rounding = rounding;
+		this.minFormat = new DecimalFormat(rounding == Rounding.HALF_MINUTE ? "#.#" : "#");
+		this.minFormat2 = new DecimalFormat(rounding == Rounding.HALF_MINUTE ? "00.#" : "00");
+		DecimalFormatSymbols symbols = new DecimalFormat().getDecimalFormatSymbols();
+		symbols.setDecimalSeparator(',');
+		this.minFormat.setDecimalFormatSymbols(symbols);
+		this.minFormat2.setDecimalFormatSymbols(symbols);
 	}
 
 	/**
@@ -46,11 +67,11 @@ public class TimeConverter {
      * @param time time
      * @return adjusted time
      */
-    private int adjustTimeForRounding(int time) {
+    private int round(int time) {
     	if (rounding == Rounding.MINUTE) {
-    		return time + 30;
+    		return (time + 30) / 60 * 60;
     	} else {
-    		return time + 15;
+    		return (time + 15) / 30 * 30;
     	}
     }
 
@@ -60,15 +81,8 @@ public class TimeConverter {
      * @param time time in seconds
      * @return textual representation
      */
-    public String convertFromIntToText(int time) {
-        time = TimeUtil.normalizeTime(time);
-        int hours = getHours(time);
-        int minutes = getMinutes(time);
-        Formatter formatter = new Formatter();
-        formatter.format("%1$d:%2$02d", hours, minutes);
-        String result = formatter.toString();
-        formatter.close();
-        return result;
+    public String convertIntToText(int time) {
+    	return formatIntToText(time, "%d:%s");
     }
 
     /**
@@ -77,14 +91,10 @@ public class TimeConverter {
      * @param time time in seconds
      * @return textual representation
      */
-    public String convertFromIntToTextNN(int time) {
+    public String convertIntToTextNN(int time) {
         int hours = getHoursNN(time);
-        int minutes = getMinutes(time);
-        Formatter formatter = new Formatter();
-        formatter.format("%1$d:%2$02d", hours, minutes);
-        String result = formatter.toString();
-        formatter.close();
-        return result;
+        String minutes = minFormat2.format(getMinutes(time));
+        return String.format("%1$d:%2$s", hours, minutes);
     }
 
     /**
@@ -97,27 +107,8 @@ public class TimeConverter {
     public String formatIntToText(int time, String format) {
         time = TimeUtil.normalizeTime(time);
         int hours = getHours(time);
-        int minutes = getMinutes(time);
+        String minutes = minFormat2.format(getMinutes(time));
         return String.format(format, hours, minutes);
-    }
-
-    /**
-     * converts from seconds to textual representation.
-     *
-     * @param time time in seconds
-     * @param delimiter delimiter
-     * @return textual representation
-     */
-    public String convertFromIntToText(int time, String delimiter) {
-        time = TimeUtil.normalizeTime(time);
-        int hours = getHours(time);
-        int minutes = getMinutes(time);
-        Formatter formatter = new Formatter();
-        String format = "%1$d" + delimiter + "%2$02d";
-        formatter.format(format, hours, minutes);
-        String result = formatter.toString();
-        formatter.close();
-        return result;
     }
 
     /**
@@ -126,9 +117,9 @@ public class TimeConverter {
      * @param time time in seconds
      * @return minutes
      */
-    public int getMinutes(int time) {
-        time = adjustTimeForRounding(time);
-        return (time % 3600) / 60;
+    public double getMinutes(int time) {
+        time = round(time);
+        return ((double) (time % 3600)) / 60;
     }
 
     /**
@@ -139,7 +130,7 @@ public class TimeConverter {
     	if (rounding == Rounding.MINUTE)
     		return false;
     	else {
-    		time = adjustTimeForRounding(time);
+    		time = round(time);
     		return ((time % 3600) / 30) % 2 == 1;
     	}
     }
@@ -151,7 +142,7 @@ public class TimeConverter {
      * @return hours
      */
     public int getHours(int time) {
-        time = adjustTimeForRounding(time);
+        time = round(time);
         time = time / 3600;
         if (time == 24)
             time = 0;
@@ -165,67 +156,9 @@ public class TimeConverter {
      * @return hours
      */
     public int getHoursNN(int time) {
-        time = adjustTimeForRounding(time);
+        time = round(time);
         time = time / 3600;
         return time;
-    }
-
-    /**
-     * returns string with hours.
-     *
-     * @param time time in seconds
-     * @return string
-     */
-    public String convertHoursToText(int time) {
-        return Integer.toString(getHours(time));
-    }
-
-    /**
-     * returns string with minutes.
-     *
-     * @param time time in seconds
-     * @return string
-     */
-    public String convertMinutesToText(int time) {
-    	TimeUtil.normalizeTime(time);
-        Formatter formatter = new Formatter();
-        formatter.format("%1$02d", getMinutes(time));
-        String result = formatter.toString();
-        formatter.close();
-        return result;
-    }
-
-    /**
-     * returns string with minutes.
-     *
-     * @param time time in seconds
-     * @return string
-     */
-    public String convertAllMinutesToText(int time) {
-        time = adjustTimeForRounding(time);
-        return Integer.toString(time / 60);
-    }
-
-    /**
-     * converts from seconds to textual representation.
-     *
-     * @param time time in seconds
-     * @param delimiter1 delimiter
-     * @param delimiter2 delimiter
-     * @return textual representation
-     */
-    public String convertHoursAndMinutesToText(int time, String delimiter1, String delimiter2) {
-    	TimeUtil.normalizeTime(time);
-        int hours = getHours(time);
-        int minutes = getMinutes(time);
-        Formatter formatter = new Formatter();
-        String format = "%1$d " + delimiter1;
-        if (minutes != 0)
-            format = format + " %2$d " + delimiter2;
-        formatter.format(format, hours, minutes);
-        String result = formatter.toString();
-        formatter.close();
-        return result;
     }
 
     /**
@@ -236,10 +169,30 @@ public class TimeConverter {
      */
     public String getLastDigitOfMinutes(int time) {
     	TimeUtil.normalizeTime(time);
-        int minutes = getMinutes(time);
-        String minutesStr = Integer.toString(minutes);
-        int lastDigitIndex = minutesStr.length() - 1;
-        return minutesStr.substring(lastDigitIndex, lastDigitIndex + 1);
+    	time = round(time);
+        return Integer.toString((time / 60) % 10);
+    }
+
+    /**
+     * converts text representation of minutes to int.
+     *
+     * @param text text
+     * @return time in seconds
+     * @throws ParseException
+     */
+    public int convertMinutesTextToInt(String text) throws ParseException {
+    	Number number = minFormat.parse(text);
+    	return round((int) (number.doubleValue() * 60));
+    }
+
+    /**
+     * converts time to string with minutes
+     *
+     * @param time time in seconds
+     * @return string with minutes
+     */
+    public String convertIntToMinutesText(int time) {
+    	return minFormat.format(getMinutes(time));
     }
 
     /**
@@ -249,20 +202,29 @@ public class TimeConverter {
      * @param text textual representation
      * @return time in seconds from midnight
      */
-    public int convertFromTextToInt(String text) {
+    public int convertTextToInt(String text) {
         // remove spaces
         text = text.trim();
 
         int size = 0;
         int[] values = new int[4];
+        double decimal = 0;
+        int ratio = 10;
+        boolean hm = true;
 
         // get digits
         for (char ch : text.toCharArray()) {
-            if (Character.isDigit(ch)) {
-                values[size++] = Character.digit(ch, 10);
-                if (size == 4)
-                    break;
-            }
+        	if (ch == ',')
+        		hm = false;
+        	if (Character.isDigit(ch)) {
+        		int digit = Character.digit(ch, 10);
+	            if (hm && size < 4) {
+	                values[size++] = digit;
+	            } else if (!hm) {
+	            	decimal = decimal + ((double) digit) / ratio;
+	            	ratio = ratio * 10;
+	            }
+        	}
         }
 
         int time = -1;
@@ -280,6 +242,10 @@ public class TimeConverter {
             case 4:
                 time = (values[0] * 10 + values[1]) * 3600 + (values[2] * 10 + values[3]) * 60;
                 break;
+        }
+        if (time != -1 && ratio != 10) {
+        	time += 60 * decimal;
+        	time = round(time);
         }
         // normalize time before return
         if (time == -1)

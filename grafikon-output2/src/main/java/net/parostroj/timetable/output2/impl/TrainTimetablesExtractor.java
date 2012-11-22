@@ -143,9 +143,9 @@ public class TrainTimetablesExtractor {
             row.setStation(nodeI.getOwnerAsNode().getName());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
             if (!nodeI.isFirst())
-                row.setArrival(diagram.getTimeConverter().convertFromIntToText(nodeI.getStart()));
+                row.setArrival(diagram.getTimeConverter().convertIntToText(nodeI.getStart()));
             if (!nodeI.isLast())
-                row.setDeparture(diagram.getTimeConverter().convertFromIntToText(nodeI.getEnd()));
+                row.setDeparture(diagram.getTimeConverter().convertIntToText(nodeI.getEnd()));
             if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());

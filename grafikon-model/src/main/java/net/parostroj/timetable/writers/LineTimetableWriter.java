@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.*;
  */
 public class LineTimetableWriter {
 
-    private static final String FORMAT = "%02d:%02d";
+    private static final String FORMAT = "%02d:%s";
 
     /**
      * writes line timetable.

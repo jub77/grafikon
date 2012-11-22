@@ -21,9 +21,9 @@ public class TrainsCycleItemWrapper {
     	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
         return String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
         		item.getFromInterval().getOwnerAsNode().getName(),
-        		c.convertFromIntToText(item.getStartTime()),
+        		c.convertIntToText(item.getStartTime()),
         		item.getToInterval().getOwnerAsNode().getName(),
-        		c.convertFromIntToText(item.getEndTime()));
+        		c.convertIntToText(item.getEndTime()));
     }
 
     public TrainsCycleItem getItem() {

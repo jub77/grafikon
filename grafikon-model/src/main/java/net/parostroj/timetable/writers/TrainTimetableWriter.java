@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.Train;
  */
 public class TrainTimetableWriter {
 
-    private static final String FORMAT = "%02d:%02d";
+    private static final String FORMAT = "%02d:%s";
 
     /**
      * writes train timetable.

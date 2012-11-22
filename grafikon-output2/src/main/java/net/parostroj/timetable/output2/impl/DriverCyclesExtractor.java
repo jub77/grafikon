@@ -64,8 +64,8 @@ public class DriverCyclesExtractor {
     	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
         DriverCycleRow row = new DriverCycleRow();
         row.setTrainName(item.getTrain().getName());
-        row.setFromTime(c.convertFromIntToText(item.getStartTime()));
-        row.setToTime(c.convertFromIntToText(item.getEndTime()));
+        row.setFromTime(c.convertIntToText(item.getStartTime()));
+        row.setToTime(c.convertIntToText(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());
