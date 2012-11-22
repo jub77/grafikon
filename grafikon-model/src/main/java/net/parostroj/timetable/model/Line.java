@@ -284,6 +284,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         binding.put("addedTime", addedTime);
         binding.put("penaltySolver", ps);
         binding.put("train", train);
+        binding.put("converter", train.getTrainDiagram().getTimeConverter());
         binding.put("diagram", train.getTrainDiagram());
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
