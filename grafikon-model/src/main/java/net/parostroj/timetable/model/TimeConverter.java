@@ -132,6 +132,19 @@ public class TimeConverter {
     }
 
     /**
+     * @param time time in seconds
+     * @return true if after rounding the result is half minute
+     */
+    public boolean isHalfMinute(int time) {
+    	if (rounding == Rounding.MINUTE)
+    		return false;
+    	else {
+    		time = adjustTimeForRounding(time);
+    		return ((time % 3600) / 30) % 2 == 1;
+    	}
+    }
+
+    /**
      * returns hours.
      *
      * @param time time in seconds
