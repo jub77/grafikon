@@ -306,7 +306,7 @@ public class CreateTrainView extends javax.swing.JPanel {
             }
 
             // get start time
-            int start = model.getDiagram().getTimeConverter().convertFromTextToInt(startTimeTextField.getText());
+            int start = model.getDiagram().getTimeConverter().convertTextToInt(startTimeTextField.getText());
             if (start == -1)
                 // midnight if cannot be parsed
                 start = 0;

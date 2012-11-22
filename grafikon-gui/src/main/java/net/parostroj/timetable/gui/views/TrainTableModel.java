@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.text.ParseException;
+
 import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -92,18 +94,18 @@ class TrainTableModel extends AbstractTableModel {
             // arrival
             case START:
                 if (!interval.isFirst())
-                    retValue = converter.convertFromIntToText(interval.getStart());
+                    retValue = converter.convertIntToText(interval.getStart());
                 break;
             // departure
             case END:
                 if (!interval.isLast())
-                    retValue = converter.convertFromIntToText(interval.getEnd());
+                    retValue = converter.convertIntToText(interval.getEnd());
                 break;
             // stop time
             case STOP:
                 if (interval.getOwner() instanceof Node && rowIndex != 0 && rowIndex != lastRow
                         && ((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
-                    retValue = Integer.valueOf(interval.getLength() / 60);
+                	retValue = converter.convertIntToMinutesText(interval.getLength());
                 break;
             // speed
             case SPEED:
@@ -113,7 +115,7 @@ class TrainTableModel extends AbstractTableModel {
             // added time
             case ADDED_TIME:
                 if (interval.isLineOwner() && interval.getAddedTime() != 0)
-                    retValue = Integer.valueOf(interval.getAddedTime() / 60);
+                	retValue = converter.convertIntToMinutesText(interval.getAddedTime());
                 break;
             // platform
             case PLATFORM:
@@ -190,7 +192,7 @@ class TrainTableModel extends AbstractTableModel {
         switch (column) {
             case END:
                 // departure
-                time = converter.convertFromTextToInt((String)aValue);
+                time = converter.convertTextToInt((String)aValue);
                 if (time != -1) {
                     if (rowIndex == 0) {
                         train.move(time);
@@ -209,7 +211,12 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case STOP:
                 // stop time
-                time = ((Integer)aValue).intValue() * 60;
+				try {
+					time = converter.convertMinutesTextToInt((String) aValue);
+				} catch (ParseException e) {
+					// wrong conversion doesn't change anything
+					time = -1;
+				}
                 if (time >= 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
                     train.changeStopTime(interval, time);
@@ -231,8 +238,15 @@ class TrainTableModel extends AbstractTableModel {
                 // added time
                 interval = train.getTimeIntervalList().get(rowIndex);
                 if (aValue != null) {
-                    int addedTime = ((Integer) aValue).intValue() * 60;
-                    train.changeSpeedAndAddedTime(interval, interval.getSpeed(), addedTime);
+                	int addedTime;
+    				try {
+    					addedTime = converter.convertMinutesTextToInt((String) aValue);
+    				} catch (ParseException e) {
+    					// wrong conversion doesn't change anything
+    					addedTime = -1;
+    				}
+    				if (addedTime >= 0)
+    					train.changeSpeedAndAddedTime(interval, interval.getSpeed(), addedTime);
                 } else {
                     train.changeSpeedAndAddedTime(interval, interval.getSpeed(), 0);
                 }

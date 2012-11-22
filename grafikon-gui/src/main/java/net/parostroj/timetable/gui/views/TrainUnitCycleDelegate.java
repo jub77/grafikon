@@ -44,7 +44,7 @@ public class TrainUnitCycleDelegate extends TCDelegate {
                 if (result.length() != 0)
                     result.append('\n');
                 TimeConverter c = item.first.getTrain().getTrainDiagram().getTimeConverter();
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(), c.convertFromIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertFromIntToText(item.second.getStartTime())));
+                result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(), c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
             }
         }
         return result.toString();

@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.*;
  */
 public class NodeTimetableWriter {
 
-    private static final String FORMAT = "%02d:%02d";
+    private static final String FORMAT = "%02d:%s";
 
     /**
      * writes node timetable.

@@ -39,7 +39,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         this.reversed = false;
         if (train != null) {
             nameTextField.setText(train.getNumber());
-            timeTextField.setText(train.getTrainDiagram().getTimeConverter().convertFromIntToText(train.getStartTime()));
+            timeTextField.setText(train.getTrainDiagram().getTimeConverter().convertIntToText(train.getStartTime()));
             setTitle(String.format(ResourceLoader.getString("copy.train.title"), train.getName()));
         }
         pack();
@@ -146,7 +146,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // create copy of the train
-        int time = train.getTrainDiagram().getTimeConverter().convertFromTextToInt(timeTextField.getText());
+        int time = train.getTrainDiagram().getTimeConverter().convertTextToInt(timeTextField.getText());
         if (time == -1)
             // select midnight if the time is not correct
             time = 0;

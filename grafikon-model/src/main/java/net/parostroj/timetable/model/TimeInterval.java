@@ -163,7 +163,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     @Override
     public String toString() {
     	TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
-        return String.format("%s(%s,%s)", getOwner(), converter.convertFromIntToText(getStart()), converter.convertFromIntToText(getEnd()));
+        return String.format("%s(%s,%s)", getOwner(), converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()));
     }
 
     /**
