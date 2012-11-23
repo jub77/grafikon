@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class GTEventOutputVisitor implements EventVisitor {
 
-    private static final String TIME_FORMAT = "%02d:%s";
     private static final Logger LOG = LoggerFactory.getLogger(GTEventOutputVisitor.class.getName());
 
     private Appendable str;
@@ -96,8 +95,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getInterval() != null) {
                     str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
                     str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(c.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
-                    str.append("-").append(c.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
+                    str.append("    Time:  ").append(c.convertIntToText(event.getInterval().getStart()));
+                    str.append("-").append(c.convertIntToText(event.getInterval().getEnd()));
                     str.append('\n');
                 }
                 if (event.getTrack() != null)
@@ -127,8 +126,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getInterval() != null) {
                     str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
                     str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(c.formatIntToText(event.getInterval().getStart(), TIME_FORMAT));
-                    str.append("-").append(c.formatIntToText(event.getInterval().getEnd(), TIME_FORMAT));
+                    str.append("    Time:  ").append(c.convertIntToText(event.getInterval().getStart()));
+                    str.append("-").append(c.convertIntToText(event.getInterval().getEnd()));
                     str.append('\n');
                     str.append("    Direction: ").append(event.getInterval().getFrom().getAbbr());
                     str.append("-").append(event.getInterval().getTo().getAbbr());

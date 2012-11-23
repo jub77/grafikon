@@ -14,8 +14,6 @@ import net.parostroj.timetable.model.Train;
  */
 public class TrainTimetableWriter {
 
-    private static final String FORMAT = "%02d:%s";
-
     /**
      * writes train timetable.
      *
@@ -33,12 +31,12 @@ public class TrainTimetableWriter {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", node.getName());
                 if (time.isFirst() || !time.isStop()) {
-                    str.append("      ").append(c.formatIntToText(time.getEnd(), FORMAT)).append("\n");
+                    str.append("      ").append(c.convertIntToText(time.getEnd())).append("\n");
                 } else if (time.isLast()) {
-                    str.append(c.formatIntToText(time.getStart(), FORMAT)).append("\n");
+                    str.append(c.convertIntToText(time.getStart())).append("\n");
                 } else if (time.isStop()) {
-                    str.append(c.formatIntToText(time.getStart(), FORMAT)).append(" ");
-                    str.append(c.formatIntToText(time.getEnd(), FORMAT)).append("\n");
+                    str.append(c.convertIntToText(time.getStart())).append(" ");
+                    str.append(c.convertIntToText(time.getEnd())).append("\n");
                 } else {
                     str.append('\n');
                 }

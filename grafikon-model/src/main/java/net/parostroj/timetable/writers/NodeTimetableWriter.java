@@ -12,8 +12,6 @@ import net.parostroj.timetable.model.*;
  */
 public class NodeTimetableWriter {
 
-    private static final String FORMAT = "%02d:%s";
-
     /**
      * writes node timetable.
      *
@@ -38,9 +36,9 @@ public class NodeTimetableWriter {
         for (TimeInterval item : list) {
             Formatter f = new Formatter(str);
             f.format("%1$-20s", item.getTrain().getCompleteName());
-            str.append(c.formatIntToText(item.getStart(), FORMAT));
+            str.append(c.convertIntToText(item.getStart()));
             str.append(" ");
-            str.append(c.formatIntToText(item.getEnd(), FORMAT));
+            str.append(c.convertIntToText(item.getEnd()));
             str.append(" [track: ");
             str.append(item.getTrack().toString()).append("]\n");
             f.close();

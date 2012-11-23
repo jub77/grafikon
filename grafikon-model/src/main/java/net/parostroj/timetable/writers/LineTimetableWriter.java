@@ -11,8 +11,6 @@ import net.parostroj.timetable.model.*;
  */
 public class LineTimetableWriter {
 
-    private static final String FORMAT = "%02d:%s";
-
     /**
      * writes line timetable.
      *
@@ -36,8 +34,8 @@ public class LineTimetableWriter {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
-                str.append(c.formatIntToText(interval.getStart(), FORMAT));
-                str.append(" ").append(c.formatIntToText(interval.getEnd(), FORMAT));
+                str.append(c.convertIntToTextFull(interval.getStart()));
+                str.append(" ").append(c.convertIntToTextFull(interval.getEnd()));
                 str.append(" [direction: ").append(interval.getTo().getAbbr()).append("]");
                 str.append('\n');
                 f.close();
