@@ -96,7 +96,7 @@ public class ExecuteScriptAction extends AbstractAction {
                     LOG.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
                 }
             } catch (GrafikonException ex) {
-                LOG.error("Error executing script.", ex);
+        		LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 ActionUtils.showError(message, parent);
             }

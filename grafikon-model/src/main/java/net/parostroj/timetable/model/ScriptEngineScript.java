@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public final class ScriptEngineScript extends Script {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScriptEngineScript.class);
-    
+
     private CompiledScript script;
 
     protected ScriptEngineScript(String sourceCode, Language language, boolean initialize) throws GrafikonException {
@@ -23,7 +23,7 @@ public final class ScriptEngineScript extends Script {
         if (initialize)
             initialize();
     }
-    
+
     private void initialize() throws GrafikonException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(this.getLanguage() == Language.GROOVY ? "groovy" : "javascript");
@@ -52,10 +52,10 @@ public final class ScriptEngineScript extends Script {
                 initialize();
             return script.eval(new SimpleBindings(binding));
         } catch (ScriptException e) {
-            throw new GrafikonException("Couldn't evaluate script.", e, GrafikonException.Type.SCRIPT);
+            throw new GrafikonException("Couldn't evaluate script: " + e.getMessage(), e, GrafikonException.Type.SCRIPT);
         }
     }
-    
+
     @Override
     public void freeResources() {
         script = null;
