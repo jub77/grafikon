@@ -13,6 +13,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * Table model for train.
@@ -200,7 +201,11 @@ class TrainTableModel extends AbstractTableModel {
                         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     } else {
                         interval = train.getTimeIntervalList().get(rowIndex);
-                        int newStop = time - interval.getStart();
+                        int start = TimeUtil.normalizeTime(interval.getStart());
+                        time = TimeUtil.normalizeTime(time);
+                        if (time < start)
+                        	time += TimeInterval.DAY;
+                        int newStop = time - start;
                         if (newStop >= 0) {
                             train.changeStopTime(interval, newStop);
                             this.fireTableRowsUpdated(rowIndex, lastRow);
