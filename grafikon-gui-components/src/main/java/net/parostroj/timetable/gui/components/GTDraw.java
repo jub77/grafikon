@@ -257,11 +257,13 @@ abstract public class GTDraw {
                 boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
 
                 Interval normalized = interval.getInterval().normalize();
-                g.setColor(this.getIntervalColor(interval));
-                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd()))
+                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
+                    g.setColor(this.getIntervalColor(interval));
                     this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
+                }
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
                 if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+                    g.setColor(this.getIntervalColor(interval));
                     this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
                 }
             }
