@@ -23,6 +23,7 @@
         <slf4j.version>1.6.0</slf4j.version>
         <rsyntaxtextarea.version>1.4.1</rsyntaxtextarea.version>
         <jxlayer.version>3.0.4</jxlayer.version>
+        <jodatime.version>2.1</jodatime.version>
         <grafikon.jnlp.version>${grafikon.version}</grafikon.jnlp.version>
     </properties>
 
