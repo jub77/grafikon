@@ -7,6 +7,8 @@
     table.index tr {height: 4mm;}
     table.index tr td {width: 21mm; text-align: center;}
 
+    td sup {font-size: 2mm; font-weight: normal;}
+
     td.column-1 {border-color: black; border-style: solid; border-width: 0mm 0.2mm 0mm 0mm;}
     td.column-2 {border-color: black; border-style: solid; border-width: 0mm 0.7mm 0mm 0mm;}
     td.column-1-delim {border-color: black; border-style: solid; border-width: 0.2mm 0.2mm 0.4mm 0mm;}
@@ -32,6 +34,8 @@
     table.wl tr {height: 4mm;}
     table.wl tr td {border-width: 0; margin: 0; padding: 0; font-size: 3mm;}
 
+    table tr td {vertical-align: text-bottom; }
+
     table.tt tr td.tc-d3-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2a { width: 6mm; border-right-width: 0.2mm; }
@@ -55,9 +59,9 @@
     table.tt tr td.tc-m-1 {font-size: 3.5mm; }
     table.tt tr td.tc-m-2 { text-align: center; font-size: 3.5mm; }
     table.tt tr td.tc-m-2a { text-align: center; font-size: 3.5mm; }
-    table.tt tr td.tc-m-3 { text-align: center; font-size: 3.5mm; font-weight: bold;}
+    table.tt tr td.tc-m-3 { text-align: right; font-size: 3.5mm; font-weight: bold;}
     table.tt tr td.tc-m-4 { text-align: right; font-size: 4mm; font-weight: bold;}
-    table.tt tr td.tc-m-5 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-5 { text-align: right; font-size: 3.5mm; }
     table.tt tr td.tc-m-6 { text-align: right; font-size: 4mm; font-weight: bold;}
     table.tt tr td.tc-m-7 { text-align: center; font-size: 3.5mm; font-weight: bold;}
     table.tt tr td.tc-m-8 { font-size: 3mm; padding-left: 1mm;}
@@ -589,15 +593,17 @@
     lastSpeed = row.speed
     lastTo = row.departure
   }
-  def totalHours = ((int)(stopDur.total + runDur.total)).intdiv(60)
-  def totalMinutes = ((int)(stopDur.total + runDur.total)) % 60
+  def timeTotal = stopDur.total + runDur.total
+  def totalHours = ((int) timeTotal).intdiv(60)
+  def totalMinutes = timeTotal - totalHours * 60
+  def totalMinutesStr = Duration.show(totalMinutes)
 %>
   <tr class="fline">
     <td colspan="${colspan / 2 - 2}" class="totalt">${total_train_time} &nbsp;. . . &nbsp;</td>
-    <td class="totali emph">${runDur.total}</td>
+    <td class="totalt emph">${runDur.showTotal()}</td>
     <td class="totali">+</td>
-    <td class="totali">${stopDur.total}</td>
-    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutes : ""} ${totalMinutes != 0 ? minutes : ""}</td>
+    <td class="totalt">${stopDur.showTotal()}</td>
+    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""} ${totalMinutes != 0 ? minutes : ""}</td>
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
@@ -625,6 +631,12 @@
 
         if (show)
           hour = parsed[0]
+
+        if (parsed.size > 2) {
+          result += "<sup>${parsed[2]}</sup>"
+        } else {
+          result += "&nbsp;"
+        }
         out = show ? result : "&nbsp;"
       }
     }
@@ -654,13 +666,40 @@
         t += 24 * 60
       def dur = t - f
       total += dur
-      return dur != 0 ? dur : "&nbsp;"
+      return Duration.show(dur)
+    }
+
+    def showTotal() {
+      return Duration.show(total)
+    }
+
+    def static show(dur) {
+      // convert to html
+      if (dur == null)
+        return "&nbsp;"
+      else {
+        def res = Duration.convertToMinPart(dur)
+        def str = res[0].toString() + (res.size == 1 ?  "&nbsp;" : "<sup>" + res[1].toString() + "</sup>")
+        return str
+      }
     }
 
     def static parse(time) {
       def parsed = Time.parse(time)
       return parsed != null ? parsed[0].toInteger() * 60 + parsed[1].toInteger() +
         (parsed.size > 2 ? (parsed[2].toInteger() / 10) : 0): 0
+    }
+
+    def static convertToMinPart(minutes) {
+      def min = (int) minutes
+      def part = minutes - min
+      while ((part - (int) part) != 0) {
+        part = part * 10;
+      }
+      if (part == 0)
+        return [min]
+      else
+        return [min,(int)part]
     }
   }
 
