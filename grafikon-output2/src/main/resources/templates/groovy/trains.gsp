@@ -589,8 +589,8 @@
     lastSpeed = row.speed
     lastTo = row.departure
   }
-  def totalHours = (stopDur.total + runDur.total).intdiv(60)
-  def totalMinutes = (stopDur.total + runDur.total) % 60
+  def totalHours = ((int)(stopDur.total + runDur.total)).intdiv(60)
+  def totalMinutes = ((int)(stopDur.total + runDur.total)) % 60
 %>
   <tr class="fline">
     <td colspan="${colspan / 2 - 2}" class="totalt">${total_train_time} &nbsp;. . . &nbsp;</td>
@@ -632,8 +632,13 @@
     def static parse(str) {
       if (str == null)
         return null
-      else
-        return str.split(":")
+      else {
+        def split = str.split(":")
+        def split2 = split[1].split(',')
+        def result = [split[0]]
+        result.addAll(split2)
+        return result
+      }
     }
   }
 
@@ -654,7 +659,8 @@
 
     def static parse(time) {
       def parsed = Time.parse(time)
-      return parsed != null ? parsed[0].toInteger() * 60 + parsed[1].toInteger() : 0
+      return parsed != null ? parsed[0].toInteger() * 60 + parsed[1].toInteger() +
+        (parsed.size > 2 ? (parsed[2].toInteger() / 10) : 0): 0
     }
   }
 
