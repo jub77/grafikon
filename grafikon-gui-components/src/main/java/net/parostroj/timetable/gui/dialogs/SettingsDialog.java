@@ -134,7 +134,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     private void setTimeRange(Integer from, Integer to) {
         fromTimeTextField.setText(diagram.getTimeConverter().convertIntToText(from != null ? from : 0));
-        toTimeTextField.setText(diagram.getTimeConverter().convertIntToTextNN(to != null ? to : TimeInterval.DAY));
+        toTimeTextField.setText(diagram.getTimeConverter().convertIntToTextNNFull(to != null ? to : TimeInterval.DAY));
     }
 
     private Tuple<Integer> getTimeRange() {
