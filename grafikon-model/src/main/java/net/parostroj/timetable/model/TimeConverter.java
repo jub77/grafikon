@@ -81,7 +81,7 @@ public class TimeConverter {
      * @param time time
      * @return adjusted time
      */
-    private int round(int time) {
+    public int round(int time) {
     	if (rounding == Rounding.MINUTE) {
     		return (time + 30) / 60 * 60;
     	} else {
