@@ -52,8 +52,8 @@ public class EngineCyclesExtractor {
     	TimeConverter c = current.getTrain().getTrainDiagram().getTimeConverter();
         EngineCycleRow row = new EngineCycleRow();
         row.setTrainName(current.getTrain().getName());
-        row.setFromTime(c.convertIntToText(current.getStartTime()));
-        row.setToTime(c.convertIntToText(current.getEndTime()));
+        row.setFromTime(c.convertIntToXml(current.getStartTime()));
+        row.setToTime(c.convertIntToXml(current.getEndTime()));
         row.setFromAbbr(current.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(current.getToInterval().getOwnerAsNode().getAbbr());
         // set wait time - in real seconds (not the model ones)
