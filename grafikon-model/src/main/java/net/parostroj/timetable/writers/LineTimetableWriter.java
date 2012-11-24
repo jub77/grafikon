@@ -34,8 +34,8 @@ public class LineTimetableWriter {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
-                str.append(c.convertIntToTextFull(interval.getStart()));
-                str.append(" ").append(c.convertIntToTextFull(interval.getEnd()));
+                str.append(c.convertIntToTextFull(interval.getStart(), true));
+                str.append(" ").append(c.convertIntToTextFull(interval.getEnd(), true));
                 str.append(" [direction: ").append(interval.getTo().getAbbr()).append("]");
                 str.append('\n');
                 f.close();

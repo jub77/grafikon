@@ -33,8 +33,8 @@ public class NodeTimetableByTracksWriter {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
-                str.append(c.convertIntToText(interval.getStart()));
-                str.append(" ").append(c.convertIntToText(interval.getEnd())).append("\n");
+                str.append(c.convertIntToText(interval.getStart(), true));
+                str.append(" ").append(c.convertIntToText(interval.getEnd(), true)).append("\n");
                 f.close();
             }
         }
