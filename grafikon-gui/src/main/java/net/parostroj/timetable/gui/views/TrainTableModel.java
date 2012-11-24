@@ -95,12 +95,12 @@ class TrainTableModel extends AbstractTableModel {
             // arrival
             case START:
                 if (!interval.isFirst())
-                    retValue = converter.convertIntToText(interval.getStart());
+                    retValue = converter.convertIntToText(interval.getStart(), true);
                 break;
             // departure
             case END:
                 if (!interval.isLast())
-                    retValue = converter.convertIntToText(interval.getEnd());
+                    retValue = converter.convertIntToText(interval.getEnd(), true);
                 break;
             // stop time
             case STOP:

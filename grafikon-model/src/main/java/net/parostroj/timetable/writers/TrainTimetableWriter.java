@@ -31,12 +31,12 @@ public class TrainTimetableWriter {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", node.getName());
                 if (time.isFirst() || !time.isStop()) {
-                    str.append("      ").append(c.convertIntToText(time.getEnd())).append("\n");
+                    str.append("      ").append(c.convertIntToText(time.getEnd(), true)).append("\n");
                 } else if (time.isLast()) {
-                    str.append(c.convertIntToText(time.getStart())).append("\n");
+                    str.append(c.convertIntToText(time.getStart(), true)).append("\n");
                 } else if (time.isStop()) {
-                    str.append(c.convertIntToText(time.getStart())).append(" ");
-                    str.append(c.convertIntToText(time.getEnd())).append("\n");
+                    str.append(c.convertIntToText(time.getStart(), true)).append(" ");
+                    str.append(c.convertIntToText(time.getEnd(), true)).append("\n");
                 } else {
                     str.append('\n');
                 }

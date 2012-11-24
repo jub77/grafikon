@@ -40,6 +40,9 @@ public class TimeConverter {
 		}
 	}
 
+	private static final DateTimeFormatter PRINT = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter();
+	private static final DateTimeFormatter PRINT_FULL = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2).toFormatter();
+
 	private final DateTimeFormatter parse;
 	private final DateTimeFormatter print;
 	private final DateTimeFormatter printFull;
@@ -109,7 +112,18 @@ public class TimeConverter {
      * @return textual representation
      */
     public String convertIntToText(int time) {
-    	return this.getLocalTime(time).toString(print);
+    	return this.convertIntToText(time, false);
+    }
+
+    /**
+     * converts from seconds to textual representation.
+     *
+     * @param time time in seconds
+     * @param fixedWidth if two spaces should be added if there is no fraction of minute
+     * @return textual representation
+     */
+    public String convertIntToText(int time, boolean fixedWidth) {
+    	return this.convertIntToTextImpl(time, fixedWidth, PRINT, print);
     }
 
     /**
@@ -119,7 +133,28 @@ public class TimeConverter {
      * @return textual representation
      */
     public String convertIntToTextFull(int time) {
-    	return this.getLocalTime(time).toString(printFull);
+    	return this.convertIntToTextFull(time, false);
+    }
+
+    /**
+     * converts from seconds to textual representation (hours always two digits).
+     *
+     * @param time time in seconds
+     * @param fixedWidth if two spaces should be added if there is no fraction of minute
+     * @return textual representation
+     */
+    public String convertIntToTextFull(int time, boolean fixedWidth) {
+    	return this.convertIntToTextImpl(time, fixedWidth, PRINT_FULL, printFull);
+    }
+
+    private String convertIntToTextImpl(int time, boolean fixed, DateTimeFormatter shortFormat, DateTimeFormatter longFormat) {
+    	LocalTime localTime = this.getLocalTime(time);
+    	String timeStr = null;
+    	if (localTime.getSecondOfMinute() == 0 && !fixed) {
+    		timeStr = localTime.toString(shortFormat);
+    	} else
+    		timeStr = localTime.toString(longFormat);
+    	return timeStr;
     }
 
     /**

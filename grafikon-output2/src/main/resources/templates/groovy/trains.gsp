@@ -7,7 +7,7 @@
     table.index tr {height: 4mm;}
     table.index tr td {width: 21mm; text-align: center;}
 
-    td sup {font-size: 2mm; font-weight: normal;}
+    td sup {font-size: 2mm; font-weight: normal; vertical-align: text-top;}
 
     td.column-1 {border-color: black; border-style: solid; border-width: 0mm 0.2mm 0mm 0mm;}
     td.column-2 {border-color: black; border-style: solid; border-width: 0mm 0.7mm 0mm 0mm;}
@@ -570,9 +570,9 @@
     <td class="tc-d3-2 tc-m-2">${desc}</td>
     <td class="tc-d3-2a tc-m-2a">${showTrack ? row.track : "&nbsp;"}</td>
     <td class="tc-d3-3 tc-m-3">${runDur.show(lastTo, row.arrival)}</td>
-    <td class="tc-d3-4 tc-m-4">${fromT.out}&nbsp;</td>
+    <td class="tc-d3-4 tc-m-4">${fromT.out}</td>
     <td class="tc-d3-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
-    <td class="tc-d3-6 tc-m-6">${toT.out}&nbsp;</td>
+    <td class="tc-d3-6 tc-m-6">${toT.out}</td>
     <td class="tc-d3-7 tc-m-7">${speed}</td>
     <td class="tc-d3-8 tc-m-8">${lineClassStr}</td>
     <td class="tc-d3-9 tc-m-9">${tTrains}</td>
@@ -582,9 +582,9 @@
     <td class="tc-1 tc-m-1">${stationName}</td>
     <td class="tc-2 tc-m-2">${desc}</td>
     <td class="tc-3 tc-m-3">${runDur.show(lastTo, row.arrival)}</td>
-    <td class="tc-4 tc-m-4">${fromT.out}&nbsp;</td>
+    <td class="tc-4 tc-m-4">${fromT.out}</td>
     <td class="tc-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
-    <td class="tc-6 tc-m-6">${toT.out}&nbsp;</td>
+    <td class="tc-6 tc-m-6">${toT.out}</td>
     <td class="tc-7 tc-m-7">${speed}</td>
     <td class="tc-8 tc-m-8">${lineClassStr}</td>
   </tr><%
@@ -594,7 +594,7 @@
     lastTo = row.departure
   }
   def timeTotal = stopDur.total + runDur.total
-  def totalHours = ((int) timeTotal).intdiv(60)
+  def totalHours = (int) (timeTotal / 60)
   def totalMinutes = timeTotal - totalHours * 60
   def totalMinutesStr = Duration.show(totalMinutes)
 %>
@@ -603,7 +603,7 @@
     <td class="totalt emph">${runDur.showTotal()}</td>
     <td class="totali">+</td>
     <td class="totalt">${stopDur.showTotal()}</td>
-    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""} ${totalMinutes != 0 ? minutes : ""}</td>
+    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? minutes : ""}</td>
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
@@ -617,6 +617,8 @@
   class Time {
     def hour
     def out = "&nbsp;"
+    static org.joda.time.format.DateTimeFormatter FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    static org.joda.time.format.DateTimeFormatter PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(' ').appendMinuteOfHour(2).toFormatter();
 
     def compute(timeStr, forceShowHour, show) {
       def parsed = parse(timeStr)
@@ -624,16 +626,17 @@
         out = "&nbsp;"
       else {
         def result
-        if (parsed[0] != hour || forceShowHour)
-          result = "${parsed[0]} ${parsed[1]}"
+        if (parsed.hourOfDay != hour || forceShowHour)
+          result = PRINT_FORMATTER.print(parsed)
         else
-          result = parsed[1]
+          result = parsed.minuteOfHour
 
         if (show)
-          hour = parsed[0]
+          hour = parsed.hourOfDay
 
-        if (parsed.size > 2) {
-          result += "<sup>${parsed[2]}</sup>"
+        if (parsed.secondOfMinute != 0) {
+          def part = (int) parsed.secondOfMinute / 60 * 10
+          result += "<sup>${part}</sup>"
         } else {
           result += "&nbsp;"
         }
@@ -645,11 +648,7 @@
       if (str == null)
         return null
       else {
-        def split = str.split(":")
-        def split2 = split[1].split(',')
-        def result = [split[0]]
-        result.addAll(split2)
-        return result
+        return FORMATTER.parseLocalTime(str)
       }
     }
   }
@@ -660,11 +659,14 @@
     def show(from,to) {
       if (from == null || to ==null)
         return "&nbsp;"
-      def f = Duration.parse(from)
-      def t = Duration.parse(to)
-      if (t < f)
-        t += 24 * 60
-      def dur = t - f
+      def f = Time.parse(from)
+      def t = Time.parse(to)
+      def period = new org.joda.time.Period(f,t);
+      if (t < f) {
+        period = period.plusDays(1).normalizedStandard();
+      }
+      double dur = period.toStandardMinutes().minutes
+      dur += period.seconds / 60
       total += dur
       return Duration.show(dur)
     }
@@ -678,28 +680,11 @@
       if (dur == null)
         return "&nbsp;"
       else {
-        def res = Duration.convertToMinPart(dur)
-        def str = res[0].toString() + (res.size == 1 ?  "&nbsp;" : "<sup>" + res[1].toString() + "</sup>")
+        def minutes = (int) dur
+        def seconds = (int) (dur - minutes) * 10
+        def str = minutes + (seconds == 0 ?  "&nbsp;" : "<sup>${seconds}</sup>")
         return str
       }
-    }
-
-    def static parse(time) {
-      def parsed = Time.parse(time)
-      return parsed != null ? parsed[0].toInteger() * 60 + parsed[1].toInteger() +
-        (parsed.size > 2 ? (parsed[2].toInteger() / 10) : 0): 0
-    }
-
-    def static convertToMinPart(minutes) {
-      def min = (int) minutes
-      def part = minutes - min
-      while ((part - (int) part) != 0) {
-        part = part * 10;
-      }
-      if (part == 0)
-        return [min]
-      else
-        return [min,(int)part]
     }
   }
 
