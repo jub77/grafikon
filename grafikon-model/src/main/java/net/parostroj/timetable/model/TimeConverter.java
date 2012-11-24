@@ -4,11 +4,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 
+import net.parostroj.timetable.utils.TimeUtil;
+
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
-
-import net.parostroj.timetable.utils.TimeUtil;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Utility class for converting time from text to int and backwards.
@@ -42,6 +43,7 @@ public class TimeConverter {
 	private final DateTimeFormatter parse;
 	private final DateTimeFormatter print;
 	private final DateTimeFormatter printFull;
+	private final DateTimeFormatter printXml;
 	private final DecimalFormat duration;
 
 	private final Rounding rounding;
@@ -66,6 +68,7 @@ public class TimeConverter {
 		this.print = builder.toFormatter();
 		this.printFull = builderFull.toFormatter();
 		this.duration = new DecimalFormat("###.#");
+		this.printXml = ISODateTimeFormat.hourMinuteSecond();
 	}
 
 	/**
@@ -117,6 +120,16 @@ public class TimeConverter {
      */
     public String convertIntToTextFull(int time) {
     	return this.getLocalTime(time).toString(printFull);
+    }
+
+    /**
+     * converts to format for xml.
+     *
+     * @param time time in seconds
+     * @return text
+     */
+    public String convertIntToXml(int time) {
+    	return printXml.print(this.getLocalTime(time));
     }
 
     /**
