@@ -107,7 +107,8 @@ public class GTVButtonPanel extends JPanel {
         comboBox = new JComboBox();
         comboBox.setModel(comboBoxModel);
         comboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 if (comboBox.getSelectedIndex() != -1) {
                     view.setRoute(comboBoxModel.getSelectedObject());
                 }
@@ -134,7 +135,8 @@ public class GTVButtonPanel extends JPanel {
 
         buttonPlus = new JButton("+");
         buttonPlus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 GTViewSettings settings = view.getSettings();
                 int size = settings.get(GTViewSettings.Key.VIEW_SIZE, Integer.class);
                 if (size <= 10) {
@@ -148,7 +150,8 @@ public class GTVButtonPanel extends JPanel {
 
         buttonMinus = new JButton("-");
         buttonMinus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 GTViewSettings settings = view.getSettings();
                 int size = settings.get(GTViewSettings.Key.VIEW_SIZE, Integer.class);
                 size--;

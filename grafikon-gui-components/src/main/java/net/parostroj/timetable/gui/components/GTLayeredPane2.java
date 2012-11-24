@@ -23,7 +23,9 @@ public class GTLayeredPane2 extends JLayeredPane {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-        Insets borderInsets = scrollPane.getBorder().getBorderInsets(scrollPane);
+        Insets borderInsets = scrollPane.getBorder() != null ?
+        		scrollPane.getBorder().getBorderInsets(scrollPane) :
+        			new Insets(0, 0, 0, 0);
 
         this.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
         this.add(new GTStationNamesOverlay(view, borderInsets.top), new Integer(400));
