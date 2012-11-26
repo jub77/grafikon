@@ -280,6 +280,16 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     }
 
     /**
+     * sets interval.
+     *
+     * @param start start
+     * @param end end
+     */
+    public void setInterval(int start, int end) {
+    	this.interval = IntervalFactory.createInterval(start, end);
+    }
+
+    /**
      * @return owner of this time interval
      */
     public RouteSegment getOwner() {
