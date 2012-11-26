@@ -199,7 +199,7 @@ class TrainTableModel extends AbstractTableModel {
         			int newTime = TimeUtil.normalizeTime(time);
         			int newStartTime = TimeUtil.normalizeTime(train.getStartTime() + (newTime - oldTime));
         			train.move(newStartTime);
-        			this.fireTableRowsUpdated(0, train.getTimeIntervalList().size() - 1);
+        			this.fireTableRowsUpdated(0, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
         		}
         		break;
