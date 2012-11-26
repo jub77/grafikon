@@ -662,7 +662,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
      * implementation of recalculating train intervals.
      */
     private void recalculateImpl(Integer newSpeed, int from) {
-        int nextStart = this.getStartTime();
+        int nextStart = timeIntervalList.get(from).getStart();
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
         	interval.move(nextStart);
