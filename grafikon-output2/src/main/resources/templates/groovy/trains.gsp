@@ -112,17 +112,19 @@
     td.publish {height: 5mm; font-size: 3mm; text-align: center;}
 
     table.list2 {font-size: 4mm; width: 120mm; padding-left: 5mm;}
+    table.list2 tr td {vertical-align: text-bottom;}
     tr.listh {height: 5mm; font-size: 3mm;}
     td.ctrainh {width: 25mm; text-align: center;}
     td.cdepartureh {width: 15mm; text-align: center;}
     td.cfromtoh {width: 22mm; text-align: center;}
     td.cnoteh {width: 53mm; padding-left: 5mm;}
     td.ctrain {vertical-align: bottom;}
-    td.cdeparture {vertical-align: bottom; text-align: center; font-weight: bold;}
-    td.cfromto {vertical-align: bottom; text-align: center;}
+    td.cdeparture {vertical-align: bottom; text-align: right; font-weight: bold; padding-right: 3mm;}
+    td.cfromto {vertical-align: bottom; text-align: left; padding-left: 1mm;}
     td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
     td.move {vertical-align: bottom;}
     tr.listabbr {font-size: 3.25mm;}
+    span.no {visibility:hidden;}
   </style>
 </head>
 <%
@@ -138,6 +140,20 @@
   TIMETABLE_COMMENT = 4
 
   PAGE_LENGTH = 185
+
+  separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+  END = "${separator}0"
+  FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+  PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+  def convertTime(time) {
+    def parsed = FORMATTER.parseLocalTime(time)
+    def result = PRINT_FORMATTER.print(parsed)
+    if (result.endsWith(END)) {
+      result = result.replace(',0', '<span class="no">,0</span>')
+    }
+    return result
+  }
 %>
 <body>
 <%
@@ -801,7 +817,7 @@
         %>
   <tr>
     <td class="ctrain">${item.trainName}</td>
-    <td class="cdeparture">${item.fromTime}</td>
+    <td class="cdeparture">${convertTime(item.fromTime)}</td>
     <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
     <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
   </tr><%   lastNode = item.to
