@@ -27,7 +27,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public enum TrainTableColumn {
     NODE("train.table.node", 50, 300, 120, "w", String.class, false, null),
-    START("train.table.starttime", 50, 70, 50, "wc", String.class, true, null),
+    START("train.table.starttime", 50, 70, 50, "fc", String.class, true, null),
     END("train.table.endtime", 50, 70, 50, "loc", String.class, true, null),
     STOP("train.table.stop", 50, 50, 50, "flo", String.class, true, null),
     REAL_STOP("train.table.real.stop", 50, 50, 50, "w", Double.class, false, null),

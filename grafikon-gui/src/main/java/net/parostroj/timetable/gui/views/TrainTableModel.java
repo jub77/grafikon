@@ -191,9 +191,21 @@ class TrainTableModel extends AbstractTableModel {
         TimeInterval interval = null;
         TrainTableColumn column = TrainTableColumn.getColumn(columnIndex);
         switch (column) {
+        	case START:
+        		time = converter.convertTextToInt((String) aValue);
+        		if (time != -1) {
+        			interval = train.getTimeIntervalList().get(rowIndex);
+        			int oldTime = TimeUtil.normalizeTime(interval.getStart());
+        			int newTime = TimeUtil.normalizeTime(time);
+        			int newStartTime = TimeUtil.normalizeTime(train.getStartTime() + (newTime - oldTime));
+        			train.move(newStartTime);
+        			this.fireTableRowsUpdated(0, train.getTimeIntervalList().size() - 1);
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+        		}
+        		break;
             case END:
                 // departure
-                time = converter.convertTextToInt((String)aValue);
+                time = converter.convertTextToInt((String) aValue);
                 if (time != -1) {
                     if (rowIndex == 0) {
                         train.move(time);
