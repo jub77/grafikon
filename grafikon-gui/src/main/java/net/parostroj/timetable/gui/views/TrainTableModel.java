@@ -220,7 +220,7 @@ class TrainTableModel extends AbstractTableModel {
                         int newStop = time - start;
                         if (newStop >= 0) {
                             train.changeStopTime(interval, newStop);
-                            this.fireTableRowsUpdated(rowIndex, lastRow);
+                            this.fireTableRowsUpdated(rowIndex - 1, lastRow);
                             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                         }
                     }
@@ -237,7 +237,7 @@ class TrainTableModel extends AbstractTableModel {
                 if (time >= 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
                     train.changeStopTime(interval, time);
-                    this.fireTableRowsUpdated(rowIndex, lastRow);
+                    this.fireTableRowsUpdated(rowIndex - 1, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
@@ -247,7 +247,7 @@ class TrainTableModel extends AbstractTableModel {
                 if (velocity > 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
                     train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
-                    this.fireTableRowsUpdated(rowIndex, lastRow);
+                    this.fireTableRowsUpdated(rowIndex - 2 >= 0 ? rowIndex - 2 : 0, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
