@@ -530,7 +530,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         systemLanguageRadioButtonMenuItem.setSelected(true);
         systemLanguageRadioButtonMenuItem.setText(ResourceLoader.getString("menu.language.system")); // NOI18N
         systemLanguageRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 languageRadioButtonMenuItemActionPerformed(evt);
             }
         });
@@ -545,7 +546,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         systemLAFRadioButtonMenuItem.setText(ResourceLoader.getString("menu.lookandfeel.system")); // NOI18N
         systemLAFRadioButtonMenuItem.setActionCommand("system");
         systemLAFRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lafRadioButtonMenuItemActionPerformed(evt);
             }
         });
@@ -565,7 +567,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         settingsMenuItem.setText(ResourceLoader.getString("menu.file.settings")); // NOI18N
         settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 settingsMenuItemActionPerformed(evt);
             }
         });
@@ -573,7 +576,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         editRoutesMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
         editRoutesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editRoutesMenuItemActionPerformed(evt);
             }
         });
@@ -581,7 +585,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         imagesMenuItem.setText(ResourceLoader.getString("menu.file.images")); // NOI18N
         imagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 imagesMenuItemActionPerformed(evt);
             }
         });
@@ -589,7 +594,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         textItemsMenuItem.setText(ResourceLoader.getString("menu.file.textitems")); // NOI18N
         textItemsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textItemsMenuItemActionPerformed(evt);
             }
         });
@@ -597,7 +603,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         infoMenuItem.setText(ResourceLoader.getString("menu.file.info")); // NOI18N
         infoMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 infoMenuItemActionPerformed(evt);
             }
         });
@@ -605,7 +612,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         trainTypesMenuItem.setText(ResourceLoader.getString("menu.file.traintypes")); // NOI18N
         trainTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trainTypesMenuItemActionPerformed(evt);
             }
         });
@@ -613,7 +621,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         lineClassesMenuItem.setText(ResourceLoader.getString("menu.file.lineclasses")); // NOI18N
         lineClassesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lineClassesMenuItemActionPerformed(evt);
             }
         });
@@ -621,7 +630,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
         weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 weightTablesMenuItemActionPerformed(evt);
             }
         });
@@ -629,7 +639,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         penaltyTableMenuItem.setText(ResourceLoader.getString("menu.file.penaltytable")); // NOI18N
         penaltyTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 penaltyTableMenuItemActionPerformed(evt);
             }
         });
@@ -637,7 +648,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
         groupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 groupsMenuItemActionPerformed(e);
             }
         });
@@ -745,7 +757,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         oSystemLRadioButtonMenuItem.setSelected(true);
         oSystemLRadioButtonMenuItem.setText(ResourceLoader.getString("menu.language.program")); // NOI18N
         oSystemLRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputLanguageRadioButtonMenuItemActionPerformed(evt);
             }
         });
@@ -760,7 +773,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         htmlRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.html")); // NOI18N
         htmlRadioButtonMenuItem.setActionCommand("html");
         htmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -770,7 +784,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         htmlSelectRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.htmlselect")); // NOI18N
         htmlSelectRadioButtonMenuItem.setActionCommand("html.select");
         htmlSelectRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -780,7 +795,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         xmlRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.xml")); // NOI18N
         xmlRadioButtonMenuItem.setActionCommand("xml");
         xmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -791,7 +807,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         genTitlePageTTCheckBoxMenuItem.setSelected(true);
         genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
         genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
             }
         });
@@ -799,7 +816,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
         twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 twoSidedPrintCheckBoxMenuItemActionPerformed(e);
             }
         });
@@ -808,7 +826,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         ouputTemplatesMenuItem.setText(ResourceLoader.getString("menu.action.user.output.templates")); // NOI18N
         ouputTemplatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ouputTemplatesMenuItemActionPerformed(evt);
             }
         });
@@ -847,7 +866,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         columnsMenuItem.setText(ResourceLoader.getString("menu.settings.columns")); // NOI18N
         columnsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 columnsMenuItemActionPerformed(evt);
             }
         });
@@ -855,7 +875,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         sortColumnsMenuItem.setText(ResourceLoader.getString("menu.settings.sort.columns")); // NOI18N
         sortColumnsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sortColumnsMenuItemActionPerformed(evt);
             }
         });
@@ -863,7 +884,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         resizeColumnsMenuItem.setText(ResourceLoader.getString("menu.settings.resize.columns")); // NOI18N
         resizeColumnsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resizeColumnsMenuItemActionPerformed(evt);
             }
         });
@@ -872,7 +894,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         showGTViewMenuItem.setSelected(true);
         showGTViewMenuItem.setText(ResourceLoader.getString("menu.settings.show.gtview")); // NOI18N
         showGTViewMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showGTViewMenuItemActionPerformed(evt);
             }
         });
@@ -880,7 +903,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
         programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 programSettingsMenuItemActionPerformed(evt);
             }
         });
@@ -892,7 +916,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         aboutMenuItem.setText(ResourceLoader.getString("menu.help.about")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
             }
         });
@@ -917,6 +942,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 @Override
                 public void execute(Train train) throws Exception {
                     train.recalculate();
+                    // round correctly stops
+                    TimeConverter converter = train.getTrainDiagram().getTimeConverter();
+                    for (TimeInterval interval : train.getTimeIntervalList()) {
+                    	if (interval.isNodeOwner()) {
+                    		train.changeStopTime(interval, converter.round(interval.getLength()));
+                    	}
+                    }
                 }
             }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
             ActionHandler.getInstance().execute(action);
