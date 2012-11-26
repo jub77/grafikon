@@ -19,7 +19,7 @@ import org.joda.time.format.ISODateTimeFormat;
 public class TimeConverter {
 
 	public static enum Rounding {
-		MINUTE("minute"), HALF_MINUTE("half.minute");
+		MINUTE("minute"), HALF_MINUTE("half.minute"), TENTH_OF_MINUTE("tenth.of.minute");
 
 		private final String key;
 
@@ -64,7 +64,7 @@ public class TimeConverter {
 		this.parse = parseBuilder.toFormatter();
 		DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2);
 		DateTimeFormatterBuilder builderFull = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2);
-		if (rounding == Rounding.HALF_MINUTE) {
+		if (rounding != Rounding.MINUTE) {
 			builder.appendLiteral(separator).appendFractionOfMinute(1, 1);
 			builderFull.appendLiteral(separator).appendFractionOfMinute(1, 1);
 		}
@@ -88,11 +88,25 @@ public class TimeConverter {
      * @return adjusted time
      */
     public int round(int time) {
-    	if (rounding == Rounding.MINUTE) {
-    		return (time + 30) / 60 * 60;
-    	} else {
-    		return (time + 15) / 30 * 30;
+    	return roundImpl(time, rounding);
+    }
+
+    /**
+     * implementation of rounding with optional parameter.
+     */
+    private int roundImpl(int time, Rounding r) {
+    	switch (r) {
+    		case MINUTE:
+    			time = (time + 30) / 60 * 60;
+    			break;
+    		case HALF_MINUTE:
+    			time = (time + 15) / 30 * 30;
+    			break;
+    		case TENTH_OF_MINUTE:
+    			time = (time + 3) / 6 * 6;
+    			break;
     	}
+    	return time;
     }
 
     /**
@@ -190,7 +204,7 @@ public class TimeConverter {
     	if (rounding == Rounding.MINUTE)
     		return false;
     	else {
-    		time = round(time);
+    		time = roundImpl(time, Rounding.HALF_MINUTE);
     		return ((time % 3600) / 30) % 2 == 1;
     	}
     }
