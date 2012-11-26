@@ -100,7 +100,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param end end time to be set
      */
     public void setEnd(int end) {
-        this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+    	if (end != interval.getEnd()) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+    	}
     }
 
     /**
@@ -114,7 +116,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param start start time to be set
      */
     public void setStart(int start) {
-        this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+    	if (start != interval.getStart()) {
+    		this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+    	}
     }
 
     /**
@@ -250,15 +254,19 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param timeShift shift time
      */
     public void shift(int timeShift) {
-        this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
+    	if (timeShift != 0) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
+    	}
     }
 
     /**
      * moves interval to specified starting time.
      */
     public void move(int aStart) {
-        int length = this.getLength();
-        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+    	if (aStart != this.interval.getStart()) {
+	        int length = this.getLength();
+	        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+    	}
     }
 
     /**
@@ -276,7 +284,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param length new length of the interval
      */
     public void setLength(int length) {
-        this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+    	if (length != this.getLength()) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+    	}
     }
 
     /**
@@ -286,7 +296,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param end end
      */
     public void setInterval(int start, int end) {
-    	this.interval = IntervalFactory.createInterval(start, end);
+    	if (start != interval.getStart() || end != interval.getEnd()) {
+    		this.interval = IntervalFactory.createInterval(start, end);
+    	}
     }
 
     /**
