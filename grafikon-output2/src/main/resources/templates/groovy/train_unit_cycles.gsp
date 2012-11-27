@@ -15,15 +15,32 @@
     td.headerw1 {width: 20mm;}
     td.headerw2 {width: 93mm;}
     td.ctrain {width: 20mm; text-align: center; vertical-align: top;}
-    td.cdeparture {width: 13mm; text-align: center; vertical-align: top; font-weight:bold;}
+    td.cdepartureh {width: 12mm; text-align: center; vertical-align: top; font-weight:bold; padding-right: 1mm;}
+    td.cdeparture {text-align: right; vertical-align: top; font-weight:bold;}
     td.cfromto {width: 17mm; text-align: center; vertical-align: top;}
     td.cnote {width: 85mm; text-align: center; vertical-align: top; font-weight:bold;}
     tr.listheader {height: 6mm; font-weight:bold ;font-size: 3mm; height: 5mm;}
     table.list {font-family: arial, sans-serif; font-size: 3mm;  width: 135mm; border-color: black; border-style: solid; border-width: 0.2mm;}
     tr.listitem {}
     td.listwrap {padding: 1mm 1mm 1mm 1mm; vertical-align: top;}
+    span.no {visibility: hidden;}
   </style>
 </head>
+<%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace(',0', '<span class="no">,0</span>')
+        }
+        return result
+    }
+%>
 <body>
 <%
   boolean pageBreak = true;
@@ -54,13 +71,13 @@
       <table align="center" class="list"  cellspacing=0>
         <tr class="listheader">
           <td class="ctrain">${column_train}</td>
-          <td class="cdeparture">${column_departure}</td>
+          <td class="cdepartureh">${column_departure}</td>
           <td class="cfromto">${column_from_to}</td>
           <td class="cnote">${column_note}</td>
         </tr><% for (row in c.rows) { %>
         <tr class="listitem">
           <td class="ctrain">${row.trainName}</td>
-          <td class="cdeparture">${row.fromTime}</td>
+          <td class="cdeparture">${convertTime(row.fromTime)}</td>
           <td class="cfromto">${row.fromAbbr} - ${row.toAbbr}</td>
           <td>${createComment(row)}</td>
         </tr><% } %>
