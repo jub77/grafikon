@@ -88,13 +88,13 @@ public class TimeConverter {
      * @return adjusted time
      */
     public int round(int time) {
-    	return roundImpl(time, rounding);
+    	return round(time, rounding);
     }
 
     /**
      * implementation of rounding with optional parameter.
      */
-    private int roundImpl(int time, Rounding r) {
+    public static int round(int time, Rounding r) {
     	switch (r) {
     		case MINUTE:
     			time = (time + 30) / 60 * 60;
@@ -204,7 +204,7 @@ public class TimeConverter {
     	if (rounding == Rounding.MINUTE)
     		return false;
     	else {
-    		time = roundImpl(time, Rounding.HALF_MINUTE);
+    		time = round(time, Rounding.HALF_MINUTE);
     		return ((time % 3600) / 30) % 2 == 1;
     	}
     }
