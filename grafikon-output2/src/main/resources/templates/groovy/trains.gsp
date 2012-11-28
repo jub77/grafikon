@@ -7,7 +7,8 @@
     table.index tr {height: 4mm;}
     table.index tr td {width: 21mm; text-align: center;}
 
-    td sup {font-size: 2mm; font-weight: normal; vertical-align: text-top;}
+    td span.s1 {font-size: 1.85mm; font-weight: normal; position: relative; top: -1.1mm;}
+    td span.s2 {font-size: 2mm; font-weight: normal; position: relative; top: -1.4mm;}
 
     td.column-1 {border-color: black; border-style: solid; border-width: 0mm 0.2mm 0mm 0mm;}
     td.column-2 {border-color: black; border-style: solid; border-width: 0mm 0.7mm 0mm 0mm;}
@@ -652,7 +653,7 @@
 
         if (parsed.secondOfMinute != 0) {
           def part = (int) parsed.secondOfMinute / 60 * 10
-          result += "<sup>${part}</sup>"
+          result += "<span class=\"s2\">${part}</span>"
         } else {
           result += "&nbsp;"
         }
@@ -698,7 +699,7 @@
       else {
         def minutes = (int) dur
         def seconds = (int) (dur - minutes) * 10
-        def str = minutes + (seconds == 0 ?  "&nbsp;" : "<sup>${seconds}</sup>")
+        def str = minutes + (seconds == 0 ?  "&nbsp;" : "<span class=\"s1\">${seconds}</span>")
         return str
       }
     }
