@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import net.parostroj.timetable.actions.NodeSort;
-import net.parostroj.timetable.actions.NodeSort.Type;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Node;
@@ -127,7 +126,7 @@ public class CreateRouteDialog extends JDialog {
     }
 
     private void setValues(TrainDiagram diagram, List<? extends RouteSegment> route) {
-        NodeSort sort = new NodeSort(Type.ASC);
+        NodeSort sort = new NodeSort(NodeSort.Type.ASC);
         availableNodes = sort.sort(diagram.getNet().getNodes());
         fromComboBox.removeAllItems();
         toComboBox.removeAllItems();
