@@ -1,7 +1,12 @@
 package net.parostroj.timetable.gui;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
@@ -11,13 +16,14 @@ import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.utils.Reference;
 
 /**
  * Application model.
  *
  * @author jub
  */
-public class ApplicationModel implements StorableGuiData {
+public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram> {
 
     private static final int LAST_OPENED_COUNT = 5;
 
@@ -301,4 +307,14 @@ public class ApplicationModel implements StorableGuiData {
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, file));
         }
     }
+
+	@Override
+	public TrainDiagram get() {
+		return getDiagram();
+	}
+
+	@Override
+	public void set(TrainDiagram object) {
+		setDiagram(object);
+	}
 }

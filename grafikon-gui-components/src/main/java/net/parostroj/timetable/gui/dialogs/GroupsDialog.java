@@ -1,15 +1,24 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.actions.GroupRemoval;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -18,8 +27,6 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
 
 /**
  * Dialog for editing groups.
@@ -36,8 +43,8 @@ public class GroupsDialog extends JDialog {
     private TrainDiagram diagram;
     private final WrapperListModel<Group> groupsModel;
 
-    public GroupsDialog(Frame parent, boolean modal) {
-        super(parent, modal);
+    public GroupsDialog(Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
 
         JPanel controlPanel = new JPanel();
         getContentPane().add(controlPanel, BorderLayout.EAST);
@@ -50,7 +57,8 @@ public class GroupsDialog extends JDialog {
 
         groupNameTextField = new JTextField();
         groupNameTextField.addCaretListener(new CaretListener() {
-            public void caretUpdate(CaretEvent e) {
+            @Override
+			public void caretUpdate(CaretEvent e) {
                 updateButtons();
             }
         });
@@ -59,7 +67,8 @@ public class GroupsDialog extends JDialog {
 
         newButton = new JButton(ResourceLoader.getString("button.new"));
         newButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 createGroup();
             }
         });
@@ -67,7 +76,8 @@ public class GroupsDialog extends JDialog {
 
         deleteButton = new JButton(ResourceLoader.getString("button.delete"));
         deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 deleteGroup();
             }
         });
@@ -80,7 +90,8 @@ public class GroupsDialog extends JDialog {
 
         JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
         okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 ok();
             }
         });
@@ -97,7 +108,8 @@ public class GroupsDialog extends JDialog {
 
         list = new JList();
         list.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
+            @Override
+			public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     updateButtons();
                 }

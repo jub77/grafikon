@@ -646,13 +646,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         diagramMenu.add(penaltyTableMenuItem);
 
+        groupsMenuItem.setAction(new EditGroupsAction(model));
         groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
-        groupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(ActionEvent e) {
-                groupsMenuItemActionPerformed(e);
-            }
-        });
         diagramMenu.add(groupsMenuItem);
 
         menuBar.add(diagramMenu);
@@ -967,13 +962,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             ActionHandler.getInstance().execute(action);
         }
     }//GEN-LAST:event_settingsMenuItemActionPerformed
-
-    private void groupsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        GroupsDialog dialog = new GroupsDialog(this, true);
-        dialog.setLocationRelativeTo(this);
-        dialog.showDialog(model.getDiagram());
-        dialog.dispose();
-    }
 
     private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imagesMenuItemActionPerformed
         imagesDialog.setLocationRelativeTo(this);
