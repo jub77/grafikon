@@ -23,6 +23,7 @@ import net.parostroj.timetable.filters.EmptyFilter;
 import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.actions.EditGroupsAction;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
@@ -110,13 +111,15 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         treePopupMenu.add(listMenu);
         moveToGroupMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.move.to.group"));
         moveToGroupMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 moveToGroup();
             }
         });
         changeRouteMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.change.route"));
         changeRouteMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 changeRoute();
             }
         });
@@ -135,7 +138,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         listTypesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
         listTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -143,7 +147,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         listFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
         listFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -151,7 +156,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         listGroupsMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups")); // NOI18N
         listGroupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -159,7 +165,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         listGroupsFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups.flat")); // NOI18N
         listGroupsFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -220,12 +227,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         menuButton.addMouseListener(menuAdapter);
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
         createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
             }
         });
@@ -300,6 +309,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     public void setModel(ApplicationModel model) {
         this.model = model;
+        javax.swing.JMenuItem groupsMenuItem = new javax.swing.JMenuItem();
+        groupsMenuItem.setAction(new EditGroupsAction(model));
+        groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
+        treePopupMenu.add(groupsMenuItem);
         this.model.getMediator().addColleague(new ApplicationGTEventColleague(true) {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
