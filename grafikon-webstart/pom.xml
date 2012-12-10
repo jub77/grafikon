@@ -4,11 +4,10 @@
     <parent>
         <groupId>net.parostroj</groupId>
         <artifactId>grafikon</artifactId>
-        <version>1</version>
+        <version>0.13</version>
     </parent>
     <groupId>net.parostroj</groupId>
     <artifactId>grafikon-webstart</artifactId>
-    <version>${grafikon.version}</version>
     <packaging>pom</packaging>
     <name>grafikon-webstart</name>
 
@@ -24,16 +23,18 @@
         <rsyntaxtextarea.version>1.4.1</rsyntaxtextarea.version>
         <jxlayer.version>3.0.4</jxlayer.version>
         <jodatime.version>2.1</jodatime.version>
-        <grafikon.jnlp.version>${grafikon.version}</grafikon.jnlp.version>
+        <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
     </properties>
 
     <build>
-        <finalName>grafikon-${grafikon.version}</finalName>
+        <finalName>grafikon-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <descriptors>
                         <descriptor>src/main/assembly/webstart.xml</descriptor>
                     </descriptors>
@@ -51,6 +52,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>1.2</version>
                 <executions>
                     <execution>
                         <id>sign</id>
@@ -66,7 +68,11 @@
                     <storepass>grafikon</storepass>
                     <processMainArtifact>false</processMainArtifact>
                     <processAttachedArtifacts>true</processAttachedArtifacts>
-                    <archiveDirectory>${project.build.directory}/${project.build.finalName}-webstart.dir</archiveDirectory>
+                    <archiveDirectory>${project.build.directory}/${project.build.finalName}-webstart</archiveDirectory>
+                    <arguments>
+                        <argument>-digestalg</argument><argument>SHA1</argument>
+                        <argument>-sigalg</argument><argument>SHA1withDSA</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
@@ -75,7 +81,7 @@
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-start</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
