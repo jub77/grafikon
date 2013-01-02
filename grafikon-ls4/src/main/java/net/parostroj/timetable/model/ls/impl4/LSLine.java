@@ -112,14 +112,15 @@ public class LSLine {
         Line line = diagram.createLine(id, length, fromNode, toNode, speed);
         line.setAttributes(attributes.createAttributes(diagram));
         // tracks
-        for (LSLineTrack lsLineTrack : getTracks()) {
-            LineTrack lineTrack = lsLineTrack.createLineTrack();
-            NodeTrack fromStraight = fromNode.findTrackById(lsLineTrack.getFromStraightTrack());
-            NodeTrack toStraight = toNode.findTrackById(lsLineTrack.getToStraightTrack());
-            lineTrack.setFromStraightTrack(fromStraight);
-            lineTrack.setToStraightTrack(toStraight);
-            line.addTrack(lineTrack);
-        }
+        if (this.tracks != null)
+            for (LSLineTrack lsLineTrack : this.tracks) {
+                LineTrack lineTrack = lsLineTrack.createLineTrack();
+                NodeTrack fromStraight = fromNode.findTrackById(lsLineTrack.getFromStraightTrack());
+                NodeTrack toStraight = toNode.findTrackById(lsLineTrack.getToStraightTrack());
+                lineTrack.setFromStraightTrack(fromStraight);
+                lineTrack.setToStraightTrack(toStraight);
+                line.addTrack(lineTrack);
+            }
         return line;
     }
 }

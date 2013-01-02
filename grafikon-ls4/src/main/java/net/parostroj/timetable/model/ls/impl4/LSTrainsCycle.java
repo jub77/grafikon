@@ -93,9 +93,10 @@ public class LSTrainsCycle {
     public TrainsCycle createTrainsCycle(TrainDiagram diagram) throws LSException {
         TrainsCycle cycle = new TrainsCycle(id, name, description, diagram.getCyclesType(type));
         cycle.setAttributes(attributes.createAttributes(diagram));
-        for (LSTrainsCycleItem item : items) {
-            cycle.addItem(item.createTrainsCycleItem(cycle, diagram));
-        }
+        if (this.items != null)
+            for (LSTrainsCycleItem item : this.items) {
+                cycle.addItem(item.createTrainsCycleItem(cycle, diagram));
+            }
         return cycle;
     }
 }

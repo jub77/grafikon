@@ -63,9 +63,10 @@ public class LSEngineClass {
     
     public EngineClass createEngineClass(Net net) {
         EngineClass ec = new EngineClass(id, name);
-        for (LSWeightTableRow lsRow : rows) {
-            ec.addWeightTableRow(lsRow.createWeightTableRow(net, ec));
-        }
+        if (this.rows != null)
+            for (LSWeightTableRow lsRow : this.rows) {
+                ec.addWeightTableRow(lsRow.createWeightTableRow(net, ec));
+            }
         return ec;
     }
 }

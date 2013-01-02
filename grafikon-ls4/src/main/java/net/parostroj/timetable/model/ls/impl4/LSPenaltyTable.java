@@ -52,8 +52,8 @@ public class LSPenaltyTable {
 
     public PenaltyTable createPenaltyTable() {
         PenaltyTable table = new PenaltyTable(id);
-        if (getCategories() != null)
-            for (LSTrainTypeCategory lsCategory : getCategories()) {
+        if (this.categories != null)
+            for (LSTrainTypeCategory lsCategory : this.categories) {
                 TrainTypeCategory category = lsCategory.createTrainTypeCategory();
                 table.addTrainTypeCategory(category);
                 if (lsCategory.getRows() != null)

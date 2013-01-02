@@ -119,9 +119,10 @@ public class LSNode {
         node.setPositionX(x);
         node.setPositionY(y);
         // tracks
-        for (LSNodeTrack track : getTracks()) {
-            node.addTrack(track.createNodeTrack());
-        }
+        if (this.tracks != null)
+            for (LSNodeTrack track : this.tracks) {
+                node.addTrack(track.createNodeTrack());
+            }
         return node;
     }
 }

@@ -51,9 +51,9 @@ public class LSSortPattern {
     public SortPattern createSortPattern() {
         SortPattern sPattern = new SortPattern(pattern);
         // no rules, no pattern
-        if (getRules() == null)
+        if (this.rules == null)
             return null;
-        for (LSSortPatternGroup g : getRules()) {
+        for (LSSortPatternGroup g : this.rules) {
             sPattern.getGroups().add(new SortPatternGroup(g.getGroup(), SortPatternGroup.Type.fromId(g.getType())));
         }
         return sPattern;

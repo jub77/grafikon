@@ -83,21 +83,22 @@ public class LSRoute {
         route.setNetPart(netPart);
         // create segments
         boolean node = true;
-        for (String segment : getSegments()) {
-            RouteSegment routeSegment = null;
-            if (node) {
-                routeSegment = net.getNodeById(segment);
-            } else {
-                routeSegment = net.getLineById(segment);
+        if (this.segments != null)
+            for (String segment : this.segments) {
+                RouteSegment routeSegment = null;
+                if (node) {
+                    routeSegment = net.getNodeById(segment);
+                } else {
+                    routeSegment = net.getLineById(segment);
+                }
+                if (routeSegment == null) {
+                    String message = String.format("Segment with id:%s not found. Cannot create route with id:%s.", segment, id);
+                    LOG.warn(message);
+                    throw new LSException(message);
+                }
+                route.getSegments().add(routeSegment);
+                node = !node;
             }
-            if (routeSegment == null) {
-                String message = String.format("Segment with id:%s not found. Cannot create route with id:%s.", segment, id);
-                LOG.warn(message);
-                throw new LSException(message);
-            }
-            route.getSegments().add(routeSegment);
-            node = !node;
-        }
         return route;
     }
 }

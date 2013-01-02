@@ -162,19 +162,20 @@ public class LSTrain {
         train.setTopSpeed(topSpeed);
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
-        for (Object routePart : getRoute()) {
-            if (routePart instanceof LSTrainRoutePartNode) {
-                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
-                Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
-                NodeTrack nodeTrack = node.findTrackById(nodePart.getTrackId());
-                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes());
-            } else {
-                LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
-                Line line = diagram.getNet().getLineById(linePart.getLineId());
-                LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
-                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAttributes().createAttributes());
+        if (this.route != null)
+            for (Object routePart : this.route) {
+                if (routePart instanceof LSTrainRoutePartNode) {
+                    LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
+                    Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
+                    NodeTrack nodeTrack = node.findTrackById(nodePart.getTrackId());
+                    builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes());
+                } else {
+                    LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
+                    Line line = diagram.getNet().getLineById(linePart.getLineId());
+                    LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
+                    builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAttributes().createAttributes());
+                }
             }
-        }
         builder.finish();
         // set technological time
         train.setTimeBefore(this.timeBefore);
