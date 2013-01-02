@@ -16,7 +16,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Train implements AttributesHolder, ObjectWithId, Visitable {
+public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, Visitable {
 
     /** No top speed constant. */
     public static final int NO_TOP_SPEED = Line.NO_SPEED;
@@ -32,27 +32,27 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /** Train type. */
     private TrainType type;
     /** List of time intervals. */
-    private TimeIntervalList timeIntervalList;
+    private final TimeIntervalList timeIntervalList;
     /** Top speed. */
     private int topSpeed = NO_TOP_SPEED;
     /** Cycles. */
-    private Map<String, List<TrainsCycleItem>> cycles;
+    private final Map<String, List<TrainsCycleItem>> cycles;
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
     private String _cachedName;
     private String _cachedCompleteName;
     private Map<String,Object> _cachedBinding;
-    private GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
+    private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
     private AttributesListener attributesListener;
     private boolean attached;
 
     /* Technological times. */
     private TimeInterval timeBefore;
     private TimeInterval timeAfter;
-    
+
     /* Cached map for train cycles. */
-    private TrainCachedCycles _cachedCycles;
+    private final TrainCachedCycles _cachedCycles;
 
     /**
      * Constructor.
@@ -190,7 +190,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
 
     @Override
     public String toString() {
-        return number + "(" + ((type != null) ? type.getDesc() : "<none>") + "," + topSpeed + ")";
+        return String.format("%s(%d)", getName(), topSpeed);
     }
 
     /**
@@ -279,20 +279,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     /**
      * @return attributes
      */
-    public Attributes getAttributes() {
+    @Override
+	public Attributes getAttributes() {
         return attributes;
     }
 
     /**
      * @param attributes attributes to be set
      */
-    public void setAttributes(Attributes attributes) {
+    @Override
+	public void setAttributes(Attributes attributes) {
         this.clearCachedData();
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainEvent(Train.this, change));
@@ -524,27 +526,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
     }
 
     /**
-     * shifts train with specified amount of time. The value can be
-     * positive for shifting forwards or negative for shifting backwards.
-     *
-     * @param timeShift time
-     */
-    public void shift(int timeShift) {
-        timeIntervalList.shift(timeShift);
-        this.updateTechnologicalTimes();
-        this.listenerSupport.fireEvent(new TrainEvent(this,
-                TimeIntervalListType.MOVED,
-                0, 0));
-    }
-
-    /**
      * moves train to the new starting time.
      *
      * @param time starting time
      */
     public void move(int time) {
-        timeIntervalList.move(time);
-        this.updateTechnologicalTimes();
+    	timeIntervalList.get(0).move(time);
+    	this.recalculateImpl(null, 0);
         this.listenerSupport.fireEvent(new TrainEvent(this,
                 TimeIntervalListType.MOVED,
                 0, 0));
@@ -562,40 +550,30 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         if (length < 0) {
             throw new IllegalArgumentException("Stop time cannot be negative.");
         }
-        if (length == nodeInterval.getLength())
+        int oldLength = nodeInterval.getLength();
+        if (length == oldLength)
             return;
         int index = timeIntervalList.indexOf(nodeInterval);
         if (index == -1 || index == 0 || index == (timeIntervalList.size() - 1)
                 || !nodeInterval.isNodeOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
-        int changeIndex = index;
-        int oldLength = nodeInterval.getLength();
+        int changedIndex = index;
 
         // change stop time
         nodeInterval.setLength(length);
 
-        TimeInterval lineInterval = null;
-        // compute running time of line before
-        lineInterval = timeIntervalList.get(index - 1);
-        if ((length == 0 && oldLength != 0) || (length != 0 && oldLength ==0)) {
-            timeIntervalList.updateLineInterval(lineInterval, index - 1);
-            // move node interval
-            nodeInterval.move(lineInterval.getEnd());
-            changeIndex = index - 1;
+        // compute running time of line before if stop changed
+		if (length == 0  || oldLength == 0) {
+            changedIndex = index - 1;
         }
-        // update node interval
-        timeIntervalList.updateNodeInterval(nodeInterval, index);
-        // compute running time of line after
-        lineInterval = timeIntervalList.get(index + 1);
-        lineInterval.move(nodeInterval.getEnd());
-        timeIntervalList.updateLineInterval(lineInterval, index + 1);
-        // move rest
-        timeIntervalList.moveFrom(index + 2, lineInterval.getEnd());
-        this.updateTechnologicalTimeAfter();
-        this.listenerSupport.fireEvent(new TrainEvent(this,
+
+		// recalculate intervals
+		this.recalculateImpl(null, changedIndex);
+
+		this.listenerSupport.fireEvent(new TrainEvent(this,
                 TimeIntervalListType.STOP_TIME,
-                index, changeIndex));
+                index, changedIndex));
     }
 
     /**
@@ -603,48 +581,27 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      *
      * @param lineInterval line interval
      * @param speed velocity to be set
-     * @param modelInfo model info
+     * @param addedTime added time
      */
-    public void changeSpeed(TimeInterval lineInterval, int speed) {
+    public void changeSpeedAndAddedTime(TimeInterval lineInterval, int speed, int addedTime) {
         int index = timeIntervalList.indexOf(lineInterval);
         if (index == -1 || !lineInterval.isLineOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
         int computedSpeed = lineInterval.getOwnerAsLine().computeSpeed(this, lineInterval, speed);
         lineInterval.setSpeed(computedSpeed);
+        lineInterval.setAddedTime(addedTime);
 
         int changedIndex = index;
 
         // line interval before (if there is not stop ...)
         if (index - 2 >= 0 && timeIntervalList.get(index - 1).getLength() == 0) {
-            TimeInterval lti = timeIntervalList.get(index - 2);
-            timeIntervalList.updateLineInterval(lti, index - 2);
-            TimeInterval nti = timeIntervalList.get(index - 1);
-            nti.move(lti.getEnd());
-            timeIntervalList.updateNodeInterval(nti, index - 1);
-            lineInterval.move(nti.getEnd());
             changedIndex = index - 2;
         }
 
-        // change line interval
-        timeIntervalList.updateLineInterval(lineInterval, index);
+        // recalculate intervals
+		this.recalculateImpl(null, changedIndex);
 
-        // change intervals after (if there is no stop ...)
-        if (index + 2 < timeIntervalList.size() && timeIntervalList.get(index + 1).getLength() == 0) {
-            TimeInterval nti = timeIntervalList.get(index + 1);
-            nti.move(lineInterval.getEnd());
-            timeIntervalList.updateNodeInterval(nti, index + 1);
-            TimeInterval lti = timeIntervalList.get(index + 2);
-            lti.move(nti.getEnd());
-            timeIntervalList.updateLineInterval(lti, index + 2);
-            // move rest
-            timeIntervalList.moveFrom(index + 3, lti.getEnd());
-        } else {
-            // move rest
-            timeIntervalList.moveFrom(index + 1, lineInterval.getEnd());
-        }
-
-        this.updateTechnologicalTimeAfter();
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.SPEED, index, changedIndex));
     }
 
@@ -687,7 +644,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * recalculates all line intervals.
      */
     public void recalculate() {
-        this.recalculateImpl(null);
+        this.recalculateImpl(null, 0);
+        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
     }
 
     /**
@@ -696,30 +654,29 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
      * @param newSpeed speed to be set to all line intervals
      */
     public void recalculate(int newSpeed) {
-        this.recalculateImpl(newSpeed);
+        this.recalculateImpl(newSpeed, 0);
+        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
     }
 
-    private void recalculateImpl(Integer newSpeed) {
-        int nextStart = this.getStartTime();
-        int i = 0;
-        for (TimeInterval interval : timeIntervalList) {
-            interval.move(nextStart);
+    /**
+     * implementation of recalculating train intervals.
+     */
+    private void recalculateImpl(Integer newSpeed, int from) {
+        int nextStart = timeIntervalList.get(from).getStart();
+        for (int i = from; i < timeIntervalList.size(); i++) {
+            TimeInterval interval = timeIntervalList.get(i);
+        	interval.move(nextStart);
             if (interval.isLineOwner()) {
                 Line line = (Line) interval.getOwner();
                 // compute speed
                 int speed = line.computeSpeed(this, interval, newSpeed == null ? interval.getSpeed() : newSpeed);
                 interval.setSpeed(speed);
-
-                timeIntervalList.updateLineInterval(interval, i);
-            } else {
-                timeIntervalList.updateNodeInterval(interval, i);
             }
+            timeIntervalList.updateInterval(interval, i);
 
             nextStart = interval.getEnd();
-            i++;
         }
         this.updateTechnologicalTimes();
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
     }
 
     /**
@@ -1046,7 +1003,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable {
         public Node get(int index) {
             return getAt(index);
         }
-        
+
         public Node getFirst() {
             return getFirstInterval().getOwnerAsNode();
         }

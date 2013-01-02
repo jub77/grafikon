@@ -2,6 +2,9 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -12,9 +15,11 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public abstract class Import {
 
-    private ImportMatch match;
-    private TrainDiagram diagram;
-    private TrainDiagram libraryDiagram;
+    private static final Logger LOG = LoggerFactory.getLogger(Import.class);
+
+    private final ImportMatch match;
+    private final TrainDiagram diagram;
+    private final TrainDiagram libraryDiagram;
 
     private List<ObjectWithId> errors;
     private Set<ObjectWithId> importedObjects;
@@ -25,6 +30,25 @@ public abstract class Import {
         this.libraryDiagram = libraryDiagram;
         this.errors = new LinkedList<ObjectWithId>();
         this.importedObjects = new HashSet<ObjectWithId>();
+    }
+
+    protected ObjectWithId getObjectWithId(ObjectWithId orig) {
+        if (orig instanceof TrainType)
+            return this.getTrainType((TrainType) orig);
+        else if (orig instanceof Train)
+            return this.getTrain((Train) orig);
+        else if (orig instanceof Node)
+            return this.getNode((Node) orig);
+        else if (orig instanceof LineClass)
+            return this.getLineClass((LineClass) orig);
+        else if (orig instanceof EngineClass)
+            return this.getEngineClass((EngineClass) orig);
+        else if (orig instanceof Group)
+            return this.getGroup((Group) orig);
+        else if (orig instanceof OutputTemplate)
+            return this.getOutputTemplate((OutputTemplate) orig);
+        else
+            return null;
     }
 
     protected TrainType getTrainType(TrainType origType) {
@@ -39,7 +63,19 @@ public abstract class Import {
         }
         return null;
     }
-    
+
+    protected Group getGroup(Group origGroup) {
+        if (match == ImportMatch.ID) {
+            return diagram.getGroupById(origGroup.getId());
+        } else {
+            for (Group g : diagram.getGroups()) {
+                if (g.getName().equals(origGroup.getName()))
+                    return g;
+            }
+        }
+        return null;
+    }
+
     protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
         if (match == ImportMatch.ID) {
             return diagram.getPenaltyTable().getTrainTypeCategoryById(origCategory.getId());
@@ -57,7 +93,9 @@ public abstract class Import {
             return diagram.getTrainById(origTrain.getId());
         } else {
             for (Train train : diagram.getTrains()) {
-                if (train.getNumber().equals(origTrain.getNumber())) {
+                // compare number and type
+                TrainType trainType = getTrainType(origTrain.getType());
+                if (train.getNumber().equals(origTrain.getNumber()) && train.getType().equals(trainType)) {
                     return train;
                 }
             }
@@ -114,7 +152,7 @@ public abstract class Import {
             return null;
         }
     }
-    
+
     protected OutputTemplate getOutputTemplate(OutputTemplate origTemplate) {
         if (match == ImportMatch.ID)
             return diagram.getOutputTemplateById(origTemplate.getId());
@@ -125,6 +163,23 @@ public abstract class Import {
             }
             return null;
         }
+    }
+
+    protected Attributes importAttributes(Attributes orig) {
+        Attributes dest = new Attributes();
+        // copy values
+        for (Map.Entry<String, Object> entry : orig.entrySet()) {
+            if (entry.getValue() instanceof ObjectWithId) {
+                ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
+                if (objectWithId == null)
+                    LOG.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId)entry.getValue()).getId(), entry.getValue().getClass());
+                else
+                    dest.set(entry.getKey(), objectWithId);
+            } else {
+                dest.set(entry.getKey(), entry.getValue());
+            }
+        }
+        return dest;
     }
 
     protected String getId(ObjectWithId oid) {
@@ -176,7 +231,7 @@ public abstract class Import {
 
     protected abstract ObjectWithId importObjectImpl(ObjectWithId o);
 
-    public static Import getInstance(ImportComponents components, TrainDiagram diagram,
+    public static Import getInstance(ImportComponent components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
             case NODES:

@@ -8,19 +8,27 @@ package net.parostroj.timetable.gui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
-import net.parostroj.timetable.actions.NodeSort;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
+import net.parostroj.timetable.gui.components.GroupSelect;
+import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
+import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.TimeConverter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,17 +38,17 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 public class CreateTrainView extends javax.swing.JPanel {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CreateTrainView.class.getName());
 
     private ApplicationModel model;
-    
-    private ThroughNodesDialog tnDialog;
-    
+
+    private final ThroughNodesDialog tnDialog;
+
     private List<Node> throughNodes;
-    
-    /** 
-     * Creates new form CreateTrainView 
+
+    /**
+     * Creates new form CreateTrainView
      */
     public CreateTrainView() {
         initComponents();
@@ -49,35 +57,37 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     public void setModel(ApplicationModel model) {
         this.model = model;
-        this.updateView();
     }
-    
-    private void updateView() {
+
+    public void updateView(Group selectedGroup) {
         DefaultComboBoxModel fromModel = new DefaultComboBoxModel();
         DefaultComboBoxModel toModel = new DefaultComboBoxModel();
-        
+
         Collection<Node> v = model.getDiagram().getNet().getNodes();
         NodeSort sort = new NodeSort(NodeSort.Type.ASC);
         List<Node> list = sort.sort(v);
-        
+
         for (Node node : list) {
             if (node.getType() != NodeType.SIGNAL) {
                 fromModel.addElement(node);
                 toModel.addElement(node);
             }
         }
-        
+
         fromComboBox.setModel(fromModel);
         toComboBox.setModel(toModel);
-        
+
         // model for train types
         typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
-        
+
         // reset through nodes
         throughNodes = new ArrayList<Node>();
         throughTextField.setText(throughNodes.toString());
+
+        // update groups
+        groupComboBox.updateGroups(model.getDiagram(), new GroupSelect(selectedGroup != null ? GroupSelect.Type.GROUP : GroupSelect.Type.NONE, selectedGroup));
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -91,8 +101,10 @@ public class CreateTrainView extends javax.swing.JPanel {
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         toComboBox = new javax.swing.JComboBox();
         speedTextField = new javax.swing.JTextField();
+        speedTextField.setColumns(10);
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         stopTextField = new javax.swing.JTextField();
+        stopTextField.setColumns(10);
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
@@ -102,6 +114,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         typeComboBox = new javax.swing.JComboBox();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         startTimeTextField = new javax.swing.JTextField();
+        startTimeTextField.setColumns(10);
         commentTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
         dieselCheckBox = new javax.swing.JCheckBox();
@@ -120,14 +133,16 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
@@ -152,108 +167,117 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         throughButton.setText(ResourceLoader.getString("create.train.throughbutton")); // NOI18N
         throughButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 throughButtonActionPerformed(evt);
             }
         });
 
         throughTextField.setEditable(false);
 
+        groupComboBox = new GroupsComboBox(false);
+
+        JLabel label = new JLabel(ResourceLoader.getString("create.train.group"));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE))
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fromComboBox, 0, 235, Short.MAX_VALUE)
-                            .addComponent(toComboBox, 0, 235, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(stopTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(speedTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(startTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-                            .addComponent(typeComboBox, 0, 235, Short.MAX_VALUE)
-                            .addComponent(commentTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(dieselCheckBox)
-                                .addGap(18, 18, 18)
-                                .addComponent(electricCheckBox))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(throughTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(throughButton)))))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(okButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(cancelButton)
+                            .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                .addComponent(jLabel8, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel6, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel5, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4, Alignment.TRAILING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel9)
+                                .addComponent(label, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                                .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel7)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(startTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(stopTextField, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(groupComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(dieselCheckBox)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(electricCheckBox))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(throughTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(throughButton))
+                                .addComponent(typeComboBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(toComboBox, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(fromComboBox, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(commentTextField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addContainerGap())))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dieselCheckBox)
-                    .addComponent(electricCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(commentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(toComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(throughButton)
-                    .addComponent(throughTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel7)
-                    .addComponent(startTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(stopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(dieselCheckBox)
+                        .addComponent(electricCheckBox)
+                        .addComponent(groupComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(commentTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(fromComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(toComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(throughButton)
+                        .addComponent(throughTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)
+                        .addComponent(startTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(stopTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton))
+                    .addContainerGap())
         );
+        this.setLayout(layout);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -268,25 +292,27 @@ public class CreateTrainView extends javax.swing.JPanel {
                         ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
                 JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
                         ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
                 JOptionPane.showMessageDialog(this.getParent(), "",
                         ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-    
+
             // get start time
-            int start = TimeConverter.convertFromTextToInt(startTimeTextField.getText());
+            int start = model.getDiagram().getTimeConverter().convertTextToInt(startTimeTextField.getText());
             if (start == -1)
                 // midnight if cannot be parsed
                 start = 0;
-    
+
+            Group group = groupComboBox.getGroupSelection().getGroup();
+
             // create command ...
             CreateTrainCommand createCommand = new CreateTrainCommand(
                     nameTextField.getText(),
@@ -299,7 +325,7 @@ public class CreateTrainView extends javax.swing.JPanel {
                     (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
                     commentTextField.getText(),
                     dieselCheckBox.isSelected(),
-                    electricCheckBox.isSelected(), true);
+                    electricCheckBox.isSelected(), true, group);
             // execute command
             model.applyCommand(createCommand);
             // hide dialog
@@ -324,11 +350,11 @@ public class CreateTrainView extends javax.swing.JPanel {
         throughNodes = tnDialog.getNodes();
         throughTextField.setText(throughNodes.toString());
     }//GEN-LAST:event_throughButtonActionPerformed
-    
+
     private void closeDialog() {
         this.getTopLevelAncestor().setVisible(false);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField commentTextField;
@@ -344,6 +370,5 @@ public class CreateTrainView extends javax.swing.JPanel {
     private javax.swing.JTextField throughTextField;
     private javax.swing.JComboBox toComboBox;
     private javax.swing.JComboBox typeComboBox;
-    // End of variables declaration//GEN-END:variables
-    
+    private GroupsComboBox groupComboBox;
 }

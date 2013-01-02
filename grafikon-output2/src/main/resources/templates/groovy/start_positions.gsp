@@ -27,10 +27,33 @@
             border-width: 0.3mm;
             padding: 0.5mm 4mm 0.5mm 1mm;
         }
+        span.no {
+            visibility: hidden;
+        }
+        table.list tr td.right {
+            text-align: right;
+            padding-right: 1mm;
+            padding-left: 4mm;
+        }
     </style>
 </head>
 <body>
 <div class="caption1">${title}</div>
+<%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace(',0', '<span class="no">,0</span>')
+        }
+        return result
+    }
+%>
 
 <div class="caption2">${title_engines}</div>
 <table class="list" border="0" cellspacing="0" cellpadding="0">
@@ -40,7 +63,7 @@
         <td>${engine.cycleDescription}</td>
         <td>${engine.stationName}</td>
         <td>${engine.track}</td>
-        <td>${engine.time}</td>
+        <td class="right">${convertTime(engine.time)}</td>
         <td>${engine.trainName}</td>
     </tr>
 <% } %>
@@ -54,7 +77,7 @@
         <td>${train_unit.cycleDescription}</td>
         <td>${train_unit.stationName}</td>
         <td>${train_unit.track}</td>
-        <td>${train_unit.time}</td>
+        <td class="right">${convertTime(train_unit.time)}</td>
         <td>${train_unit.trainName}</td>
     </tr>
 <% } %>

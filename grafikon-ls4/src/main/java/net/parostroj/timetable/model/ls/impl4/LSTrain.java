@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing trains.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "train")
@@ -152,30 +152,30 @@ public class LSTrain {
     public void setStart(int start) {
         this.start = start;
     }
-    
+
     public Train createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
         train.setType(diagram.getTrainTypeById(type));
-        train.setAttributes(attributes.createAttributes());
+        train.setAttributes(attributes.createAttributes(diagram));
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
         if (this.route != null)
-            for (Object routePart : this.route) {
-                if (routePart instanceof LSTrainRoutePartNode) {
-                    LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
-                    Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
-                    NodeTrack nodeTrack = node.findTrackById(nodePart.getTrackId());
-                    builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes());
-                } else {
-                    LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
-                    Line line = diagram.getNet().getLineById(linePart.getLineId());
-                    LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
-                    builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAttributes().createAttributes());
-                }
-            }
+	        for (Object routePart : this.route) {
+	            if (routePart instanceof LSTrainRoutePartNode) {
+	                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
+	                Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
+	                NodeTrack nodeTrack = node.findTrackById(nodePart.getTrackId());
+	                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram));
+	            } else {
+	                LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
+	                Line line = diagram.getNet().getLineById(linePart.getLineId());
+	                LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
+	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram));
+	            }
+	        }
         builder.finish();
         // set technological time
         train.setTimeBefore(this.timeBefore);

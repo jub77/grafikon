@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.MainFrame;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;

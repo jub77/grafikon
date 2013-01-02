@@ -19,7 +19,6 @@ import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.TimeConverter;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -61,7 +60,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
         typesComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmm");
         typesComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 typesComboBoxItemStateChanged(evt);
             }
         });
@@ -69,7 +69,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
         newNameTextField.setColumns(15);
         newNameTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+            @Override
+			public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 newNameTextFieldCaretUpdate(evt);
             }
         });
@@ -77,7 +78,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
         createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
             }
         });
@@ -85,7 +87,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
         deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
@@ -98,7 +101,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         String name = newNameTextField.getText();
         if (!delegate.getTrainDiagram().getCycleTypeNames().contains(name) && !TrainsCycleType.isDefaultType(name)) {
-            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name); 
+            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name);
             diagram.addCyclesType(type);
             Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>(type);
             typesComboBox.addItem(wrapper);
@@ -160,7 +163,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
                         if (result.length() != 0) {
                             result.append('\n');
                         }
-                        result.append(String.format(ResourceLoader.getString("ec.problem.time"), item.first.getTrain().getName(), TimeConverter.convertFromIntToText(item.first.getEndTime()), item.second.getTrain().getName(), TimeConverter.convertFromIntToText(item.second.getStartTime())));
+                        TimeConverter c = item.first.getTrain().getTrainDiagram().getTimeConverter();
+                        result.append(String.format(ResourceLoader.getString("ec.problem.time"), item.first.getTrain().getName(), c.convertIntToText(item.first.getEndTime()), item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
                     }
                 }
                 return result.toString();
@@ -190,8 +194,9 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             public String getType() {
                 return type;
             }
-            
-            public void handleEvent(Action action, TrainsCycle cycle, Train train) {
+
+            @Override
+			public void handleEvent(Action action, TrainsCycle cycle, Train train) {
                 if (action == Action.DIAGRAM_CHANGE) {
                     diagram = delegate.getTrainDiagram();
                     updateTypes();
@@ -211,7 +216,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             }
         });
     }
-    
+
     private void updateTypes() {
         typesComboBox.removeAllItems();
         if (diagram != null) {
@@ -225,7 +230,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         }
         deleteButton.setEnabled(type != null);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;

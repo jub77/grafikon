@@ -7,6 +7,9 @@
     table.index tr {height: 4mm;}
     table.index tr td {width: 21mm; text-align: center;}
 
+    td span.s1 {font-size: 1.85mm; font-weight: normal; position: relative; top: -1.1mm;}
+    td span.s2 {font-size: 2mm; font-weight: normal; position: relative; top: -1.4mm;}
+
     td.column-1 {border-color: black; border-style: solid; border-width: 0mm 0.2mm 0mm 0mm;}
     td.column-2 {border-color: black; border-style: solid; border-width: 0mm 0.7mm 0mm 0mm;}
     td.column-1-delim {border-color: black; border-style: solid; border-width: 0.2mm 0.2mm 0.4mm 0mm;}
@@ -32,6 +35,8 @@
     table.wl tr {height: 4mm;}
     table.wl tr td {border-width: 0; margin: 0; padding: 0; font-size: 3mm;}
 
+    table tr td {vertical-align: text-bottom; }
+
     table.tt tr td.tc-d3-1 { width: 39mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2 { width: 7mm; border-right-width: 0.2mm; }
     table.tt tr td.tc-d3-2a { width: 6mm; border-right-width: 0.2mm; }
@@ -55,9 +60,9 @@
     table.tt tr td.tc-m-1 {font-size: 3.5mm; }
     table.tt tr td.tc-m-2 { text-align: center; font-size: 3.5mm; }
     table.tt tr td.tc-m-2a { text-align: center; font-size: 3.5mm; }
-    table.tt tr td.tc-m-3 { text-align: center; font-size: 3.5mm; font-weight: bold;}
+    table.tt tr td.tc-m-3 { text-align: right; font-size: 3.5mm; font-weight: bold;}
     table.tt tr td.tc-m-4 { text-align: right; font-size: 4mm; font-weight: bold;}
-    table.tt tr td.tc-m-5 { text-align: center; font-size: 3.5mm; }
+    table.tt tr td.tc-m-5 { text-align: right; font-size: 3.5mm; }
     table.tt tr td.tc-m-6 { text-align: right; font-size: 4mm; font-weight: bold;}
     table.tt tr td.tc-m-7 { text-align: center; font-size: 3.5mm; font-weight: bold;}
     table.tt tr td.tc-m-8 { font-size: 3mm; padding-left: 1mm;}
@@ -108,16 +113,19 @@
     td.publish {height: 5mm; font-size: 3mm; text-align: center;}
 
     table.list2 {font-size: 4mm; width: 120mm; padding-left: 5mm;}
+    table.list2 tr td {vertical-align: text-bottom;}
     tr.listh {height: 5mm; font-size: 3mm;}
     td.ctrainh {width: 25mm; text-align: center;}
     td.cdepartureh {width: 15mm; text-align: center;}
     td.cfromtoh {width: 22mm; text-align: center;}
     td.cnoteh {width: 53mm; padding-left: 5mm;}
     td.ctrain {vertical-align: bottom;}
-    td.cdeparture {vertical-align: bottom; text-align: center; font-weight: bold;}
-    td.cfromto {vertical-align: bottom; text-align: center;}
+    td.cdeparture {vertical-align: bottom; text-align: right; font-weight: bold; padding-right: 3mm;}
+    td.cfromto {vertical-align: bottom; text-align: left; padding-left: 1mm;}
     td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
     td.move {vertical-align: bottom;}
+    tr.listabbr {font-size: 3.25mm;}
+    span.no {visibility:hidden;}
   </style>
 </head>
 <%
@@ -133,6 +141,20 @@
   TIMETABLE_COMMENT = 4
 
   PAGE_LENGTH = 185
+
+  separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+  END = "${separator}0"
+  FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+  PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+  def convertTime(time) {
+    def parsed = FORMATTER.parseLocalTime(time)
+    def result = PRINT_FORMATTER.print(parsed)
+    if (result.endsWith(END)) {
+      result = result.replace(',0', '<span class="no">,0</span>')
+    }
+    return result
+  }
 %>
 <body>
 <%
@@ -446,7 +468,7 @@
         def fwt = true
         if (train.weightData != null) {
         lastEngine = null
-        for (wr in train.weightData) { 
+        for (wr in train.weightData) {
           currentEngine = concat(wr.engines, ", ") %>
         <tr>
           <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
@@ -565,9 +587,9 @@
     <td class="tc-d3-2 tc-m-2">${desc}</td>
     <td class="tc-d3-2a tc-m-2a">${showTrack ? row.track : "&nbsp;"}</td>
     <td class="tc-d3-3 tc-m-3">${runDur.show(lastTo, row.arrival)}</td>
-    <td class="tc-d3-4 tc-m-4">${fromT.out}&nbsp;</td>
+    <td class="tc-d3-4 tc-m-4">${fromT.out}</td>
     <td class="tc-d3-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
-    <td class="tc-d3-6 tc-m-6">${toT.out}&nbsp;</td>
+    <td class="tc-d3-6 tc-m-6">${toT.out}</td>
     <td class="tc-d3-7 tc-m-7">${speed}</td>
     <td class="tc-d3-8 tc-m-8">${lineClassStr}</td>
     <td class="tc-d3-9 tc-m-9">${tTrains}</td>
@@ -577,9 +599,9 @@
     <td class="tc-1 tc-m-1">${stationName}</td>
     <td class="tc-2 tc-m-2">${desc}</td>
     <td class="tc-3 tc-m-3">${runDur.show(lastTo, row.arrival)}</td>
-    <td class="tc-4 tc-m-4">${fromT.out}&nbsp;</td>
+    <td class="tc-4 tc-m-4">${fromT.out}</td>
     <td class="tc-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
-    <td class="tc-6 tc-m-6">${toT.out}&nbsp;</td>
+    <td class="tc-6 tc-m-6">${toT.out}</td>
     <td class="tc-7 tc-m-7">${speed}</td>
     <td class="tc-8 tc-m-8">${lineClassStr}</td>
   </tr><%
@@ -588,15 +610,17 @@
     lastSpeed = row.speed
     lastTo = row.departure
   }
-  def totalHours = (stopDur.total + runDur.total).intdiv(60)
-  def totalMinutes = (stopDur.total + runDur.total) % 60
+  def timeTotal = stopDur.total + runDur.total
+  def totalHours = (int) (timeTotal / 60)
+  def totalMinutes = timeTotal - totalHours * 60
+  def totalMinutesStr = Duration.show(totalMinutes)
 %>
   <tr class="fline">
     <td colspan="${colspan / 2 - 2}" class="totalt">${total_train_time} &nbsp;. . . &nbsp;</td>
-    <td class="totali emph">${runDur.total}</td>
+    <td class="totalt emph">${runDur.showTotal()}</td>
     <td class="totali">+</td>
-    <td class="totali">${stopDur.total}</td>
-    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutes : ""} ${totalMinutes != 0 ? minutes : ""}</td>
+    <td class="totalt">${stopDur.showTotal()}</td>
+    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? minutes : ""}</td>
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
@@ -610,6 +634,8 @@
   class Time {
     def hour
     def out = "&nbsp;"
+    static org.joda.time.format.DateTimeFormatter FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    static org.joda.time.format.DateTimeFormatter PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(' ').appendMinuteOfHour(2).toFormatter();
 
     def compute(timeStr, forceShowHour, show) {
       def parsed = parse(timeStr)
@@ -617,13 +643,20 @@
         out = "&nbsp;"
       else {
         def result
-        if (parsed[0] != hour || forceShowHour)
-          result = "${parsed[0]} ${parsed[1]}"
+        if (parsed.hourOfDay != hour || forceShowHour)
+          result = PRINT_FORMATTER.print(parsed)
         else
-          result = parsed[1]
+          result = parsed.minuteOfHour
 
         if (show)
-          hour = parsed[0]
+          hour = parsed.hourOfDay
+
+        if (parsed.secondOfMinute != 0) {
+          def part = (int) parsed.secondOfMinute / 60 * 10
+          result += "<span class=\"s2\">${part}</span>"
+        } else {
+          result += "&nbsp;"
+        }
         out = show ? result : "&nbsp;"
       }
     }
@@ -631,8 +664,9 @@
     def static parse(str) {
       if (str == null)
         return null
-      else
-        return str.split(":")
+      else {
+        return FORMATTER.parseLocalTime(str)
+      }
     }
   }
 
@@ -642,18 +676,32 @@
     def show(from,to) {
       if (from == null || to ==null)
         return "&nbsp;"
-      def f = Duration.parse(from)
-      def t = Duration.parse(to)
-      if (t < f)
-        t += 24 * 60
-      def dur = t - f
+      def f = Time.parse(from)
+      def t = Time.parse(to)
+      def period = new org.joda.time.Period(f,t);
+      if (t < f) {
+        period = period.plusDays(1).normalizedStandard();
+      }
+      double dur = period.toStandardMinutes().minutes
+      dur += period.seconds / 60
       total += dur
-      return dur != 0 ? dur : "&nbsp;"
+      return Duration.show(dur)
     }
 
-    def static parse(time) {
-      def parsed = Time.parse(time)
-      return parsed != null ? parsed[0].toInteger() * 60 + parsed[1].toInteger() : 0
+    def showTotal() {
+      return Duration.show(total)
+    }
+
+    def static show(dur) {
+      // convert to html
+      if (dur == null)
+        return "&nbsp;"
+      else {
+        def minutes = (int) dur
+        def seconds = (int) (dur - minutes) * 10
+        def str = minutes + (seconds == 0 ?  "&nbsp;" : "<span class=\"s1\">${seconds}</span>")
+        return str
+      }
     }
   }
 
@@ -719,7 +767,7 @@
         }
       }
     } else {
-      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")      
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers.replace("\n","<br>")
     }
     return result
   }
@@ -757,7 +805,10 @@
     <td class="cfromtoh">${column_from_to}</td>
     <td class="cnoteh">${column_note}</td>
   </tr><% lastNode = null;
+          def abbrMap = [:]
           for (item in trains.cycle.rows) {
+            abbrMap[item.fromAbbr] = item.from
+            abbrMap[item.toAbbr] = item.to
             if (lastNode != null && lastNode != item.from) {
               %>
   <tr>
@@ -767,12 +818,27 @@
         %>
   <tr>
     <td class="ctrain">${item.trainName}</td>
-    <td class="cdeparture">${item.fromTime}</td>
+    <td class="cdeparture">${convertTime(item.fromTime)}</td>
     <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
     <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
-  </tr><% lastNode = item.to
+  </tr><%   lastNode = item.to
+          }%>
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4">
+      <table cellspacing="0" border="0"><%
+          abbrMap.sort().each {
+            %>
+        <tr class="listabbr">
+          <td>${it.key}</td><td>&nbsp;- ${it.value}</td>
+        </tr><%
           }
         %>
+      </table>
+    </td>
+  </tr>
 </table><%
   }
 

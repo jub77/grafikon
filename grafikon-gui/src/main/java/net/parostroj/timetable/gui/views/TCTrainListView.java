@@ -7,31 +7,26 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import javax.swing.ButtonModel;
-import javax.swing.DefaultListModel;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
+import net.parostroj.timetable.filters.TrainTypeFilter;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
+import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.Tuple;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import net.parostroj.timetable.utils.*;
 
 /**
  * View with list of train on one side and list of train of the cycle
@@ -43,8 +38,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private TCDelegate delegate;
     private TrainSort sort;
-    private TrainFilter filter;
+    private TrainTypeFilter filter;
     private boolean overlappingEnabled;
+    private final TCItemChangeDialog changeDialog;
 
     /** Creates new form ECTrainListView */
     public TCTrainListView() {
@@ -53,26 +49,27 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         allTrainsList.setModel(new DefaultListModel());
         ecTrainsList.setModel(new DefaultListModel());
         ecTrainsList.getModel().addListDataListener(new ListDataListener() {
-            
+
             @Override
             public void intervalRemoved(ListDataEvent e) {
                 this.changed();
             }
-            
+
             @Override
             public void intervalAdded(ListDataEvent e) {
                 this.changed();
             }
-            
+
             @Override
             public void contentsChanged(ListDataEvent e) {
                 this.changed();
             }
-            
+
             private void changed() {
                 sortButton.setEnabled(ecTrainsList.getModel().getSize() >= 2);
             }
         });
+        changeDialog = new TCItemChangeDialog();
     }
 
     public void setModel(TCDelegate delegate) {
@@ -84,7 +81,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         this.updateListAllTrains();
     }
-    
+
     @Override
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         switch (action) {
@@ -126,12 +123,12 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             List<Train> getTrains = new ArrayList<Train>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
-                    if (filter == null || filter.filter(train))
+                    if (filter == null || filter.is(train))
                         getTrains.add(train);
                 }
             }
             // sort them
-            getTrains = sort.sort(getTrains);
+            sort.sort(getTrains);
 
             DefaultListModel m = new DefaultListModel();
             for (Train train : getTrains) {
@@ -220,8 +217,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         changeButton = new javax.swing.JButton();
-        fromComboBox = new javax.swing.JComboBox();
-        toComboBox = new javax.swing.JComboBox();
         detailsTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         coverageScrollPane = new javax.swing.JScrollPane();
@@ -340,7 +335,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
         });
 
-        changeButton.setText(ResourceLoader.getString("ec.details.change")); // NOI18N
+        changeButton.setText(ResourceLoader.getString("ec.details.change") + "..."); // NOI18N
         changeButton.setEnabled(false);
         changeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -348,13 +343,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
         });
 
-        fromComboBox.setEnabled(false);
-        fromComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmm");
-
-        toComboBox.setEnabled(false);
-        toComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmm");
-
-        detailsTextField.setEnabled(false);
+        detailsTextField.setEditable(false);
 
         jLabel1.setText(ResourceLoader.getString("ec.list.comment")); // NOI18N
 
@@ -402,10 +391,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(coverageScrollPane, GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(fromComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(toComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(changeButton))
                 .addComponent(errorsScrollPane, GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
@@ -434,8 +419,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                         .addGroup(layout.createParallelGroup(Alignment.CENTER, false)
-                            .addComponent(fromComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(toComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(changeButton))
                         .addComponent(coverageScrollPane, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -496,7 +479,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 TrainsCycleItem item = selected.getItem();
                 item.getCycle().removeItem(item);
                 delegate.fireUpdatedTrain(item.getTrain());
-    
+
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
             }
         }
@@ -536,7 +519,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                             trainsStr.append(t.getName());
                         }
                     }
-    
+
                     delegate.fireUpdatedTrain(t);
                     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
                 }
@@ -558,12 +541,17 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         if (ecTrainsList.getSelectedIndex() != -1) {
             TrainsCycleItem item = ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem();
             Train train = item.getTrain();
+            if (!changeDialog.showDialog(this, item))
+                return;
             // check if the comment changed ...
-            String newComment = "".equals(detailsTextField.getText().trim()) ? null : detailsTextField.getText();
-            if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment())))
+            String commentText = changeDialog.getComment().trim();
+            String newComment = "".equals(commentText) ? null : commentText;
+            if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment()))) {
                 item.setComment(newComment);
-            TimeInterval from = (TimeInterval) ((Wrapper<?>)fromComboBox.getSelectedItem()).getElement();
-            TimeInterval to = (TimeInterval) ((Wrapper<?>)toComboBox.getSelectedItem()).getElement();
+                detailsTextField.setText(newComment);
+            }
+            TimeInterval from = changeDialog.getFrom();
+            TimeInterval to = changeDialog.getTo();
             // new trains cycle item
             boolean oldCovered = train.isCovered(delegate.getType());
             if (from != item.getFromInterval() || to != item.getToInterval()) {
@@ -599,14 +587,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         if (!evt.getValueIsAdjusting()) {
             boolean selectedOne = ecTrainsList.getSelectedIndex() != -1 && ecTrainsList.getMaxSelectionIndex() == ecTrainsList.getMinSelectionIndex();
             boolean selected = ecTrainsList.getSelectedIndex() != -1;
-            fromComboBox.removeAllItems();
-            toComboBox.removeAllItems();
             TrainsCycleItem item = selectedOne ? ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).getItem() : null;
             this.updateSelectedTrainsCycleItem(item);
-            detailsTextField.setEnabled(selectedOne);
             changeButton.setEnabled(selectedOne);
-            fromComboBox.setEnabled(selectedOne);
-            toComboBox.setEnabled(selectedOne);
             removeButton.setEnabled(selected);
             upButton.setEnabled(selectedOne);
             downButton.setEnabled(selectedOne);
@@ -624,7 +607,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             for (Pair<TimeInterval, Boolean> pair : coverage) {
                 this.appendSegment(coverageTextPane, pair);
             }
-            this.updateFromTo(item.getTrain().getTimeIntervalList(), item.getFromInterval(), item.getToInterval());
         }
 
     }
@@ -642,20 +624,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             else
                 pane.append(Color.RED, " - ");
         }
-    }
-
-    private void updateFromTo(List<TimeInterval> intervals, TimeInterval from, TimeInterval to) {
-        fromComboBox.removeAllItems();
-        toComboBox.removeAllItems();
-        for (TimeInterval interval : intervals) {
-            if (interval.isNodeOwner()) {
-                Wrapper<TimeInterval> w = new Wrapper<TimeInterval>(interval);
-                fromComboBox.addItem(w);
-                toComboBox.addItem(w);
-            }
-        }
-        fromComboBox.setSelectedItem(new Wrapper<TimeInterval>(from));
-        toComboBox.setSelectedItem(new Wrapper<TimeInterval>(to));
     }
 
     private void allTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_allTrainsListValueChanged
@@ -702,23 +670,23 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         ecTrainsList.getSelectionModel().clearSelection();
         ecTrainsList.repaint();
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-        
+
     }//GEN-LAST:event_sortButtonActionPerformed
 
     private void setFilter(String type, Component component) {
         if ("P".equals(type)) {
-            filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.PASSENGER);
+            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.PASSENGER);
         } else if ("F".equals(type)) {
-            filter = TrainFilter.getTrainFilter(TrainFilter.PredefinedType.FREIGHT);
+            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.FREIGHT);
         } else if ("C".equals(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
             dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
-            dialog.setLocationRelativeTo((java.awt.Frame)ActionUtils.getTopLevelComponent(component));
+            dialog.setLocationRelativeTo(ActionUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
 
             this.selectedTypes = dialog.getSelectedTypes();
-            this.filter = TrainFilter.getTrainFilter(selectedTypes);
+            this.filter = TrainTypeFilter.getTrainFilter(selectedTypes);
         } else {
             filter = null;
         }
@@ -741,14 +709,12 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JPopupMenu filterMenu;
     private javax.swing.ButtonGroup filterbuttonGroup;
     private javax.swing.JRadioButtonMenuItem freightRadioButtonMenuItem;
-    private javax.swing.JComboBox fromComboBox;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JCheckBoxMenuItem overlappingCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JButton selectionButton;
     private javax.swing.JButton sortButton;
-    private javax.swing.JComboBox toComboBox;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
 }

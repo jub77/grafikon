@@ -16,7 +16,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing lines.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "line")
@@ -114,7 +114,7 @@ public class LSLine {
         // tracks
         if (this.tracks != null)
             for (LSLineTrack lsLineTrack : this.tracks) {
-                LineTrack lineTrack = lsLineTrack.createLineTrack();
+                LineTrack lineTrack = lsLineTrack.createLineTrack(diagram);
                 NodeTrack fromStraight = fromNode.findTrackById(lsLineTrack.getFromStraightTrack());
                 NodeTrack toStraight = toNode.findTrackById(lsLineTrack.getToStraightTrack());
                 lineTrack.setFromStraightTrack(fromStraight);

@@ -26,6 +26,8 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     private Track track;
     /** Speed. */
     private int speed = NO_SPEED;
+    /** Added time. */
+    private int addedTime;
     /** Attributes. */
     private Attributes attributes;
     /** For tests - overlapping time intervals. */
@@ -47,8 +49,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param speed speed for line time interval
      * @param direction direction of the line time interval
      * @param track track
+     * @param addedTime added time
      */
-    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track) {
+    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track, int addedTime) {
         this.train = train;
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
@@ -57,11 +60,12 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         this.track = track;
         this.setAttributes(new Attributes());
         this.id = id;
+        this.addedTime = addedTime;
     }
 
     /**
      * creates instance of time interval.
-     * 
+     *
      * @param id id
      * @param train train
      * @param owner time interval owner
@@ -70,18 +74,18 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param track track
      */
     public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Track track) {
-        this(id, train, owner, start, end, NO_SPEED, null, track);
+        this(id, train, owner, start, end, NO_SPEED, null, track, 0);
     }
 
     /**
      * creates copy of an interval.
-     * 
+     *
      * @param interval copied interval
      */
     public TimeInterval(String id, TimeInterval interval) {
         this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
                 interval.getEnd(), interval.getSpeed(), interval.getDirection(),
-                interval.getTrack());
+                interval.getTrack(), interval.getAddedTime());
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
 
@@ -96,7 +100,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param end end time to be set
      */
     public void setEnd(int end) {
-        this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+    	if (end != interval.getEnd()) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+    	}
     }
 
     /**
@@ -110,7 +116,9 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      * @param start start time to be set
      */
     public void setStart(int start) {
-        this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+    	if (start != interval.getStart()) {
+    		this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+    	}
     }
 
     /**
@@ -158,7 +166,8 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     @Override
     public String toString() {
-        return train + "(" + getStart() + "," + getEnd() + ")";
+    	TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
+        return String.format("%s(%s,%s)", getOwner(), converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()));
     }
 
     /**
@@ -173,6 +182,20 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
      */
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    /**
+     * @return the addedTime
+     */
+    public int getAddedTime() {
+        return addedTime;
+    }
+
+    /**
+     * @param addedTime the addedTime to set
+     */
+    public void setAddedTime(int addedTime) {
+        this.addedTime = addedTime;
     }
 
     /**
@@ -227,24 +250,28 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     /**
      * shifts time interval with specified amount of time.
-     * 
+     *
      * @param timeShift shift time
      */
     public void shift(int timeShift) {
-        this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
+    	if (timeShift != 0) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
+    	}
     }
 
     /**
      * moves interval to specified starting time.
      */
     public void move(int aStart) {
-        int length = this.getLength();
-        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+    	if (aStart != this.interval.getStart()) {
+	        int length = this.getLength();
+	        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+    	}
     }
 
     /**
      * returns length of the interval.
-     * 
+     *
      * @return length of the interval
      */
     public int getLength() {
@@ -253,11 +280,25 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
 
     /**
      * sets length of the interval.
-     * 
+     *
      * @param length new length of the interval
      */
     public void setLength(int length) {
-        this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+    	if (length != this.getLength()) {
+    		this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+    	}
+    }
+
+    /**
+     * sets interval.
+     *
+     * @param start start
+     * @param end end
+     */
+    public void setInterval(int start, int end) {
+    	if (start != interval.getStart() || end != interval.getEnd()) {
+    		this.interval = IntervalFactory.createInterval(start, end);
+    	}
     }
 
     /**
@@ -315,7 +356,7 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public NodeTrack getToStraightTrack() {
         return (owner instanceof Line) ? ((LineTrack) track).getToStraightTrack(direction) : null;
     }
-    
+
     /**
      * @return line class for interval that belongs to line (otherwise an error is thrown).
      */
@@ -348,16 +389,18 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
         owner.updateTimeInterval(this);
     }
 
-    public Attributes getAttributes() {
+    @Override
+	public Attributes getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Attributes attributes) {
+    @Override
+	public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 train.fireEvent(new TrainEvent(train,
@@ -381,19 +424,19 @@ public class TimeInterval implements AttributesHolder, ObjectWithId {
     public Object removeAttribute(String key) {
         return attributes.remove(key);
     }
-    
+
     public boolean isNodeOwner() {
         return (owner instanceof Node);
     }
-    
+
     public boolean isLineOwner() {
         return (owner instanceof Line);
     }
-    
+
     public Node getOwnerAsNode() {
         return isNodeOwner() ? (Node)owner : null;
     }
-    
+
     public Line getOwnerAsLine() {
         return isLineOwner() ? (Line)owner : null;
     }

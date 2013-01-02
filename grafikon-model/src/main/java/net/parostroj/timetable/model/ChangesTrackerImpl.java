@@ -10,7 +10,7 @@ import java.util.Set;
 import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListenerWithNested;
+import net.parostroj.timetable.model.events.TrainDiagramListener;
 import net.parostroj.timetable.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTracker {
+class ChangesTrackerImpl implements TrainDiagramListener, ChangesTracker {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChangesTrackerImpl.class.getName());
 
-    private List<DiagramChangeSetImpl> sets;
-    private TrackedCheckVisitor trackedVisitor;
-    private TransformVisitor transformVisitor;
-    private Set<ChangesTrackerListener> listeners;
+    private final List<DiagramChangeSetImpl> sets;
+    private final TrackedCheckVisitor trackedVisitor;
+    private final TransformVisitor transformVisitor;
+    private final Set<ChangesTrackerListener> listeners;
     private DiagramChangeSetImpl _currentChangeSet;
     private boolean enabled;
 
@@ -92,11 +92,6 @@ class ChangesTrackerImpl implements TrainDiagramListenerWithNested, ChangesTrack
     @Override
     public void removeAllListeners() {
         this.listeners.clear();
-    }
-
-    @Override
-    public void trainDiagramChangedNested(TrainDiagramEvent event) {
-        this.receiveEvent(event);
     }
 
     @Override

@@ -5,7 +5,7 @@ package net.parostroj.timetable.utils;
  *
  * @author jub
  */
-public class ReferenceHolder<T> {
+public class ReferenceHolder<T> implements Reference<T> {
     private T reference;
 
     public ReferenceHolder() {

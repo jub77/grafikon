@@ -13,13 +13,13 @@ import net.parostroj.timetable.model.Track;
 
 /**
  * Cell editor for editing tracks.
- * 
+ *
  * @author jub
  */
 public class TrackCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private JComboBox editor;
-    
+    private final JComboBox editor;
+
     private boolean ignoreAction = true;
 
     public TrackCellEditor() {
@@ -46,12 +46,12 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
         List<? extends Track> tracks = interval.getOwner().getTracks();
 
         for (Track track : tracks) {
-            editor.addItem(track.getNumber());
+            editor.addItem(track);
         }
 
-        editor.setSelectedItem(interval.getTrack().getNumber());
+        editor.setSelectedItem(interval.getTrack());
         ignoreAction = false;
-        
+
         return editor;
     }
 }

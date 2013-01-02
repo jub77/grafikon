@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.NodeTrack;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -28,9 +29,9 @@ public class LSNodeTrack extends LSTrack {
         this.platform = platform;
     }
 
-    public NodeTrack createNodeTrack() throws LSException {
+    public NodeTrack createNodeTrack(TrainDiagram diagram) throws LSException {
         NodeTrack nodeTrack = new NodeTrack(this.getId());
-        this.addValuesTrack(nodeTrack);
+        this.addValuesTrack(diagram, nodeTrack);
         nodeTrack.setPlatform(platform);
         return nodeTrack;
     }

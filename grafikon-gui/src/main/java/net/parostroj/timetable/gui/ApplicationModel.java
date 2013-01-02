@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import net.parostroj.timetable.gui.actions.OutputCategory;
+
+import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.mediator.Mediator;
@@ -16,36 +16,35 @@ import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.utils.Reference;
 
 /**
  * Application model.
  *
  * @author jub
  */
-public class ApplicationModel implements StorableGuiData {
-    
+public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram> {
+
     private static final int LAST_OPENED_COUNT = 5;
-    
-    private Set<ApplicationModelListener> listeners;
+
+    private final Set<ApplicationModelListener> listeners;
     private Train selectedTrain;
     private TrainDiagram diagram;
-    private Queue<Command> commandQueue;
     private boolean modelChanged;
     private File openedFile;
-    private Mediator mediator;
-    private TrainDiagramCollegue collegue;
+    private final Mediator mediator;
+    private final TrainDiagramCollegue collegue;
     private OutputCategory outputCategory;
-    private Map<String, File> outputTemplates;
+    private final Map<String, File> outputTemplates;
     private Locale outputLocale;
     private ProgramSettings programSettings;
     private LinkedList<File> lastOpenedFiles;
-    
+
     /**
      * Default constructor.
      */
     public ApplicationModel() {
         listeners = new HashSet<ApplicationModelListener>();
-        commandQueue = new LinkedList<Command>();
         mediator = new Mediator();
         collegue = new TrainDiagramCollegue();
         mediator.addColleague(collegue);
@@ -64,7 +63,7 @@ public class ApplicationModel implements StorableGuiData {
 
     /**
      * sets selected train and generates event.
-     * 
+     *
      * @param selectedTrain train
      */
     public void setSelectedTrain(Train selectedTrain) {
@@ -96,7 +95,7 @@ public class ApplicationModel implements StorableGuiData {
 
     /**
      * sets train diagram and generates event.
-     * 
+     *
      * @param diagram train diagram
      */
     public void setDiagram(TrainDiagram diagram) {
@@ -111,25 +110,25 @@ public class ApplicationModel implements StorableGuiData {
 
     /**
      * adds application model listener.
-     * 
+     *
      * @param listener listener
      */
     public void addListener(ApplicationModelListener listener) {
         listeners.add(listener);
     }
-    
+
     /**
      * removes application model listener.
-     * 
+     *
      * @param listener listener
      */
     public void removeListener(ApplicationModelListener listener) {
         listeners.remove(listener);
     }
-    
+
     /**
      * fires specified event for this model.
-     * 
+     *
      * @param event event to be fired
      */
     public void fireEvent(ApplicationModelEvent event) {
@@ -137,24 +136,17 @@ public class ApplicationModel implements StorableGuiData {
             listener.modelChanged(event);
         this.checkModelChanged(event);
     }
-    
+
     /**
      * executes command and adds successfully executed command to
      * command queue (suppocrt for undo).
-     * 
+     *
      * @param command command to be executed
-     * @throws net.parostroj.timetable.gui.commands.CommandException 
+     * @throws net.parostroj.timetable.gui.commands.CommandException
      */
     public void applyCommand(Command command) throws CommandException {
         // execute command
         command.execute(this);
-        
-        // add to queue
-        commandQueue.add(command);
-        
-        // check queue length
-        if (commandQueue.size() > 100)
-            commandQueue.remove();
     }
 
     /**
@@ -229,6 +221,7 @@ public class ApplicationModel implements StorableGuiData {
         prefs.setBoolean("two.sided.print", programSettings.isTwoSidedPrint());
         prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
         prefs.setString("unit", programSettings.getLengthUnit().getKey());
+        prefs.setString("unit.speed", programSettings.getSpeedLengthUnit().getKey());
         prefs.removeWithPrefix("last.opened.");
         int i = 0;
         for (File file : this.lastOpenedFiles) {
@@ -244,7 +237,9 @@ public class ApplicationModel implements StorableGuiData {
         programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
         programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
+        LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit.speed", "km"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
+        programSettings.setSpeedLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
         for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
             String filename = prefs.getString("last.opened." + i, null);
             if (filename != null) {
@@ -292,7 +287,7 @@ public class ApplicationModel implements StorableGuiData {
     public void setLastOpenedFiles(LinkedList<File> lastOpenedFiles) {
         this.lastOpenedFiles = lastOpenedFiles;
     }
-    
+
     public void addLastOpenedFile(File file) {
         if (!this.lastOpenedFiles.contains(file)) {
             this.lastOpenedFiles.addFirst(file);
@@ -306,10 +301,20 @@ public class ApplicationModel implements StorableGuiData {
         }
         this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ADD_LAST_OPENED, this, file));
     }
-    
+
     public void removeLastOpenedFile(File file) {
         if (this.lastOpenedFiles.remove(file)) {
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.REMOVE_LAST_OPENED, this, file));
         }
     }
+
+	@Override
+	public TrainDiagram get() {
+		return getDiagram();
+	}
+
+	@Override
+	public void set(TrainDiagram object) {
+		setDiagram(object);
+	}
 }

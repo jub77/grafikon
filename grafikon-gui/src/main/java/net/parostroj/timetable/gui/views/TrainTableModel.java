@@ -5,13 +5,15 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.text.ParseException;
+
 import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TimeConverter;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * Table model for train.
@@ -25,6 +27,7 @@ class TrainTableModel extends AbstractTableModel {
     private int lastRow;
     private ApplicationModel model;
     private boolean editBlock;
+    private TimeConverter converter;
 
     public TrainTableModel(ApplicationModel model, Train train) {
         this.setTrain(train);
@@ -36,11 +39,15 @@ class TrainTableModel extends AbstractTableModel {
     }
 
     public void setTrain(Train train) {
-        if (editBlock)
+        if (this.editBlock)
             return;
         this.train = train;
-        if (train != null)
-            lastRow = train.getTimeIntervalList().size() - 1;
+        if (train != null) {
+            this.lastRow = train.getTimeIntervalList().size() - 1;
+            this.converter = train.getTrainDiagram().getTimeConverter();
+        } else {
+        	this.converter = null;
+        }
 
         this.fireTableDataChanged();
     }
@@ -88,33 +95,38 @@ class TrainTableModel extends AbstractTableModel {
             // arrival
             case START:
                 if (!interval.isFirst())
-                    retValue = TimeConverter.convertFromIntToText(interval.getStart());
+                    retValue = converter.convertIntToText(interval.getStart(), true);
                 break;
             // departure
             case END:
                 if (!interval.isLast())
-                    retValue = TimeConverter.convertFromIntToText(interval.getEnd());
+                    retValue = converter.convertIntToText(interval.getEnd(), true);
                 break;
             // stop time
             case STOP:
                 if (interval.getOwner() instanceof Node && rowIndex != 0 && rowIndex != lastRow
                         && ((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
-                    retValue = Integer.valueOf(interval.getLength() / 60);
+                	retValue = converter.convertIntToMinutesText(interval.getLength());
                 break;
             // speed
             case SPEED:
                 if (interval.getOwner() instanceof Line)
                     retValue = Integer.valueOf(interval.getSpeed());
                 break;
+            // added time
+            case ADDED_TIME:
+                if (interval.isLineOwner() && interval.getAddedTime() != 0)
+                	retValue = converter.convertIntToMinutesText(interval.getAddedTime());
+                break;
             // platform
             case PLATFORM:
                 if (interval.getOwner() instanceof Node) {
                     if (((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
-                        retValue = interval.getTrack().getNumber();
+                        retValue = interval.getTrack();
                 } else if (interval.getOwner() instanceof Line) {
                     // only for more than one track per line
                     if (((Line)interval.getOwner()).getTracks().size() > 1) {
-                        return interval.getTrack().getNumber();
+                        return interval.getTrack();
                     }
                 }
                 break;
@@ -179,9 +191,21 @@ class TrainTableModel extends AbstractTableModel {
         TimeInterval interval = null;
         TrainTableColumn column = TrainTableColumn.getColumn(columnIndex);
         switch (column) {
+        	case START:
+        		time = converter.convertTextToInt((String) aValue);
+        		if (time != -1) {
+        			interval = train.getTimeIntervalList().get(rowIndex);
+        			int oldTime = TimeUtil.normalizeTime(interval.getStart());
+        			int newTime = TimeUtil.normalizeTime(time);
+        			int newStartTime = TimeUtil.normalizeTime(train.getStartTime() + (newTime - oldTime));
+        			train.move(newStartTime);
+        			this.fireTableRowsUpdated(0, lastRow);
+                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+        		}
+        		break;
             case END:
                 // departure
-                time = TimeConverter.convertFromTextToInt((String)aValue);
+                time = converter.convertTextToInt((String) aValue);
                 if (time != -1) {
                     if (rowIndex == 0) {
                         train.move(time);
@@ -189,10 +213,14 @@ class TrainTableModel extends AbstractTableModel {
                         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     } else {
                         interval = train.getTimeIntervalList().get(rowIndex);
-                        int newStop = time - interval.getStart();
+                        int start = TimeUtil.normalizeTime(interval.getStart());
+                        time = TimeUtil.normalizeTime(time);
+                        if (time < start)
+                        	time += TimeInterval.DAY;
+                        int newStop = time - start;
                         if (newStop >= 0) {
                             train.changeStopTime(interval, newStop);
-                            this.fireTableRowsUpdated(rowIndex, lastRow);
+                            this.fireTableRowsUpdated(rowIndex - 1, lastRow);
                             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                         }
                     }
@@ -200,11 +228,16 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case STOP:
                 // stop time
-                time = ((Integer)aValue).intValue() * 60;
+				try {
+					time = converter.convertMinutesTextToInt((String) aValue);
+				} catch (ParseException e) {
+					// wrong conversion doesn't change anything
+					time = -1;
+				}
                 if (time >= 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
                     train.changeStopTime(interval, time);
-                    this.fireTableRowsUpdated(rowIndex, lastRow);
+                    this.fireTableRowsUpdated(rowIndex - 1, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
@@ -213,26 +246,43 @@ class TrainTableModel extends AbstractTableModel {
                 int velocity = ((Integer)aValue).intValue();
                 if (velocity > 0) {
                     interval = train.getTimeIntervalList().get(rowIndex);
-                    train.changeSpeed(interval, velocity);
-                    this.fireTableRowsUpdated(rowIndex, lastRow);
+                    train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
+                    this.fireTableRowsUpdated(rowIndex - 2 >= 0 ? rowIndex - 2 : 0, lastRow);
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
+            case ADDED_TIME:
+                // added time
+                interval = train.getTimeIntervalList().get(rowIndex);
+                if (aValue != null) {
+                	int addedTime;
+    				try {
+    					addedTime = converter.convertMinutesTextToInt((String) aValue);
+    				} catch (ParseException e) {
+    					// wrong conversion doesn't change anything
+    					addedTime = -1;
+    				}
+    				if (addedTime >= 0)
+    					train.changeSpeedAndAddedTime(interval, interval.getSpeed(), addedTime);
+                } else {
+                    train.changeSpeedAndAddedTime(interval, interval.getSpeed(), 0);
+                }
+                this.fireTableRowsUpdated(rowIndex, lastRow);
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
+                break;
             case PLATFORM:
                 // platform
-                String platform = (String)aValue;
+                Track track = (Track) aValue;
                 interval = train.getTimeIntervalList().get(rowIndex);
                 if (interval.getOwner() instanceof Node) {
-                    Node node = (Node)interval.getOwner();
-                    NodeTrack newTrack = node.getNodeTrackByNumber(platform);
+                    NodeTrack newTrack = (NodeTrack) track;
                     if (newTrack != null) {
                         train.changeNodeTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
                         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     }
                 } else if (interval.getOwner() instanceof Line) {
-                    Line line = (Line)interval.getOwner();
-                    LineTrack newTrack = line.getLineTrackByNumber(platform);
+                    LineTrack newTrack = (LineTrack) track;
                     if (newTrack != null) {
                         train.changeLineTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
@@ -247,7 +297,7 @@ class TrainTableModel extends AbstractTableModel {
                 if ("".equals(commentStr))
                     commentStr = null;
                 if (commentStr != null)
-                    interval.setAttribute("comment", (String)aValue);
+                    interval.setAttribute("comment", aValue);
                 else
                     interval.removeAttribute("comment");
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));

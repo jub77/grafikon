@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.parostroj</groupId>
     <artifactId>grafikon</artifactId>
-    <version>1</version>
+    <version>0.13</version>
     <packaging>pom</packaging>
     <name>grafikon</name>
 
@@ -33,9 +33,10 @@
                 </property>
             </activation>
             <properties>
-                <grafikon.version>not-specified</grafikon.version>
-                <grafikon.version.build>not-specified</grafikon.version.build>
-                <grafikon.version.show>not-specified</grafikon.version.show>
+                <grafikon.changeset>current</grafikon.changeset>
+                <grafikon.version>${project.version}</grafikon.version>
+                <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}-${grafikon.changeset}</grafikon.version.build>
+                <grafikon.version.show>${grafikon.version}-${maven.build.timestamp}</grafikon.version.show>
             </properties>
         </profile>
     </profiles>
@@ -45,6 +46,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -54,6 +56,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <encoding>utf-8</encoding>
                 </configuration>
@@ -61,6 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -94,5 +98,7 @@
         <module>grafikon-net</module>
         <module>grafikon-gui</module>
         <module>grafikon-start</module>
+        <module>grafikon-webstart</module>
+        <module>grafikon-assembly</module>
     </modules>
 </project>

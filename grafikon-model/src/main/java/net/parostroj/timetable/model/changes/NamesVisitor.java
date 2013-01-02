@@ -76,7 +76,7 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(TimetableImage image) {
         name = image.getFilename();
     }
-    
+
     @Override
     public void visit(TrainsCycleType type) {
         name = type.getName();
@@ -96,5 +96,10 @@ public class NamesVisitor implements TrainDiagramVisitor {
     @Override
     public void visit(OutputTemplate template) {
         name = template.getName();
+    }
+
+    @Override
+    public void visit(Group group) {
+        name = group.getName();
     }
 }

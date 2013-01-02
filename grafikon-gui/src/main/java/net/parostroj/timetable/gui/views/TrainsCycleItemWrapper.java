@@ -1,7 +1,7 @@
 package net.parostroj.timetable.gui.views;
 
+import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Wrapper for trains cycle item.
@@ -9,7 +9,7 @@ import net.parostroj.timetable.utils.TimeConverter;
  * @author jub
  */
 public class TrainsCycleItemWrapper {
-    
+
     private TrainsCycleItem item;
 
     public TrainsCycleItemWrapper(TrainsCycleItem item) {
@@ -18,7 +18,12 @@ public class TrainsCycleItemWrapper {
 
     @Override
     public String toString() {
-        return String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),item.getFromInterval().getOwnerAsNode().getName(),TimeConverter.convertFromIntToText(item.getStartTime()),item.getToInterval().getOwnerAsNode().getName(),TimeConverter.convertFromIntToText(item.getEndTime()));
+    	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
+        return String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
+        		item.getFromInterval().getOwnerAsNode().getName(),
+        		c.convertIntToText(item.getStartTime()),
+        		item.getToInterval().getOwnerAsNode().getName(),
+        		c.convertIntToText(item.getEndTime()));
     }
 
     public TrainsCycleItem getItem() {
