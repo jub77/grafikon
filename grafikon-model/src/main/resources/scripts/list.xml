@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scripts>
+    <script>
+        <id>recalculate</id>
+        <name>Recalculate</name>
+        <language>GROOVY</language>
+        <location>recalculate.groovy</location>
+    </script>
+    <script>
+        <id>remove_weights</id>
+        <name>Remove weights</name>
+        <language>GROOVY</language>
+        <location>remove_weights.groovy</location>
+    </script>
+    <script>
+        <id>hide_length</id>
+        <name>Do not show length</name>
+        <language>GROOVY</language>
+        <location>hide_length.groovy</location>
+    </script>
+    <script>
+        <id>show_length</id>
+        <name>Show length</name>
+        <language>GROOVY</language>
+        <location>show_length.groovy</location>
+    </script>
+</scripts>

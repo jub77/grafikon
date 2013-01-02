@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.parostroj</groupId>
+        <artifactId>grafikon</artifactId>
+        <version>1</version>
+    </parent>
+    <artifactId>grafikon-start</artifactId>
+    <version>${grafikon.version}</version>
+    <packaging>jar</packaging>
+    <name>grafikon-start</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>net.parostroj.timetable.gui.Main</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <SplashScreen-Image>images/splashscreen.png</SplashScreen-Image>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-gui</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.0</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+</project>
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.12" href="grafikon.jnlp">
+    <information>
+        <title>Grafikon 0.12</title>
+        <vendor>jub</vendor>
+        <description>Grafikon 0.12</description>
+        <description kind="short">Grafikon 0.12</description>
+        <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
+        <icon href="grafikon.gif"/>
+        <icon href="splashscreen.png" kind="splash"/>
+        <offline-allowed/>
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="Grafikon"/>
+        </shortcut>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <update check="timeout" policy="always"/>
+    <resources>
+        <j2se version="1.6+"/>
+        <jar href="grafikon.jar" main="true" download="eager"/>
+        <extension href="grafikon-libraries.jnlp"/>
+    </resources>
+    <application-desc main-class="net.parostroj.timetable.gui.Main">
+    </application-desc>
+</jnlp>

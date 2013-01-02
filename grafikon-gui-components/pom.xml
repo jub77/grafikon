@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.parostroj</groupId>
+        <artifactId>grafikon</artifactId>
+        <version>1</version>
+    </parent>
+    <artifactId>grafikon-gui-components</artifactId>
+    <version>${grafikon.version}</version>
+    <packaging>jar</packaging>
+    <name>grafikon-gui-components</name>
+    <dependencies>
+        <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-model</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-net</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-output2</artifactId>
+            <version>${grafikon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-svggen</artifactId>
+            <version>1.6-1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>batik-gvt</artifactId>
+                    <groupId>batik</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-svg-dom</artifactId>
+                    <groupId>batik</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-awt-util</artifactId>
+            <version>1.6-1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>batik-util</artifactId>
+                    <groupId>batik</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-dom</artifactId>
+            <version>1.6-1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-css</artifactId>
+                    <groupId>batik</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-gui-util</artifactId>
+                    <groupId>batik</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>com.fifesoft</groupId>
+        	<artifactId>rsyntaxtextarea</artifactId>
+        	<version>1.4.1</version>
+        </dependency>
+    </dependencies>
+</project>
+
+
+
+
+
+
+
+
+
