@@ -12,23 +12,23 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * View with details about selected engine cycle.
- * 
+ *
  * @author jub
  */
 public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Listener {
-    
+
     private TCDelegate delegate;
-    
+
     /** Creates new form ECDetailsView2 */
     public TCDetailsView2() {
         initComponents();
     }
-    
+
     public void setModel(TCDelegate delegate) {
         this.delegate = delegate;
         this.delegate.addListener(this);
     }
-    
+
     @Override
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         switch (action) {
@@ -44,7 +44,7 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
                 break;
         }
     }
-    
+
     private void updateValues(TrainsCycle cycle) {
         if (cycle == null) {
             nameTextField.setText("");
@@ -52,10 +52,12 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
         } else {
             nameTextField.setText(cycle.getName());
             descriptionTextField.setText(delegate.getCycleDescription());
+            nameTextField.setCaretPosition(0);
+            descriptionTextField.setCaretPosition(0);
         }
         editButton.setEnabled(cycle != null);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -120,7 +122,7 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
         if (delegate.getSelectedCycle() != null)
             delegate.showEditDialog(editButton);
     }//GEN-LAST:event_editButtonActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField descriptionTextField;
     private javax.swing.JButton editButton;

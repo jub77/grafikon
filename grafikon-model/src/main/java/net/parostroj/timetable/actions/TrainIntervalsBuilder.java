@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builder for creating trains.
- * 
+ *
  * @author jub
  */
 public class TrainIntervalsBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainIntervalsBuilder.class.getName());
-    private Train train;
+    private final Train train;
     private TimeInterval lastInterval;
-    private int startTime;
+    private final int startTime;
     private boolean finished;
-    private List<TimeInterval> timeIntervals;
+    private final List<TimeInterval> timeIntervals;
 
     public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
         this.train = train;
@@ -51,7 +51,7 @@ public class TrainIntervalsBuilder {
         timeIntervals.add(lastInterval);
     }
 
-    public void addLine(String intervalId, Line line, LineTrack track, int speed, Attributes attributes) {
+    public void addLine(String intervalId, Line line, LineTrack track, int speed, int addedTime, Attributes attributes) {
         if (intervalId == null) {
             LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
@@ -66,7 +66,7 @@ public class TrainIntervalsBuilder {
         lastInterval = new TimeInterval(
                 intervalId, train, line, 0, 0, speed,
                 lastInterval.getOwner().asNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
-                track);
+                track, addedTime);
         lastInterval.setAttributes(attributes);
         timeIntervals.add(lastInterval);
     }
@@ -95,7 +95,7 @@ public class TrainIntervalsBuilder {
                         interval.getId(), train, time,
                         interval.getDirection(), interval.getSpeed(),
                         this.computeFromSpeed(interval, timeIntervals, i),
-                        this.computeToSpeed(interval, timeIntervals, i));
+                        this.computeToSpeed(interval, timeIntervals, i), interval.getAddedTime());
             }
 
             // set track and attributes
@@ -108,7 +108,7 @@ public class TrainIntervalsBuilder {
 
             i++;
         }
-        
+
         finished = true;
     }
 

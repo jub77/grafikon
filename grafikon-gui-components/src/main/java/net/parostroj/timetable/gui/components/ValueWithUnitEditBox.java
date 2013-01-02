@@ -27,9 +27,13 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
     /** Creates new form LengthEditBox */
     public ValueWithUnitEditBox() {
+        this("#0.########");
+    }
+
+    public ValueWithUnitEditBox(String formatStr) {
         initComponents();
 
-        DecimalFormat format = new  DecimalFormat("#0.########");
+        DecimalFormat format = new  DecimalFormat(formatStr);
         format.setDecimalSeparatorAlwaysShown(false);
         format.setParseBigDecimal(true);
         NumberFormatter formatter = new NumberFormatter(format);
@@ -40,7 +44,7 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
         setValue(new BigDecimal(0));
     }
-    
+
     public void setUnits(List<? extends Unit> units) {
         this.units = units;
         // fill combo box
@@ -48,7 +52,7 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
         for (Unit unit : units)
             unitComboBox.addItem(unit);
     }
-    
+
     public List<? extends Unit> getUnits() {
         return this.units;
     }
@@ -60,11 +64,11 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
     public int getValueColumns() {
         return valueTextField.getColumns();
     }
-    
+
     public BigDecimal getValueInUnit(Unit unit) {
         return unit.convertFrom(getValue(), getUnit());
     }
-    
+
     public void setValueInUnit(BigDecimal dValue, Unit unit) {
         this.setValue(unit.convertTo(dValue, getUnit()));
     }

@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train types.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "trains_data")
@@ -55,7 +55,7 @@ public class LSTrainsData {
     public void setTrainSortPattern(LSSortPattern trainSortPattern) {
         this.trainSortPattern = trainSortPattern;
     }
-    
+
     public TrainsData createTrainsData() throws LSException {
         try {
             return new TrainsData(
@@ -76,6 +76,7 @@ public class LSTrainsData {
                     "  penalty = penalty + penalty2 - penalty1;\n" +
                     "}\n" +
                     "time = time + (int)Math.round(penalty * 0.18d * timeScale);\n" +
+                    "time = time + addedTime;\n" +
                     "time = ((int)((time + 40) / 60)) * 60;\n" +
                     "return time;\n", Script.Language.GROOVY));
         } catch (GrafikonException e) {

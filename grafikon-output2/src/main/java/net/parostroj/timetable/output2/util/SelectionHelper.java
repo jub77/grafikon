@@ -1,14 +1,13 @@
 package net.parostroj.timetable.output2.util;
 
-import net.parostroj.timetable.output2.impl.RoutesExtractor;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import net.parostroj.timetable.actions.*;
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
+import net.parostroj.timetable.output2.impl.RoutesExtractor;
 
 /**
  * Helper class for selection.
@@ -103,15 +102,15 @@ public class SelectionHelper {
             return getList((List<?>) param.getValue(), Node.class);
         }
         NodeSort s = new NodeSort(NodeSort.Type.ASC);
-        return s.sort(diagram.getNet().getNodes(), new NodeFilter() {
+        return s.sort(diagram.getNet().getNodes(), new Filter<Node>() {
 
             @Override
-            public boolean check(Node node) {
+            public boolean is(Node node) {
                 return node.getType().isStation() || node.getType().isStop();
             }
         });
     }
-    
+
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, String type) {
         if (type != null) {
             return diagram.getCycles(type);

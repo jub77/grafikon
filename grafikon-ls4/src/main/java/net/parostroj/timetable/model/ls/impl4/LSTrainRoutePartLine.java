@@ -6,16 +6,17 @@ import net.parostroj.timetable.model.TimeInterval;
 
 /**
  * Route part for line.
- * 
+ *
  * @author jub
  */
-@XmlType(propOrder = {"intervalId", "lineId", "trackId", "speed", "attributes"})
+@XmlType(propOrder = {"intervalId", "lineId", "trackId", "speed", "addedTime", "attributes"})
 public class LSTrainRoutePartLine {
 
     private String intervalId;
     private String lineId;
     private String trackId;
     private int speed;
+    private Integer addedTime;
     private LSAttributes attributes;
 
     public LSTrainRoutePartLine() {
@@ -26,6 +27,8 @@ public class LSTrainRoutePartLine {
         lineId = interval.getOwner().getId();
         trackId = interval.getTrack().getId();
         speed = interval.getSpeed();
+        if (interval.getAddedTime() != 0)
+            addedTime = interval.getAddedTime();
         this.attributes = new LSAttributes(interval.getAttributes());
     }
 
@@ -62,6 +65,15 @@ public class LSTrainRoutePartLine {
 
     public void setIntervalId(String intervalId) {
         this.intervalId = intervalId;
+    }
+
+    @XmlElement(name = "added_time")
+    public Integer getAddedTime() {
+        return addedTime;
+    }
+
+    public void setAddedTime(Integer addedTime) {
+        this.addedTime = addedTime;
     }
 
     public LSAttributes getAttributes() {

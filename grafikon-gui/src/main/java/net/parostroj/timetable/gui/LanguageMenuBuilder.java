@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.swing.JRadioButtonMenuItem;
-import net.parostroj.timetable.gui.actions.ModelUtils;
+
+import net.parostroj.timetable.gui.actions.impl.ModelUtils;
+
 import org.slf4j.LoggerFactory;
 
 /**

@@ -40,13 +40,13 @@ public class ExecuteScriptAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if ("".equals(e.getActionCommand())) {
+        if (e.getActionCommand() == null || "".equals(e.getActionCommand())) {
             editScriptExecution(e);
         } else {
             predefinedExecution(e);
         }
     }
-    
+
     private void predefinedExecution(ActionEvent e) {
         Component parent = ActionUtils.getTopLevelComponent(e.getSource());
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -96,16 +96,16 @@ public class ExecuteScriptAction extends AbstractAction {
                     LOG.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
                 }
             } catch (GrafikonException ex) {
-                LOG.error("Error executing script.", ex);
+        		LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 ActionUtils.showError(message, parent);
             }
             model.setModelChanged(true);
         }
     }
-    
+
     private void loadScriptFromPreferences() {
-        String scriptStr = null; 
+        String scriptStr = null;
         try {
             scriptStr = AppPreferences.getPreferences().getString("last.script", null);
         } catch (IOException ex) {
@@ -124,7 +124,7 @@ public class ExecuteScriptAction extends AbstractAction {
             LOG.error("Error converting script.", e);
         }
     }
-    
+
     private void saveScriptToPreferences() {
         if (lastScript != null)
             try {

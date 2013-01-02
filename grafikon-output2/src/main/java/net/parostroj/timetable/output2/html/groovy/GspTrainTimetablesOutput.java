@@ -34,7 +34,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             boolean titlePage = false;
             if (params.paramExistWithValue("title.page"))
                 titlePage = params.getParam("title.page").getValue(Boolean.class);
-            String pageSort = "both_sides"; //"one_side";
+            String pageSort = "two_sides"; //"one_side";
             if (params.paramExistWithValue("page.sort"))
                 pageSort = params.getParam("page.sort").getValue(String.class);
 

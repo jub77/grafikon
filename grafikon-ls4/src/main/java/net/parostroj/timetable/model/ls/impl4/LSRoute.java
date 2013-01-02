@@ -15,24 +15,26 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Storage for route.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"id", "name", "netPart", "segments"})
+@XmlType(propOrder = {"id", "name", "netPart", "trainRoute", "segments"})
 public class LSRoute {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(LSRoute.class.getName());
 
     private String id;
     private String name;
     private boolean netPart;
+    private boolean trainRoute;
     private List<String> segments;
 
     public LSRoute(Route route) {
         this.id = route.getId();
         this.name = route.getName();
         this.netPart = route.isNetPart();
+        this.trainRoute = route.isTrainRoute();
         this.segments = new LinkedList<String>();
         for (RouteSegment segment : route.getSegments()) {
             this.segments.add(segment.getId());
@@ -67,6 +69,15 @@ public class LSRoute {
         this.netPart = netPart;
     }
 
+    @XmlElement(name = "train_route")
+    public boolean isTrainRoute() {
+        return trainRoute;
+    }
+
+    public void setTrainRoute(boolean trainRoute) {
+        this.trainRoute = trainRoute;
+    }
+
     @XmlElementWrapper
     @XmlElement(name = "segment")
     public List<String> getSegments() {
@@ -76,11 +87,12 @@ public class LSRoute {
     public void setSegments(List<String> segments) {
         this.segments = segments;
     }
-    
+
     public Route createRoute(Net net) throws LSException {
         Route route = new Route(id);
         route.setName(name);
         route.setNetPart(netPart);
+        route.setTrainRoute(trainRoute);
         // create segments
         boolean node = true;
         if (this.segments != null)

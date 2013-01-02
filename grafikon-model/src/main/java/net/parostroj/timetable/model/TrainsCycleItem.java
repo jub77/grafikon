@@ -1,6 +1,6 @@
 /*
  * TrainCycleItem.java
- * 
+ *
  * Created on 15.9.2007, 19:48:09
  */
 package net.parostroj.timetable.model;
@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.events.TrainsCycleEvent;
 
 /**
  * Train cycle item.
- * 
+ *
  * @author jub
  */
 public class TrainsCycleItem {
@@ -31,7 +31,7 @@ public class TrainsCycleItem {
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
     }
-    
+
     public boolean containsInterval(TimeInterval interval) {
         boolean in = false;
         for (TimeInterval currentInterval : train.getTimeIntervalList()) {
@@ -130,6 +130,9 @@ public class TrainsCycleItem {
     public String toString() {
         StringBuilder builder = new StringBuilder("TrainsCycleItem[");
         builder.append(train).append(',');
+        if (cycle != null) {
+            builder.append(cycle.getName()).append(',');
+        }
         builder.append(getFromInterval().getOwner()).append(',');
         builder.append(getToInterval().getOwner()).append(']');
         return builder.toString();

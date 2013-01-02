@@ -169,49 +169,6 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         return new TimeIntervalResult(status, overlaps);
     }
 
-    /**
-     * shifts the whole list of time intervals. Can be used only for train time
-     * interval list.
-     *
-     * @param timeShift amount of time to be shifted
-     */
-    public void shift(int timeShift) {
-        this.shiftFrom(0, timeShift);
-    }
-
-    /**
-     * moves the whole list to specified starting point. Can be used only for train time
-     * interval list.
-     *
-     * @param time new starting time
-     */
-    public void move(int time) {
-        this.moveFrom(0, time);
-    }
-
-    public void moveFrom(int index, int time) {
-        TimeInterval interval = this.get(index);
-        int shift = time - interval.getStart();
-        this.shiftFrom(index, shift);
-    }
-
-    public void shiftFrom(int index, int timeShift) {
-        ListIterator<TimeInterval> i = this.listIterator(index);
-        while (i.hasNext()) {
-            TimeInterval item = i.next();
-            item.shift(timeShift);
-            if (item.isAttached())
-                item.updateInOwner();
-        }
-    }
-
-    public void shiftFrom(TimeInterval interval, int timeShift) {
-        int i = this.indexOf(interval);
-        if (i == -1)
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        this.shiftFrom(i, timeShift);
-    }
-
     public int computeFromSpeed(TimeInterval interval) {
         if (!interval.isLineOwner())
             throw new IllegalArgumentException("Cannot find speed for node.");
@@ -277,9 +234,9 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             throw new IllegalArgumentException("Line is not owner of the interval.");
         // compute running time
         int runnningTime = interval.getOwnerAsLine().computeRunningTime(
-                interval.getTrain(), interval.getSpeed(),
+                interval.getTrain(), interval.getStart(), interval.getSpeed(),
                 this.computeFromSpeed(interval, i),
-                this.computeToSpeed(interval, i));
+                this.computeToSpeed(interval, i), interval.getAddedTime());
         interval.setLength(runnningTime);
         if (interval.isAttached())
             interval.updateInOwner();

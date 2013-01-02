@@ -13,13 +13,16 @@
             <scope>runtime</scope>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>net.parostroj:grafikon-start</include>
+            </includes>
         </dependencySet>
         <dependencySet>
             <unpack>false</unpack>
             <scope>runtime</scope>
             <useProjectArtifact>false</useProjectArtifact>
             <excludes>
-                <exclude>grafikon-start*</exclude>
+                <exclude>net.parostroj:grafikon-start</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -12,11 +12,13 @@ import net.parostroj.timetable.gui.components.GTViewSettings.Selection;
 import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
+import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
 import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         ToolTipManager.sharedInstance().setReshowDelay(0);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
-    
+
+    public static interface RSListener {
+        public void routeSelected(Route route);
+    }
+
     private interface ToolTipHelper {
 
         public List<TrainsCycleItem> getEngineCycles(TimeInterval interval);
@@ -72,11 +78,12 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
-    
+    private RSListener rsListener;
+
     private TextTemplate toolTipTemplateLine;
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
-    private Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
+    private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
     private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
     private JMenuItem routesMenuItem;
@@ -126,15 +133,15 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             public List<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
             }
-        }); 
+        });
         routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes") + "...");
         routesMenu.add(routesMenuItem);
         routesMenuItem.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 // show list of routes
-                RouteSelectionDialog dialog = new RouteSelectionDialog((Frame)GraphicalTimetableView.this.getTopLevelAncestor(), true);
+                RouteSelectionDialog dialog = new RouteSelectionDialog((Window) GraphicalTimetableView.this.getTopLevelAncestor(), true);
                 dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
                 dialog.setListValues(diagram.getRoutes(), getRoute());
                 dialog.setListener(new RouteSelectionDialog.RSListener() {
@@ -148,14 +155,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             }
         });
     }
-    
+
     private EditRoutesDialog getRouteDialog() {
         if (editRoutesDialog == null)
-            editRoutesDialog = new EditRoutesDialog((Frame)this.getTopLevelAncestor(), true);
+            editRoutesDialog = new EditRoutesDialog((Window)this.getTopLevelAncestor(), true);
         return editRoutesDialog;
     }
 
-    private TrainDiagramListenerWithNested currentListener;
+    private TrainDiagramListener currentListener;
 
     public void setTrainDiagram(TrainDiagram diagram) {
         if (currentListener != null && this.diagram != null) {
@@ -169,11 +176,10 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             this.diagram = diagram;
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
-            this.currentListener = new TrainDiagramListenerWithNested() {
+            this.currentListener = new TrainDiagramVisitEventListener(new AbstractEventVisitor() {
 
                 @Override
-                public void trainDiagramChanged(TrainDiagramEvent event) {
-                    // diagram events
+                public void visit(TrainDiagramEvent event) {
                     switch (event.getType()) {
                         case ROUTE_ADDED: case ROUTE_REMOVED:
                             routesChanged(event);
@@ -186,6 +192,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                         case TRAIN_REMOVED:
                             if (trainRegionCollector != null)
                                 trainRegionCollector.deleteTrain((Train)event.getObject());
+                            draw.removedTrain((Train) event.getObject());
                             repaint();
                             break;
                         case ATTRIBUTE:
@@ -205,21 +212,25 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 }
 
                 @Override
-                public void trainDiagramChangedNested(TrainDiagramEvent event) {
-                    // other events
-                    if (event.getType() == GTEventType.NESTED) {
-                        if (event.getNestedEvent() instanceof TrainEvent) {
-                            TrainEvent tEvent = (TrainEvent) event.getNestedEvent();
-                            trainChanged(tEvent);
-                        } else if (event.getNestedEvent() instanceof LineEvent) {
-                            LineEvent lEvent = (LineEvent) event.getNestedEvent();
-                            lineChanged(lEvent);
-                        } else if (event.getNestedEvent() instanceof TrainTypeEvent) {
-                            trainTypeChanged((TrainTypeEvent)event.getNestedEvent());
-                        }
-                    }
+                public void visit(TrainEvent event) {
+                    trainChanged(event);
                 }
-            };
+
+                @Override
+                public void visit(LineEvent event) {
+                    lineChanged(event);
+                }
+
+                @Override
+                public void visit(TrainTypeEvent event) {
+                    trainTypeChanged(event);
+                }
+
+                @Override
+                public void visit(NodeEvent event) {
+                    nodeChanged(event);
+                }
+            });
             this.diagram.addListenerWithNested(this.currentListener);
             this.setTimeRange();
             this.setGTWidth(settings);
@@ -233,9 +244,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     protected GTViewSettings getDefaultViewSettings() {
         GTViewSettings config = (new GTViewSettings())
-                .set(Key.BORDER_X, 10)
-                .set(Key.BORDER_Y, 20)
-                .set(Key.STATION_GAP_X, 100)
+                .set(Key.BORDER_X, 1.5f)
+                .set(Key.BORDER_Y, 1.5f)
+                .set(Key.STATION_GAP_X, 15)
                 .set(Key.TYPE, Type.CLASSIC)
                 .set(Key.TRAIN_COLORS, TrainColors.BY_TYPE)
                 .set(Key.SELECTION, Selection.TRAIN)
@@ -244,7 +255,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)
                 .set(Key.TECHNOLOGICAL_TIME, Boolean.FALSE)
                 .set(Key.IGNORE_TIME_LIMITS, Boolean.FALSE)
-                .set(Key.VIEW_SIZE, INITIAL_WIDTH);
+                .set(Key.VIEW_SIZE, INITIAL_WIDTH)
+                .set(Key.ZOOM, 1.0f);
         return config;
     }
 
@@ -272,6 +284,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 break;
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("number") || event.getAttributeChange().getName().equals("type")) {
+                    draw.changedTextTrain(event.getSource());
                     this.repaint();
                 }
                 break;
@@ -293,10 +306,23 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         }
     }
 
+    private void nodeChanged(NodeEvent event) {
+        switch (event.getType()) {
+            case ATTRIBUTE:
+                if (event.getAttributeChange().getName().equals("name")) {
+                    draw.changedTextNode(event.getSource());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void trainTypeChanged(TrainTypeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("color") || event.getAttributeChange().getName().equals("trainNameTemplate"))
+                    draw.changedTextAllTrains();
                     // repaint
                     this.repaint();
                 break;
@@ -324,7 +350,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         preferredSize = new Dimension(newWidth, newHeight);
         this.revalidate();
     }
-    
+
     public void setTrainSelector(TrainSelector trainSelector) {
         this.trainSelector = trainSelector;
     }
@@ -335,8 +361,25 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         this.route = route;
         this.recreateDraw();
         this.activateRouteMenuItem(route);
+        if (rsListener != null) {
+            rsListener.routeSelected(route);
+        }
     }
-    
+
+    /**
+     * @return the rsListener
+     */
+    public RSListener getRsListener() {
+        return rsListener;
+    }
+
+    /**
+     * @param rsListener the rsListener to set
+     */
+    public void setRsListener(RSListener rsListener) {
+        this.rsListener = rsListener;
+    }
+
     private void setTimeRange() {
         if (diagram == null) {
             settings.remove(Key.START_TIME);
@@ -395,6 +438,13 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         return new GTViewSettings(settings);
     }
 
+    /**
+     * @return settings
+     */
+    GTViewSettings getSettingsInternal() {
+        return settings;
+    }
+
     public void setSettings(GTViewSettings settings) {
         if (settings == null)
             return;
@@ -440,19 +490,19 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
         popupMenu = new javax.swing.JPopupMenu();
         routesMenu = new javax.swing.JMenu();
-        routesEditMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem routesEditMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
         javax.swing.JMenu typesMenu = new javax.swing.JMenu();
         classicMenuItem = new javax.swing.JRadioButtonMenuItem();
         withTracksMenuItem = new javax.swing.JRadioButtonMenuItem();
         sizesMenu = new javax.swing.JMenu();
-        preferencesMenu = new javax.swing.JMenu();
+        javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
         addigitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         extendedLinesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         trainNamesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         techTimeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreTimeLimitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        typesButtonGroup = new javax.swing.ButtonGroup();
+        javax.swing.ButtonGroup typesButtonGroup = new javax.swing.ButtonGroup();
         routesGroup = new javax.swing.ButtonGroup();
 
         routesMenu.setText(ResourceLoader.getString("gt.routes")); // NOI18N
@@ -528,8 +578,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         });
         preferencesMenu.add(techTimeCheckBoxMenuItem);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
-        ignoreTimeLimitsCheckBoxMenuItem.setText(bundle.getString("gt.ignore.time.limits")); // NOI18N
+        ignoreTimeLimitsCheckBoxMenuItem.setText(ResourceLoader.getString("gt.ignore.time.limits")); // NOI18N
         ignoreTimeLimitsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 preferencesCheckBoxMenuItemActionPerformed(evt);
@@ -539,8 +588,25 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
         popupMenu.add(preferencesMenu);
 
+        javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom") + "...");
+        zoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // select zoom
+                GTViewZoomDialog dialog = new GTViewZoomDialog((Window) getTopLevelAncestor(), true);
+                dialog.setLocationRelativeTo(getParent());
+                Float oldZoom = settings.get(Key.ZOOM, Float.class);
+                Float newZoom = dialog.showDialog(oldZoom);
+                if (newZoom != null && newZoom.floatValue() != oldZoom.floatValue()) {
+                    settings.set(Key.ZOOM, newZoom);
+                    recreateDraw();
+                }
+            }
+        });
+        popupMenu.add(zoomMenuItem);
+
         setDoubleBuffered(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 formMouseClicked(evt);
             }
@@ -591,7 +657,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (trainRegionCollector == null)
             return null;
         List<TimeInterval> intervals = trainRegionCollector.getTrainForPoint(event.getX(), event.getY());
-        
+
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty())
                 lastToolTipInterval = intervals.get(0);
@@ -608,7 +674,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         else
             return toolTipTemplateNode.evaluate(toolTipformattingMap);
     }
-    
+
     private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
         int oldIndex = list.indexOf(oldInterval);
         if (oldIndex == -1)
@@ -735,7 +801,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     public GTDraw getGtDraw() {
         return draw;
     }
-    
+
     public void setDisableStationNames(Boolean disable) {
         settings.setOption(Key.DISABLE_STATION_NAMES, disable);
     }
@@ -752,7 +818,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         }
         return pSize;
     }
-    
+
     @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();
@@ -796,14 +862,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;
     protected javax.swing.JPopupMenu popupMenu;
-    private javax.swing.JMenu preferencesMenu;
-    private javax.swing.JMenuItem routesEditMenuItem;
     private javax.swing.ButtonGroup routesGroup;
     private javax.swing.JMenu routesMenu;
     private javax.swing.JMenu sizesMenu;
     private javax.swing.JCheckBoxMenuItem techTimeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem trainNamesCheckBoxMenuItem;
-    private javax.swing.ButtonGroup typesButtonGroup;
     private javax.swing.JRadioButtonMenuItem withTracksMenuItem;
     // End of variables declaration//GEN-END:variables
 }

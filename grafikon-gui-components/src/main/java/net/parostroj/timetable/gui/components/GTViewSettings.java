@@ -28,8 +28,8 @@ public class GTViewSettings {
         EXTENDED_LINES(Boolean.class),
         TRAIN_NAMES(Boolean.class),
         TECHNOLOGICAL_TIME(Boolean.class),
-        BORDER_X(Integer.class),
-        BORDER_Y(Integer.class),
+        BORDER_X(Float.class),
+        BORDER_Y(Float.class),
         SIZE(Dimension.class),
         VIEW_SIZE(Integer.class),
         STATION_GAP_X(Integer.class),
@@ -41,7 +41,8 @@ public class GTViewSettings {
         START_TIME(Integer.class),
         END_TIME(Integer.class),
         IGNORE_TIME_LIMITS(Boolean.class),
-        DISABLE_STATION_NAMES(Boolean.class);
+        DISABLE_STATION_NAMES(Boolean.class),
+        ZOOM(Float.class);
 
         private Class<?> valueClass;
 
@@ -102,12 +103,13 @@ public class GTViewSettings {
     }
 
     public String getStorageString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
                 getOption(Key.TRAIN_NAMES).toString(),
                 getOption(Key.ARRIVAL_DEPARTURE_DIGITS).toString(),
                 getOption(Key.EXTENDED_LINES).toString(),
                 getOption(Key.TECHNOLOGICAL_TIME).toString(),
-                getOption(Key.IGNORE_TIME_LIMITS).toString());
+                getOption(Key.IGNORE_TIME_LIMITS).toString(),
+                get(Key.ZOOM).toString());
     }
 
     public static GTViewSettings parseStorageString(String str) {
@@ -122,6 +124,8 @@ public class GTViewSettings {
             settings.setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
             if (split.length > 6)
                 settings.setOption(Key.IGNORE_TIME_LIMITS, Boolean.parseBoolean(split[6]));
+            if (split.length > 7)
+                settings.set(Key.ZOOM, Float.parseFloat(split[7]));
         }
         return settings;
     }

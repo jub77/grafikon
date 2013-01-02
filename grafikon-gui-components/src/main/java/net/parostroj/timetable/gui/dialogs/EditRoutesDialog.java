@@ -12,25 +12,25 @@ import net.parostroj.timetable.model.*;
 
 /**
  * Dialog for editing of routes.
- * 
+ *
  * @author jub
  */
 public class EditRoutesDialog extends javax.swing.JDialog {
 
     private List<Node> throughNodes;
-    private ThroughNodesDialog tnDialog;
+    private final ThroughNodesDialog tnDialog;
     private TrainDiagram diagram;
     private WrapperListModel<Route> routes;
-    
+
     private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(RouteWrapperDelegate.Type.FULL);
 
     /** Creates new form EditRoutesDialog */
-    public EditRoutesDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public EditRoutesDialog(java.awt.Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         tnDialog = new ThroughNodesDialog(null, true);
     }
-    
+
     public void showDialog(TrainDiagram diagram) {
         if (diagram == null)
             throw new IllegalArgumentException("Diagram cannot be null");
@@ -117,8 +117,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
 
         jLabel3.setText(ResourceLoader.getString("edit.routes.routename")); // NOI18N
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("net/parostroj/timetable/gui/components_texts"); // NOI18N
-        netPartCheckBox.setText(bundle.getString("edit.routes.net.part")); // NOI18N
+        netPartCheckBox.setText(ResourceLoader.getString("edit.routes.net.part")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

@@ -11,10 +11,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
+import net.parostroj.timetable.filters.Filter;
+import net.parostroj.timetable.filters.Filters;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Export/Import dialog.
@@ -27,28 +30,34 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
-    private Map<ImportComponents, Set<ObjectWithId>> selectedItems;
+    private Filter<ObjectWithId> filter;
+    private final Map<ImportComponent, Set<ObjectWithId>> selectedItems;
     private WrapperListModel<ObjectWithId> left;
     private WrapperListModel<ObjectWithId> right;
-    
+
     private boolean selected;
+    private final Collection<ImportComponent> components;
 
     /** Creates new form ExportImportDialog */
-    public ImportDialog(java.awt.Frame parent, boolean modal) {
+    public ImportDialog(java.awt.Frame parent, boolean modal, Collection<ImportComponent> components) {
         super(parent, modal);
         initComponents();
 
         // create map
-        selectedItems = new EnumMap<ImportComponents, Set<ObjectWithId>>(ImportComponents.class);
+        selectedItems = new EnumMap<ImportComponent, Set<ObjectWithId>>(ImportComponent.class);
         // initialize combo box with components and create sets
-        for (ImportComponents comps : ImportComponents.values()) {
+        if (components == null) {
+            components = Arrays.asList(ImportComponent.values());
+        }
+        for (ImportComponent comps : components) {
             componentComboBox.addItem(comps);
         }
         // initialize combobox for matching
         matchComboBox.addItem(ImportMatch.NAME);
         matchComboBox.addItem(ImportMatch.ID);
-        
+
         selected = false;
+        this.components = components;
     }
 
     /**
@@ -57,9 +66,10 @@ public class ImportDialog extends javax.swing.JDialog {
      * @param diagram diagram
      * @param libraryDiagram library diagram
      */
-    public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram) {
+    public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram, Filter<ObjectWithId> filter) {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
+        this.filter = filter;
         clear();
         updateDialog();
     }
@@ -69,7 +79,7 @@ public class ImportDialog extends javax.swing.JDialog {
      */
     public void clear() {
         selected = false;
-        for (ImportComponents comps : ImportComponents.values()) {
+        for (ImportComponent comps : components) {
             selectedItems.put(comps, new LinkedHashSet<ObjectWithId>());
         }
     }
@@ -239,10 +249,10 @@ public class ImportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void updateDialog() {
-        this.updateLists((ImportComponents) componentComboBox.getSelectedItem());
+        this.updateLists((ImportComponent) componentComboBox.getSelectedItem());
     }
 
-    private void updateLists(ImportComponents comps) {
+    private void updateLists(ImportComponent comps) {
         // fill in new items
         Set<ObjectWithId> all = comps != null ? comps.getObjects(libraryDiagram) : null;
         if (all == null || all.isEmpty()) {
@@ -250,6 +260,8 @@ public class ImportDialog extends javax.swing.JDialog {
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
             return;
         }
+        if (filter != null)
+            all = Filters.filter(all, filter, new HashSet<ObjectWithId>());
         Set<ObjectWithId> sel = selectedItems.get(comps);
         // remove already selected
         all.removeAll(sel);
@@ -257,7 +269,7 @@ public class ImportDialog extends javax.swing.JDialog {
         right = fillList(comps, selectedComponentsList, sel);
     }
 
-    private WrapperListModel<ObjectWithId> fillList(ImportComponents comps, JList list, Set<ObjectWithId> set) {
+    private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList list, Set<ObjectWithId> set) {
         WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(comps.getListOfWrappers(set), set, comps.sorted());
         list.setModel(model);
         return model;
@@ -267,14 +279,14 @@ public class ImportDialog extends javax.swing.JDialog {
         return (ImportMatch) matchComboBox.getSelectedItem();
     }
 
-    public Map<ImportComponents, Set<ObjectWithId>> getSelectedItems() {
+    public Map<ImportComponent, Set<ObjectWithId>> getSelectedItems() {
         return selectedItems;
     }
-    
+
     public TrainDiagram getLibraryDiagram() {
         return libraryDiagram;
     }
-    
+
     public TrainDiagram getDiagram() {
         return diagram;
     }

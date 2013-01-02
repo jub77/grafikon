@@ -3,11 +3,12 @@ package net.parostroj.timetable.model.ls.impl4;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.LineTrack;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for line track.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"fromStraightTrack", "toStraightTrack"})
@@ -43,9 +44,9 @@ public class LSLineTrack extends LSTrack {
         this.toStraightTrack = toStraightTrack;
     }
 
-    public LineTrack createLineTrack() throws LSException {
+    public LineTrack createLineTrack(TrainDiagram diagram) throws LSException {
         LineTrack lineTrack = new LineTrack(this.getId());
-        this.addValuesTrack(lineTrack);
+        this.addValuesTrack(diagram, lineTrack);
         return lineTrack;
     }
 }

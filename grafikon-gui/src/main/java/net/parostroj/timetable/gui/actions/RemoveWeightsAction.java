@@ -36,22 +36,22 @@ public class RemoveWeightsAction extends AbstractAction {
         if (result == JOptionPane.YES_OPTION) {
             // remove weights
             ActionContext context = new ActionContext(parent);
-            ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
+            ModelAction removeAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
                 
                 @Override
                 public void execute(Train train) throws Exception {
                     train.removeAttribute("weight");
                 }
             }, ResourceLoader.getString("wait.message.recalculate"), "Weight removal");
-            ModelAction action2 = new EventDispatchModelAction(context) {
+            ModelAction eventAction = new EventDispatchModelAction(context) {
 
                 @Override
                 protected void eventDispatchAction() {
                     model.setModelChanged(true);
                 }
             };
-            ActionHandler.getInstance().execute(action);
-            ActionHandler.getInstance().execute(action2);
+            ActionHandler.getInstance().execute(removeAction);
+            ActionHandler.getInstance().execute(eventAction);
         }
     }
 }

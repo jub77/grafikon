@@ -14,6 +14,7 @@ public class ProgramSettings {
     private boolean warningAutoECCorrection;
     private boolean twoSidedPrint;
     private LengthUnit lengthUnit;
+    private LengthUnit speedLengthUnit;
 
     public String getUserName() {
         return userName;
@@ -64,5 +65,13 @@ public class ProgramSettings {
 
     public void setLengthUnit(LengthUnit lengthUnit) {
         this.lengthUnit = lengthUnit;
+    }
+
+    public LengthUnit getSpeedLengthUnit() {
+        return speedLengthUnit;
+    }
+
+    public void setSpeedLengthUnit(LengthUnit speedLengthUnit) {
+        this.speedLengthUnit = speedLengthUnit;
     }
 }

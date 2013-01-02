@@ -4,10 +4,9 @@
     <parent>
         <groupId>net.parostroj</groupId>
         <artifactId>grafikon</artifactId>
-        <version>1</version>
+        <version>0.13</version>
     </parent>
     <artifactId>grafikon-gui</artifactId>
-    <version>${grafikon.version}</version>
     <packaging>jar</packaging>
     <name>grafikon-gui</name>
     <build>
@@ -25,27 +24,27 @@
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-model</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-output2</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-templates</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-gui-components</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-net</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>jgraph</groupId>
@@ -53,21 +52,21 @@
             <version>5.13.0.0</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-save</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-ls</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-ls4</artifactId>
-            <version>${grafikon.version}</version>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

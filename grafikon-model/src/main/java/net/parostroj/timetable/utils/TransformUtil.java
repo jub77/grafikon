@@ -35,6 +35,7 @@ public class TransformUtil {
     public static String getFromAbbr(TimeInterval i) {
         Node node = null;
         boolean found = false;
+        Node firstNode = null;
         for (TimeInterval current : i.getTrain().getTimeIntervalList()) {
             if (current == i) {
                 found = true;
@@ -42,6 +43,8 @@ public class TransformUtil {
             }
             if (current.getOwner() instanceof Node) {
                 Node n = (Node)current.getOwner();
+                if (firstNode == null)
+                    firstNode = n;
                 switch (n.getType()) {
                     case STOP: case STOP_WITH_FREIGHT: case ROUTE_SPLIT: case SIGNAL:
                         // do nothing
@@ -52,8 +55,8 @@ public class TransformUtil {
                 }
             }
         }
-        if (node != null && found)
-            return node.getAbbr();
+        if (found)
+            return node != null ? node.getAbbr() : (firstNode != null ? firstNode.getAbbr() : null);
         else
             return null;
     }
@@ -63,6 +66,7 @@ public class TransformUtil {
         boolean found = false;
         List<TimeInterval> list = i.getTrain().getTimeIntervalList();
         ListIterator<TimeInterval> iterator = list.listIterator(list.size());
+        Node firstNode = null;
         while (iterator.hasPrevious()) {
             TimeInterval current = iterator.previous();
             if (current == i) {
@@ -71,6 +75,8 @@ public class TransformUtil {
             }
             if (current.getOwner() instanceof Node) {
                 Node n = (Node)current.getOwner();
+                if (firstNode == null)
+                    firstNode = n;
                 switch (n.getType()) {
                     case STOP: case STOP_WITH_FREIGHT: case ROUTE_SPLIT: case SIGNAL:
                         // do nothing
@@ -81,8 +87,8 @@ public class TransformUtil {
                 }
             }
         }
-        if (found && node != null)
-            return node.getAbbr();
+        if (found)
+            return node != null ? node.getAbbr() : (firstNode != null ? firstNode.getAbbr() : null);
         else
             return null;
     }

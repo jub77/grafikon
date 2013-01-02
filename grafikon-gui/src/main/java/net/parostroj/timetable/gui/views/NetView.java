@@ -9,30 +9,37 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import net.parostroj.timetable.gui.*;
+
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.ApplicationModelEvent;
+import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListener;
-import org.jgraph.event.GraphModelEvent;
-import org.jgrapht.ext.JGraphModelAdapter;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
+
 import org.jgraph.JGraph;
+import org.jgraph.event.GraphModelEvent;
 import org.jgraph.event.GraphModelListener;
 import org.jgraph.event.GraphSelectionListener;
 import org.jgraph.graph.*;
 import org.jgraph.plaf.basic.BasicGraphUI;
+import org.jgrapht.ext.JGraphModelAdapter;
 
 /**
  * Net view ....
- * 
+ *
  * @author jub
  */
 public class NetView extends javax.swing.JPanel implements ApplicationModelListener, GraphModelListener, TrainDiagramListener {
 
     private JGraphModelAdapter<Node, Line> netAdapter;
     private ApplicationModel model;
-    private JGraph jGraph;
+    private final JGraph jGraph;
 
     public NetView() {
         initComponents();
@@ -52,7 +59,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         jGraph.addGraphSelectionListener(listener);
         jGraph.setMarqueeHandler(handler);
     }
-    
+
     public void setModel(ApplicationModel model) {
         this.model = model;
         this.model.addListener(this);
@@ -108,7 +115,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
             }
         }
     }
-    
+
     private void setNet(ApplicationModel model) {
         if (model.getDiagram() != null) {
             this.setNet(model.getDiagram().getNet());
@@ -126,7 +133,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         // remove listener
         jGraph.getModel().removeGraphModelListener(this);
         jGraph.getSelectionModel().clearSelection();
-        
+
         // initialize adapter
         netAdapter = new JGraphModelAdapter<Node, Line>(net.getGraph(),
                 JGraphModelAdapter.createDefaultVertexAttributes(),
@@ -144,10 +151,15 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
                                 collectRoutes(line, result);
                                 if (result.length() != 0)
                                     result.append(';');
-                                result.append(line.getLength() / 10).append("cm");
+                                LengthUnit lengthUnit = model.getProgramSettings().getLengthUnit();
+                                BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
+                                result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
                                 int topSpeed = line.getTopSpeed();
-                                if (topSpeed != Line.UNLIMITED_SPEED)
-                                    result.append(';').append(topSpeed).append("km/h");
+                                if (topSpeed != Line.UNLIMITED_SPEED) {
+                                    lengthUnit = model.getProgramSettings().getSpeedLengthUnit();
+                                    BigDecimal sValue = lengthUnit.convertFrom(new BigDecimal(topSpeed), LengthUnit.KM);
+                                    result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(lengthUnit.getUnitsOfString()).append("/h");
+                                }
                                 return result.toString();
                             }
                         };
@@ -171,7 +183,7 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
                     }
                 });
         jGraph.setModel(netAdapter);
-        
+
         netAdapter.beginUpdate();
         for (Node point : net.getNodes()) {
             this.positionVertexAt(point, point.getPositionX(), point.getPositionY());
@@ -192,8 +204,8 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
 
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 

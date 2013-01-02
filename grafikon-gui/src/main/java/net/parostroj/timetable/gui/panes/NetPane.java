@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui.panes;
 
+import java.awt.BorderLayout;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 
 /**
@@ -13,16 +15,16 @@ import net.parostroj.timetable.gui.ApplicationModel;
  * @author jub
  */
 public class NetPane extends javax.swing.JPanel {
-    
+
     /** Creates new form NetPane */
     public NetPane() {
         initComponents();
     }
-    
+
     public void setModel(ApplicationModel model) {
         netEditView.setModel(model);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -30,24 +32,14 @@ public class NetPane extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         netEditView = new net.parostroj.timetable.gui.views.NetEditView();
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(netEditView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(netEditView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        this.setLayout(new BorderLayout());
+        this.add(netEditView);
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.parostroj.timetable.gui.views.NetEditView netEditView;
     // End of variables declaration//GEN-END:variables
-    
+
 }

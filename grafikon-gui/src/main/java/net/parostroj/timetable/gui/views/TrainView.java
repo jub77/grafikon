@@ -6,17 +6,23 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
+import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * View of train details.
@@ -93,6 +99,22 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.model.addListener(this);
         ((TrainTableModel)trainTable.getModel()).setModel(model);
         getEditTrainDialog().setModel(model);
+        model.getMediator().addColleague(new Colleague() {
+            public void receiveMessage(Object message) {
+                IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
+                if (ism.getInterval() != null) {
+                    TimeInterval interval = ism.getInterval();
+                    int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
+                    int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED);
+                    trainTable.setRowSelectionInterval(row, row);
+                    if (column != -1)
+                        trainTable.setColumnSelectionInterval(column, column);
+                    Rectangle rect = trainTable.getCellRect(row, 0, true);
+                    trainTable.scrollRectToVisible(rect);
+                    trainTable.requestFocus();
+                }
+            }
+        }, IntervalSelectionMessage.class);
     }
 
 
@@ -213,51 +235,51 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         techTimeTextField.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(trainTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(techTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(copyButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(editButton))
-                            .addComponent(trainTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(5)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(trainTableScrollPane, Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(jLabel3)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(techTimeTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(copyButton)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(editButton))
+                                .addComponent(trainTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGap(5))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(trainTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(editButton)
-                    .addComponent(copyButton)
-                    .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(techTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(trainTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(5)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(trainTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGap(2)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(editButton)
+                        .addComponent(copyButton)
+                        .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(techTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGap(2)
+                    .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addGap(5))
         );
+        this.setLayout(layout);
     }// </editor-fold>//GEN-END:initComponents
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed

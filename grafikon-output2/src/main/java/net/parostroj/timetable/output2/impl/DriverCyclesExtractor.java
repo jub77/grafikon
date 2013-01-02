@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import net.parostroj.timetable.model.Line;
+import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.utils.TimeConverter;
 
 /**
  * Extracts information for driver cycles.
@@ -61,10 +61,11 @@ public class DriverCyclesExtractor {
     }
 
     private DriverCycleRow createRow(TrainsCycleItem item) {
+    	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
         DriverCycleRow row = new DriverCycleRow();
         row.setTrainName(item.getTrain().getName());
-        row.setFromTime(TimeConverter.convertFromIntToText(item.getStartTime()));
-        row.setToTime(TimeConverter.convertFromIntToText(item.getEndTime()));
+        row.setFromTime(c.convertIntToXml(item.getStartTime()));
+        row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());

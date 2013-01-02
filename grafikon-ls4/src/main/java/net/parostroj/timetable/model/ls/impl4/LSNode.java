@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Class for storing nodes.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "node")
@@ -115,13 +115,13 @@ public class LSNode {
 
     public Node createNode(TrainDiagram diagram) throws LSException {
         Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
-        node.setAttributes(attributes.createAttributes());
+        node.setAttributes(attributes.createAttributes(diagram));
         node.setPositionX(x);
         node.setPositionY(y);
         // tracks
         if (this.tracks != null)
             for (LSNodeTrack track : this.tracks) {
-                node.addTrack(track.createNodeTrack());
+                node.addTrack(track.createNodeTrack(diagram));
             }
         return node;
     }
