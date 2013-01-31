@@ -9,6 +9,7 @@ import groovy.lang.GroovyShell;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -58,6 +59,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private ExecuteScriptAction executeScriptAction;
 
     private Map<File, JMenuItem> lastOpened;
+    private final List<Component> enabled = new ArrayList<Component>();
 
     public MainFrame(SplashScreenInfo info) {
         String version = getVersion(false);
@@ -246,7 +248,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         switch (event.getType()) {
             case SET_DIAGRAM_CHANGED:
                 this.updateView();
-                tabbedPane.setEnabled(model.getDiagram() != null);
                 this.setTitleChanged(false);
                 break;
             case MODEL_CHANGED:
@@ -335,43 +336,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void updateView() {
         boolean notNullDiagram = model.getDiagram() != null;
-        fileSaveMenuItem.setEnabled(notNullDiagram);
-        fileSaveAsMenuItem.setEnabled(notNullDiagram);
-        trainTimetableListMenuItem.setEnabled(notNullDiagram);
-        trainTimetableListByDcMenuItem.setEnabled(notNullDiagram);
-        recalculateMenuItem.setEnabled(notNullDiagram);
-        recalculateStopsMenuItem.setEnabled(notNullDiagram);
-        nodeTimetableListMenuItem.setEnabled(notNullDiagram);
-        ecListMenuItem.setEnabled(notNullDiagram);
-        dcListMenuItem.setEnabled(notNullDiagram);
-        ccListMenuItem.setEnabled(notNullDiagram);
-        tucListMenuItem.setEnabled(notNullDiagram);
-        settingsMenuItem.setEnabled(notNullDiagram);
-        groupsMenuItem.setEnabled(notNullDiagram);
-        allHtmlMenuItem.setEnabled(notNullDiagram);
-        imagesMenuItem.setEnabled(notNullDiagram);
-        textItemsMenuItem.setEnabled(notNullDiagram);
-        infoMenuItem.setEnabled(notNullDiagram);
-        spListMenuItem.setEnabled(notNullDiagram);
-        epListMenuItem.setEnabled(notNullDiagram);
-        trainTypesMenuItem.setEnabled(notNullDiagram);
-        lineClassesMenuItem.setEnabled(notNullDiagram);
-        weightTablesMenuItem.setEnabled(notNullDiagram);
-        penaltyTableMenuItem.setEnabled(notNullDiagram);
-        trainTimetableListByTimeFilteredMenuItem.setEnabled(notNullDiagram);
-        fileImportMenuItem.setEnabled(notNullDiagram);
-        fileImportGroupMenuItem.setEnabled(notNullDiagram);
-        dcListSelectMenuItem.setEnabled(notNullDiagram);
-        trainTimetableListByDcSelectMenuItem.setEnabled(notNullDiagram);
-        nodeTimetableListSelectMenuItem.setEnabled(notNullDiagram);
-        ecListSelectMenuItem.setEnabled(notNullDiagram);
-        tucListSelectMenuItem.setEnabled(notNullDiagram);
-        editRoutesMenuItem.setEnabled(notNullDiagram);
-        trainTimetableListByRoutesMenuItem.setEnabled(notNullDiagram);
-        removeWeightsMenuItem.setEnabled(notNullDiagram);
-        executeScriptMenuItem.setEnabled(notNullDiagram);
-        scriptsMenu.setEnabled(notNullDiagram);
-        ouputTemplatesMenuItem.setEnabled(notNullDiagram);
+        for (Component c : enabled) {
+            c.setEnabled(notNullDiagram);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -386,7 +353,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
         lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
-        tabbedPane = new javax.swing.JTabbedPane();
+        javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
         engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
         trainUnitCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
@@ -398,11 +365,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem fileNewMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator3 = new javax.swing.JSeparator();
-        fileOpenMenuItem = new javax.swing.JMenuItem();
-        fileSaveMenuItem = new javax.swing.JMenuItem();
-        fileSaveAsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem fileOpenMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem fileSaveMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem fileSaveAsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator1 = new javax.swing.JSeparator();
-        fileImportMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem fileImportMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator separator5 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -411,38 +378,38 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
         javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
-        diagramMenu = new javax.swing.JMenu();
-        settingsMenuItem = new javax.swing.JMenuItem();
-        groupsMenuItem = new javax.swing.JMenuItem();
-        editRoutesMenuItem = new javax.swing.JMenuItem();
-        imagesMenuItem = new javax.swing.JMenuItem();
-        textItemsMenuItem = new javax.swing.JMenuItem();
-        infoMenuItem = new javax.swing.JMenuItem();
-        trainTypesMenuItem = new javax.swing.JMenuItem();
-        lineClassesMenuItem = new javax.swing.JMenuItem();
-        weightTablesMenuItem = new javax.swing.JMenuItem();
-        penaltyTableMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenu diagramMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem settingsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem groupsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem editRoutesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem imagesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem textItemsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem infoMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTypesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem lineClassesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem weightTablesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem penaltyTableMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
-        trainTimetableListMenuItem = new javax.swing.JMenuItem();
-        nodeTimetableListMenuItem = new javax.swing.JMenuItem();
-        ecListMenuItem = new javax.swing.JMenuItem();
-        tucListMenuItem = new javax.swing.JMenuItem();
-        dcListMenuItem = new javax.swing.JMenuItem();
-        spListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTimetableListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem nodeTimetableListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem ecListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem tucListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem dcListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem spListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
-        trainTimetableListByDcMenuItem = new javax.swing.JMenuItem();
-        trainTimetableListByTimeFilteredMenuItem = new javax.swing.JMenuItem();
-        epListMenuItem = new javax.swing.JMenuItem();
-        ccListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTimetableListByDcMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem epListMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem ccListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
-        trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
-        trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
-        nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
-        ecListSelectMenuItem = new javax.swing.JMenuItem();
-        tucListSelectMenuItem = new javax.swing.JMenuItem();
-        dcListSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem ecListSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem tucListSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem dcListSelectMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator4 = new javax.swing.JSeparator();
-        allHtmlMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem allHtmlMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator3 = new javax.swing.JSeparator();
         oLanguageMenu = new javax.swing.JMenu();
         oSystemLRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -452,20 +419,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JSeparator jSeparator5 = new javax.swing.JSeparator();
-        ouputTemplatesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem ouputTemplatesMenuItem = new javax.swing.JMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
-        recalculateMenuItem = new javax.swing.JMenuItem();
-        recalculateStopsMenuItem = new javax.swing.JMenuItem();
-        removeWeightsMenuItem = new javax.swing.JMenuItem();
-        executeScriptMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem recalculateMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem recalculateStopsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem removeWeightsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem executeScriptMenuItem = new javax.swing.JMenuItem();
         scriptsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem sortColumnsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem resizeColumnsMenuItem = new javax.swing.JMenuItem();
         showGTViewMenuItem = new javax.swing.JCheckBoxMenuItem();
-        programSettingsMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem programSettingsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -518,7 +485,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileImportMenuItem.setText(ResourceLoader.getString("menu.file.exportimport")); // NOI18N
         fileMenu.add(fileImportMenuItem);
 
-        fileImportGroupMenuItem = new JMenuItem();
+        javax.swing.JMenuItem fileImportGroupMenuItem = new javax.swing.JMenuItem();
         fileImportGroupMenuItem.setAction(new ImportAction(model, this, true));
         fileImportGroupMenuItem.setText(ResourceLoader.getString("menu.file.exportimport.trains")); // NOI18N
         fileMenu.add(fileImportGroupMenuItem);
@@ -922,6 +889,46 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         setJMenuBar(menuBar);
 
+        // enabled list
+        enabled.add(tabbedPane);
+        enabled.add(fileSaveMenuItem);
+        enabled.add(fileSaveAsMenuItem);
+        enabled.add(trainTimetableListMenuItem);
+        enabled.add(trainTimetableListByDcMenuItem);
+        enabled.add(recalculateMenuItem);
+        enabled.add(recalculateStopsMenuItem);
+        enabled.add(nodeTimetableListMenuItem);
+        enabled.add(ecListMenuItem);
+        enabled.add(dcListMenuItem);
+        enabled.add(ccListMenuItem);
+        enabled.add(tucListMenuItem);
+        enabled.add(settingsMenuItem);
+        enabled.add(groupsMenuItem);
+        enabled.add(allHtmlMenuItem);
+        enabled.add(imagesMenuItem);
+        enabled.add(textItemsMenuItem);
+        enabled.add(infoMenuItem);
+        enabled.add(spListMenuItem);
+        enabled.add(epListMenuItem);
+        enabled.add(trainTypesMenuItem);
+        enabled.add(lineClassesMenuItem);
+        enabled.add(weightTablesMenuItem);
+        enabled.add(penaltyTableMenuItem);
+        enabled.add(trainTimetableListByTimeFilteredMenuItem);
+        enabled.add(fileImportMenuItem);
+        enabled.add(fileImportGroupMenuItem);
+        enabled.add(dcListSelectMenuItem);
+        enabled.add(trainTimetableListByDcSelectMenuItem);
+        enabled.add(nodeTimetableListSelectMenuItem);
+        enabled.add(ecListSelectMenuItem);
+        enabled.add(tucListSelectMenuItem);
+        enabled.add(editRoutesMenuItem);
+        enabled.add(trainTimetableListByRoutesMenuItem);
+        enabled.add(removeWeightsMenuItem);
+        enabled.add(executeScriptMenuItem);
+        enabled.add(scriptsMenu);
+        enabled.add(ouputTemplatesMenuItem);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1247,67 +1254,27 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem allHtmlMenuItem;
-    private javax.swing.JMenuItem ccListMenuItem;
     private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
-    private javax.swing.JMenuItem dcListMenuItem;
-    private javax.swing.JMenuItem dcListSelectMenuItem;
-    private javax.swing.JMenu diagramMenu;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
-    private javax.swing.JMenuItem ecListMenuItem;
-    private javax.swing.JMenuItem ecListSelectMenuItem;
-    private javax.swing.JMenuItem editRoutesMenuItem;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
-    private javax.swing.JMenuItem epListMenuItem;
-    private javax.swing.JMenuItem executeScriptMenuItem;
-    private javax.swing.JMenuItem fileImportMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenuItem fileOpenMenuItem;
-    private javax.swing.JMenuItem fileSaveAsMenuItem;
-    private javax.swing.JMenuItem fileSaveMenuItem;
     private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
-    private javax.swing.JMenuItem imagesMenuItem;
-    private javax.swing.JMenuItem infoMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
-    private javax.swing.JMenuItem lineClassesMenuItem;
     private javax.swing.JMenu lookAndFeelMenu;
     private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
     private net.parostroj.timetable.gui.panes.NetPane netPane;
-    private javax.swing.JMenuItem nodeTimetableListMenuItem;
-    private javax.swing.JMenuItem nodeTimetableListSelectMenuItem;
     private javax.swing.JMenu oLanguageMenu;
     private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
-    private javax.swing.JMenuItem ouputTemplatesMenuItem;
     private javax.swing.ButtonGroup outputLbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
-    private javax.swing.JMenuItem penaltyTableMenuItem;
-    private javax.swing.JMenuItem programSettingsMenuItem;
-    private javax.swing.JMenuItem recalculateMenuItem;
-    private javax.swing.JMenuItem recalculateStopsMenuItem;
-    private javax.swing.JMenuItem removeWeightsMenuItem;
     private javax.swing.JMenu scriptsMenu;
-    private javax.swing.JMenuItem settingsMenuItem;
-    private javax.swing.JMenuItem groupsMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
-    private javax.swing.JMenuItem spListMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
     private javax.swing.JRadioButtonMenuItem systemLanguageRadioButtonMenuItem;
-    private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JMenuItem textItemsMenuItem;
-    private javax.swing.JMenuItem trainTimetableListByDcMenuItem;
-    private javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem;
-    private javax.swing.JMenuItem trainTimetableListByRoutesMenuItem;
-    private javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem;
-    private javax.swing.JMenuItem trainTimetableListMenuItem;
-    private javax.swing.JMenuItem trainTypesMenuItem;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
     private net.parostroj.timetable.gui.panes.TrainsPane trainsPane;
-    private javax.swing.JMenuItem tucListMenuItem;
-    private javax.swing.JMenuItem tucListSelectMenuItem;
     private javax.swing.JMenu viewsMenu;
-    private javax.swing.JMenuItem weightTablesMenuItem;
     private JCheckBoxMenuItem twoSidesPrintCheckBoxMenuItem;
-    private JMenuItem fileImportGroupMenuItem;
     // End of variables declaration//GEN-END:variables
 }
