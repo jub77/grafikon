@@ -87,10 +87,15 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
 
     @Override
     public void invoke(Object sender, mxEventObject evt) {
-    	System.out.println("---------sender----------: " + evt.getProperties());
-    	// TODO write back positions ...
-//        node.setPositionX(b.getBounds().x);
-//        node.setPositionY(b.getBounds().y);
+    	Object[] cells = (Object[]) evt.getProperty("cells");
+    	if (cells != null) {
+    		for (Object cell : cells) {
+    			mxCell mxCell = (mxCell) cell;
+    			Node node = (Node) mxCell.getValue();
+    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
+    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+    		}
+    	}
     }
 
     private void setNet(ApplicationModel model) {
