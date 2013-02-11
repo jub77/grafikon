@@ -2,18 +2,20 @@ package net.parostroj.timetable.gui.views;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
-import org.jgraph.event.GraphSelectionEvent;
-import org.jgraph.event.GraphSelectionListener;
-import org.jgraph.graph.DefaultGraphCell;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 
 /**
  * Model for net edit view.
  *
  * @author jub
  */
-public class NetSelectionModel implements GraphSelectionListener {
+public class NetSelectionModel implements mxIEventListener {
 
     private Set<NetSelectionListener> listeners;
 
@@ -41,16 +43,16 @@ public class NetSelectionModel implements GraphSelectionListener {
     }
 
     @Override
-    public void valueChanged(GraphSelectionEvent event) {
+    public void invoke(Object sender, mxEventObject event) {
         selectedLine = null;
         selectedNode = null;
-        if (event.isAddedCell()) {
-            DefaultGraphCell gc = (DefaultGraphCell)event.getCell();
-            if (gc.getUserObject() instanceof Node) {
-                selectedNode = (Node)gc.getUserObject();
+        if (sender instanceof mxCell) {
+        	// TODO rewrite ...
+            if (sender instanceof Node) {
+                selectedNode = (Node) sender;
                 this.callListeners(Action.NODE_SELECTED, selectedNode, null);
-            } else if (gc.getUserObject() instanceof Line) {
-                selectedLine = (Line)gc.getUserObject();
+            } else if (sender instanceof Line) {
+                selectedLine = (Line) sender;
                 this.callListeners(Action.LINE_SELECTED, null, selectedLine);
             }
         } else {

@@ -55,7 +55,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
-    private NetViewMarqueeHandler marqueeHandler;
 
     private EditNodeDialog editNodeDialog;
     private EditLineDialog editLineDialog;
@@ -211,9 +210,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
             ActionContext actionContext = new ActionContext(NetEditView.this);
             ModelAction action = new EventDispatchAfterModelAction(actionContext) {
-                
+
                 private boolean error;
-                
+
                 @Override
                 protected void backgroundAction() {
                     setWaitDialogVisible(true);
@@ -221,15 +220,15 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     long time = System.currentTimeMillis();
                     try {
                         Dimension saveSize = dialog.getSaveSize();
-    
+
                         if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                             BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
                             Graphics2D g2d = img.createGraphics();
                             g2d.setColor(Color.white);
                             g2d.fillRect(0, 0, saveSize.width, saveSize.height);
-    
+
                             netView.paintGraph(g2d);
-    
+
                             try {
                                 ImageIO.write(img, "png", dialog.getSaveFile());
                             } catch (IOException e) {
@@ -239,18 +238,18 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
                             DOMImplementation domImpl =
                                     GenericDOMImplementation.getDOMImplementation();
-    
+
                             // Create an instance of org.w3c.dom.Document.
                             String svgNS = "http://www.w3.org/2000/svg";
                             Document document = domImpl.createDocument(svgNS, "svg", null);
-    
+
                             SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
                             SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-    
+
                             g2d.setSVGCanvasSize(saveSize);
-    
+
                             netView.paintGraph(g2d);
-    
+
                             // write to ouput - do not use css style
                             boolean useCSS = false;
                             try {
@@ -266,7 +265,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         setWaitDialogVisible(false);
                     }
                 }
-                
+
                 @Override
                 protected void eventDispatchActionAfter() {
                     if (error) {
@@ -304,8 +303,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private void initializeListeners() {
         // add net edit model to net view
         netEditModel = new NetSelectionModel();
-        marqueeHandler = new NetViewMarqueeHandler();
-        netView.setGraphCallbacks(netEditModel, marqueeHandler);
+        netView.setGraphCallbacks(netEditModel);
         netEditModel.addNetSelectionListener(this);
     }
 
@@ -341,7 +339,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         javax.swing.JButton newLineButton = new javax.swing.JButton();
         javax.swing.JButton editButton = new javax.swing.JButton();
         javax.swing.JButton deleteButton = new javax.swing.JButton();
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         netView = new net.parostroj.timetable.gui.views.NetView();
         jButton1 = new javax.swing.JButton();
 
@@ -357,8 +354,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         deleteButton.setAction(deleteAction);
         deleteButton.setEnabled(false);
 
-        scrollPane.setViewportView(netView);
-
         jButton1.setAction(saveNetImageAction);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -368,7 +363,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addComponent(netView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(newNodeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -385,7 +380,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                .addComponent(netView, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
