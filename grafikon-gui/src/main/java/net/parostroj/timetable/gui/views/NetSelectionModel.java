@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.Node;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.view.mxGraphSelectionModel;
 
 /**
  * Model for net edit view.
@@ -44,15 +45,16 @@ public class NetSelectionModel implements mxIEventListener {
 
     @Override
     public void invoke(Object sender, mxEventObject event) {
+    	mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
+    	mxCell cell = (mxCell) mm.getCell();
         selectedLine = null;
         selectedNode = null;
-        if (sender instanceof mxCell) {
-        	// TODO rewrite ...
-            if (sender instanceof Node) {
-                selectedNode = (Node) sender;
+        if (cell != null) {
+            if (cell.getValue() instanceof Node) {
+                selectedNode = (Node) cell.getValue();
                 this.callListeners(Action.NODE_SELECTED, selectedNode, null);
-            } else if (sender instanceof Line) {
-                selectedLine = (Line) sender;
+            } else if (cell.getValue() instanceof Line) {
+                selectedLine = (Line) cell.getValue();
                 this.callListeners(Action.LINE_SELECTED, null, selectedLine);
             }
         } else {
