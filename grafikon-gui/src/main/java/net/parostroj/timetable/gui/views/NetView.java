@@ -39,15 +39,14 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
     private ApplicationModel model;
     private JGraphXAdapter<Node, Line> mxGraph;
     private mxGraphComponent mxGraphComponent;
+	private mxIEventListener selectionListener;
 
     public NetView() {
         setLayout(new java.awt.BorderLayout());
     }
 
     public void setGraphCallbacks(mxIEventListener selection) {
-    	// TODO call always ...
-    	if (mxGraph != null)
-    		mxGraph.addListener(mxEvent.SELECT, selection);
+    	this.selectionListener = selection;
     }
 
     public void setModel(ApplicationModel model) {
@@ -110,93 +109,56 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
         if (net == null)
             return;
 
-        mxGraph = new JGraphXAdapter<Node, Line>((ListenableGraph<Node, Line>) net.getGraph());
+        mxGraph = new NodeLineGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
         mxGraphComponent = new mxGraphComponent(mxGraph);
         this.add(mxGraphComponent);
         mxGraph.setCellsEditable(false);
         mxGraph.setConnectableEdges(false);
+        mxGraph.setAllowDanglingEdges(false);
         mxGraph.setEdgeLabelsMovable(false);
         mxGraph.getSelectionModel().setSingleSelection(true);
         mxGraph.setDisconnectOnMove(false);
         mxGraph.setAutoSizeCells(true);
         mxGraph.setDropEnabled(false);
         mxGraph.setAllowNegativeCoordinates(false);
+        mxGraph.setCellsResizable(false);
+        mxGraph.getSelectionModel().addListener(mxEvent.CHANGE, selectionListener);
         mxGraphComponent.setDoubleBuffered(false);
         mxGraphComponent.setDragEnabled(false);
         mxGraphComponent.getViewport().setOpaque(true);
         mxGraphComponent.getViewport().setBackground(Color.WHITE);
 
-//        // initialize adapter
-//        netAdapter = new JGraphModelAdapter<Node, Line>(net.getGraph(),
-//                JGraphModelAdapter.createDefaultVertexAttributes(),
-//                JGraphModelAdapter.createDefaultEdgeAttributes(net.getGraph()),
-//                new JGraphModelAdapter.DefaultCellFactory<Node, Line>() {
-//
-//                    @Override
-//                    public DefaultEdge createEdgeCell(Line line) {
-//                        return new DefaultEdge(line) {
-//
-//                            @Override
-//                            public String toString() {
-//                                StringBuilder result = new StringBuilder();
-//                                Line line = (Line)getUserObject();
-//                                collectRoutes(line, result);
-//                                if (result.length() != 0)
-//                                    result.append(';');
-//                                LengthUnit lengthUnit = model.getProgramSettings().getLengthUnit();
-//                                BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
-//                                result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
-//                                int topSpeed = line.getTopSpeed();
-//                                if (topSpeed != Line.UNLIMITED_SPEED) {
-//                                    lengthUnit = model.getProgramSettings().getSpeedLengthUnit();
-//                                    BigDecimal sValue = lengthUnit.convertFrom(new BigDecimal(topSpeed), LengthUnit.KM);
-//                                    result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(lengthUnit.getUnitsOfString()).append("/h");
-//                                }
-//                                return result.toString();
-//                            }
-//                        };
-//                    }
-//
-//                    private void collectRoutes(Line line, StringBuilder builder) {
-//                        TrainDiagram diagram = line.getTrainDiagram();
-//                        boolean added = false;
-//                        for (Route route : diagram.getRoutes()) {
-//                            if (route.isNetPart()) {
-//                                for (RouteSegment seg : route.getSegments()) {
-//                                    if (seg.asLine() != null && seg.asLine() == line) {
-//                                        if (added)
-//                                            builder.append(',');
-//                                        added = true;
-//                                        builder.append(route.getName());
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                });
-//        mxGraph.setModel(netAdapter);
-
         mxGraph.addListener(mxEvent.CELLS_MOVED, this);
         mxGraph.getModel().beginUpdate();
-        for (Node node : net.getNodes()) {
-        	mxCell cell = mxGraph.getVertexToCellMap().get(node);
-			mxGraph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 10, 10));
+        try {
+	        for (Node node : net.getNodes()) {
+	        	mxCell cell = mxGraph.getVertexToCellMap().get(node);
+				mxGraph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 0, 0));
+				mxGraph.updateCellSize(cell);
+	        }
+        } finally {
+        	mxGraph.getModel().endUpdate();
         }
-        mxGraph.getModel().endUpdate();
     }
 
     private void updateNode(Node node) {
     	// TODO check if it is working - label change ..
         mxGraph.getModel().beginUpdate();
-        mxGraph.cellLabelChanged(mxGraph.getVertexToCellMap().get(node), null, true);
-        mxGraph.getModel().endUpdate();
+        try {
+        	mxGraph.updateCellSize(mxGraph.getVertexToCellMap().get(node));
+        } finally {
+        	mxGraph.getModel().endUpdate();
+        }
     }
 
     private void updateLine(Line line) {
     	// TODO check if it is working - label change ..
         mxGraph.getModel().beginUpdate();
-        mxGraph.cellLabelChanged(mxGraph.getEdgeToCellMap().get(line), null, true);
-        mxGraph.getModel().endUpdate();
+        try {
+        	mxGraph.updateCellSize(mxGraph.getEdgeToCellMap().get(line));
+        } finally {
+        	mxGraph.getModel().endUpdate();
+        }
     }
 
     @Override

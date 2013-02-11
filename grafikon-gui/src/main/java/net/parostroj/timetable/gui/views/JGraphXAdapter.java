@@ -12,6 +12,11 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.view.mxGraph;
 
+/**
+ * Adapter for jgrapht graph to mxGraph.
+ *
+ * @author cz2b10k5
+ */
 public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
 
 	private ListenableGraph<V, E> graphT;
@@ -28,9 +33,7 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 	}
 
 	public void addJGraphTVertex(V vertex) {
-
 		getModel().beginUpdate();
-
 		try {
 			mxCell cell = new mxCell(vertex);
 			cell.setVertex(true);
@@ -44,9 +47,7 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 	}
 
 	public void addJGraphTEdge(E edge) {
-
 		getModel().beginUpdate();
-
 		try {
 			V source = graphT.getEdgeSource(edge);
 			V target = graphT.getEdgeTarget(edge);
@@ -111,6 +112,5 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 		} finally {
 			getModel().endUpdate();
 		}
-
 	}
 }
