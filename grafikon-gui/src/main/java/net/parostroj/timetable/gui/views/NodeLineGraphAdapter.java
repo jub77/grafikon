@@ -3,11 +3,7 @@ package net.parostroj.timetable.gui.views;
 import java.math.BigDecimal;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.RouteSegment;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 
@@ -15,6 +11,11 @@ import org.jgrapht.ListenableGraph;
 
 import com.mxgraph.model.mxCell;
 
+/**
+ * Specific adapter for graph with nodes and lines.
+ *
+ * @author cz2b10k5
+ */
 public class NodeLineGraphAdapter extends JGraphXAdapter<Node, Line> {
 
 	private ApplicationModel appModel;
@@ -35,14 +36,6 @@ public class NodeLineGraphAdapter extends JGraphXAdapter<Node, Line> {
 			value = mxCell.getValue().toString();
 		}
 		return value;
-	}
-
-	@Override
-	public boolean isCellSelectable(Object cell) {
-		boolean sel = super.isCellSelectable(cell);
-		if (cell != null && ((mxCell) cell).getValue() instanceof Line)
-			sel = false;
-		return sel;
 	}
 
 	@Override

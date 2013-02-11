@@ -12,11 +12,7 @@ import java.awt.Graphics;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListener;
 
@@ -91,9 +87,11 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
     	if (cells != null) {
     		for (Object cell : cells) {
     			mxCell mxCell = (mxCell) cell;
-    			Node node = (Node) mxCell.getValue();
-    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
-    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+    			if (mxCell.getValue() instanceof Node) {
+	    			Node node = (Node) mxCell.getValue();
+	    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
+	    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+    			}
     		}
     	}
     }
@@ -147,23 +145,11 @@ public class NetView extends javax.swing.JPanel implements ApplicationModelListe
     }
 
     private void updateNode(Node node) {
-    	// TODO check if it is working - label change ..
-        mxGraph.getModel().beginUpdate();
-        try {
-        	mxGraph.updateCellSize(mxGraph.getVertexToCellMap().get(node));
-        } finally {
-        	mxGraph.getModel().endUpdate();
-        }
+    	mxGraph.cellLabelChanged(mxGraph.getVertexToCellMap().get(node), node, true);
     }
 
     private void updateLine(Line line) {
-    	// TODO check if it is working - label change ..
-        mxGraph.getModel().beginUpdate();
-        try {
-        	mxGraph.updateCellSize(mxGraph.getEdgeToCellMap().get(line));
-        } finally {
-        	mxGraph.getModel().endUpdate();
-        }
+    	mxGraph.cellLabelChanged(mxGraph.getEdgeToCellMap().get(line), line, true);
     }
 
     @Override
