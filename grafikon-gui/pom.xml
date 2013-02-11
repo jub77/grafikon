@@ -47,9 +47,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>jgraph</groupId>
-            <artifactId>jgraph</artifactId>
-            <version>5.13.0.0</version>
+            <groupId>org.tinyjee.jgraphx</groupId>
+            <artifactId>jgraphx</artifactId>
+            <version>1.10.4.1</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
