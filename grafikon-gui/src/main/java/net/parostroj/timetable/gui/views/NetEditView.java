@@ -7,6 +7,8 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,9 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
@@ -31,6 +31,8 @@ import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainDiagramListener;
 import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -39,17 +41,26 @@ import net.parostroj.timetable.utils.Tuple;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.jgrapht.ListenableGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxGraphHandler;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 
 /**
  * View for editing net.
  *
  * @author jub
  */
-public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, ApplicationModelListener {
+public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, ApplicationModelListener, TrainDiagramListener, mxIEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetEditView.class);
 
@@ -66,7 +77,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private Action deleteAction;
     private Action saveNetImageAction;
 
-    private net.parostroj.timetable.gui.views.NetView netView;
+    private JGraphXAdapter<Node, Line> mxGraph;
+    private mxGraphComponent mxGraphComponent;
 
     public class NewNodeAction extends AbstractAction {
 
@@ -203,7 +215,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         public void actionPerformed(ActionEvent evt) {
             SaveImageDialog saveDialog = getDialog();
             dialog.setLocationRelativeTo(NetEditView.this);
-            Dimension graphSize = netView.getGraphSize();
+            Dimension graphSize = mxGraphComponent.getViewport().getView().getPreferredSize();
             dialog.setSaveSize(new Dimension(graphSize.width + 10, graphSize.height + 10));
             saveDialog.setVisible(true);
 
@@ -229,7 +241,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             g2d.setColor(Color.white);
                             g2d.fillRect(0, 0, saveSize.width, saveSize.height);
 
-                            netView.paintGraph(g2d);
+                            mxGraphComponent.getViewport().getView().paint(g2d);
 
                             try {
                                 ImageIO.write(img, "png", dialog.getSaveFile());
@@ -250,7 +262,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
                             g2d.setSVGCanvasSize(saveSize);
 
-                            netView.paintGraph(g2d);
+                            mxGraphComponent.getViewport().getView().paint(g2d);
 
                             // write to ouput - do not use css style
                             boolean useCSS = false;
@@ -305,7 +317,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private void initializeListeners() {
         // add net edit model to net view
         netEditModel = new NetSelectionModel();
-        netView.setGraphCallbacks(netEditModel);
         netEditModel.addNetSelectionListener(this);
     }
 
@@ -322,62 +333,36 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     public void setModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
-        netView.setModel(model);
         createLineDialog.setModel(model);
         editLineDialog.setModel(model);
         model.addListener(this);
         updateActions(model);
+        setNet(model);
     }
 
     private void initComponents() {
+        setLayout(new BorderLayout(0, 0));
+
+        JPanel panel = new JPanel();
+        FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+        flowLayout.setAlignment(FlowLayout.LEFT);
+        add(panel, BorderLayout.SOUTH);
         javax.swing.JButton newNodeButton = new javax.swing.JButton();
-        javax.swing.JButton newLineButton = new javax.swing.JButton();
-        javax.swing.JButton editButton = new javax.swing.JButton();
-        javax.swing.JButton deleteButton = new javax.swing.JButton();
-        javax.swing.JButton saveNetImageButton = new javax.swing.JButton();
-        netView = new net.parostroj.timetable.gui.views.NetView();
+        panel.add(newNodeButton);
 
         newNodeButton.setAction(newNodeAction);
+        javax.swing.JButton newLineButton = new javax.swing.JButton();
+        panel.add(newLineButton);
         newLineButton.setAction(newLineAction);
+        javax.swing.JButton editButton = new javax.swing.JButton();
+        panel.add(editButton);
         editButton.setAction(editAction);
+        javax.swing.JButton deleteButton = new javax.swing.JButton();
+        panel.add(deleteButton);
         deleteButton.setAction(deleteAction);
+        javax.swing.JButton saveNetImageButton = new javax.swing.JButton();
+        panel.add(saveNetImageButton);
         saveNetImageButton.setAction(saveNetImageAction);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(netView, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(newNodeButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newLineButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
-                        .addComponent(saveNetImageButton)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(netView, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(newNodeButton)
-                        .addComponent(newLineButton)
-                        .addComponent(editButton)
-                        .addComponent(deleteButton))
-                    .addComponent(saveNetImageButton))
-                .addContainerGap())
-        );
     }
 
     @Override
@@ -399,12 +384,178 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
             updateActions(event.getModel());
         }
+        switch (event.getType()) {
+        case SET_DIAGRAM_CHANGED:
+            if (model.getDiagram() != null) {
+                this.setNet(model);
+                model.getDiagram().addListener(this);
+            }
+            break;
+        case MODIFIED_NODE:
+            // redraw node
+            this.updateNode((Node)event.getObject());
+            break;
+        case MODIFIED_LINE:
+            // redraw line
+            this.updateLine((Line)event.getObject());
+            break;
+        default:
+            break;
+        }
     }
 
-	private void updateActions(ApplicationModel model) {
+    private void updateNode(Node node) {
+    	mxGraph.cellLabelChanged(mxGraph.getVertexToCellMap().get(node), node, true);
+    }
+
+    private void updateLine(Line line) {
+    	mxGraph.cellLabelChanged(mxGraph.getEdgeToCellMap().get(line), line, true);
+    }
+
+
+    private void setNet(ApplicationModel model) {
+		if (model.getDiagram() != null) {
+			this.setNet(model.getDiagram().getNet());
+		} else {
+			this.setNet((Net) null);
+		}
+	}
+
+    private void setNet(Net net) {
+    	if (mxGraphComponent != null)
+    		this.remove(mxGraphComponent);
+        mxGraphComponent = null;
+        mxGraph = null;
+        if (net == null)
+            return;
+
+        mxGraph = new NodeLineGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
+        mxGraphComponent = new mxGraphComponent(mxGraph);
+        this.add(mxGraphComponent, BorderLayout.CENTER);
+        mxGraph.setCellsEditable(false);
+        mxGraph.setConnectableEdges(false);
+        mxGraph.setAllowDanglingEdges(false);
+        mxGraph.setEdgeLabelsMovable(false);
+        mxGraph.getSelectionModel().setSingleSelection(true);
+        mxGraph.setDisconnectOnMove(false);
+        mxGraph.setAutoSizeCells(true);
+        mxGraph.setDropEnabled(false);
+        mxGraph.setAllowNegativeCoordinates(false);
+        mxGraph.setCellsResizable(false);
+        mxGraph.getSelectionModel().addListener(mxEvent.CHANGE, netEditModel);
+        mxGraphComponent.setDoubleBuffered(false);
+        mxGraphComponent.setDragEnabled(false);
+        mxGraphComponent.getViewport().setOpaque(true);
+        mxGraphComponent.getViewport().setBackground(Color.WHITE);
+//        mxGraphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+//        	@Override
+//        	public void mouseReleased(MouseEvent e) {
+//        		JOptionPane.showMessageDialog(null, "ahoj");
+//        	}
+//		});
+//        mxGraphComponent.getConnectionHandler().addListener(null, new mxIEventListener() {
+//			@Override
+//			public void invoke(Object sender, mxEventObject evt) {
+//				System.out.printf("(1): %s, %s\n", evt.getName(), evt.getProperties().toString());
+//			}
+//		});
+//        mxGraph.addListener(null, new mxIEventListener() {
+//			@Override
+//			public void invoke(Object sender, mxEventObject evt) {
+//				System.out.printf("(2): %s, %s\n", evt.getName(), evt.getProperties().toString());
+//			}
+//		});
+//        mxGraph.getModel().addListener(null, new mxIEventListener() {
+//			@Override
+//			public void invoke(Object sender, mxEventObject evt) {
+//				System.out.printf("(3): %s, %s\n", evt.getName(), evt.getProperties().toString());
+//			}
+//		});
+        mxGraphHandler h = new mxGraphHandler(mxGraphComponent) {
+        	@Override
+        	protected Cursor getCursor(MouseEvent e) {
+        		Cursor cursor = super.getCursor(e);
+        		if (cursor != null)
+        			System.out.println("Cursor: " + cursor);
+        		else
+        			cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+				return cursor;
+        	}
+        };
+        h.setSelectEnabled(false);
+        mxGraphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mousePressed(MouseEvent e) {
+        		super.mousePressed(e);
+        		System.out.println("Press: " + e);
+        		System.out.println("------: " + e.isConsumed());
+        	}
+
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		super.mouseClicked(e);
+        		System.out.println("Clicke: " + e);
+        		System.out.println("------: " + e.isConsumed());
+        	}
+
+        	@Override
+        	public void mouseReleased(MouseEvent e) {
+        		super.mouseReleased(e);
+        		System.out.println("Release: " + e);
+        		System.out.println("------: " + e.isConsumed());
+        	}
+		});
+
+//        mxInsertHandler ih = new mxInsertHandler(mxGraphComponent, null);
+
+        mxGraph.addListener(mxEvent.CELLS_MOVED, this);
+        mxGraph.getModel().beginUpdate();
+        try {
+	        for (Node node : net.getNodes()) {
+	        	mxCell cell = mxGraph.getVertexToCellMap().get(node);
+				mxGraph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 0, 0));
+				mxGraph.updateCellSize(cell);
+	        }
+        } finally {
+        	mxGraph.getModel().endUpdate();
+        }
+    }
+
+    private void updateActions(ApplicationModel model) {
 		boolean isDiagram = model != null ? model.getDiagram() != null : false;
 		newLineAction.setEnabled(isDiagram);
 		newNodeAction.setEnabled(isDiagram);
 		saveNetImageAction.setEnabled(isDiagram);
 	}
+
+    @Override
+    public void trainDiagramChanged(TrainDiagramEvent event) {
+        switch (event.getType()) {
+            case ROUTE_ADDED:
+            case ROUTE_REMOVED:
+                Route route = (Route)event.getObject();
+                for (RouteSegment seg : route.getSegments()) {
+                    if (seg.asLine() != null) {
+                        this.updateLine(seg.asLine());
+                    }
+                }
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void invoke(Object sender, mxEventObject evt) {
+    	Object[] cells = (Object[]) evt.getProperty("cells");
+    	if (cells != null) {
+    		for (Object cell : cells) {
+    			mxCell mxCell = (mxCell) cell;
+    			if (mxCell.getValue() instanceof Node) {
+	    			Node node = (Node) mxCell.getValue();
+	    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
+	    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+    			}
+    		}
+    	}
+    }
 }
