@@ -11,19 +11,19 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 /**
  * Dialog for saving GT.
- * 
+ *
  * @author jub
  */
 public class SaveImageDialog extends javax.swing.JDialog {
-    
+
     public static enum Type {
         PNG("save.gt.png",new FileNameExtensionFilter("PNG", "png"),"png"), SVG("save.gt.svg",new FileNameExtensionFilter("SVG", "svg"),"svg");
-        
+
         private String name;
         private String description;
         private FileNameExtensionFilter filter;
         private String extension;
-        
+
         private Type(String name, FileNameExtensionFilter filter,String extension) {
             this.name = name;
             this.filter = filter;
@@ -39,7 +39,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
                 this.setDescription();
             return description;
         }
-        
+
         private void setDescription() {
             description = ResourceLoader.getString(name);
         }
@@ -57,25 +57,25 @@ public class SaveImageDialog extends javax.swing.JDialog {
             return this.getDescription();
         }
     }
-    
+
     private File saveFile;
     private boolean save;
     private static final int DEFAULT_WIDTH = 2000;
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MAX_WIDTH = 10000;
-    private static final int MAX_HEIGHT = 2000;
-    
+    private static final int MAX_HEIGHT = 10000;
+
     private static JFileChooser fileChooserInstance;
-    
+
     private static synchronized JFileChooser getFileChooser() {
         if (fileChooserInstance == null)
             fileChooserInstance = new JFileChooser() {
                 @Override
                 public void approveSelection() {
                     if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
-                        int result = JOptionPane.showConfirmDialog(this, 
-                                String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()), 
-                                ResourceLoader.getString("savedialog.overwrite.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE); 
+                        int result = JOptionPane.showConfirmDialog(this,
+                                String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()),
+                                ResourceLoader.getString("savedialog.overwrite.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
                         if(result != JOptionPane.YES_OPTION) {
                             return;
                         }
@@ -85,31 +85,31 @@ public class SaveImageDialog extends javax.swing.JDialog {
             };
         return fileChooserInstance;
     }
-    
+
     /**
      * Creates new form SaveGTDialog.
-     * 
-     * @param parent 
-     * @param modal 
+     *
+     * @param parent
+     * @param modal
      */
     public SaveImageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         init();
     }
-    
+
     public SaveImageDialog(Dialog dialog, boolean modal) {
         super(dialog, modal);
         initComponents();
         init();
     }
-    
+
     private void init() {
         xTextField.setValue(Integer.valueOf(DEFAULT_WIDTH));
         yTextField.setValue(Integer.valueOf(DEFAULT_HEIGHT));
-        
+
         typeComboBox.setModel(new DefaultComboBoxModel(Type.values()));
-        
+
         // preload file chooser
         getFileChooser();
     }
@@ -143,7 +143,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         xTextField.setValue(size.width);
         yTextField.setValue(size.height);
     }
-    
+
     public Type getImageType() {
         return (Type)typeComboBox.getSelectedItem();
     }
@@ -196,7 +196,8 @@ public class SaveImageDialog extends javax.swing.JDialog {
 
         saveButton.setText(ResourceLoader.getString("save.gt.save")); // NOI18N
         saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
             }
         });
@@ -204,7 +205,8 @@ public class SaveImageDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
@@ -267,7 +269,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         // set specific file name filter
         JFileChooser fileChooser = getFileChooser();
         fileChooser.setFileFilter(this.getImageType().getFilter());
-        // show save dialog    
+        // show save dialog
         int result = fileChooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             saveFile = fileChooser.getSelectedFile();
@@ -280,7 +282,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         fileChooser.removeChoosableFileFilter(this.getImageType().getFilter());
         this.setVisible(false);
     }//GEN-LAST:event_saveButtonActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton cancelButton;
