@@ -38,7 +38,9 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 			mxCell cell = new mxCell(vertex);
 			cell.setVertex(true);
 			cell.setId(null);
+			cell.setGeometry(new mxGeometry(50, 50, 0, 0));
 			addCell(cell, defaultParent);
+			this.updateCellSize(cell);
 			vertexToCellMap.put(vertex, cell);
 			cellToVertexMap.put(cell, vertex);
 		} finally {
