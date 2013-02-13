@@ -76,9 +76,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private Action editAction;
     private Action deleteAction;
     private Action saveNetImageAction;
+    private Action zoomInAction;
+    private Action zoomOutAction;
 
     private JGraphXAdapter<Node, Line> mxGraph;
     private mxGraphComponent mxGraphComponent;
+
 
     public class NewNodeAction extends AbstractAction {
 
@@ -309,6 +312,20 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         deleteAction.setEnabled(false);
         saveNetImageAction = new SaveNetImageAction(ResourceLoader.getString("net.edit.save.image") + " ...");
         saveNetImageAction.setEnabled(false);
+        zoomInAction = new AbstractAction("+") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (mxGraphComponent != null)
+					mxGraphComponent.zoomIn();
+			}
+		};
+		zoomOutAction = new AbstractAction("-") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (mxGraphComponent != null)
+					mxGraphComponent.zoomOut();
+			}
+		};
 
         initComponents();
         initializeListeners();
@@ -360,6 +377,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         javax.swing.JButton deleteButton = new javax.swing.JButton();
         panel.add(deleteButton);
         deleteButton.setAction(deleteAction);
+        javax.swing.JButton zoomIn = new javax.swing.JButton(zoomInAction);
+        panel.add(zoomIn);
+        javax.swing.JButton zoomOut = new javax.swing.JButton(zoomOutAction);
+        panel.add(zoomOut);
         javax.swing.JButton saveNetImageButton = new javax.swing.JButton();
         panel.add(saveNetImageButton);
         saveNetImageButton.setAction(saveNetImageAction);
@@ -447,6 +468,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         mxGraphComponent.setDragEnabled(false);
         mxGraphComponent.getViewport().setOpaque(true);
         mxGraphComponent.getViewport().setBackground(Color.WHITE);
+        mxGraphComponent.setPanning(true);
 //        mxGraphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 //        	@Override
 //        	public void mouseReleased(MouseEvent e) {
@@ -546,16 +568,18 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     @Override
     public void invoke(Object sender, mxEventObject evt) {
-    	Object[] cells = (Object[]) evt.getProperty("cells");
-    	if (cells != null) {
-    		for (Object cell : cells) {
-    			mxCell mxCell = (mxCell) cell;
-    			if (mxCell.getValue() instanceof Node) {
-	    			Node node = (Node) mxCell.getValue();
-	    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
-	    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
-    			}
-    		}
+    	if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
+	    	Object[] cells = (Object[]) evt.getProperty("cells");
+	    	if (cells != null) {
+	    		for (Object cell : cells) {
+	    			mxCell mxCell = (mxCell) cell;
+	    			if (mxCell.getValue() instanceof Node) {
+		    			Node node = (Node) mxCell.getValue();
+		    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
+		    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+	    			}
+	    		}
+	    	}
     	}
     }
 }
