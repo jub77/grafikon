@@ -79,8 +79,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private Action zoomInAction;
     private Action zoomOutAction;
 
-    private JGraphXAdapter<Node, Line> mxGraph;
-    private mxGraphComponent mxGraphComponent;
+    private JGraphXAdapter<Node, Line> graph;
+    private mxGraphComponent graphComponent;
 
 
     public class NewNodeAction extends AbstractAction {
@@ -218,7 +218,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         public void actionPerformed(ActionEvent evt) {
             SaveImageDialog saveDialog = getDialog();
             dialog.setLocationRelativeTo(NetEditView.this);
-            Dimension graphSize = mxGraphComponent.getViewport().getView().getPreferredSize();
+            Dimension graphSize = graphComponent.getViewport().getView().getPreferredSize();
             dialog.setSaveSize(new Dimension(graphSize.width + 10, graphSize.height + 10));
             saveDialog.setVisible(true);
 
@@ -244,7 +244,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             g2d.setColor(Color.white);
                             g2d.fillRect(0, 0, saveSize.width, saveSize.height);
 
-                            mxGraphComponent.getViewport().getView().paint(g2d);
+                            graphComponent.getViewport().getView().paint(g2d);
 
                             try {
                                 ImageIO.write(img, "png", dialog.getSaveFile());
@@ -265,7 +265,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
                             g2d.setSVGCanvasSize(saveSize);
 
-                            mxGraphComponent.getViewport().getView().paint(g2d);
+                            graphComponent.getViewport().getView().paint(g2d);
 
                             // write to ouput - do not use css style
                             boolean useCSS = false;
@@ -315,15 +315,15 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         zoomInAction = new AbstractAction("+") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (mxGraphComponent != null)
-					mxGraphComponent.zoomIn();
+				if (graphComponent != null)
+					graphComponent.zoomIn();
 			}
 		};
 		zoomOutAction = new AbstractAction("-") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (mxGraphComponent != null)
-					mxGraphComponent.zoomOut();
+				if (graphComponent != null)
+					graphComponent.zoomOut();
 			}
 		};
 
@@ -426,11 +426,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     private void updateNode(Node node) {
-    	mxGraph.cellLabelChanged(mxGraph.getVertexToCellMap().get(node), node, true);
+    	graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
     }
 
     private void updateLine(Line line) {
-    	mxGraph.cellLabelChanged(mxGraph.getEdgeToCellMap().get(line), line, true);
+    	graph.cellLabelChanged(graph.getEdgeToCellMap().get(line), line, true);
     }
 
 
@@ -443,57 +443,57 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 	}
 
     private void setNet(Net net) {
-    	if (mxGraphComponent != null)
-    		this.remove(mxGraphComponent);
-        mxGraphComponent = null;
-        mxGraph = null;
+    	if (graphComponent != null)
+    		this.remove(graphComponent);
+        graphComponent = null;
+        graph = null;
         if (net == null)
             return;
 
-        mxGraph = new NodeLineGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
-        mxGraphComponent = new mxGraphComponent(mxGraph);
-        this.add(mxGraphComponent, BorderLayout.CENTER);
-        mxGraph.setCellsEditable(false);
-        mxGraph.setConnectableEdges(false);
-        mxGraph.setAllowDanglingEdges(false);
-        mxGraph.setEdgeLabelsMovable(false);
-        mxGraph.getSelectionModel().setSingleSelection(true);
-        mxGraph.setDisconnectOnMove(false);
-        mxGraph.setAutoSizeCells(true);
-        mxGraph.setDropEnabled(false);
-        mxGraph.setAllowNegativeCoordinates(false);
-        mxGraph.setCellsResizable(false);
-        mxGraph.getSelectionModel().addListener(mxEvent.CHANGE, netEditModel);
-        mxGraphComponent.setDoubleBuffered(false);
-        mxGraphComponent.setDragEnabled(false);
-        mxGraphComponent.getViewport().setOpaque(true);
-        mxGraphComponent.getViewport().setBackground(Color.WHITE);
-        mxGraphComponent.setPanning(true);
-//        mxGraphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+        graph = new NodeLineGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
+        graphComponent = new mxGraphComponent(graph);
+        this.add(graphComponent, BorderLayout.CENTER);
+        graph.setCellsEditable(false);
+        graph.setConnectableEdges(false);
+        graph.setAllowDanglingEdges(false);
+        graph.setEdgeLabelsMovable(false);
+        graph.getSelectionModel().setSingleSelection(true);
+        graph.setDisconnectOnMove(false);
+        graph.setAutoSizeCells(true);
+        graph.setDropEnabled(false);
+        graph.setAllowNegativeCoordinates(false);
+        graph.setCellsResizable(false);
+        graph.getSelectionModel().addListener(mxEvent.CHANGE, netEditModel);
+        graphComponent.setDoubleBuffered(false);
+        graphComponent.setDragEnabled(false);
+        graphComponent.getViewport().setOpaque(true);
+        graphComponent.getViewport().setBackground(Color.WHITE);
+        graphComponent.setPanning(true);
+//        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 //        	@Override
 //        	public void mouseReleased(MouseEvent e) {
 //        		JOptionPane.showMessageDialog(null, "ahoj");
 //        	}
 //		});
-//        mxGraphComponent.getConnectionHandler().addListener(null, new mxIEventListener() {
+//        graphComponent.getConnectionHandler().addListener(null, new mxIEventListener() {
 //			@Override
 //			public void invoke(Object sender, mxEventObject evt) {
 //				System.out.printf("(1): %s, %s\n", evt.getName(), evt.getProperties().toString());
 //			}
 //		});
-//        mxGraph.addListener(null, new mxIEventListener() {
+//        graph.addListener(null, new mxIEventListener() {
 //			@Override
 //			public void invoke(Object sender, mxEventObject evt) {
 //				System.out.printf("(2): %s, %s\n", evt.getName(), evt.getProperties().toString());
 //			}
 //		});
-//        mxGraph.getModel().addListener(null, new mxIEventListener() {
+//        graph.getModel().addListener(null, new mxIEventListener() {
 //			@Override
 //			public void invoke(Object sender, mxEventObject evt) {
 //				System.out.printf("(3): %s, %s\n", evt.getName(), evt.getProperties().toString());
 //			}
 //		});
-        mxGraphHandler h = new mxGraphHandler(mxGraphComponent) {
+        mxGraphHandler h = new mxGraphHandler(graphComponent) {
         	@Override
         	protected Cursor getCursor(MouseEvent e) {
         		Cursor cursor = super.getCursor(e);
@@ -505,7 +505,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         	}
         };
         h.setSelectEnabled(false);
-        mxGraphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
         	@Override
         	public void mousePressed(MouseEvent e) {
         		super.mousePressed(e);
@@ -530,16 +530,16 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
 //        mxInsertHandler ih = new mxInsertHandler(mxGraphComponent, null);
 
-        mxGraph.addListener(mxEvent.CELLS_MOVED, this);
-        mxGraph.getModel().beginUpdate();
+        graph.addListener(mxEvent.CELLS_MOVED, this);
+        graph.getModel().beginUpdate();
         try {
 	        for (Node node : net.getNodes()) {
-	        	mxCell cell = mxGraph.getVertexToCellMap().get(node);
-				mxGraph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 0, 0));
-				mxGraph.updateCellSize(cell);
+	        	mxCell cell = graph.getVertexToCellMap().get(node);
+				graph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 0, 0));
+				graph.updateCellSize(cell);
 	        }
         } finally {
-        	mxGraph.getModel().endUpdate();
+        	graph.getModel().endUpdate();
         }
     }
 
