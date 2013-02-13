@@ -1,0 +1,21 @@
+<shapes>
+<shape name="station" aspect="fixed" strokewidth="10">
+	<foreground>
+		<linejoin join="round"/>
+		<linecap cap="round"/>
+		<path>
+			<move x="0" y="25"/>
+			<line x="200" y="25"/>
+			<move x="50" y="25"/>
+			<line x="75" y="0"/>
+			<line x="125" y="0"/>
+			<line x="150" y="25"/>
+ 			<move x="50" y="25"/>
+			<line x="75" y="50"/>
+			<line x="125" y="50"/>
+			<line x="150" y="25"/>
+		</path>
+		<stroke/>
+	</foreground>
+</shape>
+</shapes>

@@ -16,7 +16,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
@@ -49,11 +52,13 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxConnectPreview;
+import com.mxgraph.swing.handler.mxConnectionHandler;
 import com.mxgraph.swing.handler.mxGraphHandler;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.view.mxCellState;
 
 /**
  * View for editing net.
@@ -79,8 +84,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private Action zoomInAction;
     private Action zoomOutAction;
 
-    private JGraphXAdapter<Node, Line> graph;
-    private mxGraphComponent graphComponent;
+    private NetGraphAdapter graph;
+    private NetGraphComponent graphComponent;
 
 
     public class NewNodeAction extends AbstractAction {
@@ -450,9 +455,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         if (net == null)
             return;
 
-        graph = new NodeLineGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
-        graphComponent = new mxGraphComponent(graph);
-        this.add(graphComponent, BorderLayout.CENTER);
+        graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
         graph.setCellsEditable(false);
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
@@ -463,12 +466,33 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graph.setDropEnabled(false);
         graph.setAllowNegativeCoordinates(false);
         graph.setCellsResizable(false);
+        graph.setCellsCloneable(false);
         graph.getSelectionModel().addListener(mxEvent.CHANGE, netEditModel);
+        graph.setGridEnabled(false);
+
+        graphComponent = new NetGraphComponent(graph);
         graphComponent.setDoubleBuffered(false);
         graphComponent.setDragEnabled(false);
         graphComponent.getViewport().setOpaque(true);
         graphComponent.getViewport().setBackground(Color.WHITE);
         graphComponent.setPanning(true);
+        graphComponent.getConnectionHandler().setHandleEnabled(true);
+
+        this.add(graphComponent, BorderLayout.CENTER);
+
+        mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
+        connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
+        	@Override
+        	protected Object createCell(mxCellState startState, String style) {
+        		mxCell cell = (mxCell) super.createCell(startState, style);
+        		if (graph.getModel().isEdge(cell)) {
+        			cell.setStyle((style == null || "".equals(style) ? "" : style + ";") + "endArrow=none;startArrow=none");
+        		}
+        		return cell;
+        	}
+        });
+
+
 //        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 //        	@Override
 //        	public void mouseReleased(MouseEvent e) {

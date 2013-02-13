@@ -17,7 +17,7 @@ import com.mxgraph.view.mxGraph;
  *
  * @author cz2b10k5
  */
-public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
+public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
 
 	private ListenableGraph<V, E> graphT;
 	private HashMap<V, mxCell> vertexToCellMap = new HashMap<V, mxCell>();
@@ -25,7 +25,7 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 	private HashMap<mxCell, V> cellToVertexMap = new HashMap<mxCell, V>();
 	private HashMap<mxCell, E> cellToEdgeMap = new HashMap<mxCell, E>();
 
-	public JGraphXAdapter(final ListenableGraph<V, E> graphT) {
+	public JGraphTAdapter(final ListenableGraph<V, E> graphT) {
 		super();
 		this.graphT = graphT;
 		graphT.addGraphListener(this);
@@ -39,6 +39,7 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 			cell.setVertex(true);
 			cell.setId(null);
 			cell.setGeometry(new mxGeometry(50, 50, 0, 0));
+			cell.setStyle(this.getVertexStyle(vertex));
 			addCell(cell, defaultParent);
 			this.updateCellSize(cell);
 			vertexToCellMap.put(vertex, cell);
@@ -58,6 +59,7 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 			cell.setId(null);
 			cell.setGeometry(new mxGeometry());
 			cell.getGeometry().setRelative(true);
+			cell.setStyle(this.getEdgeStyle(edge));
 			addEdge(cell, defaultParent, vertexToCellMap.get(source), vertexToCellMap.get(target), null);
 			edgeToCellMap.put(edge, cell);
 			cellToEdgeMap.put(cell, edge);
@@ -114,5 +116,20 @@ public class JGraphXAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 		} finally {
 			getModel().endUpdate();
 		}
+	}
+
+	protected String getVertexStyle(V vertex) {
+		return null;
+	}
+
+	protected String getEdgeStyle(E edge) {
+		return null;
+	}
+
+	/**
+	 * @return net
+	 */
+	public Graph<V, E> getNet() {
+		return graphT;
 	}
 }
