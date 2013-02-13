@@ -8,23 +8,54 @@ import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 
 import org.jgrapht.ListenableGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.shape.mxStencil;
+import com.mxgraph.shape.mxStencilRegistry;
+import com.mxgraph.util.mxUtils;
+import com.mxgraph.util.mxXmlUtils;
 
 /**
  * Specific adapter for graph with nodes and lines.
  *
  * @author cz2b10k5
  */
-public class NodeLineGraphAdapter extends JGraphXAdapter<Node, Line> {
+public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
+
+	private static final Logger log = LoggerFactory.getLogger(NetGraphAdapter.class);
 
 	private ApplicationModel appModel;
 
-	public NodeLineGraphAdapter(ListenableGraph<Node, Line> graphT, ApplicationModel model) {
+	static {
+		try {
+			String filename = NetGraphAdapter.class.getResource(
+					"/graph/shapes.xml").getPath();
+			Document doc = mxXmlUtils.parseXml(mxUtils.readFile(filename));
+			Element shapes = doc.getDocumentElement();
+			NodeList list = shapes.getElementsByTagName("shape");
+
+			for (int i = 0; i < list.getLength(); i++)
+			{
+				Element shape = (Element) list.item(i);
+				mxStencilRegistry.addStencil(shape.getAttribute("name"), new mxStencil(shape));
+			}
+		} catch (Exception e) {
+			log.error("Cannot load shapes.", e);
+		}
+	}
+
+	public NetGraphAdapter(ListenableGraph<Node, Line> graphT, ApplicationModel model) {
 		super(graphT);
 		appModel = model;
 		this.refresh();
 	}
+
+
 
 	@Override
 	public String convertValueToString(Object cell) {
@@ -78,5 +109,15 @@ public class NodeLineGraphAdapter extends JGraphXAdapter<Node, Line> {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected String getVertexStyle(Node node) {
+		return "shape=station;shadow=1;verticalLabelPosition=top";
+	}
+
+	@Override
+	protected String getEdgeStyle(Line line) {
+		return "endArrow=none;startArrow=none" + (line.getTracks().size() == 1 ? "" : ";strokeWidth=2");
 	}
 }
