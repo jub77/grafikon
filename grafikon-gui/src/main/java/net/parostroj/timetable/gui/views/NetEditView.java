@@ -7,8 +7,6 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,9 +50,9 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxConnectPreview;
 import com.mxgraph.swing.handler.mxConnectionHandler;
-import com.mxgraph.swing.handler.mxGraphHandler;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
@@ -86,6 +84,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private NetGraphAdapter graph;
     private NetGraphComponent graphComponent;
+    private JPanel panel;
 
 
     public class NewNodeAction extends AbstractAction {
@@ -309,8 +308,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     /** Creates new form NetEditView */
     public NetEditView() {
-        newNodeAction = new NewNodeAction(ResourceLoader.getString("net.edit.new.node") + " ...");
-        newLineAction = new NewLineAction(ResourceLoader.getString("net.edit.new.line") + " ...");
+        newNodeAction = new NewNodeAction("*");
+        newLineAction = new NewLineAction("*");
         editAction = new EditAction(ResourceLoader.getString("button.edit") + " ...");
         editAction.setEnabled(false);
         deleteAction = new DeleteAction(ResourceLoader.getString("button.delete"));
@@ -363,32 +362,64 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     private void initComponents() {
-        setLayout(new BorderLayout(0, 0));
+        setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
-        FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-        flowLayout.setAlignment(FlowLayout.LEFT);
+        panel = new JPanel();
         add(panel, BorderLayout.SOUTH);
-        javax.swing.JButton newNodeButton = new javax.swing.JButton();
-        panel.add(newNodeButton);
+        panel.setLayout(new BorderLayout());
 
+        JPanel buttonPanel = new JPanel();
+        panel.add(BorderLayout.WEST, buttonPanel);
+        GridBagLayout layoutButtonPanel = new GridBagLayout();
+        buttonPanel.setLayout(layoutButtonPanel);
+        javax.swing.JButton newNodeButton = new javax.swing.JButton();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        buttonPanel.add(newNodeButton, gbc);
         newNodeButton.setAction(newNodeAction);
         javax.swing.JButton newLineButton = new javax.swing.JButton();
-        panel.add(newLineButton);
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        buttonPanel.add(newLineButton, gbc);
         newLineButton.setAction(newLineAction);
         javax.swing.JButton editButton = new javax.swing.JButton();
-        panel.add(editButton);
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        buttonPanel.add(editButton, gbc);
         editButton.setAction(editAction);
-        javax.swing.JButton deleteButton = new javax.swing.JButton();
-        panel.add(deleteButton);
-        deleteButton.setAction(deleteAction);
         javax.swing.JButton zoomIn = new javax.swing.JButton(zoomInAction);
-        panel.add(zoomIn);
-        javax.swing.JButton zoomOut = new javax.swing.JButton(zoomOutAction);
-        panel.add(zoomOut);
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        buttonPanel.add(zoomIn, gbc);
         javax.swing.JButton saveNetImageButton = new javax.swing.JButton();
-        panel.add(saveNetImageButton);
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        buttonPanel.add(saveNetImageButton, gbc);
         saveNetImageButton.setAction(saveNetImageAction);
+        javax.swing.JButton deleteButton = new javax.swing.JButton();
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        buttonPanel.add(deleteButton, gbc);
+        deleteButton.setAction(deleteAction);
+        javax.swing.JButton zoomOut = new javax.swing.JButton(zoomOutAction);
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        buttonPanel.add(zoomOut, gbc);
     }
 
     @Override
@@ -476,6 +507,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.getViewport().setOpaque(true);
         graphComponent.getViewport().setBackground(Color.WHITE);
         graphComponent.setPanning(true);
+        graphComponent.setPageBackgroundColor(panel.getBackground());
         graphComponent.getConnectionHandler().setHandleEnabled(true);
 
         this.add(graphComponent, BorderLayout.CENTER);
@@ -492,65 +524,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         	}
         });
 
-
-//        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-//        	@Override
-//        	public void mouseReleased(MouseEvent e) {
-//        		JOptionPane.showMessageDialog(null, "ahoj");
-//        	}
-//		});
-//        graphComponent.getConnectionHandler().addListener(null, new mxIEventListener() {
-//			@Override
-//			public void invoke(Object sender, mxEventObject evt) {
-//				System.out.printf("(1): %s, %s\n", evt.getName(), evt.getProperties().toString());
-//			}
-//		});
-//        graph.addListener(null, new mxIEventListener() {
-//			@Override
-//			public void invoke(Object sender, mxEventObject evt) {
-//				System.out.printf("(2): %s, %s\n", evt.getName(), evt.getProperties().toString());
-//			}
-//		});
-//        graph.getModel().addListener(null, new mxIEventListener() {
-//			@Override
-//			public void invoke(Object sender, mxEventObject evt) {
-//				System.out.printf("(3): %s, %s\n", evt.getName(), evt.getProperties().toString());
-//			}
-//		});
-        mxGraphHandler h = new mxGraphHandler(graphComponent) {
-        	@Override
-        	protected Cursor getCursor(MouseEvent e) {
-        		Cursor cursor = super.getCursor(e);
-        		if (cursor != null)
-        			System.out.println("Cursor: " + cursor);
-        		else
-        			cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-				return cursor;
-        	}
-        };
-        h.setSelectEnabled(false);
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mousePressed(MouseEvent e) {
-        		super.mousePressed(e);
-        		System.out.println("Press: " + e);
-        		System.out.println("------: " + e.isConsumed());
-        	}
-
-        	@Override
-        	public void mouseClicked(MouseEvent e) {
-        		super.mouseClicked(e);
-        		System.out.println("Clicke: " + e);
-        		System.out.println("------: " + e.isConsumed());
-        	}
-
-        	@Override
-        	public void mouseReleased(MouseEvent e) {
-        		super.mouseReleased(e);
-        		System.out.println("Release: " + e);
-        		System.out.println("------: " + e.isConsumed());
-        	}
-		});
+        mxGraphOutline outline = graphComponent.createOutline();
+        panel.add(BorderLayout.CENTER, outline);
 
         graph.addListener(mxEvent.CELLS_MOVED, this);
         graph.getModel().beginUpdate();
