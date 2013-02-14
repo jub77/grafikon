@@ -1,5 +1,8 @@
 package net.parostroj.timetable.gui.views;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 
@@ -18,6 +21,18 @@ public class NetGraphComponent extends mxGraphComponent {
 
 	public NetGraphComponent(NetGraphAdapter graph) {
 		super(graph);
+		MouseWheelListener wheelTracker = new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (e.getWheelRotation() < 0) {
+					zoomIn();
+				} else {
+					zoomOut();
+				}
+			}
+		};
+		setWheelScrollingEnabled(false);
+		addMouseWheelListener(wheelTracker);
 	}
 
 	@Override
