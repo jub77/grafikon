@@ -63,8 +63,10 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		String value;
 		if (mxCell.getValue() instanceof Line) {
 			value = this.convertLine((Line) mxCell.getValue());
-		} else {
+		} else if (mxCell.getValue() instanceof Node) {
 			value = mxCell.getValue().toString();
+		} else {
+			value = "";
 		}
 		return value;
 	}
@@ -72,6 +74,11 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 	@Override
 	public boolean isAutoSizeCell(Object cell) {
 		return true;
+	}
+
+	@Override
+	public boolean isCellSelectable(Object cell) {
+		return cell != null ? !(((mxCell) cell).getValue() instanceof Node) : false;
 	}
 
 	private String convertLine(Line line) {
@@ -113,7 +120,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
 	@Override
 	protected String getVertexStyle(Node node) {
-		return "shape=station;shadow=1;verticalLabelPosition=top";
+		return "shape=station;shadow=1;foldable=0";
 	}
 
 	@Override

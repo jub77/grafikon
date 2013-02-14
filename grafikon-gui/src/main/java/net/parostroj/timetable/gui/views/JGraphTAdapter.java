@@ -35,13 +35,20 @@ public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 	public void addJGraphTVertex(V vertex) {
 		getModel().beginUpdate();
 		try {
-			mxCell cell = new mxCell(vertex);
+			mxCell cell = new mxCell();
 			cell.setVertex(true);
 			cell.setId(null);
-			cell.setGeometry(new mxGeometry(50, 50, 0, 0));
 			cell.setStyle(this.getVertexStyle(vertex));
+			mxCell vCell = new mxCell(vertex);
+			vCell.setStyle("editable=0;movable=0;resizable=0;deletable=0;shape=none");
+			vCell.setId(null);
+			vCell.setVertex(true);
+			vCell.setGeometry(new mxGeometry(0, -25, 0, 0));
+			vCell.setConnectable(false);
 			addCell(cell, defaultParent);
+			addCell(vCell, cell);
 			this.updateCellSize(cell);
+			this.updateCellSize(vCell);
 			vertexToCellMap.put(vertex, cell);
 			cellToVertexMap.put(cell, vertex);
 		} finally {
