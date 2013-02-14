@@ -552,8 +552,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         	}
 		});
 
-//        mxInsertHandler ih = new mxInsertHandler(mxGraphComponent, null);
-
         graph.addListener(mxEvent.CELLS_MOVED, this);
         graph.getModel().beginUpdate();
         try {
