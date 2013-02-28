@@ -120,7 +120,10 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		if (cell instanceof NodeCell) {
 			// compute size of rectangle relative to some predefined width (height?)
 			NodeShape shape = ((NodeCell) cell).getShape();
-			result = new mxRectangle(0, 0, shape.getWidth(), shape.getHeight());
+			if (shape != null)
+				result = new mxRectangle(0, 0, shape.getWidth() / 2, shape.getHeight() / 2);
+			else
+				result = new mxRectangle(0, 0, 100, 100);
 		} else {
 			result = super.getPreferredSizeForCell(cell);
 		}
@@ -132,10 +135,22 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		NodeCell cell = new NodeCell(vertex);
 		cell.setVertex(true);
 		cell.setId(null);
-		cell.setStyle("shape=station;shadow=1;foldable=0;verticalLabelPosition=top;verticalAlign=bottom");
-		cell.setShape((NodeShape) mxStencilRegistry.getStencil("station"));
+		NodeShape shape = getShapeForNode(vertex);
+		cell.setStyle("shape=" + shape.getName() + ";shadow=1;foldable=0;verticalLabelPosition=top;verticalAlign=bottom");
+		cell.setShape(shape);
 		cell.setGeometry(new mxGeometry());
 		return cell;
+	}
+
+
+
+	private NodeShape getShapeForNode(Node vertex) {
+		NodeShape shape = (NodeShape) mxStencilRegistry.getStencil(vertex.getType().getKey());
+		if (shape == null) {
+			// shape for station should always exist
+			shape = (NodeShape) mxStencilRegistry.getStencil(NodeType.STATION.getKey());
+		}
+		return shape;
 	}
 
 	@Override
