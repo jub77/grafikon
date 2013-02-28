@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.actions.execution.ModelAction;
-import net.parostroj.timetable.gui.dialogs.CreateLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
@@ -37,7 +37,6 @@ import net.parostroj.timetable.model.events.TrainDiagramListener;
 import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.Tuple;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
@@ -71,10 +70,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private EditNodeDialog editNodeDialog;
     private EditLineDialog editLineDialog;
-    private CreateLineDialog createLineDialog;
 
     private Action newNodeAction;
-    private Action newLineAction;
     private Action editAction;
     private Action deleteAction;
     private Action saveNetImageAction;
@@ -105,35 +102,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 n.addTrack(track);
                 model.getDiagram().getNet().addNode(n);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE,model,n));
-            }
-        }
-    }
-
-    public class NewLineAction extends AbstractAction {
-
-        public NewLineAction(String name) {
-            super(name);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (model.getDiagram() != null) {
-                createLineDialog.updateNodes();
-                createLineDialog.setLocationRelativeTo(NetEditView.this);
-                createLineDialog.setVisible(true);
-
-                // test if there ok was selected
-                if (createLineDialog.getSelectedNodes() == null)
-                    return;
-
-                Tuple<Node> selected = createLineDialog.getSelectedNodes();
-                // create new line
-                Line l = model.getDiagram().createLine(IdGenerator.getInstance().getId(), 1000, selected.first, selected.second, Line.UNLIMITED_SPEED);
-                LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
-                l.addTrack(track);
-                model.getDiagram().getNet().addLine(selected.first, selected.second, l);
-
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_LINE, model, l));
             }
         }
     }
@@ -308,7 +276,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     /** Creates new form NetEditView */
     public NetEditView() {
         newNodeAction = new NewNodeAction("*");
-        newLineAction = new NewLineAction("*");
         editAction = new EditAction(ResourceLoader.getString("button.edit") + " ...");
         editAction.setEnabled(false);
         deleteAction = new DeleteAction(ResourceLoader.getString("button.delete"));
@@ -344,7 +311,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         // initialize dialogs
         editNodeDialog = new EditNodeDialog((Frame)this.getTopLevelAncestor());
         editLineDialog = new EditLineDialog((Frame)this.getTopLevelAncestor(), true);
-        createLineDialog = new CreateLineDialog((Frame)this.getTopLevelAncestor(), true);
     }
 
     /**
@@ -353,7 +319,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     public void setModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
-        createLineDialog.setModel(model);
         editLineDialog.setModel(model);
         model.addListener(this);
         updateActions(model);
@@ -378,13 +343,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridy = 0;
         buttonPanel.add(newNodeButton, gbc);
         newNodeButton.setAction(newNodeAction);
-        javax.swing.JButton newLineButton = new javax.swing.JButton();
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        buttonPanel.add(newLineButton, gbc);
-        newLineButton.setAction(newLineAction);
         javax.swing.JButton editButton = new javax.swing.JButton();
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -523,6 +481,26 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         		}
         		return cell;
         	}
+
+        	@Override
+        	public Object stop(boolean commit, MouseEvent e) {
+        		Object result = super.stop(commit, e);
+        		if (commit && result instanceof mxCell && ((mxCell) result).isEdge()) {
+        			// remove the added cell for edge and create new line, creating new edge by callback
+					mxCell cell = (mxCell) result;
+					Node srcNode = (Node) ((NodeCell) cell.getSource()).getValue();
+					Node dstNode = (Node) ((NodeCell) cell.getTarget()).getValue();
+	                Line l = model.getDiagram().createLine(IdGenerator.getInstance().getId(), 1000, srcNode, dstNode, Line.UNLIMITED_SPEED);
+	                LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
+	                l.addTrack(track);
+					model.getDiagram().getNet().addLine(srcNode, dstNode, l);
+
+	                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_LINE, model, l));
+
+	                graph.removeCells(new Object[] { result });
+				}
+				return result;
+        	}
         });
 
         mxGraphOutline outline = graphComponent.createOutline();
@@ -542,7 +520,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateActions(ApplicationModel model) {
 		boolean isDiagram = model != null ? model.getDiagram() != null : false;
-		newLineAction.setEnabled(isDiagram);
 		newNodeAction.setEnabled(isDiagram);
 		saveNetImageAction.setEnabled(isDiagram);
 	}
