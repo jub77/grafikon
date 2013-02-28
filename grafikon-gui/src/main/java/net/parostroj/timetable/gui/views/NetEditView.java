@@ -49,7 +49,6 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxConnectPreview;
 import com.mxgraph.swing.handler.mxConnectionHandler;
@@ -532,8 +531,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         try {
 	        for (Node node : net.getNodes()) {
 	        	mxCell cell = graph.getVertexToCellMap().get(node);
-				graph.getModel().setGeometry(cell, new mxGeometry(node.getPositionX(), node.getPositionY(), 0, 0));
-				graph.updateCellSize(cell);
+//	        	mxGeometry geometry = graph.getModel().getGeometry(cell);
+//	        	geometry.setX(node.getPositionX());
+//	        	geometry.setY(node.getPositionY());
+//				graph.getModel().setGeometry(cell, geometry);
+//				graph.updateCellSize(cell);
+				graph.moveCells(new Object[] {cell}, node.getPositionX(), node.getPositionY());
 	        }
         } finally {
         	graph.getModel().endUpdate();

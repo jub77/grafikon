@@ -62,10 +62,6 @@ public class NetGraphComponent extends mxGraphComponent {
 	@Override
 	public mxGraphHandler createGraphHandler() {
 		return new mxGraphHandler(this) {
-			{
-				setSelectEnabled(false);
-			}
-
 			@Override
 			protected boolean shouldRemoveCellFromParent(Object parent, Object[] cells, MouseEvent e) {
 				return false;
