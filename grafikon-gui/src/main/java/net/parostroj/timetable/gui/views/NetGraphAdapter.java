@@ -135,22 +135,9 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		NodeCell cell = new NodeCell(vertex);
 		cell.setVertex(true);
 		cell.setId(null);
-		NodeShape shape = getShapeForNode(vertex);
-		cell.setStyle("shape=" + shape.getName() + ";shadow=1;foldable=0;verticalLabelPosition=top;verticalAlign=bottom");
-		cell.setShape(shape);
+		cell.setStyle("shadow=1;foldable=0;verticalLabelPosition=top;verticalAlign=bottom");
 		cell.setGeometry(new mxGeometry());
 		return cell;
-	}
-
-
-
-	private NodeShape getShapeForNode(Node vertex) {
-		NodeShape shape = (NodeShape) mxStencilRegistry.getStencil(vertex.getType().getKey());
-		if (shape == null) {
-			// shape for station should always exist
-			shape = (NodeShape) mxStencilRegistry.getStencil(NodeType.STATION.getKey());
-		}
-		return shape;
 	}
 
 	@Override
