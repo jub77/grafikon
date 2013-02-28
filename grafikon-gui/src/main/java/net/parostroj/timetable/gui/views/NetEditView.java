@@ -533,12 +533,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         try {
 	        for (Node node : net.getNodes()) {
 	        	mxCell cell = graph.getVertexToCellMap().get(node);
-//	        	mxGeometry geometry = graph.getModel().getGeometry(cell);
-//	        	geometry.setX(node.getPositionX());
-//	        	geometry.setY(node.getPositionY());
-//				graph.getModel().setGeometry(cell, geometry);
-//				graph.updateCellSize(cell);
-				graph.moveCells(new Object[] {cell}, node.getPositionX(), node.getPositionY());
+				graph.moveCells(new Object[] { cell }, node.getPositionX(), node.getPositionY());
 	        }
         } finally {
         	graph.getModel().endUpdate();
