@@ -11,8 +11,11 @@ import com.mxgraph.shape.mxStencil;
  */
 public class NodeShape extends mxStencil {
 
+	private String name;
+
 	public NodeShape(Element description) {
 		super(description);
+		name = description.getAttribute("name");
 	}
 
 	public int getWidth() {
@@ -21,5 +24,9 @@ public class NodeShape extends mxStencil {
 
 	public int getHeight() {
 		return (int) h0;
+	}
+
+	public String getName() {
+		return name;
 	}
 }
