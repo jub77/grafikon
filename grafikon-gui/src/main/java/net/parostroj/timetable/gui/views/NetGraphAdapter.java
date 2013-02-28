@@ -15,8 +15,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.shape.mxStencil;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.shape.mxStencilRegistry;
+import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 
@@ -42,7 +43,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 			for (int i = 0; i < list.getLength(); i++)
 			{
 				Element shape = (Element) list.item(i);
-				mxStencilRegistry.addStencil(shape.getAttribute("name"), new mxStencil(shape));
+				mxStencilRegistry.addStencil(shape.getAttribute("name"), new NodeShape(shape));
 			}
 		} catch (Exception e) {
 			log.error("Cannot load shapes.", e);
@@ -78,7 +79,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
 	@Override
 	public boolean isCellSelectable(Object cell) {
-		return cell != null ? !(((mxCell) cell).getValue() instanceof Node) : false;
+		return cell != null ? (cell instanceof NodeCell) : false;
 	}
 
 	private String convertLine(Line line) {
@@ -119,12 +120,36 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 	}
 
 	@Override
-	protected String getVertexStyle(Node node) {
-		return "shape=station;shadow=1;foldable=0";
+	public mxRectangle getPreferredSizeForCell(Object cell) {
+		mxRectangle result = null;
+		if (cell instanceof NodeCell) {
+			NodeShape shape = ((NodeCell) cell).getShape();
+			result = new mxRectangle(0, 0, shape.getWidth(), shape.getHeight());
+		} else {
+			result = super.getPreferredSizeForCell(cell);
+		}
+		return result;
 	}
 
 	@Override
-	protected String getEdgeStyle(Line line) {
-		return "endArrow=none;startArrow=none" + (line.getTracks().size() == 1 ? "" : ";strokeWidth=2");
+	protected mxCell getVertexCell(Node vertex) {
+		NodeCell cell = new NodeCell(vertex);
+		cell.setVertex(true);
+		cell.setId(null);
+		cell.setStyle("shape=station;shadow=1;foldable=0;verticalLabelPosition=top");
+		cell.setShape((NodeShape) mxStencilRegistry.getStencil("station"));
+		cell.setGeometry(new mxGeometry());
+		return cell;
+	}
+
+	@Override
+	protected mxCell getEdgeCell(Line edge) {
+		mxCell cell = new mxCell(edge);
+		cell.setEdge(true);
+		cell.setId(null);
+		cell.setGeometry(new mxGeometry());
+		cell.getGeometry().setRelative(true);
+		cell.setStyle("endArrow=none;startArrow=none" + (edge.getTracks().size() == 1 ? "" : ";strokeWidth=2"));
+		return cell;
 	}
 }

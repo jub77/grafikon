@@ -9,15 +9,12 @@ import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.view.mxGraph;
 
 /**
  * Adapter for jgrapht graph to mxGraph.
- *
- * @author cz2b10k5
  */
-public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
+public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
 
 	private ListenableGraph<V, E> graphT;
 	private HashMap<V, mxCell> vertexToCellMap = new HashMap<V, mxCell>();
@@ -35,20 +32,9 @@ public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 	public void addJGraphTVertex(V vertex) {
 		getModel().beginUpdate();
 		try {
-			mxCell cell = new mxCell();
-			cell.setVertex(true);
-			cell.setId(null);
-			cell.setStyle(this.getVertexStyle(vertex));
-			mxCell vCell = new mxCell(vertex);
-			vCell.setStyle("editable=0;movable=0;resizable=0;deletable=0;shape=none");
-			vCell.setId(null);
-			vCell.setVertex(true);
-			vCell.setGeometry(new mxGeometry(0, -25, 0, 0));
-			vCell.setConnectable(false);
+			mxCell cell = this.getVertexCell(vertex);
 			addCell(cell, defaultParent);
-			addCell(vCell, cell);
 			this.updateCellSize(cell);
-			this.updateCellSize(vCell);
 			vertexToCellMap.put(vertex, cell);
 			cellToVertexMap.put(cell, vertex);
 		} finally {
@@ -61,12 +47,7 @@ public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 		try {
 			V source = graphT.getEdgeSource(edge);
 			V target = graphT.getEdgeTarget(edge);
-			mxCell cell = new mxCell(edge);
-			cell.setEdge(true);
-			cell.setId(null);
-			cell.setGeometry(new mxGeometry());
-			cell.getGeometry().setRelative(true);
-			cell.setStyle(this.getEdgeStyle(edge));
+			mxCell cell = this.getEdgeCell(edge);
 			addEdge(cell, defaultParent, vertexToCellMap.get(source), vertexToCellMap.get(target), null);
 			edgeToCellMap.put(edge, cell);
 			cellToEdgeMap.put(cell, edge);
@@ -125,13 +106,9 @@ public class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E>
 		}
 	}
 
-	protected String getVertexStyle(V vertex) {
-		return null;
-	}
+	protected abstract mxCell getVertexCell(V vertex);
 
-	protected String getEdgeStyle(E edge) {
-		return null;
-	}
+	protected abstract mxCell getEdgeCell(E edge);
 
 	/**
 	 * @return net
