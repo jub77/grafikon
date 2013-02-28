@@ -77,11 +77,6 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		return true;
 	}
 
-	@Override
-	public boolean isCellSelectable(Object cell) {
-		return cell != null ? (cell instanceof NodeCell) : false;
-	}
-
 	private String convertLine(Line line) {
 		if (appModel == null)
 			return line.toString();
