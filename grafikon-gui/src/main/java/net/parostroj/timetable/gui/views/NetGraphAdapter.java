@@ -123,6 +123,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 	public mxRectangle getPreferredSizeForCell(Object cell) {
 		mxRectangle result = null;
 		if (cell instanceof NodeCell) {
+			// compute size of rectangle relative to some predefined width (height?)
 			NodeShape shape = ((NodeCell) cell).getShape();
 			result = new mxRectangle(0, 0, shape.getWidth(), shape.getHeight());
 		} else {
@@ -149,6 +150,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		cell.setId(null);
 		cell.setGeometry(new mxGeometry());
 		cell.getGeometry().setRelative(true);
+		// TODO update cell style after editing edge ...
 		cell.setStyle("endArrow=none;startArrow=none" + (edge.getTracks().size() == 1 ? "" : ";strokeWidth=2"));
 		return cell;
 	}
