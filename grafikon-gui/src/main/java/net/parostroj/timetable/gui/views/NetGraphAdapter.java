@@ -137,7 +137,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		NodeCell cell = new NodeCell(vertex);
 		cell.setVertex(true);
 		cell.setId(null);
-		cell.setStyle("shape=station;shadow=1;foldable=0;verticalLabelPosition=top");
+		cell.setStyle("shape=station;shadow=1;foldable=0;verticalLabelPosition=top;verticalAlign=bottom");
 		cell.setShape((NodeShape) mxStencilRegistry.getStencil("station"));
 		cell.setGeometry(new mxGeometry());
 		return cell;
