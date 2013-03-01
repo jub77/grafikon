@@ -549,8 +549,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 	    			mxCell mxCell = (mxCell) cell;
 	    			if (mxCell.getValue() instanceof Node) {
 		    			Node node = (Node) mxCell.getValue();
-		    			node.setPositionX((int) (node.getPositionX() + (Double) evt.getProperty("dx")));
-		    			node.setPositionY((int) (node.getPositionY() + (Double) evt.getProperty("dy")));
+		    			node.setPositionX((int) (mxCell.getGeometry().getX()));
+		    			node.setPositionY((int) (mxCell.getGeometry().getY()));
 	    			}
 	    		}
 	    	}
