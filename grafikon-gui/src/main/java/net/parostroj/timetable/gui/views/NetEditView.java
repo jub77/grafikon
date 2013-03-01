@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.EventObject;
@@ -220,7 +219,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
                             try {
                                 ImageIO.write(img, "png", dialog.getSaveFile());
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
                             }
@@ -244,7 +243,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             try {
                                 Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
                                 g2d.stream(out, useCSS);
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
                             }
