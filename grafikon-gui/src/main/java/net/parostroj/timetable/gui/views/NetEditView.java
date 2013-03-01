@@ -49,6 +49,8 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxConnectPreview;
 import com.mxgraph.swing.handler.mxConnectionHandler;
+import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -470,6 +472,48 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.getConnectionHandler().setHandleEnabled(true);
 
         this.add(graphComponent, BorderLayout.CENTER);
+
+        new mxKeyboardHandler(graphComponent) {
+
+        	@Override
+			protected InputMap getInputMap(int condition)
+        	{
+        		InputMap map = null;
+
+        		if (condition == JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        		{
+        			map = (InputMap) UIManager.get("ScrollPane.ancestorInputMap");
+        		}
+        		else if (condition == JComponent.WHEN_FOCUSED)
+        		{
+        			map = new InputMap();
+
+        			map.put(KeyStroke.getKeyStroke("ENTER"), "edit");
+        			map.put(KeyStroke.getKeyStroke("DELETE"), "delete");
+        			map.put(KeyStroke.getKeyStroke("RIGHT"), "selectNext");
+        			map.put(KeyStroke.getKeyStroke("LEFT"), "selectPrevious");
+        			map.put(KeyStroke.getKeyStroke("ADD"), "zoomIn");
+        			map.put(KeyStroke.getKeyStroke("SUBTRACT"), "zoomOut");
+        		}
+
+        		return map;
+        	}
+
+        	@Override
+			protected ActionMap createActionMap()
+        	{
+        		ActionMap map = (ActionMap) UIManager.get("ScrollPane.actionMap");
+
+        		map.put("edit", editAction);
+        		map.put("delete", deleteAction);
+        		map.put("selectNext", mxGraphActions.getSelectNextAction());
+        		map.put("selectPrevious", mxGraphActions.getSelectPreviousAction());
+        		map.put("zoomIn", mxGraphActions.getZoomInAction());
+        		map.put("zoomOut", mxGraphActions.getZoomOutAction());
+
+        		return map;
+        	}
+        };
 
         graphComponent.setCellEditor(new mxICellEditor() {
 
