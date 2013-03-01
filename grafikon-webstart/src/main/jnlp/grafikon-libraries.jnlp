@@ -24,9 +24,9 @@
         <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-save-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-templates-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="jgraph-${jgraph.version}.jar" download="eager"/>
+        <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
-        <jar href="jgrapht-jdk1.5-${jgrapht.version}.jar" download="eager"/>
+        <jar href="jgrapht-${jgrapht.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
         <jar href="jsr311-api-${jsr311.version}.jar" download="eager"/>
         <jar href="jersey-client-${jersey.version}.jar" download="eager"/>

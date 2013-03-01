@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.views;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -34,9 +35,9 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
 	static {
 		try {
-			String filename = NetGraphAdapter.class.getResource(
-					"/graph/shapes.xml").getPath();
-			Document doc = mxXmlUtils.parseXml(mxUtils.readFile(filename));
+			InputStream is = NetGraphAdapter.class.getResourceAsStream(
+					"/graph/shapes.xml");
+			Document doc = mxXmlUtils.parseXml(mxUtils.readInputStream(is));
 			Element shapes = doc.getDocumentElement();
 			NodeList list = shapes.getElementsByTagName("shape");
 
