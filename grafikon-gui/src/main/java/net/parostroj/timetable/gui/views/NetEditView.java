@@ -15,10 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
@@ -80,8 +77,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private NetGraphAdapter graph;
     private NetGraphComponent graphComponent;
+	private mxGraphOutline graphOutline;
     private JPanel panel;
-
 
     public class NewNodeAction extends AbstractAction {
 
@@ -436,8 +433,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 	}
 
     private void setNet(Net net) {
-    	if (graphComponent != null)
+    	if (graphComponent != null) {
     		this.remove(graphComponent);
+    		this.panel.remove(graphOutline);
+    	}
         graphComponent = null;
         graph = null;
         if (net == null)
@@ -503,8 +502,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         	}
         });
 
-        mxGraphOutline outline = graphComponent.createOutline();
-        panel.add(BorderLayout.CENTER, outline);
+        graphOutline = graphComponent.createOutline();
+        panel.add(BorderLayout.CENTER, graphOutline);
 
         graph.addListener(mxEvent.CELLS_MOVED, this);
         graph.getModel().beginUpdate();
@@ -516,6 +515,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         } finally {
         	graph.getModel().endUpdate();
         }
+        panel.validate();
+        validate();
     }
 
     private void updateActions(ApplicationModel model) {
