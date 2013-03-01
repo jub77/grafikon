@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.EventObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -48,6 +49,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxConnectPreview;
 import com.mxgraph.swing.handler.mxConnectionHandler;
+import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
@@ -443,7 +445,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             return;
 
         graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
-        graph.setCellsEditable(false);
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
         graph.setEdgeLabelsMovable(false);
@@ -469,6 +470,30 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.getConnectionHandler().setHandleEnabled(true);
 
         this.add(graphComponent, BorderLayout.CENTER);
+
+        graphComponent.setCellEditor(new mxICellEditor() {
+
+        	private mxCell cell;
+
+			@Override
+			public void stopEditing(boolean cancel) {
+				cell = null;
+			}
+
+			@Override
+			public void startEditing(Object cell, EventObject trigger) {
+				this.cell = (mxCell) cell;
+				if (trigger instanceof MouseEvent) {
+					editAction.actionPerformed(new ActionEvent(graphComponent, 0, null));
+					this.cell = null;
+				}
+			}
+
+			@Override
+			public Object getEditingCell() {
+				return cell;
+			}
+		});
 
         mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
         connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
