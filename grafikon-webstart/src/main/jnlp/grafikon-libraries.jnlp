@@ -16,6 +16,7 @@
         <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
         <jar href="batik-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-xml-${batik.version}.jar" download="eager"/>
+        <jar href="batik-ext-${batik.version}.jar" download="eager"/>
         <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-net-${grafikon.jnlp.version}.jar" download="eager"/>
