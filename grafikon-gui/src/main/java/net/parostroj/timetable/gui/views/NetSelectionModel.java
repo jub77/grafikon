@@ -49,7 +49,7 @@ public class NetSelectionModel implements mxIEventListener {
     	mxCell cell = (mxCell) mm.getCell();
         selectedLine = null;
         selectedNode = null;
-        if (cell != null) {
+        if (cell != null && mm.getCells().length == 1) {
             if (cell.getValue() instanceof Node) {
                 selectedNode = (Node) cell.getValue();
                 this.callListeners(Action.NODE_SELECTED, selectedNode, null);

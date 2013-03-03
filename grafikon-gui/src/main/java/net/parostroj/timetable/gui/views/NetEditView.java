@@ -454,7 +454,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
         graph.setEdgeLabelsMovable(false);
-        graph.getSelectionModel().setSingleSelection(true);
         graph.setDisconnectOnMove(false);
         graph.setAutoSizeCells(true);
         graph.setDropEnabled(false);
