@@ -497,6 +497,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         			map.put(KeyStroke.getKeyStroke("LEFT"), "selectPrevious");
         			map.put(KeyStroke.getKeyStroke("ADD"), "zoomIn");
         			map.put(KeyStroke.getKeyStroke("SUBTRACT"), "zoomOut");
+        			map.put(KeyStroke.getKeyStroke("control A"), "selectAll");
+        			map.put(KeyStroke.getKeyStroke("control D"), "selectNone");
         		}
 
         		return map;
@@ -513,6 +515,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         		map.put("selectPrevious", mxGraphActions.getSelectPreviousAction());
         		map.put("zoomIn", mxGraphActions.getZoomInAction());
         		map.put("zoomOut", mxGraphActions.getZoomOutAction());
+        		map.put("selectNone", mxGraphActions.getSelectNoneAction());
+        		map.put("selectAll", mxGraphActions.getSelectAllAction());
 
         		return map;
         	}
