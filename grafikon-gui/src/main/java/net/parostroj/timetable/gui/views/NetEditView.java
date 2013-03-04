@@ -28,6 +28,9 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
+import net.parostroj.timetable.gui.views.graph.NetGraphAdapter;
+import net.parostroj.timetable.gui.views.graph.NetGraphComponent;
+import net.parostroj.timetable.gui.views.graph.NodeCell;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListener;
@@ -46,9 +49,7 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.swing.handler.mxConnectPreview;
-import com.mxgraph.swing.handler.mxConnectionHandler;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.*;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
@@ -82,6 +83,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private NetGraphComponent graphComponent;
 	private mxGraphOutline graphOutline;
     private JPanel panel;
+
 
     public class NewNodeAction extends AbstractAction {
 
@@ -431,7 +433,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     	graph.cellLabelChanged(graph.getEdgeToCellMap().get(line), line, true);
     }
 
-
     private void setNet(ApplicationModel model) {
 		if (model.getDiagram() != null) {
 			this.setNet(model.getDiagram().getNet());
@@ -470,7 +471,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.setDragEnabled(false);
         graphComponent.getViewport().setOpaque(true);
         graphComponent.getViewport().setBackground(Color.WHITE);
-        graphComponent.setPanning(true);
         graphComponent.setPageBackgroundColor(panel.getBackground());
         graphComponent.getConnectionHandler().setHandleEnabled(true);
 

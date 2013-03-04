@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.gui.views.graph;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeType;
