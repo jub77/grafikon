@@ -7,11 +7,15 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventObject;
 
 import javax.imageio.ImageIO;
@@ -28,9 +32,7 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
-import net.parostroj.timetable.gui.views.graph.NetGraphAdapter;
-import net.parostroj.timetable.gui.views.graph.NetGraphComponent;
-import net.parostroj.timetable.gui.views.graph.NodeCell;
+import net.parostroj.timetable.gui.views.graph.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainDiagramListener;
@@ -49,7 +51,10 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.swing.handler.*;
+import com.mxgraph.swing.handler.mxConnectPreview;
+import com.mxgraph.swing.handler.mxConnectionHandler;
+import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
@@ -82,7 +87,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private NetGraphAdapter graph;
     private NetGraphComponent graphComponent;
 	private mxGraphOutline graphOutline;
+	private NodeInsertHandler insertHandler;
+	private mxRubberband selectionHandler;
     private JPanel panel;
+    private Collection<JComponent> controls = new ArrayList<JComponent>();
+
 
 
     public class NewNodeAction extends AbstractAction {
@@ -98,12 +107,22 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 // do not create if empty or cancel selected
                 if (result == null || result.equals(""))
                     return;
+                Point location = null;
+                if (e instanceof ActionEventWithLocation) {
+                	location = ((ActionEventWithLocation) e).getLocation();
+                } else {
+                	location = new Point(20, 20);
+                }
                 Node n = model.getDiagram().createNode(IdGenerator.getInstance().getId(), NodeType.STATION, result, result);
                 NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), "1");
                 track.setPlatform(true);
                 n.addTrack(track);
+                n.setPositionX(location.x);
+                n.setPositionY(location.y);
                 model.getDiagram().getNet().addNode(n);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE,model,n));
+                mxCell cell = graph.getVertexToCellMap().get(n);
+				graph.moveCells(new Object[] { cell }, n.getPositionX(), n.getPositionY());
             }
         }
     }
@@ -338,14 +357,59 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         panel.add(BorderLayout.WEST, buttonPanel);
         GridBagLayout layoutButtonPanel = new GridBagLayout();
         buttonPanel.setLayout(layoutButtonPanel);
-        javax.swing.JButton newNodeButton = new javax.swing.JButton();
+        final JToggleButton newNodeButton = new javax.swing.JToggleButton("*");
+        newNodeButton.setEnabled(false);
+        newNodeButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (insertHandler != null)
+					insertHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        buttonPanel.add(newNodeButton, gbc);
+        final JToggleButton newLineButton = new javax.swing.JToggleButton("/");
+        newLineButton.setEnabled(false);
+        newLineButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (graphComponent != null)
+					graphComponent.getConnectionHandler().setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
+        gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        buttonPanel.add(newLineButton, gbc);
+        final JToggleButton selectionButton = new javax.swing.JToggleButton("<");
+        selectionButton.setEnabled(false);
+        selectionButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (selectionHandler != null)
+					selectionHandler.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
+        gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        buttonPanel.add(newNodeButton, gbc);
-        newNodeButton.setAction(newNodeAction);
+        buttonPanel.add(selectionButton, gbc);
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(newNodeButton);
+        bg.add(newLineButton);
+        bg.add(selectionButton);
+        selectionButton.setSelected(true);
+        controls.add(newNodeButton);
+        controls.add(newLineButton);
+        controls.add(selectionButton);
         javax.swing.JButton editButton = new javax.swing.JButton();
         GridBagConstraints gbc_2 = new GridBagConstraints();
         gbc_2.fill = GridBagConstraints.HORIZONTAL;
@@ -442,9 +506,13 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 	}
 
     private void setNet(Net net) {
+    	boolean isNet = net != null;
     	if (graphComponent != null) {
     		this.remove(graphComponent);
     		this.panel.remove(graphOutline);
+    	}
+    	for (JComponent c : controls) {
+    		c.setEnabled(isNet);
     	}
         graphComponent = null;
         graph = null;
@@ -472,7 +540,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.getViewport().setOpaque(true);
         graphComponent.getViewport().setBackground(Color.WHITE);
         graphComponent.setPageBackgroundColor(panel.getBackground());
-        graphComponent.getConnectionHandler().setHandleEnabled(true);
+        graphComponent.getConnectionHandler().setHandleEnabled(false);
+        graphComponent.getConnectionHandler().setEnabled(false);
+
+        insertHandler = new NodeInsertHandler(graphComponent, newNodeAction);
+        selectionHandler = new mxRubberband(graphComponent);
 
         this.add(graphComponent, BorderLayout.CENTER);
 
