@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.gui.views.graph;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;

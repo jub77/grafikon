@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -56,8 +56,6 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 		appModel = model;
 		this.refresh();
 	}
-
-
 
 	@Override
 	public String convertValueToString(Object cell) {

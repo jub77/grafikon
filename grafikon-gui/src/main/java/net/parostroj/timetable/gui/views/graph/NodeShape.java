@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.gui.views.graph;
 
 import org.w3c.dom.Element;
 
