@@ -51,10 +51,7 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.swing.handler.mxConnectPreview;
-import com.mxgraph.swing.handler.mxConnectionHandler;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
-import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.swing.handler.*;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.util.mxEvent;
@@ -565,8 +562,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         			map.put(KeyStroke.getKeyStroke("ENTER"), "edit");
         			map.put(KeyStroke.getKeyStroke("DELETE"), "delete");
-        			map.put(KeyStroke.getKeyStroke("RIGHT"), "selectNext");
-        			map.put(KeyStroke.getKeyStroke("LEFT"), "selectPrevious");
         			map.put(KeyStroke.getKeyStroke("ADD"), "zoomIn");
         			map.put(KeyStroke.getKeyStroke("SUBTRACT"), "zoomOut");
         			map.put(KeyStroke.getKeyStroke("control A"), "selectAll");
@@ -583,8 +578,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         		map.put("edit", editAction);
         		map.put("delete", deleteAction);
-        		map.put("selectNext", mxGraphActions.getSelectNextAction());
-        		map.put("selectPrevious", mxGraphActions.getSelectPreviousAction());
         		map.put("zoomIn", mxGraphActions.getZoomInAction());
         		map.put("zoomOut", mxGraphActions.getZoomOutAction());
         		map.put("selectNone", mxGraphActions.getSelectNoneAction());
@@ -619,6 +612,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 		});
 
         mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
+        mxCellMarker marker = connectionHandler.getMarker();
+        marker.setHotspot(1.0);
         connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
         	@Override
         	protected Object createCell(mxCellState startState, String style) {
