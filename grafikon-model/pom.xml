@@ -24,17 +24,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.7.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jansi</artifactId>
-                    <groupId>org.fusesource.jansi</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jline</artifactId>
-                    <groupId>jline</groupId>
-                </exclusion>
-            </exclusions>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
