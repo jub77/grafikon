@@ -516,6 +516,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         if (net == null)
             return;
 
+        // TODO set states of handlers according to buttons ...
         graph = new NetGraphAdapter((ListenableGraph<Node, Line>) net.getGraph(), model);
         graph.setConnectableEdges(false);
         graph.setAllowDanglingEdges(false);
