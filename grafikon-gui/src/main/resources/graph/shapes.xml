@@ -56,19 +56,58 @@
             <stroke />
         </foreground>
     </shape>
-    <shape name="hidden.station" strokewidth="5" w="155" h="30">
+    <shape name="hidden.station" strokewidth="5" w="150" h="30">
         <foreground>
             <linejoin join="round" />
             <linecap cap="round" />
             <path>
                 <move x="0" y="15" />
-                <line x="155" y="15" />
+                <line x="150" y="15" />
                 <move x="50" y="15" />
                 <line x="65" y="0" />
-                <line x="155" y="0" />
+                <line x="150" y="0" />
                 <move x="45" y="15" />
                 <line x="60" y="30" />
-                <line x="155" y="30" />
+                <line x="150" y="30" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+    <shape name="freight.station" strokewidth="5" w="200" h="30">
+        <foreground>
+            <include-shape name="station" x="0" y="0" w="200" h="30" />
+        </foreground>
+    </shape>
+    <shape name="stop.with.freight" strokewidth="5" w="150" h="15">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="15" />
+                <line x="150" y="15" />
+                <move x="40" y="15" />
+                <line x="55" y="0" />
+                <line x="110" y="0" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+    <shape name="stop" strokewidth="5" w="150" h="15">
+        <foreground>
+            <include-shape name="stop.with.freight" x="0" y="0" w="150" h="15" />
+        </foreground>
+    </shape>
+    <shape name="signal" strokewidth="5" w="50" h="20">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="20" />
+                <line x="50" y="20" />
+                <move x="15" y="15" />
+                <line x="40" y="15" />
+                <move x="20" y="15" />
+                <line x="20" y="2" />
             </path>
             <stroke />
         </foreground>
