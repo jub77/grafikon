@@ -13,26 +13,26 @@ import com.mxgraph.shape.mxStencilRegistry;
  */
 public class NodeCell extends mxCell {
 
-	public NodeCell(Object value) {
-		super(value);
-	}
+    public NodeCell(Object value) {
+        super(value);
+    }
 
-	public NodeShape getShape() {
-		return getShapeForNode((Node) value);
-	}
+    public NodeShape getShape() {
+        return getShapeForNode((Node) value);
+    }
 
-	@Override
-	public String getStyle() {
-		NodeShape shape = getShapeForNode((Node) value);
-		return "shape=" + shape.getName() + ";" + super.getStyle();
-	}
+    @Override
+    public String getStyle() {
+        NodeShape shape = getShapeForNode((Node) value);
+        return "shape=" + shape.getName() + ";" + super.getStyle();
+    }
 
-	private NodeShape getShapeForNode(Node vertex) {
-		NodeShape shape = (NodeShape) mxStencilRegistry.getStencil(vertex.getType().getKey());
-		if (shape == null) {
-			// shape for station should always exist
-			shape = (NodeShape) mxStencilRegistry.getStencil(NodeType.STATION.getKey());
-		}
-		return shape;
-	}
+    private NodeShape getShapeForNode(Node vertex) {
+        NodeShape shape = (NodeShape) mxStencilRegistry.getStencil(vertex.getType().getKey());
+        if (shape == null) {
+            // shape for station should always exist
+            shape = (NodeShape) mxStencilRegistry.getStencil(NodeType.STATION.getKey());
+        }
+        return shape;
+    }
 }

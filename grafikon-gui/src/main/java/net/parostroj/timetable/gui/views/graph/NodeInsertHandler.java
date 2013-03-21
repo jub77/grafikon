@@ -16,67 +16,67 @@ import com.mxgraph.view.mxGraph;
  */
 public class NodeInsertHandler extends mxMouseAdapter {
 
-	private mxGraphComponent graphComponent;
-	private boolean enabled;
-	private Point started;
-	private Action insertAction;
+    private final mxGraphComponent graphComponent;
+    private boolean enabled;
+    private Point started;
+    private final Action insertAction;
 
-	public NodeInsertHandler(mxGraphComponent graphComponent, Action insertAction) {
-		this.graphComponent = graphComponent;
-		this.insertAction = insertAction;
+    public NodeInsertHandler(mxGraphComponent graphComponent, Action insertAction) {
+        this.graphComponent = graphComponent;
+        this.insertAction = insertAction;
 
-		graphComponent.getGraphControl().addMouseListener(this);
-		graphComponent.getGraphControl().addMouseMotionListener(this);
-	}
+        graphComponent.getGraphControl().addMouseListener(this);
+        graphComponent.getGraphControl().addMouseMotionListener(this);
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	private void start(MouseEvent e) {
-		this.started = e.getPoint();
-	}
+    private void start(MouseEvent e) {
+        this.started = e.getPoint();
+    }
 
-	private boolean isStartEvent(MouseEvent e) {
-		return true;
-	}
+    private boolean isStartEvent(MouseEvent e) {
+        return true;
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && isStartEvent(e)) {
-			start(e);
-			e.consume();
-		}
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && isStartEvent(e)) {
+            start(e);
+            e.consume();
+        }
+    }
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && started != null) {
-			e.consume();
-		}
-	}
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && started != null) {
+            e.consume();
+        }
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && started != null) {
-			mxGraph graph = graphComponent.getGraph();
-			double scale = graph.getView().getScale();
-			int x = (int) (started.getX() / scale);
-			int y = (int) (started.getY() / scale);
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if (graphComponent.isEnabled() && isEnabled() && !e.isConsumed() && started != null) {
+            mxGraph graph = graphComponent.getGraph();
+            double scale = graph.getView().getScale();
+            int x = (int) (started.getX() / scale);
+            int y = (int) (started.getY() / scale);
 
-			insertAction.actionPerformed(new ActionEventWithLocation(this, 0, null, new Point(x, y)));
+            insertAction.actionPerformed(new ActionEventWithLocation(this, 0, null, new Point(x, y)));
 
-			e.consume();
-		}
+            e.consume();
+        }
 
-		reset();
-	}
+        reset();
+    }
 
-	public void reset() {
-		started = null;
-	}
+    public void reset() {
+        started = null;
+    }
 }

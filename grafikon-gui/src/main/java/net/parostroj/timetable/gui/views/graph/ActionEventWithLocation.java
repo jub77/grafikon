@@ -10,22 +10,22 @@ import java.awt.event.ActionEvent;
  */
 public class ActionEventWithLocation extends ActionEvent {
 
-	private Point location;
+    private Point location;
 
-	public ActionEventWithLocation(Object source, int id, String command) {
-		super(source, id, command);
-	}
+    public ActionEventWithLocation(Object source, int id, String command) {
+        super(source, id, command);
+    }
 
-	public ActionEventWithLocation(Object source, int id, String command, Point location) {
-		this(source, id, command);
-		this.location = location;
-	}
+    public ActionEventWithLocation(Object source, int id, String command, Point location) {
+        this(source, id, command);
+        this.location = location;
+    }
 
-	public Point getLocation() {
-		return location;
-	}
+    public Point getLocation() {
+        return location;
+    }
 
-	public void setLocation(Point location) {
-		this.location = location;
-	}
+    public void setLocation(Point location) {
+        this.location = location;
+    }
 }
