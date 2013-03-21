@@ -1,59 +1,76 @@
 <shapes>
-	<shape name="station" strokewidth="5" w="200" h="30">
-		<foreground>
-			<linejoin join="round" />
-			<linecap cap="round" />
-			<path>
-				<move x="0" y="15" />
-				<line x="200" y="15" />
-				<move x="50" y="15" />
-				<line x="65" y="0" />
-				<line x="125" y="0" />
-				<line x="140" y="15" />
-				<move x="45" y="15" />
-				<line x="60" y="30" />
-				<line x="140" y="30" />
-				<line x="155" y="15" />
-			</path>
-			<stroke />
-		</foreground>
-	</shape>
-	<shape name="branch.station" strokewidth="5" w="200" h="30">
-		<foreground>
-			<linejoin join="round" />
-			<linecap cap="round" />
-			<path>
-				<move x="0" y="15" />
-				<line x="160" y="15" />
-				<move x="50" y="15" />
-				<line x="65" y="0" />
-				<line x="125" y="0" />
-				<line x="140" y="15" />
-				<move x="45" y="15" />
-				<line x="60" y="30" />
-				<line x="140" y="30" />
-				<line x="155" y="15" />
-				<move x="160" y="15" />
-				<line x="200" y="0" />
-				<move x="160" y="15" />
-				<line x="200" y="30" />
-			</path>
-			<stroke />
-		</foreground>
-	</shape>
-	<shape name="route.split" strokewidth="5" w="80" h="30">
-		<foreground>
-			<linejoin join="round" />
-			<linecap cap="round" />
-			<path>
-				<move x="0" y="15" />
-				<line x="40" y="15" />
-				<move x="40" y="15" />
-				<line x="80" y="0" />
-				<move x="40" y="15" />
-				<line x="80" y="30" />
-			</path>
-			<stroke />
-		</foreground>
-	</shape>
+    <shape name="station" strokewidth="5" w="200" h="30">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="15" />
+                <line x="200" y="15" />
+                <move x="50" y="15" />
+                <line x="65" y="0" />
+                <line x="125" y="0" />
+                <line x="140" y="15" />
+                <move x="45" y="15" />
+                <line x="60" y="30" />
+                <line x="140" y="30" />
+                <line x="155" y="15" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+    <shape name="branch.station" strokewidth="5" w="200" h="30">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="15" />
+                <line x="160" y="15" />
+                <move x="50" y="15" />
+                <line x="65" y="0" />
+                <line x="125" y="0" />
+                <line x="140" y="15" />
+                <move x="45" y="15" />
+                <line x="60" y="30" />
+                <line x="140" y="30" />
+                <line x="155" y="15" />
+                <move x="160" y="15" />
+                <line x="200" y="0" />
+                <move x="160" y="15" />
+                <line x="200" y="30" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+    <shape name="route.split" strokewidth="5" w="80" h="30">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="15" />
+                <line x="40" y="15" />
+                <move x="40" y="15" />
+                <line x="80" y="0" />
+                <move x="40" y="15" />
+                <line x="80" y="30" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+    <shape name="hidden.station" strokewidth="5" w="155" h="30">
+        <foreground>
+            <linejoin join="round" />
+            <linecap cap="round" />
+            <path>
+                <move x="0" y="15" />
+                <line x="155" y="15" />
+                <move x="50" y="15" />
+                <line x="65" y="0" />
+                <line x="155" y="0" />
+                <move x="45" y="15" />
+                <line x="60" y="30" />
+                <line x="155" y="30" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
 </shapes>
