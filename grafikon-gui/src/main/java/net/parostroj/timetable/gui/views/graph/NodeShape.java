@@ -11,22 +11,22 @@ import com.mxgraph.shape.mxStencil;
  */
 public class NodeShape extends mxStencil {
 
-	private String name;
+    private final String name;
 
-	public NodeShape(Element description) {
-		super(description);
-		name = description.getAttribute("name");
-	}
+    public NodeShape(Element description) {
+        super(description);
+        name = description.getAttribute("name");
+    }
 
-	public int getWidth() {
-		return (int) w0;
-	}
+    public int getWidth() {
+        return (int) w0;
+    }
 
-	public int getHeight() {
-		return (int) h0;
-	}
+    public int getHeight() {
+        return (int) h0;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 }
