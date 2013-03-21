@@ -31,6 +31,16 @@
             <directory>${pom.basedir}/src/main/jnlp</directory>
             <outputDirectory>.</outputDirectory>
             <filtered>true</filtered>
+            <includes>
+                <include>*.jnlp</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${pom.basedir}/src/main/jnlp</directory>
+            <outputDirectory>.</outputDirectory>
+            <excludes>
+                <exclude>*.jnlp</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
             <includes>
