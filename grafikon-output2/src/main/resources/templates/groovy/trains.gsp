@@ -480,7 +480,9 @@
           lastEngine = currentEngine
         }
         }
-        if (train.lengthData != null) {%>
+        if (train.lengthData != null) {
+          if (train.lengthData.length % 2 == 1)
+            train.lengthData.length = train.lengthData.length - 1%>
         <tr>
           <td colspan="4">${length}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? length_axles : train.lengthData.lengthUnit}</td>
         </tr><%
