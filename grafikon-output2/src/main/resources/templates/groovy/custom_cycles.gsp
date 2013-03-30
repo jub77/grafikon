@@ -19,12 +19,28 @@
     td.fromtoh {border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 17mm;}
     tr.row {height: 4mm; text-align: center;}
     td.trow {text-align: left;}
-    td.drow {font-weight: bold;}
+    td.drow {font-weight: bold; text-align: right; padding-right: 1mm;}
     td.ftrow {}
     tr.delim {height: .5mm;}
     tr.delim td {font-size: 0.2mm; border-color: black; border-style: solid; border-width: 0.35mm 0mm 0mm 0mm; width: 21mm;}
+    span.no {visibility: hidden;}
   </style>
 </head>
+<%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time) {
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace("${END}", "<span class=\"no\">${END}</span>")
+        }
+        return result
+    }
+%>
 <body>
 <%
   Iterator iterator = cycles.iterator();
@@ -56,11 +72,11 @@
           <td class="trainh">${column_train}</td>
           <td class="timeh">${column_departure}</td>
           <td class="fromtoh">${column_from_to}</td>
-        </tr><% for (row in c.rows) { 
+        </tr><% for (row in c.rows) {
                     %>
         <tr class="row">
           <td class="trow">&nbsp;${row.trainName}</td>
-          <td class="drow">${row.fromTime}</td>
+          <td class="drow">${convertTime(row.fromTime)}</td>
           <td class="ftrow">${row.fromAbbr} - ${row.toAbbr}</td>
         </tr><% } %>
       </table>

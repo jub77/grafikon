@@ -18,68 +18,75 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 public class TimeConverter {
 
-	public static enum Rounding {
-		MINUTE("minute"), HALF_MINUTE("half.minute"), TENTH_OF_MINUTE("tenth.of.minute");
+    public static enum Rounding {
+        MINUTE("minute"), HALF_MINUTE("half.minute"), TENTH_OF_MINUTE("tenth.of.minute");
 
-		private final String key;
+        private final String key;
 
-		private Rounding(String key) {
-			this.key = key;
-		}
+        private Rounding(String key) {
+            this.key = key;
+        }
 
-		public String getKey() {
-			return key;
-		}
+        public String getKey() {
+            return key;
+        }
 
-		public static Rounding fromString(String str) {
-			for (Rounding r : values()) {
-				if (r.getKey().equals(str))
-					return r;
-			}
-			return null;
-		}
-	}
+        public static Rounding fromString(String str) {
+            for (Rounding r : values()) {
+                if (r.getKey().equals(str))
+                    return r;
+            }
+            return null;
+        }
+    }
 
-	private static final DateTimeFormatter PRINT = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter();
-	private static final DateTimeFormatter PRINT_FULL = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2).toFormatter();
+    private static final DateTimeFormatter PRINT = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':')
+            .appendMinuteOfHour(2).toFormatter();
+    private static final DateTimeFormatter PRINT_FULL = new DateTimeFormatterBuilder().appendHourOfDay(2)
+            .appendLiteral(':').appendMinuteOfHour(2).toFormatter();
 
-	private final DateTimeFormatter parse;
-	private final DateTimeFormatter print;
-	private final DateTimeFormatter printFull;
-	private final DateTimeFormatter printXml;
-	private final DecimalFormat duration;
+    private final DateTimeFormatter parse;
+    private final DateTimeFormatter print;
+    private final DateTimeFormatter printFull;
+    private final DateTimeFormatter printXml;
+    private final DecimalFormat duration;
 
-	private final Rounding rounding;
+    private final Rounding rounding;
 
-	/**
-	 * creates instance with specific rounding.
-	 *
-	 * @param rounding rounding
-	 */
-	public TimeConverter(Rounding rounding) {
-		this.rounding = rounding;
-		char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-		DateTimeFormatterBuilder parseBuilder = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2);
-		parseBuilder.appendOptional(new DateTimeFormatterBuilder().appendLiteral(separator).appendFractionOfMinute(0, 1).toParser());
-		this.parse = parseBuilder.toFormatter();
-		DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2);
-		DateTimeFormatterBuilder builderFull = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2);
-		if (rounding != Rounding.MINUTE) {
-			builder.appendLiteral(separator).appendFractionOfMinute(1, 1);
-			builderFull.appendLiteral(separator).appendFractionOfMinute(1, 1);
-		}
-		this.print = builder.toFormatter();
-		this.printFull = builderFull.toFormatter();
-		this.duration = new DecimalFormat("###.#");
-		this.printXml = ISODateTimeFormat.hourMinuteSecond();
-	}
+    /**
+     * creates instance with specific rounding.
+     *
+     * @param rounding
+     *            rounding
+     */
+    public TimeConverter(Rounding rounding) {
+        this.rounding = rounding;
+        char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+        DateTimeFormatterBuilder parseBuilder = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':')
+                .appendMinuteOfHour(2);
+        parseBuilder.appendOptional(new DateTimeFormatterBuilder().appendLiteral(separator)
+                .appendFractionOfMinute(0, 1).toParser());
+        this.parse = parseBuilder.toFormatter();
+        DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':')
+                .appendMinuteOfHour(2);
+        DateTimeFormatterBuilder builderFull = new DateTimeFormatterBuilder().appendHourOfDay(2).appendLiteral(':')
+                .appendMinuteOfHour(2);
+        if (rounding != Rounding.MINUTE) {
+            builder.appendLiteral(separator).appendFractionOfMinute(1, 1);
+            builderFull.appendLiteral(separator).appendFractionOfMinute(1, 1);
+        }
+        this.print = builder.toFormatter();
+        this.printFull = builderFull.toFormatter();
+        this.duration = new DecimalFormat("###.#");
+        this.printXml = ISODateTimeFormat.hourMinuteSecond();
+    }
 
-	/**
-	 * @return rounding
-	 */
-	public Rounding getRounding() {
-		return rounding;
-	}
+    /**
+     * @return rounding
+     */
+    public Rounding getRounding() {
+        return rounding;
+    }
 
     /**
      * adjusts time for rounding - add 30s or 15s.
@@ -95,18 +102,18 @@ public class TimeConverter {
      * implementation of rounding with optional parameter.
      */
     public static int round(int time, Rounding r) {
-    	switch (r) {
-    		case MINUTE:
-    			time = (time + 30) / 60 * 60;
-    			break;
-    		case HALF_MINUTE:
-    			time = (time + 15) / 30 * 30;
-    			break;
-    		case TENTH_OF_MINUTE:
-    			time = (time + 3) / 6 * 6;
-    			break;
-    	}
-    	return time;
+        switch (r) {
+            case MINUTE:
+                time = (time + 30) / 60 * 60;
+                break;
+            case HALF_MINUTE:
+                time = (time + 15) / 30 * 30;
+                break;
+            case TENTH_OF_MINUTE:
+                time = (time + 3) / 6 * 6;
+                break;
+        }
+        return time;
     }
 
     /**
@@ -161,14 +168,16 @@ public class TimeConverter {
     	return this.convertIntToTextImpl(time, fixedWidth, PRINT_FULL, printFull);
     }
 
-    private String convertIntToTextImpl(int time, boolean fixed, DateTimeFormatter shortFormat, DateTimeFormatter longFormat) {
-    	LocalTime localTime = this.getLocalTime(time);
-    	String timeStr = null;
-    	if (localTime.getSecondOfMinute() == 0 && !fixed) {
-    		timeStr = localTime.toString(shortFormat);
-    	} else
-    		timeStr = localTime.toString(longFormat);
-    	return timeStr;
+    private String convertIntToTextImpl(int time, boolean fixed, DateTimeFormatter shortFormat,
+            DateTimeFormatter longFormat) {
+        LocalTime localTime = this.getLocalTime(time);
+        String timeStr = null;
+        if (localTime.getSecondOfMinute() == 0 && !fixed) {
+            timeStr = localTime.toString(shortFormat);
+        } else {
+            timeStr = localTime.toString(longFormat);
+        }
+        return timeStr;
     }
 
     /**
@@ -188,11 +197,11 @@ public class TimeConverter {
      * @return textual representation
      */
     public String convertIntToTextNNFull(int time) {
-    	LocalTime lt = this.getLocalTime(time);
-    	String result = lt.toString(printFull);
-    	if (time == TimeInterval.DAY) {
-    		result = result.replace("00:", "24:");
-    	}
+        LocalTime lt = this.getLocalTime(time);
+        String result = lt.toString(printFull);
+        if (time == TimeInterval.DAY) {
+            result = result.replace("00:", "24:");
+        }
         return result;
     }
 
@@ -201,12 +210,12 @@ public class TimeConverter {
      * @return true if after rounding the result is half minute
      */
     public boolean isHalfMinute(int time) {
-    	if (rounding == Rounding.MINUTE)
-    		return false;
-    	else {
-    		time = round(time, Rounding.HALF_MINUTE);
-    		return ((time % 3600) / 30) % 2 == 1;
-    	}
+        if (rounding == Rounding.MINUTE)
+            return false;
+        else {
+            time = round(time, Rounding.HALF_MINUTE);
+            return ((time % 3600) / 30) % 2 == 1;
+        }
     }
 
     /**
@@ -249,7 +258,7 @@ public class TimeConverter {
      * @return time in seconds from midnight
      */
     public int convertTextToInt(String text) {
-    	char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+        char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
         // remove spaces
         text = text.trim();
@@ -261,33 +270,35 @@ public class TimeConverter {
 
         // get digits
         for (char ch : text.toCharArray()) {
-        	if (ch == separator)
-        		hm = false;
-        	if (Character.isDigit(ch)) {
-        		if (hm && size < 4) {
-	                values[size++] = Character.digit(ch, 10);
-	            } else if (!hm) {
-	            	if (decimalBuilder.length() == 0)
-	            		decimalBuilder.append(separator);
-	            	decimalBuilder.append(ch);
-	            }
-        	}
+            if (ch == separator)
+                hm = false;
+            if (Character.isDigit(ch)) {
+                if (hm && size < 4) {
+                    values[size++] = Character.digit(ch, 10);
+                } else if (!hm) {
+                    if (decimalBuilder.length() == 0)
+                        decimalBuilder.append(separator);
+                    decimalBuilder.append(ch);
+                }
+            }
         }
 
         int time = -1;
         // convert to time
         switch (size) {
             case 1:
-            	time = this.parse(String.format("0%s:00" + decimalBuilder.toString(), values[0]));
-            	break;
+                time = this.parse(String.format("0%s:00" + decimalBuilder.toString(), values[0]));
+                break;
             case 2:
-            	time = this.parse(String.format("%s%s:00" + decimalBuilder.toString(), values[0], values[1]));
+                time = this.parse(String.format("%s%s:00" + decimalBuilder.toString(), values[0], values[1]));
                 break;
             case 3:
-            	time = this.parse(String.format("0%s:%s%s" + decimalBuilder.toString(), values[0], values[1], values[2]));
+                time = this
+                        .parse(String.format("0%s:%s%s" + decimalBuilder.toString(), values[0], values[1], values[2]));
                 break;
             case 4:
-            	time = this.parse(String.format("%s%s:%s%s" + decimalBuilder.toString(), values[0], values[1], values[2], values[3]));
+                time = this.parse(String.format("%s%s:%s%s" + decimalBuilder.toString(), values[0], values[1],
+                        values[2], values[3]));
                 break;
         }
         // normalize time before return

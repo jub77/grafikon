@@ -10,8 +10,28 @@
         tr.header td {font-weight:bold ;font-size: 3.4mm;}
         tr.header_station {height: 8mm;}
         tr.header_station td {font-weight:bold ; font-size: 5mm; text-align: center;}
+        span.no {visibility: hidden;}
+        td.time {text-align: right; padding-left: 1mm; padding-right: 0mm;}
     </style>
 </head>
+<%
+    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    END = "${separator}0"
+    FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).appendLiteral(separator).appendFractionOfMinute(1, 1).toFormatter()
+
+    def convertTime(time, includePart) {
+        if (time == "" || time == null)
+            return "";
+        def parsed = FORMATTER.parseLocalTime(time)
+        def result = PRINT_FORMATTER.print(parsed)
+        if (result.endsWith(END)) {
+            result = result.replace("${END}", includePart ? "<span class=\"no\">${END}</span>" : "")
+        }
+        return result
+    }
+%>
+
 <%
   def print_out(str, variant) {
     print get_out(str, variant)
@@ -43,7 +63,7 @@
           if (engine_t.trainName == null)
             note_parts << "${engine}: ${engine_t.name} ${ends}"
           else
-            note_parts << "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${engine_t.time})"
+            note_parts << "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
     // train unit
     if (row.trainUnit != null)
       for (train_unit_t in row.trainUnit)
@@ -53,7 +73,7 @@
           if (train_unit_t.trainName == null)
             note_parts << "${train_unit}: ${train_unit_t.name} ${ends}"
           else
-            note_parts << "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${train_unit_t.time})"
+            note_parts << "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
     // other
     if (row.cycle != null)
       for (cycle_t in row.cycle)
@@ -63,7 +83,7 @@
           if (cycle_t.trainName == null)
             note_parts << "${cycle_t.type}: ${cycle_t.name} ${ends}"
           else
-            note_parts << "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${cycle_t.time})"
+            note_parts << "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
     // comment
     if (row.comment != null)
       note_parts << row.comment
@@ -109,9 +129,9 @@
     <td>&nbsp;</td>
     <td>${row.trainName}</td>
     <td><% print_out(row.from,"&nbsp;") %></td>
-    <td align="right"><% print_out(row.arrival,"&nbsp;") %>&nbsp;</td>
+    <td class="time"><% print_out(convertTime(row.arrival, true),"&nbsp;") %></td>
     <td align="center">${row.track}</td>
-    <td align="right"><% print_out(row.departure,"&nbsp;") %>&nbsp;</td>
+    <td class="time"><% print_out(convertTime(row.departure, true),"&nbsp;") %></td>
     <td><% print_out(row.to,"&nbsp;") %></td>
     <td><% print_out(row.end,"&nbsp;") %></td>
     <td><% note = get_note(row); note != "" ? print(note) : print("&nbsp;") %></td>

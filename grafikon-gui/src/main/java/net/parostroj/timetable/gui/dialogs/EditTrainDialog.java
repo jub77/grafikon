@@ -61,13 +61,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             dieselCheckBox.setSelected((Boolean)train.getAttribute("diesel"));
             electricCheckBox.setSelected((Boolean)train.getAttribute("electric"));
             showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("show.station.length")));
-            if (train.getType().getCategory().getKey().equals("freight")) {
-                emptyCheckBox.setEnabled(true);
-                emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("empty")));
-            } else {
-                emptyCheckBox.setEnabled(false);
-                emptyCheckBox.setSelected(false);
-            }
+            emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("empty")));
 
             numberTextField.setText(train.getNumber());
 

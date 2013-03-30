@@ -17,10 +17,12 @@ public class StationTimetablesExtractor {
     private final TrainDiagram diagram;
     private final List<Node> nodes;
     private final TimeConverter converter;
+    private final boolean techTime;
 
-    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes) {
+    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime) {
         this.diagram = diagram;
         this.nodes = nodes;
+        this.techTime = techTime;
         this.converter = diagram.getTimeConverter();
     }
 
@@ -32,7 +34,9 @@ public class StationTimetablesExtractor {
 
             // process rows ...
             for (TimeInterval interval : this.collectIntervals(node)) {
-                timetable.getRows().add(this.createRow(interval));
+                if (techTime || !interval.isTechnological()) {
+                    timetable.getRows().add(this.createRow(interval));
+                }
             }
 
             result.add(timetable);

@@ -13,6 +13,7 @@ public class ProgramSettings {
     private boolean generateTitlePageTT;
     private boolean warningAutoECCorrection;
     private boolean twoSidedPrint;
+    private boolean stShowTechTime;
     private LengthUnit lengthUnit;
     private LengthUnit speedLengthUnit;
 
@@ -73,5 +74,13 @@ public class ProgramSettings {
 
     public void setSpeedLengthUnit(LengthUnit speedLengthUnit) {
         this.speedLengthUnit = speedLengthUnit;
+    }
+
+    public boolean isStShowTechTime() {
+        return stShowTechTime;
+    }
+
+    public void setStShowTechTime(boolean stShowTechTime) {
+        this.stShowTechTime = stShowTechTime;
     }
 }

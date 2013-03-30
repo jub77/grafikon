@@ -32,8 +32,11 @@ public class GspStationTimetablesOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
+            boolean techTime = false;
+            if (params.paramExistWithValue("tech.time"))
+                techTime = params.getParam("tech.time").getValue(Boolean.class);
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram));
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime);
             List<StationTimetable> timetables = se.getStationTimetables();
 
             // call template

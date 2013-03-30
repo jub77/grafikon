@@ -49,7 +49,7 @@
         def parsed = FORMATTER.parseLocalTime(time)
         def result = PRINT_FORMATTER.print(parsed)
         if (result.endsWith(END)) {
-            result = result.replace(',0', '<span class="no">,0</span>')
+            result = result.replace("${END}", "<span class=\"no\">${END}</span>")
         }
         return result
     }
@@ -60,7 +60,7 @@
 <%  for (engine in engines) { %>
     <tr>
         <td>${engine.cycleName}</td>
-        <td>${engine.cycleDescription}</td>
+        <td>${engine.cycleDescription}&nbsp;</td>
         <td>${engine.stationName}</td>
         <td>${engine.track}</td>
         <td class="right">${convertTime(engine.time)}</td>
@@ -74,7 +74,7 @@
 <%  for (train_unit in train_units) { %>
     <tr>
         <td>${train_unit.cycleName}</td>
-        <td>${train_unit.cycleDescription}</td>
+        <td>${train_unit.cycleDescription}&nbsp;</td>
         <td>${train_unit.stationName}</td>
         <td>${train_unit.track}</td>
         <td class="right">${convertTime(train_unit.time)}</td>
