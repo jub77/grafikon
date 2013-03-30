@@ -91,6 +91,9 @@ public class CreateTrainCommand extends Command {
         train.setDescription(description);
         train.setAttribute("diesel", diesel);
         train.setAttribute("electric", electric);
+        if (!train.getType().getCategory().getKey().equals("freight")) {
+            train.setAttribute("empty", Boolean.TRUE);
+        }
         if (showLength)
             train.setAttribute("show.station.length", Boolean.TRUE);
 

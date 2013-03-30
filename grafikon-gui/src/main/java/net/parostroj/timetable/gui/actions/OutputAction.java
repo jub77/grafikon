@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 public class OutputAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(OutputAction.class.getName());
-    private ApplicationModel model;
+    private final ApplicationModel model;
     private Component parent;
-    private TemplateSelectDialog templateSelectDialog;
+    private final TemplateSelectDialog templateSelectDialog;
 
     // selection variables
     private File outputFile;
@@ -244,6 +244,9 @@ public class OutputAction extends AbstractAction {
             params.setParam("title.page", model.getProgramSettings().isGenerateTitlePageTT());
             params.setParam("page.sort", model.getProgramSettings().isTwoSidedPrint() ? "two_sides" : "one_side");
         }
+        if (type != null && type.getOutputType().equals("stations")) {
+            params.setParam("tech.time", model.getProgramSettings().isStShowTechTime());
+        }
         return params;
     }
 
@@ -272,7 +275,7 @@ public class OutputAction extends AbstractAction {
                 time = System.currentTimeMillis() - time;
                 LOG.debug("Generated in {}ms", time);
             }
-            
+
             @Override
             protected void eventDispatchActionAfter() {
                 if (errorMessage != null) {

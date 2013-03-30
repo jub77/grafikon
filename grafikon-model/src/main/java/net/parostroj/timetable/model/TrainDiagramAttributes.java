@@ -22,4 +22,5 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_TO_TIME = "to.time";
     public static final String ATTR_TRAIN_NAME_TEMPLATE = "train.name.template";
     public static final String ATTR_TRAIN_COMPLETE_NAME_TEMPLATE = "train.complete.name.template";
+    public static final String ATTR_TIME_CONVERTER = "time.converter";
 }

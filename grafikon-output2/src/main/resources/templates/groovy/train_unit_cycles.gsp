@@ -36,7 +36,7 @@
         def parsed = FORMATTER.parseLocalTime(time)
         def result = PRINT_FORMATTER.print(parsed)
         if (result.endsWith(END)) {
-            result = result.replace(',0', '<span class="no">,0</span>')
+            result = result.replace("${END}", "<span class=\"no\">${END}</span>")
         }
         return result
     }

@@ -28,8 +28,11 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
+            boolean techTime = false;
+            if (params.paramExistWithValue("tech.time"))
+                techTime = params.getParam("tech.time").getValue(Boolean.class);
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram));
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime);
             StationTimetables st = new StationTimetables(se.getStationTimetables());
 
             JAXBContext context = JAXBContext.newInstance(StationTimetables.class);

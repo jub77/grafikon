@@ -418,6 +418,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JRadioButtonMenuItem htmlSelectRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JRadioButtonMenuItem xmlRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         genTitlePageTTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        stShowTechTimeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JSeparator jSeparator5 = new javax.swing.JSeparator();
         javax.swing.JMenuItem ouputTemplatesMenuItem = new javax.swing.JMenuItem();
         viewsMenu = new javax.swing.JMenu();
@@ -720,7 +721,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         oSystemLRadioButtonMenuItem.setText(ResourceLoader.getString("menu.language.program")); // NOI18N
         oSystemLRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputLanguageRadioButtonMenuItemActionPerformed(evt);
             }
         });
@@ -736,7 +737,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         htmlRadioButtonMenuItem.setActionCommand("html");
         htmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -747,7 +748,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         htmlSelectRadioButtonMenuItem.setActionCommand("html.select");
         htmlSelectRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -758,7 +759,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         xmlRadioButtonMenuItem.setActionCommand("xml");
         xmlRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputTypeActionPerformed(evt);
             }
         });
@@ -770,8 +771,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
         genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                genTitlePageTTCheckBoxMenuItemActionPerformed(evt);
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+                model.getProgramSettings().setGenerateTitlePageTT(selected);
             }
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
@@ -779,17 +781,29 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
         twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
-                twoSidedPrintCheckBoxMenuItemActionPerformed(e);
+            public void actionPerformed(ActionEvent e) {
+                boolean selected = ((JCheckBoxMenuItem) e.getSource()).isSelected();
+                model.getProgramSettings().setTwoSidedPrint(selected);
             }
         });
         actionMenu.add(twoSidesPrintCheckBoxMenuItem);
+
+        stShowTechTimeCheckBoxMenuItem.setSelected(false);
+        stShowTechTimeCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.show.tech.time")); // NOI18N
+        stShowTechTimeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean selected = ((JCheckBoxMenuItem) e.getSource()).isSelected();
+                model.getProgramSettings().setStShowTechTime(selected);
+            }
+        });
+        actionMenu.add(stShowTechTimeCheckBoxMenuItem);
         actionMenu.add(jSeparator5);
 
         ouputTemplatesMenuItem.setText(ResourceLoader.getString("menu.action.user.output.templates")); // NOI18N
         ouputTemplatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ouputTemplatesMenuItemActionPerformed(evt);
             }
         });
@@ -829,7 +843,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         columnsMenuItem.setText(ResourceLoader.getString("menu.settings.columns")); // NOI18N
         columnsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 columnsMenuItemActionPerformed(evt);
             }
         });
@@ -838,7 +852,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         sortColumnsMenuItem.setText(ResourceLoader.getString("menu.settings.sort.columns")); // NOI18N
         sortColumnsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sortColumnsMenuItemActionPerformed(evt);
             }
         });
@@ -857,7 +871,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         showGTViewMenuItem.setText(ResourceLoader.getString("menu.settings.show.gtview")); // NOI18N
         showGTViewMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showGTViewMenuItemActionPerformed(evt);
             }
         });
@@ -866,7 +880,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         programSettingsMenuItem.setText(ResourceLoader.getString("menu.program.settings")); // NOI18N
         programSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 programSettingsMenuItemActionPerformed(evt);
             }
         });
@@ -879,7 +893,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         aboutMenuItem.setText(ResourceLoader.getString("menu.help.about")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
             }
         });
@@ -1084,16 +1098,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainsPane.setVisibilityOfGTView(state);
     }//GEN-LAST:event_showGTViewMenuItemActionPerformed
 
-    private void genTitlePageTTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
-        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-        model.getProgramSettings().setGenerateTitlePageTT(selected);
-    }//GEN-LAST:event_genTitlePageTTCheckBoxMenuItemActionPerformed
-
-    private void twoSidedPrintCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-        model.getProgramSettings().setTwoSidedPrint(selected);
-    }
-
     private void lafRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lafRadioButtonMenuItemActionPerformed
     }//GEN-LAST:event_lafRadioButtonMenuItemActionPerformed
 
@@ -1230,6 +1234,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
         genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
         twoSidesPrintCheckBoxMenuItem.setSelected(prefs.getBoolean("two.sided.print", false));
+        stShowTechTimeCheckBoxMenuItem.setSelected(prefs.getBoolean("st.show.tech.time", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -1259,6 +1264,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem stShowTechTimeCheckBoxMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JMenu lookAndFeelMenu;
