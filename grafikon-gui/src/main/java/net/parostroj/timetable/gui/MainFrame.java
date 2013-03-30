@@ -1232,9 +1232,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
 
         showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
-        genTitlePageTTCheckBoxMenuItem.setSelected(prefs.getBoolean("generate.tt.title.page", false));
-        twoSidesPrintCheckBoxMenuItem.setSelected(prefs.getBoolean("two.sided.print", false));
-        stShowTechTimeCheckBoxMenuItem.setSelected(prefs.getBoolean("st.show.tech.time", false));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -1243,6 +1240,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
         circulationPane.loadFromPreferences(prefs);
+
+        genTitlePageTTCheckBoxMenuItem.setSelected(model.getProgramSettings().isGenerateTitlePageTT());
+        twoSidesPrintCheckBoxMenuItem.setSelected(model.getProgramSettings().isTwoSidedPrint());
+        stShowTechTimeCheckBoxMenuItem.setSelected(model.getProgramSettings().isStShowTechTime());
     }
 
     public void forceLoad(File file) {
