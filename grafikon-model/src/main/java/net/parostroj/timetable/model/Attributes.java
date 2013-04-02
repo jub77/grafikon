@@ -11,9 +11,9 @@ import net.parostroj.timetable.model.events.AttributesListener;
  * @author jub
  */
 public class Attributes implements Map<String, Object> {
-    
-    private Set<AttributesListener> listeners = new HashSet<AttributesListener>();
-    private Map<String, Object> values;
+
+    private final Set<AttributesListener> listeners = new HashSet<AttributesListener>();
+    private final Map<String, Object> values;
     private Map<String, Map<String, Object>> valuesWithCategory;
 
     /**
@@ -22,7 +22,7 @@ public class Attributes implements Map<String, Object> {
     public Attributes() {
         values = new LinkedHashMap<String, Object>();
     }
-    
+
     /**
      * Copy constructor (shallow copy).
      *
@@ -41,18 +41,18 @@ public class Attributes implements Map<String, Object> {
     public void set(String name, Object value) {
         this.set(name, value, null);
     }
-    
+
     public void set(String name, Object value, String category) {
         Map<String, Object> map = this.getMapForCategory(category);
         Object oldValue = map.get(name);
         map.put(name, value);
         this.fireChange(name, oldValue, value, category);
     }
-    
+
     public Object get(String name) {
-        return this.get(name, (String)null);
+        return this.get(name, (String) null);
     }
-    
+
     public <T> T get(String name, String category, Class<T> clazz) {
         return clazz.cast(this.get(name, category));
     }
@@ -60,7 +60,16 @@ public class Attributes implements Map<String, Object> {
     public <T> T get(String name, Class<T> clazz) {
         return clazz.cast(this.get(name));
     }
-    
+
+    public <T> T get(String name, String category, Class<T> clazz, T defaultValue) {
+        T value = this.get(name, category, clazz);
+        return value == null ? defaultValue : value;
+    }
+
+    public <T> T get(String name, Class<T> clazz, T defaultValue) {
+        return this.get(name, null, clazz, defaultValue);
+    }
+
     public Object get(String name, String category) {
         if (this.mapExistsForCategory(category))
             return this.getMapForCategory(category).get(name);
@@ -71,7 +80,7 @@ public class Attributes implements Map<String, Object> {
     public Object remove(String name) {
         return this.remove(name, null);
     }
-    
+
     public Object remove(String name, String category) {
         if (!this.mapExistsForCategory(category))
             return null;
@@ -88,7 +97,7 @@ public class Attributes implements Map<String, Object> {
     public void clear() {
         this.clear(null);
     }
-    
+
     public void clear(String category) {
         if (this.mapExistsForCategory(category)) {
             Set<String> keys = new HashSet<String>(this.getMapForCategory(category).keySet());
@@ -97,7 +106,7 @@ public class Attributes implements Map<String, Object> {
             }
         }
     }
-    
+
     public Set<String> getCategories() {
         if (valuesWithCategory == null)
             return Collections.emptySet();
@@ -108,14 +117,14 @@ public class Attributes implements Map<String, Object> {
     public Map<String, Object> getAttributesMap() {
         return this.getAttributesMap(null);
     }
-    
+
     public Map<String, Object> getAttributesMap(String category) {
         if (this.mapExistsForCategory(category))
             return Collections.unmodifiableMap(this.getMapForCategory(category));
         else
             return Collections.emptyMap();
     }
-    
+
     public void addListener(AttributesListener listener) {
         listeners.add(listener);
     }
@@ -133,7 +142,7 @@ public class Attributes implements Map<String, Object> {
         for (AttributesListener l : listeners)
             l.attributeChanged(this, change);
     }
-    
+
     private Map<String, Object> getMapForCategory(String category) {
         if (category == null)
             return values;
@@ -143,7 +152,7 @@ public class Attributes implements Map<String, Object> {
             valuesWithCategory.put(category, new LinkedHashMap<String, Object>());
         return valuesWithCategory.get(category);
     }
-    
+
     private boolean mapExistsForCategory(String category) {
         if (category == null)
             return values != null;
@@ -199,7 +208,7 @@ public class Attributes implements Map<String, Object> {
 
     @Override
     public boolean containsKey(Object key) {
-        return values.containsKey((String) key);
+        return values.containsKey(key);
     }
 
     @Override
@@ -209,7 +218,7 @@ public class Attributes implements Map<String, Object> {
 
     @Override
     public Object get(Object key) {
-        return values.get((String) key);
+        return values.get(key);
     }
 
     @Override
