@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
+import java.awt.FlowLayout;
 
 /**
  * Dialog for program settings.
@@ -33,9 +34,10 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         for (LengthUnit unit : LengthUnit.values()) {
             if (unit.isScaleDependent()) {
                 unitComboBox.addItem(unit);
-                speedUnitComboBox.addItem(unit);
             }
         }
+        speedUnitComboBox.addItem(LengthUnit.KM);
+        speedUnitComboBox.addItem(LengthUnit.MILE);
     }
 
     /**
@@ -89,41 +91,30 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
         dataPanel.add(warningAutoECCorrectionCheckBox, gridBagConstraints);
 
-        unitLabel.setText(ResourceLoader.getString("program.settings.unit")); // NOI18N
+        FlowLayout fl_unitsPanel = new FlowLayout(FlowLayout.LEFT);
+        javax.swing.JPanel unitsPanel = new javax.swing.JPanel(fl_unitsPanel);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new Insets(0, 5, 0, 5);
-        dataPanel.add(unitLabel, gridBagConstraints);
+        dataPanel.add(unitsPanel, gridBagConstraints);
+
+        unitLabel.setText(ResourceLoader.getString("modelinfo.unit")); // NOI18N
+        unitsPanel.add(unitLabel);
         unitComboBox = new javax.swing.JComboBox();
-
-        GridBagConstraints gridBagConstraints_2 = new java.awt.GridBagConstraints();
-        gridBagConstraints_2.insets = new Insets(0, 0, 0, 5);
-        gridBagConstraints_2.gridx = 1;
-        gridBagConstraints_2.gridy = 2;
-        gridBagConstraints_2.anchor = java.awt.GridBagConstraints.WEST;
-        dataPanel.add(unitComboBox, gridBagConstraints_2);
-
-        JLabel label2 = new JLabel(ResourceLoader.getString("program.settings.unit")); //$NON-NLS-1$
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 0, 0, 5);
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        dataPanel.add(label2, gbc);
+        unitsPanel.add(unitComboBox);
+        JLabel speedUnitLabel = new JLabel(ResourceLoader.getString("modelinfo.speed.unit")); //$NON-NLS-1$
+        unitsPanel.add(speedUnitLabel);
+        speedUnitComboBox = new javax.swing.JComboBox();
+        unitsPanel.add(speedUnitComboBox);
+        unitsPanel.add(new javax.swing.JLabel("/h"));
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
-
-        speedUnitComboBox = new javax.swing.JComboBox();
-        GridBagConstraints gbc_speedUnitComboBox = new GridBagConstraints();
-        gbc_speedUnitComboBox.anchor = GridBagConstraints.WEST;
-        gbc_speedUnitComboBox.insets = new Insets(0, 0, 0, 5);
-        gbc_speedUnitComboBox.gridx = 3;
-        gbc_speedUnitComboBox.gridy = 2;
-        dataPanel.add(speedUnitComboBox, gbc_speedUnitComboBox);
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 

@@ -24,20 +24,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Editation of a line.
- * 
+ *
  * @author jub
  */
 public class EditLineDialog extends javax.swing.JDialog {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EditLineDialog.class.getName());
     private ApplicationModel model;
     private Line line;
-    private Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
+    private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
     private boolean modified;
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
     private List<LineTrack> removed;
-    
+
     /** Creates new form EditLineDialog */
     public EditLineDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -46,7 +46,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         // set units
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
-    
+
     public void setModel(ApplicationModel model) {
         this.model = model;
     }
@@ -58,31 +58,31 @@ public class EditLineDialog extends javax.swing.JDialog {
     public void setModified(boolean modified) {
         this.modified = modified;
     }
-    
+
     public void setLine(Line line) {
         modified = false;
         this.line = line;
 
-        lengthEditBox.setUnit(model.getProgramSettings().getLengthUnit());
-        
+        lengthEditBox.setUnit(model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
+
         // update track for from and to (direct)
         Node from = line.getFrom();
         Node to = line.getTo();
         fromToLabel.setText(from.getName() + " - " + to.getName());
-                
+
         fromDirectTrackComboBox.removeAllItems();
         toDirectTrackComboBox.removeAllItems();
         fromDirectTrackComboBox.addItem(noneTrack);
         toDirectTrackComboBox.addItem(noneTrack);
-        
+
         for (NodeTrack track : from.getTracks()) {
             fromDirectTrackComboBox.addItem(track);
         }
-        
+
         for (NodeTrack track : to.getTracks()) {
             toDirectTrackComboBox.addItem(track);
         }
-        
+
         if (line.getTopSpeed() == Line.UNLIMITED_SPEED) {
             speedTextField.setText("");
             unlimitedSpeedCheckBox.setSelected(true);
@@ -92,11 +92,11 @@ public class EditLineDialog extends javax.swing.JDialog {
             speedTextField.setText(Integer.toString(line.getTopSpeed()));
             speedTextField.setEditable(true);
         }
-        
+
         lengthEditBox.setValueInUnit(new BigDecimal(line.getLength()), LengthUnit.MM);
-        
+
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED)));
-        
+
         // update line class combo box
         List<LineClass> classes = model.getDiagram().getNet().getLineClasses();
         lineClassComboBox.removeAllItems();
@@ -118,12 +118,12 @@ public class EditLineDialog extends javax.swing.JDialog {
             lineClassBackComboBox.setSelectedItem(lineClassComboBox.getSelectedItem());
         else
             lineClassBackComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS_BACK));
-        
+
         this.updateTracks(null);
 
         this.pack();
     }
-    
+
     private void updateTracks(LineTrack selected) {
         removed = new LinkedList<LineTrack>();
         connections.clear();
@@ -135,7 +135,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         trackList.setModel(listModel);
         this.updateSelectedTrack(selected);
     }
-    
+
     private void updateSelectedTrack(LineTrack selected) {
         // set selected
         if (selected != null) {
@@ -161,7 +161,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             toDirectTrackComboBox.setSelectedItem(noneTrack);
         }
     }
-    
+
     private void writeValuesBack() {
         // recalculate flag
         boolean recalculate = false;
@@ -243,7 +243,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             }
         }
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -522,7 +522,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             NodeTrack changed = (NodeTrack)evt.getItem();
             if (changed == noneTrack)
                 changed = null;
-            Tuple<NodeTrack> tuple = connections.get((LineTrack)trackList.getSelectedValue());
+            Tuple<NodeTrack> tuple = connections.get(trackList.getSelectedValue());
             if (tuple != null)
                 tuple.second = changed;
         }
@@ -533,7 +533,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             NodeTrack changed = (NodeTrack)evt.getItem();
             if (changed == noneTrack)
                 changed = null;
-            Tuple<NodeTrack> tuple = connections.get((LineTrack)trackList.getSelectedValue());
+            Tuple<NodeTrack> tuple = connections.get(trackList.getSelectedValue());
             if (tuple != null)
                 tuple.first = changed;
         }
@@ -560,7 +560,7 @@ public class EditLineDialog extends javax.swing.JDialog {
                 lineClassBackComboBox.setSelectedItem(nlcb);
         }
     }//GEN-LAST:event_lineClassChanged
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox controlledCheckBox;
