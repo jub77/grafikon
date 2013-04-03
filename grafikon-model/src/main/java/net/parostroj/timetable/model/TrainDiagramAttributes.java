@@ -23,4 +23,6 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_TRAIN_NAME_TEMPLATE = "train.name.template";
     public static final String ATTR_TRAIN_COMPLETE_NAME_TEMPLATE = "train.complete.name.template";
     public static final String ATTR_TIME_CONVERTER = "time.converter";
+    public static final String ATTR_EDIT_LENGTH_UNIT = "edit.length.unit";
+    public static final String ATTR_EDIT_SPEED_UNIT = "edit.speed.unit";
 }
