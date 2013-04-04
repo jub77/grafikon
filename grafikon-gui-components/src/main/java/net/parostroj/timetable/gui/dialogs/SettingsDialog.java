@@ -513,6 +513,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         scriptEditBox.setColumns(80);
         scriptEditBox.setRows(8);
+        scriptEditBox.setScriptFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         GridBagConstraints gridBagConstraints_6 = new java.awt.GridBagConstraints();
         gridBagConstraints_6.insets = new Insets(0, 0, 5, 0);
         gridBagConstraints_6.gridx = 0;
