@@ -101,7 +101,7 @@ public class StationTimetablesExtractor {
                 // end
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
-                cycles.add(new CycleWithTypeFromTo(false, cycle.getName(),
+                cycles.add(new CycleWithTypeFromTo(false, false, cycle.getName(),
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null,
@@ -111,7 +111,7 @@ public class StationTimetablesExtractor {
                 // start
                 TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
-                cycles.add(new CycleWithTypeFromTo(true, cycle.getName(),
+                cycles.add(new CycleWithTypeFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null,
@@ -127,7 +127,7 @@ public class StationTimetablesExtractor {
                 // end
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
-                cycles.add(new CycleFromTo(false, cycle.getName(),
+                cycles.add(new CycleFromTo(false, false, cycle.getName(),
                         type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null));
@@ -136,7 +136,7 @@ public class StationTimetablesExtractor {
                 // start
                 TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
-                cycles.add(new CycleFromTo(true, cycle.getName(),
+                cycles.add(new CycleFromTo(itemPrev == null, true, cycle.getName(),
                         type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null));

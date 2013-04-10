@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 public class CycleFromTo {
 
     private boolean in;
+    private boolean start;
     private String name;
     private String desc;
     private String trainName;
@@ -18,7 +19,8 @@ public class CycleFromTo {
     public CycleFromTo() {
     }
 
-    public CycleFromTo(boolean in, String name, String desc, String trainName, String time) {
+    public CycleFromTo(boolean start, boolean in, String name, String desc, String trainName, String time) {
+        this.start = start;
         this.in = in;
         this.name = name;
         this.desc = desc;
@@ -65,5 +67,14 @@ public class CycleFromTo {
 
     public void setIn(boolean in) {
         this.in = in;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    @XmlAttribute
+    public void setStart(boolean start) {
+        this.start = start;
     }
 }

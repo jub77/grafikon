@@ -9,8 +9,8 @@ public class CycleWithTypeFromTo extends CycleFromTo {
     public CycleWithTypeFromTo() {
     }
 
-    public CycleWithTypeFromTo(boolean in, String name, String desc, String trainName, String time, String type) {
-        super(in, name, desc, trainName, time);
+    public CycleWithTypeFromTo(boolean start, boolean in, String name, String desc, String trainName, String time, String type) {
+        super(start, in, name, desc, trainName, time);
         this.type = type;
     }
 
