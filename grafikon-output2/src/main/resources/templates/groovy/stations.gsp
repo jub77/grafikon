@@ -30,6 +30,14 @@
         }
         return result
     }
+    
+    def highlight(str) {
+        return "<b>${str}</b>"
+    }
+    
+    def comment(separator, str) {
+        return (str == null || str =="") ? str : "${separator}(${str})"
+    }
 %>
 
 <%
@@ -56,34 +64,43 @@
     }
     // engine
     if (row.engine != null)
-      for (engine_t in row.engine)
+      for (engine_t in row.engine) {
+        def str = ""
         if (engine_t.in)
-          note_parts << "${engine}: ${engine_t.name} (${engine_t.desc})"
+          str = "${engine}: ${engine_t.name}${comment(' ', engine_t.desc)}"
         else
           if (engine_t.trainName == null)
-            note_parts << "${engine}: ${engine_t.name} ${ends}"
+            str = "${engine}: ${engine_t.name} ${ends}"
           else
-            note_parts << "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
+            str = "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
+        note_parts << (engine_t.start ? highlight(str) : str)
+      }
     // train unit
     if (row.trainUnit != null)
-      for (train_unit_t in row.trainUnit)
+      for (train_unit_t in row.trainUnit) {
+        def str = ""
         if (train_unit_t.in)
-          note_parts << "${train_unit}: ${train_unit_t.name} (${train_unit_t.desc})"
+          str = "${train_unit}: ${train_unit_t.name}${comment(' ', train_unit_t.desc)}"
         else
           if (train_unit_t.trainName == null)
-            note_parts << "${train_unit}: ${train_unit_t.name} ${ends}"
+            str = "${train_unit}: ${train_unit_t.name} ${ends}"
           else
-            note_parts << "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
+            str = "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
+        note_parts << (train_unit_t.start ? highlight(str) : str)
+      }
     // other
     if (row.cycle != null)
-      for (cycle_t in row.cycle)
+      for (cycle_t in row.cycle) {
+        def str = ""
         if (cycle_t.in)
-          note_parts << "${cycle_t.type}: ${cycle_t.name} (${cycle_t.desc})"
+          str = "${cycle_t.type}: ${cycle_t.name}${comment(' ', cycle_t.desc)}"
         else
           if (cycle_t.trainName == null)
-            note_parts << "${cycle_t.type}: ${cycle_t.name} ${ends}"
+            str = "${cycle_t.type}: ${cycle_t.name} ${ends}"
           else
-            note_parts << "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+            str = "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+        note_parts << (cycle_t.start ? highlight(str) : str)
+      }
     // comment
     if (row.comment != null)
       note_parts << row.comment
