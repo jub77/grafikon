@@ -23,6 +23,8 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.dialogs.EditLineDialog;
 import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.graph.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
@@ -349,7 +351,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         panel.add(BorderLayout.WEST, buttonPanel);
         GridBagLayout layoutButtonPanel = new GridBagLayout();
         buttonPanel.setLayout(layoutButtonPanel);
-        final JToggleButton newNodeButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/add_document.png"));
+        final JToggleButton newNodeButton = GuiComponentUtils.createToggleButton(GuiIcon.ADD_DOC, 2);
         newNodeButton.setEnabled(false);
         newNodeButton.addItemListener(new ItemListener() {
             @Override
@@ -364,7 +366,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridx = 1;
         gbc.gridy = 0;
         buttonPanel.add(newNodeButton, gbc);
-        final JToggleButton newLineButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/connect.png"));
+        final JToggleButton newLineButton = GuiComponentUtils.createToggleButton(GuiIcon.CONNECT, 2);
         newLineButton.setEnabled(false);
         newLineButton.addItemListener(new ItemListener() {
             @Override
@@ -379,7 +381,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridx = 2;
         gbc.gridy = 0;
         buttonPanel.add(newLineButton, gbc);
-        final JToggleButton selectionButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/select.png"));
+        final JToggleButton selectionButton = GuiComponentUtils.createToggleButton(GuiIcon.SELECT, 2);
         selectionButton.setEnabled(false);
         selectionButton.addItemListener(new ItemListener() {
             @Override
@@ -402,17 +404,14 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         controls.add(newNodeButton);
         controls.add(newLineButton);
         controls.add(selectionButton);
-        javax.swing.JButton editButton = new javax.swing.JButton();
+        javax.swing.JButton editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2, editAction);
         GridBagConstraints gbc_2 = new GridBagConstraints();
         gbc_2.fill = GridBagConstraints.HORIZONTAL;
         gbc_2.anchor = GridBagConstraints.NORTH;
         gbc_2.gridx = 0;
         gbc_2.gridy = 1;
         buttonPanel.add(editButton, gbc_2);
-        editButton.setAction(editAction);
-        editButton.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/edit.png"));
-        javax.swing.JButton zoomIn = new javax.swing.JButton(zoomInAction);
-        zoomIn.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/zoom_in.png"));
+        javax.swing.JButton zoomIn = GuiComponentUtils.createButton(GuiIcon.ZOOM_IN, 2, zoomInAction);
         GridBagConstraints gbc_3 = new GridBagConstraints();
         gbc_3.fill = GridBagConstraints.HORIZONTAL;
         gbc_3.anchor = GridBagConstraints.NORTH;
@@ -424,21 +423,18 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.insets = new Insets(10, 0, 0, 0);
         buttonPanel.add(saveNetImageButton, gbc);
         saveNetImageButton.setAction(saveNetImageAction);
-        javax.swing.JButton deleteButton = new javax.swing.JButton();
+        javax.swing.JButton deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, deleteAction);
         GridBagConstraints gbc_1 = new GridBagConstraints();
         gbc_1.fill = GridBagConstraints.HORIZONTAL;
         gbc_1.anchor = GridBagConstraints.NORTH;
         gbc_1.gridx = 1;
         gbc_1.gridy = 1;
         buttonPanel.add(deleteButton, gbc_1);
-        deleteButton.setAction(deleteAction);
-        deleteButton.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/delete.png"));
-        javax.swing.JButton zoomOut = new javax.swing.JButton(zoomOutAction);
-        zoomOut.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/zoom_out.png"));
+        javax.swing.JButton zoomOut = GuiComponentUtils.createButton(GuiIcon.ZOOM_OUT, 2, zoomOutAction);
         GridBagConstraints gbc_4 = new GridBagConstraints();
         gbc_4.fill = GridBagConstraints.HORIZONTAL;
         gbc_4.anchor = GridBagConstraints.NORTH;

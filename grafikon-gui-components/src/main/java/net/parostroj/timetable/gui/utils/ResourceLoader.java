@@ -33,6 +33,14 @@ public class ResourceLoader {
     }
 
     /**
+     * @param icon icon type
+     * @return icon
+     */
+    public static ImageIcon createImageIcon(GuiIcon icon) {
+        return createImageIcon(icon.getPath());
+    }
+
+    /**
      * @param path path of the icon
      * @return icon
      */

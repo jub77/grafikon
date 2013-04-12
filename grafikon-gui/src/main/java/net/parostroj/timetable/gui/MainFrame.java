@@ -10,8 +10,10 @@ import groovy.lang.GroovyShell;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import javax.swing.*;
@@ -26,13 +28,16 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
-import net.parostroj.timetable.gui.utils.*;
-import net.parostroj.timetable.gui.views.*;
+import net.parostroj.timetable.gui.utils.GuiUtils;
+import net.parostroj.timetable.gui.views.DriverCycleDelegate;
+import net.parostroj.timetable.gui.views.EngineCycleDelegate;
+import net.parostroj.timetable.gui.views.TrainUnitCycleDelegate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
