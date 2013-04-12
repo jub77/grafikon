@@ -349,7 +349,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         panel.add(BorderLayout.WEST, buttonPanel);
         GridBagLayout layoutButtonPanel = new GridBagLayout();
         buttonPanel.setLayout(layoutButtonPanel);
-        final JToggleButton newNodeButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/add.png"));
+        final JToggleButton newNodeButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/add_document.png"));
         newNodeButton.setEnabled(false);
         newNodeButton.addItemListener(new ItemListener() {
             @Override
