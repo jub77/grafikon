@@ -54,7 +54,7 @@ public class ResourceLoader {
      * @return icon
      */
     public static ImageIcon createImageIcon(String path, String description) {
-        java.net.URL imgURL = ClassLoader.getSystemResource(path);
+        java.net.URL imgURL = ResourceLoader.class.getResource("/" + path);
         if (imgURL != null) {
             return description == null ? new ImageIcon(imgURL) : new ImageIcon(imgURL, description);
         } else {
