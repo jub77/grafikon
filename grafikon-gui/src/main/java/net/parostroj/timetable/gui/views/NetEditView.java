@@ -50,6 +50,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
+import javax.swing.border.EmptyBorder;
 
 /**
  * View for editing net.
@@ -84,10 +85,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class NewNodeAction extends AbstractAction {
 
-        public NewNodeAction(String name) {
-            super(name);
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             if (model.getDiagram() != null) {
@@ -118,10 +115,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     public class EditAction extends AbstractAction {
 
-        public EditAction(String name) {
-            super(name);
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             // edit line
@@ -150,10 +143,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     public class DeleteAction extends AbstractAction {
-
-        public DeleteAction(String name) {
-            super(name);
-        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -297,21 +286,21 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     /** Creates new form NetEditView */
     public NetEditView() {
-        newNodeAction = new NewNodeAction("*");
-        editAction = new EditAction("o");
+        newNodeAction = new NewNodeAction();
+        editAction = new EditAction();
         editAction.setEnabled(false);
-        deleteAction = new DeleteAction("x");
+        deleteAction = new DeleteAction();
         deleteAction.setEnabled(false);
         saveNetImageAction = new SaveNetImageAction(ResourceLoader.getString("net.edit.save.image") + " ...");
         saveNetImageAction.setEnabled(false);
-        zoomInAction = new AbstractAction("+") {
+        zoomInAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (graphComponent != null)
                     graphComponent.zoomIn();
             }
         };
-        zoomOutAction = new AbstractAction("-") {
+        zoomOutAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (graphComponent != null)
@@ -352,6 +341,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         setLayout(new BorderLayout());
 
         panel = new JPanel();
+        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         add(panel, BorderLayout.SOUTH);
         panel.setLayout(new BorderLayout());
 
@@ -359,7 +349,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         panel.add(BorderLayout.WEST, buttonPanel);
         GridBagLayout layoutButtonPanel = new GridBagLayout();
         buttonPanel.setLayout(layoutButtonPanel);
-        final JToggleButton newNodeButton = new javax.swing.JToggleButton("*");
+        final JToggleButton newNodeButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/add.png"));
         newNodeButton.setEnabled(false);
         newNodeButton.addItemListener(new ItemListener() {
             @Override
@@ -374,7 +364,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridx = 1;
         gbc.gridy = 0;
         buttonPanel.add(newNodeButton, gbc);
-        final JToggleButton newLineButton = new javax.swing.JToggleButton("/");
+        final JToggleButton newLineButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/connect.png"));
         newLineButton.setEnabled(false);
         newLineButton.addItemListener(new ItemListener() {
             @Override
@@ -389,7 +379,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridx = 2;
         gbc.gridy = 0;
         buttonPanel.add(newLineButton, gbc);
-        final JToggleButton selectionButton = new javax.swing.JToggleButton("<");
+        final JToggleButton selectionButton = new javax.swing.JToggleButton(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/select.png"));
         selectionButton.setEnabled(false);
         selectionButton.addItemListener(new ItemListener() {
             @Override
@@ -420,7 +410,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc_2.gridy = 1;
         buttonPanel.add(editButton, gbc_2);
         editButton.setAction(editAction);
+        editButton.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/edit.png"));
         javax.swing.JButton zoomIn = new javax.swing.JButton(zoomInAction);
+        zoomIn.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/zoom_in.png"));
         GridBagConstraints gbc_3 = new GridBagConstraints();
         gbc_3.fill = GridBagConstraints.HORIZONTAL;
         gbc_3.anchor = GridBagConstraints.NORTH;
@@ -433,6 +425,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 3;
+        gbc.insets = new Insets(10, 0, 0, 0);
         buttonPanel.add(saveNetImageButton, gbc);
         saveNetImageButton.setAction(saveNetImageAction);
         javax.swing.JButton deleteButton = new javax.swing.JButton();
@@ -443,7 +436,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc_1.gridy = 1;
         buttonPanel.add(deleteButton, gbc_1);
         deleteButton.setAction(deleteAction);
+        deleteButton.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/delete.png"));
         javax.swing.JButton zoomOut = new javax.swing.JButton(zoomOutAction);
+        zoomOut.setIcon(net.parostroj.timetable.gui.utils.ResourceLoader.createImageIcon("icons/zoom_out.png"));
         GridBagConstraints gbc_4 = new GridBagConstraints();
         gbc_4.fill = GridBagConstraints.HORIZONTAL;
         gbc_4.anchor = GridBagConstraints.NORTH;
