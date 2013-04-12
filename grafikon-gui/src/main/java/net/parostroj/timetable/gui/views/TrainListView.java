@@ -32,6 +32,8 @@ import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
 import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
 import net.parostroj.timetable.gui.dialogs.GroupChooserDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.tree2.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEventType;
@@ -211,16 +213,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         JPanel buttonPanel = new JPanel();
         add(buttonPanel, BorderLayout.SOUTH);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        createButton = new javax.swing.JButton();
+        createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         buttonPanel.add(createButton);
 
-        createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
-        deleteButton = new javax.swing.JButton();
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         buttonPanel.add(deleteButton);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
-
-        menuButton = new javax.swing.JButton("v");
+        menuButton = GuiComponentUtils.createButton(GuiIcon.CONFIGURE_T, 2);
         buttonPanel.add(menuButton);
         menuAdapter = new MenuAdapter();
         menuButton.addActionListener(menuAdapter);
