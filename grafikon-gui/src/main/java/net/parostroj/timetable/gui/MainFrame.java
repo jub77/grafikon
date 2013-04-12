@@ -445,7 +445,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(this.getTitleString(false));
         setLocationByPlatform(true);
-        setMinimumSize(new java.awt.Dimension(800, 600));
 
         tabbedPane.addTab(ResourceLoader.getString("tab.trains"), trainsPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.engine.cycles"), engineCyclesPane); // NOI18N
@@ -948,7 +947,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         enabled.add(scriptsMenu);
         enabled.add(ouputTemplatesMenuItem);
 
-        pack();
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setSize(getMinimumSize());
     }// </editor-fold>//GEN-END:initComponents
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
