@@ -15,6 +15,8 @@ import javax.swing.JComponent;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
@@ -42,8 +44,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         typesComboBox = new javax.swing.JComboBox();
         newNameTextField = new javax.swing.JTextField();
-        createButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
+        createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         trainsCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
 
         setLayout(new java.awt.BorderLayout());
@@ -68,7 +70,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         });
         controlPanel.add(newNameTextField);
 
-        createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         createButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -77,7 +78,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         });
         controlPanel.add(createButton);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
