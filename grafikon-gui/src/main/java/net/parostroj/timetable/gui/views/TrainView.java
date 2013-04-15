@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 
 /**
  * View of train details.
@@ -133,9 +134,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             speedTextField.setText(null);
             techTimeTextField.setText(null);
             speedTextField.setEnabled(false);
-
-            editButton.setEnabled(false);
-            copyButton.setEnabled(false);
         } else {
             // train type
             String name = train.getCompleteName();
@@ -146,9 +144,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             techTimeTextField.setText(this.createTechTimeString(train));
             speedTextField.setEnabled(true);
-
-            editButton.setEnabled(true);
-            copyButton.setEnabled(true);
         }
 
         trainTable.removeEditor();
@@ -187,10 +182,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTable = new javax.swing.JTable();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         speedTextField = new javax.swing.JTextField();
-        editButton = new javax.swing.JButton();
-        copyButton = new javax.swing.JButton();
+        speedTextField.setHorizontalAlignment(SwingConstants.RIGHT);
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         techTimeTextField = new javax.swing.JTextField();
+        techTimeTextField.setColumns(15);
 
         jLabel1.setText(ResourceLoader.getString("create.train.number")); // NOI18N
 
@@ -206,12 +201,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         speedTextField.setColumns(5);
         speedTextField.setEditable(false);
 
-        editButton.setText(ResourceLoader.getString("button.edit")); // NOI18N
-        editButton.setEnabled(false);
-
-        copyButton.setText(ResourceLoader.getString("button.copy")); // NOI18N
-        copyButton.setEnabled(false);
-
         jLabel3.setText(ResourceLoader.getString("create.train.technological.time")); // NOI18N
 
         techTimeTextField.setEditable(false);
@@ -222,24 +211,19 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                 .addGroup(layout.createSequentialGroup()
                     .addGap(5)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(trainTableScrollPane, Alignment.TRAILING)
+                        .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel1)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(techTimeTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(copyButton)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(editButton))
-                                .addComponent(trainTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(trainTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(jLabel2)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(jLabel3)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(techTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)))
                     .addGap(5))
         );
         layout.setVerticalGroup(
@@ -248,24 +232,17 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     .addGap(5)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jLabel1)
-                        .addComponent(trainTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(2)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(trainTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel2)
-                        .addComponent(editButton)
-                        .addComponent(copyButton)
                         .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
                         .addComponent(techTimeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(2)
-                    .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(trainTableScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                     .addGap(5))
         );
         this.setLayout(layout);
     }
-
-    private javax.swing.JButton copyButton;
-    private javax.swing.JButton editButton;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JTextField techTimeTextField;
     private javax.swing.JTable trainTable;
