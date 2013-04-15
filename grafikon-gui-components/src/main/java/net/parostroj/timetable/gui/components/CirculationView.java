@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public class CirculationView extends javax.swing.JPanel implements SaveImageAction.Image {
-    
+
     private static class Layout {
 
         private static final double BORDER = 1d;
@@ -29,7 +29,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         private static final double SMALL_FONT = 0.8d;
         private static final int START_WIDTH = 7;
         private static final double STEP_RATIO = 2.0d;
-        
+
         public boolean init;
         public int title;
         public int border;
@@ -49,19 +49,19 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         public int textOffsetSmall;
         public int stepWidth = 5;
         public Font smallFont;
-        
+
         public int getRow(int rowIndex) {
             return border + rowIndex * this.row + this.title;
         }
-        
+
         public void updateValues(Graphics2D g) {
             if (!this.init) {
                 TextLayout tl1 = new TextLayout("M", g.getFont(), g.getFontRenderContext());
                 TextLayout tl2 = new TextLayout("Čy", g.getFont(), g.getFontRenderContext());
-                
+
                 smallFont = g.getFont().deriveFont(g.getFont().getSize() * (float)SMALL_FONT);
                 TextLayout stl = new TextLayout("Čy", smallFont, g.getFontRenderContext());
-                
+
                 Rectangle2D b1 = tl1.getBounds();
                 Rectangle2D b2 = tl2.getBounds();
                 Rectangle2D bs = stl.getBounds();
@@ -81,7 +81,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             this.rowGapSmall = (this.row - this.letterSmall.height * 2) / 2;
             this.updateSize(rows, fromTime, toTime);
         }
-        
+
         public void updateSize(int rows, int fromTime, int toTime) {
             if (rows == 0) {
                 size = new Dimension(0, 0);
@@ -96,25 +96,26 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             }
         }
     }
-    
+
     private static final Color COLOR_1 = new Color(210, 210, 210);
     private static final Color COLOR_2 = new Color(230, 230, 230);
     private static final Color COLOR_LINE = new Color(170, 170, 170);
 
     private TrainDiagram diagram;
     private TrainsCycleType type;
-    private Layout layout = new Layout();
+    private final Layout layout = new Layout();
 
     /** Creates new form CirculationView */
     public CirculationView() {
-        initComponents();
+        setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(null);
     }
 
     @Override
     public void paintImage(Graphics g) {
         this.paint(g);
     }
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -128,7 +129,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         this.diagram = diagram;
         this.repaintAndUpdateSize();
     }
-    
+
     private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
         paintTimeTimeline(g);
         int row = 0;
@@ -136,7 +137,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             paintCirculation(g, circulation, row++);
         }
     }
-    
+
     private void paintTimeTimeline(Graphics2D g) {
         int startX = layout.border + layout.description;
         int startY = layout.border;
@@ -174,7 +175,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
                 g.drawLine(pos, layout.border + layout.title, pos, layout.size.height - layout.border);
             }
         }
-        
+
         // row delimiters
         g.setColor(COLOR_LINE);
         for (int i = 0; i <= layout.rows; i++) {
@@ -204,7 +205,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         }
         g.setFont(backup);
     }
-    
+
     private void repaintAndUpdateSize() {
         int newCount = 0, newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
         if (diagram != null && type != null) {
@@ -216,18 +217,18 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             if (value != null)
                 newUpperLimit = value.intValue();
         }
-        if (newCount != layout.rows || newLowerLimit != layout.fromTime 
+        if (newCount != layout.rows || newLowerLimit != layout.fromTime
                 || newUpperLimit != layout.toTime) {
             layout.updateSize(newCount, newLowerLimit, newUpperLimit);
             this.revalidate();
         }
         this.repaint();
     }
-    
+
     public int getCount() {
         return layout.rows;
     }
-    
+
     @Override
     public Dimension getPreferredSize() {
         if (!layout.init) {
@@ -236,21 +237,6 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         }
         return layout.size;
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        setBackground(new java.awt.Color(255, 255, 255));
-        setLayout(null);
-    }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
 
     public void circulationRemoved(TrainsCycle circulation) {
         this.repaintAndUpdateSize();
@@ -272,7 +258,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     public void timeLimitsUpdated() {
         this.repaintAndUpdateSize();
     }
-    
+
     public void setStepWidth(int size) {
         this.layout.stepWidth = size;
         this.layout.updateValues((Graphics2D) this.getGraphics());
