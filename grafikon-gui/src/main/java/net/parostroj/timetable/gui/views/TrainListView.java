@@ -29,9 +29,7 @@ import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
-import net.parostroj.timetable.gui.dialogs.CreateRouteDialog;
-import net.parostroj.timetable.gui.dialogs.CreateTrainDialog;
-import net.parostroj.timetable.gui.dialogs.GroupChooserDialog;
+import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.tree2.*;
@@ -243,6 +241,31 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 createButtonActionPerformed(evt);
             }
         });
+        copyButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame) TrainListView.this.getTopLevelAncestor(),
+                        true, model, model.getSelectedTrain());
+                dialog.setLocationRelativeTo(TrainListView.this);
+                dialog.setVisible(true);
+            }
+        });
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getEditTrainDialog().setModel(model);
+                getEditTrainDialog().getSelectedTrainData();
+                getEditTrainDialog().setLocationRelativeTo(TrainListView.this);
+                getEditTrainDialog().setVisible(true);
+            }
+        });
+    }
+
+    private EditTrainDialog getEditTrainDialog() {
+        if (editDialog == null) {
+            editDialog = new EditTrainDialog((java.awt.Frame) this.getTopLevelAncestor(), true);
+        }
+        return editDialog;
     }
 
     private void updateGroupsMenu(boolean added, Group group) {
@@ -595,6 +618,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         this.updateViewDiagramChanged();
     }
 
+    private EditTrainDialog editDialog;
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
     private final javax.swing.JButton editButton;
