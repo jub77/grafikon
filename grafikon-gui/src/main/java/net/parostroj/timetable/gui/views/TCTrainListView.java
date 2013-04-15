@@ -150,7 +150,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             DefaultListModel m = (DefaultListModel)ecTrainsList.getModel();
             m.clear();
             for (TrainsCycleItem item : delegate.getSelectedCycle()) {
-                m.addElement(new TrainsCycleItemWrapper(item));
+                m.addElement(new TrainsCycleItemWrapper(item, true));
             }
             ecTrainsList.setModel(m);
         }
@@ -214,8 +214,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, BUTTON_MARGIN);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, BUTTON_MARGIN);
         changeButton = GuiComponentUtils.createButton(GuiIcon.EDIT, BUTTON_MARGIN);
-        detailsTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageTextPane = new net.parostroj.timetable.gui.views.ColorTextPane();
         sortButton = GuiComponentUtils.createButton(GuiIcon.VIEW_SORT, BUTTON_MARGIN);
@@ -335,10 +333,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
         });
 
-        detailsTextField.setEditable(false);
-
-        jLabel1.setText(ResourceLoader.getString("ec.list.comment")); // NOI18N
-
         coverageScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         coverageScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -374,10 +368,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         .addComponent(changeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(jLabel1)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(detailsTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                 .addComponent(coverageScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addComponent(errorsScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
         );
@@ -401,10 +391,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(selectionButton))
                         .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(detailsTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(coverageScrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -534,7 +520,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             String newComment = "".equals(commentText) ? null : commentText;
             if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment()))) {
                 item.setComment(newComment);
-                detailsTextField.setText(newComment);
             }
             TimeInterval from = changeDialog.getFrom();
             TimeInterval to = changeDialog.getTo();
@@ -545,12 +530,11 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 if (train.testAddCycle(newItem, item, overlappingEnabled)) {
                     TrainsCycle cycle = item.getCycle();
                     cycle.replaceItem(newItem, item);
-                    ((TrainsCycleItemWrapper)ecTrainsList.getSelectedValue()).setItem(newItem);
+                    ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).setItem(newItem);
                     this.updateSelectedTrainsCycleItem(newItem);
                     this.updateErrors();
                     if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
                         this.updateListAllTrains();
-                    ecTrainsList.repaint();
                     // recalculate if needed (engine class depedency)
                     if (train.checkNeedSpeedRecalculate()) {
                         train.recalculate();
@@ -565,6 +549,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     this.updateSelectedTrainsCycleItem(item);
                 }
             }
+            ecTrainsList.repaint();
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
     }
@@ -584,10 +569,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void updateSelectedTrainsCycleItem(TrainsCycleItem item) {
         if (item == null) {
-            detailsTextField.setText("");
             coverageTextPane.setText("");
         } else {
-            detailsTextField.setText(item.getComment());
             List<Pair<TimeInterval, Boolean>> coverage = item.getTrain().getRouteCoverage(delegate.getType());
             coverageTextPane.setText("");
             for (Pair<TimeInterval, Boolean> pair : coverage) {
@@ -688,7 +671,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JScrollPane coverageScrollPane;
     private net.parostroj.timetable.gui.views.ColorTextPane coverageTextPane;
     private javax.swing.JRadioButtonMenuItem customRadioButtonMenuItem;
-    private javax.swing.JTextField detailsTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JList ecTrainsList;
     private javax.swing.JPopupMenu filterMenu;

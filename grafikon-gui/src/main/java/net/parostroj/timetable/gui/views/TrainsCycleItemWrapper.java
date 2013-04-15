@@ -11,19 +11,29 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 public class TrainsCycleItemWrapper {
 
     private TrainsCycleItem item;
+    private final boolean showComment;
 
     public TrainsCycleItemWrapper(TrainsCycleItem item) {
+        this(item, false);
+    }
+
+    public TrainsCycleItemWrapper(TrainsCycleItem item, boolean showComment) {
         this.item = item;
+        this.showComment = showComment;
     }
 
     @Override
     public String toString() {
     	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
-        return String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
+        String str = String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
         		item.getFromInterval().getOwnerAsNode().getName(),
         		c.convertIntToText(item.getStartTime()),
         		item.getToInterval().getOwnerAsNode().getName(),
         		c.convertIntToText(item.getEndTime()));
+        if (showComment && item.getComment() != null && !"".equals(item.getComment().trim())) {
+            str = String.format("%s - %s", str, item.getComment());
+        }
+        return str;
     }
 
     public TrainsCycleItem getItem() {
