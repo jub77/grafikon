@@ -216,6 +216,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         buttonPanel.add(createButton);
 
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        buttonPanel.add(editButton);
+
+        copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
+        buttonPanel.add(copyButton);
+
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         buttonPanel.add(deleteButton);
 
@@ -227,13 +233,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
         createButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
             }
         });
@@ -383,19 +389,18 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             trainTreeHandler.addTrains(model.getDiagram().getTrains());
             trainTree.setModel(trainTreeHandler.getTreeModel());
             createButton.setEnabled(true);
-            deleteButton.setEnabled(false);
-            moveToGroupMenuItem.setEnabled(false);
-            changeRouteMenuItem.setEnabled(false);
             menuButton.setEnabled(true);
         } else {
             trainTree.setModel(null);
             trainTreeHandler = null;
             createButton.setEnabled(false);
-            deleteButton.setEnabled(false);
-            moveToGroupMenuItem.setEnabled(false);
-            changeRouteMenuItem.setEnabled(false);
             menuButton.setEnabled(false);
         }
+        deleteButton.setEnabled(false);
+        editButton.setEnabled(false);
+        copyButton.setEnabled(false);
+        moveToGroupMenuItem.setEnabled(false);
+        changeRouteMenuItem.setEnabled(false);
         if (trainTreeHandler != null)
             this.selectTrain(model.getSelectedTrain());
     }
@@ -499,8 +504,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     model.setSelectedTrain(train);
             }
         }
-        boolean selectionEmpty = trainTree.isSelectionEmpty();
+        boolean selectionEmpty = trainTree.isSelectionEmpty() || (trainTree.getSelectionCount() == 1
+                && trainTree.getSelectionPath().getParentPath() == null);
         deleteButton.setEnabled(!selectionEmpty);
+        copyButton.setEnabled(model.getSelectedTrain() != null);
+        editButton.setEnabled(model.getSelectedTrain() != null);
         moveToGroupMenuItem.setEnabled(!selectionEmpty);
         changeRouteMenuItem.setEnabled(model.getSelectedTrain() != null);
         selecting = false;
@@ -531,7 +539,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_deleteButtonActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         Set<Train> selectedTrains = this.getSelectedTrains();
 
         model.setSelectedTrain(null); // no train selected
@@ -539,7 +547,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         for (Train deletedTrain : selectedTrains) {
             this.deleteTrain(deletedTrain, model.getDiagram());
         }
-    }// GEN-LAST:event_deleteButtonActionPerformed
+    }
 
     private Set<Train> getSelectedTrains() {
         TreePath[] paths = trainTree.getSelectionPaths();
@@ -563,7 +571,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
-    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_createButtonActionPerformed
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // call create new train dialog
         Frame f = (Frame) this.getTopLevelAncestor();
 
@@ -572,9 +580,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         create.setLocationRelativeTo(f);
         create.setVisible(true);
-    }// GEN-LAST:event_createButtonActionPerformed
+    }
 
-    private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_treeTypeActionPerformed
+    private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {
         if (evt.getSource() == listFlatMenuItem)
             treeType = TrainListView.TreeType.FLAT;
         else if (evt.getSource() == listTypesMenuItem)
@@ -585,11 +593,12 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             treeType = TrainListView.TreeType.GROUPS;
         // update list
         this.updateViewDiagramChanged();
-    }// GEN-LAST:event_treeTypeActionPerformed
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
+    private final javax.swing.JButton editButton;
+    private final javax.swing.JButton copyButton;
     private final javax.swing.JRadioButtonMenuItem listFlatMenuItem;
     private final javax.swing.JRadioButtonMenuItem listGroupsMenuItem;
     private final javax.swing.JRadioButtonMenuItem listGroupsFlatMenuItem;
