@@ -1,5 +1,5 @@
 /*
- * ECTrainListView.java
+ * TCTrainListView.java
  *
  * Created on 12. září 2007, 16:07
  */
@@ -370,17 +370,15 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         .addComponent(downButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addComponent(sortButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addComponent(selectionButton, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
+                        .addComponent(addButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                        .addComponent(changeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(jLabel1)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(detailsTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(coverageScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(changeButton))
+                .addComponent(coverageScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addComponent(errorsScrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -399,6 +397,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(sortButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(changeButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(selectionButton))
                         .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -406,10 +406,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         .addComponent(jLabel1)
                         .addComponent(detailsTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                        .addGroup(layout.createParallelGroup(Alignment.CENTER, false)
-                            .addComponent(changeButton))
-                        .addComponent(coverageScrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(coverageScrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(errorsScrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
@@ -632,7 +629,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         // enable/disable overlapping (refresh list of all trains)
         overlappingEnabled = overlappingCheckBoxMenuItem.isSelected();
         this.updateListAllTrains();
-    }//GEN-LAST:event_overlappingCheckBoxMenuItemActionPerformed
+    }
 
     private void selectionButtonActionPerformed(java.awt.event.ActionEvent evt) {
         filterMenu.show(selectionButton, 3, 3);
