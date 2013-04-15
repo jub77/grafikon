@@ -77,7 +77,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         return templateTextArea.getRows();
     }
 
-    public void setScriptFont(Font font) {
+    public void setTemplateFont(Font font) {
         templateTextArea.setFont(font);
     }
 
