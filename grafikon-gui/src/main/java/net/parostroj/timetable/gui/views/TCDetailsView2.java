@@ -5,11 +5,11 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.awt.GridLayout;
+
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.utils.ResourceLoader;
-import java.awt.GridLayout;
 
 /**
  * View with details about selected engine cycle.
@@ -60,19 +60,14 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
 
     private void initComponents() {
         nameTextField = new javax.swing.JTextField();
-        javax.swing.JLabel nameLabel = new javax.swing.JLabel();
 
         nameTextField.setColumns(10);
         nameTextField.setEditable(false);
 
-        nameLabel.setText(ResourceLoader.getString("ec.details.name")); // NOI18N
-        setLayout(new GridLayout(0, 1, 0, 0));
-        add(nameLabel);
+        GridLayout layout = new GridLayout(0, 1, 0, 3);
+        setLayout(layout);
         add(nameTextField);
-        javax.swing.JLabel descriptionLabel = new javax.swing.JLabel();
 
-        descriptionLabel.setText(ResourceLoader.getString("ec.details.description")); // NOI18N
-        add(descriptionLabel);
         descriptionTextField = new javax.swing.JTextField();
 
         descriptionTextField.setColumns(10);

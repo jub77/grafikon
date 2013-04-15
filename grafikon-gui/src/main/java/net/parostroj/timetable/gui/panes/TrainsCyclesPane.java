@@ -168,7 +168,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
         innerPanel.setLayout(new java.awt.BorderLayout());
 
-        detailsView.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
+        detailsView.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 0));
         innerPanel.add(detailsView, java.awt.BorderLayout.NORTH);
 
         listView.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
