@@ -283,7 +283,7 @@ public class FloatingWindowsFactory {
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         gtView.setTrainSelector(hts);
 
-        FloatingDialog dialog = new FloatingDialog(frame, scrollPane, "dialog.gtview.title", "gtview") {
+        FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gtview") {
 
             @Override
             public void saveToPreferences(AppPreferences prefs) {
