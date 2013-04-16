@@ -102,9 +102,33 @@ public class GTVButtonPanel extends JPanel {
         add(layer, BorderLayout.NORTH);
 
         JButton zoomIn = GuiComponentUtils.createButton(GuiIcon.ZOOM_IN, 2);
+        zoomIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GTViewSettings settings = view.getSettings();
+                float zoom = settings.get(GTViewSettings.Key.ZOOM, Float.class);
+                if (zoom < 2.0f) {
+                    zoom += 0.05f;
+                    settings.set(GTViewSettings.Key.ZOOM, zoom);
+                    view.setSettings(settings);
+                }
+            }
+        });
         panel.add(zoomIn);
 
         JButton zoomOut = GuiComponentUtils.createButton(GuiIcon.ZOOM_OUT, 2);
+        zoomOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GTViewSettings settings = view.getSettings();
+                float zoom = settings.get(GTViewSettings.Key.ZOOM, Float.class);
+                if (zoom > 0.5f) {
+                    zoom -= 0.05f;
+                    settings.set(GTViewSettings.Key.ZOOM, zoom);
+                    view.setSettings(settings);
+                }
+            }
+        });
         panel.add(zoomOut);
 
         comboBoxModel = new WrapperListModel<Route>(true);
