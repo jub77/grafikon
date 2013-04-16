@@ -55,7 +55,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private SettingsDialog settingsDialog;
     private EditImagesDialog imagesDialog;
     private EditInfoDialog infoDialog;
-    private FloatingDialogsList floatingDialogsList;
+    private FloatingWindowsList floatingDialogsList;
     private TrainTypesDialog trainTypesDialog;
     private LineClassesDialog lineClassesDialog;
     private EngineClassesDialog engineClassesDialog;
@@ -188,7 +188,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         infoDialog = new EditInfoDialog(this, true);
         infoDialog.setModel(model);
 
-        floatingDialogsList = FloatingDialogsFactory.createDialogs(this, model.getMediator(), model);
+        floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
 
         trainTypesDialog = new TrainTypesDialog(this, true);

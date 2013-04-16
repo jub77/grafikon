@@ -5,7 +5,6 @@ import java.awt.Frame;
 import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -14,7 +13,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class FloatingDialog extends javax.swing.JDialog implements StorableGuiData {
+public class FloatingDialog extends javax.swing.JDialog implements FloatingWindow {
 
     private final String storageKeyPrefix;
     private boolean visibleOnInit;

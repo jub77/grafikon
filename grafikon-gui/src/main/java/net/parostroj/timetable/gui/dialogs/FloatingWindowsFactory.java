@@ -25,11 +25,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class FloatingDialogsFactory {
+public class FloatingWindowsFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FloatingDialogsFactory.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FloatingWindowsFactory.class.getName());
 
-    private static FloatingDialog createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingWindow createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
         panel.addTrainSelectionListener(new ListSelectionListener() {
 
@@ -46,7 +46,7 @@ public class FloatingDialogsFactory {
                 }
             }
         });
-        final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainconflicts.title", "train.conflicts");
+        final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainconflicts.title", "train.conflicts");
         mediator.addColleague(new ApplicationGTEventColleague(true){
 
             @Override
@@ -96,7 +96,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    private static FloatingDialog createTrainsWithZeroWeightsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingWindow createTrainsWithZeroWeightsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithZeroWeightsPanel panel = new TrainsWithZeroWeightsPanel();
         panel.addTrainSelectionListener(new ListSelectionListener() {
 
@@ -196,7 +196,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    private static FloatingDialog createEventsViewerDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+    private static FloatingWindow createEventsViewerDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final EventsViewerPanel panel = new EventsViewerPanel();
         panel.addConverter(new GTEventTypeConverter());
         panel.addConverter(new ApplicationEventTypeConverter());
@@ -246,7 +246,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    private static FloatingDialog createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createChangesTrackedDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final ChangesTrackerPanel panel = new ChangesTrackerPanel();
         model.addListener(new ApplicationModelListener() {
             @Override
@@ -255,7 +255,7 @@ public class FloatingDialogsFactory {
                     panel.setTrainDiagram(event.getModel().getDiagram());
             }
         });
-        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
+        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
             @Override
             public void saveToPreferences(AppPreferences prefs) {
@@ -276,7 +276,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    private static FloatingDialog createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
         final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
@@ -314,7 +314,7 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    private static FloatingDialog createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
+    private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final CirculationViewPanel panel = new CirculationViewPanel();
         mediator.addColleague(new ApplicationGTEventColleague(true) {
             @Override
@@ -354,7 +354,7 @@ public class FloatingDialogsFactory {
                 panel.circulationUpdated(event.getSource());
             }
         });
-        FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulationview") {
+        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulationview") {
             @Override
             public void saveToPreferences(AppPreferences prefs) {
                 super.saveToPreferences(prefs);
@@ -370,8 +370,8 @@ public class FloatingDialogsFactory {
         return dialog;
     }
 
-    public static FloatingDialogsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
-        FloatingDialogsList list = new FloatingDialogsList();
+    public static FloatingWindowsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
+        FloatingWindowsList list = new FloatingWindowsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
         list.add(createTrainsWithZeroWeightsDialog(frame, mediator, model));
         list.add(createEventsViewerDialog(frame, mediator, model));

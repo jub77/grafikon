@@ -12,22 +12,22 @@ import net.parostroj.timetable.gui.StorableGuiData;
  *
  * @author jub
  */
-public class FloatingDialogsList extends ArrayList<FloatingDialog> implements StorableGuiData {
+public class FloatingWindowsList extends ArrayList<FloatingWindow> implements StorableGuiData {
 
     @Override
     public void saveToPreferences(AppPreferences prefs) {
-        for (FloatingDialog dialog : this)
+        for (FloatingWindow dialog : this)
             dialog.saveToPreferences(prefs);
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
-        for (FloatingDialog dialog : this)
+        for (FloatingWindow dialog : this)
             dialog.loadFromPreferences(prefs);
     }
 
     public void addToMenuItem(final JMenuItem menuItem) {
-        for (final FloatingDialog dialog : this) {
+        for (final FloatingWindow dialog : this) {
             // use title for menu item text
             JMenuItem fdItem = new JMenuItem();
             fdItem.setAction(new AbstractAction(dialog.getTitle()) {
@@ -45,7 +45,7 @@ public class FloatingDialogsList extends ArrayList<FloatingDialog> implements St
     }
 
     public void setVisibleOnInit() {
-        for (FloatingDialog dialog : this)
+        for (FloatingWindow dialog : this)
             dialog.setVisibleOnInit();
     }
 }
