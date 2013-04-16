@@ -15,10 +15,7 @@ import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainEvent;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
+import net.parostroj.timetable.model.events.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +54,7 @@ public class FloatingDialogsFactory {
                 switch (event.getType()) {
                     case TIME_INTERVAL_LIST:
                     case TECHNOLOGICAL:
-                        panel.updateTrain((Train) event.getSource());
+                        panel.updateTrain(event.getSource());
                         break;
                     default:
                         break;
@@ -138,22 +135,22 @@ public class FloatingDialogsFactory {
                 }
                 super.receiveMessage(message);
             }
-            
+
             @Override
             public void processTrainEvent(TrainEvent event) {
                 switch (event.getType()) {
                     case ATTRIBUTE:
                         if (event.getAttributeChange().getName().equals("weight"))
-                            panel.updateTrain((Train) event.getSource());
+                            panel.updateTrain(event.getSource());
                         break;
                     case TIME_INTERVAL_LIST:
-                        panel.updateTrain((Train) event.getSource());
+                        panel.updateTrain(event.getSource());
                         break;
                     default:
                         break;
                 }
             }
-            
+
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
                 if (TrainsCycleType.ENGINE_CYCLE.equals(event.getSource().getType())) {
@@ -281,7 +278,7 @@ public class FloatingDialogsFactory {
 
     private static FloatingDialog createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
-        GTLayeredPane scrollPane = new GTLayeredPane(gtView);
+        final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         gtView.setTrainSelector(hts);
@@ -305,6 +302,14 @@ public class FloatingDialogsFactory {
                 }
             }
         };
+        mediator.addColleague(new ApplicationModelColleague(model) {
+            @Override
+            public void modelChanged(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+                    scrollPane.setTrainDiagram(event.getModel().getDiagram());
+                }
+            }
+        });
         dialog.setSize(new Dimension(400, 300)); // initial size
         return dialog;
     }
@@ -355,7 +360,7 @@ public class FloatingDialogsFactory {
                 super.saveToPreferences(prefs);
                 prefs.setInt(createStorageKey("size"), panel.geSizeSlider());
             }
-            
+
             @Override
             public void loadFromPreferences(AppPreferences prefs) {
                 super.loadFromPreferences(prefs);
