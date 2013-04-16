@@ -108,7 +108,9 @@ public class GTVButtonPanel extends JPanel {
                 GTViewSettings settings = view.getSettings();
                 float zoom = settings.get(GTViewSettings.Key.ZOOM, Float.class);
                 if (zoom < 2.0f) {
-                    zoom += 0.05f;
+                    int value = (int) (zoom * 20);
+                    value++;
+                    zoom = value / (float) 20;
                     settings.set(GTViewSettings.Key.ZOOM, zoom);
                     view.setSettings(settings);
                 }
@@ -123,7 +125,9 @@ public class GTVButtonPanel extends JPanel {
                 GTViewSettings settings = view.getSettings();
                 float zoom = settings.get(GTViewSettings.Key.ZOOM, Float.class);
                 if (zoom > 0.5f) {
-                    zoom -= 0.05f;
+                    int value = (int) (zoom * 20);
+                    value--;
+                    zoom = value / (float) 20;
                     settings.set(GTViewSettings.Key.ZOOM, zoom);
                     view.setSettings(settings);
                 }
