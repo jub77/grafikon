@@ -12,6 +12,8 @@ import javax.swing.event.PopupMenuListener;
 
 import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Route;
@@ -25,8 +27,6 @@ import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 
 public class GTVButtonPanel extends JPanel {
 
-    private JButton buttonPlus;
-    private JButton buttonMinus;
     private final GraphicalTimetableView view;
     private JComboBox comboBox;
     private WrapperListModel<Route> comboBoxModel;
@@ -39,7 +39,6 @@ public class GTVButtonPanel extends JPanel {
 
     public GTVButtonPanel(GraphicalTimetableView aView, Insets borderInsets) {
         this.showTask = new Timer(250, new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.setVisible(shown);
@@ -81,7 +80,6 @@ public class GTVButtonPanel extends JPanel {
         panel.setVisible(false);
         panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
         AbstractLayerUI<JPanel> layerUI = new AbstractLayerUI<JPanel>() {
-
             @Override
             protected void processMouseEvent(MouseEvent e, JXLayer<? extends JPanel> l) {
                 super.processMouseEvent(e, l);
@@ -103,6 +101,12 @@ public class GTVButtonPanel extends JPanel {
         flowLayout.setAlignment(FlowLayout.RIGHT);
         add(layer, BorderLayout.NORTH);
 
+        JButton zoomIn = GuiComponentUtils.createButton(GuiIcon.ZOOM_IN, 2);
+        panel.add(zoomIn);
+
+        JButton zoomOut = GuiComponentUtils.createButton(GuiIcon.ZOOM_OUT, 2);
+        panel.add(zoomOut);
+
         comboBoxModel = new WrapperListModel<Route>(true);
         comboBox = new JComboBox();
         comboBox.setModel(comboBoxModel);
@@ -115,7 +119,6 @@ public class GTVButtonPanel extends JPanel {
             }
         });
         comboBox.addPopupMenuListener(new PopupMenuListener() {
-
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 popup = true;
@@ -133,10 +136,10 @@ public class GTVButtonPanel extends JPanel {
         });
         panel.add(comboBox);
 
-        buttonPlus = new JButton("+");
+        JButton buttonPlus = GuiComponentUtils.createButton(GuiIcon.PLUS, 2);
         buttonPlus.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 GTViewSettings settings = view.getSettings();
                 int size = settings.get(GTViewSettings.Key.VIEW_SIZE, Integer.class);
                 if (size <= 10) {
@@ -148,10 +151,10 @@ public class GTVButtonPanel extends JPanel {
         });
         panel.add(buttonPlus);
 
-        buttonMinus = new JButton("-");
+        JButton buttonMinus = GuiComponentUtils.createButton(GuiIcon.MINUS, 2);
         buttonMinus.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 GTViewSettings settings = view.getSettings();
                 int size = settings.get(GTViewSettings.Key.VIEW_SIZE, Integer.class);
                 size--;
@@ -164,7 +167,6 @@ public class GTVButtonPanel extends JPanel {
         panel.add(buttonMinus);
 
         view.setRsListener(new GraphicalTimetableView.RSListener() {
-
             @Override
             public void routeSelected(Route route) {
                 comboBoxModel.setSelectedObject(route);
