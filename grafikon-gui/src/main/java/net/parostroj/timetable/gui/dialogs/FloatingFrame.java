@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JComponent;
@@ -16,6 +18,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow {
 
+    private static final Dimension SIZE = new Dimension(400, 300);
+
     private final String storageKeyPrefix;
     private boolean visibleOnInit;
 
@@ -27,10 +31,9 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
 
         this.storageKeyPrefix = storageKeyPrefix;
 
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-        // update layout
-        pack();
+        setSize(SIZE); // initial size
     }
 
 
@@ -40,21 +43,38 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
 
     @Override
     public void saveToPreferences(AppPreferences prefs) {
+        boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
         prefs.removeWithPrefix(storageKeyPrefix);
-        prefs.setString(this.createStorageKey("position"), GuiUtils.getPosition(this));
+        prefs.setBoolean(this.createStorageKey("maximized"), maximized);
+        prefs.setString(this.createStorageKey("position"), GuiUtils.getPositionFrame(this, maximized));
         prefs.setBoolean(this.createStorageKey("visible"), this.isVisible());
+
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
-        // set position
-        String positionStr = prefs.getString(this.createStorageKey("position"), null);
-        GuiUtils.setPosition(positionStr, this);
+        String positionKey = this.createStorageKey("position");
+        if (prefs.contains(positionKey)) {
+            // set position
+            String positionStr = prefs.getString(positionKey, null);
+            GuiUtils.setPosition(positionStr, this);
+        }
+        if (prefs.getBoolean(this.createStorageKey("maximized"), false)) {
+            // setting maximized state
+            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
         // set visibility
         if (prefs.getBoolean(this.createStorageKey("visible"), false))
-                this.visibleOnInit = true;
+            this.visibleOnInit = true;
     }
 
+    @Override
+    public void setLocationRelativeTo(Component c) {
+        setSize(SIZE);
+        super.setLocationRelativeTo(c);
+    }
+
+    @Override
     public void setVisibleOnInit() {
         if (this.visibleOnInit)
             this.setVisible(true);
