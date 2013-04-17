@@ -72,6 +72,13 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
     public void setLocationRelativeTo(Component c) {
         setSize(SIZE);
         super.setLocationRelativeTo(c);
+        this.requestFocus();
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        this.requestFocus();
     }
 
     @Override
