@@ -31,7 +31,6 @@ public class FloatingWindowsList extends ArrayList<FloatingWindow> implements St
             // use title for menu item text
             JMenuItem fdItem = new JMenuItem();
             fdItem.setAction(new AbstractAction(dialog.getTitle()) {
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!dialog.isVisible())

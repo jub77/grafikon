@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JList;
@@ -310,7 +309,6 @@ public class FloatingWindowsFactory {
                 }
             }
         });
-        dialog.setSize(new Dimension(400, 300)); // initial size
         return dialog;
     }
 

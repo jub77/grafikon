@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
  * @author jub
  */
 public class GuiUtils {
+
     public static void setPosition(String preferences, Component component) {
         if (preferences == null)
             return;
@@ -27,7 +28,19 @@ public class GuiUtils {
                     values.get(2),
                     values.get(3));
             component.setBounds(r);
+        } else if (values.size() == 2) {
+            Rectangle bounds = component.getBounds();
+            bounds.x = values.get(0);
+            bounds.y = values.get(1);
+            component.setBounds(bounds);
         }
+    }
+
+    public static String getPositionFrame(Component component, boolean maximized) {
+        if (!maximized)
+            return getPosition(component);
+        else
+            return String.format("%d|%d", component.getX(), component.getY());
     }
 
     public static String getPosition(Component component) {
