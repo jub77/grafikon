@@ -48,6 +48,17 @@ public class EngineCycleDelegate extends TCDelegate {
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(), c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
             }
         }
+        List<TrainsCycleItem> items = cycle.getItems();
+        if (!items.isEmpty()) {
+            TrainsCycleItem first = items.get(0);
+            TrainsCycleItem last = items.get(items.size() - 1);
+            if (first.getFromInterval().getOwnerAsNode() != last.getToInterval().getOwnerAsNode()) {
+                if (result.length() != 0) {
+                    result.append('\n');
+                }
+                result.append(ResourceLoader.getString("ec.problem.startend"));
+            }
+        }
         return result.toString();
     }
 
