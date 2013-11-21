@@ -6,7 +6,6 @@
         <artifactId>grafikon</artifactId>
         <version>0.13</version>
     </parent>
-    <groupId>net.parostroj</groupId>
     <artifactId>grafikon-webstart</artifactId>
     <packaging>pom</packaging>
     <name>grafikon-webstart</name>

@@ -6,7 +6,6 @@
         <artifactId>grafikon</artifactId>
         <version>0.13</version>
     </parent>
-    <groupId>net.parostroj</groupId>
     <artifactId>grafikon-assembly</artifactId>
     <packaging>pom</packaging>
     <name>grafikon-assembly</name>
