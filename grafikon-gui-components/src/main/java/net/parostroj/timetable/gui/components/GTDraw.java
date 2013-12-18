@@ -324,14 +324,13 @@ abstract public class GTDraw {
     protected void paintTrainNameOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
         // draw train name
         AffineTransform old = g.getTransform();
-        double lengthY = line.getY2()-line.getY1();
-        double lengthX = line.getX2()-line.getX1();
-        double angle = Math.atan(lengthY / lengthX);
+        double lengthY = line.getY2() - line.getY1();
+        double lengthX = line.getX2() - line.getX1();
         // get length
-        double length = Math.sqrt(Math.pow(lengthY, 2)+Math.pow(lengthX, 2));
+        double length = Math.sqrt(Math.pow(lengthY, 2) + Math.pow(lengthX, 2));
         AffineTransform newTransform = g.getTransform();
-        newTransform.translate(line.getX1(),line.getY1());
-        newTransform.rotate(angle);
+        newTransform.translate(line.getX1(), line.getY1());
+        newTransform.rotate(lengthX, lengthY);
         g.setTransform(newTransform);
         // length of the text
         Train train = interval.getTrain();
