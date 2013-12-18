@@ -11,6 +11,7 @@ import java.util.Map;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,12 @@ import org.slf4j.LoggerFactory;
  */
 abstract public class GTDraw {
 
+
     private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
+
+    // chars
+    private static final String M_CHAR = "M";
+    private static final String DIGIT_CHAR = "0";
 
     // basic display
     private static final float HOURS_STROKE_WIDTH = 1.8f;
@@ -367,14 +373,14 @@ abstract public class GTDraw {
 
     private Rectangle2D getDigitSize(Graphics2D g) {
         if (digitSize == null) {
-            digitSize = g.getFont().getStringBounds("0", g.getFontRenderContext());
+            digitSize = g.getFont().getStringBounds(DIGIT_CHAR, g.getFontRenderContext());
         }
         return digitSize;
     }
 
     private Rectangle2D getMSize(Graphics2D g) {
         if (mSize == null) {
-            mSize = g.getFont().getStringBounds("M", g.getFontRenderContext());
+            mSize = g.getFont().getStringBounds(M_CHAR, g.getFontRenderContext());
         }
         return mSize;
     }
