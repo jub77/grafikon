@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
+import java.util.Collections;
 
 import javax.swing.JFileChooser;
 
@@ -14,7 +15,6 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
@@ -27,50 +27,13 @@ import org.slf4j.LoggerFactory;
  */
 public class OutputTemplateListDialog extends javax.swing.JDialog {
 
-    public static class Settings {
-
-        private final boolean title;
-        private final boolean twoSided;
-        private final boolean techTimes;
-
-        public Settings(boolean title, boolean twoSided, boolean techTimes) {
-            this.title = title;
-            this.twoSided = twoSided;
-            this.techTimes = techTimes;
-        }
-
-        public boolean isTitle() {
-            return title;
-        }
-
-        public boolean isTwoSided() {
-            return twoSided;
-        }
-
-        public boolean isTechTimes() {
-            return techTimes;
-        }
-
-        public OutputParams createParams() {
-            OutputParams params = new OutputParams();
-            if (title) {
-                params.setParam("title.page", true);
-            }
-            params.setParam("page.sort", twoSided ? "two_sides" : "one_side");
-            if (techTimes) {
-                params.setParam("tech.time", true);
-            }
-            return params;
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
     private final WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
     private JFileChooser chooser;
-    private Settings settings;
+    private OutputTemplateAction.Settings settings;
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
@@ -80,7 +43,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         templateList.setModel(templatesModel);
     }
 
-    public void showDialog(TrainDiagram diagram, JFileChooser chooser, Settings settings) {
+    public void showDialog(TrainDiagram diagram, JFileChooser chooser, OutputTemplateAction.Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
         this.settings = settings;
@@ -353,118 +316,16 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
-        ModelAction action = new EventDispatchAfterModelAction(c) {
-
-            private String errorMessage;
-            private OutputTemplate errorTemplate;
-
-            @Override
-            protected void backgroundAction() {
-                long time = System.currentTimeMillis();
-                setWaitMessage(ResourceLoader.getString("ot.message.wait"));
-                setWaitDialogVisible(true);
-                try {
-                    Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
-                    if (wrapper != null) {
-                        try {
-                            errorTemplate = (OutputTemplate) wrapper.getElement();
-                            generateOutput((OutputTemplate) wrapper.getElement());
-                        } catch (OutputException e) {
-                            LOG.error(e.getMessage(), e);
-                            errorMessage = e.getMessage();
-                        }
-                    }
-                } catch (Exception e) {
-                    LOG.warn(e.getMessage(), e);
-                    errorMessage = ResourceLoader.getString("ot.message.error");
-                } finally {
-                    setWaitDialogVisible(false);
-                }
-                time = System.currentTimeMillis() - time;
-                LOG.debug("Generated in {}ms", time);
-            }
-
-            @Override
-            protected void eventDispatchActionAfter() {
-                if (errorMessage != null) {
-                    ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, OutputTemplateListDialog.this);
-                }
-            }
-        };
+        OutputTemplateAction action = new OutputTemplateAction(c, this, diagram, settings, outputDirectory,
+                templateList.isSelectionEmpty() ? null : Collections.singletonList((OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement()));
         ActionHandler.getInstance().execute(action);
     }
 
     private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
-        ModelAction action = new EventDispatchAfterModelAction(c) {
-
-            private String errorMessage;
-            private OutputTemplate errorTemplate;
-
-            @Override
-            protected void backgroundAction() {
-                long time = System.currentTimeMillis();
-                setWaitMessage(ResourceLoader.getString("ot.message.wait"));
-                setWaitDialogVisible(true);
-                try {
-                    try {
-                        for (OutputTemplate template : diagram.getOutputTemplates()) {
-                            errorTemplate = template;
-                            generateOutput(template);
-                        }
-                    } catch (OutputException e) {
-                        LOG.error(e.getMessage(), e);
-                        errorMessage = e.getMessage();
-                    }
-                } catch (Exception e) {
-                    LOG.warn(e.getMessage(), e);
-                    errorMessage = ResourceLoader.getString("ot.message.error");
-                } finally {
-                    setWaitDialogVisible(false);
-                }
-                time = System.currentTimeMillis() - time;
-                LOG.debug("Generated in {}ms", time);
-            }
-
-            @Override
-            protected void eventDispatchActionAfter() {
-                if (errorMessage != null) {
-                    ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, OutputTemplateListDialog.this);
-                }
-            }
-        };
+        OutputTemplateAction action = new OutputTemplateAction(c, this, diagram, settings, outputDirectory, diagram.getOutputTemplates());
         ActionHandler.getInstance().execute(action);
-    }
-
-    private void generateOutput(OutputTemplate template) throws OutputException {
-        String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
-        OutputFactory factory = OutputFactory.newInstance("groovy");
-        Output output = factory.createOutput(type);
-        generateOutput(output, this.getFile(template.getName()), template.getTemplate(), type, null);
-        if ("trains".equals(type)) {
-            // for each driver circulation
-            for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
-                generateOutput(output, this.getFile(template.getName() + "_" + cycle.getName()), template.getTemplate(), type, cycle);
-            }
-        }
-    }
-
-    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type, Object param) throws OutputException {
-        OutputParams params = settings.createParams();
-        params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
-        params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
-        params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
-        // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
-        if ("trains".equals(type) && param != null) {
-            params.setParam("driver_cycle", param);
-        }
-        output.write(params);
-    }
-
-    private File getFile(String name) {
-        name = name.replaceAll("[\\\\:/\"?<>|]", "");
-        return new File(outputDirectory, name + ".html");
     }
 
     private OutputTemplate copyTemplate(OutputTemplate template) {
