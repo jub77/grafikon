@@ -51,6 +51,17 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
             return techTimes;
         }
 
+        public OutputParams createParams() {
+            OutputParams params = new OutputParams();
+            if (title) {
+                params.setParam("title.page", true);
+            }
+            params.setParam("page.sort", twoSided ? "two_sides" : "one_side");
+            if (techTimes) {
+                params.setParam("tech.time", true);
+            }
+            return params;
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
@@ -59,6 +70,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private final WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
     private JFileChooser chooser;
+    private Settings settings;
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
@@ -71,6 +83,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     public void showDialog(TrainDiagram diagram, JFileChooser chooser, Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
+        this.settings = settings;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
         this.locationTextField.setText(this.outputDirectory.getPath());
         this.fillList();
@@ -438,7 +451,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type, Object param) throws OutputException {
-        OutputParams params = new OutputParams();
+        OutputParams params = settings.createParams();
         params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
         params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
