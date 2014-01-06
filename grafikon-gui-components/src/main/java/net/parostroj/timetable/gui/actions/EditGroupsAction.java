@@ -18,21 +18,21 @@ import net.parostroj.timetable.utils.Reference;
  */
 public class EditGroupsAction extends AbstractAction {
 
-	private Reference<TrainDiagram> diagramReference;
+    private final Reference<TrainDiagram> diagramReference;
 
-	/**
-	 * @param ref reference to train diagram
-	 */
-	public EditGroupsAction(Reference<TrainDiagram> ref) {
-		this.diagramReference = ref;
-	}
+    /**
+     * @param ref reference to train diagram
+     */
+    public EditGroupsAction(Reference<TrainDiagram> ref) {
+        this.diagramReference = ref;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
         Window parent = SwingUtilities.getWindowAncestor((Component) e.getSource());
-		GroupsDialog dialog = new GroupsDialog(parent, true);
+        GroupsDialog dialog = new GroupsDialog(parent, true);
         dialog.setLocationRelativeTo(parent);
         dialog.showDialog(diagramReference.get());
         dialog.dispose();
-	}
+    }
 }
