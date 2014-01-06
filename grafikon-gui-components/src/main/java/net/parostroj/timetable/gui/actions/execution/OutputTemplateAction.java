@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.actions.execution;
 
-import java.awt.Component;
 import java.io.File;
 import java.util.Collection;
 
@@ -55,15 +54,13 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     private String errorMessage;
     private OutputTemplate errorTemplate;
 
-    private final Component parent;
     private final TrainDiagram diagram;
     private final Settings settings;
     private final File outputDirectory;
     private final Collection<OutputTemplate> templates;
 
-    public OutputTemplateAction(ActionContext context, Component parent, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<OutputTemplate> templates) {
+    public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<OutputTemplate> templates) {
         super(context);
-        this.parent = parent;
         this.diagram = diagram;
         this.settings = settings;
         this.outputDirectory = outputDirectory;
@@ -100,7 +97,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, parent);
+            ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, context.getLocationComponent());
         }
     }
     private void generateOutput(OutputTemplate template) throws OutputException {

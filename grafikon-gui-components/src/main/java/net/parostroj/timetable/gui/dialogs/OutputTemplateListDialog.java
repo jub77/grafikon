@@ -316,7 +316,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
-        OutputTemplateAction action = new OutputTemplateAction(c, this, diagram, settings, outputDirectory,
+        OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
                 templateList.isSelectionEmpty() ? null : Collections.singletonList((OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement()));
         ActionHandler.getInstance().execute(action);
     }
@@ -324,7 +324,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
-        OutputTemplateAction action = new OutputTemplateAction(c, this, diagram, settings, outputDirectory, diagram.getOutputTemplates());
+        OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory, diagram.getOutputTemplates());
         ActionHandler.getInstance().execute(action);
     }
 
