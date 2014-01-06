@@ -89,7 +89,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         outputButton = new javax.swing.JButton();
         outputAllButton = new javax.swing.JButton();
         javax.swing.JPanel okPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
+        javax.swing.JButton closeButton = new javax.swing.JButton();
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         templateList = new javax.swing.JList();
@@ -176,13 +176,13 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         okPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         okPanel.setLayout(new java.awt.GridLayout(1, 0));
 
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
+        closeButton.setText(ResourceLoader.getString("button.close")); // NOI18N
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
-        okPanel.add(okButton);
+        okPanel.add(closeButton);
 
         buttonPanel.add(okPanel, java.awt.BorderLayout.SOUTH);
 
@@ -359,7 +359,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private javax.swing.JTextField locationTextField;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
-    private javax.swing.JButton okButton;
     private javax.swing.JButton outputAllButton;
     private javax.swing.JButton outputButton;
     private javax.swing.JScrollPane scrollPane;

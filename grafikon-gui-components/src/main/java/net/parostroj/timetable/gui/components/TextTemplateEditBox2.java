@@ -116,6 +116,15 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         }
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        languageComboBox.setEnabled(enabled);
+        scrollPane.setEnabled(enabled);
+        templateTextArea.setEnabled(enabled);
+        templateTextArea.setEditable(enabled);
+        super.setEnabled(enabled);
+    }
+
     private void initComponents() {
         javax.swing.JPanel panel = new javax.swing.JPanel();
         languageComboBox = new javax.swing.JComboBox();
