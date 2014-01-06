@@ -5,8 +5,10 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
 import java.util.Collections;
-import javax.swing.JDialog;
+
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.GrafikonException;
@@ -14,7 +16,10 @@ import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
+
 import org.slf4j.LoggerFactory;
+
+import javax.swing.JCheckBox;
 
 /**
  * Dialog for editing text template.
@@ -25,22 +30,15 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private OutputTemplate template;
 
-    /** Creates new form OutputTemplateDialog */
-    public OutputTemplateDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        init();
-    }
-
-    public OutputTemplateDialog(JDialog parent, boolean modal) {
-        super(parent, modal);
+    public OutputTemplateDialog(Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         init();
     }
 
     public void showDialog(OutputTemplate template) {
         this.template = template;
-        this.updateValues();
+        this.updateValues(null);
         this.setVisible(true);
     }
 
@@ -55,8 +53,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         return template;
     }
 
-    private void updateValues() {
-        textTemplateEditBox.setTemplate(this.template.getTemplate());
+    private void updateValues(Boolean defaultTemplate) {
+        if (defaultTemplate == null) {
+            defaultTemplate = this.template.getAttributes().get("default.template", Boolean.class);
+            this.defaultTemplateCheckbox.setSelected(defaultTemplate == Boolean.TRUE);
+        }
+        textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
+        textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE));
     }
 
@@ -109,6 +112,15 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         controlPanel.add(verifyPanel, java.awt.BorderLayout.WEST);
 
+        defaultTemplateCheckbox = new JCheckBox(ResourceLoader.getString("ot.checkbox.default.template"));
+        verifyPanel.add(defaultTemplateCheckbox);
+        defaultTemplateCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateValues(defaultTemplateCheckbox.isSelected());
+            }
+        });
+
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
 
         pack();
@@ -119,6 +131,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             TextTemplate textTemplate = this.convertToTemplate();
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
+            if (defaultTemplateCheckbox.isSelected()) {
+                this.template.setAttribute("default.template", true);
+            } else {
+                this.template.removeAttribute("default.template");
+            }
             this.setVisible(false);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
@@ -150,4 +167,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox outputTypeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
+    private JCheckBox defaultTemplateCheckbox;
 }
