@@ -27,6 +27,32 @@ import org.slf4j.LoggerFactory;
  */
 public class OutputTemplateListDialog extends javax.swing.JDialog {
 
+    public static class Settings {
+
+        private final boolean title;
+        private final boolean twoSided;
+        private final boolean techTimes;
+
+        public Settings(boolean title, boolean twoSided, boolean techTimes) {
+            this.title = title;
+            this.twoSided = twoSided;
+            this.techTimes = techTimes;
+        }
+
+        public boolean isTitle() {
+            return title;
+        }
+
+        public boolean isTwoSided() {
+            return twoSided;
+        }
+
+        public boolean isTechTimes() {
+            return techTimes;
+        }
+
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
@@ -42,7 +68,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         templateList.setModel(templatesModel);
     }
 
-    public void showDialog(TrainDiagram diagram, JFileChooser chooser) {
+    public void showDialog(TrainDiagram diagram, JFileChooser chooser, Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
