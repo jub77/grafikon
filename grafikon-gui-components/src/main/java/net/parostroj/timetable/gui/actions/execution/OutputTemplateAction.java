@@ -104,18 +104,21 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
-        generateOutput(output, this.getFile(template.getName()), template.getTemplate(), type, null);
+        TextTemplate textTemplate = template.getAttribute("default.template") == Boolean.TRUE ? null : template.getTemplate();
+        generateOutput(output, this.getFile(template.getName()), textTemplate, type, null);
         if ("trains".equals(type)) {
             // for each driver circulation
             for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
-                generateOutput(output, this.getFile(template.getName() + "_" + cycle.getName()), template.getTemplate(), type, cycle);
+                generateOutput(output, this.getFile(template.getName() + "_" + cycle.getName()), textTemplate, type, cycle);
             }
         }
     }
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type, Object param) throws OutputException {
         OutputParams params = settings.createParams();
-        params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
+        if (textTemplate != null) {
+            params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
+        }
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
         params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
         // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
