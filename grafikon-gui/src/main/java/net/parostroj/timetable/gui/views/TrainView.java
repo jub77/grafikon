@@ -104,6 +104,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                 IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
                 if (ism.getInterval() != null) {
                     TimeInterval interval = ism.getInterval();
+                    Train train = interval.getTrain();
+                    if (train.getTimeIntervalBefore() == interval) {
+                        interval = train.getFirstInterval();
+                    } else if (train.getTimeIntervalAfter() == interval) {
+                        interval = train.getLastInterval();
+                    }
                     int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
                     int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED);
                     trainTable.setRowSelectionInterval(row, row);
@@ -185,7 +191,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         speedTextField.setHorizontalAlignment(SwingConstants.RIGHT);
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         techTimeTextField = new javax.swing.JTextField();
-        techTimeTextField.setColumns(15);
+        techTimeTextField.setColumns(20);
 
         jLabel1.setText(ResourceLoader.getString("create.train.number")); // NOI18N
 
@@ -198,7 +204,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
 
         jLabel2.setText(ResourceLoader.getString("create.train.speed")); // NOI18N
 
-        speedTextField.setColumns(5);
+        speedTextField.setColumns(4);
         speedTextField.setEditable(false);
 
         jLabel3.setText(ResourceLoader.getString("create.train.technological.time")); // NOI18N
