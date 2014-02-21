@@ -5,6 +5,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 
 import net.parostroj.timetable.utils.TimeUtil;
+import net.parostroj.timetable.utils.Tuple;
 
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -285,22 +286,27 @@ public class TimeConverter {
 
         int time = -1;
         // convert to time
+        Tuple<Integer> thm;
         switch (size) {
             case 1:
-                time = this.parse(String.format("0%s:00" + decimalBuilder.toString(), values[0]));
+                thm = this.normalizeNumber(0, values[0], 0, 0);
                 break;
             case 2:
-                time = this.parse(String.format("%s%s:00" + decimalBuilder.toString(), values[0], values[1]));
+                thm = this.normalizeNumber(values[0], values[1], 0, 0);
                 break;
             case 3:
-                time = this
-                        .parse(String.format("0%s:%s%s" + decimalBuilder.toString(), values[0], values[1], values[2]));
+                thm = this.normalizeNumber(0, values[0], values[1], values[2]);
                 break;
             case 4:
-                time = this.parse(String.format("%s%s:%s%s" + decimalBuilder.toString(), values[0], values[1],
-                        values[2], values[3]));
+                thm = this.normalizeNumber(values[0], values[1], values[2], values[3]);
+                break;
+            default:
+                thm = new Tuple<Integer>(0, 0);
                 break;
         }
+
+        time = this.parse(String.format("%d:%d" + decimalBuilder.toString(), thm.first, thm.second));
+
         // normalize time before return
         if (time == -1)
             return -1;
@@ -308,13 +314,39 @@ public class TimeConverter {
             return round(TimeUtil.normalizeTime(time));
     }
 
+    private Tuple<Integer> normalizeNumber(int h1, int h2, int m1, int m2) {
+        int h = 10 * h1 + h2;
+        int m = 10 * m1 + m2;
+        while (m < 0 || m >= 60) {
+            if (m < 0) {
+                m += 60;
+                h--;
+            } else {
+                m -= 60;
+                h++;
+            }
+        }
+        while (h < 0 || h >= 24) {
+            if (h < 0) {
+                h += 24;
+            } else {
+                h -= 24;
+            }
+        }
+        return new Tuple<Integer>(h, m);
+    }
+
     /**
      * conversion of predefined string to time in seconds.
      *
      * @param str string representation
-     * @return time in seconds
+     * @return time in seconds (or -1 if there was an error)
      */
     private int parse(String str) {
-    	return parse.parseLocalTime(str).getMillisOfDay() / 1000;
+        try {
+            return parse.parseLocalTime(str).getMillisOfDay() / 1000;
+        } catch (IllegalArgumentException e) {
+            return -1;
+        }
     }
 }
