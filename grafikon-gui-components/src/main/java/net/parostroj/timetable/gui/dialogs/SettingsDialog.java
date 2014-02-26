@@ -78,14 +78,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         speedUnitComboBox.addItem(LengthUnit.KM);
         speedUnitComboBox.addItem(LengthUnit.MILE);
 
-        pack();
-    }
-
-    public void setTrainDiagram(TrainDiagram diagram) {
-        this.diagram = diagram;
-        this.diagramChanged = false;
-        this.recalculate = false;
-
         for (Scale scale : Scale.getPredefined()) {
             scaleComboBox.addItem(scale);
         }
@@ -95,6 +87,14 @@ public class SettingsDialog extends javax.swing.JDialog {
             ratioComboBox.addItem(Double.toString(d));
             d += 0.5;
         }
+
+        pack();
+    }
+
+    public void setTrainDiagram(TrainDiagram diagram) {
+        this.diagram = diagram;
+        this.diagramChanged = false;
+        this.recalculate = false;
 
         this.updateValues();
     }
