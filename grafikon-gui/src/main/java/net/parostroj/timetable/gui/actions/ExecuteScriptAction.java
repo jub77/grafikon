@@ -4,9 +4,12 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.AbstractAction;
 
 import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
@@ -15,6 +18,7 @@ import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.dialogs.ScriptDialog;
+import net.parostroj.timetable.gui.dialogs.ScriptOutputDialog;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
@@ -84,6 +88,8 @@ public class ExecuteScriptAction extends AbstractAction {
             // binding
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", model.getDiagram());
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            binding.put("output", new PrintStream(output));
             try {
                 parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 long time = System.currentTimeMillis();
@@ -94,6 +100,14 @@ public class ExecuteScriptAction extends AbstractAction {
                 } finally {
                     parent.setCursor(Cursor.getDefaultCursor());
                     LOG.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
+                }
+                String outString = output.toString();
+                if (!outString.isEmpty()) {
+                    // show in a window
+                    ScriptOutputDialog outputDialog = new ScriptOutputDialog((Frame) parent, true);
+                    outputDialog.setText(outString);
+                    outputDialog.setLocationRelativeTo(parent);
+                    outputDialog.setVisible(true);
                 }
             } catch (GrafikonException ex) {
         		LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
