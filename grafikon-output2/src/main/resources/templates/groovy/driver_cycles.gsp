@@ -18,7 +18,8 @@
     td.stations {height: 15mm; font-size: 4mm; text-align: center; font-weight: bold;}
     td.valid {height: 20mm; font-size: 4mm; text-align: center; font-weight: bold;}
     td.cycle {height: 8mm; font-size: 5mm; text-align: center; vertical-align: top; font-weight: bold;}
-    td.space2 {height: 58mm; font-size: 5mm; text-align: center; vertical-align: top;}
+    td.cycledesc {height: 8mm; font-size: 4mm; text-align: center;}
+    td.space2 {height: 50mm; font-size: 5mm; text-align: center; vertical-align: top;}
     td.publish {height: 5mm; font-size: 3mm; text-align: center;}
     table.list1 {width: 130mm;}
     td.list1 {font-size: 5mm; padding-left: 3mm; vertical-align: top;}
@@ -74,6 +75,7 @@
     <tr><td class="stations">${getRoutePaths(c, cycles)}</td></tr>
     <tr><td class="valid"><% if (cycles.validity != null) { %>${validity_from} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
     <tr><td class="cycle">${cycle}: ${c.name}</td></tr>
+    <tr><td class="cycledesc">${c.description}</td></tr>
     <tr><td class="space2">&nbsp;</td></tr>
     <tr><td class="publish">${publisher}</td></tr>
   </table>
