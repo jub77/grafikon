@@ -83,7 +83,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         }
 
         // set some values for speed
-        for (double d = 4.0; d <= 6.0 ;) {
+        for (double d = 1.0; d <= 10.0 ;) {
             ratioComboBox.addItem(Double.toString(d));
             d += 0.5;
         }

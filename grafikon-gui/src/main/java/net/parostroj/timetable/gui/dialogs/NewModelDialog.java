@@ -48,10 +48,12 @@ public class NewModelDialog extends javax.swing.JDialog {
         }
 
         // set some values for speed
-        for (double d = 4.0; d <= 6.0 ;) {
+        for (double d = 1.0; d <= 10.0 ;) {
             ratioComboBox.addItem(Double.toString(d));
             d += 0.5;
         }
+
+        ratioComboBox.setSelectedItem(5.0);
 
         // create combo box with templates
         List<Template> list = TemplatesLoader.getTemplates();
