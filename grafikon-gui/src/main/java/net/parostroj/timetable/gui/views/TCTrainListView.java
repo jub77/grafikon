@@ -124,18 +124,18 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             allTrainsList.setModel(new DefaultListModel());
         } else {
             // get all trains (sort)
-            List<Train> getTrains = new ArrayList<Train>();
+            List<Train> trainsList = new ArrayList<Train>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
                     if (filter == null || filter.is(train))
-                        getTrains.add(train);
+                        trainsList.add(train);
                 }
             }
             // sort them
-            sort.sort(getTrains);
+            trainsList = sort.sort(trainsList);
 
             DefaultListModel m = new DefaultListModel();
-            for (Train train : getTrains) {
+            for (Train train : trainsList) {
                 m.addElement(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
             }
             allTrainsList.setModel(m);
