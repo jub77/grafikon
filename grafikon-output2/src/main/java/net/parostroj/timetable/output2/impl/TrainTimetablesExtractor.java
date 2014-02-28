@@ -15,11 +15,11 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class TrainTimetablesExtractor {
 
-    private TrainDiagram diagram;
-    private List<Train> trains;
-    private List<Route> routes;
-    private TrainsCycle cycle;
-    private Map<Pair<Line, Node>, Double> cachedRoutePositions;
+    private final TrainDiagram diagram;
+    private final List<Train> trains;
+    private final List<Route> routes;
+    private final TrainsCycle cycle;
+    private final Map<Pair<Line, Node>, Double> cachedRoutePositions;
 
     public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle) {
         this.diagram = diagram;
@@ -131,8 +131,10 @@ public class TrainTimetablesExtractor {
             TimeInterval nodeI = i.next();
             TimeInterval lineI = i.hasNext() ? i.next() : null;
 
-            if (nodeI.getOwnerAsNode().getType() == NodeType.SIGNAL)
+            if (nodeI.getOwnerAsNode().getType() == NodeType.SIGNAL) {
+                lastLineI = lineI;
                 continue;
+            }
 
             TrainTimetableRow row = new TrainTimetableRow();
 
