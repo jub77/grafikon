@@ -12,8 +12,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
@@ -52,27 +50,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         coverageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         allTrainsList.setModel(new DefaultListModel());
         ecTrainsList.setModel(new DefaultListModel());
-        ecTrainsList.getModel().addListDataListener(new ListDataListener() {
-
-            @Override
-            public void intervalRemoved(ListDataEvent e) {
-                this.changed();
-            }
-
-            @Override
-            public void intervalAdded(ListDataEvent e) {
-                this.changed();
-            }
-
-            @Override
-            public void contentsChanged(ListDataEvent e) {
-                this.changed();
-            }
-
-            private void changed() {
-                sortButton.setEnabled(ecTrainsList.getModel().getSize() >= 2);
-            }
-        });
         changeDialog = new TCItemChangeDialog();
     }
 
@@ -211,12 +188,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         removeButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, BUTTON_MARGIN);
         javax.swing.JScrollPane errorsScrollPane = new javax.swing.JScrollPane();
         infoTextArea = new javax.swing.JTextArea();
-        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, BUTTON_MARGIN);
-        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, BUTTON_MARGIN);
         changeButton = GuiComponentUtils.createButton(GuiIcon.EDIT, BUTTON_MARGIN);
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageTextPane = new net.parostroj.timetable.gui.views.ColorTextPane();
-        sortButton = GuiComponentUtils.createButton(GuiIcon.VIEW_SORT, BUTTON_MARGIN);
         selectionButton = GuiComponentUtils.createButton(GuiIcon.CONFIGURE_T, BUTTON_MARGIN);
 
         filterbuttonGroup.add(allRadioButtonMenuItem);
@@ -312,20 +286,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         infoTextArea.setRows(3);
         errorsScrollPane.setViewportView(infoTextArea);
 
-        upButton.setEnabled(false);
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
-
-        downButton.setEnabled(false);
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
-
         changeButton.setEnabled(false);
         changeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -338,13 +298,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         coverageTextPane.setEditable(false);
         coverageScrollPane.setViewportView(coverageTextPane);
-
-        sortButton.setEnabled(false);
-        sortButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sortButtonActionPerformed(evt);
-            }
-        });
 
         selectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -360,9 +313,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                         .addComponent(removeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                        .addComponent(upButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                        .addComponent(downButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                        .addComponent(sortButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addComponent(selectionButton, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(addButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addComponent(changeButton, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
@@ -381,12 +331,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                             .addGap(0)
                             .addComponent(removeButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(upButton)
-                            .addGap(0)
-                            .addComponent(downButton)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(sortButton)
-                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(changeButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(selectionButton))
@@ -397,50 +341,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     .addComponent(errorsScrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
         this.setLayout(layout);
-    }
-
-    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // change order
-        TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
-        int selectedIndex = ecTrainsList.getSelectedIndex();
-        if (selected != null) {
-            TrainsCycleItem item = selected.getItem();
-            int newIndex = selectedIndex + 1;
-            if (newIndex < item.getCycle().getItems().size()) {
-                // remove ...
-                DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
-                m.remove(selectedIndex);
-                // move to new place
-                m.add(newIndex, selected);
-                item.getCycle().moveItem(selectedIndex, newIndex);
-                this.updateErrors();
-                ecTrainsList.setSelectedValue(selected, true);
-                ecTrainsList.repaint();
-            }
-            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-        }
-    }
-
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // change order
-        TrainsCycleItemWrapper selected = (TrainsCycleItemWrapper) ecTrainsList.getSelectedValue();
-        int selectedIndex = ecTrainsList.getSelectedIndex();
-        if (selected != null) {
-            TrainsCycleItem item = selected.getItem();
-            int newIndex = selectedIndex - 1;
-            if (newIndex >= 0) {
-                // remove ...
-                DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
-                m.remove(selectedIndex);
-                // move to new place
-                m.add(newIndex, selected);
-                item.getCycle().moveItem(selectedIndex, newIndex);
-                this.updateErrors();
-                ecTrainsList.setSelectedValue(selected, true);
-                ecTrainsList.repaint();
-            }
-            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-        }
     }
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -479,7 +379,15 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         Tuple<TimeInterval> tuple = t.getFirstUncoveredPart(delegate.getType());
                         item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                     }
-                    cycle.addItem(item);
+                    // add to correct place
+                    int index = 0;
+                    for (TrainsCycleItem currentItem : cycle.getItems()) {
+                        if (currentItem.getStartTime() > item.getStartTime()) {
+                            break;
+                        }
+                        index++;
+                    }
+                    cycle.addItem(item, index);
                     // recalculate if needed (engine class dependency)
                     if (t.checkNeedSpeedRecalculate()) {
                         t.recalculate();
@@ -562,8 +470,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             this.updateSelectedTrainsCycleItem(item);
             changeButton.setEnabled(selectedOne);
             removeButton.setEnabled(selected);
-            upButton.setEnabled(selectedOne);
-            downButton.setEnabled(selectedOne);
         }
     }
 
@@ -618,30 +524,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         filterMenu.show(selectionButton, 3, 3);
     }
 
-    private void sortButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // sort items in cycle by time (using bubble sort - the number of elements is small
-        // so it is a suitable method)
-        DefaultListModel m = (DefaultListModel) ecTrainsList.getModel();
-        int size = m.getSize();
-        for (int j = size - 2; j >= 0; j--) {
-            for (int i = 0; i <= j; i++) {
-                TrainsCycleItemWrapper item1 = (TrainsCycleItemWrapper) m.get(i);
-                TrainsCycleItemWrapper item2 = (TrainsCycleItemWrapper) m.get(i + 1);
-                if (item2.getItem().getStartTime() < item1.getItem().getStartTime()) {
-                    m.remove(i);
-                    // move to new place
-                    m.add(i + 1, item1);
-                    item1.getItem().getCycle().moveItem(i, i + 1);
-                }
-            }
-        }
-        this.updateErrors();
-        ecTrainsList.getSelectionModel().clearSelection();
-        ecTrainsList.repaint();
-        delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-
-    }
-
     private void setFilter(String type, Component component) {
         if ("P".equals(type)) {
             filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.PASSENGER);
@@ -671,7 +553,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JScrollPane coverageScrollPane;
     private net.parostroj.timetable.gui.views.ColorTextPane coverageTextPane;
     private javax.swing.JRadioButtonMenuItem customRadioButtonMenuItem;
-    private javax.swing.JButton downButton;
     private javax.swing.JList ecTrainsList;
     private javax.swing.JPopupMenu filterMenu;
     private javax.swing.ButtonGroup filterbuttonGroup;
@@ -681,6 +562,4 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JButton selectionButton;
-    private javax.swing.JButton sortButton;
-    private javax.swing.JButton upButton;
 }
