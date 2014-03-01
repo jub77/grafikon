@@ -125,9 +125,12 @@ public class TrainBuilder {
         for (TimeInterval originalInterval : reverseIntervals) {
             TimeInterval interval = null;
             if (originalInterval.isNodeOwner()) {
-                interval = originalInterval.getOwnerAsNode().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getLength());
+                interval = originalInterval.getOwnerAsNode().createTimeInterval(IdGenerator.getInstance().getId(),
+                        train, currentTime, originalInterval.getLength(), (NodeTrack) originalInterval.getTrack());
             } else {
-                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(), train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0, 0, 0);
+                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(),
+                        train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0,
+                        0, 0, (LineTrack) originalInterval.getTrack());
             }
             currentTime = interval.getEnd();
             train.addInterval(interval);
@@ -150,7 +153,8 @@ public class TrainBuilder {
      * @param defaultStop default stop time
      * @return created train
      */
-    public Train createTrain(String id, String number, TrainType trainType, int topSpeed, Route route, int time, TrainDiagram diagram, int defaultStop) {
+    public Train createTrain(String id, String number, TrainType trainType, int topSpeed, Route route, int time,
+            TrainDiagram diagram, int defaultStop) {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
         train.setType(trainType);
@@ -160,16 +164,18 @@ public class TrainBuilder {
         this.adjustSpeedsAndStops(data, train, topSpeed, defaultStop);
 
         int i = 0;
-        TimeInterval interval;
         Node lastNode = null;
+        TimeInterval lastInterval = null;
 
         for (Pair<RouteSegment, Integer> pair : data) {
+            TimeInterval interval = null;
             if (pair.first instanceof Node) {
                 // handle node
                 Node node = (Node)pair.first;
+                NodeTrack prefferedTrack = lastInterval == null ? null : lastInterval.getToStraightTrack();
                 interval = node.createTimeInterval(
                         IdGenerator.getInstance().getId(),
-                        train, time, pair.second);
+                        train, time, pair.second, prefferedTrack);
                 lastNode = node;
             } else {
                 // handle line
@@ -183,12 +189,13 @@ public class TrainBuilder {
                         train, time,
                         direction, pair.second,
                         this.computeFromSpeed(pair, data, i),
-                        this.computeToSpeed(pair, data, i), 0);
+                        this.computeToSpeed(pair, data, i), 0, null);
             }
 
             // add created interval to train and set current time
             time = interval.getEnd();
             train.addInterval(interval);
+            lastInterval = interval;
 
             i++;
         }

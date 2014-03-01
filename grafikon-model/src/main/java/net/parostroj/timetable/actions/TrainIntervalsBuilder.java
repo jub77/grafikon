@@ -87,7 +87,7 @@ public class TrainIntervalsBuilder {
                 Node node = interval.getOwnerAsNode();
                 createdInterval = node.createTimeInterval(
                         interval.getId(), train, time,
-                        interval.getLength());
+                        interval.getLength(), null);
             } else {
                 // handle line
                 Line line = interval.getOwnerAsLine();
@@ -95,7 +95,7 @@ public class TrainIntervalsBuilder {
                         interval.getId(), train, time,
                         interval.getDirection(), interval.getSpeed(),
                         this.computeFromSpeed(interval, timeIntervals, i),
-                        this.computeToSpeed(interval, timeIntervals, i), interval.getAddedTime());
+                        this.computeToSpeed(interval, timeIntervals, i), interval.getAddedTime(), null);
             }
 
             // set track and attributes

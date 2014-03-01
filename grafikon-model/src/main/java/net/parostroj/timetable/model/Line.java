@@ -114,25 +114,25 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("length", oldLength, length)));
     }
 
-    public TimeInterval createTimeInterval(String intervalId, Train train, int start, TimeIntervalDirection direction, int speed, int fromSpeed, int toSpeed, int addedTime) {
+    public TimeInterval createTimeInterval(String intervalId, Train train, int start, TimeIntervalDirection direction, int speed, int fromSpeed, int toSpeed, int addedTime, LineTrack selectedTrack) {
         int computedTime = this.computeRunningTime(train, start, speed, fromSpeed, toSpeed, addedTime);
         int end = start + computedTime;
 
-        LineTrack selectedTrack = null;
         TimeInterval interval = new TimeInterval(null, train, this, start, end, speed, direction, null, addedTime);
 
-        // check which track is free for adding
-        for (LineTrack lineTrack : tracks) {
-            TimeIntervalResult result = lineTrack.testTimeInterval(interval);
-            if (result.getStatus() == TimeIntervalResult.Status.OK) {
-                selectedTrack = lineTrack;
-                break;
+        if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
+            // check which track is free for adding
+            for (LineTrack lineTrack : this.getIterableByDirection(direction)) {
+                TimeIntervalResult result = lineTrack.testTimeInterval(interval);
+                if (result.getStatus() == TimeIntervalResult.Status.OK) {
+                    selectedTrack = lineTrack;
+                    break;
+                }
             }
         }
-
         if (selectedTrack == null) {
             // set first one
-            selectedTrack = tracks.get(0);
+            selectedTrack = tracks.get(direction == TimeIntervalDirection.FORWARD ? 0 : tracks.size() - 1);
         }
 
         return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack, addedTime);
@@ -448,5 +448,35 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             track.accept(visitor);
         }
         visitor.visitAfter(this);
+    }
+
+    private Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction) {
+        if (direction == TimeIntervalDirection.FORWARD) {
+            return tracks;
+        } else {
+            return new Iterable<LineTrack>() {
+                @Override
+                public Iterator<LineTrack> iterator() {
+                    return new Iterator<LineTrack>() {
+                        private final ListIterator<LineTrack> i = tracks.listIterator(tracks.size());
+
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        @Override
+                        public LineTrack next() {
+                            return i.previous();
+                        }
+
+                        @Override
+                        public boolean hasNext() {
+                            return i.hasPrevious();
+                        }
+                    };
+                }
+            };
+        }
     }
 }
