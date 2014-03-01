@@ -68,11 +68,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.diagram = diagram;
         init();
     }
-    
+
     public void addListener(NodeListener listener) {
         this.listenerSupport.addListener(listener);
     }
-    
+
     public void removeListener(NodeListener listener) {
         this.listenerSupport.removeListener(listener);
     }
@@ -89,25 +89,25 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return diagram;
     }
 
-    public TimeInterval createTimeInterval(String intervalId, Train train, int start, int stop) {
+    public TimeInterval createTimeInterval(String intervalId, Train train, int start, int stop, NodeTrack selectedTrack) {
         int end = start + stop;
 
-        NodeTrack selectedTrack = null;
         TimeInterval interval = new TimeInterval(null, train, this, start, end, null);
 
-        // check which platform is free for adding
-        for (NodeTrack nodeTrack : tracks) {
-            // skip station tracks with no platform
-            if (stop !=0 && train.getType().isPlatform() && !nodeTrack.isPlatform()) {
-                continue;
-            }
-            TimeIntervalResult result = nodeTrack.testTimeInterval(interval);
-            if (result.getStatus() == TimeIntervalResult.Status.OK) {
-                selectedTrack = nodeTrack;
-                break;
+        if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
+            // check which platform is free for adding
+            for (NodeTrack nodeTrack : tracks) {
+                // skip station tracks with no platform
+                if (stop != 0 && train.getType().isPlatform() && !nodeTrack.isPlatform()) {
+                    continue;
+                }
+                TimeIntervalResult result = nodeTrack.testTimeInterval(interval);
+                if (result.getStatus() == TimeIntervalResult.Status.OK) {
+                    selectedTrack = nodeTrack;
+                    break;
+                }
             }
         }
-
         if (selectedTrack == null) {
             // set first one
             selectedTrack = tracks.get(0);
@@ -220,7 +220,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new NodeEvent(Node.this, change));
@@ -301,7 +301,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     /**
      * returns node track with specified number.
-     * 
+     *
      * @param number number
      * @return node track
      */
@@ -317,7 +317,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /**
      * returns set of overlapping intervals for all node tracks for given
      * time interval.
-     * 
+     *
      * @param interval checked interval
      * @return set of overlapping time intervals
      */
