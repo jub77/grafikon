@@ -53,7 +53,7 @@ public class NewModelDialog extends javax.swing.JDialog {
             d += 0.5;
         }
 
-        ratioComboBox.setSelectedItem(5.0);
+        ratioComboBox.setSelectedItem("5.0");
 
         // create combo box with templates
         List<Template> list = TemplatesLoader.getTemplates();
