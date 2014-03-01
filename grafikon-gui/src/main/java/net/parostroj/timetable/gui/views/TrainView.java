@@ -8,8 +8,10 @@ package net.parostroj.timetable.gui.views;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.util.*;
+
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
@@ -18,8 +20,10 @@ import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -200,6 +204,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTable.setAutoCreateColumnsFromModel(false);
         trainTable.setModel(new TrainTableModel(model,train));
         trainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel());
+        header.setToolTipText("text");
+        trainTable.setTableHeader(header);
         trainTableScrollPane.setViewportView(trainTable);
 
         jLabel2.setText(ResourceLoader.getString("create.train.speed")); // NOI18N
