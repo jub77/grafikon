@@ -355,6 +355,8 @@ class TrainTableModel extends AbstractTableModel {
                 } else {
                     interval.removeAttribute(TimeInterval.ATTR_IGNORE_LENGTH);
                 }
+                this.fireTableRowsUpdated(rowIndex, rowIndex);
+                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             default:
                 break;
