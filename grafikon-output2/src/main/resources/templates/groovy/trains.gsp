@@ -541,6 +541,8 @@
   def rowL = train.rows.size - 1
   def cnt = 0
   def lastSpeed = null
+  def lastSpeed2 = null
+  def isSpeed2 = false
   def fromT = new Time()
   def toT = new Time()
   def stopDur = new Duration()
@@ -549,8 +551,11 @@
   def lastLineClass = null
   def cChar = "*"
   for (row in train.rows) {
+    def speed = row.setSpeed != null ? row.setSpeed : row.speed
+    def speed2 = row.speed
+    isSpeed2 = isSpeed2 || speed != speed2
     def emphName = (cnt == 0) || (cnt == rowL) || row.stationType == "branch.station"
-    def speed = ((lastSpeed == null || lastSpeed != row.speed) && row.speed != null) ?  row.speed : "&nbsp;"
+    def speedStr = ((lastSpeed == null || lastSpeed != speed) && speed != null) ?  speed : "&nbsp;"
     fromT.compute(row.arrival, cnt == rowL, row.arrival != row.departure)
     toT.compute(row.departure, false, true)
     def stationName = row.station
@@ -569,9 +574,15 @@
     if (row.shunt) desc += "&loz;"
     if (row.comment != null) {desc += cChar; cChar += "*"}
     if (desc == "") desc = "&nbsp;"
+    def speed2Str = (lastSpeed2 == null || lastSpeed2 != speed2) && speed2 != null && isSpeed2 ? speed2 : null;
     def lineClassStr = "&nbsp;"
-    if ((lastLineClass == null || (lastLineClass != row.lineClass)) && row.lineClass != null)
+    if ((lastLineClass == null || (lastLineClass != row.lineClass)) && row.lineClass != null) {
       lineClassStr += row.lineClass
+      if (speed2Str != null)
+        lineClassStr += "/" + speed2Str
+    } else if (speed2Str != null) {
+        lineClassStr += (row.lineClass != null ? row.lineClass : "-") + "/" + speed2Str
+    }
     lastLineClass = row.lineClass
     if (train.controlled) {
       def showTrack = row.track != null && !row.controlStation && row.onControlled
@@ -593,7 +604,7 @@
     <td class="tc-d3-4 tc-m-4">${fromT.out}</td>
     <td class="tc-d3-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
     <td class="tc-d3-6 tc-m-6">${toT.out}</td>
-    <td class="tc-d3-7 tc-m-7">${speed}</td>
+    <td class="tc-d3-7 tc-m-7">${speedStr}</td>
     <td class="tc-d3-8 tc-m-8">${lineClassStr}</td>
     <td class="tc-d3-9 tc-m-9">${tTrains}</td>
   </tr><%
@@ -605,12 +616,13 @@
     <td class="tc-4 tc-m-4">${fromT.out}</td>
     <td class="tc-5 tc-m-5">${stopDur.show(row.arrival,row.departure)}</td>
     <td class="tc-6 tc-m-6">${toT.out}</td>
-    <td class="tc-7 tc-m-7">${speed}</td>
+    <td class="tc-7 tc-m-7">${speedStr}</td>
     <td class="tc-8 tc-m-8">${lineClassStr}</td>
   </tr><%
     }
     cnt++
-    lastSpeed = row.speed
+    lastSpeed = speed
+    lastSpeed2 = speed2
     lastTo = row.departure
   }
   def timeTotal = stopDur.total + runDur.total
