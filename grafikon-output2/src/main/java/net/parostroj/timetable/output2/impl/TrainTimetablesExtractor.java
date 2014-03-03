@@ -152,7 +152,7 @@ public class TrainTimetablesExtractor {
             if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
-                row.setTrainSpeed((Integer) lineI.getAttribute(TimeInterval.ATTR_SET_SPEED));
+                row.setSetSpeed((Integer) lineI.getAttribute(TimeInterval.ATTR_SET_SPEED));
             }
 
             // comment

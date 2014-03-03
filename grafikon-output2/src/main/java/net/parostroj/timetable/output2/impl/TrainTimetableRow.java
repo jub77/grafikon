@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlType(propOrder={"station", "stationType", "track", "straight", "arrival", "departure",
-    "speed", "trainSpeed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
+    "speed", "setSpeed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
     "onControlled", "trapezoid", "trapezoidTrains", "lineClass", "routePosition", "routePositionOut",
     "lineTracks"
 })
@@ -24,7 +24,7 @@ public class TrainTimetableRow {
     private String arrival;
     private String departure;
     private Integer speed;
-    private Integer trainSpeed;
+    private Integer setSpeed;
     private Boolean controlStation;
     private String comment;
     private Boolean shunt;
@@ -63,12 +63,12 @@ public class TrainTimetableRow {
         this.speed = speed;
     }
 
-    public Integer getTrainSpeed() {
-        return trainSpeed;
+    public Integer getSetSpeed() {
+        return setSpeed;
     }
 
-    public void setTrainSpeed(Integer trainSpeed) {
-        this.trainSpeed = trainSpeed;
+    public void setSetSpeed(Integer trainSpeed) {
+        this.setSpeed = trainSpeed;
     }
 
     public String getStation() {
