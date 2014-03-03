@@ -30,12 +30,12 @@ public class TrainsHelper {
     public static enum NextType {
         LAST_STATION, FIRST_STATION, BRANCH_STATION;
     }
-    
+
     public static Integer getLength(TimeInterval interval) {
         Integer length = null;
         if (interval.isNodeOwner()) {
             Node node = interval.getOwnerAsNode();
-            if (shouldCheckLength(node, interval.getTrain()) && interval.isStop()) {
+            if (shouldCheckLength(node, interval.getTrain(), interval) && interval.isStop()) {
                 length = (Integer) node.getAttribute("length");
                 length = convertLength(node.getTrainDiagram(), length);
             }
@@ -237,7 +237,7 @@ public class TrainsHelper {
 
     /**
      * returns list of extracted engine classes from list of cycle items.
-     * 
+     *
      * @param list list of cycle items
      * @return list of engines
      */
@@ -320,7 +320,7 @@ public class TrainsHelper {
 
     /**
      * returns length minimal length from one node to another.
-     * 
+     *
      * @param from node from
      * @param to node to
      * @param train train
@@ -342,7 +342,7 @@ public class TrainsHelper {
             Integer tempLength = getLength(interval);
             if (length == null || (tempLength != null && tempLength < length))
                 length = tempLength;
-            
+
             if (interval.getOwner() == to)
                 break;
         }
@@ -351,7 +351,7 @@ public class TrainsHelper {
 
     /**
      * checks if the node of the interval fulfills search criteria.
-     * 
+     *
      * @param interval time interval
      * @param type type
      * @return if the criteria are met
@@ -369,7 +369,7 @@ public class TrainsHelper {
                 default:
                     break;
             }
-            // last station is always true regardless of the type (including LAST_STATION type) 
+            // last station is always true regardless of the type (including LAST_STATION type)
             return interval.isLast();
         }
         return false;
@@ -377,7 +377,7 @@ public class TrainsHelper {
 
     /**
      * returns next node with specified type.
-     * 
+     *
      * @param node starting node
      * @param train train
      * @param type type
@@ -402,9 +402,11 @@ public class TrainsHelper {
      *
      * @param node node
      * @param train train
+     * @param interval time interval
      * @return if the length should be taken into account
      */
-    public static boolean shouldCheckLength(Node node, Train train) {
-        return node.getType().isStation() || (node.getType().isStop() && train.getType().isPlatform());
+    public static boolean shouldCheckLength(Node node, Train train, TimeInterval interval) {
+        boolean ignore = Boolean.TRUE.equals(interval.getAttribute(TimeInterval.ATTR_IGNORE_LENGTH));
+        return (node.getType().isStation() || (node.getType().isStop() && train.getType().isPlatform())) && !ignore;
     }
 }
