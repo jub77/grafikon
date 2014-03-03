@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.events.TrainEvent;
  *
  * @author jub
  */
-public class TimeInterval implements AttributesHolder, ObjectWithId {
+public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, ObjectWithId {
 
     public static final int DAY = 24 * 3600;
 
