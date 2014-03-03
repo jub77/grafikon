@@ -37,7 +37,8 @@ public enum TrainTableColumn {
             false, null), COMMENT_SHOWN("train.table.comment.shown", 30, 30, 30, "o", Boolean.class, false, null), COMMENT(
             "train.table.comment", 1, Integer.MAX_VALUE, 150, "", String.class, false, null), OCCUPIED_ENTRY(
             "train.table.occupied.track", 30, 30, 30, "fo", Boolean.class, false, null), SHUNT("train.table.shunt", 30,
-            30, 30, "fo", Boolean.class, false, null);
+            30, 30, "fo", Boolean.class, false, null), SET_SPEED("train.table.set.speed", 50, 50, 50, "e", Integer.class, false, null),
+            IGNORE_LENGTH("train.table.ignore.length", 30, 30, 30, "o", Boolean.class, false, null);
 
     private int index;
     private String key;

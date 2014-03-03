@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
+
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.actions.TrainsHelper;
@@ -151,6 +152,7 @@ public class TrainTimetablesExtractor {
             if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
+                row.setTrainSpeed((Integer) lineI.getAttribute(TimeInterval.ATTR_SET_SPEED));
             }
 
             // comment
