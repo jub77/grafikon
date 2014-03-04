@@ -578,8 +578,8 @@
     def lineClassStr = "&nbsp;"
     if ((lastLineClass == null || (lastLineClass != row.lineClass)) && row.lineClass != null) {
       lineClassStr += row.lineClass
-      if (speed2Str != null)
-        lineClassStr += "/" + speed2Str
+      if (isSpeed2)
+        lineClassStr += "/" + speed2
     } else if (speed2Str != null) {
         lineClassStr += (row.lineClass != null ? row.lineClass : "-") + "/" + speed2Str
     }
