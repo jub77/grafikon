@@ -4,9 +4,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,8 +86,8 @@ public class ExecuteScriptAction extends AbstractAction {
             // binding
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", model.getDiagram());
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            binding.put("output", new PrintStream(output));
+            CharArrayWriter output = new CharArrayWriter();
+            binding.put("output", new PrintWriter(output));
             try {
                 parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 long time = System.currentTimeMillis();
@@ -109,7 +107,7 @@ public class ExecuteScriptAction extends AbstractAction {
                     outputDialog.setLocationRelativeTo(parent);
                     outputDialog.setVisible(true);
                 }
-            } catch (GrafikonException ex) {
+            } catch (Exception ex) {
         		LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 ActionUtils.showError(message, parent);
