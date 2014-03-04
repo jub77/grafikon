@@ -108,7 +108,7 @@ public class ExecuteScriptAction extends AbstractAction {
                     outputDialog.setVisible(true);
                 }
             } catch (Exception ex) {
-        		LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
+                LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 ActionUtils.showError(message, parent);
             }
