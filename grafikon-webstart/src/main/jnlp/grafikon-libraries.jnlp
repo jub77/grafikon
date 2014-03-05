@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.13" href="grafikon-libraries.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.14" href="grafikon-libraries.jnlp">
     <information>
-        <title>Grafikon 0.13 libraries</title>
+        <title>Grafikon 0.14 libraries</title>
         <vendor>jub</vendor>
         <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
     </information>
