@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Class for loading model templates. It also returns list of available
  * templates.
- * 
+ *
  * @author jub
  */
 public class TemplatesLoader {
@@ -61,8 +61,10 @@ public class TemplatesLoader {
                 TrainDiagram diagram = null;
                 try {
                     ZipInputStream is = new ZipInputStream(iStream);
-                    FileLoadSave ls = LSFileFactory.getInstance().createForLoad(is);
+                    FileLoadSave ls = this.getLoadSave(template);
                     diagram = ls.load(is);
+                } catch (IOException e) {
+                    throw new LSException("Error getting model version.", e);
                 } finally {
                     try {
                         iStream.close();
@@ -75,5 +77,15 @@ public class TemplatesLoader {
         }
         // no template found
         return null;
+    }
+
+    private FileLoadSave getLoadSave(Template template) throws IOException, LSException {
+        InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename());
+        try {
+            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(new ZipInputStream(iStream));
+            return ls;
+        } finally {
+            iStream.close();
+        }
     }
 }
