@@ -1,10 +1,13 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.TrainType;
+
 import java.awt.Color;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
@@ -15,7 +18,8 @@ import net.parostroj.timetable.utils.Conversions;
  * @author jub
  */
 @XmlRootElement(name = "train_type")
-@XmlType(propOrder = {"id", "abbr", "desc", "color", "categoryId", "platform", "trainNameTemplate", "trainCompleteNameTemplate"})
+@XmlType(propOrder = {"id", "abbr", "desc", "color", "categoryId", "platform", "trainNameTemplate",
+        "trainCompleteNameTemplate", "attributes"})
 public class LSTrainType {
 
     private String id;
@@ -26,6 +30,7 @@ public class LSTrainType {
     private boolean platform;
     private LSTextTemplate trainNameTemplate;
     private LSTextTemplate trainCompleteNameTemplate;
+    private LSAttributes attributes;
 
     public LSTrainType() {
     }
@@ -42,6 +47,7 @@ public class LSTrainType {
             new LSTextTemplate(type.getTrainNameTemplate()) : null;
         this.trainCompleteNameTemplate = type.getTrainCompleteNameTemplate() != null ?
             new LSTextTemplate(type.getTrainCompleteNameTemplate()) : null;
+        this.attributes = new LSAttributes(type.getAttributes());
     }
 
     public String getAbbr() {
@@ -110,7 +116,15 @@ public class LSTrainType {
     public void setTrainCompleteNameTemplate(LSTextTemplate trainCompleteNameTemplate) {
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
     }
-    
+
+    public LSAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(LSAttributes attributes) {
+        this.attributes = attributes;
+    }
+
     public TrainType createTrainType(TrainDiagram diagram) throws LSException {
         TrainType type = diagram.createTrainType(id);
         type.setAbbr(abbr);
@@ -122,6 +136,9 @@ public class LSTrainType {
             trainCompleteNameTemplate.createTextTemplate() : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?
             trainNameTemplate.createTextTemplate() : null);
+        if (attributes != null) {
+            type.setAttributes(attributes.createAttributes(diagram));
+        }
         return type;
     }
 }
