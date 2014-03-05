@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.AbstractListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -24,9 +25,12 @@ import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Dialog for editation of the train types of the train diagram.
@@ -71,7 +75,11 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-        updateButton.setEnabled(enabled);
+        String abbr = abbrTextField.getText().trim();
+        String desc = descTextField.getText().trim();
+        boolean enabledValues = !(abbr.equals("") || desc.equals(""));
+        newButton.setEnabled(enabledValues);
+        updateButton.setEnabled(enabledValues && enabled);
     }
 
     private void initComponents() {
@@ -145,6 +153,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 newButtonActionPerformed(evt);
             }
         });
+        newButton.setEnabled(false);
 
         updateButton.setText(ResourceLoader.getString("button.update")); // NOI18N
         updateButton.addActionListener(new java.awt.event.ActionListener() {
@@ -175,6 +184,29 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         });
 
         platformNeededCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.platform.needed"));
+
+        DocumentListener listener = new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            private void setNewEnabled() {
+                setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
+            }
+        };
+        descTextField.getDocument().addDocumentListener(listener);
+        abbrTextField.getDocument().addDocumentListener(listener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
