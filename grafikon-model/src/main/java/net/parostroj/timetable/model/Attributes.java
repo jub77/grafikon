@@ -38,6 +38,18 @@ public class Attributes implements Map<String, Object> {
         }
     }
 
+    public void setRemove(String name, Object value) {
+        this.setRemove(name, value, null);
+    }
+
+    public void setRemove(String name, Object value, String category) {
+        if (value == null) {
+            this.remove(name, category);
+        } else {
+            this.set(name, value, category);
+        }
+    }
+
     public void set(String name, Object value) {
         this.set(name, value, null);
     }
