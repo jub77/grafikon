@@ -169,18 +169,10 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         String number = routeNumberTextArea.getText().trim(); if (number.equals("")) number = null;
         String nodes = routesTextArea.getText().trim(); if (nodes.equals("")) nodes = null;
         String validity = validityTextField.getText().trim(); if (validity.equals("")) validity = null;
-        if (number == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS);
-        else if (!number.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
-        if (nodes == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_NODES);
-        else if (!nodes.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NODES, nodes);
-        if (validity == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY);
-        else if (!validity.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
+
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, nodes);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
 
         this.setVisible(false);
     }
