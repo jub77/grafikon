@@ -11,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */

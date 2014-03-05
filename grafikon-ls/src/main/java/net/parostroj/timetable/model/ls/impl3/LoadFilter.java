@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  * @author jub
  */
 public class LoadFilter {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(LoadFilter.class);
 
     public void checkDiagram(TrainDiagram diagram, ModelVersion version) {
@@ -37,6 +37,12 @@ public class LoadFilter {
                     LOG.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
                 train.removeAttribute("route.info");
+            }
+        }
+        // show weight info - depending on category
+        for (TrainType type : diagram.getTrainTypes()) {
+            if (type.getCategory().getKey().equals("freight")) {
+                type.setAttribute(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
             }
         }
     }

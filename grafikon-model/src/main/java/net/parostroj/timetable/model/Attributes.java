@@ -45,8 +45,31 @@ public class Attributes implements Map<String, Object> {
     public void set(String name, Object value, String category) {
         Map<String, Object> map = this.getMapForCategory(category);
         Object oldValue = map.get(name);
-        map.put(name, value);
-        this.fireChange(name, oldValue, value, category);
+        if ((oldValue != null && value == null) || (value != null && !value.equals(oldValue))) {
+            map.put(name, value);
+            this.fireChange(name, oldValue, value, category);
+        }
+    }
+
+    public boolean getBool(String name) {
+        return this.getBool(name, null);
+    }
+
+    public boolean getBool(String name, String category) {
+        Boolean value = this.get(name, category, Boolean.class);
+        return Boolean.TRUE.equals(value);
+    }
+
+    public void setBool(String name, boolean value) {
+        this.setBool(name, null, value);
+    }
+
+    public void setBool(String name, String category, boolean value) {
+        if (value) {
+            this.set(name, Boolean.TRUE, category);
+        } else {
+            this.remove(name, category);
+        }
     }
 
     public Object get(String name) {

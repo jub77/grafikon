@@ -208,13 +208,18 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         descTextField.getDocument().addDocumentListener(listener);
         abbrTextField.getDocument().addDocumentListener(listener);
 
+        showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(platformNeededCheckBox)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(platformNeededCheckBox)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(showWeightInfoCheckBox))
                         .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                         .addComponent(completeNameTemplateCheckBox)
                         .addComponent(nameTemplateCheckBox)
@@ -266,7 +271,9 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(descTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(platformNeededCheckBox)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(platformNeededCheckBox)
+                        .addComponent(showWeightInfoCheckBox))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(nameTemplateCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -334,6 +341,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 selected.getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
                 selected.getTrainCompleteNameTemplate());
             platformNeededCheckBox.setSelected(selected.isPlatform());
+            showWeightInfoCheckBox.setSelected(selected.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO));
         } else {
             abbrTextField.setText("");
             descTextField.setText("");
@@ -347,6 +355,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             cNameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainCompleteNameTemplate());
             cNameTemplateEditBox.setEnabled(false);
             platformNeededCheckBox.setSelected(false);
+            showWeightInfoCheckBox.setSelected(false);
         }
     }
 
@@ -391,6 +400,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (platformNeededCheckBox.isSelected() != type.isPlatform()) {
                 type.setPlatform(platformNeededCheckBox.isSelected());
             }
+            type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
             Color c = Conversions.convertTextToColor(colorLabel.getText());
             if (!c.equals(type.getColor()))
                 type.setColor(c);
@@ -485,6 +495,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             LOG.warn(e.getMessage(), e);
             return;
         }
+        type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
         int index = typesModel.add(type);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
@@ -531,6 +542,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JList trainTypesList;
     private javax.swing.JButton upButton;
     private javax.swing.JButton updateButton;
+    private javax.swing.JCheckBox showWeightInfoCheckBox;
 }
 
 class TrainTypesModel extends AbstractListModel {
