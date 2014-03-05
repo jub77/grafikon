@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/0.13" href="grafikon-libraries.jnlp">
+    <information>
+        <title>Grafikon 0.13 libraries</title>
+        <vendor>jub</vendor>
+        <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <update check="timeout" policy="always"/>
+    <resources>
+        <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="batik-awt-util-${batik.version}.jar" download="eager"/>
+        <jar href="batik-dom-${batik.version}.jar" download="eager"/>
+        <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
+        <jar href="batik-util-${batik.version}.jar" download="eager"/>
+        <jar href="batik-xml-${batik.version}.jar" download="eager"/>
+        <jar href="batik-ext-${batik.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-net-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-ls4-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-model-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-save-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-templates-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
+        <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
+        <jar href="jgrapht-${jgrapht.version}.jar" download="eager"/>
+        <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
+        <jar href="jsr311-api-${jsr311.version}.jar" download="eager"/>
+        <jar href="jersey-client-${jersey.version}.jar" download="eager"/>
+        <jar href="jersey-core-${jersey.version}.jar" download="eager"/>
+        <jar href="slf4j-api-${slf4j.version}.jar" download="eager"/>
+        <jar href="slf4j-jdk14-${slf4j.version}.jar" download="eager"/>
+        <jar href="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" download="eager"/>
+        <jar href="jxlayer-${jxlayer.version}.jar" download="eager"/>
+        <jar href="joda-time-${jodatime.version}.jar" download="eager"/>
+    </resources>
+    <component-desc/>
+</jnlp>

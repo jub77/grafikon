@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lsTrainTypeList>
+    <trainNameTemplate>@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}</trainNameTemplate>
+    <trainCompleteNameTemplate>@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}@if{train.description != ''} @{train.description}@end{}</trainCompleteNameTemplate>
+    <trainSortPattern>
+        <pattern>(\d*)(.*)</pattern>
+        <rule>
+            <group>1</group>
+            <type>number</type>
+        </rule>
+        <rule>
+            <group>2</group>
+            <type>string</type>
+        </rule>
+    </trainSortPattern>
+    <trainType>
+        <abbr>Ex</abbr>
+        <braking>PASSENGER</braking>
+        <color>0xFF0000</color>
+        <desc>Expresný vlak</desc>
+        <key>1</key>
+        <platform>true</platform>
+    </trainType>
+    <trainType>
+        <abbr>R</abbr>
+        <braking>PASSENGER</braking>
+        <color>0xFF0000</color>
+        <desc>Rýchlik</desc>
+        <key>2</key>
+        <platform>true</platform>
+    </trainType>
+    <trainType>
+        <abbr>Sp</abbr>
+        <braking>PASSENGER</braking>
+        <color>0xFF0000</color>
+        <desc>Spešninový vlak</desc>
+        <key>3</key>
+        <platform>true</platform>
+    </trainType>
+    <trainType>
+        <abbr>Os</abbr>
+        <braking>PASSENGER</braking>
+        <color>0x0000FF</color>
+        <desc>Osobný vlak</desc>
+        <key>4</key>
+        <platform>true</platform>
+    </trainType>
+    <trainType>
+        <abbr>Sv</abbr>
+        <braking>PASSENGER</braking>
+        <color>0x0000FF</color>
+        <desc>Súpravový vlak</desc>
+        <key>5</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Sn</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x000000</color>
+        <desc>Spešninový nákladný vlak</desc>
+        <key>6</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Pn</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x000000</color>
+        <desc>Priebežný nákladný vlak</desc>
+        <key>7</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Vn</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x000000</color>
+        <desc>Vyrovnávkový nákladný vlak</desc>
+        <key>8</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Lv</abbr>
+        <braking>PASSENGER</braking>
+        <color>0x336633</color>
+        <desc>Lokomotívny vlak</desc>
+        <key>9</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Mn</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x727272</color>
+        <desc>Manipulačný nákladný vlak</desc>
+        <key>10</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Vleč</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x727272</color>
+        <desc>Vlečkový vlak</desc>
+        <key>11</key>
+        <platform>false</platform>
+    </trainType>
+    <trainType>
+        <abbr>Pv</abbr>
+        <braking>FREIGHT</braking>
+        <color>0x727272</color>
+        <desc>Prestavovací vlak</desc>
+        <key>12</key>
+        <platform>false</platform>
+    </trainType>
+</lsTrainTypeList>
