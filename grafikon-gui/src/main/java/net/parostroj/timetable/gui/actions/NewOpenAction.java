@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class NewOpenAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(NewOpenAction.class.getName());
-    private ApplicationModel model;
+    private final ApplicationModel model;
     private NewModelDialog newModelDialog;
 
     /**
@@ -76,7 +76,7 @@ public class NewOpenAction extends AbstractAction {
             ModelAction saveAction = SaveAction.getSaveModelAction(context, model.getOpenedFile(), parent, model);
             ActionHandler.getInstance().execute(saveAction);
         }
-        
+
         ModelAction openAction = new CombinedModelAction(context) {
 
             private JFileChooser xmlFileChooser;
@@ -85,7 +85,7 @@ public class NewOpenAction extends AbstractAction {
             private String errorMessage;
             private Exception errorException;
             private File selectedFile;
-            
+
             @Override
             protected void eventDispatchActionBefore() {
                 if (preselectedFile == null) {
@@ -98,7 +98,7 @@ public class NewOpenAction extends AbstractAction {
                     retVal = JFileChooser.APPROVE_OPTION;
                 }
             }
-            
+
             @Override
             protected void backgroundAction() {
                 if (retVal != JFileChooser.APPROVE_OPTION)
@@ -133,7 +133,7 @@ public class NewOpenAction extends AbstractAction {
                     setWaitDialogVisible(false);
                 }
             }
-            
+
             @Override
             protected void eventDispatchActionAfter() {
                 if (retVal != JFileChooser.APPROVE_OPTION)
@@ -159,17 +159,17 @@ public class NewOpenAction extends AbstractAction {
         if (result == JOptionPane.CANCEL_OPTION) {
             return;
         }
-        
+
         // save old diagram
         ActionContext context = new ActionContext(parent);
         if (result == JOptionPane.YES_OPTION) {
             ModelAction saveAction = SaveAction.getSaveModelAction(context, model.getOpenedFile(), parent, model);
             ActionHandler.getInstance().execute(saveAction);
         }
-        
+
         // new
         ModelAction newAction = new EventDispatchModelAction(context) {
-            
+
             @Override
             protected void eventDispatchAction() {
                 // create new model
@@ -181,15 +181,18 @@ public class NewOpenAction extends AbstractAction {
             }
         };
         ModelAction createAction = new EventDispatchAfterModelAction(context) {
-            
+
             private NewModelDialog.NewModelValues values;
             private TrainDiagram diagram;
+            private Exception error;
 
+            @Override
             protected boolean check() {
                 values = (NewModelValues) context.getAttribute("values");
                 return values != null;
             }
-            
+
+            @Override
             protected void backgroundAction() {
                 setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
                 setWaitDialogVisible(true);
@@ -198,9 +201,7 @@ public class NewOpenAction extends AbstractAction {
                     try {
                         diagram = (new TemplatesLoader()).getTemplate(values.template);
                     } catch (LSException ex) {
-                        JOptionPane.showMessageDialog(parent, ex.getMessage(),
-                                ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-                        LOG.warn("Cannot load template.", ex);
+                        error = ex;
                         return;
                     }
                     // update scale and time scale
@@ -211,12 +212,19 @@ public class NewOpenAction extends AbstractAction {
                     setWaitDialogVisible(false);
                 }
             }
-            
+
+            @Override
             protected void eventDispatchActionAfter() {
                 if (diagram != null) {
                     model.setDiagram(diagram);
                     model.setOpenedFile(null);
                     model.setModelChanged(true);
+                }
+
+                if (error != null) {
+                    LOG.warn("Cannot load template.", error);
+                    JOptionPane.showMessageDialog(parent, error.getMessage(),
+                            ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
