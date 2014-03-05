@@ -280,7 +280,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
      * @return attributes
      */
     @Override
-	public Attributes getAttributes() {
+    public Attributes getAttributes() {
         return attributes;
     }
 
@@ -288,7 +288,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
      * @param attributes attributes to be set
      */
     @Override
-	public void setAttributes(Attributes attributes) {
+    public void setAttributes(Attributes attributes) {
         this.clearCachedData();
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
@@ -554,8 +554,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         if (length == oldLength)
             return;
         int index = timeIntervalList.indexOf(nodeInterval);
-        if (index == -1 || index == 0 || index == (timeIntervalList.size() - 1)
-                || !nodeInterval.isNodeOwner())
+        if (index == -1 || index == 0 || index == (timeIntervalList.size() - 1) || !nodeInterval.isNodeOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
         int changedIndex = index;
@@ -564,16 +563,14 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         nodeInterval.setLength(length);
 
         // compute running time of line before if stop changed
-		if (length == 0  || oldLength == 0) {
+        if (length == 0 || oldLength == 0) {
             changedIndex = index - 1;
         }
 
-		// recalculate intervals
-		this.recalculateImpl(null, changedIndex);
+        // recalculate intervals
+        this.recalculateImpl(null, changedIndex);
 
-		this.listenerSupport.fireEvent(new TrainEvent(this,
-                TimeIntervalListType.STOP_TIME,
-                index, changedIndex));
+        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.STOP_TIME, index, changedIndex));
     }
 
     /**
@@ -600,7 +597,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         }
 
         // recalculate intervals
-		this.recalculateImpl(null, changedIndex);
+        this.recalculateImpl(null, changedIndex);
 
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.SPEED, index, changedIndex));
     }
@@ -665,7 +662,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         int nextStart = timeIntervalList.get(from).getStart();
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
-        	interval.move(nextStart);
+            interval.move(nextStart);
             if (interval.isLineOwner()) {
                 Line line = (Line) interval.getOwner();
                 // compute speed
