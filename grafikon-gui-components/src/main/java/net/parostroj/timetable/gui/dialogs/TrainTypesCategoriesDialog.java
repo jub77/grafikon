@@ -18,10 +18,12 @@ import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * List of train type categories.
@@ -231,8 +233,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private void initComponents() {
         scrollPane1 = new javax.swing.JScrollPane();
         trainTypeCategoriesList = new javax.swing.JList();
-        nameTextField = new javax.swing.JTextField();
-        keyTextField = new javax.swing.JTextField();
         newButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -243,7 +243,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         deleteRowButton = new javax.swing.JButton();
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
 
         trainTypeCategoriesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         trainTypeCategoriesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -259,7 +258,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
                 newButtonActionPerformed(evt);
             }
         });
-        newButton.setEnabled(false);
 
         deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
@@ -304,105 +302,78 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
         speedTextField.setColumns(5);
 
-        jLabel1.setText(ResourceLoader.getString("categories.speed") + ":"); // NOI18N
-
-        jLabel2.setText(ResourceLoader.getString("categories.key") + ":"); // NOI18N
-
-        DocumentListener valuesChangedListener = new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                enableNew();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                enableNew();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                enableNew();
-            }
-
-            private void enableNew() {
-                newButton.setEnabled(!nameTextField.getText().trim().equals("") && !keyTextField.getText().trim().equals(""));
-            }
-        };
-        keyTextField.getDocument().addDocumentListener(valuesChangedListener);
-        nameTextField.getDocument().addDocumentListener(valuesChangedListener);
+        jLabel1.setText(ResourceLoader.getString("categories.speed") + ":");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(keyTextField)
-                            .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(newButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(nameTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newRowButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteRowButton)))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                .addComponent(downButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(upButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(deleteButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(newButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(newRowButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(deleteRowButton)))
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(upButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton))
-                    .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(newRowButton)
-                    .addComponent(deleteRowButton)
-                    .addComponent(speedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(newButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(deleteButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(upButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(downButton))
+                        .addComponent(scrollPane1, 0, 0, Short.MAX_VALUE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(newRowButton)
+                        .addComponent(deleteRowButton))
+                    .addContainerGap())
         );
+        getContentPane().setLayout(layout);
 
         pack();
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (nameTextField != null && !"".equals(nameTextField.getText())) {
-            // create new LineClass
-            TrainTypeCategory category = new TrainTypeCategory(IdGenerator.getInstance().getId(),
-                    nameTextField.getText(),
-                    keyTextField.getText());
+        TrainTypesCategoriesNewDialog dialog = new TrainTypesCategoriesNewDialog(this);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(diagram);
+        if (dialog.getNewCategory() != null) {
+            TrainTypeCategory category = dialog.getNewCategory();
             listModel.addTrainTypeCategory(category);
-            nameTextField.setText("");
-            keyTextField.setText("");
+            if (dialog.getTemplateCategory() != null) {
+                TrainTypeCategory template = dialog.getTemplateCategory();
+                // copy
+                List<PenaltyTableRow> tRows = diagram.getPenaltyTable().getPenaltyTableRowsForCategory(template);
+                for (PenaltyTableRow tRow : tRows) {
+                    PenaltyTableRow row = new PenaltyTableRow(tRow.getSpeed(), tRow.getAcceleration(), tRow.getDeceleration());
+                    diagram.getPenaltyTable().addRowForCategory(category, row);
+                }
+            }
         }
     }
 
@@ -483,8 +454,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteRowButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextField keyTextField;
-    private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;
     private javax.swing.JScrollPane scrollPane1;
