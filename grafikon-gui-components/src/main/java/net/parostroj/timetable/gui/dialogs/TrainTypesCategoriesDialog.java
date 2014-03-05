@@ -7,9 +7,9 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.swing.AbstractListModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
@@ -19,6 +19,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,6 +259,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
                 newButtonActionPerformed(evt);
             }
         });
+        newButton.setEnabled(false);
 
         deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
@@ -305,6 +307,29 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         jLabel1.setText(ResourceLoader.getString("categories.speed") + ":"); // NOI18N
 
         jLabel2.setText(ResourceLoader.getString("categories.key") + ":"); // NOI18N
+
+        DocumentListener valuesChangedListener = new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                enableNew();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                enableNew();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                enableNew();
+            }
+
+            private void enableNew() {
+                newButton.setEnabled(!nameTextField.getText().trim().equals("") && !keyTextField.getText().trim().equals(""));
+            }
+        };
+        keyTextField.getDocument().addDocumentListener(valuesChangedListener);
+        nameTextField.getDocument().addDocumentListener(valuesChangedListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
