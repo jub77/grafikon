@@ -67,7 +67,7 @@ public class OutputAction extends AbstractAction {
         } catch (Exception ex) {
             LOG.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
-            ActionUtils.showError(errorMessage + ": " + ex.getMessage(), parent);
+            ActionUtils.showError(errorMessage + " " + ex.getMessage(), parent);
         }
     }
 
