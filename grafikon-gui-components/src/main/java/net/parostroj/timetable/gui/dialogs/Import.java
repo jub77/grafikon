@@ -15,20 +15,38 @@ import net.parostroj.timetable.utils.IdGenerator;
  */
 public abstract class Import {
 
+    public static class ImportError {
+        private final ObjectWithId object;
+        private final String text;
+
+        public ImportError(ObjectWithId object, String text) {
+            this.object = object;
+            this.text = text;
+        }
+
+        public ObjectWithId getObject() {
+            return object;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(Import.class);
 
     private final ImportMatch match;
     private final TrainDiagram diagram;
     private final TrainDiagram libraryDiagram;
 
-    private List<ObjectWithId> errors;
+    private List<ImportError> errors;
     private Set<ObjectWithId> importedObjects;
 
     public Import(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         this.match = match;
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
-        this.errors = new LinkedList<ObjectWithId>();
+        this.errors = new LinkedList<ImportError>();
         this.importedObjects = new HashSet<ObjectWithId>();
     }
 
@@ -191,7 +209,7 @@ public abstract class Import {
     }
 
     protected void clean() {
-        errors = new LinkedList<ObjectWithId>();
+        errors = new LinkedList<ImportError>();
         importedObjects = new HashSet<ObjectWithId>();
     }
 
@@ -206,7 +224,7 @@ public abstract class Import {
     }
 
     protected void addError(ObjectWithId o, String explanation) {
-        errors.add(o);
+        errors.add(new ImportError(o, explanation));
     }
 
     protected void addImportedObject(ObjectWithId o) {
@@ -221,7 +239,7 @@ public abstract class Import {
         return libraryDiagram;
     }
 
-    public List<ObjectWithId> getErrors() {
+    public List<ImportError> getErrors() {
         return errors;
     }
 
