@@ -23,9 +23,9 @@ public class OutputTemplateImport extends Import {
         // check existence
         OutputTemplate checkedOutputTemplate = this.getOutputTemplate(importedOutputTemplate);
         if (checkedOutputTemplate != null) {
-            String message = "Output template already exists: " + checkedOutputTemplate;
+            String message = "output template already exists";
             this.addError(importedOutputTemplate, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedOutputTemplate);
             return null;
         }
 

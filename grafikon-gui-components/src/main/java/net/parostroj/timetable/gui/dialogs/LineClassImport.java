@@ -29,9 +29,9 @@ public class LineClassImport extends Import {
         // check existence
         LineClass checkedLineClass = this.getLineClass(importedLineClass);
         if (checkedLineClass != null) {
-            String message = "Line class already exists: " + checkedLineClass;
+            String message = "line class already exists";
             this.addError(importedLineClass, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedLineClass);
             return null;
         }
 
