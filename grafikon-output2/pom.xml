@@ -16,9 +16,80 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.6</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
             <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>batik-svg-dom</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-gvt</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-awt-util</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-transcoder</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-extension</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-ext</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-script</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-util</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-anim</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xml-apis</artifactId>
+                    <groupId>xml-apis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-dom</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-parser</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xalan</artifactId>
+                    <groupId>xalan</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>batik-xml</artifactId>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xml-apis-ext</artifactId>
+                    <groupId>xml-apis</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
