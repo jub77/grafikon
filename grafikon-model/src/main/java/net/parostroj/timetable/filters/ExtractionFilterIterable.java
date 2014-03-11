@@ -1,5 +1,6 @@
 package net.parostroj.timetable.filters;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -14,7 +15,7 @@ public class ExtractionFilterIterable<T, U> implements Iterable<T> {
     private final ExtractionFilter<T, U> filter;
 
     public ExtractionFilterIterable(Collection<U> collection, ExtractionFilter<T, U> filter) {
-        this.collection = collection;
+        this.collection = new ArrayList<U>(collection);
         this.filter = filter;
     }
 
