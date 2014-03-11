@@ -749,6 +749,18 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         outputTypeMenu.add(xmlRadioButtonMenuItem);
 
+        javax.swing.JRadioButtonMenuItem pdfRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        outputTypeButtonGroup.add(pdfRadioButtonMenuItem);
+        pdfRadioButtonMenuItem.setText(ResourceLoader.getString("menu.output.type.pdf")); // NOI18N
+        pdfRadioButtonMenuItem.setActionCommand("pdf");
+        pdfRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                outputTypeActionPerformed(evt);
+            }
+        });
+        outputTypeMenu.add(pdfRadioButtonMenuItem);
+
         actionMenu.add(outputTypeMenu);
 
         genTitlePageTTCheckBoxMenuItem.setSelected(true);
