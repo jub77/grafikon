@@ -10,13 +10,19 @@
     </security>
     <update check="timeout" policy="always"/>
     <resources>
-        <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="avalon-framework-api-${avalon.version}.jar" download="eager"/>
+        <jar href="avalon-framework-impl-${avalon.version}.jar" download="eager"/>
         <jar href="batik-awt-util-${batik.version}.jar" download="eager"/>
+        <jar href="batik-bridge-${batik.version}.jar" download="eager"/>
+        <jar href="batik-css-${batik.version}.jar" download="eager"/>
         <jar href="batik-dom-${batik.version}.jar" download="eager"/>
+        <jar href="batik-ext-${batik.version}.jar" download="eager"/>
         <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
         <jar href="batik-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-xml-${batik.version}.jar" download="eager"/>
-        <jar href="batik-ext-${batik.version}.jar" download="eager"/>
+        <jar href="commons-io-${commons.io.version}.jar" download="eager"/>
+        <jar href="fop-${fop.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-net-${grafikon.jnlp.version}.jar" download="eager"/>
@@ -25,9 +31,10 @@
         <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-save-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-templates-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
-        <jar href="jgrapht-${jgrapht.version}.jar" download="eager"/>
+        <jar href="jcl-over-slf4j-${slf4j.version}.jar" download="eager"/>
+        <jar href="jgrapht-core-${jgrapht.version}.jar" download="eager"/>
+        <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
         <jar href="jsr311-api-${jsr311.version}.jar" download="eager"/>
         <jar href="jersey-client-${jersey.version}.jar" download="eager"/>
@@ -37,6 +44,7 @@
         <jar href="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" download="eager"/>
         <jar href="jxlayer-${jxlayer.version}.jar" download="eager"/>
         <jar href="joda-time-${jodatime.version}.jar" download="eager"/>
+        <jar href="xmlgraphics-commons-${xmlgraphics.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>
