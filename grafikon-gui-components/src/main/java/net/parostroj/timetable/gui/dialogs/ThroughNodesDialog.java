@@ -1,8 +1,12 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
+
 import javax.swing.DefaultListModel;
+
 import net.parostroj.timetable.actions.NodeSort;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Node;
 
@@ -57,8 +61,8 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
         nodeList = new javax.swing.JList();
-        addButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
+        addButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         cancelButton = new javax.swing.JButton();
         nodeComboBox = new javax.swing.JComboBox();
         okButton = new javax.swing.JButton();
@@ -66,14 +70,12 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
         nodeList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
         scrollPane.setViewportView(nodeList);
 
-        addButton.setText(ResourceLoader.getString("ted.add")); // NOI18N
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
             }
         });
 
-        removeButton.setText(ResourceLoader.getString("ted.remove")); // NOI18N
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeButtonActionPerformed(evt);
