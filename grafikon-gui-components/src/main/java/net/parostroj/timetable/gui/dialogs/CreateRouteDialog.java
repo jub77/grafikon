@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import net.parostroj.timetable.actions.NodeSort;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.Node;
@@ -45,7 +47,7 @@ public class CreateRouteDialog extends JDialog {
             fromComboBox = new JComboBox();
             GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
             gbc_fromComboBox.gridwidth = 2;
-            gbc_fromComboBox.insets = new Insets(0, 0, 5, 5);
+            gbc_fromComboBox.insets = new Insets(0, 0, 5, 0);
             gbc_fromComboBox.fill = GridBagConstraints.HORIZONTAL;
             gbc_fromComboBox.gridx = 0;
             gbc_fromComboBox.gridy = 0;
@@ -55,7 +57,7 @@ public class CreateRouteDialog extends JDialog {
             toComboBox = new JComboBox();
             GridBagConstraints gbc_toComboBox = new GridBagConstraints();
             gbc_toComboBox.gridwidth = 2;
-            gbc_toComboBox.insets = new Insets(0, 0, 5, 5);
+            gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
             gbc_toComboBox.fill = GridBagConstraints.HORIZONTAL;
             gbc_toComboBox.gridx = 0;
             gbc_toComboBox.gridy = 1;
@@ -73,7 +75,7 @@ public class CreateRouteDialog extends JDialog {
             throughTextField.setEditable(false);
         }
         {
-            JButton throughButton = new JButton(ResourceLoader.getString("edit.routes.through") + "...");
+            JButton throughButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, 2);
             GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
             gbc_btnNewButton.gridx = 1;
             gbc_btnNewButton.gridy = 2;
