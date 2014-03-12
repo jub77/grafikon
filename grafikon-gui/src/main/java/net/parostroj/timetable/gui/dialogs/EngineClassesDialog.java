@@ -223,7 +223,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        scrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         engineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(8);
@@ -240,7 +240,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
-        scrollPane2 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
         newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newRowButton.setEnabled(false);
@@ -492,8 +492,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;
-    private javax.swing.JScrollPane scrollPane1;
-    private javax.swing.JScrollPane scrollPane2;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JButton upButton;
     private javax.swing.JTable weightTable;
