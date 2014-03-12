@@ -22,8 +22,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private TCDelegate delegate;
 
     /** Creates new form TCDetailsViewDialog */
-    public TCDetailsViewDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public TCDetailsViewDialog(java.awt.Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         attributesPanel.setCategory(TCDetailsViewDialog.USER_ATTR_CATEGORY);
     }
