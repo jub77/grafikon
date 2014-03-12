@@ -6,10 +6,15 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import javax.swing.AbstractListModel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -116,10 +121,19 @@ public class LineClassesDialog extends javax.swing.JDialog {
         scrollPane = new javax.swing.JScrollPane();
         lineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
+        nameTextField.setColumns(6);
+        nameTextField.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                String text = nameTextField.getText();
+                newButton.setEnabled(text != null && !"".equals(text.trim()));
+            }
+        });
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newButton.setEnabled(false);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
 
         lineClassesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         lineClassesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -129,28 +143,24 @@ public class LineClassesDialog extends javax.swing.JDialog {
         });
         scrollPane.setViewportView(lineClassesList);
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
         });
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
