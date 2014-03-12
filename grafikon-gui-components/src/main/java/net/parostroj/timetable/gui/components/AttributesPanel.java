@@ -109,6 +109,11 @@ public class AttributesPanel extends javax.swing.JPanel {
         addButton.setEnabled(!"".equals(nameTextField.getText()));
     }
 
+    public void startEditing(Attributes attributes, String category) {
+        this.setCategory(category);
+        this.startEditing(attributes);
+    }
+
     public void startEditing(Attributes attributes) {
         attributesTableModel = new AttributesTableModel(category);
         attributesTableModel.startEditing(attributes);
