@@ -9,15 +9,18 @@ import java.util.Map;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +32,6 @@ import org.slf4j.LoggerFactory;
 public class EngineClassesDialog extends javax.swing.JDialog {
 
     private class EngineClassesListModel extends AbstractListModel {
-
-        public void refresh() {
-            int size = getSize();
-            if (size > 0) {
-                this.fireContentsChanged(this, 0, size - 1);
-            }
-        }
 
         @Override
         public int getSize() {
@@ -204,7 +200,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel.refresh();
+        engineClassesList.setModel(listModel);
         tableModel.updateInfo();
         this.enableDisable();
     }
@@ -213,11 +209,11 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         boolean enabled = !engineClassesList.isSelectionEmpty();
         weightTable.setEnabled(enabled);
         speedTextField.setEnabled(enabled);
-        newRowButton.setEnabled(enabled);
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
         copyButton.setEnabled(enabled);
+        speedTextField.setText("");
         this.enableDisableDeleteRow();
     }
 
@@ -230,15 +226,25 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         scrollPane1 = new javax.swing.JScrollPane();
         engineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        copyButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
+        nameTextField.setColumns(8);
+        nameTextField.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                String text = nameTextField.getText();
+                newButton.setEnabled(text != null && !"".equals(text.trim()));
+            }
+        });
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newButton.setEnabled(false);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
         scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
-        newRowButton = new javax.swing.JButton();
-        deleteRowButton = new javax.swing.JButton();
+        newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newRowButton.setEnabled(false);
+        deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
@@ -250,35 +256,30 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         });
         scrollPane1.setViewportView(engineClassesList);
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
         });
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
-        copyButton.setText(ResourceLoader.getString("button.copy")); // NOI18N
         copyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyButtonActionPerformed(evt);
             }
         });
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -291,14 +292,12 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         weightTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane2.setViewportView(weightTable);
 
-        newRowButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newRowButtonActionPerformed(evt);
             }
         });
 
-        deleteRowButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteRowButtonActionPerformed(evt);
@@ -306,6 +305,13 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         });
 
         speedTextField.setColumns(5);
+        speedTextField.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                String text = speedTextField.getText();
+                newRowButton.setEnabled(text != null && !"".equals(text.trim()));
+            }
+        });
 
         jLabel1.setText(ResourceLoader.getString("editengingeclasses.speed") + ":"); // NOI18N
 
@@ -458,7 +464,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
             // get new name
             String newName = JOptionPane.showInputDialog(this, null, copiedClazz.getName());
-            if (newName != null & !newName.equals("")) {
+            if (newName != null && !newName.equals("")) {
                 // create new LineClass
                 EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
                 // copy all data
