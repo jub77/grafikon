@@ -47,7 +47,39 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
-        attributesTable = new javax.swing.JTable();
+        attributesTable = new javax.swing.JTable() {
+
+            private Class<?> editingClass;
+
+            @Override
+            public javax.swing.table.TableCellRenderer getCellRenderer(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    Class<?> rowClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultRenderer(rowClass);
+                } else {
+                    return super.getCellRenderer(row, column);
+                }
+            }
+
+            @Override
+            public javax.swing.table.TableCellEditor getCellEditor(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    editingClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultEditor(editingClass);
+                } else {
+                    return super.getCellEditor(row, column);
+                }
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return editingClass != null ? editingClass : super.getColumnClass(column);
+            }
+        };
         buttonsPanel = new javax.swing.JPanel();
         addButton = new javax.swing.JButton();
         nameTextField = new javax.swing.JTextField();
