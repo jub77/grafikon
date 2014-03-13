@@ -66,7 +66,7 @@ public class GroupsDialog extends JDialog {
         handlePanel.add(groupNameTextField);
         groupNameTextField.setColumns(10);
 
-        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         newButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,7 +75,7 @@ public class GroupsDialog extends JDialog {
         });
         handlePanel.add(newButton);
 
-        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
