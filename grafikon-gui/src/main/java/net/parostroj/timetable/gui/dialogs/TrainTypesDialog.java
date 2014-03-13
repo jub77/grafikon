@@ -20,6 +20,8 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
@@ -85,7 +87,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private void initComponents() {
         abbrTextField = new javax.swing.JTextField();
         brakeComboBox = new javax.swing.JComboBox();
-        editColorButton = new javax.swing.JButton();
+        editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
         descTextField = new javax.swing.JTextField();
         nameTemplateCheckBox = new javax.swing.JCheckBox();
         nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
@@ -98,17 +100,16 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         colorLabel = new javax.swing.JLabel();
-        newButton = new javax.swing.JButton();
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         updateButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 0);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 0);
 
         setTitle(ResourceLoader.getString("edit.traintypes")); // NOI18N
 
         brakeComboBox.setMaximumRowCount(2);
 
-        editColorButton.setText(ResourceLoader.getString("button.edit") + "..."); // NOI18N
         editColorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editColorButtonActionPerformed(evt);
@@ -147,7 +148,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         colorLabel.setText("0x000000");
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
@@ -162,21 +162,18 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             }
         });
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -300,6 +297,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
 
         pack();
+        setMinimumSize(getSize());
     }
 
     private void editColorButtonActionPerformed(java.awt.event.ActionEvent evt) {
