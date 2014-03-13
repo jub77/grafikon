@@ -242,9 +242,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
-        newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         newRowButton.setEnabled(false);
-        deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
