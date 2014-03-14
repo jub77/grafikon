@@ -380,14 +380,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                     }
                     // add to correct place
-                    int index = 0;
-                    for (TrainsCycleItem currentItem : cycle.getItems()) {
-                        if (currentItem.getStartTime() > item.getStartTime()) {
-                            break;
-                        }
-                        index++;
-                    }
-                    cycle.addItem(item, index);
+                    cycle.addItem(item);
                     // recalculate if needed (engine class dependency)
                     if (t.checkNeedSpeedRecalculate()) {
                         t.recalculate();

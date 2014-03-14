@@ -122,24 +122,16 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     /**
-     * sorts items by start time of items. Modified buble sort - direction change.
+     * corrects position of an item.
+     *
+     * @param item item to be corrected
      */
-    public void sort() {
-        int i = 0;
-        int size = items.size();
-        while (i < size - 1) {
-            TrainsCycleItem item1 = items.get(i);
-            TrainsCycleItem item2 = items.get(i + 1);
-            if (item1.getStartTime() > item2.getStartTime()) {
-                this.moveItem(i + 1, i);
-                if (i > 0) {
-                    i--;
-                } else {
-                    i++;
-                }
-            } else {
-                i++;
-            }
+    public void correctItem(TrainsCycleItem item) {
+        int oldIndex = items.indexOf(item);
+        items.remove(oldIndex);
+        int newIndex = this.addItemImpl(item);
+        if (oldIndex != newIndex) {
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_MOVED, item, item));
         }
     }
 
@@ -169,8 +161,20 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     public void addItem(TrainsCycleItem item) {
         item.getTrain().addCycleItem(item);
-        items.add(item);
+        addItemImpl(item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
+    }
+
+    private int addItemImpl(TrainsCycleItem item) {
+        int index = 0;
+        for (TrainsCycleItem currentItem : items) {
+            if (currentItem.getStartTime() > item.getStartTime()) {
+                break;
+            }
+            index++;
+        }
+        items.add(index, item);
+        return index;
     }
 
     public void removeItem(TrainsCycleItem item) {
@@ -179,25 +183,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
     }
 
-    public void addItem(TrainsCycleItem item, int index) {
-        item.getTrain().addCycleItem(item);
-        items.add(index, item);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
-    }
-
     public TrainsCycleItem removeItem(int index) {
         TrainsCycleItem item = items.remove(index);
         item.getTrain().removeCycleItem(item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
         return item;
-    }
-
-    public void moveItem(int from, int to) {
-        TrainsCycleItem moved = items.remove(from);
-        if (moved != null) {
-            items.add(to, moved);
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_MOVED, moved, moved));
-        }
     }
 
     public void replaceItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
