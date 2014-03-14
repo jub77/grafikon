@@ -1,6 +1,6 @@
 /*
  * TrainsCycle.java
- * 
+ *
  * Created on 11.9.2007, 20:30:58
  */
 package net.parostroj.timetable.model;
@@ -14,7 +14,7 @@ import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Trains cycle.
- * 
+ *
  * @author jub
  */
 public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable {
@@ -24,13 +24,13 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private String description;
     private TrainsCycleType type;
     private Attributes attributes;
-    private List<TrainsCycleItem> items;
-    private GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
+    private final List<TrainsCycleItem> items;
+    private final GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
     private AttributesListener attributesListener;
 
     /**
      * creates instance
-     * 
+     *
      * @param id id
      * @param name name of the cycle
      * @param description description
@@ -121,6 +121,28 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         return conflicts;
     }
 
+    /**
+     * sorts items by start time of items. Modified buble sort - direction change.
+     */
+    public void sort() {
+        int i = 0;
+        int size = items.size();
+        while (i < size - 1) {
+            TrainsCycleItem item1 = items.get(i);
+            TrainsCycleItem item2 = items.get(i + 1);
+            if (item1.getStartTime() > item2.getStartTime()) {
+                this.moveItem(i + 1, i);
+                if (i > 0) {
+                    i--;
+                } else {
+                    i++;
+                }
+            } else {
+                i++;
+            }
+        }
+    }
+
     public TrainsCycleItem getNextItem(TrainsCycleItem item) {
         int ind = items.indexOf(item);
         if (ind == -1) {
@@ -150,19 +172,19 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         items.add(item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
     }
-    
+
     public void removeItem(TrainsCycleItem item) {
         item.getTrain().removeCycleItem(item);
         items.remove(item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
     }
-    
+
     public void addItem(TrainsCycleItem item, int index) {
         item.getTrain().addCycleItem(item);
         items.add(index, item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
     }
-    
+
     public TrainsCycleItem removeItem(int index) {
         TrainsCycleItem item = items.remove(index);
         item.getTrain().removeCycleItem(item);
@@ -177,7 +199,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_MOVED, moved, moved));
         }
     }
-    
+
     public void replaceItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
         if (newItem.getTrain() != oldItem.getTrain() || newItem.getCycle() != this || oldItem.getCycle() != this)
             throw new IllegalArgumentException("Illegal argument.");
@@ -187,21 +209,23 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.items.set(this.items.indexOf(oldItem), newItem);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_UPDATED, oldItem, newItem));
     }
-    
+
     public List<TrainsCycleItem> getItems() {
         return Collections.unmodifiableList(items);
     }
-    
+
+    @Override
     public Attributes getAttributes() {
         return attributes;
     }
 
+    @Override
     public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainsCycleEvent(TrainsCycle.this, change));
@@ -239,11 +263,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public Iterator<TrainsCycleItem> iterator() {
         return items.iterator();
     }
-    
+
     public boolean isEmpty() {
         return items.isEmpty();
     }
-    
+
     public void clear() {
         for (TrainsCycleItem item : items) {
             item.getTrain().removeCycleItem(item);
