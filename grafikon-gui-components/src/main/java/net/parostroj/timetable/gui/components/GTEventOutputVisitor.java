@@ -16,8 +16,8 @@ public class GTEventOutputVisitor implements EventVisitor {
 
     private static final Logger LOG = LoggerFactory.getLogger(GTEventOutputVisitor.class.getName());
 
-    private Appendable str;
-    private boolean full;
+    private final Appendable str;
+    private final boolean full;
 
     public GTEventOutputVisitor(Appendable str, boolean full) {
         this.str = str;
@@ -45,9 +45,9 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getObject() instanceof TimetableImage)
                     str.append("    Image: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof TrainsCycleType)
-                    str.append("    Cycle type: ").append(((TrainsCycleType)event.getObject()).getName());
+                    str.append("    Cycle type: ").append(((TrainsCycleType) event.getObject()).getName());
                 if (event.getObject() instanceof TrainsCycle)
-                    str.append("    Cycle: ").append(((TrainsCycle)event.getObject()).getName());
+                    str.append("    Cycle: ").append(((TrainsCycle) event.getObject()).getName());
             }
         } catch (IOException e) {
             LOG.warn(e.getMessage(), e);
@@ -195,13 +195,15 @@ public class GTEventOutputVisitor implements EventVisitor {
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Cycle type: ").append(event.getSource().getType().toString()).append('\n');
+                str.append("  Name: ").append(event.getSource().getName()).append('\n');
+                str.append("  Cycle type: ").append(event.getSource().getType().getName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange())).append('\n');
                 if (event.getNewCycleItem() != null) {
                     str.append("    Cycle item: ").append(event.getNewCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
                     str.append('-').append(event.getNewCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
+                    str.append("    Train: ").append(event.getNewCycleItem().getTrain().getName()).append('\n');
                 }
             }
         } catch (IOException e) {
