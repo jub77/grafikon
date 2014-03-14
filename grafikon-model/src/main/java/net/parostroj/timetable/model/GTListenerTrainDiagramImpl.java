@@ -27,7 +27,7 @@ class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, 
             Map<String, List<TrainsCycleItem>> map = event.getSource().getCyclesMap();
             for (List<TrainsCycleItem> iList : map.values()) {
                 for (TrainsCycleItem item : iList) {
-                    item.getCycle().sort();
+                    item.getCycle().correctItem(item);
                 }
             }
         }
