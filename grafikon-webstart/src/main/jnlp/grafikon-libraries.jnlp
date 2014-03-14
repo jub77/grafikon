@@ -36,7 +36,6 @@
         <jar href="jgrapht-core-${jgrapht.version}.jar" download="eager"/>
         <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
-        <jar href="jsr311-api-${jsr311.version}.jar" download="eager"/>
         <jar href="jersey-client-${jersey.version}.jar" download="eager"/>
         <jar href="jersey-core-${jersey.version}.jar" download="eager"/>
         <jar href="slf4j-api-${slf4j.version}.jar" download="eager"/>
