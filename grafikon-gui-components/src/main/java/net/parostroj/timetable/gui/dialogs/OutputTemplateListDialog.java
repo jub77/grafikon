@@ -11,6 +11,8 @@ import java.util.Collections;
 import javax.swing.JFileChooser;
 
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -81,17 +83,15 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         buttonPanel = new javax.swing.JPanel();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
-        editButton = new javax.swing.JButton();
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 1);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 1);
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         outputButton = new javax.swing.JButton();
         outputAllButton = new javax.swing.JButton();
-        javax.swing.JPanel okPanel = new javax.swing.JPanel();
-        javax.swing.JButton closeButton = new javax.swing.JButton();
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         templateList = new javax.swing.JList();
         javax.swing.JPanel locationPanel = new javax.swing.JPanel();
         javax.swing.JPanel locationPanel1 = new javax.swing.JPanel();
@@ -99,7 +99,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         javax.swing.JPanel locationPanel2 = new javax.swing.JPanel();
         locationButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("ot.title")); // NOI18N
 
         buttonPanel.setLayout(new java.awt.BorderLayout());
@@ -115,7 +114,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(nameTextField);
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
@@ -123,7 +121,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(newButton);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -131,7 +128,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(deleteButton);
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
@@ -139,7 +135,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(upButton);
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -147,7 +142,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(downButton);
 
-        editButton.setText(ResourceLoader.getString("button.edit")); // NOI18N
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -172,19 +166,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         controlPanel.add(outputAllButton);
 
         buttonPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
-
-        okPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        okPanel.setLayout(new java.awt.GridLayout(1, 0));
-
-        closeButton.setText(ResourceLoader.getString("button.close")); // NOI18N
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-        okPanel.add(closeButton);
-
-        buttonPanel.add(okPanel, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.LINE_END);
 
@@ -280,10 +261,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         this.updateButtons();
     }
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
-    }
-
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
         OutputTemplateDialog dialog = new OutputTemplateDialog(this, true);
         dialog.setLocationRelativeTo(this);
@@ -361,7 +338,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private javax.swing.JButton newButton;
     private javax.swing.JButton outputAllButton;
     private javax.swing.JButton outputButton;
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList templateList;
     private javax.swing.JButton upButton;
 }
