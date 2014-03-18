@@ -94,11 +94,18 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
         TimeInterval interval = new TimeInterval(null, train, this, start, end, null);
 
+        selectedTrack = selectTrack(interval, selectedTrack);
+
+        return new TimeInterval(intervalId, train, this, start, end, selectedTrack);
+    }
+
+    public NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack) {
+        NodeTrack selectedTrack = preselectedTrack;
         if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
             // check which platform is free for adding
             for (NodeTrack nodeTrack : tracks) {
                 // skip station tracks with no platform
-                if (stop != 0 && train.getType().isPlatform() && !nodeTrack.isPlatform()) {
+                if (interval.getLength() != 0 && interval.getTrain().getType().isPlatform() && !nodeTrack.isPlatform()) {
                     continue;
                 }
                 TimeIntervalResult result = nodeTrack.testTimeInterval(interval);
@@ -112,8 +119,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             // set first one
             selectedTrack = tracks.get(0);
         }
-
-        return new TimeInterval(intervalId, train, this, start, end, selectedTrack);
+        return selectedTrack;
     }
 
     /**

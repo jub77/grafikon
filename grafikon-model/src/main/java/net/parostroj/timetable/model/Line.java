@@ -120,9 +120,16 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
         TimeInterval interval = new TimeInterval(null, train, this, start, end, speed, direction, null, addedTime);
 
+        selectedTrack = selectTrack(interval, selectedTrack);
+
+        return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack, addedTime);
+    }
+
+    public LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack) {
+        LineTrack selectedTrack = preselectedTrack;
         if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {
             // check which track is free for adding
-            for (LineTrack lineTrack : this.getIterableByDirection(direction)) {
+            for (LineTrack lineTrack : this.getIterableByDirection(interval.getDirection())) {
                 TimeIntervalResult result = lineTrack.testTimeInterval(interval);
                 if (result.getStatus() == TimeIntervalResult.Status.OK) {
                     selectedTrack = lineTrack;
@@ -132,10 +139,9 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
         if (selectedTrack == null) {
             // set first one
-            selectedTrack = tracks.get(direction == TimeIntervalDirection.FORWARD ? 0 : tracks.size() - 1);
+            selectedTrack = tracks.get(interval.getDirection() == TimeIntervalDirection.FORWARD ? 0 : tracks.size() - 1);
         }
-
-        return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack, addedTime);
+        return selectedTrack;
     }
 
     /**
