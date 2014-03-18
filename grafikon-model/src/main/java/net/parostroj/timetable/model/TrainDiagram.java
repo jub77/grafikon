@@ -140,8 +140,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void addTrain(Train train) {
         train.addListener(listener);
         this.trains.add(train);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_ADDED, train));
         train.attach();
+        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_ADDED, train));
     }
 
     public void removeTrain(Train train) {
