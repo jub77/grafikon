@@ -9,9 +9,13 @@ import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
+
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.NodeTypeWrapper;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
@@ -20,8 +24,14 @@ import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.GroupLayout;
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
 
 /**
  * Edit dialog for node.
@@ -196,20 +206,18 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private void initComponents() {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
+        nameTextField.setColumns(40);
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         abbrTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox();
-        signalsCheckBox = new javax.swing.JCheckBox();
-        controlCheckBox = new javax.swing.JCheckBox();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         trackList = new javax.swing.JList();
-        newTrackButton = new javax.swing.JButton();
-        renameTrackButton = new javax.swing.JButton();
-        deleteTrackButton = new javax.swing.JButton();
+        newTrackButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
+        renameTrackButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
+        deleteTrackButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
-        trapezoidCheckBox = new javax.swing.JCheckBox();
         platformCheckBox = new javax.swing.JCheckBox();
         lineEndCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
@@ -232,10 +240,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
             }
         });
 
-        signalsCheckBox.setText(ResourceLoader.getString("ne.new.signals")); // NOI18N
-
-        controlCheckBox.setText(ResourceLoader.getString("ne.control.station")); // NOI18N
-
         trackList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         trackList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -244,21 +248,18 @@ public class EditNodeDialog extends javax.swing.JDialog {
         });
         scrollPane.setViewportView(trackList);
 
-        newTrackButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newTrackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newTrackButtonActionPerformed(evt);
             }
         });
 
-        renameTrackButton.setText(ResourceLoader.getString("button.rename")); // NOI18N
         renameTrackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 renameTrackButtonActionPerformed(evt);
             }
         });
 
-        deleteTrackButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteTrackButtonActionPerformed(evt);
@@ -278,8 +279,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
-
-        trapezoidCheckBox.setText(ResourceLoader.getString("ne.trapezoid.table")); // NOI18N
 
         platformCheckBox.setText(ResourceLoader.getString("ne.platform")); // NOI18N
         platformCheckBox.setEnabled(false);
@@ -305,93 +304,103 @@ public class EditNodeDialog extends javax.swing.JDialog {
             }
         });
 
+        JPanel panel = new JPanel();
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(platformCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lineEndCheckBox))
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
-                    .addComponent(trapezoidCheckBox)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(newTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(renameTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(signalsCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(controlCheckBox))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(abbrTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-                            .addComponent(typeComboBox, 0, 261, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lengthEditBox, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lengthCheckBox)))))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(platformCheckBox)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(lineEndCheckBox))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(newTrackButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(renameTrackButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(deleteTrackButton)
+                            .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addComponent(okButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(cancelButton))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                                .addComponent(typeComboBox, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(lengthEditBox, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(lengthCheckBox)))))
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(abbrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(lengthEditBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lengthCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(signalsCheckBox)
-                    .addComponent(controlCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(trapezoidCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(platformCheckBox)
-                    .addComponent(lineEndCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(newTrackButton)
-                    .addComponent(renameTrackButton)
-                    .addComponent(deleteTrackButton))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(abbrTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(8)
+                            .addComponent(jLabel4)
+                            .addGap(3))
+                        .addComponent(lengthEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lengthCheckBox))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(platformCheckBox)
+                        .addComponent(lineEndCheckBox))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                            .addComponent(newTrackButton)
+                            .addComponent(renameTrackButton)
+                            .addComponent(deleteTrackButton))
+                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                            .addComponent(cancelButton)
+                            .addComponent(okButton)))
+                    .addContainerGap())
         );
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        signalsCheckBox = new javax.swing.JCheckBox();
+        panel.add(signalsCheckBox);
+
+        signalsCheckBox.setText(ResourceLoader.getString("ne.new.signals"));
+        trapezoidCheckBox = new javax.swing.JCheckBox();
+        panel.add(trapezoidCheckBox);
+
+        trapezoidCheckBox.setText(ResourceLoader.getString("ne.trapezoid.table"));
+        controlCheckBox = new javax.swing.JCheckBox();
+        panel.add(controlCheckBox);
+
+        controlCheckBox.setText(ResourceLoader.getString("ne.control.station"));
+        getContentPane().setLayout(layout);
 
         pack();
     }

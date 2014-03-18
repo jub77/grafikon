@@ -21,7 +21,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.actions.GroupRemoval;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Group;
@@ -58,44 +59,30 @@ public class GroupsDialog extends JDialog {
         groupNameTextField = new JTextField();
         groupNameTextField.addCaretListener(new CaretListener() {
             @Override
-			public void caretUpdate(CaretEvent e) {
+            public void caretUpdate(CaretEvent e) {
                 updateButtons();
             }
         });
         handlePanel.add(groupNameTextField);
         groupNameTextField.setColumns(10);
 
-        newButton = new JButton(ResourceLoader.getString("button.new"));
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         newButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 createGroup();
             }
         });
         handlePanel.add(newButton);
 
-        deleteButton = new JButton(ResourceLoader.getString("button.delete"));
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         deleteButton.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 deleteGroup();
             }
         });
         handlePanel.add(deleteButton);
-
-        JPanel okPanel = new JPanel();
-        okPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        controlPanel.add(okPanel, BorderLayout.SOUTH);
-        okPanel.setLayout(new GridLayout(0, 1, 0, 5));
-
-        JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
-        okButton.addActionListener(new ActionListener() {
-            @Override
-			public void actionPerformed(ActionEvent e) {
-                ok();
-            }
-        });
-        okPanel.add(okButton);
 
         JPanel panel = new JPanel();
         panel.setBorder(new EmptyBorder(5, 5, 5, 0));
@@ -109,7 +96,7 @@ public class GroupsDialog extends JDialog {
         list = new JList();
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
-			public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     updateButtons();
                 }
@@ -169,9 +156,5 @@ public class GroupsDialog extends JDialog {
             GroupRemoval removal = new GroupRemoval(diagram);
             removal.removeGroup(wrapper.getElement());
         }
-    }
-
-    private void ok() {
-        this.setVisible(false);
     }
 }

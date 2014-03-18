@@ -10,8 +10,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.Attributes;
+
+import javax.swing.JComboBox;
 
 /**
  * Panel with table with attributes.
@@ -22,6 +25,24 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private AttributesTableModel attributesTableModel;
     private String category;
+
+    private static enum Type {
+        STRING("String", ""), BOOLEAN("Boolean", false),
+        INTEGER("Integer", Integer.valueOf(0)), DOUBLE("Double", Double.valueOf(0));
+
+        public String text;
+        public Object value;
+
+        private Type(String text, Object value) {
+            this.text = text;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
     /** Creates new form AttributesPanel */
     public AttributesPanel() {
@@ -47,11 +68,42 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
-        attributesTable = new javax.swing.JTable();
+        attributesTable = new javax.swing.JTable() {
+
+            private Class<?> editingClass;
+
+            @Override
+            public javax.swing.table.TableCellRenderer getCellRenderer(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    Class<?> rowClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultRenderer(rowClass);
+                } else {
+                    return super.getCellRenderer(row, column);
+                }
+            }
+
+            @Override
+            public javax.swing.table.TableCellEditor getCellEditor(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    editingClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultEditor(editingClass);
+                } else {
+                    return super.getCellEditor(row, column);
+                }
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return editingClass != null ? editingClass : super.getColumnClass(column);
+            }
+        };
         buttonsPanel = new javax.swing.JPanel();
-        addButton = new javax.swing.JButton();
         nameTextField = new javax.swing.JTextField();
-        removeButton = new javax.swing.JButton();
+        removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -63,14 +115,6 @@ public class AttributesPanel extends javax.swing.JPanel {
 
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        addButton.setText(ResourceLoader.getString("button.new")); // NOI18N
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-        buttonsPanel.add(addButton);
-
         nameTextField.setColumns(20);
         nameTextField.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
@@ -79,12 +123,25 @@ public class AttributesPanel extends javax.swing.JPanel {
         });
         buttonsPanel.add(nameTextField);
 
-        removeButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeButtonActionPerformed(evt);
             }
         });
+
+        typeComboBox = new JComboBox();
+        for (Type t : Type.values()) {
+            typeComboBox.addItem(t);
+        }
+        buttonsPanel.add(typeComboBox);
+        addButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
+        buttonsPanel.add(addButton);
         buttonsPanel.add(removeButton);
 
         add(buttonsPanel, java.awt.BorderLayout.PAGE_END);
@@ -92,7 +149,8 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (this.attributesTableModel != null) {
-            this.attributesTableModel.getAttributes().set(nameTextField.getText(), "", category);
+            Type type = (Type) typeComboBox.getSelectedItem();
+            this.attributesTableModel.getAttributes().set(nameTextField.getText(), type.value, category);
         }
         nameTextField.setText("");
     }
@@ -107,6 +165,11 @@ public class AttributesPanel extends javax.swing.JPanel {
 
     private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
         addButton.setEnabled(!"".equals(nameTextField.getText()));
+    }
+
+    public void startEditing(Attributes attributes, String category) {
+        this.setCategory(category);
+        this.startEditing(attributes);
     }
 
     public void startEditing(Attributes attributes) {
@@ -142,4 +205,5 @@ public class AttributesPanel extends javax.swing.JPanel {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
+    private JComboBox typeComboBox;
 }

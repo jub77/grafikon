@@ -33,17 +33,17 @@ public class TrainImport extends Import {
         // check if the train already exist
         Train checkedTrain = this.getTrain(importedTrain);
         if (checkedTrain != null) {
-            String message = "Train already exists: " + checkedTrain;
+            String message = "train already exists";
             this.addError(importedTrain, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedTrain);
             return null;
         }
         // create a new train
         TrainType trainType = this.getTrainType(importedTrain.getType());
         if (trainType == null) {
-            String message = "Train type missing: " + importedTrain.getType();
+            String message = "train type missing: " + importedTrain.getType();
             this.addError(importedTrain, message);
-            LOG.trace(message);
+            LOG.debug(message);
             return null;
         }
         Train train = getDiagram().createTrain(this.getId(importedTrain));
@@ -57,9 +57,9 @@ public class TrainImport extends Import {
         // create route (new)
         List<Triplet<RouteSegment, Track, TimeInterval>> route = createNewRoute(importedTrain);
         if (route == null) {
-            String message = "Error creating route for train: " + importedTrain;
+            String message = "error creating route for train";
             this.addError(importedTrain, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, importedTrain);
             return null;
         }
         for (Triplet<RouteSegment, Track, TimeInterval> seg : route) {

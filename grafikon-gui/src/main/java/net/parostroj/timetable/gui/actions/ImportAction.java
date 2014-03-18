@@ -24,6 +24,7 @@ import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.dialogs.Import.ImportError;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -232,7 +233,7 @@ public class ImportAction extends AbstractAction {
                 if (trainType) {
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.TRAIN_TYPES_CHANGED, model));
                 }
-                List<Object> errors = new LinkedList<Object>();
+                List<ImportError> errors = new LinkedList<ImportError>();
                 for (ImportComponent comp : components) {
                     Import i = imports.get(comp);
                     errors.addAll(i.getErrors());
@@ -246,7 +247,7 @@ public class ImportAction extends AbstractAction {
                     StringBuilder message = new StringBuilder();
                     int lineLength = 70;
                     int nextLimit = lineLength;
-                    for (Object error : errors) {
+                    for (ImportError error : errors) {
                         if (message.length() != 0) {
                             message.append(", ");
                         }
@@ -283,15 +284,18 @@ public class ImportAction extends AbstractAction {
         }
     }
 
-    private String getText(Object oid) {
+    private String getText(ImportError error) {
+        Object oid = error.getObject();
+        String oidStr = null;
         if (oid instanceof Train) {
-            return ((Train) oid).getName();
+            oidStr = ((Train) oid).getName();
         } else if (oid instanceof Node) {
-            return ((Node) oid).getName();
+            oidStr = ((Node) oid).getName();
         } else if (oid instanceof TrainType) {
-            return ((TrainType) oid).getDesc();
+            oidStr = ((TrainType) oid).getDesc();
         } else {
-            return oid.toString();
+            oidStr = oid.toString();
         }
+        return String.format("%s (%s)", oidStr, error.getText());
     }
 }

@@ -1,10 +1,13 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.*;
+
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.TextItem;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -80,14 +83,17 @@ public class TextItemsDialog extends javax.swing.JDialog {
         javax.swing.JPanel handlePanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
         typeComboBox = new javax.swing.JComboBox();
-        createButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
-        javax.swing.JPanel okPanel = new javax.swing.JPanel();
-        javax.swing.JButton okButton = new javax.swing.JButton();
+        createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 0);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 0);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeActionPerformed();
+            }
+        });
 
         textPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 0));
         textPanel.setLayout(new java.awt.BorderLayout(5, 0));
@@ -132,7 +138,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(nameTextField);
         handlePanel.add(typeComboBox);
 
-        createButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         createButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
@@ -140,7 +145,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         });
         handlePanel.add(createButton);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -148,7 +152,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         });
         handlePanel.add(deleteButton);
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
@@ -156,7 +159,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
         });
         handlePanel.add(upButton);
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -166,25 +168,12 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
         controlPanel.add(handlePanel, java.awt.BorderLayout.NORTH);
 
-        okPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        okPanel.setLayout(new java.awt.GridLayout(1, 0));
-
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-        okPanel.add(okButton);
-
-        controlPanel.add(okPanel, java.awt.BorderLayout.SOUTH);
-
         getContentPane().add(controlPanel, java.awt.BorderLayout.LINE_END);
 
         pack();
     }
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void closeActionPerformed() {
         writeChangedValueBack();
         this.setVisible(false);
     }
