@@ -104,7 +104,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
-        TextTemplate textTemplate = template.getAttribute("default.template") == Boolean.TRUE ? null : template.getTemplate();
+        TextTemplate textTemplate = template.getAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE) == Boolean.TRUE ? null : template.getTemplate();
         generateOutput(
                 output,
                 this.getFile(template.getName(),
