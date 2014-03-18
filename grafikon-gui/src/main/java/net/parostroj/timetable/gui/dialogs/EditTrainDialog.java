@@ -412,7 +412,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
             if (maxSpeed != train.getTopSpeed() && maxSpeed > 0) {
                 // modify top speed
                 train.setTopSpeed(maxSpeed);
-                train.recalculate(maxSpeed);
                 // fire event
                 changed = true;
             }
