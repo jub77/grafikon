@@ -105,11 +105,19 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttribute("default.template") == Boolean.TRUE ? null : template.getTemplate();
-        generateOutput(output, this.getFile(template.getName()), textTemplate, type, null);
+        generateOutput(
+                output,
+                this.getFile(template.getName(),
+                        template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
+                textTemplate, type, null);
         if ("trains".equals(type)) {
             // for each driver circulation
             for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
-                generateOutput(output, this.getFile(template.getName() + "_" + cycle.getName()), textTemplate, type, cycle);
+                generateOutput(
+                        output,
+                        this.getFile(template.getName() + "_" + cycle.getName(),
+                                template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
+                        textTemplate, type, cycle);
             }
         }
     }
@@ -128,8 +136,8 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         output.write(params);
     }
 
-    private File getFile(String name) {
+    private File getFile(String name, String extension) {
         name = name.replaceAll("[\\\\:/\"?<>|]", "");
-        return new File(outputDirectory, name + ".html");
+        return new File(outputDirectory, name + "." + (extension == null ? "html" : extension));
     }
 }
