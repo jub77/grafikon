@@ -186,7 +186,9 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         int oldSpeed = this.topSpeed;
         this.topSpeed = topSpeed;
         this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("topSpeed", oldSpeed, topSpeed)));
-        this.recalculate(this.topSpeed);
+        if (!timeIntervalList.isEmpty()) {
+            this.recalculate(this.topSpeed);
+        }
     }
 
     @Override
@@ -644,6 +646,25 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
     public void recalculate() {
         this.recalculateImpl(null, 0);
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
+    }
+
+    /**
+     * assigns empty tracks (current ones are preselected).
+     */
+    public void assignEmptyTracks() {
+        TimeInterval last = null;
+        for (TimeInterval interval : this.timeIntervalList) {
+            if (interval.isLineOwner()) {
+                Line line = interval.getOwnerAsLine();
+                interval.setTrack(line.selectTrack(interval, (LineTrack) interval.getTrack()));
+            } else {
+                Node node = interval.getOwnerAsNode();
+                NodeTrack preselected = (NodeTrack) interval.getTrack();
+                preselected = (preselected == null && last != null) ? last.getToStraightTrack() : preselected;
+                interval.setTrack(node.selectTrack(interval, (NodeTrack) interval.getTrack()));
+            }
+            last = interval;
+        }
     }
 
     /**
