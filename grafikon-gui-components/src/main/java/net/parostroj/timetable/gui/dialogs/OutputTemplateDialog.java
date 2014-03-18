@@ -57,7 +57,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private void updateValues(Boolean defaultTemplate) {
         if (defaultTemplate == null) {
-            defaultTemplate = this.template.getAttributes().get("default.template", Boolean.class);
+            defaultTemplate = this.template.getAttributes().get(OutputTemplate.ATTR_DEFAULT_TEMPLATE, Boolean.class);
             this.defaultTemplateCheckbox.setSelected(defaultTemplate == Boolean.TRUE);
         }
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
@@ -148,9 +148,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
                 this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_EXTENSION, ext);
             }
             if (defaultTemplateCheckbox.isSelected()) {
-                this.template.setAttribute("default.template", true);
+                this.template.setAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE, true);
             } else {
-                this.template.removeAttribute("default.template");
+                this.template.removeAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE);
             }
             this.setVisible(false);
         } catch (GrafikonException e) {
