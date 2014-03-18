@@ -27,7 +27,8 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
                     tde.getType() == GTEventType.IMAGE_REMOVED || tde.getType() == GTEventType.OUTPUT_TEMPLATE_ADDED ||
                     tde.getType() == GTEventType.OUTPUT_TEMPLATE_MOVED || tde.getType() == GTEventType.OUTPUT_TEMPLATE_REMOVED ||
                     tde.getType() == GTEventType.GROUP_ADDED || tde.getType() == GTEventType.GROUP_REMOVED ||
-                    tde.getType() == GTEventType.CYCLE_TYPE_ADDED || tde.getType() == GTEventType.CYCLE_TYPE_REMOVED)
+                    tde.getType() == GTEventType.CYCLE_TYPE_ADDED || tde.getType() == GTEventType.CYCLE_TYPE_REMOVED ||
+                    tde.getType() == GTEventType.ROUTE_ADDED || tde.getType() == GTEventType.ROUTE_REMOVED)
                 model.setModelChanged(true);
             if (tde.getType() == GTEventType.NESTED) {
                 GTEvent<?> nestedEvent = tde.getLastNestedEvent();
