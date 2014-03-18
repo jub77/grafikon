@@ -251,7 +251,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param toSpeed to speed
      * @return pair running time and speed
      */
-    public int computeRunningTime(final Train train, int start, int speed, int fromSpeed, int toSpeed, int addedTime) {
+    public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed, int addedTime) {
         Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
         double timeScale = (Double) diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
@@ -272,7 +272,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         Map<String, Object> binding = new HashMap<String, Object>();
         binding.put("speed", speed);
         binding.put("fromSpeed", fromSpeed);
-        binding.put("startTime", start);
         binding.put("toSpeed", toSpeed);
         binding.put("timeScale", timeScale);
         binding.put("scale", scale.getRatio());
