@@ -186,6 +186,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         int oldSpeed = this.topSpeed;
         this.topSpeed = topSpeed;
         this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("topSpeed", oldSpeed, topSpeed)));
+        this.recalculate(this.topSpeed);
     }
 
     @Override
