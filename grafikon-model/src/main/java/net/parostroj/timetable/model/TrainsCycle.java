@@ -198,6 +198,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         t.addCycleItem(newItem);
         this.items.set(this.items.indexOf(oldItem), newItem);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_UPDATED, oldItem, newItem));
+        this.correctItem(newItem);
     }
 
     public List<TrainsCycleItem> getItems() {

@@ -442,6 +442,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 if (train.testAddCycle(newItem, item, overlappingEnabled)) {
                     TrainsCycle cycle = item.getCycle();
                     cycle.replaceItem(newItem, item);
+                    ecTrainsList.setSelectedIndex(cycle.getItems().indexOf(newItem));
                     ((TrainsCycleItemWrapper) ecTrainsList.getSelectedValue()).setItem(newItem);
                     this.updateSelectedTrainsCycleItem(newItem);
                     this.updateErrors();
