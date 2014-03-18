@@ -31,7 +31,7 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
                 model.setModelChanged(true);
             if (tde.getType() == GTEventType.NESTED) {
                 GTEvent<?> nestedEvent = tde.getLastNestedEvent();
-                if (nestedEvent instanceof TextItemEvent ||
+                if (nestedEvent instanceof TextItemEvent || nestedEvent instanceof OutputTemplateEvent ||
                         (nestedEvent instanceof TrainEvent && ((TrainEvent) nestedEvent).getType() == GTEventType.ATTRIBUTE))
                     model.setModelChanged(true);
             }
