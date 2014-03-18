@@ -8,20 +8,29 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.channels.FileChannel;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * Edit dialog for images for timetable.
@@ -43,6 +52,28 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
             fileChooserInstance.addChoosableFileFilter(filter);
         }
         return fileChooserInstance;
+    }
+
+    // Code for dispatching events from components to event handlers
+    private class FormListener implements java.awt.event.ActionListener, javax.swing.event.ListSelectionListener {
+
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            if (evt.getSource() == newButton) {
+                EditImagesDialog.this.newButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == renameButton) {
+                EditImagesDialog.this.renameButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == deleteButton) {
+                EditImagesDialog.this.deleteButtonActionPerformed(evt);
+            }
+        }
+
+        public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+            if (evt.getSource() == imagesList) {
+                EditImagesDialog.this.imagesListValueChanged(evt);
+            }
+        }
     }
 
     /** Creates new form EditImagesDialog */
@@ -92,97 +123,57 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }
 
     private void initComponents() {
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         imagesList = new javax.swing.JList();
-        newButton = new javax.swing.JButton();
-        renameButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        exitButton = new javax.swing.JButton();
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        renameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+
+        setTitle(ResourceLoader.getString("images.edit.title")); // NOI18N
 
         FormListener formListener = new FormListener();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle(ResourceLoader.getString("images.edit.title")); // NOI18N
 
         imagesList.addListSelectionListener(formListener);
         scrollPane.setViewportView(imagesList);
 
-        newButton.setText(ResourceLoader.getString("button.new") + " ..."); // NOI18N
         newButton.addActionListener(formListener);
 
-        renameButton.setText(ResourceLoader.getString("button.rename")); // NOI18N
         renameButton.setEnabled(false);
         renameButton.addActionListener(formListener);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.setEnabled(false);
         deleteButton.addActionListener(formListener);
 
-        exitButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        exitButton.addActionListener(formListener);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(renameButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                        .addComponent(renameButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(deleteButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(newButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(renameButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
-                        .addComponent(exitButton)))
-                .addContainerGap())
+            layout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(newButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(renameButton)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(deleteButton)))
+                    .addContainerGap())
         );
+        getContentPane().setLayout(layout);
 
         pack();
-    }
-
-    // Code for dispatching events from components to event handlers
-    private class FormListener implements java.awt.event.ActionListener, javax.swing.event.ListSelectionListener {
-        FormListener() {}
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            if (evt.getSource() == newButton) {
-                EditImagesDialog.this.newButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == renameButton) {
-                EditImagesDialog.this.renameButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == deleteButton) {
-                EditImagesDialog.this.deleteButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == exitButton) {
-                EditImagesDialog.this.exitButtonActionPerformed(evt);
-            }
-        }
-
-        public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-            if (evt.getSource() == imagesList) {
-                EditImagesDialog.this.imagesListValueChanged(evt);
-            }
-        }
-    }
-
-    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -281,9 +272,7 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     }
 
     private javax.swing.JButton deleteButton;
-    private javax.swing.JButton exitButton;
     private javax.swing.JList imagesList;
     private javax.swing.JButton newButton;
     private javax.swing.JButton renameButton;
-    private javax.swing.JScrollPane scrollPane;
 }

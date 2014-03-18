@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model;
 
 import java.awt.Color;
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.TrainTypeEvent;
-import net.parostroj.timetable.model.events.TrainTypeListener;
+
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -12,7 +11,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */
@@ -32,7 +31,10 @@ public class TrainType implements ObjectWithId, Visitable {
     /** Template for complete train name. */
     private TextTemplate trainCompleteNameTemplate;
     /** Listener support. */
-    private GTListenerSupport<TrainTypeListener, TrainTypeEvent> listenerSupport;
+    private final GTListenerSupport<TrainTypeListener, TrainTypeEvent> listenerSupport;
+    /** Attributes */
+    private Attributes attributes;
+    private AttributesListener attributesListener;
 
     /**
      * creates instance.
@@ -49,6 +51,7 @@ public class TrainType implements ObjectWithId, Visitable {
                 listener.trainTypeChanged(event);
             }
         });
+        this.setAttributes(new Attributes());
     }
 
     /**
@@ -230,5 +233,46 @@ public class TrainType implements ObjectWithId, Visitable {
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    /**
+     * @return attributes
+     */
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * @param attributes attributes to be set
+     */
+    @Override
+    public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
+        this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TrainTypeEvent(TrainType.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
+    }
+
+    @Override
+    public Object getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    @Override
+    public Object removeAttribute(String key) {
+        return attributes.remove(key);
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        attributes.set(key, value);
     }
 }

@@ -4,11 +4,28 @@ import java.util.*;
 
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+
+import javax.swing.JPanel;
+
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.BorderLayout;
+
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 
 /**
  * Dialog for editing of routes.
@@ -64,134 +81,156 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        scrollPane = new javax.swing.JScrollPane();
-        routesList = new javax.swing.JList();
-        fromComboBox = new javax.swing.JComboBox();
-        toComboBox = new javax.swing.JComboBox();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        exitButton = new javax.swing.JButton();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        throughButton = new javax.swing.JButton();
-        throughTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        routeNameTextField = new javax.swing.JTextField();
-        netPartCheckBox = new javax.swing.JCheckBox();
 
         FormListener formListener = new FormListener();
 
         setTitle(ResourceLoader.getString("edit.routes.title")); // NOI18N
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        newButton.setEnabled(false);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+
+        deleteButton.addActionListener(formListener);
+
+        newButton.addActionListener(formListener);
+        getContentPane().setLayout(new BorderLayout(0, 0));
+
+        JPanel scrollPanel = new JPanel();
+        scrollPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        getContentPane().add(scrollPanel, BorderLayout.CENTER);
+        scrollPanel.setLayout(new BorderLayout(0, 0));
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
+        scrollPanel.add(scrollPane, BorderLayout.CENTER);
+        routesList = new javax.swing.JList();
 
         scrollPane.setMinimumSize(new java.awt.Dimension(0, 0));
-        scrollPane.setPreferredSize(new java.awt.Dimension(200, 0));
+        scrollPane.setPreferredSize(new java.awt.Dimension(300, 150));
 
         routesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         routesList.addListSelectionListener(formListener);
         scrollPane.setViewportView(routesList);
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBorder(new EmptyBorder(5, 0, 5, 5));
+        getContentPane().add(rightPanel, BorderLayout.EAST);
+        GridBagLayout gbl_rightPanel = new GridBagLayout();
+        gbl_rightPanel.rowWeights = new double[] { 0, 0, 0, 0, 0, 1.0 };
+        rightPanel.setLayout(gbl_rightPanel);
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
-        newButton.addActionListener(formListener);
+        JPanel settingsPanel = new JPanel();
+        GridBagConstraints gbc_settingsPanel = new GridBagConstraints();
+        gbc_settingsPanel.gridwidth = 2;
+        gbc_settingsPanel.insets = new Insets(0, 0, 5, 0);
+        gbc_settingsPanel.fill = GridBagConstraints.BOTH;
+        gbc_settingsPanel.gridx = 0;
+        gbc_settingsPanel.gridy = 2;
+        rightPanel.add(settingsPanel, gbc_settingsPanel);
+        settingsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        throughButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, 2);
+        settingsPanel.add(throughButton);
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
-        deleteButton.addActionListener(formListener);
+        settingsPanel.add(Box.createHorizontalStrut(3));
+        netPartCheckBox = new javax.swing.JCheckBox();
+        settingsPanel.add(netPartCheckBox);
 
-        exitButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        exitButton.addActionListener(formListener);
-
-        jLabel1.setText(ResourceLoader.getString("from.node")); // NOI18N
-
-        jLabel2.setText(ResourceLoader.getString("to.node")); // NOI18N
-
-        throughButton.setText(ResourceLoader.getString("edit.routes.through")); // NOI18N
+        netPartCheckBox.setText(ResourceLoader.getString("edit.routes.net.part"));
         throughButton.addActionListener(formListener);
+        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
+        GridBagConstraints gbc_jLabel2 = new GridBagConstraints();
+        gbc_jLabel2.anchor = GridBagConstraints.WEST;
+        gbc_jLabel2.insets = new Insets(0, 0, 5, 5);
+        gbc_jLabel2.gridx = 0;
+        gbc_jLabel2.gridy = 1;
+        rightPanel.add(jLabel2, gbc_jLabel2);
+
+        jLabel2.setText(ResourceLoader.getString("to.node"));
+        fromComboBox = new javax.swing.JComboBox();
+        GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
+        gbc_fromComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_fromComboBox.anchor = GridBagConstraints.WEST;
+        gbc_fromComboBox.insets = new Insets(0, 0, 5, 0);
+        gbc_fromComboBox.gridx = 1;
+        gbc_fromComboBox.gridy = 0;
+        rightPanel.add(fromComboBox, gbc_fromComboBox);
+        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        GridBagConstraints gbc_jLabel1 = new GridBagConstraints();
+        gbc_jLabel1.anchor = GridBagConstraints.WEST;
+        gbc_jLabel1.insets = new Insets(0, 0, 5, 5);
+        gbc_jLabel1.gridx = 0;
+        gbc_jLabel1.gridy = 0;
+        rightPanel.add(jLabel1, gbc_jLabel1);
+
+        jLabel1.setText(ResourceLoader.getString("from.node"));
+
+        JPanel namePanel = new JPanel();
+        GridBagConstraints gbc_namePanel = new GridBagConstraints();
+        gbc_namePanel.gridwidth = 2;
+        gbc_namePanel.insets = new Insets(0, 0, 5, 0);
+        gbc_namePanel.fill = GridBagConstraints.BOTH;
+        gbc_namePanel.gridx = 0;
+        gbc_namePanel.gridy = 4;
+        rightPanel.add(namePanel, gbc_namePanel);
+        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
+        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
+        namePanel.add(jLabel3);
+
+        jLabel3.setText(ResourceLoader.getString("edit.routes.routename"));
+
+        namePanel.add(Box.createHorizontalStrut(3));
+        routeNameTextField = new javax.swing.JTextField();
+        routeNameTextField.setAlignmentX(1.0f);
+        namePanel.add(routeNameTextField);
+        routeNameTextField.addCaretListener(new CaretListener(){
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                String text = routeNameTextField.getText();
+                newButton.setEnabled(text != null && !"".equals(text.trim()));
+            }
+        });
+
+        JPanel buttonPanel = new JPanel();
+        GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
+        gbc_buttonPanel.gridwidth = 2;
+        gbc_buttonPanel.anchor = GridBagConstraints.NORTHWEST;
+        gbc_buttonPanel.gridx = 0;
+        gbc_buttonPanel.gridy = 5;
+        rightPanel.add(buttonPanel, gbc_buttonPanel);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        buttonPanel.add(newButton);
+        buttonPanel.add(Box.createHorizontalStrut(3));
+        buttonPanel.add(deleteButton);
+        throughTextField = new javax.swing.JTextField();
+        GridBagConstraints gbc_throughTextField = new GridBagConstraints();
+        gbc_throughTextField.gridwidth = 2;
+        gbc_throughTextField.anchor = GridBagConstraints.WEST;
+        gbc_throughTextField.insets = new Insets(0, 0, 5, 0);
+        gbc_throughTextField.gridx = 0;
+        gbc_throughTextField.gridy = 3;
+        rightPanel.add(throughTextField, gbc_throughTextField);
+        throughTextField.setColumns(20);
 
         throughTextField.setEditable(false);
-
-        jLabel3.setText(ResourceLoader.getString("edit.routes.routename")); // NOI18N
-
-        netPartCheckBox.setText(ResourceLoader.getString("edit.routes.net.part")); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exitButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(fromComboBox, 0, 140, Short.MAX_VALUE)
-                            .addComponent(toComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 140, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(throughButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(throughTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(routeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(netPartCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(fromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(toComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(routeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(throughButton)
-                            .addComponent(throughTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(netPartCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exitButton)))
-                .addContainerGap())
-        );
+        toComboBox = new javax.swing.JComboBox();
+        GridBagConstraints gbc_toComboBox = new GridBagConstraints();
+        gbc_toComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
+        gbc_toComboBox.anchor = GridBagConstraints.WEST;
+        gbc_toComboBox.gridx = 1;
+        gbc_toComboBox.gridy = 1;
+        rightPanel.add(toComboBox, gbc_toComboBox);
 
         pack();
+        setMinimumSize(getSize());
     }
 
     private class FormListener implements java.awt.event.ActionListener, javax.swing.event.ListSelectionListener {
-        FormListener() {}
+        FormListener() {
+        }
+
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == newButton) {
                 EditRoutesDialog.this.newButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == deleteButton) {
+            } else if (evt.getSource() == deleteButton) {
                 EditRoutesDialog.this.deleteButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == exitButton) {
-                EditRoutesDialog.this.exitButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == throughButton) {
+            } else if (evt.getSource() == throughButton) {
                 EditRoutesDialog.this.throughButtonActionPerformed(evt);
             }
         }
@@ -201,10 +240,6 @@ public class EditRoutesDialog extends javax.swing.JDialog {
                 EditRoutesDialog.this.routesListValueChanged(evt);
             }
         }
-    }
-
-    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -219,7 +254,8 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         nodes.add((Node) toComboBox.getSelectedItem());
         newRoute = builder.createRoute(UUID.randomUUID().toString(), diagram.getNet(), nodes);
         // do not create route with duplicate nodes
-        if (newRoute.checkDuplicateNodes()) {
+        if (newRoute == null || newRoute.checkDuplicateNodes()) {
+            ActionUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), this);
             return;
         }
         // set name
@@ -252,7 +288,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         int index = routesList.getSelectedIndex();
         Wrapper<Route> deletedRoute = routes.removeIndex(index);
         diagram.removeRoute(deletedRoute.getElement());
-        routesList.setSelectedIndex(index >= routes.getSize() ? routes.getSize() - 1: index);
+        routesList.setSelectedIndex(index >= routes.getSize() ? routes.getSize() - 1 : index);
     }
 
     private void throughButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -266,13 +302,11 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     }
 
     private javax.swing.JButton deleteButton;
-    private javax.swing.JButton exitButton;
     private javax.swing.JComboBox fromComboBox;
     private javax.swing.JCheckBox netPartCheckBox;
     private javax.swing.JButton newButton;
     private javax.swing.JTextField routeNameTextField;
     private javax.swing.JList routesList;
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JButton throughButton;
     private javax.swing.JTextField throughTextField;
     private javax.swing.JComboBox toComboBox;

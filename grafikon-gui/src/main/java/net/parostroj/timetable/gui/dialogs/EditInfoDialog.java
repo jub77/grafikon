@@ -11,6 +11,14 @@ import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.UIManager;
+
 /**
  * Dialog for editing additional information (temporary).
  *
@@ -39,8 +47,14 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         if (model.getDiagram() == null) {
             return;
         }
-        routeNumberTextArea.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
-        routesTextArea.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
+        String numbers = (String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS);
+        String nodes = (String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NODES);
+        boolean info = !(nodes == null && numbers == null);
+        routeInfoCheckBox.setSelected(info);
+        setAreasEnabled(info);
+
+        routeNumberTextArea.setText(numbers);
+        routesTextArea.setText(nodes);
         validityTextField.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
     }
 
@@ -55,7 +69,6 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         routesTextArea = new javax.swing.JTextArea();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        validityTextField = new javax.swing.JTextField();
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -70,69 +83,94 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
 
         jLabel1.setText(ResourceLoader.getString("info.route.number")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        gridBagConstraints.insets = new Insets(3, 3, 5, 5);
         dataPanel.add(jLabel1, gridBagConstraints);
 
         routeNumberTextArea.setColumns(35);
-        routeNumberTextArea.setFont(validityTextField.getFont());
         routeNumberTextArea.setRows(3);
         scrollPane1.setViewportView(routeNumberTextArea);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        dataPanel.add(scrollPane1, gridBagConstraints);
+        gridBagConstraints_2 = new java.awt.GridBagConstraints();
+        gridBagConstraints_2.gridwidth = 2;
+        gridBagConstraints_2.gridx = 0;
+        gridBagConstraints_2.gridy = 1;
+        gridBagConstraints_2.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints_2.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints_2.weightx = 1.0;
+        gridBagConstraints_2.weighty = 1.0;
+        gridBagConstraints_2.insets = new Insets(3, 3, 5, 5);
+        dataPanel.add(scrollPane1, gridBagConstraints_2);
 
         jLabel2.setText(ResourceLoader.getString("info.routes")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        dataPanel.add(jLabel2, gridBagConstraints);
+        gridBagConstraints_3 = new java.awt.GridBagConstraints();
+        gridBagConstraints_3.gridwidth = 2;
+        gridBagConstraints_3.gridx = 0;
+        gridBagConstraints_3.gridy = 2;
+        gridBagConstraints_3.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints_3.insets = new Insets(3, 3, 5, 5);
+        dataPanel.add(jLabel2, gridBagConstraints_3);
 
         routesTextArea.setColumns(35);
-        routesTextArea.setFont(validityTextField.getFont());
         routesTextArea.setRows(5);
         scrollPane2.setViewportView(routesTextArea);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        dataPanel.add(scrollPane2, gridBagConstraints);
+        gridBagConstraints_1 = new java.awt.GridBagConstraints();
+        gridBagConstraints_1.gridwidth = 2;
+        gridBagConstraints_1.gridx = 0;
+        gridBagConstraints_1.gridy = 3;
+        gridBagConstraints_1.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints_1.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints_1.weightx = 1.0;
+        gridBagConstraints_1.weighty = 1.0;
+        gridBagConstraints_1.insets = new Insets(3, 3, 5, 5);
+        dataPanel.add(scrollPane2, gridBagConstraints_1);
 
-        jLabel3.setText(ResourceLoader.getString("info.validity")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        dataPanel.add(jLabel3, gridBagConstraints);
+        routeInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("info.route.enabled"));
+        routeInfoCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean info = routeInfoCheckBox.isSelected();
+                setAreasEnabled(info);
+                routeNumberTextArea.setText("");
+                routesTextArea.setText("");
+            }
+        });
+        GridBagConstraints gbc_routeInfoCheckBox = new GridBagConstraints();
+        gbc_routeInfoCheckBox.gridwidth = 2;
+        gbc_routeInfoCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_routeInfoCheckBox.insets = new Insets(0, 0, 5, 5);
+        gbc_routeInfoCheckBox.gridx = 0;
+        gbc_routeInfoCheckBox.gridy = 4;
+        dataPanel.add(routeInfoCheckBox, gbc_routeInfoCheckBox);
 
-        validityTextField.setColumns(25);
+        jLabel3.setText(ResourceLoader.getString("info.validity") + ":"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        dataPanel.add(validityTextField, gridBagConstraints);
+        gridBagConstraints.insets = new Insets(3, 3, 5, 5);
+        dataPanel.add(jLabel3, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(dataPanel, gridBagConstraints);
+        validityTextField = new javax.swing.JTextField();
+        routeNumberTextArea.setFont(validityTextField.getFont());
+        routesTextArea.setFont(validityTextField.getFont());
+
+        validityTextField.setColumns(25);
+        gridBagConstraints_4 = new java.awt.GridBagConstraints();
+        gridBagConstraints_4.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints_4.gridx = 1;
+        gridBagConstraints_4.gridy = 5;
+        gridBagConstraints_4.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints_4.insets = new Insets(3, 3, 5, 3);
+        dataPanel.add(validityTextField, gridBagConstraints_4);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(formListener);
@@ -149,6 +187,14 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         getContentPane().add(buttonsPanel, gridBagConstraints);
 
         pack();
+    }
+
+    private void setAreasEnabled(boolean enabled) {
+        routeNumberTextArea.setEnabled(enabled);
+        routesTextArea.setEnabled(enabled);
+        Color back = UIManager.getColor(enabled ? "TextArea.background" : "TextArea.disabledBackground");
+        routeNumberTextArea.setBackground(back);
+        routesTextArea.setBackground(back);
     }
 
     private class FormListener implements java.awt.event.ActionListener {
@@ -169,18 +215,10 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         String number = routeNumberTextArea.getText().trim(); if (number.equals("")) number = null;
         String nodes = routesTextArea.getText().trim(); if (nodes.equals("")) nodes = null;
         String validity = validityTextField.getText().trim(); if (validity.equals("")) validity = null;
-        if (number == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS);
-        else if (!number.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
-        if (nodes == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_NODES);
-        else if (!nodes.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_NODES, nodes);
-        if (validity == null)
-            diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY);
-        else if (!validity.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY)))
-            diagram.setAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
+
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, nodes);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_VALIDITY, validity);
 
         this.setVisible(false);
     }
@@ -195,4 +233,9 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
     private javax.swing.JTextArea routeNumberTextArea;
     private javax.swing.JTextArea routesTextArea;
     private javax.swing.JTextField validityTextField;
+    private javax.swing.JCheckBox routeInfoCheckBox;
+    private GridBagConstraints gridBagConstraints_1;
+    private GridBagConstraints gridBagConstraints_2;
+    private GridBagConstraints gridBagConstraints_3;
+    private GridBagConstraints gridBagConstraints_4;
 }

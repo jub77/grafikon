@@ -20,7 +20,7 @@ public class AttributesTableModel extends AbstractTableModel {
     private Attributes attributes;
     private AttributesListener listener;
     private List<String> userNames;
-    private String category;
+    private final String category;
 
     public AttributesTableModel(String category) {
         this.category = category;
@@ -28,16 +28,26 @@ public class AttributesTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return column == 0 ?
-            ResourceLoader.getString("attributes.name") :
-            ResourceLoader.getString("attributes.value");
+        String name = null;
+        switch (column) {
+            case 0:
+                name = ResourceLoader.getString("attributes.name");
+                break;
+            case 1:
+                name = ResourceLoader.getString("attributes.value");
+                break;
+            case 2:
+                name = ResourceLoader.getString("attributes.type");
+                break;
+        }
+        return name;
     }
-    
+
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 1;
@@ -50,16 +60,19 @@ public class AttributesTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         String name = userNames.get(rowIndex);
-        if (columnIndex == 0) {
-            return name;
-        } else {
-            return attributes.get(name, category);
+        switch (columnIndex) {
+            case 0:
+                return name;
+            case 1:
+                return attributes.get(name, category);
+            default:
+                return attributes.get(name, category).getClass().getSimpleName();
         }
     }
 
@@ -114,7 +127,7 @@ public class AttributesTableModel extends AbstractTableModel {
         userNames.remove(name);
         this.fireTableRowsDeleted(position, position);
     }
-    
+
     public List<String> getUserNames() {
         return userNames;
     }

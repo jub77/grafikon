@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.AbstractListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -19,14 +20,19 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Dialog for editation of the train types of the train diagram.
@@ -71,13 +77,17 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-        updateButton.setEnabled(enabled);
+        String abbr = abbrTextField.getText().trim();
+        String desc = descTextField.getText().trim();
+        boolean enabledValues = !(abbr.equals("") || desc.equals(""));
+        newButton.setEnabled(enabledValues);
+        updateButton.setEnabled(enabledValues && enabled);
     }
 
     private void initComponents() {
         abbrTextField = new javax.swing.JTextField();
         brakeComboBox = new javax.swing.JComboBox();
-        editColorButton = new javax.swing.JButton();
+        editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
         descTextField = new javax.swing.JTextField();
         nameTemplateCheckBox = new javax.swing.JCheckBox();
         nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
@@ -90,17 +100,16 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         colorLabel = new javax.swing.JLabel();
-        newButton = new javax.swing.JButton();
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         updateButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 0);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 0);
 
         setTitle(ResourceLoader.getString("edit.traintypes")); // NOI18N
 
         brakeComboBox.setMaximumRowCount(2);
 
-        editColorButton.setText(ResourceLoader.getString("button.edit") + "..."); // NOI18N
         editColorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editColorButtonActionPerformed(evt);
@@ -139,12 +148,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         colorLabel.setText("0x000000");
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
         });
+        newButton.setEnabled(false);
 
         updateButton.setText(ResourceLoader.getString("button.update")); // NOI18N
         updateButton.addActionListener(new java.awt.event.ActionListener() {
@@ -153,21 +162,18 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             }
         });
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -176,13 +182,41 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         platformNeededCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.platform.needed"));
 
+        DocumentListener listener = new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setNewEnabled();
+            }
+
+            private void setNewEnabled() {
+                setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
+            }
+        };
+        descTextField.getDocument().addDocumentListener(listener);
+        abbrTextField.getDocument().addDocumentListener(listener);
+
+        showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(platformNeededCheckBox)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(platformNeededCheckBox)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(showWeightInfoCheckBox))
                         .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                         .addComponent(completeNameTemplateCheckBox)
                         .addComponent(nameTemplateCheckBox)
@@ -234,7 +268,9 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(descTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(platformNeededCheckBox)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(platformNeededCheckBox)
+                        .addComponent(showWeightInfoCheckBox))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(nameTemplateCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -261,6 +297,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
 
         pack();
+        setMinimumSize(getSize());
     }
 
     private void editColorButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -302,6 +339,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 selected.getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
                 selected.getTrainCompleteNameTemplate());
             platformNeededCheckBox.setSelected(selected.isPlatform());
+            showWeightInfoCheckBox.setSelected(selected.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO));
         } else {
             abbrTextField.setText("");
             descTextField.setText("");
@@ -315,6 +353,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             cNameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainCompleteNameTemplate());
             cNameTemplateEditBox.setEnabled(false);
             platformNeededCheckBox.setSelected(false);
+            showWeightInfoCheckBox.setSelected(false);
         }
     }
 
@@ -359,6 +398,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (platformNeededCheckBox.isSelected() != type.isPlatform()) {
                 type.setPlatform(platformNeededCheckBox.isSelected());
             }
+            type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
             Color c = Conversions.convertTextToColor(colorLabel.getText());
             if (!c.equals(type.getColor()))
                 type.setColor(c);
@@ -453,6 +493,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             LOG.warn(e.getMessage(), e);
             return;
         }
+        type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
         int index = typesModel.add(type);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
@@ -499,6 +540,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JList trainTypesList;
     private javax.swing.JButton upButton;
     private javax.swing.JButton updateButton;
+    private javax.swing.JCheckBox showWeightInfoCheckBox;
 }
 
 class TrainTypesModel extends AbstractListModel {

@@ -13,6 +13,8 @@ import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -21,6 +23,7 @@ import net.parostroj.timetable.model.TrainTypeCategory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -231,16 +234,16 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        scrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         trainTypeCategoriesList = new javax.swing.JList();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
-        scrollPane2 = new javax.swing.JScrollPane();
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
+        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
+        javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
-        newRowButton = new javax.swing.JButton();
-        deleteRowButton = new javax.swing.JButton();
+        newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
+        deleteRowButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         speedTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
@@ -252,28 +255,24 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         });
         scrollPane1.setViewportView(trainTypeCategoriesList);
 
-        newButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
         });
 
-        deleteButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
-        upButton.setText("^");
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
-        downButton.setText("v");
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -286,14 +285,12 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         weightTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane2.setViewportView(weightTable);
 
-        newRowButton.setText(ResourceLoader.getString("button.new")); // NOI18N
         newRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newRowButtonActionPerformed(evt);
             }
         });
 
-        deleteRowButton.setText(ResourceLoader.getString("button.delete")); // NOI18N
         deleteRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteRowButtonActionPerformed(evt);
@@ -319,7 +316,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
                                 .addComponent(upButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(deleteButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(newButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(layout.createSequentialGroup()
+                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
                             .addComponent(jLabel1)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -456,8 +453,6 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private javax.swing.JButton downButton;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;
-    private javax.swing.JScrollPane scrollPane1;
-    private javax.swing.JScrollPane scrollPane2;
     private javax.swing.JTextField speedTextField;
     private javax.swing.JList trainTypeCategoriesList;
     private javax.swing.JButton upButton;

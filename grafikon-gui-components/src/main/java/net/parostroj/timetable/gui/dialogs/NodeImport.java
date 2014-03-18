@@ -30,9 +30,9 @@ class NodeImport extends Import {
         // check if the train already exist
         Node checkedNode = this.getNode(importedNode);
         if (checkedNode != null) {
-            String message = "Station already exists: " + checkedNode;
+            String message = "station already exists";
             this.addError(importedNode, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedNode);
             return null;
         }
 

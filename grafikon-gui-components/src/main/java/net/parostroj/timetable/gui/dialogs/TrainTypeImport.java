@@ -31,18 +31,18 @@ public class TrainTypeImport extends Import {
         // check existence
         TrainType checkedType = this.getTrainType(importedType);
         if (checkedType != null) {
-            String message = "Train type already exists: " + checkedType;
+            String message = "train type already exists";
             this.addError(importedType, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedType);
             return null;
         }
-        
+
         // get category
         TrainTypeCategory checkedCategory = this.getTrainTypeCategory(importedType.getCategory());
         if (checkedCategory == null) {
-            String message = "Category missing: " + importedType.getCategory();
+            String message = "category missing: " + importedType.getCategory();
             this.addError(importedType, message);
-            LOG.trace(message);
+            LOG.debug(message);
             return null;
         }
 

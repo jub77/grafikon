@@ -64,7 +64,7 @@ public class TrainUnitCycleDelegate extends TCDelegate {
     @Override
     public void showEditDialog(JComponent component) {
         if (editDialog == null)
-            editDialog = new TCDetailsViewDialog((java.awt.Frame)component.getTopLevelAncestor(), true);
+            editDialog = new TCDetailsViewDialog((java.awt.Window) component.getTopLevelAncestor(), true);
         editDialog.setLocationRelativeTo(component);
         editDialog.updateValues(this);
         editDialog.setVisible(true);

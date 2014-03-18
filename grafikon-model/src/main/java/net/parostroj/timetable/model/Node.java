@@ -196,9 +196,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setPositionX(int positionX) {
-        int oldPos = this.positionX;
-        this.positionX = positionX;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionX", oldPos, positionX)));
+        if (positionX != this.positionX) {
+            int oldPos = this.positionX;
+            this.positionX = positionX;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionX", oldPos, positionX)));
+        }
     }
 
     public int getPositionY() {
@@ -206,9 +208,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setPositionY(int positionY) {
-        int oldPos = this.positionY;
-        this.positionY = positionY;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionY", oldPos, positionY)));
+        if (positionY != this.positionY) {
+            int oldPos = this.positionY;
+            this.positionY = positionY;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionY", oldPos, positionY)));
+        }
     }
 
     public Attributes getAttributes() {

@@ -13,6 +13,7 @@ import net.parostroj.timetable.model.units.Unit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.SwingConstants;
 
 /**
  * Editing component for length.
@@ -125,6 +126,7 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
     private void initComponents() {
         valueTextField = new javax.swing.JFormattedTextField();
+        valueTextField.setHorizontalAlignment(SwingConstants.RIGHT);
         unitComboBox = new javax.swing.JComboBox();
 
         setLayout(new java.awt.BorderLayout());

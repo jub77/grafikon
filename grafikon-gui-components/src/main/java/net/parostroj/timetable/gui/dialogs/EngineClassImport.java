@@ -32,9 +32,9 @@ public class EngineClassImport extends Import {
         // check existence
         EngineClass checkedEngineClass = this.getEngineClass(importedEngineClass);
         if (checkedEngineClass != null) {
-            String message = "Engine class already exists: " + checkedEngineClass;
+            String message = "engine class already exists";
             this.addError(importedEngineClass, message);
-            LOG.trace(message);
+            LOG.debug("{}: {}", message, checkedEngineClass);
             return null;
         }
 
@@ -47,9 +47,9 @@ public class EngineClassImport extends Import {
             for (Map.Entry<LineClass, Integer> impEntry : impRow.getWeights().entrySet()) {
                 LineClass lineClass = this.getLineClass(impEntry.getKey());
                 if (lineClass == null) {
-                    String message = "Line class missing: " + impEntry.getKey().getName();
+                    String message = "line class missing: " + impEntry.getKey().getName();
                     this.addError(importedEngineClass, message);
-                    LOG.trace(message);
+                    LOG.debug(message);
                     return null;
                 }
                 row.setWeightInfo(lineClass, impEntry.getValue());
