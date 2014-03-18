@@ -114,17 +114,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("length", oldLength, length)));
     }
 
-    public TimeInterval createTimeInterval(String intervalId, Train train, int start, TimeIntervalDirection direction, int speed, int fromSpeed, int toSpeed, int addedTime, LineTrack selectedTrack) {
-        int computedTime = this.computeRunningTime(train, start, speed, fromSpeed, toSpeed, addedTime);
-        int end = start + computedTime;
-
-        TimeInterval interval = new TimeInterval(null, train, this, start, end, speed, direction, null, addedTime);
-
-        selectedTrack = selectTrack(interval, selectedTrack);
-
-        return new TimeInterval(intervalId, train, this, start, end, speed, direction, selectedTrack, addedTime);
-    }
-
     public LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack) {
         LineTrack selectedTrack = preselectedTrack;
         if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {

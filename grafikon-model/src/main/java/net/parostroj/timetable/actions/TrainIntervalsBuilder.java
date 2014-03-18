@@ -77,7 +77,6 @@ public class TrainIntervalsBuilder {
         }
 
         // finish train
-        int i = 0;
         TimeInterval createdInterval;
         int time = this.startTime;
 
@@ -85,17 +84,13 @@ public class TrainIntervalsBuilder {
             if (interval.isNodeOwner()) {
                 // handle node
                 Node node = interval.getOwnerAsNode();
-                createdInterval = node.createTimeInterval(
-                        interval.getId(), train, time,
-                        interval.getLength(), null);
+                createdInterval = new TimeInterval(interval.getId(), train, node, time,
+                        time + interval.getLength(), null);
             } else {
                 // handle line
                 Line line = interval.getOwnerAsLine();
-                createdInterval = line.createTimeInterval(
-                        interval.getId(), train, time,
-                        interval.getDirection(), interval.getSpeed(),
-                        this.computeFromSpeed(interval, timeIntervals, i),
-                        this.computeToSpeed(interval, timeIntervals, i), interval.getAddedTime(), null);
+                createdInterval = new TimeInterval(interval.getId(), train, line, time, time, interval.getSpeed(),
+                        interval.getDirection(), null, interval.getAddedTime());
             }
 
             // set track and attributes
@@ -105,34 +100,9 @@ public class TrainIntervalsBuilder {
             // add created interval to train and set current time
             time = createdInterval.getEnd();
             train.addInterval(createdInterval);
-
-            i++;
         }
+        train.recalculate();
 
         finished = true;
-    }
-
-    private int computeFromSpeed(TimeInterval interval, List<TimeInterval> intervals, int i) {
-        if (!interval.isLineOwner())
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        // previous node is stop - first node or node has not null time
-        if ((i - 1) == 0 || intervals.get(i - 1).getLength() != 0)
-            return 0;
-        else {
-            // check speed of previous line
-            return intervals.get(i - 2).getSpeed();
-        }
-    }
-
-    private int computeToSpeed(TimeInterval interval, List<TimeInterval> intervals, int i) {
-        if (!interval.isLineOwner())
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        // next node is stop - last node or node has not null time
-        if ((i + 1) == (intervals.size() - 1) || intervals.get(i + 1).getLength() != 0)
-            return 0;
-        else {
-            // check speed of previous line
-            return intervals.get(i + 2).getSpeed();
-        }
     }
 }

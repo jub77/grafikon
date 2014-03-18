@@ -89,16 +89,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return diagram;
     }
 
-    public TimeInterval createTimeInterval(String intervalId, Train train, int start, int stop, NodeTrack selectedTrack) {
-        int end = start + stop;
-
-        TimeInterval interval = new TimeInterval(null, train, this, start, end, null);
-
-        selectedTrack = selectTrack(interval, selectedTrack);
-
-        return new TimeInterval(intervalId, train, this, start, end, selectedTrack);
-    }
-
     public NodeTrack selectTrack(TimeInterval interval, NodeTrack preselectedTrack) {
         NodeTrack selectedTrack = preselectedTrack;
         if (selectedTrack == null || selectedTrack.testTimeInterval(interval).getStatus() != TimeIntervalResult.Status.OK) {

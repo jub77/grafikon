@@ -125,17 +125,18 @@ public class TrainBuilder {
         for (TimeInterval originalInterval : reverseIntervals) {
             TimeInterval interval = null;
             if (originalInterval.isNodeOwner()) {
-                interval = originalInterval.getOwnerAsNode().createTimeInterval(IdGenerator.getInstance().getId(),
-                        train, currentTime, originalInterval.getLength(), (NodeTrack) originalInterval.getTrack());
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
+                        currentTime, currentTime + originalInterval.getLength(), null);
             } else {
-                interval = originalInterval.getOwnerAsLine().createTimeInterval(IdGenerator.getInstance().getId(),
-                        train, currentTime, originalInterval.getDirection().reverse(), originalInterval.getSpeed(), 0,
-                        0, 0, (LineTrack) originalInterval.getTrack());
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
+                        0, 0, originalInterval.getSpeed(), originalInterval.getDirection(), null,
+                        originalInterval.getAddedTime());
             }
             currentTime = interval.getEnd();
             train.addInterval(interval);
         }
         train.recalculate();
+        train.assignEmptyTracks();
 
         return train;
     }
@@ -163,19 +164,15 @@ public class TrainBuilder {
         List<Pair<RouteSegment, Integer>> data = this.createDataForRoute(route);
         this.adjustSpeedsAndStops(data, train, topSpeed, defaultStop);
 
-        int i = 0;
         Node lastNode = null;
-        TimeInterval lastInterval = null;
 
         for (Pair<RouteSegment, Integer> pair : data) {
             TimeInterval interval = null;
             if (pair.first instanceof Node) {
                 // handle node
                 Node node = (Node)pair.first;
-                NodeTrack prefferedTrack = lastInterval == null ? null : lastInterval.getToStraightTrack();
-                interval = node.createTimeInterval(
-                        IdGenerator.getInstance().getId(),
-                        train, time, pair.second, prefferedTrack);
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, node, time,
+                        time + pair.second, null);
                 lastNode = node;
             } else {
                 // handle line
@@ -184,21 +181,15 @@ public class TrainBuilder {
                         (line.getFrom() == lastNode) ?
                             TimeIntervalDirection.FORWARD :
                             TimeIntervalDirection.BACKWARD;
-                interval = line.createTimeInterval(
-                        IdGenerator.getInstance().getId(),
-                        train, time,
-                        direction, pair.second,
-                        this.computeFromSpeed(pair, data, i),
-                        this.computeToSpeed(pair, data, i), 0, null);
+                interval = new TimeInterval(IdGenerator.getInstance().getId(), train, line, time, time, pair.second, direction, null, 0);
             }
 
             // add created interval to train and set current time
             time = interval.getEnd();
             train.addInterval(interval);
-            lastInterval = interval;
-
-            i++;
         }
+        train.recalculate();
+        train.assignEmptyTracks();
 
         return train;
     }
@@ -228,30 +219,6 @@ public class TrainBuilder {
                 Line line = (Line)pair.first;
                 pair.second = line.computeSpeed(train, null, speed);
             }
-        }
-    }
-
-    private int computeFromSpeed(Pair<RouteSegment,Integer> pair, List<Pair<RouteSegment, Integer>> data, int i) {
-        if (!(pair.first instanceof Line))
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        // previous node is stop - first node or node has not null time
-        if ((i - 1) == 0 || data.get(i - 1).second != 0)
-            return 0;
-        else {
-            // check speed of previous line
-            return data.get(i - 2).second;
-        }
-    }
-
-    private int computeToSpeed(Pair<RouteSegment,Integer> pair, List<Pair<RouteSegment, Integer>> data, int i) {
-        if (!(pair.first instanceof Line))
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        // next node is stop - last node or node has not null time
-        if ((i + 1) == (data.size() - 1) || data.get(i + 1).second != 0)
-            return 0;
-        else {
-            // check speed of previous line
-            return data.get(i + 2).second;
         }
     }
 }
