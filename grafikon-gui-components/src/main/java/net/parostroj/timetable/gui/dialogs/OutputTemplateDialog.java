@@ -20,6 +20,8 @@ import net.parostroj.timetable.output2.OutputFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  * Dialog for editing text template.
@@ -60,6 +62,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         }
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
         textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
+        extensionTextField.setText(this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class));
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE));
     }
 
@@ -71,7 +74,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
         outputTypeComboBox = new javax.swing.JComboBox();
-        verifyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -102,18 +104,26 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         verifyPanel.add(outputTypeComboBox);
 
-        verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
-        verifyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                verifyButtonActionPerformed(evt);
-            }
-        });
-        verifyPanel.add(verifyButton);
-
         controlPanel.add(verifyPanel, java.awt.BorderLayout.WEST);
 
         defaultTemplateCheckbox = new JCheckBox(ResourceLoader.getString("ot.checkbox.default.template"));
         verifyPanel.add(defaultTemplateCheckbox);
+        verifyButton = new javax.swing.JButton();
+
+                verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
+                verifyButton.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        verifyButtonActionPerformed(evt);
+                    }
+                });
+                verifyPanel.add(verifyButton);
+
+        JLabel suffixLabel = new JLabel(ResourceLoader.getString("ot.extension") + ":");
+        verifyPanel.add(suffixLabel);
+
+        extensionTextField = new JTextField();
+        verifyPanel.add(extensionTextField);
+        extensionTextField.setColumns(10);
         defaultTemplateCheckbox.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,6 +141,12 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             TextTemplate textTemplate = this.convertToTemplate();
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
+            String ext = extensionTextField.getText().trim();
+            if ("".equals(ext)) {
+                this.template.removeAttribute(OutputTemplate.ATTR_OUTPUT_EXTENSION);
+            } else {
+                this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_EXTENSION, ext);
+            }
             if (defaultTemplateCheckbox.isSelected()) {
                 this.template.setAttribute("default.template", true);
             } else {
@@ -168,4 +184,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
     private JCheckBox defaultTemplateCheckbox;
+    private JTextField extensionTextField;
 }
