@@ -48,6 +48,9 @@ public class TrainBuilder {
             train.addInterval(interval);
         }
 
+        // recalculate
+        train.recalculate();
+
         // move to new time
         train.move(time);
 
