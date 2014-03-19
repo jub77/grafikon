@@ -25,4 +25,5 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_TIME_CONVERTER = "time.converter";
     public static final String ATTR_EDIT_LENGTH_UNIT = "edit.length.unit";
     public static final String ATTR_EDIT_SPEED_UNIT = "edit.speed.unit";
+    public static final String ATTR_INFO = "info";
 }
