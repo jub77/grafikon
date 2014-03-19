@@ -18,13 +18,13 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Removes weight attribute from all trains.
- * 
+ *
  * @author jub
  */
 public class RemoveWeightsAction extends AbstractAction {
-    
-    private ApplicationModel model;
-    
+
+    private final ApplicationModel model;
+
     public RemoveWeightsAction(ApplicationModel model) {
         this.model = model;
     }
@@ -37,10 +37,10 @@ public class RemoveWeightsAction extends AbstractAction {
             // remove weights
             ActionContext context = new ActionContext(parent);
             ModelAction removeAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
-                
+
                 @Override
                 public void execute(Train train) throws Exception {
-                    train.removeAttribute("weight");
+                    train.removeAttribute(Train.ATTR_WEIGHT);
                 }
             }, ResourceLoader.getString("wait.message.recalculate"), "Weight removal");
             ModelAction eventAction = new EventDispatchModelAction(context) {
