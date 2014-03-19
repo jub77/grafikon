@@ -61,7 +61,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        dataPanel = new javax.swing.JPanel();
+        javax.swing.JPanel dataPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         routeNumberTextArea = new javax.swing.JTextArea();
@@ -94,7 +94,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         routeNumberTextArea.setRows(3);
         scrollPane1.setViewportView(routeNumberTextArea);
 
-        gridBagConstraints_2 = new java.awt.GridBagConstraints();
+        java.awt.GridBagConstraints gridBagConstraints_2 = new java.awt.GridBagConstraints();
         gridBagConstraints_2.gridwidth = 2;
         gridBagConstraints_2.gridx = 0;
         gridBagConstraints_2.gridy = 1;
@@ -106,7 +106,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         dataPanel.add(scrollPane1, gridBagConstraints_2);
 
         jLabel2.setText(ResourceLoader.getString("info.routes")); // NOI18N
-        gridBagConstraints_3 = new java.awt.GridBagConstraints();
+        java.awt.GridBagConstraints gridBagConstraints_3 = new java.awt.GridBagConstraints();
         gridBagConstraints_3.gridwidth = 2;
         gridBagConstraints_3.gridx = 0;
         gridBagConstraints_3.gridy = 2;
@@ -118,7 +118,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         routesTextArea.setRows(5);
         scrollPane2.setViewportView(routesTextArea);
 
-        gridBagConstraints_1 = new java.awt.GridBagConstraints();
+        java.awt.GridBagConstraints gridBagConstraints_1 = new java.awt.GridBagConstraints();
         gridBagConstraints_1.gridwidth = 2;
         gridBagConstraints_1.gridx = 0;
         gridBagConstraints_1.gridy = 3;
@@ -164,7 +164,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         routesTextArea.setFont(validityTextField.getFont());
 
         validityTextField.setColumns(25);
-        gridBagConstraints_4 = new java.awt.GridBagConstraints();
+        java.awt.GridBagConstraints gridBagConstraints_4 = new java.awt.GridBagConstraints();
         gridBagConstraints_4.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints_4.gridx = 1;
         gridBagConstraints_4.gridy = 5;
@@ -228,14 +228,9 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
     }
 
     private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel dataPanel;
     private javax.swing.JButton okButton;
     private javax.swing.JTextArea routeNumberTextArea;
     private javax.swing.JTextArea routesTextArea;
     private javax.swing.JTextField validityTextField;
     private javax.swing.JCheckBox routeInfoCheckBox;
-    private GridBagConstraints gridBagConstraints_1;
-    private GridBagConstraints gridBagConstraints_2;
-    private GridBagConstraints gridBagConstraints_3;
-    private GridBagConstraints gridBagConstraints_4;
 }
