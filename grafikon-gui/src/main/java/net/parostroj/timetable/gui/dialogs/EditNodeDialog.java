@@ -17,9 +17,7 @@ import javax.swing.ListModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.NodeTypeWrapper;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.NodeType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -27,10 +25,12 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
+
 import java.awt.FlowLayout;
 
 /**
@@ -52,7 +52,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             this.track = track;
             this.number = track.getNumber();
             this.platform = track.isPlatform();
-            this.lineEnd = track.getAttributes().getBool("line.end");
+            this.lineEnd = track.getAttributes().getBool(Track.ATTR_LINE_END);
         }
 
         @Override
@@ -68,7 +68,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 track.setNumber(number);
             if (platform != track.isPlatform())
                 track.setPlatform(platform);
-            track.getAttributes().setRemove("line.end", lineEnd);
+            track.getAttributes().setRemove(Track.ATTR_LINE_END, lineEnd);
         }
     }
 

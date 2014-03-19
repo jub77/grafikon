@@ -11,20 +11,20 @@ import net.parostroj.timetable.model.events.AttributesListener;
  *
  * @author jub
  */
-public abstract class Track implements AttributesHolder, ObjectWithId {
+public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes {
     /** ID. */
     private final String id;
     /** Track number. */
     private String number;
     /** Interval list. */
-    private TimeIntervalList intervalList;
+    private final TimeIntervalList intervalList;
     /** Attributes. */
     private Attributes attributes;
     private AttributesListener attributesListener;
 
     /**
      * Constructor.
-     * 
+     *
      * @param id id
      */
     public Track(String id) {
@@ -102,10 +102,10 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
     TimeIntervalResult testTimeInterval(TimeInterval interval) {
         return intervalList.testIntervalForRouteSegment(interval);
     }
-    
+
     /**
      * tests time interval.
-     * 
+     *
      * @param interval time interval
      * @return result
      */
@@ -131,7 +131,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue());
@@ -158,6 +158,6 @@ public abstract class Track implements AttributesHolder, ObjectWithId {
         attributes.set(key, value);
         this.fireAttributeChanged(key, oldValue, value);
     }
-    
+
     abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);
 }
