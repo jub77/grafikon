@@ -222,18 +222,10 @@ public class EditLineDialog extends javax.swing.JDialog {
             line.setAttribute(Line.ATTR_CONTROLLED, controlledCheckBox.isSelected());
 
         // set line class
-        if (lineClassComboBox.getSelectedItem() == noneLineClass)
-            line.removeAttribute(Line.ATTR_CLASS);
-        else {
-            if (lineClassComboBox.getSelectedItem() != line.getAttribute(Line.ATTR_CLASS))
-                line.setAttribute(Line.ATTR_CLASS, lineClassComboBox.getSelectedItem());
-        }
+        line.getAttributes().setRemove(Line.ATTR_CLASS, lineClassComboBox.getSelectedItem() == noneLineClass ? null : lineClassComboBox.getSelectedItem());
         // set line class back
-        if (lineClassBackComboBox.getSelectedItem() == lineClassComboBox.getSelectedItem() ||
-                lineClassBackComboBox.getSelectedItem() == noneLineClass)
-            line.removeAttribute(Line.ATTR_CLASS_BACK);
-        else
-            line.setAttribute(Line.ATTR_CLASS_BACK, lineClassBackComboBox.getSelectedItem());
+        line.getAttributes().setRemove(Line.ATTR_CLASS_BACK, lineClassBackComboBox.getSelectedItem() == lineClassComboBox.getSelectedItem()
+                        || lineClassBackComboBox.getSelectedItem() == noneLineClass ? null : lineClassBackComboBox.getSelectedItem());
 
         if (recalculate) {
             // collect trains
