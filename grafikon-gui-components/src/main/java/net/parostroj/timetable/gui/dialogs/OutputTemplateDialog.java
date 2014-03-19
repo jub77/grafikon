@@ -142,16 +142,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
             String ext = extensionTextField.getText().trim();
-            if ("".equals(ext)) {
-                this.template.removeAttribute(OutputTemplate.ATTR_OUTPUT_EXTENSION);
-            } else {
-                this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_EXTENSION, ext);
-            }
-            if (defaultTemplateCheckbox.isSelected()) {
-                this.template.setAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE, true);
-            } else {
-                this.template.removeAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE);
-            }
+            this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION, "".equals(ext) ? null : ext);
+            this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE, defaultTemplateCheckbox.isSelected());
             this.setVisible(false);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);

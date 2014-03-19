@@ -478,10 +478,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             Set<Train> selectedTrains = this.getSelectedTrains();
             Group group = dialog.getSelected();
             for (Train train : selectedTrains) {
-                if (group == null)
-                    train.removeAttribute(Train.ATTR_GROUP);
-                else
-                    train.setAttribute(Train.ATTR_GROUP, group);
+                train.getAttributes().setRemove(Train.ATTR_GROUP, group);
             }
         }
     }
