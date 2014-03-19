@@ -667,58 +667,26 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // route length
         try {
+            Double rlRatio = null;
             if (rlRatioTextField.getText() != null && !"".equals(rlRatioTextField.getText())) {
-                Double rlRatio = Double.valueOf(rlRatioTextField.getText());
-                if (!rlRatio.equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO)))
-                    diagram.setAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
-            } else {
-                if (diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO) != null)
-                    diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+                rlRatio = Double.valueOf(rlRatioTextField.getText());
             }
+            diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
         } catch (NumberFormatException e) {
             LOG.warn("Cannot convert route length ratio to double.", e);
         }
-        if (rlUnitTextField.getText() != null && !rlUnitTextField.getText().equals("")) {
-            if (!rlUnitTextField.getText().trim().equals(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT)))
-                diagram.setAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, rlUnitTextField.getText().trim());
-        } else {
-            if (diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT) != null)
-                diagram.removeAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
-        }
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, !"".equals(rlUnitTextField.getText().trim()) ? rlUnitTextField.getText().trim() : null);
 
         // time range
         Tuple<Integer> timeRange = this.getTimeRange();
-        if ((timeRange.first != null && !timeRange.first.equals(diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME)))
-                || (timeRange.first == null && diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME) != null)) {
-            if (timeRange.first == null)
-                diagram.removeAttribute(TrainDiagram.ATTR_FROM_TIME);
-            else
-                diagram.setAttribute(TrainDiagram.ATTR_FROM_TIME, timeRange.first);
-        }
-        if ((timeRange.second != null && !timeRange.second.equals(diagram.getAttribute(TrainDiagram.ATTR_TO_TIME)))
-                || (timeRange.second == null && diagram.getAttribute(TrainDiagram.ATTR_TO_TIME) != null)) {
-            if (timeRange.second == null)
-                diagram.removeAttribute(TrainDiagram.ATTR_TO_TIME);
-            else
-                diagram.setAttribute(TrainDiagram.ATTR_TO_TIME, timeRange.second);
-        }
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_FROM_TIME, timeRange.first);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_TO_TIME, timeRange.second);
 
         Object unitObject = unitComboBox.getSelectedItem();
         Object speedUnitObject = speedUnitComboBox.getSelectedItem();
-        LengthUnit lUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class);
-        LengthUnit sUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, LengthUnit.class);
-        if (unitObject != lUnit) {
-            if (unitObject == NO_UNIT)
-                diagram.removeAttribute(TrainDiagram.ATTR_EDIT_LENGTH_UNIT);
-            else
-                diagram.setAttribute(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, unitObject);
-        }
-        if (speedUnitObject != sUnit) {
-            if (speedUnitObject == NO_UNIT)
-                diagram.removeAttribute(TrainDiagram.ATTR_EDIT_SPEED_UNIT);
-            else
-                diagram.setAttribute(TrainDiagram.ATTR_EDIT_SPEED_UNIT, speedUnitObject);
-        }
+
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, unitObject == NO_UNIT ? null : unitObject);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, unitObject == NO_UNIT ? null : speedUnitObject);
 
         // clear cached information for train names
         if (clear)
