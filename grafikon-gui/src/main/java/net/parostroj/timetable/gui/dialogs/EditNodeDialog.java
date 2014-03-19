@@ -45,14 +45,14 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private static class EditTrack {
         public NodeTrack track;
         public String number;
-        public Boolean platform;
-        public Boolean lineEnd;
+        public boolean platform;
+        public boolean lineEnd;
 
         public EditTrack(NodeTrack track) {
             this.track = track;
             this.number = track.getNumber();
             this.platform = track.isPlatform();
-            this.lineEnd = Boolean.TRUE.equals(track.getAttribute("line.end"));
+            this.lineEnd = track.getAttributes().getBool("line.end");
         }
 
         @Override
@@ -68,9 +68,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 track.setNumber(number);
             if (platform != track.isPlatform())
                 track.setPlatform(platform);
-            Boolean bool = Boolean.TRUE.equals(track.getAttribute("line.end"));
-            if (!Boolean.valueOf(lineEnd).equals(bool))
-                track.setAttribute("line.end", lineEnd);
+            track.getAttributes().setRemove("line.end", lineEnd);
         }
     }
 
