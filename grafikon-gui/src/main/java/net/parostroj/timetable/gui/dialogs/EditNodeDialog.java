@@ -160,12 +160,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         NodeType newType = ((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType();
         if (node.getType() != newType)
             node.setType(newType);
-        Boolean bool = (Boolean) node.getAttribute("control.station");
-        if ((bool == null && controlCheckBox.isSelected()) || (bool != null && controlCheckBox.isSelected() != bool.booleanValue()))
-            node.setAttribute("control.station", controlCheckBox.isSelected());
-        bool = (Boolean) node.getAttribute("trapezoid.sign");
-        if ((bool == null && trapezoidCheckBox.isSelected()) || (bool != null && trapezoidCheckBox.isSelected() != bool.booleanValue()))
-            node.setAttribute("trapezoid.sign", trapezoidCheckBox.isSelected());
+
+        node.getAttributes().setBool("control.station", controlCheckBox.isSelected());
+        node.getAttributes().setBool("trapezoid.sign", trapezoidCheckBox.isSelected());
 
         // length
         if (lengthCheckBox.isSelected()) {
