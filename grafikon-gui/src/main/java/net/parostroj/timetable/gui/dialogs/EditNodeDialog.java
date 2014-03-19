@@ -154,13 +154,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (!"".equals(newAbbr) && !newAbbr.equals(node.getAbbr())) {
             node.setAbbr(abbrTextField.getText());
         }
-        boolean signalChanged = "new.signals".equals(node.getAttribute("interlocking.plant"));
-        if (signalChanged != signalsCheckBox.isSelected())
-            if (signalsCheckBox.isSelected()) {
-                node.setAttribute("interlocking.plant", "new.signals");
-            } else {
-                node.removeAttribute("interlocking.plant");
-            }
+
+        node.getAttributes().setRemove("interlocking.plant", signalsCheckBox.isSelected() ? "new.signals" : null);
+
         NodeType newType = ((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType();
         if (node.getType() != newType)
             node.setType(newType);
