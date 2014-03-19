@@ -1,7 +1,5 @@
 package net.parostroj.timetable.actions;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import org.slf4j.Logger;
@@ -19,14 +17,12 @@ public class TrainIntervalsBuilder {
     private TimeInterval lastInterval;
     private final int startTime;
     private boolean finished;
-    private final List<TimeInterval> timeIntervals;
 
     public TrainIntervalsBuilder(TrainDiagram diagram, Train train, int startTime) {
         this.train = train;
         this.lastInterval = null;
         this.startTime = startTime;
         this.finished = false;
-        this.timeIntervals = new ArrayList<TimeInterval>();
     }
 
     public void addNode(String intervalId, Node node, NodeTrack track, int stop, Attributes attributes) {
@@ -48,7 +44,7 @@ public class TrainIntervalsBuilder {
                     train, node, 0, stop, track);
         }
         lastInterval.setAttributes(attributes);
-        timeIntervals.add(lastInterval);
+        train.addInterval(lastInterval);
     }
 
     public void addLine(String intervalId, Line line, LineTrack track, int speed, int addedTime, Attributes attributes) {
@@ -68,7 +64,7 @@ public class TrainIntervalsBuilder {
                 lastInterval.getOwner().asNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
                 track, addedTime);
         lastInterval.setAttributes(attributes);
-        timeIntervals.add(lastInterval);
+        train.addInterval(lastInterval);
     }
 
     public void finish() {
@@ -77,30 +73,6 @@ public class TrainIntervalsBuilder {
         }
 
         // finish train
-        TimeInterval createdInterval;
-        int time = this.startTime;
-
-        for (TimeInterval interval : timeIntervals) {
-            if (interval.isNodeOwner()) {
-                // handle node
-                Node node = interval.getOwnerAsNode();
-                createdInterval = new TimeInterval(interval.getId(), train, node, time,
-                        time + interval.getLength(), null);
-            } else {
-                // handle line
-                Line line = interval.getOwnerAsLine();
-                createdInterval = new TimeInterval(interval.getId(), train, line, time, time, interval.getSpeed(),
-                        interval.getDirection(), null, interval.getAddedTime());
-            }
-
-            // set track and attributes
-            createdInterval.setTrack(interval.getTrack());
-            createdInterval.setAttributes(new Attributes(interval.getAttributes()));
-
-            // add created interval to train and set current time
-            time = createdInterval.getEnd();
-            train.addInterval(createdInterval);
-        }
         train.recalculate();
 
         finished = true;
