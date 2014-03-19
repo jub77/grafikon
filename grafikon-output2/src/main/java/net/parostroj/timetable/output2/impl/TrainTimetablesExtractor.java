@@ -139,9 +139,9 @@ public class TrainTimetablesExtractor {
 
             TrainTimetableRow row = new TrainTimetableRow();
 
-            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute("control.station")))
+            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_CONTROL_STATION)))
                 row.setControlStation(true);
-            if ("new.signals".equals(nodeI.getOwnerAsNode().getAttribute("interlocking.plant")))
+            if ("new.signals".equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_INTERLOCKING_PLANT)))
                 row.setLightSignals(true);
             row.setStation(nodeI.getOwnerAsNode().getName());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
@@ -185,7 +185,7 @@ public class TrainTimetablesExtractor {
 
             if (lastLineI != null && lastLineI.getToStraightTrack() != null)
                 row.setStraight(lastLineI.getToStraightTrack() == nodeI.getTrack());
-            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute("trapezoid.sign"))) {
+            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_TRAPEZOID_SIGN))) {
                 Pair<Boolean, List<String>> trapezoidTrains = this.getTrapezoidTrains(nodeI);
                 if (trapezoidTrains != null) {
                     row.setTrapezoidTrains(trapezoidTrains.second);
