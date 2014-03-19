@@ -32,7 +32,7 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
                         || tde.getType() == GTEventType.GROUP_ADDED || tde.getType() == GTEventType.GROUP_REMOVED
                         || tde.getType() == GTEventType.CYCLE_TYPE_ADDED
                         || tde.getType() == GTEventType.CYCLE_TYPE_REMOVED || tde.getType() == GTEventType.ROUTE_ADDED
-                        || tde.getType() == GTEventType.ROUTE_REMOVED)
+                        || tde.getType() == GTEventType.ROUTE_REMOVED || tde.getType() == GTEventType.ATTRIBUTE)
                     model.setModelChanged(true);
                 if (tde.getType() == GTEventType.NESTED) {
                     GTEvent<?> nestedEvent = tde.getLastNestedEvent();
