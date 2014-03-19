@@ -94,11 +94,12 @@ public class CreateTrainCommand extends Command {
         if (!train.getType().getCategory().getKey().equals("freight")) {
             train.setAttribute("empty", Boolean.TRUE);
         }
-        if (showLength)
-            train.setAttribute("show.station.length", Boolean.TRUE);
-
-        if (group != null)
+        if (showLength) {
+            train.setAttribute(Train.ATTR_SHOW_STATION_LENGTH, Boolean.TRUE);
+        }
+        if (group != null) {
             train.setAttribute(Train.ATTR_GROUP, group);
+        }
 
         // add train to diagram
         model.getDiagram().addTrain(train);

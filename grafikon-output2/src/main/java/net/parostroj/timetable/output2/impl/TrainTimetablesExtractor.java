@@ -109,7 +109,7 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractLengthData(Train train, TrainTimetable timetable) {
-        if (Boolean.TRUE.equals(train.getAttribute("show.station.length"))) {
+        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH))) {
             // compute maximal length
             Pair<Node, Integer> length = TrainsHelper.getNextLength(train.getStartNode(), train, TrainsHelper.NextType.LAST_STATION);
             if (length != null && length.second != null) {

@@ -18,6 +18,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
@@ -60,7 +61,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             typeComboBox.setSelectedItem(train.getType());
             dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
             electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
-            showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("show.station.length")));
+            showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH)));
             emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("empty")));
 
             numberTextField.setText(train.getNumber());
@@ -353,14 +354,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
             modifiedTypeName = true;
         }
-        if (showLengthCheckBox.isSelected() && !Boolean.TRUE.equals(train.getAttribute("show.station.length")))
-            train.setAttribute("show.station.length", Boolean.TRUE);
-        else if (!showLengthCheckBox.isSelected())
-            train.removeAttribute("show.station.length");
-        if (emptyCheckBox.isSelected() && !Boolean.TRUE.equals(train.getAttribute("empty")))
-            train.setAttribute("empty", Boolean.TRUE);
-        else if (!emptyCheckBox.isSelected())
-            train.removeAttribute("empty");
+        train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
+        train.getAttributes().setBool("empty", emptyCheckBox.isSelected());
         if (!numberTextField.getText().equals(train.getNumber())) {
             train.setNumber(numberTextField.getText());
             modifiedTypeName = true;
@@ -370,11 +365,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             modifiedTypeName = true;
         }
         Group sGroup = groupsComboBox.getGroupSelection().getGroup();
-        Group aGroup = train.getAttributes().get(Train.ATTR_GROUP, Group.class);
-        if (sGroup == null && aGroup != null)
-            train.removeAttribute(Train.ATTR_GROUP);
-        else if (sGroup != null && !sGroup.equals(aGroup))
-            train.setAttribute(Train.ATTR_GROUP, sGroup);
+        train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
 
         // weight
         Integer oldWI = (Integer) train.getAttribute("weight");
@@ -387,20 +378,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
             LOG.warn("Couldn't convert weight to int.");
             newWI = oldWI;
         }
-        if (newWI != null && !newWI.equals(oldWI)) {
-            train.setAttribute("weight", newWI);
-        } else if (newWI == null && oldWI != null)
-            train.removeAttribute("weight");
+        train.getAttributes().setRemove("weight", newWI);
 
         // route
         try {
             TextTemplate newRI = routeEditBox.getTemplateEmpty();
-            TextTemplate oldRI = (TextTemplate) train.getAttribute("route");
-            if ((oldRI != null && !oldRI.equals(newRI)) ||
-                    (oldRI == null && newRI != null))
-                train.setAttribute("route", newRI);
-            else if (oldRI != null && newRI == null)
-                train.removeAttribute("route");
+            train.getAttributes().setRemove("route", newRI);
         } catch (GrafikonException e) {
             LOG.warn("Error creating template: {}", e.getMessage());
         }
