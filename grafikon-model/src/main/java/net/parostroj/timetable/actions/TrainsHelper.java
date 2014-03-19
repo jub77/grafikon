@@ -183,7 +183,7 @@ public class TrainsHelper {
             return null;
         // weight in kg
         TrainDiagram diagram = train.getTrainDiagram();
-        Integer wpa = Boolean.TRUE.equals(train.getAttribute("empty")) ?
+        Integer wpa = Boolean.TRUE.equals(train.getAttribute(Train.ATTR_EMPTY)) ?
             (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY) :
             (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE);
         LengthUnit lu = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);

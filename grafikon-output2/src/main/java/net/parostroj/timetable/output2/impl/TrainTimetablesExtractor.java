@@ -95,10 +95,10 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractRouteInfo(Train train, TrainTimetable timetable) {
-        if (train.getAttribute("route") == null) {
+        if (train.getAttribute(Train.ATTR_ROUTE) == null) {
             return;
         }
-        String result = ((TextTemplate) train.getAttribute("route")).evaluate(train);
+        String result = ((TextTemplate) train.getAttribute(Train.ATTR_ROUTE)).evaluate(train);
         timetable.setRouteInfo(new LinkedList<RouteInfoPart>());
         // split
         String[] splitted = result.split("-");

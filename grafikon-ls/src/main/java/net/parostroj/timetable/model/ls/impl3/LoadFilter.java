@@ -32,7 +32,7 @@ public class LoadFilter {
                 routeInfo = routeInfo.trim();
             if (routeInfo != null && !"".equals(routeInfo)) {
                 try {
-                    train.setAttribute("route", this.convert(routeInfo));
+                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                 } catch (GrafikonException e) {
                     LOG.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
