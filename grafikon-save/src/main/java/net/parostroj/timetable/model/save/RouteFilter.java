@@ -9,11 +9,11 @@ import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
  * Route filter.
- * 
+ *
  * @author jub
  */
 public class RouteFilter implements TrainDiagramFilter {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(RouteFilter.class);
 
     @Override
@@ -24,7 +24,7 @@ public class RouteFilter implements TrainDiagramFilter {
                 routeInfo = routeInfo.trim();
             if (routeInfo != null && !"".equals(routeInfo)) {
                 try {
-                    train.setAttribute("route", this.convert(routeInfo));
+                    train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                 } catch (GrafikonException e) {
                     LOG.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
@@ -33,7 +33,7 @@ public class RouteFilter implements TrainDiagramFilter {
         }
         return diagram;
     }
-    
+
     private TextTemplate convert(String routeInfo) throws GrafikonException {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < routeInfo.length(); i++) {

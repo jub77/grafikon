@@ -62,7 +62,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
             electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
             showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH)));
-            emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("empty")));
+            emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_EMPTY)));
 
             numberTextField.setText(train.getNumber());
 
@@ -70,7 +70,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             Integer weight = (Integer) train.getAttribute("weight");
             weightTextField.setText(weight != null ? weight.toString() : "");
-            routeEditBox.setTemplate((TextTemplate) train.getAttribute("route"));
+            routeEditBox.setTemplate((TextTemplate) train.getAttribute(Train.ATTR_ROUTE));
 
             fromNodeButton.setText(((Node) train.getFirstInterval().getOwner()).getName());
             toNodeButton.setText(((Node) train.getLastInterval().getOwner()).getName());
@@ -355,7 +355,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             modifiedTypeName = true;
         }
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
-        train.getAttributes().setBool("empty", emptyCheckBox.isSelected());
+        train.getAttributes().setBool(Train.ATTR_EMPTY, emptyCheckBox.isSelected());
         if (!numberTextField.getText().equals(train.getNumber())) {
             train.setNumber(numberTextField.getText());
             modifiedTypeName = true;
@@ -383,7 +383,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // route
         try {
             TextTemplate newRI = routeEditBox.getTemplateEmpty();
-            train.getAttributes().setRemove("route", newRI);
+            train.getAttributes().setRemove(Train.ATTR_ROUTE, newRI);
         } catch (GrafikonException e) {
             LOG.warn("Error creating template: {}", e.getMessage());
         }
