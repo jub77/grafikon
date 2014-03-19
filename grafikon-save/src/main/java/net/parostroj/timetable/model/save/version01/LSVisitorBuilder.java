@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
@@ -106,8 +107,8 @@ public class LSVisitorBuilder implements LSVisitor {
         train.setTopSpeed(lsTrain.getTopSpeed());
         train.setType(type);
         train.setDescription(lsTrain.getDescription());
-        train.setAttribute("electric", lsTrain.isElectric());
-        train.setAttribute("diesel", lsTrain.isDiesel());
+        train.setAttribute(Train.ATTR_ELECTRIC, lsTrain.isElectric());
+        train.setAttribute(Train.ATTR_DIESEL, lsTrain.isDiesel());
         train.setAttribute("weight.info", lsTrain.getWeightInfo());
         train.setAttribute("route.info", lsTrain.getRouteInfo());
 

@@ -58,8 +58,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             // model for train types
             typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
             typeComboBox.setSelectedItem(train.getType());
-            dieselCheckBox.setSelected((Boolean)train.getAttribute("diesel"));
-            electricCheckBox.setSelected((Boolean)train.getAttribute("electric"));
+            dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
+            electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
             showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("show.station.length")));
             emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute("empty")));
 
@@ -345,12 +345,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
             train.setType((TrainType)typeComboBox.getSelectedItem());
             modifiedTypeName = true;
         }
-        if (!train.getAttribute("diesel").equals(dieselCheckBox.isSelected())) {
-            train.setAttribute("diesel", dieselCheckBox.isSelected());
+        if (!train.getAttribute(Train.ATTR_DIESEL).equals(dieselCheckBox.isSelected())) {
+            train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
             modifiedTypeName = true;
         }
-        if (!train.getAttribute("electric").equals(electricCheckBox.isSelected())) {
-            train.setAttribute("electric", electricCheckBox.isSelected());
+        if (!train.getAttribute(Train.ATTR_ELECTRIC).equals(electricCheckBox.isSelected())) {
+            train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
             modifiedTypeName = true;
         }
         if (showLengthCheckBox.isSelected() && !Boolean.TRUE.equals(train.getAttribute("show.station.length")))
