@@ -10,4 +10,5 @@ public interface TrainAttributes {
     public static final String ATTR_GROUP = "group";
     public static final String ATTR_DIESEL = "diesel";
     public static final String ATTR_ELECTRIC = "electric";
+    public static final String ATTR_SHOW_STATION_LENGTH = "show.station.length";
 }
