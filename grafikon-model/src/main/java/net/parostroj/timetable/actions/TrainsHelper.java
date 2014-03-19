@@ -89,6 +89,7 @@ public class TrainsHelper {
 
     /**
      * return converted weight from weight.info attribute.
+     * Deprecated - only for loading old versions.
      *
      * @param train train
      * @return weight
