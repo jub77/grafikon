@@ -68,7 +68,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
             descriptionTextField.setText(train.getDescription());
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
-            Integer weight = (Integer) train.getAttribute("weight");
+            Integer weight = (Integer) train.getAttribute(Train.ATTR_WEIGHT);
             weightTextField.setText(weight != null ? weight.toString() : "");
             routeEditBox.setTemplate((TextTemplate) train.getAttribute(Train.ATTR_ROUTE));
 
@@ -368,7 +368,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
 
         // weight
-        Integer oldWI = (Integer) train.getAttribute("weight");
+        Integer oldWI = (Integer) train.getAttribute(Train.ATTR_WEIGHT);
         Integer newWI = null;
         try {
             String weightStr = weightTextField.getText().trim();
@@ -378,7 +378,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             LOG.warn("Couldn't convert weight to int.");
             newWI = oldWI;
         }
-        train.getAttributes().setRemove("weight", newWI);
+        train.getAttributes().setRemove(Train.ATTR_WEIGHT, newWI);
 
         // route
         try {

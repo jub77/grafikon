@@ -21,7 +21,7 @@ public class LoadFilter {
         for (Train train : diagram.getTrains()) {
             Integer weight = TrainsHelper.getWeightFromInfoAttribute(train);
             if (weight != null)
-                train.setAttribute("weight", weight);
+                train.setAttribute(Train.ATTR_WEIGHT, weight);
             // remove weight.info attribute
             train.removeAttribute("weight.info");
         }

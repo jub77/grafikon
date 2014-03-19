@@ -84,7 +84,7 @@ public class TrainsHelper {
      * @return weight
      */
     public static Integer getWeightFromAttribute(Train train) {
-        return (Integer) train.getAttribute("weight");
+        return (Integer) train.getAttribute(Train.ATTR_WEIGHT);
     }
 
     /**
