@@ -8,11 +8,13 @@ package net.parostroj.timetable.gui.views;
 import java.text.ParseException;
 
 import javax.swing.table.AbstractTableModel;
+
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
@@ -295,40 +297,23 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case COMMENT:
                 // comment
-                String commentStr = (String)aValue;
-                if ("".equals(commentStr))
-                    commentStr = null;
-                if (commentStr != null)
-                    interval.setAttribute("comment", aValue);
-                else
-                    interval.removeAttribute("comment");
+                String commentStr = Conversions.checkAndTrim((String) aValue);
+                interval.getAttributes().setRemove("comment", commentStr);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case OCCUPIED_ENTRY:
                 // entry of the occupied track
-                if (Boolean.TRUE.equals(aValue)) {
-                    interval.setAttribute("occupied", aValue);
-                } else {
-                    interval.removeAttribute("occupied");
-                }
+                interval.getAttributes().setBool("occupied", (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SHUNT:
                 // entry shunting on the far side
-                if (Boolean.TRUE.equals(aValue)) {
-                    interval.setAttribute("shunt", aValue);
-                } else {
-                    interval.removeAttribute("shunt");
-                }
+                interval.getAttributes().setBool("shunt", (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case COMMENT_SHOWN:
                 // entry shunting on the far side
-                if (Boolean.TRUE.equals(aValue)) {
-                    interval.setAttribute("comment.shown", aValue);
-                } else {
-                    interval.removeAttribute("comment.shown");
-                }
+                interval.getAttributes().setBool("comment.shown", (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SET_SPEED:
@@ -350,11 +335,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case IGNORE_LENGTH:
                 // ignore length of the station in computation
-                if (Boolean.TRUE.equals(aValue)) {
-                    interval.setAttribute(TimeInterval.ATTR_IGNORE_LENGTH, aValue);
-                } else {
-                    interval.removeAttribute(TimeInterval.ATTR_IGNORE_LENGTH);
-                }
+                interval.getAttributes().setBool(TimeInterval.ATTR_IGNORE_LENGTH, (Boolean) aValue);
                 this.fireTableRowsUpdated(rowIndex, rowIndex);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
