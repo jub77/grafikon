@@ -8,7 +8,7 @@ public class LSTrain {
     private int id;
 
     private String name;
-    
+
     private String description;
 
     private String trainType;
@@ -16,13 +16,13 @@ public class LSTrain {
     private LSTimeInterval[] timeIntervals;
 
     private int topSpeed;
-    
+
     private boolean diesel;
-    
+
     private boolean electric;
-    
+
     private String routeInfo;
-    
+
     private String weightInfo;
 
     public LSTrain() {
@@ -41,10 +41,10 @@ public class LSTrain {
         }
         name = train.getNumber();
         description = train.getDescription();
-        electric = (Boolean)train.getAttribute("electric");
-        diesel = (Boolean)train.getAttribute("diesel");
-        routeInfo = (String)train.getAttribute("route.info");
-        weightInfo = (String)train.getAttribute("weight.info");
+        electric = (Boolean) train.getAttribute(Train.ATTR_ELECTRIC);
+        diesel = (Boolean) train.getAttribute(Train.ATTR_DIESEL);
+        routeInfo = (String) train.getAttribute("route.info");
+        weightInfo = (String) train.getAttribute("weight.info");
     }
 
     /**

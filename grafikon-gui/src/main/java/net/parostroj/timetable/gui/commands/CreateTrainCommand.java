@@ -89,8 +89,8 @@ public class CreateTrainCommand extends Command {
         Train train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
 
         train.setDescription(description);
-        train.setAttribute("diesel", diesel);
-        train.setAttribute("electric", electric);
+        train.setAttribute(Train.ATTR_DIESEL, diesel);
+        train.setAttribute(Train.ATTR_ELECTRIC, electric);
         if (!train.getType().getCategory().getKey().equals("freight")) {
             train.setAttribute("empty", Boolean.TRUE);
         }

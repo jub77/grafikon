@@ -88,9 +88,9 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractDieselElectric(Train train, TrainTimetable timetable) {
-        if (Boolean.TRUE.equals(train.getAttribute("diesel")))
+        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_DIESEL)))
             timetable.setDiesel(true);
-        if (Boolean.TRUE.equals(train.getAttribute("electric")))
+        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_ELECTRIC)))
             timetable.setElectric(true);
     }
 
