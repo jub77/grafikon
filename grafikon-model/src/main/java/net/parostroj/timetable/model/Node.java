@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable {
+public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes {
 
     /** Train diagram. */
     private final TrainDiagram diagram;

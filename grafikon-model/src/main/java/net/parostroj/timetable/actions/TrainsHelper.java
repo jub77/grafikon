@@ -36,7 +36,7 @@ public class TrainsHelper {
         if (interval.isNodeOwner()) {
             Node node = interval.getOwnerAsNode();
             if (shouldCheckLength(node, interval.getTrain(), interval) && interval.isStop()) {
-                length = (Integer) node.getAttribute("length");
+                length = (Integer) node.getAttribute(Node.ATTR_LENGTH);
                 length = convertLength(node.getTrainDiagram(), length);
             }
         } else {

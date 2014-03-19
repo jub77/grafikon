@@ -46,7 +46,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSNode lsNode) {
         NodeType type = NodeType.valueOf(lsNode.getNodeType());
         Node node = diagram.createNode(this.createId(), type, lsNode.getName(), lsNode.getAbbr());
-        node.setAttribute("interlocking.plant", lsNode.getInterlockingPlant());
+        node.setAttribute(Node.ATTR_INTERLOCKING_PLANT, lsNode.getInterlockingPlant());
         node.setPositionX(lsNode.getX());
         node.setPositionY(lsNode.getY());
         ids.put(lsNode.getId(), node);

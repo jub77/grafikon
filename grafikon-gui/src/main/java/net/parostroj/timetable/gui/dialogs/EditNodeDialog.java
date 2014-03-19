@@ -120,12 +120,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
         typeComboBox.setSelectedItem(NodeTypeWrapper.getWrapper(node.getType()));
-        signalsCheckBox.setSelected("new.signals".equals(node.getAttribute("interlocking.plant")));
-        controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute("control.station")));
-        trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute("trapezoid.sign")));
+        signalsCheckBox.setSelected("new.signals".equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
+        controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_CONTROL_STATION)));
+        trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_TRAPEZOID_SIGN)));
 
         // set node length
-        Integer length = (Integer)node.getAttribute("length");
+        Integer length = (Integer) node.getAttribute(Node.ATTR_LENGTH);
         if (length != null) {
             lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
         } else {
@@ -153,28 +153,28 @@ public class EditNodeDialog extends javax.swing.JDialog {
             node.setAbbr(abbrTextField.getText());
         }
 
-        node.getAttributes().setRemove("interlocking.plant", signalsCheckBox.isSelected() ? "new.signals" : null);
+        node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? "new.signals" : null);
 
         NodeType newType = ((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType();
         if (node.getType() != newType)
             node.setType(newType);
 
-        node.getAttributes().setBool("control.station", controlCheckBox.isSelected());
-        node.getAttributes().setBool("trapezoid.sign", trapezoidCheckBox.isSelected());
+        node.getAttributes().setBool(Node.ATTR_CONTROL_STATION, controlCheckBox.isSelected());
+        node.getAttributes().setBool(Node.ATTR_TRAPEZOID_SIGN, trapezoidCheckBox.isSelected());
 
         // length
         if (lengthCheckBox.isSelected()) {
             try {
                 Integer length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
-                Integer oldLength = (Integer) node.getAttribute("length");
+                Integer oldLength = (Integer) node.getAttribute(Node.ATTR_LENGTH);
                 if (!length.equals(oldLength))
-                    node.setAttribute("length", length);
+                    node.setAttribute(Node.ATTR_LENGTH, length);
             } catch (ArithmeticException e) {
                 LOG.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
                 LOG.warn(e.getMessage());
             }
         } else {
-            node.removeAttribute("length");
+            node.removeAttribute(Node.ATTR_LENGTH);
         }
 
         // remove removed tracks

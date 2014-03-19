@@ -6,19 +6,19 @@ import net.parostroj.timetable.model.NodeTrack;
 public class LSNode {
 
     private int id;
-    
+
     private String name;
-    
+
     private String abbr;
 
     private LSNodeTrack[] nodeTracks;
-    
+
     private String nodeType;
-    
+
     private String interlockingPlant;
-    
+
     private int x;
-    
+
     private int y;
 
     public LSNode() {
@@ -35,7 +35,7 @@ public class LSNode {
         }
         name = node.getName();
         abbr = node.getAbbr();
-        interlockingPlant = (String)node.getAttribute("interlocking.plant");
+        interlockingPlant = (String) node.getAttribute(Node.ATTR_INTERLOCKING_PLANT);
         nodeType = node.getType().name();
         x = node.getPositionX();
         y = node.getPositionY();
