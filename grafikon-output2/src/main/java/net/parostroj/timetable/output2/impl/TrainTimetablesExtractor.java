@@ -163,7 +163,7 @@ public class TrainTimetablesExtractor {
             }
             // check line end
             if (nodeI.isLast() || nodeI.isInnerStop()) {
-                if (Boolean.TRUE.equals(nodeI.getTrack().getAttribute("line.end"))) {
+                if (Boolean.TRUE.equals(nodeI.getTrack().getAttribute(Track.ATTR_LINE_END))) {
                     row.setLineEnd(Boolean.TRUE);
                 }
             }
