@@ -272,11 +272,7 @@ public class ImportAction extends AbstractAction {
             // if train import -> move to appropriate group
             if (trainImport) {
                 Group destGroup = groupDialog.getSelectedTo();
-                Train train = (Train) o;
-                if (destGroup == null)
-                    train.removeAttribute("group");
-                else
-                    train.setAttribute("group", destGroup);
+                ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
             }
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, o));
         } else if (o instanceof Node) {
