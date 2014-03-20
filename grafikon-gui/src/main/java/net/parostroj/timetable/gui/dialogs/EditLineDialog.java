@@ -42,7 +42,6 @@ public class EditLineDialog extends javax.swing.JDialog {
     private Line line;
     private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
-    private boolean modified;
     private static final LineClass noneLineClass = new LineClass(null, ResourceLoader.getString("line.class.none"));
     private List<LineTrack> removed;
 
@@ -59,16 +58,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         this.model = model;
     }
 
-    public boolean isModified() {
-        return modified;
-    }
-
-    public void setModified(boolean modified) {
-        this.modified = modified;
-    }
-
     public void setLine(Line line) {
-        modified = false;
         this.line = line;
 
         lengthEditBox.setUnit(model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
@@ -173,7 +163,6 @@ public class EditLineDialog extends javax.swing.JDialog {
     private void writeValuesBack() {
         // recalculate flag
         boolean recalculate = false;
-        modified = true;
         int length = line.getLength();
         try {
             length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
