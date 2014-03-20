@@ -297,7 +297,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     @Override
     public String toString() {
-        return String.format("%s-%s<%d,%d>", from.getAbbr(), to.getAbbr(), length, topSpeed);
+        return String.format("%s-%s", from.getAbbr(), to.getAbbr());
     }
 
     @Override
