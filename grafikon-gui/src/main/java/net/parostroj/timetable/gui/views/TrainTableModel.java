@@ -299,22 +299,18 @@ class TrainTableModel extends AbstractTableModel {
                 // comment
                 String commentStr = Conversions.checkAndTrim((String) aValue);
                 interval.getAttributes().setRemove(TimeInterval.ATTR_COMMENT, commentStr);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case OCCUPIED_ENTRY:
                 // entry of the occupied track
                 interval.getAttributes().setBool(TimeInterval.ATTR_OCCUPIED, (Boolean) aValue);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SHUNT:
                 // entry shunting on the far side
                 interval.getAttributes().setBool(TimeInterval.ATTR_SHUNT, (Boolean) aValue);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case COMMENT_SHOWN:
                 // entry shunting on the far side
                 interval.getAttributes().setBool(TimeInterval.ATTR_COMMENT_SHOWN, (Boolean) aValue);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SET_SPEED:
                 // train speed
@@ -322,14 +318,12 @@ class TrainTableModel extends AbstractTableModel {
                 Integer currentTrainSpeed = interval.getAttributes().get(TimeInterval.ATTR_SET_SPEED, Integer.class);
                 if (trainSpeed == null && currentTrainSpeed != null) {
                     interval.removeAttribute(TimeInterval.ATTR_SET_SPEED);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 } else if (trainSpeed != null && trainSpeed > 0) {
                     if (trainSpeed > train.getTopSpeed()) {
                         trainSpeed = train.getTopSpeed();
                     }
                     if (trainSpeed != currentTrainSpeed) {
                         interval.setAttribute(TimeInterval.ATTR_SET_SPEED, trainSpeed);
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                     }
                 }
                 break;
@@ -337,7 +331,6 @@ class TrainTableModel extends AbstractTableModel {
                 // ignore length of the station in computation
                 interval.getAttributes().setBool(TimeInterval.ATTR_IGNORE_LENGTH, (Boolean) aValue);
                 this.fireTableRowsUpdated(rowIndex, rowIndex);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             default:
                 break;
