@@ -16,9 +16,13 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
 import net.parostroj.timetable.mediator.Colleague;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -96,7 +100,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         }
     }
 
-    public void setModel(ApplicationModel model) {
+    public void setModel(final ApplicationModel model) {
         this.model = model;
         this.train = model.getSelectedTrain();
         this.updateView();
@@ -125,6 +129,16 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                 }
             }
         }, IntervalSelectionMessage.class);
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
+            @Override
+            public void processTrainEvent(TrainEvent event) {
+                if (event.getSource() == model.getSelectedTrain()) {
+                    if (event.getType() == GTEventType.ATTRIBUTE) {
+                        updateView();
+                    }
+                }
+            }
+        }, TrainDiagramEvent.class);
     }
 
 
@@ -133,7 +147,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED || event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
             this.train = model.getSelectedTrain();
             this.updateView();
-        } else if ((event.getType() == ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE || event.getType() == ApplicationModelEventType.MODIFIED_TRAIN) && event.getObject() == model.getSelectedTrain()) {
+        } else if ((event.getType() == ApplicationModelEventType.MODIFIED_TRAIN) && event.getObject() == model.getSelectedTrain()) {
             this.updateView();
         }
     }

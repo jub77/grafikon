@@ -340,29 +340,23 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         Train train = model.getSelectedTrain();
-        boolean modifiedTypeName = false;
         // set values to train ...
         if (train.getType() != typeComboBox.getSelectedItem()) {
             train.setType((TrainType)typeComboBox.getSelectedItem());
-            modifiedTypeName = true;
         }
         if (!train.getAttribute(Train.ATTR_DIESEL).equals(dieselCheckBox.isSelected())) {
             train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
-            modifiedTypeName = true;
         }
         if (!train.getAttribute(Train.ATTR_ELECTRIC).equals(electricCheckBox.isSelected())) {
             train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
-            modifiedTypeName = true;
         }
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_EMPTY, emptyCheckBox.isSelected());
         if (!numberTextField.getText().equals(train.getNumber())) {
             train.setNumber(numberTextField.getText());
-            modifiedTypeName = true;
         }
         if (!descriptionTextField.getText().equals(train.getDescription())) {
             train.setDescription(descriptionTextField.getText());
-            modifiedTypeName = true;
         }
         Group sGroup = groupsComboBox.getGroupSelection().getGroup();
         train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
@@ -423,9 +417,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // fire changed event
         if (changed)
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
-        // fire event (modified attributes that affect name)
-        if (modifiedTypeName)
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_NAME_TYPE, model, train));
 
         this.setVisible(false);
     }
