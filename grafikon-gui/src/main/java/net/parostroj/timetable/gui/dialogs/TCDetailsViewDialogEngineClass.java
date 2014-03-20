@@ -6,8 +6,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.*;
@@ -162,7 +160,6 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
                     Train train = item.getTrain();
                     if (train.checkNeedSpeedRecalculate()) {
                         train.recalculate();
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                         if (warning) {
                             if (trainsStr == null)
                                 trainsStr = new StringBuilder();

@@ -11,8 +11,6 @@ import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.TimeUtil;
@@ -210,7 +208,6 @@ class TrainTableModel extends AbstractTableModel {
                     int newStartTime = TimeUtil.normalizeTime(train.getStartTime() + (newTime - oldTime));
                     train.move(newStartTime);
                     this.fireTableRowsUpdated(0, lastRow);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
             case END:
@@ -220,7 +217,6 @@ class TrainTableModel extends AbstractTableModel {
                     if (rowIndex == 0) {
                         train.move(time);
                         this.fireTableDataChanged();
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     } else {
                         int start = TimeUtil.normalizeTime(interval.getStart());
                         time = TimeUtil.normalizeTime(time);
@@ -230,7 +226,6 @@ class TrainTableModel extends AbstractTableModel {
                         if (newStop >= 0) {
                             train.changeStopTime(interval, newStop);
                             this.fireTableRowsUpdated(rowIndex - 1, lastRow);
-                            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                         }
                     }
                 }
@@ -246,7 +241,6 @@ class TrainTableModel extends AbstractTableModel {
                 if (time >= 0) {
                     train.changeStopTime(interval, time);
                     this.fireTableRowsUpdated(rowIndex - 1, lastRow);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
             case SPEED:
@@ -255,7 +249,6 @@ class TrainTableModel extends AbstractTableModel {
                 if (velocity > 0) {
                     train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
                     this.fireTableRowsUpdated(rowIndex - 2 >= 0 ? rowIndex - 2 : 0, lastRow);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 }
                 break;
             case ADDED_TIME:
@@ -274,7 +267,6 @@ class TrainTableModel extends AbstractTableModel {
                     train.changeSpeedAndAddedTime(interval, interval.getSpeed(), 0);
                 }
                 this.fireTableRowsUpdated(rowIndex, lastRow);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                 break;
             case PLATFORM:
                 // platform
@@ -284,14 +276,12 @@ class TrainTableModel extends AbstractTableModel {
                     if (newTrack != null) {
                         train.changeNodeTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     }
                 } else if (interval.getOwner() instanceof Line) {
                     LineTrack newTrack = (LineTrack) track;
                     if (newTrack != null) {
                         train.changeLineTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
-                        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
                     }
                 }
                 break;

@@ -13,8 +13,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
@@ -227,8 +225,6 @@ public class EditLineDialog extends javax.swing.JDialog {
             // recalculate collected trains
             for (Train train : trains) {
                 train.recalculate();
-                // event
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
             }
         }
     }
