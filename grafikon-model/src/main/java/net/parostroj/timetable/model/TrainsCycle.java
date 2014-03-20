@@ -8,6 +8,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -62,9 +63,12 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setDescription(String description) {
-        String oldDescription = this.description;
-        this.description = description;
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("description", oldDescription, description)));
+        if (!Conversions.compareWithNull(description, this.description)) {
+            String oldDescription = this.description;
+            this.description = description;
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("description",
+                    oldDescription, description)));
+        }
     }
 
     public String getName() {
@@ -72,9 +76,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("name", oldName, name)));
+        if (!Conversions.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("name", oldName, name)));
+        }
     }
 
     @Override
@@ -245,9 +251,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setType(TrainsCycleType type) {
-        TrainsCycleType oldType = this.type;
-        this.type = type;
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("type", oldType, type)));
+        if (!Conversions.compareWithNull(type, this.type)) {
+            TrainsCycleType oldType = this.type;
+            this.type = type;
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("type", oldType, type)));
+        }
     }
 
     @Override
