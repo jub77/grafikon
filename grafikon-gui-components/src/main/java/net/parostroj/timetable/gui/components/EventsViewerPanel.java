@@ -211,7 +211,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
         if (index != -1) {
             Triplet<Object, String, String> event = this.getEventsModel().getEventTriplet(index);
             EventsViewerTypeConverter converter = this.getConverterForType(event.first.getClass());
-            String viewString = converter.getViewString(event.first);
+            String viewString = converter != null ? converter.getViewString(event.first) : event.first.toString();
             eventTextArea.setText(viewString);
         } else
             eventTextArea.setText("");
