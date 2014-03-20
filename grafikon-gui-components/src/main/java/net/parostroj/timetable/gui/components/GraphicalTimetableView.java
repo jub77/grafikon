@@ -321,10 +321,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private void trainTypeChanged(TrainTypeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE:
-                if (event.getAttributeChange().getName().equals("color") || event.getAttributeChange().getName().equals("trainNameTemplate"))
+                if (event.getAttributeChange().checkName("color", "trainNameTemplate", "abbr")) {
                     draw.changedTextAllTrains();
                     // repaint
                     this.repaint();
+                }
                 break;
             default:
                 break;
