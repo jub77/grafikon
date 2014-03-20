@@ -147,16 +147,12 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
 
     @Override
     public Object removeAttribute(String key) {
-        Object returnValue = attributes.remove(key);
-        this.fireAttributeChanged(key, returnValue, null);
-        return returnValue;
+        return attributes.remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
         attributes.set(key, value);
-        this.fireAttributeChanged(key, oldValue, value);
     }
 
     abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);
