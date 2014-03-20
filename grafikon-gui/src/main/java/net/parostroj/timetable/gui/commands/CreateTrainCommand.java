@@ -11,8 +11,6 @@ import java.util.List;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -103,9 +101,6 @@ public class CreateTrainCommand extends Command {
 
         // add train to diagram
         model.getDiagram().addTrain(train);
-
-        // fire new event on the model
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, train));
     }
 
     @Override

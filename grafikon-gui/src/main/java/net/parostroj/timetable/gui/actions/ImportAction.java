@@ -274,7 +274,6 @@ public class ImportAction extends AbstractAction {
                 Group destGroup = groupDialog.getSelectedTo();
                 ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
             }
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, o));
         }
     }
 

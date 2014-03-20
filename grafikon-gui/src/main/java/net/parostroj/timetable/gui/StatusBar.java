@@ -72,6 +72,10 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 switch (event.getType()) {
                     case TRAINS_CYCLE_ADDED: case TRAINS_CYCLE_REMOVED:
                         updateCirculations(event.getSource());
+                        break;
+                    case TRAIN_ADDED: case TRAIN_REMOVED:
+                        updateTrainCount(event.getSource());
+                        break;
                     default:
                         // nothing
                         break;
@@ -116,7 +120,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     public void modelChanged(ApplicationModelEvent event) {
         // left
         switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED: case NEW_TRAIN: case DELETE_TRAIN:
+            case SET_DIAGRAM_CHANGED:
                 this.updateTrainCount(event.getModel().getDiagram());
                 break;
             default:
