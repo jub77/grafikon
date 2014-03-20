@@ -428,11 +428,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             if (!changeDialog.showDialog(this, item))
                 return;
             // check if the comment changed ...
-            String commentText = changeDialog.getComment().trim();
-            String newComment = "".equals(commentText) ? null : commentText;
-            if ((newComment == null && item.getComment() != null) || (newComment != null && !newComment.equals(item.getComment()))) {
-                item.setComment(newComment);
-            }
+            String commentText = Conversions.checkAndTrim(changeDialog.getComment());
+            item.setComment(commentText);
             TimeInterval from = changeDialog.getFrom();
             TimeInterval to = changeDialog.getTo();
             // new trains cycle item
