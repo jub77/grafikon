@@ -112,14 +112,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         moveToGroupMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.move.to.group"));
         moveToGroupMenuItem.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 moveToGroup();
             }
         });
         changeRouteMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("trainlist.change.route"));
         changeRouteMenuItem.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 changeRoute();
             }
         });
@@ -139,7 +139,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         listTypesMenuItem.setText(ResourceLoader.getString("trainlist.tree.types")); // NOI18N
         listTypesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -148,7 +148,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         listFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.flat")); // NOI18N
         listFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -157,7 +157,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         listGroupsMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups")); // NOI18N
         listGroupsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
@@ -166,7 +166,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         listGroupsFlatMenuItem.setText(ResourceLoader.getString("trainlist.tree.groups.flat")); // NOI18N
         listGroupsFlatMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 treeTypeActionPerformed(evt);
             }
         });
