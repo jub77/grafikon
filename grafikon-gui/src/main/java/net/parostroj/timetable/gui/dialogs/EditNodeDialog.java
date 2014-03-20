@@ -68,7 +68,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 track.setNumber(number);
             if (platform != track.isPlatform())
                 track.setPlatform(platform);
-            track.getAttributes().setRemove(Track.ATTR_LINE_END, lineEnd);
+            track.getAttributes().setBool(Track.ATTR_LINE_END, lineEnd);
         }
     }
 
