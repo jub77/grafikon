@@ -9,6 +9,10 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
  */
 public class ApplicationGTEventColleague extends GTEventsReceiverColleague {
 
+    public ApplicationGTEventColleague() {
+        super();
+    }
+
     public ApplicationGTEventColleague(boolean theMostNested) {
         super(theMostNested);
     }

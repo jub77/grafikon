@@ -16,7 +16,11 @@ import net.parostroj.timetable.model.events.TrainsCycleEvent;
  */
 public class GTEventsReceiverColleague extends AbstractColleague {
 
-    private boolean theMostNested;
+    private final boolean theMostNested;
+
+    public GTEventsReceiverColleague() {
+        this(true);
+    }
 
     public GTEventsReceiverColleague(boolean theMostNested) {
         this.theMostNested = theMostNested;
@@ -25,7 +29,7 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     @Override
     public void receiveMessage(Object message) {
         if (message instanceof GTEvent<?>) {
-            GTEvent<?> event = (GTEvent<?>)message;
+            GTEvent<?> event = (GTEvent<?>) message;
             if (theMostNested) {
                 processGTEventImpl(event.getLastNestedEvent());
             } else {
@@ -71,7 +75,7 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     public void processTrainTypeEvent(TrainTypeEvent event) {}
 
     public void processTrainsCycleEvent(TrainsCycleEvent event) {}
-    
+
     public void processGTEvent(GTEvent<?> event) {}
 
     public void processGTEventAll(GTEvent<?> event) {}
