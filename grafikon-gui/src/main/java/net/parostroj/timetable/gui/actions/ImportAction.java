@@ -15,8 +15,6 @@ import net.parostroj.timetable.filters.ExtractionFilterIterable;
 import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
@@ -124,7 +122,6 @@ public class ImportAction extends AbstractAction {
 
             private static final int CHUNK_SIZE = 10;
             private final Map<ImportComponent, Import> imports = new EnumMap<ImportComponent, Import>(ImportComponent.class);
-            private boolean trainType;
             private int size;
             private final CyclicBarrier barrier = new CyclicBarrier(2);
 
@@ -167,8 +164,6 @@ public class ImportAction extends AbstractAction {
                         public void apply(ObjectWithId item) {
                             Import i = imports.get(ImportComponent.getByComponentClass(item.getClass()));
                             if (i != null) {
-                                if (item instanceof TrainType)
-                                    trainType = true;
                                 ObjectWithId imported = i.importObject(item);
                                 processImportedObject(imported);
                             } else {
@@ -230,9 +225,6 @@ public class ImportAction extends AbstractAction {
                 importDialog.clear();
                 if (cancelled)
                     return;
-                if (trainType) {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.TRAIN_TYPES_CHANGED, model));
-                }
                 List<ImportError> errors = new LinkedList<ImportError>();
                 for (ImportComponent comp : components) {
                     Import i = imports.get(comp);
