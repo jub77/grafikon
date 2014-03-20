@@ -160,8 +160,9 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
      * @param modelChanged model is changed
      */
     public void setModelChanged(boolean modelChanged) {
-        if (modelChanged == true && this.modelChanged == false)
+        if (modelChanged == true && this.modelChanged == false) {
             this.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_CHANGED, this));
+        }
         this.modelChanged = modelChanged;
     }
 
