@@ -20,7 +20,6 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -133,9 +132,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             @Override
             public void processTrainEvent(TrainEvent event) {
                 if (event.getSource() == model.getSelectedTrain()) {
-                    if (event.getType() == GTEventType.ATTRIBUTE) {
-                        updateView();
-                    }
+                    updateView();
                 }
             }
         }, TrainDiagramEvent.class);
@@ -146,8 +143,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     public void modelChanged(ApplicationModelEvent event) {
         if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED || event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
             this.train = model.getSelectedTrain();
-            this.updateView();
-        } else if ((event.getType() == ApplicationModelEventType.MODIFIED_TRAIN) && event.getObject() == model.getSelectedTrain()) {
             this.updateView();
         }
     }

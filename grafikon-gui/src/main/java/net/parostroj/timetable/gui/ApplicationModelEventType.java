@@ -12,7 +12,7 @@ package net.parostroj.timetable.gui;
  * @author jub
  */
 public enum ApplicationModelEventType {
-    SELECTED_TRAIN_CHANGED, SET_DIAGRAM_CHANGED, MODIFIED_TRAIN,
+    SELECTED_TRAIN_CHANGED, SET_DIAGRAM_CHANGED,
     MODEL_CHANGED, MODEL_SAVED,
     ADD_LAST_OPENED, REMOVE_LAST_OPENED;
 }

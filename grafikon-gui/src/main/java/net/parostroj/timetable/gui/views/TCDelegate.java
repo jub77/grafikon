@@ -3,7 +3,6 @@
  *
  * Created on 16.9.2007, 14:31:31
  */
-
 package net.parostroj.timetable.gui.views;
 
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.Train;
@@ -90,10 +88,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
 
     public void fireEvent(Action action, TrainsCycle cycle) {
         this.fireEventImpl(action, cycle, null);
-    }
-
-    public void fireUpdatedTrain(Train train) {
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
     }
 
     private void fireEventImpl(Action action, TrainsCycle cycle, Train train) {

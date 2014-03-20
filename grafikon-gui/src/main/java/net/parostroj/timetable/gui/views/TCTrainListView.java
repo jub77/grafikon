@@ -361,8 +361,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             if (selected != null) {
                 TrainsCycleItem item = selected.getItem();
                 item.getCycle().removeItem(item);
-                delegate.fireUpdatedTrain(item.getTrain());
-
                 delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
             }
         }
@@ -404,7 +402,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         }
                     }
 
-                    delegate.fireUpdatedTrain(t);
                     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
                 }
             }
@@ -448,7 +445,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     // recalculate if needed (engine class depedency)
                     if (train.checkNeedSpeedRecalculate()) {
                         train.recalculate();
-                        delegate.fireUpdatedTrain(train);
                         if (delegate.showCorrectionWarning()) {
                             ActionUtils.showWarning(
                                     String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),

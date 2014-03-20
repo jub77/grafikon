@@ -10,8 +10,6 @@ import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -382,15 +380,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
             LOG.warn("Error creating template: {}", e.getMessage());
         }
 
-        boolean changed = false;
         // check max speed - modify if changed
         try {
             int maxSpeed = Integer.parseInt(speedTextField.getText());
             if (maxSpeed != train.getTopSpeed() && maxSpeed > 0) {
                 // modify top speed
                 train.setTopSpeed(maxSpeed);
-                // fire event
-                changed = true;
             }
             if (maxSpeed <= 0)
                 LOG.warn("Speed has to be positive number: {}", maxSpeed);
@@ -404,19 +399,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
             int timeAfter = Integer.parseInt(timeAfterTextField.getText()) * 60;
             if (timeBefore != train.getTimeBefore()) {
                 train.setTimeBefore(timeBefore);
-                changed = true;
             }
             if (timeAfter != train.getTimeAfter()) {
                 train.setTimeAfter(timeAfter);
-                changed = true;
             }
         } catch (NumberFormatException e) {
             LOG.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
         }
-
-        // fire changed event
-        if (changed)
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN, model, train));
 
         this.setVisible(false);
     }
