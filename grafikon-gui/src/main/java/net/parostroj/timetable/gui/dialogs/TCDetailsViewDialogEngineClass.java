@@ -35,7 +35,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         this.delegate = delegate;
         this.model = model;
         TrainsCycle cycle = delegate.getSelectedCycle();
-        EngineClass clazz = (EngineClass)cycle.getAttribute("engine.class");
+        EngineClass clazz = (EngineClass) cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
         this.nameTextField.setText(cycle.getName());
         this.descTextField.setText(cycle.getDescription());
         this.engineClassComboBox.removeAllItems();
@@ -155,11 +155,11 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         if (engineClassComboBox.getSelectedItem() == noneEngineClass) {
             // another check is not needed because remove attribute doesn't send
             // event for removing non-existent attribute
-            cycle.removeAttribute("engine.class");
+            cycle.removeAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
         } else {
             EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
-            if (eClass != cycle.getAttribute("engine.class")) {
-                cycle.setAttribute("engine.class", eClass);
+            if (eClass != cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS)) {
+                cycle.setAttribute(TrainsCycle.ATTR_ENGINE_CLASS, eClass);
                 boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
                 StringBuilder trainsStr = null;
                 for (TrainsCycleItem item : cycle.getItems()) {
