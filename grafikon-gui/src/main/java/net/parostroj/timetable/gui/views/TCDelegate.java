@@ -50,10 +50,19 @@ public abstract class TCDelegate implements ApplicationModelListener {
         this.model.getMediator().addColleague(new GTEventsReceiverColleague(true) {
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
-                // if selected and type ==
+                // if selected and type == item moved
                 if (event.getSource() == selected && event.getType() == GTEventType.CYCLE_ITEM_MOVED) {
                     // deselect
                     setSelectedCycle(selected);
+                }
+            }
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                // process add/remove train
+                if (event.getType() == GTEventType.TRAIN_ADDED) {
+                    fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
+                } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
+                    fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
                 }
             }
         }, TrainDiagramEvent.class);
@@ -117,12 +126,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
         switch (event.getType()) {
             case SET_DIAGRAM_CHANGED:
                 this.fireEvent(Action.DIAGRAM_CHANGE, null);
-                break;
-            case NEW_TRAIN:
-                this.fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
-                break;
-            case DELETE_TRAIN:
-                this.fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
                 break;
             default:
                 break;

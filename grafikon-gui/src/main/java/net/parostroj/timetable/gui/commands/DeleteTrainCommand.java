@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -32,7 +30,6 @@ public class DeleteTrainCommand extends Command {
         }
 
         diagram.removeTrain(train); // remove from list of trains
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_TRAIN, model, train));
     }
 
     private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModel model) {

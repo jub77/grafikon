@@ -349,12 +349,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                         buildGroupsMenu();
                         updateViewDiagramChanged();
                         break;
-                    case NEW_TRAIN:
-                        addAndSelectTrain((Train) event.getObject());
-                        break;
-                    case DELETE_TRAIN:
-                        deleteAndDeselectTrain((Train) event.getObject());
-                        break;
                     case SELECTED_TRAIN_CHANGED:
                         if (!selecting) {
                             selectTrain((Train) event.getObject());
@@ -378,6 +372,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     updateGroupsMenu(true, (Group) event.getObject());
                 } else if (event.getType() == GTEventType.GROUP_REMOVED) {
                     updateGroupsMenu(false, (Group) event.getObject());
+                } else if (event.getType() == GTEventType.TRAIN_ADDED) {
+                    addAndSelectTrain((Train) event.getObject());
+                } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
+                    deleteAndDeselectTrain((Train) event.getObject());
                 }
             }
 
@@ -499,7 +497,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 model.setSelectedTrain(null);
                 this.deleteTrain(oldTrain, oldTrain.getTrainDiagram());
                 model.getDiagram().addTrain(newTrain);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, newTrain));
                 model.setSelectedTrain(newTrain);
             } catch (Exception e) {
                 LOG.warn("Error changing route of the train.", e);
