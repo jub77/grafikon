@@ -88,14 +88,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
     }
 
     private void fireEventImpl(Action action, TrainsCycle cycle, Train train) {
-        // propagate action up
-        switch (action) {
-            case MODIFIED_CYCLE:
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_CYCLE, model, cycle));
-                break;
-            default:
-                break;
-        }
+        // handle event
         this.handleEvent(action, cycle, train);
         // call listeners
         for (Listener listener : listeners) {
