@@ -354,9 +354,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                             selectTrain((Train) event.getObject());
                         }
                         break;
-                    case MODIFIED_TRAIN_NAME_TYPE:
-                        modifyAndSelectTrain((Train) event.getObject());
-                        break;
                     default:
                         // do nothing
                         break;
@@ -389,7 +386,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
             @Override
             public void processTrainEvent(TrainEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().getName().equals("group")) {
+                if (event.getType() == GTEventType.ATTRIBUTE) {
                     modifyAndSelectTrain(event.getSource());
                 }
             }
