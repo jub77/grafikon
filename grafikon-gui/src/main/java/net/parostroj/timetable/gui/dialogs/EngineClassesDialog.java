@@ -13,8 +13,6 @@ import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
@@ -148,7 +146,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             } else {
                 row.setWeightInfo(clazz, (Integer) aValue);
             }
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
 
         public void updateInfo() {
@@ -161,14 +158,12 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             clazz.addWeightTableRow(row);
             int index = clazz.getWeightTable().indexOf(row);
             this.fireTableRowsInserted(index, index);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
 
         public void removeWeightTableRow(int index) {
             EngineClass clazz = getCurrentEngineClass();
             clazz.removeWeightTableRow(index);
             this.fireTableRowsDeleted(index, index);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
     }
     private ApplicationModel model;
@@ -381,7 +376,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
             listModel.addEngineClass(clazz);
             nameTextField.setText("");
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -393,7 +387,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                 selected--;
             }
             engineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -407,7 +400,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             }
             listModel.moveEngineClass(selected + 1, selected);
             engineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -421,7 +413,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             }
             listModel.moveEngineClass(selected - 1, selected);
             engineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -477,7 +468,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                 }
                 listModel.addEngineClass(clazz, selected + 1);
                 nameTextField.setText("");
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.ENGINE_CLASSES_CHANGED, model));
                 engineClassesList.setSelectedIndex(selected + 1);
                 engineClassesList.ensureIndexIsVisible(selected + 1);
             }
