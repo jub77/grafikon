@@ -19,6 +19,7 @@ import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.changes.DiagramChange.Action;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -66,16 +67,27 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 }
             }
 
-            private boolean isIgnoredEvent(GTEvent<?> event) {
-            	if (event.getType() == GTEventType.ATTRIBUTE && event.getSource() instanceof Node) {
-            		String attribName = event.getAttributeChange().getName();
-					return attribName.equals("positionX") || attribName.equals("positionY");
-            	} else {
-            		return false;
-            	}
-			}
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                switch (event.getType()) {
+                    case TRAINS_CYCLE_ADDED: case TRAINS_CYCLE_REMOVED:
+                        updateCirculations(event.getSource());
+                    default:
+                        // nothing
+                        break;
+                }
+            }
 
-			private String transformChange(DiagramChange change) {
+            private boolean isIgnoredEvent(GTEvent<?> event) {
+                if (event.getType() == GTEventType.ATTRIBUTE && event.getSource() instanceof Node) {
+                    String attribName = event.getAttributeChange().getName();
+                    return attribName.equals("positionX") || attribName.equals("positionY");
+                } else {
+                    return false;
+                }
+            }
+
+            private String transformChange(DiagramChange change) {
                 StringBuilder b = new StringBuilder();
                 b.append(change.getType()).append(": ");
                 b.append(change.getObject() != null ? change.getObject() : change.getType()).append(' ');
@@ -113,7 +125,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         }
         // right
         switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED: case NEW_CYCLE: case DELETED_CYCLE:
+            case SET_DIAGRAM_CHANGED:
                 this.updateCirculations(event.getModel().getDiagram());
                 break;
             default:
