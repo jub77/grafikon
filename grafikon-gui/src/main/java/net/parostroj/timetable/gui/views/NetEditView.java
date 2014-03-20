@@ -26,9 +26,9 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.graph.*;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -52,6 +52,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
+
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -124,10 +125,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 editLineDialog.setLine(selectedLine);
                 editLineDialog.setLocationRelativeTo(NetEditView.this);
                 editLineDialog.setVisible(true);
-                if (editLineDialog.isModified()) {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_LINE, model,
-                            selectedLine));
-                }
             }
             // edit node
             if (netEditModel.getSelectedNode() != null) {
@@ -135,10 +132,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 editNodeDialog.setNode(selectedNode, model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
                 editNodeDialog.setLocationRelativeTo(NetEditView.this);
                 editNodeDialog.setVisible(true);
-                if (editNodeDialog.isModified()) {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_NODE, model,
-                            selectedNode));
-                }
             }
         }
     }
@@ -332,6 +325,16 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         model.addListener(this);
         updateActions(model);
         setNet(model);
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
+            @Override
+            public void processNodeEvent(NodeEvent event) {
+                updateNode(event.getSource());
+            }
+            @Override
+            public void processLineEvent(LineEvent event) {
+                updateLine(event.getSource());
+            }
+        });
     }
 
     private void initComponents() {
@@ -464,14 +467,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     this.setNet(model);
                     model.getDiagram().addListener(this);
                 }
-                break;
-            case MODIFIED_NODE:
-                // redraw node
-                this.updateNode((Node) event.getObject());
-                break;
-            case MODIFIED_LINE:
-                // redraw line
-                this.updateLine((Line) event.getObject());
                 break;
             default:
                 break;

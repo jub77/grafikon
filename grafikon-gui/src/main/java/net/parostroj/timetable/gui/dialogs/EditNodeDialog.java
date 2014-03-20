@@ -74,7 +74,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private Node node;
     private List<EditTrack> removed;
-    private boolean modified;
 
     /** Creates new form EditNodeDialog */
     public EditNodeDialog(java.awt.Frame parent) {
@@ -90,17 +89,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
 
-    public boolean isModified() {
-        return modified;
-    }
-
-    public void setModified(boolean modified) {
-        this.modified = modified;
-    }
-
     public void setNode(Node node, LengthUnit unit) {
         this.node = node;
-        this.modified = false;
         this.lengthEditBox.setUnit(unit);
         this.updateValues();
     }
@@ -143,7 +133,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void writeValuesBack() {
-        this.modified = true;
         String newName = nameTextField.getText();
         if (!"".equals(newName) && !newName.equals(node.getName())) {
             node.setName(nameTextField.getText());
