@@ -108,7 +108,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 n.setPositionX(location.x);
                 n.setPositionY(location.y);
                 model.getDiagram().getNet().addNode(n);
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE, model, n));
                 mxCell cell = graph.getVertexToCellMap().get(n);
                 graph.moveCells(new Object[] { cell }, n.getPositionX(), n.getPositionY());
             }
@@ -165,8 +164,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     model.getDiagram().getNet().removeNode(selectedNode);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_NODE, model,
-                            selectedNode));
                 }
             }
             // delete line

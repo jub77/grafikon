@@ -275,8 +275,6 @@ public class ImportAction extends AbstractAction {
                 ((Train) o).getAttributes().setRemove(Train.ATTR_GROUP, destGroup);
             }
             model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_TRAIN, model, o));
-        } else if (o instanceof Node) {
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_NODE, model, o));
         }
     }
 
