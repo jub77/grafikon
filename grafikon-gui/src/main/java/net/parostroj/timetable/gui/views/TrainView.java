@@ -22,6 +22,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.TrainTypeEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -132,6 +133,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             @Override
             public void processTrainEvent(TrainEvent event) {
                 if (event.getSource() == model.getSelectedTrain()) {
+                    updateView();
+                }
+            }
+            @Override
+            public void processTrainTypeEvent(TrainTypeEvent event) {
+                if (model.getSelectedTrain() != null && event.getSource() == model.getSelectedTrain().getType()) {
                     updateView();
                 }
             }
