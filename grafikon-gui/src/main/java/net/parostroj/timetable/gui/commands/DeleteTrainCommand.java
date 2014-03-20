@@ -37,9 +37,7 @@ public class DeleteTrainCommand extends Command {
 
     private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModel model) {
         for (TrainsCycleItem item : new LinkedList<TrainsCycleItem>(items)) {
-            TrainsCycle cycle = item.getCycle();
             item.getCycle().removeItem(item);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETED_CYCLE, model, cycle));
         }
     }
 

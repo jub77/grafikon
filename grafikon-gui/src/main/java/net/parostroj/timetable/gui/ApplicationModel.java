@@ -167,7 +167,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
 
     private void checkModelChanged(ApplicationModelEvent event) {
         switch(event.getType()) {
-            case DELETED_CYCLE: case NEW_CYCLE: case DELETE_TRAIN:
+            case DELETE_TRAIN:
             case MODIFIED_LINE: case MODIFIED_NODE:
             case MODIFIED_TRAIN: case MODIFIED_TRAIN_NAME_TYPE:
             case NEW_TRAIN: case MODIFIED_CYCLE:
