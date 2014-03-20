@@ -50,7 +50,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupportAll;
     private AttributesListener attributesListener;
-	private TimeConverter timeConverter;
+    private TimeConverter timeConverter;
 
     /**
      * Default constructor.
@@ -502,9 +502,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     protected void fireEvent(TrainDiagramEvent e) {
+        if (e.getType() == GTEventType.ATTRIBUTE &&
+                e.getAttributeChange().checkName(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE, TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE)) {
+            this.clearCachedTrainNames();
+        }
         listenerSupportAll.fireEvent(e);
         if (e.getNestedEvent() == null) {
             listenerSupport.fireEvent(e);
+        }
+    }
+
+    protected void clearCachedTrainNames() {
+        for (Train train : trains) {
+            train.clearCachedData();
         }
     }
 
