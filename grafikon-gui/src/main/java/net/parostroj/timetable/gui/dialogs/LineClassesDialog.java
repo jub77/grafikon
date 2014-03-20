@@ -10,8 +10,6 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -211,7 +209,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
             LineClass lineClass = new LineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
             listModel.addLineClass(lineClass);
             nameTextField.setText("");
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -227,7 +224,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
                 selected--;
             }
             lineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -240,7 +236,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
                 return;
             listModel.moveLineClass(selected + 1, selected);
             lineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
         }
     }
 
@@ -253,7 +248,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
                 return;
             listModel.moveLineClass(selected - 1, selected);
             lineClassesList.setSelectedIndex(selected);
-            model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.LINE_CLASSES_CHANGED, model));
         }
     }
 
