@@ -179,8 +179,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     model.getDiagram().getNet().removeLine(selectedLine);
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.DELETE_LINE, model,
-                            selectedLine));
                 }
             }
         }
@@ -629,8 +627,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
                     l.addTrack(track);
                     model.getDiagram().getNet().addLine(srcNode, dstNode, l);
-
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.NEW_LINE, model, l));
 
                     graph.removeCells(new Object[] { result });
                 }
