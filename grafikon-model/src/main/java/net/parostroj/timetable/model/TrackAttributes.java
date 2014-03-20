@@ -8,4 +8,5 @@ package net.parostroj.timetable.model;
 public interface TrackAttributes {
 
     public static final String ATTR_LINE_END = "line.end";
+    public static final String ATTR_NUMBER = "number";
 }

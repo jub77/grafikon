@@ -64,7 +64,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     public void setNumber(String number) {
         String oldNumber = this.number;
         this.number = number;
-        this.fireAttributeChanged("number", oldNumber, number);
+        this.fireAttributeChanged(ATTR_NUMBER, oldNumber, number);
     }
 
     /**

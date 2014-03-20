@@ -16,7 +16,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, Visitable {
+public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes {
 
     /** No top speed constant. */
     public static final int NO_TOP_SPEED = Line.NO_SPEED;
@@ -124,7 +124,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         this.clearCachedData();
         String oldNumber = this.number;
         this.number = number;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("number", oldNumber, number)));
+        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
     }
 
     /**
@@ -169,7 +169,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         this.clearCachedData();
         String oldDesc = this.description;
         this.description = description;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("description", oldDesc, description)));
+        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc, description)));
     }
 
     /**
@@ -185,7 +185,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
     public void setTopSpeed(int topSpeed) {
         int oldSpeed = this.topSpeed;
         this.topSpeed = topSpeed;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("topSpeed", oldSpeed, topSpeed)));
+        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
         if (!timeIntervalList.isEmpty()) {
             this.recalculate(this.topSpeed);
         }
@@ -210,7 +210,7 @@ public class Train implements TrainAttributes, AttributesHolder, ObjectWithId, V
         this.clearCachedData();
         TrainType oldType = this.type;
         this.type = type;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange("type", oldType, type)));
+        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
     }
 
     /**
