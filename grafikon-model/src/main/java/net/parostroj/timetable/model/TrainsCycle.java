@@ -66,7 +66,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!Conversions.compareWithNull(description, this.description)) {
             String oldDescription = this.description;
             this.description = description;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("description",
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_DESCRIPTION,
                     oldDescription, description)));
         }
     }
@@ -79,7 +79,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!Conversions.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("name", oldName, name)));
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -254,7 +254,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!Conversions.compareWithNull(type, this.type)) {
             TrainsCycleType oldType = this.type;
             this.type = type;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange("type", oldType, type)));
+            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
         }
     }
 
