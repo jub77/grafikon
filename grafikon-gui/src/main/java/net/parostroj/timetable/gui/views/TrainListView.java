@@ -357,9 +357,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     case MODIFIED_TRAIN_NAME_TYPE:
                         modifyAndSelectTrain((Train) event.getObject());
                         break;
-                    case TRAIN_TYPES_CHANGED:
-                        updateViewDiagramChanged();
-                        break;
                     default:
                         // do nothing
                         break;
@@ -368,14 +365,25 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
             @Override
             public void processTrainDiagramEvent(TrainDiagramEvent event) {
-                if (event.getType() == GTEventType.GROUP_ADDED) {
-                    updateGroupsMenu(true, (Group) event.getObject());
-                } else if (event.getType() == GTEventType.GROUP_REMOVED) {
-                    updateGroupsMenu(false, (Group) event.getObject());
-                } else if (event.getType() == GTEventType.TRAIN_ADDED) {
-                    addAndSelectTrain((Train) event.getObject());
-                } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
-                    deleteAndDeselectTrain((Train) event.getObject());
+                switch (event.getType()) {
+                    case GROUP_ADDED:
+                        updateGroupsMenu(true, (Group) event.getObject());
+                        break;
+                    case GROUP_REMOVED:
+                        updateGroupsMenu(false, (Group) event.getObject());
+                        break;
+                    case TRAIN_ADDED:
+                        addAndSelectTrain((Train) event.getObject());
+                        break;
+                    case TRAIN_REMOVED:
+                        deleteAndDeselectTrain((Train) event.getObject());
+                        break;
+                    case TRAIN_TYPE_ADDED: case TRAIN_TYPE_REMOVED: case TRAIN_TYPE_MOVED:
+                        updateViewDiagramChanged();
+                        break;
+                    default:
+                        // nothing
+                        break;
                 }
             }
 

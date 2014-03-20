@@ -17,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -375,8 +373,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
             typesModel.remove(trainTypesList.getSelectedIndex());
             this.updateValuesForTrainType(null);
-            // fire event
-            this.fireEvent();
         }
     }
 
@@ -437,8 +433,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             for (Train train : model.getDiagram().getTrains())
                 if (train.getType() == type)
                     train.clearCachedData();
-
-            this.fireEvent();
         }
     }
 
@@ -449,7 +443,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (dest != index) {
                 trainTypesList.setSelectedIndex(dest);
                 trainTypesList.ensureIndexIsVisible(dest);
-                this.fireEvent();
             }
         }
     }
@@ -461,7 +454,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             if (dest != index) {
                 trainTypesList.setSelectedIndex(dest);
                 trainTypesList.ensureIndexIsVisible(dest);
-                this.fireEvent();
             }
         }
     }
@@ -497,7 +489,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         int index = typesModel.add(type);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
-        this.fireEvent();
     }
 
     private void nameTemplateCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {
@@ -518,10 +509,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void showErrorDialog(String key) {
         JOptionPane.showMessageDialog(this, ResourceLoader.getString(key), ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-    }
-
-    private void fireEvent() {
-        model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.TRAIN_TYPES_CHANGED, model));
     }
 
     private javax.swing.JTextField abbrTextField;
