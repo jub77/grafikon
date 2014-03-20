@@ -158,8 +158,8 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSModelInfo lsInfo) {
         if (lsInfo != null) {
-            diagram.setAttribute("scale", Scale.fromString(lsInfo.getScale()));
-            diagram.setAttribute("time.scale", Double.valueOf(lsInfo.getTimeScale()));
+            diagram.setAttribute(TrainDiagram.ATTR_SCALE, Scale.fromString(lsInfo.getScale()));
+            diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.valueOf(lsInfo.getTimeScale()));
         }
     }
 
