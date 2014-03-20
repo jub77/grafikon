@@ -19,9 +19,7 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
+import net.parostroj.timetable.model.events.*;
 
 /**
  * Delegate for actions over trains cycles.
@@ -45,7 +43,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
     public TCDelegate(ApplicationModel model) {
         this.model = model;
         this.model.addListener(this);
-        this.model.getMediator().addColleague(new GTEventsReceiverColleague(true) {
+        this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
                 // if selected and type == item moved
@@ -63,7 +61,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
                     fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
                 }
             }
-        }, TrainDiagramEvent.class);
+        }, GTEvent.class);
         this.listeners = new HashSet<Listener>();
     }
 

@@ -48,7 +48,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final GTListenerTrainDiagramImpl listener;
     private final ChangesTrackerImpl changesTracker;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
-    private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupportAll;
+    private final GTListenerSupport<AllEventListener, GTEvent<?>> listenerSupportAll;
     private AttributesListener attributesListener;
     private TimeConverter timeConverter;
 
@@ -78,16 +78,16 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 listener.trainDiagramChanged(event);
             }
         });
-        this.listenerSupportAll = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(new GTEventSender<TrainDiagramListener, TrainDiagramEvent>() {
+        this.listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(new GTEventSender<AllEventListener, GTEvent<?>>() {
 
             @Override
-            public void fireEvent(TrainDiagramListener listener, TrainDiagramEvent event) {
-                listener.trainDiagramChanged(event);
+            public void fireEvent(AllEventListener listener, GTEvent<?> event) {
+                listener.changed(event);
             }
         });
-        this.net.addListener(listener);
+        this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
-        this.addListenerWithNested(changesTracker);
+        this.addAllEventListener(changesTracker);
     }
 
     /**
@@ -99,10 +99,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public void setNet(Net net) {
         if (this.net != null) {
-            this.net.removeListener(listener);
+            this.net.removeAllEventListener(listener);
         }
         this.net = net;
-        this.net.addListener(listener);
+        this.net.addAllEventListener(listener);
     }
 
     public ChangesTracker getChangesTracker() {
@@ -488,17 +488,16 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         listenerSupport.removeListener(listener);
     }
 
-    public void addListenerWithNested(TrainDiagramListener listener) {
+    public void addAllEventListener(AllEventListener listener) {
         listenerSupportAll.addListener(listener);
     }
 
-    public void removeListenerWithNested(TrainDiagramListener listener) {
+    public void removeAllEventListener(AllEventListener listener) {
         listenerSupportAll.removeListener(listener);
     }
 
-    protected void fireNestedEvent(GTEvent<?> nestedEvent) {
-        TrainDiagramEvent event = new TrainDiagramEvent(this, nestedEvent);
-        this.fireEvent(event);
+    protected void fireNestedEvent(GTEvent<?> event) {
+        listenerSupportAll.fireEvent(event);
     }
 
     protected void fireEvent(TrainDiagramEvent e) {
@@ -506,10 +505,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 e.getAttributeChange().checkName(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE, TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE)) {
             this.clearCachedTrainNames();
         }
+        listenerSupport.fireEvent(e);
         listenerSupportAll.fireEvent(e);
-        if (e.getNestedEvent() == null) {
-            listenerSupport.fireEvent(e);
-        }
     }
 
     protected void clearCachedTrainNames() {

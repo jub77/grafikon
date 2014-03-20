@@ -13,10 +13,6 @@ public class ApplicationGTEventColleague extends GTEventsReceiverColleague {
         super();
     }
 
-    public ApplicationGTEventColleague(boolean theMostNested) {
-        super(theMostNested);
-    }
-
     @Override
     public void receiveMessage(Object message) {
         // process gt events

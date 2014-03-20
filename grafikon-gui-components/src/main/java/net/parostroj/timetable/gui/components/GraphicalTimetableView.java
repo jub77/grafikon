@@ -162,11 +162,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         return editRoutesDialog;
     }
 
-    private TrainDiagramListener currentListener;
+    private AllEventListener currentListener;
 
     public void setTrainDiagram(TrainDiagram diagram) {
         if (currentListener != null && this.diagram != null) {
-            this.diagram.removeListener(currentListener);
+            this.diagram.removeAllEventListener(this.currentListener);
         }
         if (diagram == null) {
             this.diagram = null;
@@ -176,7 +176,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             this.diagram = diagram;
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
-            this.currentListener = new TrainDiagramVisitEventListener(new AbstractEventVisitor() {
+            this.currentListener = new VisitEventListener(new AbstractEventVisitor() {
 
                 @Override
                 public void visit(TrainDiagramEvent event) {
@@ -231,7 +231,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                     nodeChanged(event);
                 }
             });
-            this.diagram.addListenerWithNested(this.currentListener);
+            this.diagram.addAllEventListener(this.currentListener);
             this.setTimeRange();
             this.setGTWidth(settings);
             if (diagram.getRoutes().size() > 0) {

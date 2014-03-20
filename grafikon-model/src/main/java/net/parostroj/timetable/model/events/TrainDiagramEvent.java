@@ -5,7 +5,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
  * Train diagram event.
- * 
+ *
  * @author jub
  */
 public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
@@ -15,16 +15,11 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
     public TrainDiagramEvent(TrainDiagram diagram, GTEventType type) {
         super(diagram, type);
     }
-    
-    public TrainDiagramEvent(TrainDiagram diagram, GTEvent<?> event) {
-        super(diagram, event);
-    }
 
     public TrainDiagramEvent(TrainDiagram diagram, GTEventType type, Object object) {
         super(diagram, type);
         this.object = object;
     }
-
 
     public TrainDiagramEvent(TrainDiagram diagram, AttributeChange attributeChange) {
         super(diagram, GTEventType.ATTRIBUTE);
