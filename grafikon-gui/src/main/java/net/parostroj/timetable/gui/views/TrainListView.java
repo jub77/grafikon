@@ -34,9 +34,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.tree2.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -382,6 +380,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                         // nothing
                         break;
                 }
+            }
+
+            @Override
+            public void processTrainTypeEvent(TrainTypeEvent event) {
+                updateViewDiagramChanged();
             }
 
             @Override
