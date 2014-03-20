@@ -428,11 +428,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                     type.setTrainCompleteNameTemplate(null);
             }
             typesModel.updated(trainTypesList.getSelectedIndex());
-
-            // clear data for templates
-            for (Train train : model.getDiagram().getTrains())
-                if (train.getType() == type)
-                    train.clearCachedData();
         }
     }
 

@@ -555,7 +555,6 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         boolean recalculateUpate = false;
-        boolean clear = false;
 
         // get templates values
         TrainsData trainsData = diagram.getTrainsData();
@@ -595,11 +594,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         // set templates
         if (!completeName.equals(trainsData.getTrainCompleteNameTemplate())) {
             trainsData.setTrainCompleteNameTemplate(completeName);
-            clear = true;
         }
         if (!name.equals(trainsData.getTrainNameTemplate())) {
             trainsData.setTrainNameTemplate(name);
-            clear = true;
         }
 
         // set sorting
@@ -687,11 +684,6 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, unitObject == NO_UNIT ? null : unitObject);
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, unitObject == NO_UNIT ? null : speedUnitObject);
-
-        // clear cached information for train names
-        if (clear)
-            for (Train train : diagram.getTrains())
-                train.clearCachedData();
 
         this.updateValues();
 
