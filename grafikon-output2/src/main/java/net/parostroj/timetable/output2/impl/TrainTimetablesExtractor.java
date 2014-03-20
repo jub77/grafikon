@@ -156,8 +156,8 @@ public class TrainTimetablesExtractor {
             }
 
             // comment
-            if (Boolean.TRUE.equals(nodeI.getAttribute("comment.shown"))) {
-                String comment = (String)nodeI.getAttribute("comment");
+            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_COMMENT_SHOWN))) {
+                String comment = (String)nodeI.getAttribute(TimeInterval.ATTR_COMMENT);
                 if (comment != null && !comment.trim().equals(""))
                     row.setComment(comment);
             }
@@ -168,11 +168,11 @@ public class TrainTimetablesExtractor {
                 }
             }
             // check occupied track
-            if (Boolean.TRUE.equals(nodeI.getAttribute("occupied"))) {
+            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_OCCUPIED))) {
                 row.setOccupied(Boolean.TRUE);
             }
             // check shunt
-            if (Boolean.TRUE.equals(nodeI.getAttribute("shunt"))) {
+            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_SHUNT))) {
                 row.setShunt(Boolean.TRUE);
             }
 

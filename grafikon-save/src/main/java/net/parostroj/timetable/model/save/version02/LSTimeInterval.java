@@ -15,9 +15,9 @@ public class LSTimeInterval {
     private int trackId;
 
     private String type;
-    
+
     private int direction;
-    
+
     private String comment;
 
     private LSAttributes attributes;
@@ -29,7 +29,7 @@ public class LSTimeInterval {
         speed = interval.getSpeed();
         trackId = data.getIdForObject(interval.getTrack());
         direction = (interval.getDirection() != null) ? interval.getDirection().getNumerical() : 0;
-        comment = (String)interval.getAttribute("comment");
+        comment = (String) interval.getAttribute(TimeInterval.ATTR_COMMENT);
         attributes = new LSAttributes(interval.getAttributes(), data);
     }
 
