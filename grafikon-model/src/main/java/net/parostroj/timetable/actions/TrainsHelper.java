@@ -259,7 +259,7 @@ public class TrainsHelper {
      * @return cycle item
      */
     public static EngineClass getEngineClass(TrainsCycleItem item) {
-        return (EngineClass) item.getCycle().getAttribute("engine.class");
+        return (EngineClass) item.getCycle().getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
     }
 
     /**

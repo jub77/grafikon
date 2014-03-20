@@ -60,9 +60,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             EngineClass clazz = (EngineClass) getElementAt(index);
             // remove engine class from engine cycles
             for (TrainsCycle cycle : model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE)) {
-                EngineClass eClass = (EngineClass) cycle.getAttribute("engine.class");
+                EngineClass eClass = (EngineClass) cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
                 if (eClass == clazz)
-                    cycle.removeAttribute("engine.class");
+                    cycle.removeAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
             }
             // remove from model
             model.getDiagram().removeEngineClass(clazz);

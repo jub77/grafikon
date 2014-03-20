@@ -11,13 +11,13 @@ import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * Transformation of texts.
- * 
+ *
  * @author jub
  */
 public class TransformUtil {
     /**
      * creates name of the station.
-     * 
+     *
      * @param node station
      * @param stop abbreviation for stops
      * @param stopFreight abbreviation for stops with freight
@@ -31,7 +31,7 @@ public class TransformUtil {
             name += " " + stopFreight;
         return name;
     }
-    
+
     public static String getFromAbbr(TimeInterval i) {
         Node node = null;
         boolean found = false;
@@ -60,7 +60,7 @@ public class TransformUtil {
         else
             return null;
     }
-    
+
     public static String getToAbbr(TimeInterval i) {
         Node node = null;
         boolean found = false;
@@ -92,15 +92,15 @@ public class TransformUtil {
         else
             return null;
     }
-    
+
     public static String getEngineCycleDescription(TrainsCycle ec) {
         if (!TrainsCycleType.ENGINE_CYCLE.equals(ec.getType().getName())) {
             throw new IllegalArgumentException("Engine cycle expected.");
         }
-        
+
         String result = (ec.getDescription() != null) ? ec.getDescription().trim() : "";
-        if (ec.getAttribute("engine.class") != null) {
-            EngineClass cl = (EngineClass)ec.getAttribute("engine.class");
+        if (ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS) != null) {
+            EngineClass cl = (EngineClass) ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
             String desc = result;
             result = cl.getName();
             if (!"".equals(desc)) {
@@ -111,7 +111,7 @@ public class TransformUtil {
     }
 
     public static String getEngineDescription(TrainsCycle ec) {
-        EngineClass cl = (EngineClass)ec.getAttribute("engine.class");
+        EngineClass cl = (EngineClass) ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
         if (cl != null)
             return cl.getName();
         else {

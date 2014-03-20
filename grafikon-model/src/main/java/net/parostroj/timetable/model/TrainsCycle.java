@@ -17,7 +17,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable {
+public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainsCycleAttributes {
 
     private final String id;
     private String name;
