@@ -11,6 +11,7 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -140,16 +141,11 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // write values back and close
         TrainsCycle cycle = delegate.getSelectedCycle();
-        if (nameTextField.getText() != null && !"".equals(nameTextField.getText())
-                && !nameTextField.getText().equals(cycle.getName()))
-            cycle.setName(nameTextField.getText().trim());
-        if (descTextField.getText() == null || "".equals(descTextField.getText().trim())) {
-            if (cycle.getDescription() != null)
-                cycle.setDescription(null);
-        } else {
-            if (!descTextField.getText().equals(cycle.getDescription()))
-                cycle.setDescription(descTextField.getText().trim());
+        String name = Conversions.checkAndTrim(nameTextField.getText());
+        if (name != null) {
+            cycle.setName(name);
         }
+        cycle.setDescription(Conversions.checkAndTrim(descTextField.getText()));
 
         // write back engine class
         if (engineClassComboBox.getSelectedItem() == noneEngineClass) {
