@@ -172,7 +172,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
             case MODIFIED_TRAIN: case MODIFIED_TRAIN_NAME_TYPE:
             case NEW_TRAIN: case MODIFIED_CYCLE:
             case ROUTES_MODIFIED: case NEW_LINE: case NEW_NODE: case MODIFIED_TRAIN_ATTRIBUTE:
-            case TRAIN_TYPES_CHANGED: case ENGINE_CLASSES_CHANGED: case DELETE_LINE:
+            case TRAIN_TYPES_CHANGED: case DELETE_LINE:
             case DELETE_NODE:
                 this.setModelChanged(true);
                 break;
