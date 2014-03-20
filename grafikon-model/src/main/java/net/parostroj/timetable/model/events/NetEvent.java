@@ -5,12 +5,12 @@ import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
  * Net event.
- * 
+ *
  * @author jub
  */
 public class NetEvent extends GTEvent<Net> {
 
-    private Object object;
+    private final Object object;
     private int fromIndex;
     private int toIndex;
 
@@ -23,10 +23,6 @@ public class NetEvent extends GTEvent<Net> {
         this(net, type, object);
         this.fromIndex = fromIndex;
         this.toIndex = toIndex;
-    }
-
-    public NetEvent(Net net, GTEvent<?> event) {
-        super(net, event);
     }
 
     public Object getObject() {
@@ -46,9 +42,6 @@ public class NetEvent extends GTEvent<Net> {
         StringBuilder builder = new StringBuilder("NetEvent[");
         builder.append(getSource()).append(',');
         builder.append(getType());
-        if (getType() == GTEventType.NESTED) {
-            builder.append(',').append(getNestedEvent());
-        }
         builder.append(']');
         return builder.toString();
     }

@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import net.parostroj.timetable.model.changes.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class ChangesTrackerImpl implements TrainDiagramListener, ChangesTracker {
+class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChangesTrackerImpl.class.getName());
 
@@ -43,7 +43,6 @@ class ChangesTrackerImpl implements TrainDiagramListener, ChangesTracker {
         if (!enabled)
             return;
 
-        event = event.getLastNestedEvent();
         // check if the event belongs to tracked events
         if (!isTracked(event))
             return;
@@ -95,7 +94,7 @@ class ChangesTrackerImpl implements TrainDiagramListener, ChangesTracker {
     }
 
     @Override
-    public void trainDiagramChanged(TrainDiagramEvent event) {
+    public void changed(GTEvent<?> event) {
         this.receiveEvent(event);
     }
 

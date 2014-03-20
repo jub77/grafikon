@@ -47,7 +47,7 @@ public class FloatingWindowsFactory {
             }
         });
         final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainconflicts.title", "train.conflicts");
-        mediator.addColleague(new ApplicationGTEventColleague(true){
+        mediator.addColleague(new ApplicationGTEventColleague(){
 
             @Override
             public void processTrainEvent(TrainEvent event) {
@@ -125,7 +125,7 @@ public class FloatingWindowsFactory {
                 super.setVisible(b);
             }
         };
-        mediator.addColleague(new ApplicationGTEventColleague(true){
+        mediator.addColleague(new ApplicationGTEventColleague() {
 
             @Override
             public void receiveMessage(Object message) {
@@ -305,7 +305,7 @@ public class FloatingWindowsFactory {
 
     private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final CirculationViewPanel panel = new CirculationViewPanel();
-        mediator.addColleague(new ApplicationGTEventColleague(true) {
+        mediator.addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED)

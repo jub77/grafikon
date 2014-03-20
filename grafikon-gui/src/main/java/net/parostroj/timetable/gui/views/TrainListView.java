@@ -339,7 +339,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         groupsMenuItem.setAction(new EditGroupsAction(model));
         groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
         treePopupMenu.add(groupsMenuItem);
-        this.model.getMediator().addColleague(new ApplicationGTEventColleague(true) {
+        this.model.getMediator().addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
                 switch (event.getType()) {

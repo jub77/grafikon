@@ -10,15 +10,9 @@ import net.parostroj.timetable.visitors.EventVisitor;
  */
 public class GTEventsReceiverColleague extends AbstractColleague {
 
-    private final boolean theMostNested;
     private final EventVisitor visitor;
 
     public GTEventsReceiverColleague() {
-        this(true);
-    }
-
-    public GTEventsReceiverColleague(boolean theMostNested) {
-        this.theMostNested = theMostNested;
         this.visitor = new EventVisitor() {
             @Override
             public void visit(OutputTemplateEvent event) {
@@ -75,14 +69,7 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     @Override
     public void receiveMessage(Object message) {
         if (message instanceof GTEvent<?>) {
-            GTEvent<?> event = (GTEvent<?>) message;
-            if (theMostNested) {
-                processGTEventImpl(event.getLastNestedEvent());
-            } else {
-                for (GTEvent<?> e : event) {
-                    processGTEventImpl(e);
-                }
-            }
+            processGTEventImpl((GTEvent<?>) message);
         }
     }
 

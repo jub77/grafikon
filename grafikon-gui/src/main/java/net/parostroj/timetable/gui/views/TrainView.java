@@ -20,9 +20,7 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainEvent;
-import net.parostroj.timetable.model.events.TrainTypeEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -142,7 +140,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     updateView();
                 }
             }
-        }, TrainDiagramEvent.class);
+        }, GTEvent.class);
     }
 
 

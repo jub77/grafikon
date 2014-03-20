@@ -49,7 +49,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     public void setModel(ApplicationModel model) {
-        model.getMediator().addColleague(new GTEventsReceiverColleague(true) {
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
 
             private final TrackedCheckVisitor tcv = new TrackedCheckVisitor();
             private final TransformVisitor tv = new TransformVisitor();
