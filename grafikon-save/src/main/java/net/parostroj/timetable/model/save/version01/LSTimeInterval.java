@@ -15,9 +15,9 @@ public class LSTimeInterval {
     private int stationTrackId;
 
     private String type;
-    
+
     private int direction;
-    
+
     private String comment;
 
     public LSTimeInterval(TimeInterval interval, LSTransformationData data) {
@@ -27,7 +27,7 @@ public class LSTimeInterval {
         speed = interval.getSpeed();
         stationTrackId = data.getIdForObject(interval.getTrack());
         direction = (interval.getDirection() != null) ? interval.getDirection().getNumerical() : 0;
-        comment = (String)interval.getAttribute("comment");
+        comment = (String) interval.getAttribute(TimeInterval.ATTR_COMMENT);
     }
 
     public LSTimeInterval() {

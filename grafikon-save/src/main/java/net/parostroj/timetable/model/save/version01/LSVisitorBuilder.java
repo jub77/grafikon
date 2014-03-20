@@ -127,7 +127,7 @@ public class LSVisitorBuilder implements LSVisitor {
         RouteSegment part = (RouteSegment) ids.get(lsInterval.getRoutePartId());
         TimeInterval interval = new TimeInterval(createId(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track, 0);
         if (lsInterval.getComment() != null && !lsInterval.getComment().equals(""))
-            interval.setAttribute("comment", lsInterval.getComment());
+            interval.setAttribute(TimeInterval.ATTR_COMMENT, lsInterval.getComment());
 
         // add interval to train
         lastTrain.addInterval(interval);

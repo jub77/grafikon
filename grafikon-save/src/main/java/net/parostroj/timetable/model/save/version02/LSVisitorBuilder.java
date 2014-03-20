@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
@@ -144,7 +145,7 @@ public class LSVisitorBuilder implements LSVisitor {
         RouteSegment part = (RouteSegment) ids.get(lsInterval.getOwnerId());
         TimeInterval interval = new TimeInterval(UUID.randomUUID().toString(), lastTrain, part, lsInterval.getStart(), lsInterval.getEnd(), lsInterval.getSpeed(), TimeIntervalDirection.toTimeIntervalDirection(lsInterval.getDirection()), track, 0);
         if (lsInterval.getComment() != null && !lsInterval.getComment().equals(""))
-            interval.setAttribute("comment", lsInterval.getComment());
+            interval.setAttribute(TimeInterval.ATTR_COMMENT, lsInterval.getComment());
 
         // add interval to train
         lastTrain.addInterval(interval);

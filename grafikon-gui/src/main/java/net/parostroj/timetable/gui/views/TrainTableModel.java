@@ -144,18 +144,18 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             // comment
             case COMMENT:
-                retValue = interval.getAttribute("comment");
+                retValue = interval.getAttribute(TimeInterval.ATTR_COMMENT);
                 break;
             case OCCUPIED_ENTRY:
-                Boolean value = (Boolean)interval.getAttribute("occupied");
+                Boolean value = (Boolean)interval.getAttribute(TimeInterval.ATTR_OCCUPIED);
                 retValue = Boolean.TRUE.equals(value);
                 break;
             case SHUNT:
-                value = (Boolean)interval.getAttribute("shunt");
+                value = (Boolean)interval.getAttribute(TimeInterval.ATTR_SHUNT);
                 retValue = Boolean.TRUE.equals(value);
                 break;
             case COMMENT_SHOWN:
-                value = (Boolean)interval.getAttribute("comment.shown");
+                value = (Boolean)interval.getAttribute(TimeInterval.ATTR_COMMENT_SHOWN);
                 retValue = Boolean.TRUE.equals(value);
                 break;
             case REAL_STOP:
@@ -298,22 +298,22 @@ class TrainTableModel extends AbstractTableModel {
             case COMMENT:
                 // comment
                 String commentStr = Conversions.checkAndTrim((String) aValue);
-                interval.getAttributes().setRemove("comment", commentStr);
+                interval.getAttributes().setRemove(TimeInterval.ATTR_COMMENT, commentStr);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case OCCUPIED_ENTRY:
                 // entry of the occupied track
-                interval.getAttributes().setBool("occupied", (Boolean) aValue);
+                interval.getAttributes().setBool(TimeInterval.ATTR_OCCUPIED, (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SHUNT:
                 // entry shunting on the far side
-                interval.getAttributes().setBool("shunt", (Boolean) aValue);
+                interval.getAttributes().setBool(TimeInterval.ATTR_SHUNT, (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case COMMENT_SHOWN:
                 // entry shunting on the far side
-                interval.getAttributes().setBool("comment.shown", (Boolean) aValue);
+                interval.getAttributes().setBool(TimeInterval.ATTR_COMMENT_SHOWN, (Boolean) aValue);
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODIFIED_TRAIN_ATTRIBUTE, model, train));
                 break;
             case SET_SPEED:

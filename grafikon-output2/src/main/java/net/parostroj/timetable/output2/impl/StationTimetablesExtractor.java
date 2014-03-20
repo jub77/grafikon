@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -90,8 +91,8 @@ public class StationTimetablesExtractor {
                 this.addCycles(interval, type, row.getCycle());
             }
         }
-        row.setComment((String)interval.getAttribute("comment"));
-        row.setOccupied(Boolean.TRUE.equals(interval.getAttribute("occupied")));
+        row.setComment((String) interval.getAttribute(TimeInterval.ATTR_COMMENT));
+        row.setOccupied(Boolean.TRUE.equals(interval.getAttribute(TimeInterval.ATTR_OCCUPIED)));
     }
 
     private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles) {
