@@ -58,6 +58,15 @@ public class AttributeChange {
         this.category = category;
     }
 
+    public boolean checkName(String... names) {
+        for (String name : names) {
+            if (this.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder('[');
