@@ -129,7 +129,10 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
             int drivers = diagram.getCycles(TrainsCycleType.DRIVER_CYCLE).size();
             int engines = diagram.getCycles(TrainsCycleType.ENGINE_CYCLE).size();
             int trainUnits = diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).size();
-            String text = String.format("%d, %d, %d", engines, trainUnits, drivers);
+            String text = String.format("%s: %d, %s: %d, %s: %d",
+                    ResourceLoader.getString("sbar.engines"), engines,
+                    ResourceLoader.getString("sbar.train.units"), trainUnits,
+                    ResourceLoader.getString("sbar.drivers"), drivers);
             updateLeft(text);
         }
     }
@@ -165,10 +168,10 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     private void initComponents() {
 
         left = new javax.swing.JTextField();
-        left.setColumns(15);
+        left.setColumns(25);
         center = new javax.swing.JTextField();
         right = new javax.swing.JTextField();
-        right.setColumns(15);
+        right.setColumns(10);
 
         left.setEditable(false);
 
