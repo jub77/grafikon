@@ -315,17 +315,14 @@ class TrainTableModel extends AbstractTableModel {
             case SET_SPEED:
                 // train speed
                 Integer trainSpeed = (Integer) aValue;
-                Integer currentTrainSpeed = interval.getAttributes().get(TimeInterval.ATTR_SET_SPEED, Integer.class);
-                if (trainSpeed == null && currentTrainSpeed != null) {
-                    interval.removeAttribute(TimeInterval.ATTR_SET_SPEED);
-                } else if (trainSpeed != null && trainSpeed > 0) {
+                if (trainSpeed != null && trainSpeed > 0) {
                     if (trainSpeed > train.getTopSpeed()) {
                         trainSpeed = train.getTopSpeed();
                     }
-                    if (trainSpeed != currentTrainSpeed) {
-                        interval.setAttribute(TimeInterval.ATTR_SET_SPEED, trainSpeed);
-                    }
+                } else {
+                    trainSpeed = null;
                 }
+                interval.getAttributes().setRemove(TimeInterval.ATTR_SET_SPEED, trainSpeed);
                 break;
             case IGNORE_LENGTH:
                 // ignore length of the station in computation
