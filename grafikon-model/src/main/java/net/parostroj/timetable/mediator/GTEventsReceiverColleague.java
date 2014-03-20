@@ -1,13 +1,7 @@
 package net.parostroj.timetable.mediator;
 
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.LineEvent;
-import net.parostroj.timetable.model.events.NetEvent;
-import net.parostroj.timetable.model.events.NodeEvent;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainEvent;
-import net.parostroj.timetable.model.events.TrainTypeEvent;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.visitors.EventVisitor;
 
 /**
  * Colleague for receiving and processing events.
@@ -17,6 +11,7 @@ import net.parostroj.timetable.model.events.TrainsCycleEvent;
 public class GTEventsReceiverColleague extends AbstractColleague {
 
     private final boolean theMostNested;
+    private final EventVisitor visitor;
 
     public GTEventsReceiverColleague() {
         this(true);
@@ -24,6 +19,57 @@ public class GTEventsReceiverColleague extends AbstractColleague {
 
     public GTEventsReceiverColleague(boolean theMostNested) {
         this.theMostNested = theMostNested;
+        this.visitor = new EventVisitor() {
+            @Override
+            public void visit(OutputTemplateEvent event) {
+                processGTEvent(event);
+            }
+
+            @Override
+            public void visit(EngineClassEvent event) {
+                processGTEvent(event);
+            }
+
+            @Override
+            public void visit(TextItemEvent event) {
+                processGTEvent(event);
+            }
+
+            @Override
+            public void visit(TrainsCycleEvent event) {
+                processTrainsCycleEvent(event);
+            }
+
+            @Override
+            public void visit(TrainTypeEvent event) {
+                processTrainTypeEvent(event);
+            }
+
+            @Override
+            public void visit(TrainEvent event) {
+                processTrainEvent(event);
+            }
+
+            @Override
+            public void visit(LineEvent event) {
+                processLineEvent(event);
+            }
+
+            @Override
+            public void visit(NodeEvent event) {
+                processNodeEvent(event);
+            }
+
+            @Override
+            public void visit(NetEvent event) {
+                processNetEvent(event);
+            }
+
+            @Override
+            public void visit(TrainDiagramEvent event) {
+                processTrainDiagramEvent(event);
+            }
+        };
     }
 
     @Override
@@ -42,22 +88,7 @@ public class GTEventsReceiverColleague extends AbstractColleague {
 
     private void processGTEventImpl(GTEvent<?> event) {
         // process by specific method
-        if (event instanceof LineEvent)
-            processLineEvent((LineEvent)event);
-        else if (event instanceof NetEvent)
-            processNetEvent((NetEvent)event);
-        else if (event instanceof NodeEvent)
-            processNodeEvent((NodeEvent)event);
-        else if (event instanceof TrainDiagramEvent)
-            processTrainDiagramEvent((TrainDiagramEvent)event);
-        else if (event instanceof TrainEvent)
-            processTrainEvent((TrainEvent)event);
-        else if (event instanceof TrainTypeEvent)
-            processTrainTypeEvent((TrainTypeEvent)event);
-        else if (event instanceof TrainsCycleEvent)
-            processTrainsCycleEvent((TrainsCycleEvent)event);
-        else
-            processGTEvent(event);
+        event.accept(this.visitor);
         // process by common method
         processGTEventAll(event);
     }
