@@ -116,7 +116,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         lineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(6);
@@ -261,6 +261,5 @@ public class LineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JList lineClassesList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
-    private javax.swing.JScrollPane scrollPane;
     private javax.swing.JButton upButton;
 }
