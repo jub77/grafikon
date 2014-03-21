@@ -23,12 +23,14 @@ public class ChildrenDelegateTypesImpl extends ChildrenDelegateImpl implements C
     @Override
     public int addChildNode(TrainTreeNode node, TrainTreeNode newChildNode) {
         TrainType newType = this.getTypeFromNode(newChildNode);
-        TrainDiagram diagram = newType.getTrainDiagram();
-        for (int i = 0; i < node.getChildCount(); i++) {
-            TrainTreeNode childNode = (TrainTreeNode) node.getChildAt(i);
-            if (this.compareTypes(diagram, this.getTypeFromNode(newChildNode), this.getTypeFromNode(childNode)) < 0) {
-                node.insert(newChildNode, i);
-                return i;
+        if (newType != null) {
+            TrainDiagram diagram = newType.getTrainDiagram();
+            for (int i = 0; i < node.getChildCount(); i++) {
+                TrainTreeNode childNode = (TrainTreeNode) node.getChildAt(i);
+                if (this.compareTypes(diagram, this.getTypeFromNode(newChildNode), this.getTypeFromNode(childNode)) < 0) {
+                    node.insert(newChildNode, i);
+                    return i;
+                }
             }
         }
         node.add(newChildNode);

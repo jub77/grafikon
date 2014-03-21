@@ -12,7 +12,8 @@ public class NodeDelegateTypeImpl implements NodeDelegate {
 
     @Override
     public String getNodeText(TrainTreeNode trainTreeNode) {
-        return ((TrainType) trainTreeNode.getUserObject()).getDesc();
+        TrainType type = (TrainType) trainTreeNode.getUserObject();
+        return type != null ? type.getDesc() : "-";
     }
 
     @Override
