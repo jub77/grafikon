@@ -1,8 +1,5 @@
 package net.parostroj.timetable.model;
 
-import java.util.List;
-import java.util.Map;
-
 import net.parostroj.timetable.model.events.*;
 
 /**
@@ -22,15 +19,6 @@ class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, 
     @Override
     public void trainChanged(TrainEvent event) {
         diagram.fireNestedEvent(event);
-        // keep circulations sorted
-        if (event.getType() == GTEventType.TIME_INTERVAL_LIST) {
-            Map<String, List<TrainsCycleItem>> map = event.getSource().getCyclesMap();
-            for (List<TrainsCycleItem> iList : map.values()) {
-                for (TrainsCycleItem item : iList) {
-                    item.getCycle().correctItem(item);
-                }
-            }
-        }
     }
 
     @Override

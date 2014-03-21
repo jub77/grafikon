@@ -5,6 +5,7 @@ import java.util.*;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.validators.TrainDiagramValidator;
+import net.parostroj.timetable.model.validators.TrainIntervalsValidator;
 import net.parostroj.timetable.model.validators.TrainNamesValidator;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -93,6 +94,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.addAllEventListener(changesTracker);
         this.validators = new ArrayList<TrainDiagramValidator>();
         this.validators.add(new TrainNamesValidator(this));
+        this.validators.add(new TrainIntervalsValidator());
     }
 
     /**
