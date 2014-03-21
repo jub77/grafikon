@@ -137,14 +137,14 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         nameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
         nameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTemplateCheckBoxActionPerformed(evt);
+                nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected());
             }
         });
 
         completeNameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
         completeNameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                completeNameTemplateCheckBoxActionPerformed(evt);
+                cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected());
             }
         });
 
@@ -489,14 +489,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         typesModel.addWrapper(Wrapper.getWrapper(type), index);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
-    }
-
-    private void nameTemplateCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected());
-    }
-
-    private void completeNameTemplateCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected());
     }
 
     private boolean existsTrainWithType(TrainType type, List<Train> trains) {
