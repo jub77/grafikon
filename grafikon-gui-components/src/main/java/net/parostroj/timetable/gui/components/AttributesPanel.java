@@ -13,6 +13,7 @@ import javax.swing.table.TableColumn;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.Attributes;
+import net.parostroj.timetable.utils.Conversions;
 
 import javax.swing.JComboBox;
 
@@ -116,9 +117,11 @@ public class AttributesPanel extends javax.swing.JPanel {
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         nameTextField.setColumns(20);
-        nameTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                nameTextFieldCaretUpdate(evt);
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                String txt = Conversions.checkAndTrim(nameTextField.getText());
+                addButton.setEnabled(txt != null);
             }
         });
         buttonsPanel.add(nameTextField);
@@ -161,10 +164,6 @@ public class AttributesPanel extends javax.swing.JPanel {
             String name = attributesTableModel.getUserNames().get(row);
             attributesTableModel.getAttributes().remove(name, category);
         }
-    }
-
-    private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-        addButton.setEnabled(!"".equals(nameTextField.getText()));
     }
 
     public void startEditing(Attributes attributes, String category) {
