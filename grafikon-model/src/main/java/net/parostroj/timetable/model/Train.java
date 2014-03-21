@@ -4,10 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.TrainEvent.TimeIntervalListType;
-import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.utils.ReferenceHolder;
-import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -207,10 +204,12 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type the type to set
      */
     public void setType(TrainType type) {
-        this.clearCachedData();
-        TrainType oldType = this.type;
-        this.type = type;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        if (!Conversions.compareWithNull(type, this.type)) {
+            this.clearCachedData();
+            TrainType oldType = this.type;
+            this.type = type;
+            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        }
     }
 
     /**
