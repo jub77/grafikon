@@ -5,11 +5,9 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -85,9 +83,9 @@ public class LineClassesDialog extends javax.swing.JDialog {
         lineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(6);
-        nameTextField.addCaretListener(new CaretListener() {
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
-            public void caretUpdate(CaretEvent e) {
+            protected void change() {
                 String text = nameTextField.getText();
                 newButton.setEnabled(text != null && !"".equals(text.trim()));
             }
