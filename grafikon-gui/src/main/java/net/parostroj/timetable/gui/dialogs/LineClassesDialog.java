@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import javax.swing.AbstractListModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -13,6 +12,9 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -25,58 +27,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class LineClassesDialog extends javax.swing.JDialog {
 
     private ApplicationModel model;
-    private LineClassesListModel listModel;
-
-    private class LineClassesListModel extends AbstractListModel {
-
-        @Override
-        public int getSize() {
-            if (model.getDiagram() == null) {
-                return 0;
-            } else {
-                return model.getDiagram().getNet().getLineClasses().size();
-            }
-        }
-
-        @Override
-        public Object getElementAt(int index) {
-            if (model.getDiagram() == null) {
-                return null;
-            } else {
-                return model.getDiagram().getNet().getLineClasses().get(index);
-            }
-        }
-
-        public void addLineClass(LineClass clazz) {
-            int size = getSize();
-            model.getDiagram().getNet().addLineClass(clazz);
-            this.fireIntervalAdded(this, size, size);
-        }
-
-        public void removeLineClass(int index) {
-            LineClass clazz = (LineClass) getElementAt(index);
-            // remove item with this line class from weight tables
-            for (EngineClass eClass : model.getDiagram().getEngineClasses()) {
-                for (WeightTableRow row : eClass.getWeightTable()) {
-                    row.removeWeightInfo(clazz);
-                }
-            }
-            // remove line class from lines
-            for (Line line : model.getDiagram().getNet().getLines()) {
-                line.removeAttribute(Line.ATTR_CLASS);
-                line.removeAttribute(Line.ATTR_CLASS_BACK);
-            }
-            // remove line class
-            model.getDiagram().getNet().removeLineClass(clazz);
-            this.fireIntervalRemoved(model, index, index);
-        }
-
-        public void moveLineClass(int index1, int index2) {
-            model.getDiagram().getNet().moveLineClass(index1, index2);
-            this.fireContentsChanged(this, index1, index1);
-            this.fireContentsChanged(this, index2, index2);
-        }
-    }
+    private WrapperListModel<LineClass> listModel;
 
     /** Creates new form LineClassesDialog */
     public LineClassesDialog(java.awt.Frame parent, boolean modal) {
@@ -86,12 +37,42 @@ public class LineClassesDialog extends javax.swing.JDialog {
 
     public void setModel(ApplicationModel model) {
         this.model = model;
-        listModel = new LineClassesListModel();
-        lineClassesList.setModel(listModel);
     }
 
     public void updateValues() {
         // update list of available classes ...
+        listModel = new WrapperListModel<LineClass>(Wrapper.getWrapperList(model.getDiagram().getNet().getLineClasses()), null, false);
+        listModel.setObjectListener(new ObjectListener<LineClass>() {
+            @Override
+            public void added(LineClass object, int index) {
+                model.getDiagram().getNet().addLineClass(object, index);
+            }
+
+            @Override
+            public void removed(LineClass object) {
+                // remove item with this line class from weight tables
+                for (EngineClass eClass : model.getDiagram().getEngineClasses()) {
+                    for (WeightTableRow row : eClass.getWeightTable()) {
+                        row.removeWeightInfo(object);
+                    }
+                }
+                // remove line class from lines
+                for (Line line : model.getDiagram().getNet().getLines()) {
+                    if (line.getAttribute(Line.ATTR_CLASS) == object) {
+                        line.removeAttribute(Line.ATTR_CLASS);
+                    }
+                    if (line.getAttribute(Line.ATTR_CLASS_BACK) == object) {
+                        line.removeAttribute(Line.ATTR_CLASS_BACK);
+                    }
+                }
+                // remove line class
+                model.getDiagram().getNet().removeLineClass(object);
+            }
+
+            @Override
+            public void moved(LineClass object, int fromIndex, int toIndex) {
+                model.getDiagram().getNet().moveLineClass(fromIndex, toIndex);
+            }});
         lineClassesList.setModel(listModel);
         this.updateEnabled();
     }
@@ -207,7 +188,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
         if (nameTextField != null && !"".equals(nameTextField.getText())) {
             // create new LineClass
             LineClass lineClass = new LineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
-            listModel.addLineClass(lineClass);
+            listModel.addWrapper(Wrapper.getWrapper(lineClass));
             nameTextField.setText("");
         }
     }
@@ -215,11 +196,11 @@ public class LineClassesDialog extends javax.swing.JDialog {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!lineClassesList.isSelectionEmpty()) {
             int selected = lineClassesList.getSelectedIndex();
-            if (!this.deleteAllowed((LineClass)listModel.getElementAt(selected))) {
+            if (!this.deleteAllowed(listModel.getIndex(selected).getElement())) {
                 ActionUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
                 return;
             }
-            listModel.removeLineClass(selected);
+            listModel.removeIndex(selected);
             if (selected >= listModel.getSize()) {
                 selected--;
             }
@@ -234,7 +215,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
             selected -= 1;
             if (selected < 0)
                 return;
-            listModel.moveLineClass(selected + 1, selected);
+            listModel.moveIndexUp(selected + 1);
             lineClassesList.setSelectedIndex(selected);
         }
     }
@@ -246,7 +227,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
             selected += 1;
             if (selected >= listModel.getSize())
                 return;
-            listModel.moveLineClass(selected - 1, selected);
+            listModel.moveIndexDown(selected - 1);
             lineClassesList.setSelectedIndex(selected);
         }
     }
