@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Map;
 
-import javax.swing.AbstractListModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -15,6 +14,9 @@ import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -29,55 +31,11 @@ import org.slf4j.LoggerFactory;
  */
 public class EngineClassesDialog extends javax.swing.JDialog {
 
-    private class EngineClassesListModel extends AbstractListModel {
-
-        @Override
-        public int getSize() {
-            if (model.getDiagram() == null) {
-                return 0;
-            } else {
-                return model.getDiagram().getEngineClasses().size();
-            }
-        }
-
-        @Override
-        public Object getElementAt(int index) {
-            return model.getDiagram().getEngineClasses().get(index);
-        }
-
-        public void addEngineClass(EngineClass clazz) {
-            this.addEngineClass(clazz, getSize());
-        }
-
-        public void addEngineClass(EngineClass clazz, int position) {
-            model.getDiagram().addEngineClass(clazz, position);
-            this.fireIntervalAdded(this, position, position);
-        }
-
-        public void removeEngineClass(int index) {
-            EngineClass clazz = (EngineClass) getElementAt(index);
-            // remove engine class from engine cycles
-            for (TrainsCycle cycle : model.getDiagram().getCycles(TrainsCycleType.ENGINE_CYCLE)) {
-                EngineClass eClass = (EngineClass) cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
-                if (eClass == clazz)
-                    cycle.removeAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
-            }
-            // remove from model
-            model.getDiagram().removeEngineClass(clazz);
-            this.fireIntervalRemoved(model, index, index);
-        }
-
-        public void moveEngineClass(int index1, int index2) {
-            model.getDiagram().moveEngineClass(index1, index2);
-            this.fireContentsChanged(this, index1, index1);
-            this.fireContentsChanged(this, index2, index2);
-        }
-    }
-
     private class WeightTableModel extends AbstractTableModel {
 
         private EngineClass getCurrentEngineClass() {
-            EngineClass clazz = (EngineClass) engineClassesList.getSelectedValue();
+            int selected = engineClassesList.getSelectedIndex();
+            EngineClass clazz = selected != -1 ? listModel.getIndex(selected).getElement() : null;
             return clazz;
         }
 
@@ -167,7 +125,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         }
     }
     private ApplicationModel model;
-    private EngineClassesListModel listModel;
+    private WrapperListModel<EngineClass> listModel;
     private final WeightTableModel tableModel;
     private static final Logger LOG = LoggerFactory.getLogger(EngineClassesDialog.class.getName());
 
@@ -189,12 +147,27 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void setModel(ApplicationModel model) {
         this.model = model;
-        listModel = new EngineClassesListModel();
-        engineClassesList.setModel(listModel);
     }
 
     public void updateValues() {
         // update list of available classes ...
+        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(model.getDiagram().getEngineClasses()), null, false);
+        listModel.setObjectListener(new ObjectListener<EngineClass>() {
+            @Override
+            public void added(EngineClass object, int index) {
+                model.getDiagram().addEngineClass(object, index);
+            }
+
+            @Override
+            public void removed(EngineClass object) {
+                model.getDiagram().removeEngineClass(object);
+            }
+
+            @Override
+            public void moved(EngineClass object, int fromIndex, int toIndex) {
+                model.getDiagram().moveEngineClass(fromIndex, toIndex);
+            }
+        });
         engineClassesList.setModel(listModel);
         tableModel.updateInfo();
         this.enableDisable();
@@ -374,7 +347,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         if (nameTextField != null && !"".equals(nameTextField.getText())) {
             // create new LineClass
             EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
-            listModel.addEngineClass(clazz);
+            listModel.addWrapper(Wrapper.getWrapper(clazz));
             nameTextField.setText("");
         }
     }
@@ -382,7 +355,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!engineClassesList.isSelectionEmpty()) {
             int selected = engineClassesList.getSelectedIndex();
-            listModel.removeEngineClass(selected);
+            listModel.removeIndex(selected);
             if (selected >= listModel.getSize()) {
                 selected--;
             }
@@ -398,7 +371,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             if (selected < 0) {
                 return;
             }
-            listModel.moveEngineClass(selected + 1, selected);
+            listModel.moveIndexUp(selected + 1);
             engineClassesList.setSelectedIndex(selected);
         }
     }
@@ -411,7 +384,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             if (selected >= listModel.getSize()) {
                 return;
             }
-            listModel.moveEngineClass(selected - 1, selected);
+            listModel.moveIndexDown(selected - 1);
             engineClassesList.setSelectedIndex(selected);
         }
     }
@@ -451,7 +424,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!engineClassesList.isSelectionEmpty()) {
             int selected = engineClassesList.getSelectedIndex();
-            EngineClass copiedClazz = (EngineClass)listModel.getElementAt(selected);
+            EngineClass copiedClazz = listModel.getIndex(selected).getElement();
 
             // get new name
             String newName = JOptionPane.showInputDialog(this, null, copiedClazz.getName());
@@ -466,7 +439,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                     }
                     clazz.addWeightTableRow(newRow);
                 }
-                listModel.addEngineClass(clazz, selected + 1);
+                listModel.addWrapper(Wrapper.getWrapper(clazz), selected + 1);
                 nameTextField.setText("");
                 engineClassesList.setSelectedIndex(selected + 1);
                 engineClassesList.ensureIndexIsVisible(selected + 1);

@@ -95,6 +95,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new TrainIntervalsValidator());
         this.validators.add(new LineClassRemoveValidator(this));
         this.validators.add(new GroupRemoveValidator(this));
+        this.validators.add(new EngineClassRemoveValidator(this));
     }
 
     /**
