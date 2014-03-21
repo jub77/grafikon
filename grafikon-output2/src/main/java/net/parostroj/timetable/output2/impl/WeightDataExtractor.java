@@ -29,7 +29,7 @@ public class WeightDataExtractor {
     }
 
     private void testWeights(List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list) {
-        boolean showWeight = train.getType().getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)
+        boolean showWeight = (train.getType() != null && train.getType().getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO))
             || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
         // test if all weight are defined
         boolean defined = true;
