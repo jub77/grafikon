@@ -4,6 +4,8 @@ import java.util.*;
 
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.validators.TrainDiagramValidator;
+import net.parostroj.timetable.model.validators.TrainNamesValidator;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -45,6 +47,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Penalty table. */
     private PenaltyTable penaltyTable;
 
+    private final List<TrainDiagramValidator> validators;
     private final GTListenerTrainDiagramImpl listener;
     private final ChangesTrackerImpl changesTracker;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
@@ -88,6 +91,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
+        this.validators = new ArrayList<TrainDiagramValidator>();
+        this.validators.add(new TrainNamesValidator(this));
     }
 
     /**
@@ -497,21 +502,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     protected void fireNestedEvent(GTEvent<?> event) {
+        processValidators(event);
         listenerSupportAll.fireEvent(event);
     }
 
-    protected void fireEvent(TrainDiagramEvent e) {
-        if (e.getType() == GTEventType.ATTRIBUTE &&
-                e.getAttributeChange().checkName(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE, TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE)) {
-            this.clearCachedTrainNames();
-        }
-        listenerSupport.fireEvent(e);
-        listenerSupportAll.fireEvent(e);
+    protected void fireEvent(TrainDiagramEvent event) {
+        processValidators(event);
+        listenerSupport.fireEvent(event);
+        listenerSupportAll.fireEvent(event);
     }
 
-    protected void clearCachedTrainNames() {
-        for (Train train : trains) {
-            train.clearCachedData();
+    private void processValidators(GTEvent<?> event) {
+        for (TrainDiagramValidator validator : validators) {
+            validator.validate(event);
         }
     }
 

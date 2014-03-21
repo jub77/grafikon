@@ -45,7 +45,6 @@ class GTListenerTrainDiagramImpl implements TrainListener, TrainsCycleListener, 
 
     @Override
     public void trainTypeChanged(TrainTypeEvent event) {
-        diagram.clearCachedTrainNames();
         diagram.fireNestedEvent(event);
     }
 
