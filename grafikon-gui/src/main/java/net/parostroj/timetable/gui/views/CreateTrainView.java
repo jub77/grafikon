@@ -40,7 +40,7 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTrainView.class.getName());
 
-    private static final TrainType NO_TYPE = new TrainType(null, null) {
+    public static final TrainType NO_TYPE = new TrainType(null, null) {
         @Override
         public String toString() {return "-";}
     };
