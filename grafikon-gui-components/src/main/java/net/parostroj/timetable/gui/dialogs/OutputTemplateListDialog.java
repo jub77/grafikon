@@ -11,6 +11,7 @@ import java.util.Collections;
 import javax.swing.JFileChooser;
 
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -107,9 +108,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         controlPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 3));
 
         nameTextField.setColumns(10);
-        nameTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                nameTextFieldCaretUpdate(evt);
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                updateButtons();
             }
         });
         controlPanel.add(nameTextField);
@@ -177,7 +179,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         templateList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         templateList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                templateListValueChanged(evt);
+                updateButtons();
             }
         });
         scrollPane.setViewportView(templateList);
@@ -271,14 +273,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
         }
-    }
-
-    private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-        this.updateButtons();
-    }
-
-    private void templateListValueChanged(javax.swing.event.ListSelectionEvent evt) {
-        this.updateButtons();
     }
 
     private void locationButtonActionPerformed(java.awt.event.ActionEvent evt) {

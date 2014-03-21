@@ -13,6 +13,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -20,6 +21,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -62,10 +64,10 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         controlPanel.add(typesComboBox);
 
         newNameTextField.setColumns(15);
-        newNameTextField.addCaretListener(new javax.swing.event.CaretListener() {
+        newNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                newNameTextFieldCaretUpdate(evt);
+            protected void change() {
+                createButton.setEnabled(Conversions.checkAndTrim(newNameTextField.getText()) != null);
             }
         });
         controlPanel.add(newNameTextField);
@@ -109,10 +111,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             diagram.removeCyclesType(delegate.getType());
             typesComboBox.removeItem(new Wrapper<TrainsCycleType>(cycleType));
         }
-    }
-
-    private void newNameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-        createButton.setEnabled(newNameTextField.getText().length() != 0);
     }
 
     private void typesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {

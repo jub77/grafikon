@@ -15,11 +15,10 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -56,9 +55,9 @@ public class GroupsDialog extends JDialog {
         handlePanel.setLayout(new GridLayout(0, 1, 0, 5));
 
         groupNameTextField = new JTextField();
-        groupNameTextField.addCaretListener(new CaretListener() {
+        groupNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
-            public void caretUpdate(CaretEvent e) {
+            protected void change() {
                 updateButtons();
             }
         });

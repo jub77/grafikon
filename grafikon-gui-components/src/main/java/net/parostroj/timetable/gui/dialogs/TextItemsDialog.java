@@ -6,6 +6,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.TextItem;
@@ -75,7 +76,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
-        scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
+        org.fife.ui.rtextarea.RTextScrollPane scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         textArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         javax.swing.JScrollPane listScrollPane = new javax.swing.JScrollPane();
         itemList = new javax.swing.JList();
@@ -103,9 +104,10 @@ public class TextItemsDialog extends javax.swing.JDialog {
         textArea.setColumns(60);
         textArea.setRows(25);
         textArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
-        textArea.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                textAreaCaretUpdate(evt);
+        textArea.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                changed = true;
             }
         });
         scrollPane.setViewportView(textArea);
@@ -130,9 +132,10 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         handlePanel.setLayout(new java.awt.GridLayout(6, 0, 0, 3));
 
-        nameTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                nameTextFieldCaretUpdate(evt);
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                updateButtons();
             }
         });
         handlePanel.add(nameTextField);
@@ -176,10 +179,6 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void closeActionPerformed() {
         writeChangedValueBack();
         this.setVisible(false);
-    }
-
-    private void nameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-        this.updateButtons();
     }
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -245,16 +244,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
         }
     }
 
-    private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {
-        changed = true;
-    }
-
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
     private javax.swing.JList itemList;
     private javax.swing.JTextField nameTextField;
-    private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea;
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JButton upButton;

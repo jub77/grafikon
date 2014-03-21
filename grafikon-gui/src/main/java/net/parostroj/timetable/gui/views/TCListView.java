@@ -14,6 +14,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.actions.TrainsCycleSort;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
@@ -34,7 +35,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     public TCListView() {
         setLayout(new BorderLayout(0, 0));
         ecList = new javax.swing.JList();
-        scrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         add(scrollPane, BorderLayout.CENTER);
 
         ecList.setPrototypeCellValue("mmmmmmmmm");
@@ -56,9 +57,10 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         panel.add(newNameTextField, gbc_newNameTextField);
 
         newNameTextField.setColumns(7);
-        newNameTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                newNameTextFieldCaretUpdate(evt);
+        newNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+            @Override
+            protected void change() {
+                updateButtonStatus();
             }
         });
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
@@ -152,7 +154,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
 
     private void updateButtonStatus() {
         boolean status = delegate.getTrainDiagram() != null && delegate.getType() != null
-                && newNameTextField.getText().length() > 0;
+                && newNameTextField.getText().trim().length() > 0;
 
         createButton.setEnabled(status);
     }
@@ -202,14 +204,9 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         }
     }
 
-    private void newNameTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-        this.updateButtonStatus();
-    }
-
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
     private final javax.swing.JButton editButton;
     private final javax.swing.JList ecList;
     private final javax.swing.JTextField newNameTextField;
-    private final javax.swing.JScrollPane scrollPane;
 }
