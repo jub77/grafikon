@@ -45,7 +45,7 @@ public class LSTrain {
         this.id = train.getId();
         this.number = train.getNumber();
         this.desc = train.getDescription();
-        this.type = train.getType().getId();
+        this.type = train.getType() != null ? train.getType().getId() : null;
         this.topSpeed = train.getTopSpeed();
         this.start = train.getStartTime();
         this.timeBefore = train.getTimeBefore();

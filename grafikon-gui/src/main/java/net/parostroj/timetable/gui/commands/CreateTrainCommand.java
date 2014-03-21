@@ -5,10 +5,6 @@
  */
 package net.parostroj.timetable.gui.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
@@ -24,9 +20,7 @@ public class CreateTrainCommand extends Command {
     private final String number;
     private final TrainType type;
     private final int topSpeed;
-    private final Node from;
-    private final Node to;
-    private final List<Node> through;
+    private final Route route;
     private final int time;
     private final int defaultStop;
     private final String description;
@@ -41,24 +35,20 @@ public class CreateTrainCommand extends Command {
      * @param number number of the train
      * @param type train type
      * @param topSpeed maximum speed of the train
-     * @param from from station
-     * @param to to station
+     * @param route route
      * @param time starting time
      * @param defaultStop default stop
      * @param description description
      * @param diesel if the train is electric
      * @param electric if the train is diesel
-     * @param through list of nodes through which this train goes
      * @param showLength show max. length in timetable
      * @param group group
      */
-    public CreateTrainCommand(String number, TrainType type, int topSpeed, Node from, Node to, List<Node> through, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group) {
+    public CreateTrainCommand(String number, TrainType type, int topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group) {
         this.number = number;
         this.type = type;
         this.topSpeed = topSpeed;
-        this.from = from;
-        this.to = to;
-        this.through = through;
+        this.route = route;
         this.time = time;
         this.defaultStop = defaultStop;
         this.description = description;
@@ -71,18 +61,6 @@ public class CreateTrainCommand extends Command {
     @Override
     public void execute(ApplicationModel model) {
         TrainBuilder trainBuilder = new TrainBuilder();
-        RouteBuilder routeBuilder = new RouteBuilder();
-
-        Route route = null;
-        if (through == null)
-            route = routeBuilder.createRoute(null, model.getDiagram().getNet(), from, to);
-        else {
-            List<Node> r = new ArrayList<Node>();
-            r.add(from);
-            r.addAll(through);
-            r.add(to);
-            route = routeBuilder.createRoute(null, model.getDiagram().getNet(), r);
-        }
 
         Train train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
 

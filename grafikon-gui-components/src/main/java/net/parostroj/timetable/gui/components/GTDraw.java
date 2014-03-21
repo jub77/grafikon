@@ -439,7 +439,7 @@ abstract public class GTDraw {
             return hTrains.getColor();
         switch (colors) {
             case BY_TYPE:
-                return interval.getTrain().getType().getColor();
+                return interval.getTrain().getType() != null ? interval.getTrain().getType().getColor() : Color.black;
             case BY_COLOR_CHOOSER:
                 return trainColorChooser.getIntervalColor(interval);
             default:

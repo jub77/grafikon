@@ -148,7 +148,8 @@ public class StationTimetablesExtractor {
     private LengthInfo getLength(TimeInterval interval) {
         LengthInfo lengthInfo = null;
         Train train = interval.getTrain();
-        if (train.getIntervalAfter(interval) != null && interval.isStop() && train.getType().getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
+        TrainType trainType = train.getType();
+        if (train.getIntervalAfter(interval) != null && interval.isStop() && trainType != null && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
             Pair<Node, Integer> length = TrainsHelper.getNextLength(interval.getOwnerAsNode(), train, TrainsHelper.NextType.LAST_STATION);
             // if length was calculated
             if (length != null && length.second != null) {

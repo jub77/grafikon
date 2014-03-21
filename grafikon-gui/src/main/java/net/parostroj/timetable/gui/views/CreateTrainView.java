@@ -17,16 +17,15 @@ import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.actions.NodeSort;
+import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
-import net.parostroj.timetable.model.Group;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -298,6 +297,23 @@ public class CreateTrainView extends javax.swing.JPanel {
                 return;
             }
 
+            RouteBuilder routeBuilder = new RouteBuilder();
+            Route route = null;
+            if (throughNodes == null)
+                route = routeBuilder.createRoute(null, model.getDiagram().getNet(), (Node) fromComboBox.getSelectedItem(), (Node) toComboBox.getSelectedItem());
+            else {
+                List<Node> r = new ArrayList<Node>();
+                r.add((Node) fromComboBox.getSelectedItem());
+                r.addAll(throughNodes);
+                r.add((Node) toComboBox.getSelectedItem());
+                route = routeBuilder.createRoute(null, model.getDiagram().getNet(), r);
+            }
+
+            if (route == null) {
+                ActionUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
+                return;
+            }
+
             // get start time
             int start = model.getDiagram().getTimeConverter().convertTextToInt(startTimeTextField.getText());
             if (start == -1)
@@ -311,9 +327,7 @@ public class CreateTrainView extends javax.swing.JPanel {
                     nameTextField.getText(),
                     (TrainType)typeComboBox.getSelectedItem(),
                     Integer.valueOf(speedTextField.getText()),
-                    (Node)fromComboBox.getSelectedItem(),
-                    (Node)toComboBox.getSelectedItem(),
-                    throughNodes,
+                    route,
                     start,
                     (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
                     commentTextField.getText(),
