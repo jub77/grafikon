@@ -65,10 +65,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         trainTypesList.setModel(typesModel);
         brakeComboBox.removeAllItems();
         if (model.getDiagram() != null) {
-            brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
             for (TrainTypeCategory cat : model.getDiagram().getPenaltyTable().getTrainTypeCategories()) {
                 brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
             }
+            brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
         }
         brakeComboBox.setMaximumRowCount(Math.min(10, brakeComboBox.getItemCount()));
         this.updateValuesForTrainType(null);
