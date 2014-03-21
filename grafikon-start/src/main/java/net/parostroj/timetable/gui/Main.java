@@ -9,7 +9,6 @@ import javax.swing.UIManager;
 
 import net.parostroj.timetable.gui.ApplicationStarter.AfterStartAction;
 import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
-import net.parostroj.timetable.model.TrainDiagramFactory;
 
 /**
  * Class with main method.
@@ -40,26 +39,20 @@ public class Main {
             setDebug();
         setLookAndFeel();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
-//        starter.setAction(new AfterStartAction<MainFrame>() {
-//
-//            @Override
-//            public void action(MainFrame frame) {
-//                if (args.length > 0) {
-//                    // trying to load file
-//                    File file = new File(args[0]);
-//                    if (file.exists()) {
-//                        netParostrojLogger.log(Level.FINE, "Loading: " + file.getName());
-//                        frame.forceLoad(file);
-//                    } else {
-//                        netParostrojLogger.log(Level.FINE, "File " + file.getPath() + " doesn't exist");
-//                    }
-//                }
-//            }
-//        });
         starter.setAction(new AfterStartAction<MainFrame>() {
+
             @Override
             public void action(MainFrame frame) {
-                frame.getModel().set(TrainDiagramFactory.newInstance().createDiagram());
+                if (args.length > 0) {
+                    // trying to load file
+                    File file = new File(args[0]);
+                    if (file.exists()) {
+                        netParostrojLogger.log(Level.FINE, "Loading: " + file.getName());
+                        frame.forceLoad(file);
+                    } else {
+                        netParostrojLogger.log(Level.FINE, "File " + file.getPath() + " doesn't exist");
+                    }
+                }
             }
         });
         starter.start();
