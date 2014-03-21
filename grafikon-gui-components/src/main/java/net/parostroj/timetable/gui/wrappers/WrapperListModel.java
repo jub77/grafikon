@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
@@ -18,6 +19,7 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     public interface ObjectListener<T> {
         void added(T object, int index);
         void removed(T object);
+        void moved(T object, int fromIndex, int toIndex);
     }
 
     private Set<T> set;
@@ -101,6 +103,34 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
 
     public Wrapper<T> getIndex(int index) {
         return list.get(index);
+    }
+
+    public void updateIndex(int index) {
+        this.fireContentsChanged(this, index, index);
+    }
+
+    public void moveIndexDown(int index) {
+        if (this.sorted) {
+            throw new IllegalStateException("Cannot move in sorted list.");
+        }
+        Wrapper<T> removed = list.remove(index);
+        list.add(index + 1, removed);
+        this.fireContentsChanged(this, index, index + 1);
+        if (this.listener != null) {
+            this.listener.moved(removed.getElement(), index, index + 1);
+        }
+    }
+
+    public void moveIndexUp(int index) {
+        if (this.sorted) {
+            throw new IllegalStateException("Cannot move in sorted list.");
+        }
+        Wrapper<T> removed = list.remove(index);
+        list.add(index - 1, removed);
+        this.fireContentsChanged(this, index - 1, index);
+        if (this.listener != null) {
+            this.listener.moved(removed.getElement(), index, index - 1);
+        }
     }
 
     public void addWrapper(Wrapper<T> w) {
