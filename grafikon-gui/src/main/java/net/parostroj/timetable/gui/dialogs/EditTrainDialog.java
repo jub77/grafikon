@@ -11,6 +11,7 @@ import javax.swing.DefaultComboBoxModel;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
+import net.parostroj.timetable.gui.views.CreateTrainView;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -56,7 +57,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             Train train = model.getSelectedTrain();
             // model for train types
             typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
-            typeComboBox.setSelectedItem(train.getType());
+            typeComboBox.addItem(CreateTrainView.NO_TYPE);
+            typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
             electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
             showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH)));
@@ -339,9 +341,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         Train train = model.getSelectedTrain();
         // set values to train ...
-        if (train.getType() != typeComboBox.getSelectedItem()) {
-            train.setType((TrainType)typeComboBox.getSelectedItem());
-        }
+        TrainType type = (TrainType) typeComboBox.getSelectedItem();
+        train.setType(type != CreateTrainView.NO_TYPE ? type : null);
         if (!train.getAttribute(Train.ATTR_DIESEL).equals(dieselCheckBox.isSelected())) {
             train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
         }

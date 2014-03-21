@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -70,6 +71,9 @@ public abstract class Import {
     }
 
     protected TrainType getTrainType(TrainType origType) {
+        if (origType == null) {
+            return null;
+        }
         if (match == ImportMatch.ID) {
             return diagram.getTrainTypeById(origType.getId());
         } else {
@@ -113,7 +117,7 @@ public abstract class Import {
             for (Train train : diagram.getTrains()) {
                 // compare number and type
                 TrainType trainType = getTrainType(origTrain.getType());
-                if (train.getNumber().equals(origTrain.getNumber()) && train.getType().equals(trainType)) {
+                if (train.getNumber().equals(origTrain.getNumber()) && Conversions.compareWithNull(train.getType(), trainType)) {
                     return train;
                 }
             }

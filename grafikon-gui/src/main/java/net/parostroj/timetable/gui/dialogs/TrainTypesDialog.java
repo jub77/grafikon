@@ -500,7 +500,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private boolean existsTrainWithType(TrainType type, List<Train> trains) {
         for (Train t : trains) {
-            if (t.getType().equals(type))
+            if (type.equals(t.getType()))
                 return true;
         }
         return false;

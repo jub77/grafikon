@@ -95,7 +95,8 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             // check which platform is free for adding
             for (NodeTrack nodeTrack : tracks) {
                 // skip station tracks with no platform
-                if (interval.getLength() != 0 && interval.getTrain().getType().isPlatform() && !nodeTrack.isPlatform()) {
+                TrainType trainType = interval.getTrain().getType();
+                if (interval.getLength() != 0 && trainType != null && trainType.isPlatform() && !nodeTrack.isPlatform()) {
                     continue;
                 }
                 TimeIntervalResult result = nodeTrack.testTimeInterval(interval);
