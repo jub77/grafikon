@@ -259,12 +259,14 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
             @Override
             public int getDecelerationPenalty(int speed) {
-                return penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed).getDeceleration();
+                PenaltyTableRow row = train.getType() != null ? penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
+                return row != null ? row.getDeceleration() : 0;
             }
 
             @Override
             public int getAccelerationPenalty(int speed) {
-                return penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed).getAcceleration();
+                PenaltyTableRow row = train.getType() != null ? penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
+                return row != null ? row.getAcceleration() : 0;
             }
         };
 

@@ -42,7 +42,7 @@ public class LSTrainType {
         this.platform = type.isPlatform();
         Color c = type.getColor();
         this.color = Conversions.convertColorToText(c);
-        this.categoryId = type.getCategory().getId();
+        this.categoryId = type.getCategory() != null ? type.getCategory().getId() : null;
         this.trainNameTemplate = type.getTrainNameTemplate() != null ?
             new LSTextTemplate(type.getTrainNameTemplate()) : null;
         this.trainCompleteNameTemplate = type.getTrainCompleteNameTemplate() != null ?
