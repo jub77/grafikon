@@ -113,11 +113,13 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
         if (this.sorted) {
             throw new IllegalStateException("Cannot move in sorted list.");
         }
-        Wrapper<T> removed = list.remove(index);
-        list.add(index + 1, removed);
-        this.fireContentsChanged(this, index, index + 1);
-        if (this.listener != null) {
-            this.listener.moved(removed.getElement(), index, index + 1);
+        if (index < getSize() - 1) {
+            Wrapper<T> removed = list.remove(index);
+            list.add(index + 1, removed);
+            this.fireContentsChanged(this, index, index + 1);
+            if (this.listener != null) {
+                this.listener.moved(removed.getElement(), index, index + 1);
+            }
         }
     }
 
@@ -125,11 +127,13 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
         if (this.sorted) {
             throw new IllegalStateException("Cannot move in sorted list.");
         }
-        Wrapper<T> removed = list.remove(index);
-        list.add(index - 1, removed);
-        this.fireContentsChanged(this, index - 1, index);
-        if (this.listener != null) {
-            this.listener.moved(removed.getElement(), index, index - 1);
+        if (index > 0) {
+            Wrapper<T> removed = list.remove(index);
+            list.add(index - 1, removed);
+            this.fireContentsChanged(this, index - 1, index);
+            if (this.listener != null) {
+                this.listener.moved(removed.getElement(), index, index - 1);
+            }
         }
     }
 
