@@ -24,9 +24,7 @@ public class TrainDiagramBuilder {
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
-        if (diagram == null)
-            this.diagram = new TrainDiagram(lsDiagram.getId(), null);
-        this.diagram.setTrainsData(data);
+        this.diagram = new TrainDiagram(lsDiagram.getId(), data);
         // attributes
         Attributes attributes = lsDiagram.getAttributes().createAttributes(this.diagram);
         this.diagram.setAttributes(attributes);
