@@ -484,7 +484,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             LOG.warn(e.getMessage(), e);
             return;
         }
-        type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
+        type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
         int index = typesModel.getSize();
         typesModel.addWrapper(Wrapper.getWrapper(type), index);
         trainTypesList.setSelectedIndex(index);
