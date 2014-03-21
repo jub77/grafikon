@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
@@ -18,6 +17,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -180,9 +180,14 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+        copyEnable(Conversions.checkAndTrim(nameTextField.getText()), enabled);
         copyButton.setEnabled(enabled);
         speedTextField.setText("");
         this.enableDisableDeleteRow();
+    }
+
+    private void copyEnable(String txt, boolean selected) {
+        copyButton.setEnabled(txt != null && selected);
     }
 
     private void enableDisableDeleteRow() {
@@ -198,14 +203,16 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         nameTextField.addCaretListener(new CaretListener() {
             @Override
             public void caretUpdate(CaretEvent e) {
-                String text = nameTextField.getText();
-                newButton.setEnabled(text != null && !"".equals(text.trim()));
+                String text = Conversions.checkAndTrim(nameTextField.getText());
+                newButton.setEnabled(text != null);
+                copyEnable(text, !engineClassesList.isSelectionEmpty());
             }
         });
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
+        copyButton.setEnabled(false);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
@@ -426,9 +433,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             int selected = engineClassesList.getSelectedIndex();
             EngineClass copiedClazz = listModel.getIndex(selected).getElement();
 
-            // get new name
-            String newName = JOptionPane.showInputDialog(this, null, copiedClazz.getName());
-            if (newName != null && !newName.equals("")) {
+            String newName = Conversions.checkAndTrim(nameTextField.getText());
+            if (newName != null) {
                 // create new LineClass
                 EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
                 // copy all data
