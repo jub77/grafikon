@@ -22,7 +22,7 @@ public class IntervalSelectionMessage {
     @Override
     public String toString() {
         return interval != null ?
-                String.format("Interval message<%s,%s>", interval.getTrain(), interval) :
-                "Interval message<empty>";
+                String.format("IntervalMessage<%s,%s>", interval.getTrain(), interval) :
+                "IntervalMessage<empty>";
     }
 }
