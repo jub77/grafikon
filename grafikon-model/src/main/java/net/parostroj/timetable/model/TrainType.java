@@ -78,9 +78,11 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param abbr the abbreviation to set
      */
     public void setAbbr(String abbr) {
-        String oldAbbr = this.abbr;
-        this.abbr = abbr;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("abbr", oldAbbr, abbr)));
+        if (!Conversions.compareWithNull(abbr, this.abbr)) {
+            String oldAbbr = this.abbr;
+            this.abbr = abbr;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
+        }
     }
 
     /**
@@ -94,9 +96,11 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param color the color to be set
      */
     public void setColor(Color color) {
-        Color oldColor = this.color;
-        this.color = color;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("color", oldColor, color)));
+        if (!Conversions.compareWithNull(color, this.color)) {
+            Color oldColor = this.color;
+            this.color = color;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_COLOR, oldColor, color)));
+        }
     }
 
     /**
@@ -110,9 +114,11 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param desc description to set
      */
     public void setDesc(String desc) {
-        String oldDesc = this.desc;
-        this.desc = desc;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("desc", oldDesc, desc)));
+        if (!Conversions.compareWithNull(desc, this.desc)) {
+            String oldDesc = this.desc;
+            this.desc = desc;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_DESC, oldDesc, desc)));
+        }
     }
 
     /**
@@ -126,9 +132,12 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param platform sets if the type needs the platform in the station
      */
     public void setPlatform(boolean platform) {
-        boolean oldPlatform = this.platform;
-        this.platform = platform;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("platform", oldPlatform, platform)));
+        if (platform != this.platform) {
+            boolean oldPlatform = this.platform;
+            this.platform = platform;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_PLATFORM, oldPlatform,
+                    platform)));
+        }
     }
 
     /**
@@ -161,9 +170,12 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param trainNameTemplate sets train name template
      */
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
-        TextTemplate oldTemplate = this.trainNameTemplate;
-        this.trainNameTemplate = trainNameTemplate;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("trainNameTemplate",oldTemplate, trainNameTemplate)));
+        if (!Conversions.compareWithNull(trainNameTemplate, this.trainNameTemplate)) {
+            TextTemplate oldTemplate = this.trainNameTemplate;
+            this.trainNameTemplate = trainNameTemplate;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_TRAIN_NAME_TEMPLATE,
+                    oldTemplate, trainNameTemplate)));
+        }
     }
 
     /**
@@ -177,9 +189,12 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param trainCompleteNameTemplate sets template with complete train name
      */
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
-        TextTemplate oldTemplate = this.trainCompleteNameTemplate;
-        this.trainCompleteNameTemplate = trainCompleteNameTemplate;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("trainCompleteNameTemplate", oldTemplate, trainCompleteNameTemplate)));
+        if (!Conversions.compareWithNull(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
+            TextTemplate oldTemplate = this.trainCompleteNameTemplate;
+            this.trainCompleteNameTemplate = trainCompleteNameTemplate;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(
+                    ATTR_TRAIN_COMPLETE_NAME_TEMPLATE, oldTemplate, trainCompleteNameTemplate)));
+        }
     }
 
     /**
