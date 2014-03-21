@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.AbstractListModel;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 
@@ -21,6 +20,8 @@ import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -44,7 +45,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private static final TrainTypeCategory NONE_CATEGORY = new TrainTypeCategory(null, "-", "-");
 
     private ApplicationModel model;
-    private TrainTypesModel typesModel;
+    private WrapperListModel<TrainType> typesModel;
 
     /** Creates new form TrainTypesDialog */
     public TrainTypesDialog(java.awt.Frame parent, boolean modal) {
@@ -61,7 +62,23 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // fill train type jlist
-        typesModel = new TrainTypesModel(model.getDiagram());
+        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(model.getDiagram().getTrainTypes()), null, false);
+        typesModel.setObjectListener(new ObjectListener<TrainType>() {
+            @Override
+            public void added(TrainType object, int index) {
+                model.getDiagram().addTrainType(object, index);
+            }
+
+            @Override
+            public void removed(TrainType object) {
+                model.getDiagram().removeTrainType(object);
+            }
+
+            @Override
+            public void moved(TrainType object, int fromIndex, int toIndex) {
+                model.getDiagram().moveTrainType(fromIndex, toIndex);
+            }
+        });
         trainTypesList.setModel(typesModel);
         brakeComboBox.removeAllItems();
         if (model.getDiagram() != null) {
@@ -69,8 +86,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
             }
             brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
+            brakeComboBox.setMaximumRowCount(brakeComboBox.getItemCount());
         }
-        brakeComboBox.setMaximumRowCount(Math.min(10, brakeComboBox.getItemCount()));
         this.updateValuesForTrainType(null);
     }
 
@@ -312,9 +329,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void trainTypesListValueChanged(javax.swing.event.ListSelectionEvent evt) {
         if (!evt.getValueIsAdjusting()) {
-            this.setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
-            if (trainTypesList.getSelectedIndex() != -1) {
-                TrainType selected = (TrainType)trainTypesList.getSelectedValue();
+            int index = trainTypesList.getSelectedIndex();
+            this.setComponentsEnabled(index != -1);
+            if (index != -1) {
+                TrainType selected = typesModel.getIndex(index).getElement();
                 this.updateValuesForTrainType(selected);
             }
         }
@@ -361,7 +379,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // remove from types ...
-        TrainType type = (TrainType)trainTypesList.getSelectedValue();
+        TrainType type = typesModel.getIndex(trainTypesList.getSelectedIndex()).getElement();
         if (type != null) {
             // check if there is no train with this type ...
             if (this.existsTrainWithType(type, model.getDiagram().getTrains())) {
@@ -375,14 +393,14 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 return;
             }
 
-            typesModel.remove(trainTypesList.getSelectedIndex());
+            typesModel.removeIndex(trainTypesList.getSelectedIndex());
             this.updateValuesForTrainType(null);
         }
     }
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // update values of a type
-        TrainType type = (TrainType)trainTypesList.getSelectedValue();
+        TrainType type = typesModel.getIndex(trainTypesList.getSelectedIndex()).getElement();
         if (type != null) {
             String abbr = abbrTextField.getText().trim();
             String desc = descTextField.getText().trim();
@@ -430,29 +448,25 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 if (type.getTrainCompleteNameTemplate() != null)
                     type.setTrainCompleteNameTemplate(null);
             }
-            typesModel.updated(trainTypesList.getSelectedIndex());
+            typesModel.updateIndex(trainTypesList.getSelectedIndex());
         }
     }
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = trainTypesList.getSelectedIndex();
-        if (index != -1) {
-            int dest = typesModel.moveFromTo(index, index - 1);
-            if (dest != index) {
-                trainTypesList.setSelectedIndex(dest);
-                trainTypesList.ensureIndexIsVisible(dest);
-            }
+        if (index > 0) {
+            typesModel.moveIndexUp(index);
+            trainTypesList.setSelectedIndex(index - 1);
+            trainTypesList.ensureIndexIsVisible(index - 1);
         }
     }
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = trainTypesList.getSelectedIndex();
-        if (index != -1) {
-            int dest = typesModel.moveFromTo(index, index + 1);
-            if (dest != index) {
-                trainTypesList.setSelectedIndex(dest);
-                trainTypesList.ensureIndexIsVisible(dest);
-            }
+        if (index != -1 && index < typesModel.getSize() - 1) {
+            typesModel.moveIndexDown(index);
+            trainTypesList.setSelectedIndex(index + 1);
+            trainTypesList.ensureIndexIsVisible(index + 1);
         }
     }
 
@@ -485,7 +499,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             return;
         }
         type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
-        int index = typesModel.add(type);
+        int index = typesModel.getSize();
+        typesModel.addWrapper(Wrapper.getWrapper(type), index);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
     }
@@ -527,51 +542,4 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JButton upButton;
     private javax.swing.JButton updateButton;
     private javax.swing.JCheckBox showWeightInfoCheckBox;
-}
-
-class TrainTypesModel extends AbstractListModel {
-
-    private final TrainDiagram diagram;
-
-    public TrainTypesModel(TrainDiagram diagram) {
-        this.diagram = diagram;
-    }
-
-    public void remove(int index) {
-        TrainType type = diagram.getTrainTypes().get(index);
-        diagram.removeTrainType(type);
-        this.fireIntervalRemoved(this, index, index);
-    }
-
-    @Override
-    public int getSize() {
-        return diagram.getTrainTypes().size();
-    }
-
-    @Override
-    public Object getElementAt(int index) {
-        return diagram.getTrainTypes().get(index);
-    }
-
-    public void updated(int index) {
-        this.fireContentsChanged(this, index, index);
-    }
-
-    public int add(TrainType type) {
-        diagram.addTrainType(type);
-        int index = diagram.getTrainTypes().size() - 1;
-        this.fireIntervalAdded(this, index, index);
-        return index;
-    }
-
-    public int moveFromTo(int index1, int index2) {
-        // check limits
-        if (index1 < 0 || index1 >= diagram.getTrainTypes().size() || index2 < 0 || index2 >= diagram.getTrainTypes().size())
-            return index1;
-        diagram.moveTrainType(index1, index2);
-        // inform listeners
-        this.fireContentsChanged(this, index1, index1);
-        this.fireContentsChanged(this, index2, index2);
-        return index2;
-    }
 }
