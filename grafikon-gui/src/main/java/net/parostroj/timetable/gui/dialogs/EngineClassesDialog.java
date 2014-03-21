@@ -11,6 +11,7 @@ import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -181,7 +182,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
         copyEnable(Conversions.checkAndTrim(nameTextField.getText()), enabled);
-        copyButton.setEnabled(enabled);
         speedTextField.setText("");
         this.enableDisableDeleteRow();
     }
@@ -200,9 +200,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         engineClassesList = new javax.swing.JList();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(8);
-        nameTextField.addCaretListener(new CaretListener() {
+        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
-            public void caretUpdate(CaretEvent e) {
+            protected void change() {
                 String text = Conversions.checkAndTrim(nameTextField.getText());
                 newButton.setEnabled(text != null);
                 copyEnable(text, !engineClassesList.isSelectionEmpty());
