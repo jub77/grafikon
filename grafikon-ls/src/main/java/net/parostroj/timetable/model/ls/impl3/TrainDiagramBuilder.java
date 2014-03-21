@@ -25,9 +25,7 @@ public class TrainDiagramBuilder {
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
         // attributes
         Attributes attributes = lsDiagram.getAttributes().createAttributes();
-        if (diagram == null)
-            this.diagram = new TrainDiagram(lsDiagram.getId(), null);
-        this.diagram.setTrainsData(data);
+        this.diagram = new TrainDiagram(lsDiagram.getId(), data);
         this.diagram.setAttributes(attributes);
         // fill penalty table with predefined values
         LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getPenaltyTable());
