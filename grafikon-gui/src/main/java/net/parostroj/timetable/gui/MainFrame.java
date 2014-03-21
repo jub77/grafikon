@@ -1247,6 +1247,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
     }
 
+    public ApplicationModel getModel() {
+        return model;
+    }
+
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
