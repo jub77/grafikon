@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -30,7 +31,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
@@ -200,23 +200,9 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         platformNeededCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.platform.needed"));
 
-        DocumentListener listener = new DocumentListener() {
+        DocumentListener listener = new ChangeDocumentListener() {
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                setNewEnabled();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                setNewEnabled();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setNewEnabled();
-            }
-
-            private void setNewEnabled() {
+            protected void change() {
                 setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
             }
         };

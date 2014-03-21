@@ -5,6 +5,7 @@ import java.util.*;
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -12,6 +13,7 @@ import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Conversions;
 
 import javax.swing.JPanel;
 
@@ -22,8 +24,6 @@ import java.awt.Insets;
 import java.awt.BorderLayout;
 
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
@@ -178,11 +178,11 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         routeNameTextField = new javax.swing.JTextField();
         routeNameTextField.setAlignmentX(1.0f);
         namePanel.add(routeNameTextField);
-        routeNameTextField.addCaretListener(new CaretListener(){
+        routeNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
-            public void caretUpdate(CaretEvent e) {
-                String text = routeNameTextField.getText();
-                newButton.setEnabled(text != null && !"".equals(text.trim()));
+            protected void change() {
+                String text = Conversions.checkAndTrim(routeNameTextField.getText());
+                newButton.setEnabled(text != null);
             }
         });
 
