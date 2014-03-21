@@ -47,7 +47,8 @@ public abstract class TCDelegate implements ApplicationModelListener {
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
                 // if selected and type == item moved
-                if (event.getSource() == selected && event.getType() == GTEventType.CYCLE_ITEM_MOVED) {
+                if (event.getSource() == selected && (event.getType() == GTEventType.CYCLE_ITEM_MOVED
+                        || event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS))) {
                     // deselect
                     setSelectedCycle(selected);
                 }
