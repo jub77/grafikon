@@ -20,7 +20,6 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.parostroj.timetable.actions.GroupRemoval;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
@@ -153,8 +152,7 @@ public class GroupsDialog extends JDialog {
         if (index != -1) {
             Wrapper<Group> wrapper = groupsModel.removeIndex(index);
             list.setSelectedIndex(index < groupsModel.getSize() ? index : groupsModel.getSize() - 1);
-            GroupRemoval removal = new GroupRemoval(diagram);
-            removal.removeGroup(wrapper.getElement());
+            diagram.removeGroup(wrapper.getElement());
         }
     }
 }
