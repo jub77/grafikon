@@ -132,7 +132,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public String getName() {
         if (_cachedName == null) {
-            _cachedName = type.formatTrainName(this);
+            _cachedName = type != null ? type.formatTrainName(this) : number;
         }
         return _cachedName;
     }
@@ -142,7 +142,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public String getCompleteName() {
         if (_cachedCompleteName == null) {
-            _cachedCompleteName = type.formatTrainCompleteName(this);
+            _cachedCompleteName = type != null ? type.formatTrainCompleteName(this) : number;
         }
         return _cachedCompleteName;
     }

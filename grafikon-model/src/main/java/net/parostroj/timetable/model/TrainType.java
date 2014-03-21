@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.awt.Color;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -141,9 +142,12 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param category sets category of train type
      */
     public void setCategory(TrainTypeCategory category) {
-        TrainTypeCategory oldCategory = this.category;
-        this.category = category;
-        this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("category", oldCategory, category)));
+        if (!Conversions.compareWithNull(category, this.category)) {
+            TrainTypeCategory oldCategory = this.category;
+            this.category = category;
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("category", oldCategory,
+                    category)));
+        }
     }
 
     /**

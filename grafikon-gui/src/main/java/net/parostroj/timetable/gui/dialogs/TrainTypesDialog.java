@@ -41,6 +41,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrainTypesDialog.class);
 
+    private static final TrainTypeCategory NONE_CATEGORY = new TrainTypeCategory(null, "-", "-");
+
     private ApplicationModel model;
     private TrainTypesModel typesModel;
 
@@ -63,6 +65,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         trainTypesList.setModel(typesModel);
         brakeComboBox.removeAllItems();
         if (model.getDiagram() != null) {
+            brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
             for (TrainTypeCategory cat : model.getDiagram().getPenaltyTable().getTrainTypeCategories()) {
                 brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
             }
@@ -323,7 +326,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             descTextField.setText(selected.getDesc());
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));
             colorLabel.setForeground(selected.getColor());
-            brakeComboBox.setSelectedItem(new Wrapper<TrainTypeCategory>(selected.getCategory()));
+            TrainTypeCategory category = selected.getCategory();
+            brakeComboBox.setSelectedItem(new Wrapper<TrainTypeCategory>(category != null ? category : NONE_CATEGORY));
 
             nameTemplateCheckBox.setSelected(selected.getTrainNameTemplate() != null);
             nameTemplateEditBox.setEnabled(selected.getTrainNameTemplate() != null);
@@ -343,7 +347,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             descTextField.setText("");
             colorLabel.setText("0x000000");
             colorLabel.setForeground(Color.BLACK);
-            brakeComboBox.setSelectedItem(model.getDiagram().getPenaltyTable().getTrainTypeCategories().get(0));
+            brakeComboBox.setSelectedItem(NONE_CATEGORY);
             nameTemplateCheckBox.setSelected(false);
             nameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainNameTemplate());
             nameTemplateEditBox.setEnabled(false);
@@ -398,9 +402,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             Color c = Conversions.convertTextToColor(colorLabel.getText());
             if (!c.equals(type.getColor()))
                 type.setColor(c);
-            TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>)brakeComboBox.getSelectedItem()).getElement();
-            if (!category.equals(type.getCategory()))
-                type.setCategory(category);
+            TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>) brakeComboBox.getSelectedItem()).getElement();
+            type.setCategory(category != NONE_CATEGORY ? category : null);
             if (nameTemplateCheckBox.isSelected()) {
                 try {
                     if (type.getTrainNameTemplate() == null ||
@@ -467,7 +470,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         type.setDesc(desc);
         type.setPlatform(platformNeededCheckBox.isSelected());
         type.setColor(Conversions.convertTextToColor(colorLabel.getText()));
-        type.setCategory((TrainTypeCategory) ((Wrapper<?>)brakeComboBox.getSelectedItem()).getElement());
+        TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>) brakeComboBox.getSelectedItem()).getElement();
+        type.setCategory(category != NONE_CATEGORY ? category : null);
         try {
             if (nameTemplateCheckBox.isSelected()) {
                 type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());

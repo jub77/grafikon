@@ -1,6 +1,7 @@
 package net.parostroj.timetable.utils;
 
 import java.awt.Color;
+import java.io.*;
 
 /**
  * Converting utility.
@@ -35,5 +36,15 @@ public class Conversions {
         } else {
             return false;
         }
+    }
+
+    public static String loadFile(InputStream is) throws IOException {
+        StringBuilder b = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"));
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            b.append(line).append('\n');
+        }
+        return b.toString();
     }
 }
