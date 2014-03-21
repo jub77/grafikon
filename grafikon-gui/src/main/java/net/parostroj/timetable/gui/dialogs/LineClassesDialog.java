@@ -50,22 +50,6 @@ public class LineClassesDialog extends javax.swing.JDialog {
 
             @Override
             public void removed(LineClass object) {
-                // remove item with this line class from weight tables
-                for (EngineClass eClass : model.getDiagram().getEngineClasses()) {
-                    for (WeightTableRow row : eClass.getWeightTable()) {
-                        row.removeWeightInfo(object);
-                    }
-                }
-                // remove line class from lines
-                for (Line line : model.getDiagram().getNet().getLines()) {
-                    if (line.getAttribute(Line.ATTR_CLASS) == object) {
-                        line.removeAttribute(Line.ATTR_CLASS);
-                    }
-                    if (line.getAttribute(Line.ATTR_CLASS_BACK) == object) {
-                        line.removeAttribute(Line.ATTR_CLASS_BACK);
-                    }
-                }
-                // remove line class
                 model.getDiagram().getNet().removeLineClass(object);
             }
 
