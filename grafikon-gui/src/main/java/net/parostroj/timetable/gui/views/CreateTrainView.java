@@ -40,10 +40,13 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTrainView.class.getName());
 
+    private static final TrainType NO_TYPE = new TrainType(null, null) {
+        @Override
+        public String toString() {return "-";}
+    };
+
     private ApplicationModel model;
-
     private final ThroughNodesDialog tnDialog;
-
     private List<Node> throughNodes;
 
     /**
@@ -78,6 +81,7 @@ public class CreateTrainView extends javax.swing.JPanel {
 
         // model for train types
         typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
+        typeComboBox.addItem(NO_TYPE);
 
         // reset through nodes
         throughNodes = new ArrayList<Node>();
@@ -323,9 +327,10 @@ public class CreateTrainView extends javax.swing.JPanel {
             Group group = groupComboBox.getGroupSelection().getGroup();
 
             // create command ...
+            TrainType tType = (TrainType) typeComboBox.getSelectedItem();
             CreateTrainCommand createCommand = new CreateTrainCommand(
                     nameTextField.getText(),
-                    (TrainType)typeComboBox.getSelectedItem(),
+                    tType != NO_TYPE ? tType : null,
                     Integer.valueOf(speedTextField.getText()),
                     route,
                     start,
