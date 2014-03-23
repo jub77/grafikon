@@ -85,6 +85,10 @@ public class TrainsWithConflictsPanel extends javax.swing.JPanel {
         this.checkTrains();
     }
 
+    public void refreshTrain(Train train) {
+        listModel.updateIndex(listModel.getIndexOfObject(train));
+    }
+
     public void removeTrain(Train train) {
         listModel.removeObject(train);
         this.checkTrains();

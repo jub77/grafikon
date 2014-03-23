@@ -56,6 +56,11 @@ public class FloatingWindowsFactory {
                     case TECHNOLOGICAL:
                         panel.updateTrain(event.getSource());
                         break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                            panel.refreshTrain(event.getSource());
+                        }
+                        break;
                     default:
                         break;
                 }
