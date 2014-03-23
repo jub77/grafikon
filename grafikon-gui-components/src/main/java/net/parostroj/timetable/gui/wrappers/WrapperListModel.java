@@ -105,8 +105,15 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
         return list.get(index);
     }
 
-    public void updateIndex(int index) {
+    public void refreshIndex(int index) {
         this.fireContentsChanged(this, index, index);
+    }
+
+    public void refreshObject(T object) {
+        int index = this.getIndexOfObject(object);
+        if (index != -1) {
+            this.refreshIndex(index);
+        }
     }
 
     public void moveIndexDown(int index) {
