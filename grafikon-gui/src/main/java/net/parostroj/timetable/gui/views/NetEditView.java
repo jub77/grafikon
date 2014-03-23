@@ -328,11 +328,15 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processNodeEvent(NodeEvent event) {
-                updateNode(event.getSource());
+                if (event.getType() == GTEventType.ATTRIBUTE) {
+                    updateNode(event.getSource());
+                }
             }
             @Override
             public void processLineEvent(LineEvent event) {
-                updateLine(event.getSource());
+                if (event.getType() == GTEventType.ATTRIBUTE) {
+                    updateLine(event.getSource());
+                }
             }
         });
     }
