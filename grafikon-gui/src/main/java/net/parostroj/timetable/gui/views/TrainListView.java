@@ -384,13 +384,19 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
             @Override
             public void processTrainTypeEvent(TrainTypeEvent event) {
-                updateViewDiagramChanged();
+                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(TrainType.ATTR_DESC)) {
+                    updateViewDiagramChanged();
+                }
             }
 
             @Override
             public void processTrainEvent(TrainEvent event) {
                 if (event.getType() == GTEventType.ATTRIBUTE) {
-                    modifyAndSelectTrain(event.getSource());
+                    if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                        refreshTrain(event.getSource());
+                    } else if (event.getAttributeChange().checkName(Train.ATTR_TYPE, Train.ATTR_GROUP)) {
+                        modifyTrain(event.getSource());
+                    }
                 }
             }
         });
@@ -451,9 +457,18 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         this.selectNode(null);
     }
 
-    private void modifyAndSelectTrain(Train train) {
+    private void modifyTrain(Train train) {
+        boolean selected = this.isTrainSelected(train);
         trainTreeHandler.removeTrain(train);
-        this.addAndSelectTrain(train);
+        TrainTreeNode node = trainTreeHandler.addTrain(train);
+        if (selected) {
+            addSelectedNode(node);
+        }
+    }
+
+    private void refreshTrain(Train train) {
+        TrainTreeNode node = trainTreeHandler.getTrain(train);
+        trainTreeHandler.getTreeModel().nodeChanged(node);
     }
 
     private TreePath selectTrain(Train train) {
@@ -472,6 +487,13 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private TreePath selectNode(TrainTreeNode node) {
         TreePath p = this.getPath(node);
         trainTree.setSelectionPath(p);
+        trainTree.scrollPathToVisible(p);
+        return p;
+    }
+
+    private TreePath addSelectedNode(TrainTreeNode node) {
+        TreePath p = this.getPath(node);
+        trainTree.addSelectionPath(p);
         trainTree.scrollPathToVisible(p);
         return p;
     }
@@ -585,6 +607,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             }
         }
         return selected;
+    }
+
+    private boolean isTrainSelected(Train train) {
+        TrainTreeNode node = trainTreeHandler.getTrain(train);
+        return trainTree.isPathSelected(this.getPath(node));
     }
 
     private void deleteTrain(Train deletedTrain, TrainDiagram diagram) {
