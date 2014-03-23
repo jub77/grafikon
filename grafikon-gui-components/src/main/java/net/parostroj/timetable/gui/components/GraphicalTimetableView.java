@@ -202,9 +202,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                                 setGTWidth(settings);
                                 recreateDraw();
                             }
-                            if (TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE.equals(name) ||
-                                    TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE.equals(name))
-                                repaint();
                             break;
                         default:
                             break;
@@ -283,7 +280,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 this.repaint();
                 break;
             case ATTRIBUTE:
-                if (event.getAttributeChange().getName().equals(Train.ATTR_NUMBER) || event.getAttributeChange().getName().equals(Train.ATTR_TYPE)) {
+                if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
                     draw.changedTextTrain(event.getSource());
                     this.repaint();
                 }
@@ -321,8 +318,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private void trainTypeChanged(TrainTypeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE:
-                if (event.getAttributeChange().checkName("color", "trainNameTemplate", "abbr")) {
-                    draw.changedTextAllTrains();
+                if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
                     // repaint
                     this.repaint();
                 }
