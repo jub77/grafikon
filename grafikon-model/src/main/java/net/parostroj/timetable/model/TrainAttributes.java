@@ -18,4 +18,6 @@ public interface TrainAttributes {
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_TOP_SPEED = "topSpeed";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_COMPLETE_NAME = "completeName";
 }
