@@ -156,10 +156,10 @@ public class LSTrain {
     public Train createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
-        train.setType(diagram.getTrainTypeById(type));
         train.setAttributes(attributes.createAttributes(diagram));
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
+        train.setType(diagram.getTrainTypeById(type));
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
         if (this.route != null)
