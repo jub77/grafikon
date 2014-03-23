@@ -145,8 +145,11 @@ public class FloatingWindowsFactory {
             public void processTrainEvent(TrainEvent event) {
                 switch (event.getType()) {
                     case ATTRIBUTE:
-                        if (event.getAttributeChange().getName().equals(Train.ATTR_WEIGHT))
+                        if (event.getAttributeChange().checkName(Train.ATTR_WEIGHT)) {
                             panel.updateTrain(event.getSource());
+                        } else if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                            panel.refreshTrain(event.getSource());
+                        }
                         break;
                     case TIME_INTERVAL_LIST:
                         panel.updateTrain(event.getSource());
