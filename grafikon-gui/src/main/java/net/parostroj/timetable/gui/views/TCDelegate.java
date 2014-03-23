@@ -29,7 +29,7 @@ import net.parostroj.timetable.model.events.*;
 public abstract class TCDelegate implements ApplicationModelListener {
 
     public enum Action {
-        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE;
+        NEW_CYCLE, DELETED_CYCLE, MODIFIED_CYCLE, SELECTED_CHANGED, REFRESH, NEW_TRAIN, DELETED_TRAIN, DIAGRAM_CHANGE, REFRESH_TRAIN_NAME;
     }
 
     public interface Listener {
@@ -60,6 +60,12 @@ public abstract class TCDelegate implements ApplicationModelListener {
                     fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
                 } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
                     fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
+                }
+            }
+            @Override
+            public void processTrainEvent(TrainEvent event) {
+                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                    fireEventImpl(Action.REFRESH_TRAIN_NAME, null, event.getSource());
                 }
             }
         }, GTEvent.class);
