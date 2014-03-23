@@ -434,7 +434,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 if (type.getTrainCompleteNameTemplate() != null)
                     type.setTrainCompleteNameTemplate(null);
             }
-            typesModel.updateIndex(trainTypesList.getSelectedIndex());
+            typesModel.refreshIndex(trainTypesList.getSelectedIndex());
         }
     }
 

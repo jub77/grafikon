@@ -85,7 +85,7 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
     }
 
     public void refreshTrain(Train train) {
-        listModel.updateIndex(listModel.getIndexOfObject(train));
+        listModel.refreshObject(train);
     }
 
     public void removeTrain(Train train) {
