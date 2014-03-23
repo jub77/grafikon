@@ -37,8 +37,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
-    private String _cachedName;
-    private String _cachedCompleteName;
+    private final CachedValue<String> _cachedName;
+    private final CachedValue<String> _cachedCompleteName;
     private Map<String,Object> _cachedBinding;
     private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
     private AttributesListener attributesListener;
@@ -60,11 +60,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     Train(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
+        _cachedCycles = new TrainCachedCycles();
+        _cachedName = new CachedValue<String>();
+        _cachedCompleteName = new CachedValue<String>();
         timeIntervalList = new TimeIntervalList();
         this.setAttributes(new Attributes());
         cycles = new HashMap<String, List<TrainsCycleItem>>();
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
-
             @Override
             public void fireEvent(TrainListener listener, TrainEvent event) {
                 listener.trainChanged(event);
@@ -73,7 +75,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         attached = false;
         timeBefore = null;
         timeAfter = null;
-        _cachedCycles = new TrainCachedCycles();
     }
 
     /**
@@ -118,38 +119,64 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param number number to be set
      */
     public void setNumber(String number) {
-        this.clearCachedData();
-        String oldNumber = this.number;
-        this.number = number;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
+        if (!Conversions.compareWithNull(number, this.number)) {
+            String oldNumber = this.number;
+            this.number = number;
+            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
+            this.refreshCachedNames();
+        }
     }
 
     /**
      * @return name of the train depending on the pattern
      */
     public String getName() {
-        if (_cachedName == null) {
-            _cachedName = type != null ? type.formatTrainName(this) : number;
+        if (!_cachedName.isCached()) {
+            this.refreshName();
         }
-        return _cachedName;
+        return _cachedName.getValue();
+    }
+
+    private String getNameImpl() {
+        return type != null ? type.formatTrainName(this) : number;
     }
 
     /**
      * @return complete name of the train depending on the pattern
      */
     public String getCompleteName() {
-        if (_cachedCompleteName == null) {
-            _cachedCompleteName = type != null ? type.formatTrainCompleteName(this) : number;
+        if (!_cachedCompleteName.isCached()) {
+            this.refreshCompleteName();
         }
-        return _cachedCompleteName;
+        return _cachedCompleteName.getValue();
+    }
+
+    private String getCompleteNameImpl() {
+        return type != null ? type.formatTrainCompleteName(this) : number;
+    }
+
+    private void refreshName() {
+        String oldName = _cachedName.getValue();
+        String newName = this.getNameImpl();
+        if (_cachedName.set(newName)) {
+            this.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NAME, oldName, newName)));
+        }
+    }
+
+    private void refreshCompleteName() {
+        String oldName = _cachedCompleteName.getValue();
+        String newName = this.getCompleteNameImpl();
+        if (_cachedCompleteName.set(newName)) {
+            this.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_COMPLETE_NAME, oldName, newName)));
+        }
     }
 
     /**
      * clears cached train names.
      */
-    public void clearCachedData() {
-        _cachedCompleteName = null;
-        _cachedName = null;
+    public void refreshCachedNames() {
+        refreshName();
+        refreshCompleteName();
     }
 
     /**
@@ -163,10 +190,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param description sets description
      */
     public void setDescription(String description) {
-        this.clearCachedData();
-        String oldDesc = this.description;
-        this.description = description;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc, description)));
+        if (!Conversions.compareWithNull(description, this.description)) {
+            String oldDesc = this.description;
+            this.description = description;
+            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc,
+                    description)));
+            this.refreshCachedNames();
+        }
     }
 
     /**
@@ -205,10 +235,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public void setType(TrainType type) {
         if (!Conversions.compareWithNull(type, this.type)) {
-            this.clearCachedData();
             TrainType oldType = this.type;
             this.type = type;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+            this.refreshCachedNames();
         }
     }
 
@@ -291,7 +321,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     @Override
     public void setAttributes(Attributes attributes) {
-        this.clearCachedData();
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
@@ -300,9 +329,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainEvent(Train.this, change));
+                refreshCachedNames();
             }
         };
         this.attributes.addListener(attributesListener);
+        this.refreshCachedNames();
     }
 
     @Override
@@ -317,7 +348,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
 
     @Override
     public void setAttribute(String key, Object value) {
-        this.clearCachedData();
         attributes.set(key, value);
     }
 

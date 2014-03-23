@@ -36,7 +36,7 @@ public class TrainNamesValidator implements TrainDiagramValidator {
 
     protected void clearCachedTrainNames() {
         for (Train train : diagram.getTrains()) {
-            train.clearCachedData();
+            train.refreshCachedNames();
         }
     }
 }
