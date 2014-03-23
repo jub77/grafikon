@@ -90,6 +90,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             case DELETED_CYCLE:
                 this.updateListAllTrains();
                 break;
+            case REFRESH_TRAIN_NAME:
+                this.updateTrainName(train);
+                break;
             default:
                 // nothing
         }
@@ -116,6 +119,27 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 m.addElement(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
             }
             allTrainsList.setModel(m);
+        }
+    }
+
+    private void updateTrainName(Train train) {
+        // all train list
+        DefaultListModel model = (DefaultListModel) allTrainsList.getModel();
+        int size = model.getSize();
+        for (int i = 0; i < size; i ++) {
+            Wrapper<?> w = (Wrapper<?>) model.getElementAt(i);
+            if (w.getElement() == train) {
+                model.setElementAt(w, i);
+            }
+        }
+        // circulation list
+        model = (DefaultListModel) ecTrainsList.getModel();
+        size = model.getSize();
+        for (int i = 0; i < size; i++) {
+            TrainsCycleItemWrapper w = (TrainsCycleItemWrapper) model.getElementAt(i);
+            if (w.getItem().getTrain() == train) {
+                model.setElementAt(w, i);
+            }
         }
     }
 
