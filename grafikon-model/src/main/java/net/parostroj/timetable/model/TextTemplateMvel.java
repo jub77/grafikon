@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
  * @author jub
  */
 public final class TextTemplateMvel extends TextTemplate {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TextTemplateMvel.class);
-    
+
     private CompiledTemplate compiledTemplate;
 
     protected TextTemplateMvel(String template, boolean initialize) {
@@ -25,7 +25,7 @@ public final class TextTemplateMvel extends TextTemplate {
         if (initialize)
             initialize();
     }
-    
+
     private void initialize() {
         TemplateCompiler compiler = new TemplateCompiler(this.getTemplate());
         compiledTemplate = compiler.compile();
@@ -56,7 +56,7 @@ public final class TextTemplateMvel extends TextTemplate {
     public Language getLanguage() {
         return Language.MVEL;
     }
-    
+
     @Override
     public void freeResources() {
         compiledTemplate = null;
