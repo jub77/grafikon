@@ -134,12 +134,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     updateView();
                 }
             }
-            @Override
-            public void processTrainTypeEvent(TrainTypeEvent event) {
-                if (model.getSelectedTrain() != null && event.getSource() == model.getSelectedTrain().getType()) {
-                    updateView();
-                }
-            }
         }, GTEvent.class);
     }
 
