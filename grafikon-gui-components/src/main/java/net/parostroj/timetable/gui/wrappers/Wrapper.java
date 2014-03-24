@@ -66,26 +66,32 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     }
 
     public static <T> Wrapper<T> getWrapper(T o) {
-        Wrapper<T> w = null;
-        if (o instanceof Train) {
-            w = new Wrapper<T>(o, new TrainWrapperDelegate(
-                    TrainWrapperDelegate.Type.NAME,
-                    new TrainComparator(TrainComparator.Type.ASC, ((Train)o).getTrainDiagram().getTrainsData().getTrainSortPattern())));
-        } else if (o instanceof Route) {
-            w = new Wrapper<T>(o, new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT));
-        } else if (o instanceof TrainsCycleItem) {
-            w = new Wrapper<T>(o, new TrainsCycleWrapperDelegate());
-        } else {
-            w = new Wrapper<T>(o);
+        return getWrapper(o, null);
+    }
+
+    public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate delegate) {
+        if (delegate == null) {
+            if (o instanceof Train) {
+                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, new TrainComparator(
+                        TrainComparator.Type.ASC, ((Train) o).getTrainDiagram().getTrainsData().getTrainSortPattern()));
+            } else if (o instanceof Route) {
+                delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
+            } else if (o instanceof TrainsCycleItem) {
+                delegate = new TrainsCycleWrapperDelegate();
+            }
         }
-        return w;
+        return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
     }
 
     public static <T> List<Wrapper<T>> getWrapperList(List<? extends T> objList) {
+        return getWrapperList(objList, null);
+    }
+
+    public static <T> List<Wrapper<T>> getWrapperList(List<? extends T> objList, WrapperDelegate delegate) {
         List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
         Class<?> clazz = null;
         for (T o : objList) {
-            list.add(getWrapper(o));
+            list.add(getWrapper(o, delegate));
             if (clazz != null && !clazz.equals(o.getClass())) {
                 throw new IllegalArgumentException("All element are expected to have the same class.");
             }
