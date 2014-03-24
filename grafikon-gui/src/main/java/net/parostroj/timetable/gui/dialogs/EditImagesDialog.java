@@ -229,7 +229,8 @@ public class EditImagesDialog extends javax.swing.JDialog implements Application
     private void renameButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
         // ask for a new name
-        String newName = JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),selected.getFilename());
+        String newName = (String) JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),
+                null, JOptionPane.QUESTION_MESSAGE, null, null, selected.getFilename());
         if (newName != null && !newName.equals(selected.getFilename())) {
             TimetableImage newImage = model.getDiagram().createImage(IdGenerator.getInstance().getId(), newName, selected.getImageWidth(), selected.getImageHeight());
             if (checkExistence(newName, selected)) {
