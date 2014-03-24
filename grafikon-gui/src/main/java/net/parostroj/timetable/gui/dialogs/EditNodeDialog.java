@@ -16,7 +16,9 @@ import javax.swing.ListModel;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.gui.views.NodeTypeWrapper;
+import net.parostroj.timetable.gui.wrappers.NodeTypeWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
@@ -74,16 +76,21 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private Node node;
     private List<EditTrack> removed;
+    private final WrapperListModel<NodeType> types;
 
     /** Creates new form EditNodeDialog */
     public EditNodeDialog(java.awt.Frame parent) {
         super(parent);
         initComponents();
 
+        types = new WrapperListModel<NodeType>(false);
+
         // fill combo box
+        NodeTypeWrapperDelegate delegate = new NodeTypeWrapperDelegate();
         for (NodeType type : NodeType.values()) {
-            typeComboBox.addItem(NodeTypeWrapper.getWrapper(type));
+            types.addWrapper(Wrapper.getWrapper(type, delegate));
         }
+        typeComboBox.setModel(types);
 
         // set units
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
@@ -109,7 +116,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         removed = new LinkedList<EditTrack>();
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
-        typeComboBox.setSelectedItem(NodeTypeWrapper.getWrapper(node.getType()));
+        types.setSelectedObject(node.getType());
         signalsCheckBox.setSelected("new.signals".equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
         controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_CONTROL_STATION)));
         trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_TRAPEZOID_SIGN)));
@@ -144,7 +151,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? "new.signals" : null);
 
-        NodeType newType = ((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType();
+        NodeType newType = types.getSelectedObject();
         if (node.getType() != newType)
             node.setType(newType);
 
@@ -429,23 +436,23 @@ public class EditNodeDialog extends javax.swing.JDialog {
         }
     }
 
-    private NodeTypeWrapper lastSelectedType;
+    private Wrapper<?> lastSelectedType;
 
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // selected ... (SIGNAL is allowed only if there is only one track)
-            if (((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType() == NodeType.SIGNAL) {
+            if (types.getSelectedObject() == NodeType.SIGNAL) {
                 if (trackList.getModel().getSize() != 1) {
                     typeComboBox.setSelectedItem(lastSelectedType);
                 }
             }
 
-            boolean signal = (((NodeTypeWrapper) typeComboBox.getSelectedItem()).getType() == NodeType.SIGNAL);
+            boolean signal = types.getSelectedObject() == NodeType.SIGNAL;
             newTrackButton.setEnabled(!signal);
             renameTrackButton.setEnabled(!signal);
             deleteTrackButton.setEnabled(!signal);
         } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
-            lastSelectedType = (NodeTypeWrapper) evt.getItem();
+            lastSelectedType = (Wrapper<?>) evt.getItem();
         }
     }
 
