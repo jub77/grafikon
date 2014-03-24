@@ -20,13 +20,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This action recalculates train stops.
- * 
+ *
  * @author jub
  */
 public class RecalculateStopsAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecalculateStopsAction.class.getName());
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     public RecalculateStopsAction(ApplicationModel model) {
         this.model = model;
@@ -37,7 +37,8 @@ public class RecalculateStopsAction extends AbstractAction {
         Component top = ActionUtils.getTopLevelComponent(event.getSource());
 
         // get ratio
-        String ratioStr = JOptionPane.showInputDialog(top, ResourceLoader.getString("recalculate.stops.ratio"), "0.5");
+        String ratioStr = (String) JOptionPane.showInputDialog(top, ResourceLoader.getString("recalculate.stops.ratio"),
+                null, JOptionPane.QUESTION_MESSAGE, null, null, "0.5");
 
         if (ratioStr == null)
             return;
@@ -52,9 +53,9 @@ public class RecalculateStopsAction extends AbstractAction {
         }
 
         final double ratio = cRatio;
-        
+
         TrainAction trainAction = new TrainAction() {
-            
+
             @Override
             public void execute(Train train) throws Exception {
                 // convert stops ...
@@ -92,12 +93,12 @@ public class RecalculateStopsAction extends AbstractAction {
                 return time;
             }
         };
-        
+
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(event.getSource()));
         ModelAction recalculateAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
                 trainAction, ResourceLoader.getString("wait.message.recalculate"), "Recalculate stops");
         ModelAction eventAction = new EventDispatchModelAction(context) {
-            
+
             @Override
             protected void eventDispatchAction() {
                 model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
