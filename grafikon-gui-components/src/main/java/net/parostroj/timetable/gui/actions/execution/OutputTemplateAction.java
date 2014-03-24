@@ -1,11 +1,12 @@
 package net.parostroj.timetable.gui.actions.execution;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.*;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.utils.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,40 +101,75 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
             ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, context.getLocationComponent());
         }
     }
+
+    private List<Pair<String, Map<String, Object>>> createOutputs(OutputTemplate template) {
+        List<Pair<String, Map<String, Object>>> result = null;
+        if (template.getScript() != null) {
+            final List<Pair<String, Map<String, Object>>> out = new ArrayList<Pair<String, Map<String, Object>>>();
+            Map<String, Object> binding = new HashMap<String, Object>();
+            binding.put("diagram", diagram);
+            binding.put("outputs", new Object() {
+                @SuppressWarnings("unused")
+                public void add(String name, Map<String, Object> values) {
+                    out.add(new Pair<String, Map<String, Object>>(name, values));
+                }
+            });
+            template.getScript().evaluate(binding);
+            result = out;
+        }
+        return result;
+    }
+
     private void generateOutput(OutputTemplate template) throws OutputException {
         String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE) == Boolean.TRUE ? null : template.getTemplate();
-        generateOutput(
-                output,
-                this.getFile(template.getName(),
-                        template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                textTemplate, type, null);
-        if ("trains".equals(type)) {
-            // for each driver circulation
-            for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
-                generateOutput(
-                        output,
-                        this.getFile(template.getName() + "_" + cycle.getName(),
-                                template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                        textTemplate, type, cycle);
+        List<Pair<String, Map<String, Object>>> outputNames = this.createOutputs(template);
+        if (outputNames == null) {
+            this.generateOutput(
+                    output,
+                    this.getFile(template.getName(),
+                            template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
+                    textTemplate, type, null, null);
+            if ("trains".equals(type)) {
+                // for each driver circulation
+                for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
+                    this.generateOutput(
+                            output,
+                            this.getFile(template.getName() + "_" + cycle.getName(),
+                                    template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
+                            textTemplate, type, cycle, null);
+                }
+            }
+        } else {
+            for(Pair<String, Map<String, Object>> outputName : outputNames) {
+                this.generateOutput(output, this.getFile(outputName.first), textTemplate, type, null, outputName.second);
             }
         }
     }
 
-    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type, Object param) throws OutputException {
+    private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
+            Object param, Map<String, Object> context) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
             params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
         }
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
         params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
+        if (context != null) {
+            params.setParam(DefaultOutputParam.CONTEXT, context);
+        }
         // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
         if ("trains".equals(type) && param != null) {
             params.setParam("driver_cycle", param);
         }
         output.write(params);
+    }
+
+    private File getFile(String name) {
+        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        return new File(outputDirectory, name);
     }
 
     private File getFile(String name, String extension) {
