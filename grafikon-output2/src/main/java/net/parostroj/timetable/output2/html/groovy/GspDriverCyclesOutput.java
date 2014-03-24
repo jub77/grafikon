@@ -40,7 +40,8 @@ public class GspDriverCyclesOutput extends GspOutput {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("cycles", cycles);
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
-            
+            this.addContext(params, map);
+
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, map);

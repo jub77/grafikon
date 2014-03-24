@@ -5,14 +5,9 @@ import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-import net.parostroj.timetable.output2.DefaultOutputParam;
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputParams;
-import net.parostroj.timetable.output2.OutputWithLocale;
+import net.parostroj.timetable.output2.*;
 
 /**
  * Gsp output.
@@ -22,7 +17,7 @@ import net.parostroj.timetable.output2.OutputWithLocale;
 public abstract class GspOutput extends OutputWithLocale {
 
     /** Cached default template. */
-    private Map<String, Template> _cachedTemplates;
+    private final Map<String, Template> _cachedTemplates;
 
     public GspOutput(Locale locale) {
         super(locale);
@@ -65,7 +60,7 @@ public abstract class GspOutput extends OutputWithLocale {
         }
         return template;
     }
-    
+
     protected void writeOutput(OutputStream stream, Template template, Map<String, Object> binding) throws OutputException {
         Writable result = template.make(binding);
         Writer writer;
@@ -78,5 +73,15 @@ public abstract class GspOutput extends OutputWithLocale {
         } catch (IOException e) {
             throw new OutputException("Error writing output.", e);
         }
+    }
+
+    protected void addContext(OutputParams params, Map<String, Object> map) {
+        if (params.paramExistWithValue(DefaultOutputParam.CONTEXT)) {
+            Map<?, ?> context = params.get(DefaultOutputParam.CONTEXT).getValue(Map.class);
+            for (Map.Entry<?, ?> entry : context.entrySet()) {
+                map.put((String) entry.getKey(), entry.getValue());
+            }
+        }
+
     }
 }

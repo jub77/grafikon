@@ -28,6 +28,7 @@ public class GspDiagramOutput extends GspOutput {
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("diagram", diagram);
+            this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);

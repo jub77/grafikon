@@ -54,6 +54,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             map.put("page_sort", pageSort);
             ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
             ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
+            this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
