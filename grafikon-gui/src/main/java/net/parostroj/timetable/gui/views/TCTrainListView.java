@@ -196,10 +196,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void initComponents() {
         filterMenu = new javax.swing.JPopupMenu();
-        allRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        passengerRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        freightRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        customRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem allRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem freightRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        javax.swing.JRadioButtonMenuItem customRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JSeparator separator = new javax.swing.JSeparator();
         overlappingCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         filterbuttonGroup = new javax.swing.ButtonGroup();
@@ -570,18 +570,14 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private Set<TrainType> selectedTypes = new HashSet<TrainType>();
 
     private javax.swing.JButton addButton;
-    private javax.swing.JRadioButtonMenuItem allRadioButtonMenuItem;
     private javax.swing.JList allTrainsList;
     private javax.swing.JButton changeButton;
     private net.parostroj.timetable.gui.views.ColorTextPane coverageTextPane;
-    private javax.swing.JRadioButtonMenuItem customRadioButtonMenuItem;
     private javax.swing.JList ecTrainsList;
     private javax.swing.JPopupMenu filterMenu;
     private javax.swing.ButtonGroup filterbuttonGroup;
-    private javax.swing.JRadioButtonMenuItem freightRadioButtonMenuItem;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JCheckBoxMenuItem overlappingCheckBoxMenuItem;
-    private javax.swing.JRadioButtonMenuItem passengerRadioButtonMenuItem;
     private javax.swing.JButton removeButton;
     private javax.swing.JButton selectionButton;
 }
