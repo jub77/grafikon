@@ -170,6 +170,22 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
         }
     }
 
+    public void setWrapper(Wrapper<T> w, int index) {
+        if (this.sorted)
+            throw new IllegalStateException("Cannot insert in specific place in sorted list.");
+        Wrapper<T> old = list.get(index);
+        if (set != null) {
+            set.remove(old.getElement());
+            set.add(w.getElement());
+        }
+        list.set(index, w);
+        this.fireContentsChanged(this, index, index);
+        if (this.listener != null) {
+            this.listener.removed(old.getElement());
+            this.listener.added(w.getElement(), index);
+        }
+    }
+
     public List<Wrapper<T>> getListOfWrappers() {
         return list;
     }
