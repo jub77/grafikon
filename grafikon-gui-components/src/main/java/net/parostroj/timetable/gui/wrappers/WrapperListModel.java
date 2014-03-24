@@ -252,6 +252,7 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     @Override
     public void setSelectedItem(Object anItem) {
         selectedItem = (Wrapper<T>) anItem;
+        this.fireContentsChanged(this, -1, -1);
     }
 
     @Override
