@@ -62,13 +62,14 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private final TCItemChangeDialog changeDialog;
 
     private final WrapperListModel<Train> allTrains;
+    private final WrapperListModel<TrainsCycleItem> cTrains;
 
-    /** Creates new form ECTrainListView */
     public TCTrainListView() {
         initComponents();
         allTrains = new WrapperListModel<Train>(true);
+        cTrains = new WrapperListModel<TrainsCycleItem>(false);
         allTrainsList.setModel(allTrains);
-        cTrainsList.setModel(new DefaultListModel());
+        cTrainsList.setModel(cTrains);
         changeDialog = new TCItemChangeDialog();
     }
 
@@ -133,27 +134,21 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         // all train list
         allTrains.refreshObject(train);
         // circulation list
-        DefaultListModel model = (DefaultListModel) cTrainsList.getModel();
-        int size = model.getSize();
+        int size = cTrains.getSize();
         for (int i = 0; i < size; i++) {
-            Wrapper<?> w = (Wrapper<?>) model.getElementAt(i);
-            if (((TrainsCycleItem) w.getElement()).getTrain() == train) {
-                model.setElementAt(w, i);
+            if (cTrains.getIndex(i).getElement().getTrain() == train) {
+                cTrains.refreshIndex(i);
             }
         }
     }
 
     private void updateListCycle() {
         // right list with assign trains
-        if (delegate.getSelectedCycle() == null) {
-            ((DefaultListModel)cTrainsList.getModel()).clear();
-        } else {
-            DefaultListModel m = (DefaultListModel)cTrainsList.getModel();
-            m.clear();
+        cTrains.clear();
+        if (delegate.getSelectedCycle() != null) {
             for (TrainsCycleItem item : delegate.getSelectedCycle()) {
-                m.addElement(Wrapper.getWrapper(item));
+                cTrains.addWrapper(Wrapper.getWrapper(item));
             }
-            cTrainsList.setModel(m);
         }
     }
 
@@ -175,11 +170,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             int index = allTrains.getIndexOfObject(interval.getTrain());
             allTrainsList.setSelectedIndex(index);
             // select all intervals in right list
-            DefaultListModel dlm = (DefaultListModel) cTrainsList.getModel();
             boolean selection = false;
-            for (int i = 0; i < dlm.getSize(); i++) {
-                Wrapper<?> w = (Wrapper<?>) dlm.getElementAt(i);
-                if (((TrainsCycleItem) w.getElement()).getTrain() == interval.getTrain()) {
+            for (int i = 0; i < cTrains.getSize(); i++) {
+                Wrapper<TrainsCycleItem> w = cTrains.getIndex(i);
+                if (w.getElement().getTrain() == interval.getTrain()) {
                     if (!selection) {
                         selection = true;
                         cTrainsList.clearSelection();
@@ -381,16 +375,14 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        Object[] selectedValues = cTrainsList.getSelectedValues();
-        for (Object selectedObject : selectedValues) {
-            Wrapper<?> selected = (Wrapper<?>) selectedObject;
-            if (selected != null) {
-                TrainsCycleItem item = (TrainsCycleItem) selected.getElement();
-                item.getCycle().removeItem(item);
-                delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
-            }
+        int[] selectedIndices = cTrainsList.getSelectedIndices();
+        for (int selectedIndex : selectedIndices) {
+            Wrapper<TrainsCycleItem> selected = cTrains.getIndex(selectedIndex);
+            TrainsCycleItem item = selected.getElement();
+            item.getCycle().removeItem(item);
+            delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
-        if (selectedValues.length > 0) {
+        if (selectedIndices.length > 0) {
             this.updateListAllTrains();
             this.updateListCycle();
             this.updateErrors();
@@ -398,13 +390,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        Object[] selectedValues = allTrainsList.getSelectedValues();
+        int[] selectedIndices = allTrainsList.getSelectedIndices();
         boolean warning = delegate.showCorrectionWarning();
         StringBuilder trainsStr = null;
-        for (Object objectSelected : selectedValues) {
-            Wrapper<?> selected = (Wrapper<?>) objectSelected;
+        for (int indexSelected : selectedIndices) {
+            Wrapper<Train> selected = allTrains.getIndex(indexSelected);
             if (selected != null) {
-                Train t = (Train) selected.getElement();
+                Train t = selected.getElement();
                 TrainsCycle cycle = delegate.getSelectedCycle();
                 if (cycle != null) {
                     TrainsCycleItem item = null;
@@ -432,7 +424,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 }
             }
         }
-        if (selectedValues.length > 0) {
+        if (selectedIndices.length > 0) {
             this.updateListAllTrains();
             this.updateListCycle();
             this.updateErrors();
@@ -446,7 +438,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (cTrainsList.getSelectedIndex() != -1) {
-            TrainsCycleItem item = (TrainsCycleItem) ((Wrapper<?>) cTrainsList.getSelectedValue()).getElement();
+            TrainsCycleItem item = cTrains.getIndex(cTrainsList.getSelectedIndex()).getElement();
             Train train = item.getTrain();
             if (!changeDialog.showDialog(this, item))
                 return;
@@ -464,7 +456,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     cycle.replaceItem(newItem, item);
                     int index = cycle.getItems().indexOf(newItem);
                     cTrainsList.setSelectedIndex(index);
-                    ((DefaultListModel) cTrainsList.getModel()).set(index, Wrapper.getWrapper(newItem));
+                    cTrains.setWrapper(Wrapper.getWrapper(newItem), index);
                     this.updateSelectedTrainsCycleItem(newItem);
                     this.updateErrors();
                     if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
@@ -482,7 +474,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     this.updateSelectedTrainsCycleItem(item);
                 }
             }
-            cTrainsList.repaint();
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
     }
@@ -491,7 +482,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         if (!evt.getValueIsAdjusting()) {
             boolean selectedOne = cTrainsList.getSelectedIndex() != -1 && cTrainsList.getMaxSelectionIndex() == cTrainsList.getMinSelectionIndex();
             boolean selected = cTrainsList.getSelectedIndex() != -1;
-            TrainsCycleItem item = (TrainsCycleItem) (selectedOne ? ((Wrapper<?>) cTrainsList.getSelectedValue()).getElement() : null);
+            TrainsCycleItem item = selectedOne ? cTrains.getIndex(cTrainsList.getSelectedIndex()).getElement() : null;
             this.updateSelectedTrainsCycleItem(item);
             changeButton.setEnabled(selectedOne);
             removeButton.setEnabled(selected);
