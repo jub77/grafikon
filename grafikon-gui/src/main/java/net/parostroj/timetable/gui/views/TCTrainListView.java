@@ -38,6 +38,25 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private static final int BUTTON_MARGIN = 1;
 
+    private static enum TrainFilter {
+
+        PASSENGER("P"), FREIGHT("F"), CUSTOM("C"), ALL("A");
+
+        private String key;
+
+        private TrainFilter(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public boolean isType(String key) {
+            return this.key.equals(key);
+        }
+    }
+
     private TCDelegate delegate;
     private TrainSort sort;
     private TrainTypeFilter filter;
@@ -220,7 +239,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         filterbuttonGroup.add(allRadioButtonMenuItem);
         allRadioButtonMenuItem.setSelected(true);
         allRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.all")); // NOI18N
-        allRadioButtonMenuItem.setActionCommand("A");
+        allRadioButtonMenuItem.setActionCommand(TrainFilter.ALL.getKey());
         allRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -231,7 +250,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         filterbuttonGroup.add(passengerRadioButtonMenuItem);
         passengerRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.passenger")); // NOI18N
-        passengerRadioButtonMenuItem.setActionCommand("P");
+        passengerRadioButtonMenuItem.setActionCommand(TrainFilter.PASSENGER.getKey());
         passengerRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -242,7 +261,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         filterbuttonGroup.add(freightRadioButtonMenuItem);
         freightRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.freight")); // NOI18N
-        freightRadioButtonMenuItem.setActionCommand("F");
+        freightRadioButtonMenuItem.setActionCommand(TrainFilter.FREIGHT.getKey());
         freightRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -253,7 +272,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         filterbuttonGroup.add(customRadioButtonMenuItem);
         customRadioButtonMenuItem.setText(ResourceLoader.getString("filter.trains.custom")); // NOI18N
-        customRadioButtonMenuItem.setActionCommand("C");
+        customRadioButtonMenuItem.setActionCommand(TrainFilter.CUSTOM.getKey());
         customRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -548,11 +567,11 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private void setFilter(String type, Component component) {
-        if ("P".equals(type)) {
+        if (TrainFilter.PASSENGER.isType(type)) {
             filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.PASSENGER);
-        } else if ("F".equals(type)) {
+        } else if (TrainFilter.FREIGHT.isType(type)) {
             filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.FREIGHT);
-        } else if ("C".equals(type)) {
+        } else if (TrainFilter.CUSTOM.isType(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
             dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
