@@ -117,7 +117,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
         types.setSelectedObject(node.getType());
-        signalsCheckBox.setSelected("new.signals".equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
+        signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
         controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_CONTROL_STATION)));
         trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_TRAPEZOID_SIGN)));
 
@@ -149,7 +149,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             node.setAbbr(abbrTextField.getText());
         }
 
-        node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? "new.signals" : null);
+        node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? Node.IP_NEW_SIGNALS : null);
 
         NodeType newType = types.getSelectedObject();
         if (node.getType() != newType)

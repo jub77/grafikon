@@ -141,7 +141,7 @@ public class TrainTimetablesExtractor {
 
             if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_CONTROL_STATION)))
                 row.setControlStation(true);
-            if ("new.signals".equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_INTERLOCKING_PLANT)))
+            if (Node.IP_NEW_SIGNALS.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_INTERLOCKING_PLANT)))
                 row.setLightSignals(true);
             row.setStation(nodeI.getOwnerAsNode().getName());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
