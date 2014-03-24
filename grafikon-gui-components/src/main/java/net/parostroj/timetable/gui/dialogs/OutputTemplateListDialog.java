@@ -309,6 +309,14 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         }
         copy.setName(template.getName());
         copy.setAttributes(new Attributes(template.getAttributes()));
+        try {
+            if (template.getScript() != null) {
+                copy.setScript(Script.createScript(template.getScript().getSourceCode(),
+                        template.getScript().getLanguage()));
+            }
+        } catch (GrafikonException e) {
+            LOG.error("Error creating script.", e);
+        }
         return copy;
     }
 
@@ -320,6 +328,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
             template.setTemplate(fromTemplate.getTemplate());
         }
         template.getAttributes().merge(fromTemplate.getAttributes());
+        template.setScript(fromTemplate.getScript());
     }
 
     private javax.swing.JPanel buttonPanel;

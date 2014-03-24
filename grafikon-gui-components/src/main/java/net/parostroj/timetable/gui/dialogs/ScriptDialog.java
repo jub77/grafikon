@@ -19,8 +19,8 @@ public class ScriptDialog extends javax.swing.JDialog {
     private Script selectedScript;
 
     /** Creates new form ScriptDialog */
-    public ScriptDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ScriptDialog(java.awt.Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
     }
 
