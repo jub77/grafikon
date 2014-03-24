@@ -6,19 +6,19 @@ import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Output template.
- * 
+ *
  * @author jub
  */
 public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes {
-    
+
     private final String id;
     private final TrainDiagram diagram;
 
     private String name;
     private TextTemplate template;
-    
+
     private Attributes attributes;
-    private GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
+    private final GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
     private AttributesListener attributesListener;
 
     public OutputTemplate(String id, TrainDiagram diagram) {
@@ -43,17 +43,17 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     public String getId() {
         return id;
     }
-    
+
     public TrainDiagram getDiagram() {
         return diagram;
     }
-    
+
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange("name", oldName, name)));
+        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
     }
-    
+
     public String getName() {
         return name;
     }
@@ -61,7 +61,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     public void setTemplate(TextTemplate template) {
         TextTemplate oldTemplate = this.template;
         this.template = template;
-        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange("template", oldTemplate, template)));
+        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
     }
 
     public TextTemplate getTemplate() {
@@ -94,7 +94,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
         this.attributesListener = new AttributesListener() {
-            
+
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change));
@@ -105,7 +105,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     /**
      * adds listener.
-     * 
+     *
      * @param listener listener
      */
     public void addListener(OutputTemplateListener listener) {
@@ -114,7 +114,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     /**
      * removes listener.
-     * 
+     *
      * @param listener listener
      */
     public void removeListener(OutputTemplateListener listener) {
