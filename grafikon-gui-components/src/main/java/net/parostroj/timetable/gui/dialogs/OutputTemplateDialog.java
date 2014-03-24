@@ -69,13 +69,14 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             defaultTemplate = this.template.getAttributes().get(OutputTemplate.ATTR_DEFAULT_TEMPLATE, Boolean.class);
             this.defaultTemplateCheckbox.setSelected(defaultTemplate == Boolean.TRUE);
         }
+        boolean isScript = this.template.getScript() != null;
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
         textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
-        extensionTextField.setText(this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class));
+        extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class) : null);
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE));
-        boolean isScript = this.template.getScript() != null;
         scriptCheckBox.setSelected(isScript);
         scriptButton.setEnabled(isScript);
+        extensionTextField.setEnabled(!isScript);
     }
 
     private void initComponents() {
@@ -170,23 +171,25 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         });
         scriptPanel.add(scriptButton);
 
-                scriptCheckBox = new JCheckBox();
-                scriptCheckBox.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        boolean isScript = scriptCheckBox.isSelected();
-                        scriptButton.setEnabled(isScript);
-                        if (isScript) {
-                            try {
-                                template.setScript(Script.createScript("", Script.Language.GROOVY));
-                            } catch (GrafikonException e1) {
-                                log.error("Error creating script.", e);
-                            }
-                        } else {
-                            template.setScript(null);
-                        }
+        scriptCheckBox = new JCheckBox();
+        scriptCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean isScript = scriptCheckBox.isSelected();
+                scriptButton.setEnabled(isScript);
+                extensionTextField.setEnabled(!isScript);
+                if (isScript) {
+                    extensionTextField.setText(null);
+                    try {
+                        template.setScript(Script.createScript("", Script.Language.GROOVY));
+                    } catch (GrafikonException e1) {
+                        log.error("Error creating script.", e);
                     }
-                });
-                scriptPanel.add(scriptCheckBox);
+                } else {
+                    template.setScript(null);
+                }
+            }
+        });
+        scriptPanel.add(scriptCheckBox);
 
         pack();
     }
