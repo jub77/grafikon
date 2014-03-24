@@ -30,7 +30,7 @@ public class LSOutputTemplate {
         this.name = template.getName();
         this.template = new LSTextTemplate(template.getTemplate());
         this.attributes = new LSAttributes(template.getAttributes());
-        this.script = new LSScript(template.getScript());
+        this.script = template.getScript() != null ? new LSScript(template.getScript()) : null;
     }
 
     public String getId() {
