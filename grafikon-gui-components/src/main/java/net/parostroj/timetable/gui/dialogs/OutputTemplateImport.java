@@ -34,6 +34,7 @@ public class OutputTemplateImport extends Import {
         outputTemplate.setName(importedOutputTemplate.getName());
         outputTemplate.setAttributes(new Attributes(importedOutputTemplate.getAttributes()));
         outputTemplate.setTemplate(importedOutputTemplate.getTemplate());
+        outputTemplate.setScript(importedOutputTemplate.getScript());
 
         // add to diagram
         this.getDiagram().addOutputTemplate(outputTemplate);
