@@ -7,6 +7,8 @@ package net.parostroj.timetable.model;
  */
 public interface NodeAttributes {
 
+    public static final String IP_NEW_SIGNALS = "new.signals";
+
     public static final String ATTR_CONTROL_STATION = "control.station";
     public static final String ATTR_INTERLOCKING_PLANT = "interlocking.plant";
     public static final String ATTR_TRAPEZOID_SIGN = "trapezoid.sign";
