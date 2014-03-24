@@ -395,7 +395,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = JOptionPane.showInputDialog(this, "");
+        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
         if (name != null && !name.equals("")) {
             NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), name);
             track.setPlatform(true);
@@ -406,7 +406,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private void renameTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!trackList.isSelectionEmpty()) {
             EditTrack track = (EditTrack) trackList.getSelectedValue();
-            String name = JOptionPane.showInputDialog(this, "", track.number);
+            String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, track.number);
             if (name != null && !name.equals("")) {
                 track.number = name;
             }

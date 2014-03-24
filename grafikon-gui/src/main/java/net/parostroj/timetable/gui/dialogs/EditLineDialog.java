@@ -24,6 +24,7 @@ import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
@@ -465,7 +466,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
     private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // show dialog with name question
-        String name = JOptionPane.showInputDialog(this,"");
+        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
         if (name != null && !name.equals("")) {
             LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), name);
             ((DefaultListModel)trackList.getModel()).addElement(track);
