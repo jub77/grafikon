@@ -8,15 +8,15 @@ import net.parostroj.timetable.model.TrainsCycleItem;
  *
  * @author jub
  */
-public class TrainsCycleWrapperDelegate implements WrapperDelegate {
+public class TrainsCycleWrapperItemDelegate implements WrapperDelegate {
 
     private final boolean showComment;
 
-    public TrainsCycleWrapperDelegate() {
+    public TrainsCycleWrapperItemDelegate() {
         this(true);
     }
 
-    public TrainsCycleWrapperDelegate(boolean showComment) {
+    public TrainsCycleWrapperItemDelegate(boolean showComment) {
         this.showComment = showComment;
     }
 
