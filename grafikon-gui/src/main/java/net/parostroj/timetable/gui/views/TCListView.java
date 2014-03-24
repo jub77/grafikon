@@ -170,7 +170,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         else
             delegate.setSelectedCycle(null);
         deleteButton.setEnabled(selectedValues.length > 0);
-        editButton.setEnabled(selectedValues.length > 0);
+        editButton.setEnabled(selectedValues.length == 1);
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
