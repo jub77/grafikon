@@ -41,6 +41,7 @@ public class GspEndPositionsOutput extends GspOutput {
             map.put("engines", engines);
             map.put("train_units", trainUnits);
             ResourceHelper.addTextsToMap(map, "end_positions_", this.getLocale(), "texts/html_texts");
+            this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
