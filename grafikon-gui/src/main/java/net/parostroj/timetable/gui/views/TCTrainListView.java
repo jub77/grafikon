@@ -13,8 +13,6 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.actions.TrainSort;
 import net.parostroj.timetable.filters.TrainTypeFilter;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TrainSelector;
@@ -25,6 +23,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.*;
 
@@ -58,15 +57,17 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private TCDelegate delegate;
-    private TrainSort sort;
     private TrainTypeFilter filter;
     private boolean overlappingEnabled;
     private final TCItemChangeDialog changeDialog;
 
+    private final WrapperListModel<Train> allTrains;
+
     /** Creates new form ECTrainListView */
     public TCTrainListView() {
         initComponents();
-        allTrainsList.setModel(new DefaultListModel());
+        allTrains = new WrapperListModel<Train>(true);
+        allTrainsList.setModel(allTrains);
         cTrainsList.setModel(new DefaultListModel());
         changeDialog = new TCItemChangeDialog();
     }
@@ -85,12 +86,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
         switch (action) {
             case REFRESH:
-                if (delegate.getTrainDiagram() != null) {
-                    this.sort = new TrainSort(
-                            new TrainComparator(
-                            TrainComparator.Type.ASC,
-                            delegate.getTrainDiagram().getTrainsData().getTrainSortPattern()));
-                }
                 this.updateListAllTrains();
                 break;
             case NEW_TRAIN:
@@ -118,9 +113,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void updateListAllTrains() {
         // left list with available trains
-        if (delegate.getTrainDiagram() == null) {
-            allTrainsList.setModel(new DefaultListModel());
-        } else {
+        allTrains.clear();
+        if (delegate.getTrainDiagram() != null) {
             // get all trains (sort)
             List<Train> trainsList = new ArrayList<Train>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
@@ -129,30 +123,18 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         trainsList.add(train);
                 }
             }
-            // sort them
-            trainsList = sort.sort(trainsList);
-
-            DefaultListModel m = new DefaultListModel();
             for (Train train : trainsList) {
-                m.addElement(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
+                allTrains.addWrapper(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
             }
-            allTrainsList.setModel(m);
         }
     }
 
     private void updateTrainName(Train train) {
         // all train list
-        DefaultListModel model = (DefaultListModel) allTrainsList.getModel();
-        int size = model.getSize();
-        for (int i = 0; i < size; i ++) {
-            Wrapper<?> w = (Wrapper<?>) model.getElementAt(i);
-            if (w.getElement() == train) {
-                model.setElementAt(w, i);
-            }
-        }
+        allTrains.refreshObject(train);
         // circulation list
-        model = (DefaultListModel) cTrainsList.getModel();
-        size = model.getSize();
+        DefaultListModel model = (DefaultListModel) cTrainsList.getModel();
+        int size = model.getSize();
         for (int i = 0; i < size; i++) {
             Wrapper<?> w = (Wrapper<?>) model.getElementAt(i);
             if (((TrainsCycleItem) w.getElement()).getTrain() == train) {
@@ -190,7 +172,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     public void selectTrainInterval(TimeInterval interval) {
         if (interval != null) {
             // select in left list
-            allTrainsList.setSelectedValue(Wrapper.getWrapper(interval.getTrain(), null), true);
+            int index = allTrains.getIndexOfObject(interval.getTrain());
+            allTrainsList.setSelectedIndex(index);
             // select all intervals in right list
             DefaultListModel dlm = (DefaultListModel) cTrainsList.getModel();
             boolean selection = false;
