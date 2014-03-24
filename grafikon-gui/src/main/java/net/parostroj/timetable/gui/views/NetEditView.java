@@ -86,12 +86,14 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private JPanel panel;
     private final Collection<JComponent> controls = new ArrayList<JComponent>();
 
+    private int cnt = 0;
+
     public class NewNodeAction extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (model.getDiagram() != null) {
-                String result = JOptionPane.showInputDialog(NetEditView.this, ResourceLoader.getString("nl.name"));
+                String result = ResourceLoader.getString("node.station.text") + " " + (++cnt);
                 // do not create if empty or cancel selected
                 if (result == null || result.equals(""))
                     return;
@@ -102,7 +104,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     location = new Point(20, 20);
                 }
                 Node n = model.getDiagram().createNode(IdGenerator.getInstance().getId(), NodeType.STATION, result,
-                        result);
+                        result.substring(0, 1) + cnt);
                 NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), "1");
                 track.setPlatform(true);
                 n.addTrack(track);
