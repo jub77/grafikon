@@ -37,6 +37,8 @@ import java.awt.event.ActionListener;
  */
 public class OutputTemplateDialog extends javax.swing.JDialog {
 
+    private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:])";
+
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
     private OutputTemplate template;
@@ -180,7 +182,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
                 if (isScript) {
                     extensionTextField.setText(null);
                     try {
-                        template.setScript(Script.createScript("", Script.Language.GROOVY));
+                        template.setScript(Script.createScript(DEFAULT_OUTPUT_SCRIPT, Script.Language.GROOVY));
                     } catch (GrafikonException e1) {
                         log.error("Error creating script.", e);
                     }
