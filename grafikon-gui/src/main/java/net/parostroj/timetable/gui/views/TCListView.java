@@ -7,17 +7,16 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -31,17 +30,20 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
 
     private TCDelegate delegate;
 
+    private final WrapperListModel<TrainsCycle> cycles;
+
     /** Creates new form ECListView */
     public TCListView() {
         setLayout(new BorderLayout(0, 0));
-        ecList = new javax.swing.JList();
+        cycles = new WrapperListModel<TrainsCycle>(true);
+        cyclesList = new javax.swing.JList(cycles);
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         add(scrollPane, BorderLayout.CENTER);
 
-        ecList.setPrototypeCellValue("mmmmmmmmm");
-        ecList.setVisibleRowCount(3);
-        scrollPane.setViewportView(ecList);
-        ecList.addListSelectionListener(this);
+        cyclesList.setPrototypeCellValue("mmmmmmmmm");
+        cyclesList.setVisibleRowCount(3);
+        scrollPane.setViewportView(cyclesList);
+        cyclesList.addListSelectionListener(this);
 
         javax.swing.JPanel panel = new javax.swing.JPanel();
         add(panel, BorderLayout.SOUTH);
@@ -126,7 +128,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
                 this.updateView();
                 break;
             case MODIFIED_CYCLE:
-                ecList.repaint();
+                cyclesList.repaint();
                 break;
             case SELECTED_CHANGED:
                 break;
@@ -136,17 +138,13 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     }
 
     private void updateView() {
+        cycles.clear();
+        cyclesList.clearSelection();
         if (delegate.getTrainDiagram() != null && delegate.getType() != null) {
             // set list
-            List<TrainsCycle> sorted = (new TrainsCycleSort(TrainsCycleSort.Type.ASC)).sort(delegate.getTrainDiagram()
-                    .getCycles(delegate.getType()));
-            DefaultListModel listModel = new DefaultListModel();
-            for (TrainsCycle cycle : sorted) {
-                listModel.addElement(cycle);
+            for (TrainsCycle cycle : delegate.getTrainDiagram().getCycles(delegate.getType())) {
+                cycles.addWrapper(Wrapper.getWrapper(cycle));
             }
-            ecList.setModel(listModel);
-        } else {
-            ecList.setModel(new DefaultListModel());
         }
 
         this.updateButtonStatus();
@@ -164,20 +162,21 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         if (e.getValueIsAdjusting())
             return;
         // set selected engine
-        Object[] selectedValues = ecList.getSelectedValues();
-        if (selectedValues.length == 1)
-            delegate.setSelectedCycle((TrainsCycle) ecList.getSelectedValue());
-        else
+        int[] selectedIndices = cyclesList.getSelectedIndices();
+        if (selectedIndices.length == 1) {
+            delegate.setSelectedCycle(cycles.getIndex(selectedIndices[0]).getElement());
+        } else {
             delegate.setSelectedCycle(null);
-        deleteButton.setEnabled(selectedValues.length > 0);
-        editButton.setEnabled(selectedValues.length == 1);
+        }
+        deleteButton.setEnabled(selectedIndices.length > 0);
+        editButton.setEnabled(selectedIndices.length == 1);
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get selected cycles ...
-        Object[] selectedValues = ecList.getSelectedValues();
-        for (Object selectedObject : selectedValues) {
-            TrainsCycle cycle = (TrainsCycle) selectedObject;
+        int[] selectedIndices = cyclesList.getSelectedIndices();
+        for (int selectedIndex : selectedIndices) {
+            TrainsCycle cycle = cycles.getIndex(selectedIndex).getElement();
             if (cycle != null) {
                 // remove from diagram
                 delegate.getTrainDiagram().removeCycle(cycle);
@@ -199,7 +198,9 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
             // fire event
             delegate.fireEvent(TCDelegate.Action.NEW_CYCLE, cycle);
             // set selected
-            ecList.setSelectedValue(cycle, true);
+            int index = cycles.getIndexOfObject(cycle);
+            cyclesList.setSelectedIndex(index);
+            cyclesList.ensureIndexIsVisible(index);
             delegate.fireEvent(TCDelegate.Action.SELECTED_CHANGED, cycle);
         }
     }
@@ -207,6 +208,6 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
     private final javax.swing.JButton editButton;
-    private final javax.swing.JList ecList;
+    private final javax.swing.JList cyclesList;
     private final javax.swing.JTextField newNameTextField;
 }
