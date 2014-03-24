@@ -36,7 +36,7 @@ public class Parameter {
     }
 
     public String getTranslatedValue() {
-        return translated ? DiagramChange.getStringWithException(value) : value;
+        return translated ? DiagramChange.getStringWithoutException(value) : value;
     }
 
     @Override

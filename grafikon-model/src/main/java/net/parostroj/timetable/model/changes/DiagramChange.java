@@ -148,4 +148,15 @@ public class DiagramChange {
     static String getStringWithException(String key) {
         return ResourceBundle.getBundle("net.parostroj.timetable.model.changes.diagram_change_texts").getString(key);
     }
+
+    static String getStringWithoutException(String key) {
+        String result = null;
+        try {
+            result = getStringWithException(key);
+        } catch (MissingResourceException e) {
+            LOG.warn("Key not found: {}", e.getKey());
+            result = key;
+        }
+        return result;
+    }
 }
