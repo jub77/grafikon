@@ -47,7 +47,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     /** Creates new form ECTrainListView */
     public TCTrainListView() {
         initComponents();
-        coverageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         allTrainsList.setModel(new DefaultListModel());
         ecTrainsList.setModel(new DefaultListModel());
         changeDialog = new TCItemChangeDialog();
@@ -213,7 +212,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         javax.swing.JScrollPane errorsScrollPane = new javax.swing.JScrollPane();
         infoTextArea = new javax.swing.JTextArea();
         changeButton = GuiComponentUtils.createButton(GuiIcon.EDIT, BUTTON_MARGIN);
-        coverageScrollPane = new javax.swing.JScrollPane();
+        javax.swing.JScrollPane coverageScrollPane = new javax.swing.JScrollPane();
+        coverageScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         coverageTextPane = new net.parostroj.timetable.gui.views.ColorTextPane();
         selectionButton = GuiComponentUtils.createButton(GuiIcon.CONFIGURE_T, BUTTON_MARGIN);
 
@@ -573,7 +573,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private javax.swing.JRadioButtonMenuItem allRadioButtonMenuItem;
     private javax.swing.JList allTrainsList;
     private javax.swing.JButton changeButton;
-    private javax.swing.JScrollPane coverageScrollPane;
     private net.parostroj.timetable.gui.views.ColorTextPane coverageTextPane;
     private javax.swing.JRadioButtonMenuItem customRadioButtonMenuItem;
     private javax.swing.JList ecTrainsList;
