@@ -116,7 +116,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
             DefaultListModel m = new DefaultListModel();
             for (Train train : trainsList) {
-                m.addElement(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
+                m.addElement(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
             }
             allTrainsList.setModel(m);
         }
@@ -172,7 +172,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     public void selectTrainInterval(TimeInterval interval) {
         if (interval != null) {
             // select in left list
-            allTrainsList.setSelectedValue(new Wrapper<Train>(interval.getTrain(), null), true);
+            allTrainsList.setSelectedValue(Wrapper.getWrapper(interval.getTrain(), null), true);
             // select all intervals in right list
             DefaultListModel dlm = (DefaultListModel) ecTrainsList.getModel();
             boolean selection = false;
