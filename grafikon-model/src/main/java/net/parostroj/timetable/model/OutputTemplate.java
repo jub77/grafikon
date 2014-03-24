@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -16,6 +17,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     private String name;
     private TextTemplate template;
+    private Script script;
 
     private Attributes attributes;
     private final GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
@@ -49,9 +51,11 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        if (!Conversions.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        }
     }
 
     public String getName() {
@@ -59,13 +63,27 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setTemplate(TextTemplate template) {
-        TextTemplate oldTemplate = this.template;
-        this.template = template;
-        this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+        if (!Conversions.compareWithNull(template, this.template)) {
+            TextTemplate oldTemplate = this.template;
+            this.template = template;
+            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+        }
     }
 
     public TextTemplate getTemplate() {
         return template;
+    }
+
+    public void setScript(Script script) {
+        if (!Conversions.compareWithNull(script, this.script)) {
+            Script oldScript = this.script;
+            this.script = script;
+            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_SCRIPT, oldScript, script)));
+        }
+    }
+
+    public Script getScript() {
+        return script;
     }
 
     @Override
