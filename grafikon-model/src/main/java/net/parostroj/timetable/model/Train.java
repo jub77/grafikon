@@ -15,9 +15,6 @@ import net.parostroj.timetable.visitors.Visitable;
  */
 public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes {
 
-    /** No top speed constant. */
-    public static final int NO_TOP_SPEED = Line.NO_SPEED;
-
     /** Train diagram reference. */
     private final TrainDiagram diagram;
     /** ID. */
@@ -31,7 +28,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** List of time intervals. */
     private final TimeIntervalList timeIntervalList;
     /** Top speed. */
-    private int topSpeed = NO_TOP_SPEED;
+    private int topSpeed = Integer.MAX_VALUE;
     /** Cycles. */
     private final Map<String, List<TrainsCycleItem>> cycles;
     /* Attributes of the train. */

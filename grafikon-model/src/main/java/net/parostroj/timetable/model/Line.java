@@ -197,14 +197,13 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("topSpeed", oldTopSpeed, topSpeed)));
     }
 
-    public int computeSpeed(Train train, TimeInterval interval, int prefferedSpeed) {
+    public int computeSpeed(Train train, TimeInterval interval, Integer prefferedSpeed) {
         int speed;
-        if (prefferedSpeed < 1)
+        if (prefferedSpeed != null && prefferedSpeed < 1)
             throw new IllegalArgumentException("Speed has to be greater than 0.");
-        if (train.getTopSpeed() != NO_SPEED) {
+        speed = train.getTopSpeed();
+        if (prefferedSpeed != null) {
             speed = Math.min(prefferedSpeed, train.getTopSpeed());
-        } else {
-            speed = prefferedSpeed;
         }
 
         // apply track speed limit
