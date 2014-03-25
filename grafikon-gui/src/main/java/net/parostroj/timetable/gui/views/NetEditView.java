@@ -623,8 +623,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     mxCell cell = (mxCell) result;
                     Node srcNode = (Node) ((NodeCell) cell.getSource()).getValue();
                     Node dstNode = (Node) ((NodeCell) cell.getTarget()).getValue();
-                    Line l = model.getDiagram().createLine(IdGenerator.getInstance().getId(), 1000, srcNode, dstNode,
-                            Line.UNLIMITED_SPEED);
+                    Line l = model.getDiagram().createLine(IdGenerator.getInstance().getId(), 1000,
+                            srcNode, dstNode, null);
                     LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
                     l.addTrack(track);
                     model.getDiagram().getNet().addLine(srcNode, dstNode, l);

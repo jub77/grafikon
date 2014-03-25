@@ -24,11 +24,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** List of node tracks. */
     private final List<LineTrack> tracks;
     /** Top speed for the track. */
-    private int topSpeed = UNLIMITED_SPEED;
-    /** Unlimited spedd. */
-    public static final int UNLIMITED_SPEED = -1;
-    /** No speed constant. */
-    public static final int NO_SPEED = UNLIMITED_SPEED;
+    private Integer topSpeed;
     /** Attributes. */
     private Attributes attributes;
     /** Starting point. */
@@ -48,7 +44,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param to end point
      * @param topSpeed top speed
      */
-    Line(String id, TrainDiagram diagram, int length, Node from, Node to, int topSpeed) {
+    Line(String id, TrainDiagram diagram, int length, Node from, Node to, Integer topSpeed) {
         tracks = new ArrayList<LineTrack>();
         this.setAttributes(new Attributes());
         this.length = length;
@@ -181,18 +177,18 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /**
      * @return top speed
      */
-    public int getTopSpeed() {
+    public Integer getTopSpeed() {
         return topSpeed;
     }
 
     /**
      * @param topSpeed top speed to be set
      */
-    public void setTopSpeed(int topSpeed) {
-        if (topSpeed == 0 || topSpeed < -1) {
+    public void setTopSpeed(Integer topSpeed) {
+        if (topSpeed != null && topSpeed <= 0) {
             throw new IllegalArgumentException("Top speed should be positive number.");
         }
-        int oldTopSpeed = this.topSpeed;
+        Integer oldTopSpeed = this.topSpeed;
         this.topSpeed = topSpeed;
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("topSpeed", oldTopSpeed, topSpeed)));
     }
@@ -207,7 +203,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
 
         // apply track speed limit
-        if (this.topSpeed != UNLIMITED_SPEED) {
+        if (this.topSpeed != null) {
             speed = Math.min(speed, this.topSpeed);
         }
 
@@ -216,7 +212,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(interval);
             for (EngineClass engineClass : engineClasses) {
                 WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
-                if (row.getSpeed() != UNLIMITED_SPEED) {
+                if (row != null) {
                     speed = Math.min(speed, row.getSpeed());
                 }
             }

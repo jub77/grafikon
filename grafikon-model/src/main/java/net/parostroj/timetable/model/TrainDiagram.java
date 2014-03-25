@@ -568,7 +568,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      * @param topSpeed top speed
      * @return a new line
      */
-    public Line createLine(String id, int length, Node from, Node to, int topSpeed) {
+    public Line createLine(String id, int length, Node from, Node to, Integer topSpeed) {
         return new Line(id, this, length, from, to, topSpeed);
     }
 
