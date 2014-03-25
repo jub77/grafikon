@@ -62,11 +62,11 @@ public class CreateTrainCommand extends Command {
     public void execute(ApplicationModel model) {
         TrainBuilder trainBuilder = new TrainBuilder();
 
-        Train train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, type, topSpeed, route, time, model.getDiagram(), defaultStop);
+        Train train = trainBuilder.createTrain(IdGenerator.getInstance().getId(), number, null, topSpeed, route, time, model.getDiagram(), defaultStop);
 
-        train.setDescription(description);
         train.setAttribute(Train.ATTR_DIESEL, diesel);
         train.setAttribute(Train.ATTR_ELECTRIC, electric);
+        train.setDescription(description);
         if (train.getType() != null && train.getType().getCategory() != null && !train.getType().getCategory().getKey().equals("freight")) {
             train.setAttribute(Train.ATTR_EMPTY, Boolean.TRUE);
         }
@@ -76,6 +76,7 @@ public class CreateTrainCommand extends Command {
         if (group != null) {
             train.setAttribute(Train.ATTR_GROUP, group);
         }
+        train.setType(type);
 
         // add train to diagram
         model.getDiagram().addTrain(train);
