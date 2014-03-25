@@ -182,6 +182,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.speed = speed;
     }
 
+    public int computeSpeed() {
+        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeed()) : 0;
+    }
+
     /**
      * @return the addedTime
      */
