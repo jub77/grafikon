@@ -115,7 +115,6 @@ class EventToChangeConvert {
         map.put(GTEventType.LINE_CLASS_MOVED, null); // nothing
         map.put(GTEventType.LINE_CLASS_REMOVED, null); // nothing
         map.put(GTEventType.LINE_REMOVED, null); // nothing
-        map.put(GTEventType.NESTED, null); // nothing
         map.put(GTEventType.NODE_ADDED, null); // nothing
         map.put(GTEventType.NODE_REMOVED, null); // nothing
         map.put(GTEventType.ROUTE_ADDED, null); // nothing
@@ -195,7 +194,6 @@ class EventToChangeConvert {
     map.put(GTEventType.LINE_CLASS_MOVED, null);
     map.put(GTEventType.LINE_CLASS_REMOVED, null);
     map.put(GTEventType.LINE_REMOVED, null);
-    map.put(GTEventType.NESTED, null);
     map.put(GTEventType.NODE_ADDED, null);
     map.put(GTEventType.NODE_REMOVED, null);
     map.put(GTEventType.ROUTE_ADDED, null);
