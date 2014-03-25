@@ -34,27 +34,38 @@ public class TextItemsDialog extends javax.swing.JDialog {
         typeComboBox.addItem("html");
         // create model and set it
         itemsModel = new WrapperListModel<TextItem>(false);
+        itemsModel.setObjectListener(new WrapperListModel.ObjectListener<TextItem>() {
+            @Override
+            public void added(TextItem object, int index) {
+                diagram.addTextItem(object, index);
+            }
+
+            @Override
+            public void removed(TextItem object) {
+                diagram.removeTextItem(object);
+            }
+
+            @Override
+            public void moved(TextItem object, int fromIndex, int toIndex) {
+                diagram.moveTextItem(fromIndex, toIndex);
+            }
+        });
         itemList.setModel(itemsModel);
         textArea.setTabsEmulated(true);
     }
 
     @Override
     public void setVisible(boolean b) {
-        if (b)
+        if (b) {
             updateButtons();
+        }
         super.setVisible(b);
     }
 
     public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
-        this.fillList();
+        itemsModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getTextItems()));
         this.setVisible(true);
-    }
-
-    private void fillList() {
-        for (TextItem item : diagram.getTextItems()) {
-            itemsModel.addWrapper(new Wrapper<TextItem>(item));
-        }
     }
 
     private void updateButtons() {
@@ -186,8 +197,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         item.setName(nameTextField.getText().trim());
         item.setType((String)typeComboBox.getSelectedItem());
         item.setText("");
-        diagram.addTextItem(item);
-        Wrapper<TextItem> wrapper = new Wrapper<TextItem>(item);
+        Wrapper<TextItem> wrapper = Wrapper.getWrapper(item);
         itemsModel.addWrapper(wrapper);
         nameTextField.setText("");
         itemList.setSelectedValue(wrapper, true);
@@ -197,9 +207,9 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void itemListValueChanged(javax.swing.event.ListSelectionEvent evt) {
         if (!evt.getValueIsAdjusting()) {
             writeChangedValueBack();
-            Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
-            if (wrapper != null) {
-                selectedItem = (TextItem) wrapper.getElement();
+            int index = itemList.getSelectedIndex();
+            if (index != -1) {
+                selectedItem = itemsModel.getIndex(index).getElement();
                 textArea.setText(selectedItem.getText());
                 textArea.setSyntaxEditingStyle(selectedItem.getType().equals("bbcode") ?
                         SyntaxConstants.SYNTAX_STYLE_BBCODE :
@@ -215,32 +225,25 @@ public class TextItemsDialog extends javax.swing.JDialog {
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        Wrapper<?> wrapper = (Wrapper<?>) itemList.getSelectedValue();
-        if (wrapper != null) {
-            itemsModel.removeObject((TextItem) wrapper.getElement());
-            diagram.removeTextItem((TextItem) wrapper.getElement());
+        int index = itemList.getSelectedIndex();
+        if (index != -1) {
+            itemsModel.removeIndex(index);
         }
     }
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = itemList.getSelectedIndex();
         if (index != -1 && index != 0) {
-            Wrapper<TextItem> wrapper = itemsModel.removeIndex(index);
-            diagram.moveTextItem(index, index - 1);
-            index--;
-            itemsModel.addWrapper(wrapper, index);
-            itemList.setSelectedIndex(index);
+            itemsModel.moveIndexUp(index);
+            itemList.setSelectedIndex(index - 1);
         }
     }
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = itemList.getSelectedIndex();
         if (index != -1 && index != (itemsModel.getSize() - 1)) {
-            Wrapper<TextItem> wrapper = itemsModel.removeIndex(index);
-            diagram.moveTextItem(index, index + 1);
-            index++;
-            itemsModel.addWrapper(wrapper, index);
-            itemList.setSelectedIndex(index);
+            itemsModel.moveIndexDown(index);
+            itemList.setSelectedIndex(index + 1);
         }
     }
 
