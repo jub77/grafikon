@@ -723,9 +723,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean checkNeedSpeedRecalculate() {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isLineOwner()) {
-                Line line = interval.getOwnerAsLine();
-                int cSpeed = line.computeSpeed(this, interval, interval.getSpeed());
-                if (cSpeed != interval.getSpeed())
+                if (interval.computeSpeed() != interval.getUsedSpeed())
                     return true;
             }
         }
