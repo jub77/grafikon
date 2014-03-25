@@ -15,7 +15,7 @@ public class LSTrainRoutePartLine {
     private String intervalId;
     private String lineId;
     private String trackId;
-    private int speed;
+    private Integer speed;
     private Integer addedTime;
     private LSAttributes attributes;
 
@@ -41,11 +41,11 @@ public class LSTrainRoutePartLine {
         this.lineId = lineId;
     }
 
-    public int getSpeed() {
+    public Integer getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(Integer speed) {
         this.speed = speed;
     }
 

@@ -47,7 +47,7 @@ public class TrainIntervalsBuilder {
         train.addInterval(lastInterval);
     }
 
-    public void addLine(String intervalId, Line line, LineTrack track, int speed, int addedTime, Attributes attributes) {
+    public void addLine(String intervalId, Line line, LineTrack track, Integer speed, int addedTime, Attributes attributes) {
         if (intervalId == null) {
             LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
