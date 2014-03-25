@@ -33,7 +33,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
-    private final WrapperListModel<OutputTemplate> templatesModel;
+    private WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
     private JFileChooser chooser;
     private OutputTemplateAction.Settings settings;
@@ -42,31 +42,41 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        templatesModel = new WrapperListModel<OutputTemplate>(false);
-        templateList.setModel(templatesModel);
     }
 
-    public void showDialog(TrainDiagram diagram, JFileChooser chooser, OutputTemplateAction.Settings settings) {
+    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, OutputTemplateAction.Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
         this.settings = settings;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
         this.locationTextField.setText(this.outputDirectory.getPath());
-        this.fillList();
+        templatesModel = new WrapperListModel<OutputTemplate>(Wrapper.getWrapperList(diagram.getOutputTemplates()), null, false);
+        templatesModel.setObjectListener(new WrapperListModel.ObjectListener<OutputTemplate>() {
+            @Override
+            public void added(OutputTemplate object, int index) {
+                diagram.addOutputTemplate(object, index);
+            }
+
+            @Override
+            public void removed(OutputTemplate object) {
+                diagram.removeOutputTemplate(object);
+            }
+
+            @Override
+            public void moved(OutputTemplate object, int fromIndex, int toIndex) {
+                diagram.moveOutputTemplate(fromIndex, toIndex);
+            }
+        });
+        templateList.setModel(templatesModel);
         this.setVisible(true);
     }
 
     @Override
     public void setVisible(boolean b) {
-        if (b)
+        if (b) {
             updateButtons();
-        super.setVisible(b);
-    }
-
-    private void fillList() {
-        for (OutputTemplate template : diagram.getOutputTemplates()) {
-            templatesModel.addWrapper(new Wrapper<OutputTemplate>(template));
         }
+        super.setVisible(b);
     }
 
     private void updateButtons() {
@@ -219,30 +229,23 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = templateList.getSelectedIndex();
         if (index != -1 && index != (templatesModel.getSize() - 1)) {
-            Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
-            diagram.moveOutputTemplate(index, index + 1);
-            index++;
-            templatesModel.addWrapper(wrapper, index);
-            templateList.setSelectedIndex(index);
+            templatesModel.moveIndexDown(index);
+            templateList.setSelectedIndex(index + 1);
         }
     }
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int index = templateList.getSelectedIndex();
         if (index != -1 && index != 0) {
-            Wrapper<OutputTemplate> wrapper = templatesModel.removeIndex(index);
-            diagram.moveOutputTemplate(index, index - 1);
-            index--;
-            templatesModel.addWrapper(wrapper, index);
-            templateList.setSelectedIndex(index);
+            templatesModel.moveIndexUp(index);
+            templateList.setSelectedIndex(index - 1);
         }
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        Wrapper<?> wrapper = (Wrapper<?>) templateList.getSelectedValue();
-        if (wrapper != null) {
-            templatesModel.removeObject((OutputTemplate) wrapper.getElement());
-            diagram.removeOutputTemplate((OutputTemplate) wrapper.getElement());
+        int index = templateList.getSelectedIndex();
+        if (index != -1) {
+            templatesModel.removeIndex(index);
         }
     }
 
@@ -255,8 +258,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
             LOG.error("Error creating template.", e);
         }
         template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, "diagram");
-        diagram.addOutputTemplate(template);
-        Wrapper<OutputTemplate> wrapper = new Wrapper<OutputTemplate>(template);
+        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template);
         templatesModel.addWrapper(wrapper);
         nameTextField.setText("");
         templateList.setSelectedValue(wrapper, true);
@@ -267,7 +269,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         OutputTemplateDialog dialog = new OutputTemplateDialog(this, true);
         dialog.setLocationRelativeTo(this);
         // get template
-        OutputTemplate template = (OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement();
+        OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         dialog.setTitle(template.getName());
         dialog.showDialog(this.copyTemplate(template));
         if (dialog.getTemplate() != null) {
@@ -288,7 +290,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
-                templateList.isSelectionEmpty() ? null : Collections.singletonList((OutputTemplate) ((Wrapper<?>) templateList.getSelectedValue()).getElement()));
+                templateList.isSelectionEmpty() ? null : Collections.singletonList(templatesModel.getIndex(templateList.getSelectedIndex()).getElement()));
         ActionHandler.getInstance().execute(action);
     }
 
