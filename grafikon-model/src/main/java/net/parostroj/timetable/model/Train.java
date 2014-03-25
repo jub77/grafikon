@@ -609,13 +609,12 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param speed velocity to be set
      * @param addedTime added time
      */
-    public void changeSpeedAndAddedTime(TimeInterval lineInterval, int speed, int addedTime) {
+    public void changeSpeedAndAddedTime(TimeInterval lineInterval, Integer speed, int addedTime) {
         int index = timeIntervalList.indexOf(lineInterval);
         if (index == -1 || !lineInterval.isLineOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
-        int computedSpeed = lineInterval.getOwnerAsLine().computeSpeed(this, lineInterval, speed);
-        lineInterval.setSpeed(computedSpeed);
+        lineInterval.setSpeed(speed);
         lineInterval.setAddedTime(addedTime);
 
         int changedIndex = index;
@@ -711,12 +710,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
             interval.move(nextStart);
-            if (interval.isLineOwner()) {
-                Line line = (Line) interval.getOwner();
-                // compute speed
-                int speed = line.computeSpeed(this, interval, newSpeed == null ? interval.getSpeed() : newSpeed);
-                interval.setSpeed(speed);
-            }
             timeIntervalList.updateInterval(interval, i);
 
             nextStart = interval.getEnd();
