@@ -67,8 +67,9 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     }
 
     private void sort(List<? extends Wrapper<T>> ll) {
-        if (sorted)
+        if (sorted) {
             Collections.sort(ll);
+        }
     }
 
     public void removeWrapper(Wrapper<T> w) {
@@ -83,7 +84,9 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
 
     public void removeObject(T object) {
         int index = this.getIndexOfObject(object);
-        this.removeIndex(index);
+        if (index != -1) {
+            this.removeIndex(index);
+        }
     }
 
     public Wrapper<T> removeIndex(int index) {
@@ -146,8 +149,9 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
 
     public void addWrapper(Wrapper<T> w) {
         // add to set
-        if (set != null)
+        if (set != null) {
             set.add(w.getElement());
+        }
         // add to list
         list.add(w);
         this.sort(list);
@@ -159,10 +163,12 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     }
 
     public void addWrapper(Wrapper<T> w, int index) {
-        if (this.sorted)
+        if (this.sorted) {
             throw new IllegalStateException("Cannot insert in specific place in sorted list.");
-        if (set != null)
+        }
+        if (set != null) {
             set.add(w.getElement());
+        }
         list.add(index, w);
         this.fireIntervalAdded(this, index, index);
         if (this.listener != null) {
@@ -171,8 +177,9 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     }
 
     public void setWrapper(Wrapper<T> w, int index) {
-        if (this.sorted)
+        if (this.sorted) {
             throw new IllegalStateException("Cannot insert in specific place in sorted list.");
+        }
         Wrapper<T> old = list.get(index);
         if (set != null) {
             set.remove(old.getElement());
@@ -202,20 +209,23 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     }
 
     public void setListOfWrappers(List<Wrapper<T>> list) {
-        if (list.size() > 0)
+        if (list.size() > 0) {
             this.fireIntervalRemoved(this, 0, list.size() - 1);
+        }
         this.list = list;
         this.set = null;
         this.sort(list);
-        if (list.size() > 0)
+        if (list.size() > 0) {
             this.fireIntervalAdded(this, 0, list.size() - 1);
+        }
     }
 
     public int getIndexOfObject(T object) {
         int i = 0;
         for (Wrapper<T> wrapper : list) {
-            if (wrapper.getElement().equals(object))
+            if (wrapper.getElement().equals(object)) {
                 return i;
+            }
             i++;
         }
         return -1;
@@ -223,8 +233,9 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
 
     public Wrapper<T> getWrapperForObject(T object) {
         for (Wrapper<T> wrapper : list) {
-            if (wrapper.getElement().equals(object))
+            if (wrapper.getElement().equals(object)) {
                 return wrapper;
+            }
         }
         return null;
     }
@@ -232,10 +243,12 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     public void clear() {
         int size = list.size();
         list.clear();
-        if (set != null)
+        if (set != null) {
             initializeSet();
-        if (size != 0)
+        }
+        if (size != 0) {
             this.fireIntervalRemoved(this, 0, size - 1);
+        }
     }
 
     @Override
@@ -270,9 +283,10 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
 
     public void setSelectedObject(T object) {
         int index = getIndexOfObject(object);
-        if (index != -1)
+        if (index != -1) {
             setSelectedItem(getIndex(index));
-        else
+        } else {
             setSelectedItem(null);
+        }
     }
 }
