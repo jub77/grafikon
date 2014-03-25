@@ -133,9 +133,13 @@ public class TrainsHelper {
             for (TrainsCycleItem item : items) {
                 EngineClass engine = getEngineClass(item);
                 if (engine != null) {
-                    if (weight == null)
+                    if (weight == null) {
                         weight = 0;
-                    weight += engine.getWeightTableRowForSpeed(interval.getSpeed()).getWeight(lineClass);
+                    }
+                    WeightTableRow weightTableRow = engine.getWeightTableRowForSpeed(interval.getSpeed());
+                    if (weightTableRow != null) {
+                        weight += weightTableRow.getWeight(lineClass);
+                    }
                 }
             }
             if (weight != null)

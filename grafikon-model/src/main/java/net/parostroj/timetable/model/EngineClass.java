@@ -10,33 +10,15 @@ import net.parostroj.timetable.visitors.Visitable;
 /**
  * Engine class. It contains table with weight information for each
  * line class.
- * 
+ *
  * @author jub
  */
 public class EngineClass implements ObjectWithId, Visitable {
 
-    private static final class EmptyWeightTableRow extends WeightTableRow {
-
-        public EmptyWeightTableRow() {
-            super(null, Line.UNLIMITED_SPEED);
-        }
-
-        @Override
-        public void removeWeightInfo(LineClass lineClass) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setWeightInfo(LineClass lineClass, Integer weight) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    private static final WeightTableRow EMPTY_ROW = new EmptyWeightTableRow();
     private final String id;
     private String name;
-    private List<WeightTableRow> weightTable;
-    private GTListenerSupport<EngineClassListener, EngineClassEvent> listenerSupport;
+    private final List<WeightTableRow> weightTable;
+    private final GTListenerSupport<EngineClassListener, EngineClassEvent> listenerSupport;
 
     public EngineClass(String id, String name) {
         this.name = name;
@@ -114,8 +96,8 @@ public class EngineClass implements ObjectWithId, Visitable {
                 return row;
             }
         }
-        // return empty row for speed not in table
-        return EMPTY_ROW;
+        // return null for speed not in table
+        return null;
     }
 
     public WeightTableRow getWeightTableRowForSpeedExact(int speed) {
@@ -131,8 +113,8 @@ public class EngineClass implements ObjectWithId, Visitable {
 
     public WeightTableRow getWeigthTableRowWithMaxSpeed() {
         if (weightTable.isEmpty())
-            // empty row with unlimited speed
-            return EMPTY_ROW;
+            // return null
+            return null;
         else
             // return last row (one with max speed)
             return weightTable.get(weightTable.size() - 1);

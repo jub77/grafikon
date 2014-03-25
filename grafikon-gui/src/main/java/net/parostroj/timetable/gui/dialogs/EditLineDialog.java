@@ -80,7 +80,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             toDirectTrackComboBox.addItem(track);
         }
 
-        if (line.getTopSpeed() == Line.UNLIMITED_SPEED) {
+        if (line.getTopSpeed() == null) {
             speedTextField.setText("");
             unlimitedSpeedCheckBox.setSelected(true);
             speedTextField.setEditable(false);
@@ -168,12 +168,12 @@ public class EditLineDialog extends javax.swing.JDialog {
         } catch (ArithmeticException e) {
             LOGGER.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
         }
-        int speed = line.getTopSpeed();
+        Integer speed = line.getTopSpeed();
         try {
             if (!unlimitedSpeedCheckBox.isSelected())
                 speed = Integer.parseInt(speedTextField.getText());
             else
-                speed = Line.UNLIMITED_SPEED;
+                speed = null;
         } catch (NumberFormatException e) {
             LOGGER.warn("Cannot convert string to int (speed).", e);
         }

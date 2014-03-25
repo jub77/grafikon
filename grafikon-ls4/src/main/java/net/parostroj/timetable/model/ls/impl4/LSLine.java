@@ -25,7 +25,7 @@ public class LSLine {
 
     private String id;
     private int length;
-    private int speed;
+    private Integer speed;
     private String from;
     private String to;
     private LSAttributes attributes;
@@ -71,11 +71,11 @@ public class LSLine {
         this.length = length;
     }
 
-    public int getSpeed() {
+    public Integer getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(Integer speed) {
         this.speed = speed;
     }
 
@@ -109,6 +109,9 @@ public class LSLine {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
+        if (speed != null && speed <= 0) {
+            speed = null;
+        }
         Line line = diagram.createLine(id, length, fromNode, toNode, speed);
         line.setAttributes(attributes.createAttributes(diagram));
         // tracks

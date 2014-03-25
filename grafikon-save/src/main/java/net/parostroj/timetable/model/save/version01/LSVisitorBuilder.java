@@ -82,7 +82,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSLine lsLine) {
         Node from = (Node) ids.get(lsLine.getSourceId());
         Node to = (Node) ids.get(lsLine.getTargetId());
-        Line line = diagram.createLine(this.createId(), lsLine.getLength(), from, to, Line.UNLIMITED_SPEED);
+        Line line = diagram.createLine(this.createId(), lsLine.getLength(), from, to, null);
         LineTrack lt = new LineTrack(this.createId(), "1");
         line.addTrack(lt);
         lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
