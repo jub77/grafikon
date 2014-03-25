@@ -93,6 +93,8 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.GROUP_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.GROUP_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, DiagramChange.Action.ADDED);
+        map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
         return map;
     }
 
