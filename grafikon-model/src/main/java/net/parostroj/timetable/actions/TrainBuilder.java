@@ -200,7 +200,7 @@ public class TrainBuilder {
     private List<Pair<RouteSegment, Integer>> createDataForRoute(Route route) {
         List<Pair<RouteSegment, Integer>> data = new ArrayList<Pair<RouteSegment, Integer>>(route.getSegments().size());
         for (RouteSegment segment : route.getSegments()) {
-            data.add(new Pair<RouteSegment, Integer>(segment, 0));
+            data.add(new Pair<RouteSegment, Integer>(segment, null));
         }
         return data;
     }
@@ -216,6 +216,8 @@ public class TrainBuilder {
                 if (i != 1 && i != size && node.getType() != NodeType.ROUTE_SPLIT && node.getType() != NodeType.SIGNAL) {
                     // set default stop
                     pair.second = defaultStop;
+                } else {
+                    pair.second = 0;
                 }
             }
         }
