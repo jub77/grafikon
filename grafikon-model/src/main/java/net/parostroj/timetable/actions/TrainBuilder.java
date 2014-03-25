@@ -212,15 +212,11 @@ public class TrainBuilder {
             i++;
             if (pair.first instanceof Node) {
                 // node
-                Node node = (Node)pair.first;
+                Node node = (Node) pair.first;
                 if (i != 1 && i != size && node.getType() != NodeType.ROUTE_SPLIT && node.getType() != NodeType.SIGNAL) {
                     // set default stop
                     pair.second = defaultStop;
                 }
-            } else {
-                // line
-                Line line = (Line)pair.first;
-                pair.second = line.computeSpeed(train, null, speed);
             }
         }
     }

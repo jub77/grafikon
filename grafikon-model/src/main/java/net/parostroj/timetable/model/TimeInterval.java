@@ -25,15 +25,13 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Track. */
     private Track track;
     /** Speed. */
-    private int speed = NO_SPEED;
+    private Integer speed;
     /** Added time. */
     private int addedTime;
     /** Attributes. */
     private Attributes attributes;
     /** For tests - overlapping time intervals. */
     private Set<TimeInterval> overlappingIntervals;
-    /** No speed constant. */
-    public static final int NO_SPEED = -1;
     /** Direction of the time interval regarding the underlying line. */
     private TimeIntervalDirection direction;
     private AttributesListener attributesListener;
@@ -51,7 +49,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param track track
      * @param addedTime added time
      */
-    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, int speed, TimeIntervalDirection direction, Track track, int addedTime) {
+    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Integer speed, TimeIntervalDirection direction, Track track, int addedTime) {
         this.train = train;
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
@@ -74,7 +72,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param track track
      */
     public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Track track) {
-        this(id, train, owner, start, end, NO_SPEED, null, track, 0);
+        this(id, train, owner, start, end, null, null, track, 0);
     }
 
     /**
@@ -173,14 +171,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /**
      * @return the speed
      */
-    public int getSpeed() {
+    public Integer getSpeed() {
         return speed;
     }
 
     /**
      * @param speed the speed to set
      */
-    public void setSpeed(int speed) {
+    public void setSpeed(Integer speed) {
         this.speed = speed;
     }
 
