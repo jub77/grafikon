@@ -193,7 +193,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             return 0;
         else {
             // check speed of previous line
-            return this.get(i - 2).getSpeed();
+            return this.get(i - 2).computeSpeed();
         }
     }
 
@@ -203,7 +203,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             return 0;
         else {
             // check speed of previous line
-            return this.get(i + 2).getSpeed();
+            return this.get(i + 2).computeSpeed();
         }
     }
 
