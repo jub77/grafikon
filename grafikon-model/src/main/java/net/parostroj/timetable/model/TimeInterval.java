@@ -35,6 +35,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Direction of the time interval regarding the underlying line. */
     private TimeIntervalDirection direction;
     private AttributesListener attributesListener;
+    /** Speed used for calculation of running time (line as an owner). */
+    private int usedSpeed;
 
     /**
      * creates instance of an time interval.
@@ -98,9 +100,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param end end time to be set
      */
     public void setEnd(int end) {
-    	if (end != interval.getEnd()) {
-    		this.interval = IntervalFactory.createInterval(interval.getStart(), end);
-    	}
+        if (end != interval.getEnd()) {
+            this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+        }
     }
 
     /**
@@ -114,9 +116,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param start start time to be set
      */
     public void setStart(int start) {
-    	if (start != interval.getStart()) {
-    		this.interval = IntervalFactory.createInterval(start, interval.getEnd());
-    	}
+        if (start != interval.getStart()) {
+            this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+        }
     }
 
     /**
@@ -164,8 +166,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     @Override
     public String toString() {
-    	TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
-        return String.format("%s(%s,%s)", getOwner(), converter.convertIntToText(getStart()), converter.convertIntToText(getEnd()));
+        TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
+        return String.format("%s(%s,%s)", getOwner(), converter.convertIntToText(getStart()),
+                converter.convertIntToText(getEnd()));
     }
 
     /**
@@ -184,6 +187,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     public int computeSpeed() {
         return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeed()) : 0;
+    }
+
+    public int getUsedSpeed() {
+        return usedSpeed;
+    }
+
+    public void setUsedSpeed(int usedSpeed) {
+        this.usedSpeed = usedSpeed;
     }
 
     /**
@@ -256,19 +267,20 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param timeShift shift time
      */
     public void shift(int timeShift) {
-    	if (timeShift != 0) {
-    		this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd() + timeShift);
-    	}
+        if (timeShift != 0) {
+            this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd()
+                    + timeShift);
+        }
     }
 
     /**
      * moves interval to specified starting time.
      */
     public void move(int aStart) {
-    	if (aStart != this.interval.getStart()) {
-	        int length = this.getLength();
-	        this.interval = IntervalFactory.createInterval(aStart, aStart + length);
-    	}
+        if (aStart != this.interval.getStart()) {
+            int length = this.getLength();
+            this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+        }
     }
 
     /**
@@ -286,9 +298,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param length new length of the interval
      */
     public void setLength(int length) {
-    	if (length != this.getLength()) {
-    		this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
-    	}
+        if (length != this.getLength()) {
+            this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+        }
     }
 
     /**
@@ -298,9 +310,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param end end
      */
     public void setInterval(int start, int end) {
-    	if (start != interval.getStart() || end != interval.getEnd()) {
-    		this.interval = IntervalFactory.createInterval(start, end);
-    	}
+        if (start != interval.getStart() || end != interval.getEnd()) {
+            this.interval = IntervalFactory.createInterval(start, end);
+        }
     }
 
     /**

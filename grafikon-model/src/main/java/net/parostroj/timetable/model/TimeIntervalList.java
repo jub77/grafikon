@@ -233,11 +233,13 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         if (!interval.isLineOwner())
             throw new IllegalArgumentException("Line is not owner of the interval.");
         // compute running time
+        int computedSpeed = interval.computeSpeed();
         int runnningTime = interval.getOwnerAsLine().computeRunningTime(
-                interval.getTrain(), interval.getSpeed(),
+                interval.getTrain(), computedSpeed,
                 this.computeFromSpeed(interval, i),
                 this.computeToSpeed(interval, i), interval.getAddedTime());
         interval.setLength(runnningTime);
+        interval.setUsedSpeed(computedSpeed);
         if (interval.isAttached())
             interval.updateInOwner();
     }
