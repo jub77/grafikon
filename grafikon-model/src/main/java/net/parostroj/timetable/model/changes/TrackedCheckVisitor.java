@@ -21,7 +21,7 @@ public class TrackedCheckVisitor implements EventVisitor {
     @Override
     public void visit(TrainDiagramEvent event) {
         switch (event.getType()) {
-            case TRAIN_TYPE_MOVED: case TEXT_ITEM_MOVED: case ENGINE_CLASS_MOVED:
+            case TRAIN_TYPE_MOVED: case TEXT_ITEM_MOVED: case ENGINE_CLASS_MOVED: case OUTPUT_TEMPLATE_MOVED:
                 tracked = false;
                 break;
             default:
