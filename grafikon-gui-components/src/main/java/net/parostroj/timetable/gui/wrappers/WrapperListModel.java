@@ -75,30 +75,30 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
         if (w == null) {
             return;
         }
+        int index = list.indexOf(w);
+        if (index != -1) {
+            this.removeIndex(index);
+        }
+    }
+
+    public void removeObject(T object) {
+        int index = this.getIndexOfObject(object);
+        this.removeIndex(index);
+    }
+
+    public Wrapper<T> removeIndex(int index) {
+        Wrapper<T> w = list.get(index);
         // remove from set
         if (set != null) {
             set.remove(w.getElement());
         }
         // remove from list
-        int index = list.indexOf(w);
-        if (index != -1) {
-            if (this.listener != null) {
-                this.listener.removed(w.getElement());
-            }
-            list.remove(w);
-            this.fireIntervalRemoved(this, index, index);
+        if (this.listener != null) {
+            this.listener.removed(w.getElement());
         }
-    }
-
-    public void removeObject(T object) {
-        Wrapper<T> wrapper = this.getWrapperForObject(object);
-        this.removeWrapper(wrapper);
-    }
-
-    public Wrapper<T> removeIndex(int index) {
-        Wrapper<T> wrapper = list.get(index);
-        this.removeWrapper(wrapper);
-        return wrapper;
+        list.remove(index);
+        this.fireIntervalRemoved(this, index, index);
+        return w;
     }
 
     public Wrapper<T> getIndex(int index) {
