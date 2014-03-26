@@ -231,9 +231,6 @@ public class ImportAction extends AbstractAction {
                     errors.addAll(i.getErrors());
                 }
 
-                if (size > 0)
-                    model.setModelChanged(true);
-
                 // create string ...
                 if (!errors.isEmpty()) {
                     StringBuilder message = new StringBuilder();

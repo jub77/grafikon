@@ -66,7 +66,6 @@ public class ExecuteScriptAction extends AbstractAction {
             String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
             ActionUtils.showError(message, parent);
         }
-        model.setModelChanged(true);
     }
 
     private void editScriptExecution(ActionEvent e) {
@@ -112,7 +111,6 @@ public class ExecuteScriptAction extends AbstractAction {
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 ActionUtils.showError(message, parent);
             }
-            model.setModelChanged(true);
         }
     }
 
