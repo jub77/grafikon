@@ -1057,7 +1057,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // program settings
         ProgramSettingsDialog dialog = new ProgramSettingsDialog(this, true);
         dialog.setLocationRelativeTo(this);
-        dialog.showDialog(model);
+        dialog.showDialog(model.getProgramSettings());
         dialog.dispose();
     }
 
