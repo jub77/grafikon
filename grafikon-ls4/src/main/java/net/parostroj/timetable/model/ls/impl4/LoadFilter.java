@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 
 /**
  * Adjust older versions.
@@ -47,6 +49,19 @@ public class LoadFilter {
                 if (type.getCategory().getKey().equals("freight")) {
                     type.setAttribute(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
                 }
+            }
+        }
+        if (version.compareTo(new ModelVersion(4, 8)) <= 0) {
+            Object object = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT);
+            if (object instanceof LengthUnit) {
+                if (object == LengthUnit.KM) {
+                    object = SpeedUnit.KMPH;
+                } else if (object == LengthUnit.MILE) {
+                    object = SpeedUnit.MPH;
+                } else {
+                    object = null;
+                }
+                diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, object);
             }
         }
     }
