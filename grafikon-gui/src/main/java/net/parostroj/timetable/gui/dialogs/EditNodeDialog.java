@@ -96,10 +96,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
 
-    public void setNode(Node node, LengthUnit unit) {
+    public void showDialog(Node node, LengthUnit unit) {
         this.node = node;
         this.lengthEditBox.setUnit(unit);
         this.updateValues();
+        this.setVisible(true);
     }
 
     private void updateSelectedTrack(EditTrack track) {

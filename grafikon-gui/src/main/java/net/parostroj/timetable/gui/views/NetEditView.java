@@ -130,9 +130,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             // edit node
             if (netEditModel.getSelectedNode() != null) {
                 Node selectedNode = netEditModel.getSelectedNode();
-                editNodeDialog.setNode(selectedNode, model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
                 editNodeDialog.setLocationRelativeTo(NetEditView.this);
-                editNodeDialog.setVisible(true);
+                editNodeDialog.showDialog(selectedNode, model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
             }
         }
     }
