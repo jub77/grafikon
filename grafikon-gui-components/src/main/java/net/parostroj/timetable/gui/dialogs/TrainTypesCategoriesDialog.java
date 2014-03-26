@@ -194,13 +194,15 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         });
     }
 
-    public void setTrainDiagram(TrainDiagram diagram) {
+    public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
         listModel = new TrainTypeCategoriesListModel();
         trainTypeCategoriesList.setModel(listModel);
+        this.updateValues();
+        this.setVisible(true);
     }
 
-    public void updateValues() {
+    private void updateValues() {
         // update list of available classes ...
         trainTypeCategoriesList.setModel(listModel);
         tableModel.updateInfo();

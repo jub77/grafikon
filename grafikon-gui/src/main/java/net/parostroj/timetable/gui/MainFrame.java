@@ -1011,10 +1011,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
-        dialog.setTrainDiagram(model.getDiagram());
-        dialog.updateValues();
         dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
     }
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
