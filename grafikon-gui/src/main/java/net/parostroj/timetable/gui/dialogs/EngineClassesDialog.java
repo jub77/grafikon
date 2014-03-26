@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -41,7 +40,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         }
 
         private LineClass getLineClass(int index) {
-            return model.getDiagram().getNet().getLineClasses().get(index - 1);
+            return diagram.getNet().getLineClasses().get(index - 1);
         }
 
         @Override
@@ -54,8 +53,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             if (column == 0) {
                 return ResourceLoader.getString("editengingeclasses.speed");
             }
-            if (model != null && model.getDiagram() != null) {
-                return model.getDiagram().getNet().getLineClasses().get(column - 1).getName();
+            if (diagram != null) {
+                return diagram.getNet().getLineClasses().get(column - 1).getName();
             } else {
                 return null;
             }
@@ -72,8 +71,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            if (model != null && model.getDiagram() != null) {
-                return model.getDiagram().getNet().getLineClasses().size() + 1;
+            if (diagram != null) {
+                return diagram.getNet().getLineClasses().size() + 1;
             } else {
                 return 0;
             }
@@ -125,7 +124,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             this.fireTableRowsDeleted(index, index);
         }
     }
-    private ApplicationModel model;
+    private TrainDiagram diagram;
     private WrapperListModel<EngineClass> listModel;
     private final WeightTableModel tableModel;
     private static final Logger LOG = LoggerFactory.getLogger(EngineClassesDialog.class.getName());
@@ -146,27 +145,29 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         });
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
+    public void showDialog(TrainDiagram diagram) {
+        this.diagram = diagram;
+        this.updateValues();
+        this.setVisible(true);
     }
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(model.getDiagram().getEngineClasses()), null, false);
+        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, false);
         listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
-                model.getDiagram().addEngineClass(object, index);
+                diagram.addEngineClass(object, index);
             }
 
             @Override
             public void removed(EngineClass object) {
-                model.getDiagram().removeEngineClass(object);
+                diagram.removeEngineClass(object);
             }
 
             @Override
             public void moved(EngineClass object, int fromIndex, int toIndex) {
-                model.getDiagram().moveEngineClass(fromIndex, toIndex);
+                diagram.moveEngineClass(fromIndex, toIndex);
             }
         });
         engineClassesList.setModel(listModel);
