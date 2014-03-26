@@ -11,7 +11,6 @@ import java.awt.Insets;
 
 import javax.swing.JLabel;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -25,7 +24,7 @@ import java.awt.FlowLayout;
  */
 public class ProgramSettingsDialog extends javax.swing.JDialog {
 
-    private ApplicationModel model;
+    private ProgramSettings settings;
 
     /** Creates new form ProgramSettingsDialog */
     public ProgramSettingsDialog(java.awt.Frame parent, boolean modal) {
@@ -142,35 +141,30 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }
 
-    public void showDialog(ApplicationModel model) {
+    public void showDialog(ProgramSettings settings) {
         // set model
-        this.setModel(model);
+        this.settings = settings;
+        this.updateValues();
         // show dialog
         this.setVisible(true);
     }
 
-    private void setModel(ApplicationModel model) {
-        this.model = model;
-        this.updateValues();
-    }
-
     private void updateValues() {
-        this.nameTextField.setText(model.getProgramSettings().getUserNameOrSystemUser());
-        this.warningAutoECCorrectionCheckBox.setSelected(model.getProgramSettings().isWarningAutoECCorrection());
-        this.unitComboBox.setSelectedItem(model.getProgramSettings().getLengthUnit());
-        this.speedUnitComboBox.setSelectedItem(model.getProgramSettings().getSpeedLengthUnit());
+        this.nameTextField.setText(settings.getUserNameOrSystemUser());
+        this.warningAutoECCorrectionCheckBox.setSelected(settings.isWarningAutoECCorrection());
+        this.unitComboBox.setSelectedItem(settings.getLengthUnit());
+        this.speedUnitComboBox.setSelectedItem(settings.getSpeedLengthUnit());
     }
 
     private boolean writeBackValues() {
-        ProgramSettings ps = model.getProgramSettings();
         String name = nameTextField.getText().trim();
-        if (name.equals(ps.getSystemUser()) || "".equals(name))
-            ps.setUserName(null);
+        if (name.equals(settings.getSystemUser()) || "".equals(name))
+            settings.setUserName(null);
         else
-            ps.setUserName(name);
-        ps.setWarningAutoECCorrection(warningAutoECCorrectionCheckBox.isSelected());
-        ps.setLengthUnit((LengthUnit) unitComboBox.getSelectedItem());
-        ps.setSpeedLengthUnit((LengthUnit) speedUnitComboBox.getSelectedItem());
+            settings.setUserName(name);
+        settings.setWarningAutoECCorrection(warningAutoECCorrectionCheckBox.isSelected());
+        settings.setLengthUnit((LengthUnit) unitComboBox.getSelectedItem());
+        settings.setSpeedLengthUnit((LengthUnit) speedUnitComboBox.getSelectedItem());
         return true;
     }
 
