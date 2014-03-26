@@ -264,7 +264,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             public void run() {
                 JMenuItem openItem = null;
                 if (!lastOpened.containsKey(file)) {
-                    openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, false));
+                    openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this));
                     openItem.setText("x " + file.getName());
                     openItem.setActionCommand("open:" + file.getAbsoluteFile());
                     lastOpened.put(file, openItem);
@@ -424,13 +424,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        fileNewMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this, true));
+        fileNewMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this));
         fileNewMenuItem.setText(ResourceLoader.getString("menu.file.new")); // NOI18N
         fileNewMenuItem.setActionCommand("new");
         fileMenu.add(fileNewMenuItem);
         fileMenu.add(separator3);
 
-        fileOpenMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this, false));
+        fileOpenMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this));
         fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
         fileOpenMenuItem.setActionCommand("open");
@@ -1214,7 +1214,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     public void forceLoad(File file) {
-        NewOpenAction action = new NewOpenAction(model, this, false);
+        NewOpenAction action = new NewOpenAction(model, this);
         action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
     }
 

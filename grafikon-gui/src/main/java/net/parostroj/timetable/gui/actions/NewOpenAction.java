@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.actions;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +37,6 @@ public class NewOpenAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(NewOpenAction.class.getName());
     private final ApplicationModel model;
-    private NewModelDialog newModelDialog;
 
     /**
      * creates a new instance
@@ -44,11 +44,8 @@ public class NewOpenAction extends AbstractAction {
      * @param model application model
      * @param owner frame
      */
-    public NewOpenAction(ApplicationModel model, Frame owner, boolean createNewDialog) {
+    public NewOpenAction(ApplicationModel model, Frame owner) {
         this.model = model;
-        if (createNewDialog) {
-            newModelDialog = new NewModelDialog(owner, true);
-        }
     }
 
     @Override
@@ -173,11 +170,14 @@ public class NewOpenAction extends AbstractAction {
             @Override
             protected void eventDispatchAction() {
                 // create new model
+                NewModelDialog newModelDialog = new NewModelDialog((Window) parent, true);
                 newModelDialog.setLocationRelativeTo(parent);
                 newModelDialog.setVisible(true);
+                newModelDialog.dispose();
                 NewModelValues values = newModelDialog.getNewModelValues();
-                if (values != null)
+                if (values != null) {
                     context.setAttribute("values", values);
+                }
             }
         };
         ModelAction createAction = new EventDispatchAfterModelAction(context) {
