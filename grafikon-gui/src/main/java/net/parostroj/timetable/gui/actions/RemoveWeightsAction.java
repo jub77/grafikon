@@ -11,7 +11,6 @@ import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
 import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -43,15 +42,7 @@ public class RemoveWeightsAction extends AbstractAction {
                     train.removeAttribute(Train.ATTR_WEIGHT);
                 }
             }, ResourceLoader.getString("wait.message.recalculate"), "Weight removal");
-            ModelAction eventAction = new EventDispatchModelAction(context) {
-
-                @Override
-                protected void eventDispatchAction() {
-                    model.setModelChanged(true);
-                }
-            };
             ActionHandler.getInstance().execute(removeAction);
-            ActionHandler.getInstance().execute(eventAction);
         }
     }
 }
