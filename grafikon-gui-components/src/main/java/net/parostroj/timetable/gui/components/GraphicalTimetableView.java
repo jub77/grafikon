@@ -298,6 +298,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                     recreateDraw();
                 }
                 break;
+            case ATTRIBUTE:
+                if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
+                    if (this.getRoute() != null && this.getRoute().contains(event.getSource())) {
+                        // redraw all
+                        recreateDraw();
+                    }
+                }
+                break;
             default:
                 break;
         }
