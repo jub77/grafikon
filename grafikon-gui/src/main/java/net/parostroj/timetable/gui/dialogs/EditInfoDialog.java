@@ -5,10 +5,8 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import java.awt.Color;
@@ -20,6 +18,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+
 import java.awt.GridBagLayout;
 
 /**
@@ -27,9 +26,9 @@ import java.awt.GridBagLayout;
  *
  * @author jub
  */
-public class EditInfoDialog extends javax.swing.JDialog implements ApplicationModelListener {
+public class EditInfoDialog extends javax.swing.JDialog {
 
-    private ApplicationModel model;
+    private TrainDiagram diagram;
 
     /** Creates new form EditInfoDialog */
     public EditInfoDialog(java.awt.Frame parent, boolean modal) {
@@ -37,29 +36,26 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
         initComponents();
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
-    }
-
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        // do nothing
+    public void showDialog(TrainDiagram diagram) {
+        this.diagram = diagram;
+        this.updateValues();
+        this.setVisible(true);
     }
 
     public void updateValues() {
-        if (model.getDiagram() == null) {
+        if (diagram == null) {
             return;
         }
-        String numbers = (String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS);
-        String nodes = (String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_NODES);
+        String numbers = diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class);
+        String nodes = diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_NODES, String.class);
         boolean info = !(nodes == null && numbers == null);
         routeInfoCheckBox.setSelected(info);
         setAreasEnabled(info);
 
         routeNumberTextArea.setText(numbers);
         routesTextArea.setText(nodes);
-        validityTextField.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
-        infoTextArea.setText((String) model.getDiagram().getAttribute(TrainDiagram.ATTR_INFO));
+        validityTextField.setText(diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
+        infoTextArea.setText(diagram.getAttributes().get(TrainDiagram.ATTR_INFO, String.class));
     }
 
     private void initComponents() {
@@ -245,11 +241,10 @@ public class EditInfoDialog extends javax.swing.JDialog implements ApplicationMo
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // save values
-        TrainDiagram diagram = model.getDiagram();
-        String number = routeNumberTextArea.getText().trim(); if (number.equals("")) number = null;
-        String nodes = routesTextArea.getText().trim(); if (nodes.equals("")) nodes = null;
-        String validity = validityTextField.getText().trim(); if (validity.equals("")) validity = null;
-        String info = infoTextArea.getText().trim(); if ("".equals(info)) info = null;
+        String number = Conversions.checkAndTrim(routeNumberTextArea.getText());
+        String nodes = Conversions.checkAndTrim(routesTextArea.getText());
+        String validity = Conversions.checkAndTrim(validityTextField.getText());
+        String info = Conversions.checkAndTrim(infoTextArea.getText());
 
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, nodes);

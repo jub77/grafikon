@@ -53,7 +53,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private ApplicationModel model;
     private SettingsDialog settingsDialog;
-    private EditInfoDialog infoDialog;
     private FloatingWindowsList floatingDialogsList;
     private TrainTypesDialog trainTypesDialog;
     private LineClassesDialog lineClassesDialog;
@@ -180,9 +179,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         model.addListener(statusBar);
 
         settingsDialog = new SettingsDialog(this, true);
-
-        infoDialog = new EditInfoDialog(this, true);
-        infoDialog.setModel(model);
 
         floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
@@ -972,9 +968,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        EditInfoDialog infoDialog = new EditInfoDialog(this, true);
         infoDialog.setLocationRelativeTo(this);
-        infoDialog.updateValues();
-        infoDialog.setVisible(true);
+        infoDialog.showDialog(model.getDiagram());
+        infoDialog.dispose();
     }
 
     private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
