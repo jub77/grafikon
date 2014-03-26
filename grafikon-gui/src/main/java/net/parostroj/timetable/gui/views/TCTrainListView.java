@@ -551,6 +551,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
             dialog.setLocationRelativeTo(ActionUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
+            dialog.dispose();
 
             this.selectedTypes = dialog.getSelectedTypes();
             this.filter = TrainTypeFilter.getTrainFilter(selectedTypes);
