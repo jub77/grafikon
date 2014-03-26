@@ -251,8 +251,8 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case SPEED:
                 // velocity
-                int velocity = ((Integer)aValue).intValue();
-                if (velocity > 0) {
+                Integer velocity = (Integer) aValue;
+                if (velocity == null || velocity > 0) {
                     train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
                     this.fireTableRowsUpdated(rowIndex - 2 >= 0 ? rowIndex - 2 : 0, lastRow);
                 }
