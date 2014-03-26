@@ -211,7 +211,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         this.topSpeed = topSpeed;
         this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
         if (!timeIntervalList.isEmpty()) {
-            this.recalculate(this.topSpeed);
+            this.recalculate();
         }
     }
 
@@ -561,7 +561,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public void move(int time) {
     	timeIntervalList.get(0).move(time);
-    	this.recalculateImpl(null, 0);
+    	this.recalculateImpl(0);
         this.listenerSupport.fireEvent(new TrainEvent(this,
                 TimeIntervalListType.MOVED,
                 0, 0));
@@ -597,7 +597,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         }
 
         // recalculate intervals
-        this.recalculateImpl(null, changedIndex);
+        this.recalculateImpl(changedIndex);
 
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.STOP_TIME, index, changedIndex));
     }
@@ -625,7 +625,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         }
 
         // recalculate intervals
-        this.recalculateImpl(null, changedIndex);
+        this.recalculateImpl(changedIndex);
 
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.SPEED, index, changedIndex));
     }
@@ -669,7 +669,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * recalculates all line intervals.
      */
     public void recalculate() {
-        this.recalculateImpl(null, 0);
+        this.recalculateImpl(0);
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
     }
 
@@ -693,19 +693,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     /**
-     * recalculates all line intervals with given speed.
-     *
-     * @param newSpeed speed to be set to all line intervals
-     */
-    public void recalculate(int newSpeed) {
-        this.recalculateImpl(newSpeed, 0);
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
-    }
-
-    /**
      * implementation of recalculating train intervals.
      */
-    private void recalculateImpl(Integer newSpeed, int from) {
+    private void recalculateImpl(int from) {
         int nextStart = timeIntervalList.get(from).getStart();
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
