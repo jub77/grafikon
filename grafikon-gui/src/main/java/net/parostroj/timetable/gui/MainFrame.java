@@ -54,7 +54,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private ApplicationModel model;
     private SettingsDialog settingsDialog;
     private FloatingWindowsList floatingDialogsList;
-    private TrainTypesDialog trainTypesDialog;
     private Locale locale;
     private OutputAction outputAction;
     private ExecuteScriptAction executeScriptAction;
@@ -180,9 +179,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
-
-        trainTypesDialog = new TrainTypesDialog(this, true);
-        trainTypesDialog.setModel(model);
 
         netPane.setModel(model);
 
@@ -983,9 +979,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        trainTypesDialog.updateValues();
+        TrainTypesDialog trainTypesDialog = new TrainTypesDialog(this, true);
         trainTypesDialog.setLocationRelativeTo(this);
-        trainTypesDialog.setVisible(true);
+        trainTypesDialog.showDialog(model.getDiagram());
+        trainTypesDialog.dispose();
     }
 
     private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
