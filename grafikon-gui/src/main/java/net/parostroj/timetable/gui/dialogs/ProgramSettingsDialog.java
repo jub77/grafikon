@@ -37,6 +37,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         }
         speedUnitComboBox.addItem(LengthUnit.KM);
         speedUnitComboBox.addItem(LengthUnit.MILE);
+
+        pack();
     }
 
     private void initComponents() {
@@ -45,7 +47,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         javax.swing.JPanel dataPanel = new javax.swing.JPanel();
         javax.swing.JLabel nameLabel = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
-        warningAutoECCorrectionCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel unitLabel = new javax.swing.JLabel();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         javax.swing.JButton okButton = new javax.swing.JButton();
@@ -76,20 +77,11 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         gridBagConstraints_1.insets = new Insets(5, 0, 5, 5);
         dataPanel.add(nameTextField, gridBagConstraints_1);
 
-        warningAutoECCorrectionCheckBox.setText(ResourceLoader.getString("program.settings.speedautochange.warning")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
-        dataPanel.add(warningAutoECCorrectionCheckBox, gridBagConstraints);
-
         FlowLayout fl_unitsPanel = new FlowLayout(FlowLayout.LEFT);
         javax.swing.JPanel unitsPanel = new javax.swing.JPanel(fl_unitsPanel);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new Insets(0, 5, 0, 5);
@@ -126,8 +118,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         buttonPanel.add(cancelButton);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.PAGE_END);
-
-        pack();
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -151,7 +141,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
 
     private void updateValues() {
         this.nameTextField.setText(settings.getUserNameOrSystemUser());
-        this.warningAutoECCorrectionCheckBox.setSelected(settings.isWarningAutoECCorrection());
         this.unitComboBox.setSelectedItem(settings.getLengthUnit());
         this.speedUnitComboBox.setSelectedItem(settings.getSpeedLengthUnit());
     }
@@ -162,7 +151,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
             settings.setUserName(null);
         else
             settings.setUserName(name);
-        settings.setWarningAutoECCorrection(warningAutoECCorrectionCheckBox.isSelected());
         settings.setLengthUnit((LengthUnit) unitComboBox.getSelectedItem());
         settings.setSpeedLengthUnit((LengthUnit) speedUnitComboBox.getSelectedItem());
         return true;
@@ -170,6 +158,5 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
 
     private javax.swing.JTextField nameTextField;
     private javax.swing.JComboBox unitComboBox;
-    private javax.swing.JCheckBox warningAutoECCorrectionCheckBox;
     private javax.swing.JComboBox speedUnitComboBox;
 }
