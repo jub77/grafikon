@@ -5,10 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.ArrayList;
-
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Conversions;
@@ -22,7 +18,6 @@ import net.parostroj.timetable.utils.ResourceLoader;
 public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
 
     private TCDelegate delegate;
-    private ApplicationModel model;
     private static final EngineClass noneEngineClass = new EngineClass(null, ResourceLoader.getString("ec.details.engineclass.none"));
 
     /** Creates new form TCDetailsViewDialog */
@@ -32,16 +27,15 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         attributesPanel.setCategory(Attributes.USER_CATEGORY);
     }
 
-    public void updateValues(TCDelegate delegate, ApplicationModel model) {
+    public void updateValues(TCDelegate delegate, TrainDiagram diagram) {
         this.delegate = delegate;
-        this.model = model;
         TrainsCycle cycle = delegate.getSelectedCycle();
         EngineClass clazz = (EngineClass) cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
         this.nameTextField.setText(cycle.getName());
         this.descTextField.setText(cycle.getDescription());
         this.engineClassComboBox.removeAllItems();
         this.engineClassComboBox.addItem(noneEngineClass);
-        for (EngineClass c : model.getDiagram().getEngineClasses()) {
+        for (EngineClass c : diagram.getEngineClasses()) {
             this.engineClassComboBox.addItem(c);
         }
         attributesPanel.startEditing(new Attributes(cycle.getAttributes()));
@@ -156,26 +150,6 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
             EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
             if (eClass != cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS)) {
                 cycle.setAttribute(TrainsCycle.ATTR_ENGINE_CLASS, eClass);
-                boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
-                StringBuilder trainsStr = null;
-                for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(cycle.getItems())) {
-                    Train train = item.getTrain();
-                    if (train.checkNeedSpeedRecalculate()) {
-                        train.recalculate();
-                        if (warning) {
-                            if (trainsStr == null)
-                                trainsStr = new StringBuilder();
-                            else
-                                trainsStr.append(',');
-                            trainsStr.append(train.getName());
-                        }
-                    }
-                }
-                if (warning && trainsStr != null) {
-                    ActionUtils.showWarning(
-                            String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
-                            ActionUtils.getTopLevelComponent(this.getParent()));
-                }
             }
         }
 

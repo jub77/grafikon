@@ -67,7 +67,7 @@ public class EngineCycleDelegate extends TCDelegate {
         if (editDialog == null)
             editDialog = new TCDetailsViewDialogEngineClass((java.awt.Frame)component.getTopLevelAncestor(), true);
         editDialog.setLocationRelativeTo(component);
-        editDialog.updateValues(this, model);
+        editDialog.updateValues(this, model.getDiagram());
         editDialog.setVisible(true);
     }
 
