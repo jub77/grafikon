@@ -62,6 +62,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         dialog.setLocationRelativeTo(trainTableScrollPane);
         dialog.updateColumns(trainTable);
         dialog.setVisible(true);
+        dialog.dispose();
     }
 
     public void resizeColumns() {
