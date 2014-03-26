@@ -7,8 +7,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.model.TimeInterval;
@@ -97,16 +95,6 @@ public class RecalculateStopsAction extends AbstractAction {
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(event.getSource()));
         ModelAction recalculateAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
                 trainAction, ResourceLoader.getString("wait.message.recalculate"), "Recalculate stops");
-        ModelAction eventAction = new EventDispatchModelAction(context) {
-
-            @Override
-            protected void eventDispatchAction() {
-                model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
-                // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
-                model.setModelChanged(true);
-            }
-        };
         ActionHandler.getInstance().execute(recalculateAction);
-        ActionHandler.getInstance().execute(eventAction);
     }
 }
