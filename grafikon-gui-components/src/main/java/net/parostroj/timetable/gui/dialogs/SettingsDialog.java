@@ -38,7 +38,6 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     private static final String NO_UNIT = "-";
 
-    private boolean diagramChanged;
     private boolean recalculate;
     private TrainDiagram diagram;
 
@@ -47,7 +46,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        diagramChanged = false;
         recalculate = false;
 
         sortComboBox.addItem(ResourceLoader.getString("modelinfo.sort.number"));
@@ -98,7 +96,6 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     public void setTrainDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
-        this.diagramChanged = false;
         this.recalculate = false;
 
         this.updateValues();
@@ -189,10 +186,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         if (toTime == TimeInterval.DAY || toTime == 0)
             toTime = null;
         return new Tuple<Integer>(fromTime, toTime);
-    }
-
-    public boolean isDiagramChanged() {
-        return diagramChanged;
     }
 
     public boolean isRecalculate() {
@@ -689,7 +682,6 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         this.setVisible(false);
         this.recalculate = recalculateUpate;
-        this.diagramChanged = true;
     }
 
     private void setAttributeBDtoInt(String attr, BigDecimal value) {
@@ -705,7 +697,6 @@ public class SettingsDialog extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.updateValues();
         this.setVisible(false);
-        this.diagramChanged = false;
     }
 
     private void timeTextFieldFocusLost(java.awt.event.FocusEvent evt) {

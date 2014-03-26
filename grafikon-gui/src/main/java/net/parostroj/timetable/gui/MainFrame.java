@@ -966,19 +966,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
             ActionHandler.getInstance().execute(action);
         }
-        // check and send event if neccessary
-        if (settingsDialog.isDiagramChanged()) {
-            ModelAction action = new EventDispatchModelAction(context) {
-
-                @Override
-                protected void eventDispatchAction() {
-                    model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.SET_DIAGRAM_CHANGED, model));
-                    // set back modified status (SET_DIAGRAM_CHANGED unfortunately clears the modified status)
-                    model.setModelChanged(true);
-                }
-            };
-            ActionHandler.getInstance().execute(action);
-        }
     }
 
     private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
