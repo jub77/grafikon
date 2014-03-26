@@ -29,8 +29,8 @@ public enum TrainTableColumn {
     NODE("train.table.node", 50, 300, 120, "w", String.class, false, null), START("train.table.starttime", 50, 70, 50,
             "fc", String.class, true, null), END("train.table.endtime", 50, 70, 50, "loc", String.class, true, null), STOP(
             "train.table.stop", 50, 50, 50, "flo", String.class, true, null), REAL_STOP("train.table.real.stop", 50,
-            50, 50, "w", Double.class, false, null), SPEED("train.table.speed", 50, 50, 50, "e", Integer.class, false,
-            null), USED_SPEED("train.table.speed", 50, 50, 50, "w", Integer.class, false, null),
+            50, 50, "w", Double.class, false, null), SPEED_LIMIT("train.table.speed", 50, 50, 50, "e", Integer.class, false,
+            null), SPEED("train.table.speed", 50, 50, 50, "w", Integer.class, false, null),
             ADDED_TIME("train.table.added.time", 50, 50, 50, "e", String.class, true, null), PLATFORM(
             "train.table.platform", 50, 50, 50, "t", String.class, false, new TrackCellEditor()), WEIGHT(
             "train.table.weight", 50, 100, 50, "w", Integer.class, false, null), LENGTH("train.table.length", 50, 100,

@@ -117,7 +117,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                         interval = train.getLastInterval();
                     }
                     int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
-                    int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED);
+                    int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
                     trainTable.setRowSelectionInterval(row, row);
                     if (column != -1)
                         trainTable.setColumnSelectionInterval(column, column);

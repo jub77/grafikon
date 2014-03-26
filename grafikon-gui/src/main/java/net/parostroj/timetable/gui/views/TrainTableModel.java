@@ -109,14 +109,14 @@ class TrainTableModel extends AbstractTableModel {
                 	retValue = converter.convertIntToMinutesText(interval.getLength());
                 break;
             // speed
-            case SPEED:
+            case SPEED_LIMIT:
                 if (interval.getOwner() instanceof Line) {
-                    retValue = interval.getSpeed();
+                    retValue = interval.getSpeedLimit();
                 }
                 break;
             // used speed
-            case USED_SPEED:
-                retValue = interval.getUsedSpeed();
+            case SPEED:
+                retValue = interval.getSpeed();
                 break;
             // added time
             case ADDED_TIME:
@@ -249,7 +249,7 @@ class TrainTableModel extends AbstractTableModel {
                     this.fireTableRowsUpdated(rowIndex - 1, lastRow);
                 }
                 break;
-            case SPEED:
+            case SPEED_LIMIT:
                 // velocity
                 Integer velocity = (Integer) aValue;
                 if (velocity == null || velocity > 0) {
@@ -268,9 +268,9 @@ class TrainTableModel extends AbstractTableModel {
                         addedTime = -1;
                     }
                     if (addedTime >= 0)
-                        train.changeSpeedAndAddedTime(interval, interval.getSpeed(), addedTime);
+                        train.changeSpeedAndAddedTime(interval, interval.getSpeedLimit(), addedTime);
                 } else {
-                    train.changeSpeedAndAddedTime(interval, interval.getSpeed(), 0);
+                    train.changeSpeedAndAddedTime(interval, interval.getSpeedLimit(), 0);
                 }
                 this.fireTableRowsUpdated(rowIndex, lastRow);
                 break;

@@ -150,7 +150,7 @@ public class TrainTimetablesExtractor {
             if (!nodeI.isLast())
                 row.setDeparture(diagram.getTimeConverter().convertIntToXml(nodeI.getEnd()));
             if (lineI != null) {
-                row.setSpeed(lineI.getSpeed());
+                row.setSpeed(lineI.getSpeedLimit());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
                 row.setSetSpeed((Integer) lineI.getAttribute(TimeInterval.ATTR_SET_SPEED));
             }

@@ -25,7 +25,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Track. */
     private Track track;
     /** Speed. */
-    private Integer speed;
+    private Integer speedLimit;
     /** Added time. */
     private int addedTime;
     /** Attributes. */
@@ -55,7 +55,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.train = train;
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
-        this.speed = speed;
+        this.speedLimit = speed;
         this.direction = direction;
         this.track = track;
         this.setAttributes(new Attributes());
@@ -84,7 +84,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public TimeInterval(String id, TimeInterval interval) {
         this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
-                interval.getEnd(), interval.getSpeed(), interval.getDirection(),
+                interval.getEnd(), interval.getSpeedLimit(), interval.getDirection(),
                 interval.getTrack(), interval.getAddedTime());
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
@@ -174,26 +174,26 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /**
      * @return the speed
      */
-    public Integer getSpeed() {
-        return speed;
+    public Integer getSpeedLimit() {
+        return speedLimit;
     }
 
     /**
      * @param speed the speed to set
      */
-    public void setSpeed(Integer speed) {
-        this.speed = speed;
+    public void setSpeedLimit(Integer speed) {
+        this.speedLimit = speed;
     }
 
     public Integer computeSpeed() {
-        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeed()) : null;
+        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeedLimit()) : null;
     }
 
-    public Integer getUsedSpeed() {
+    public Integer getSpeed() {
         return usedSpeed;
     }
 
-    public void setUsedSpeed(Integer usedSpeed) {
+    public void setSpeed(Integer usedSpeed) {
         this.usedSpeed = usedSpeed;
     }
 

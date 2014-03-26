@@ -81,7 +81,7 @@ public class TrainBuilder {
                 ni.setAttributes(oi.getAttributes());
                 if (!ni.isFirst() && !ni.isLast())
                     ni.setLength(oi.getLength());
-                ni.setSpeed(oi.getSpeed());
+                ni.setSpeedLimit(oi.getSpeedLimit());
                 ni.setTrack(oi.getTrack());
                 if (first == null) {
                     first = new Tuple<TimeInterval>(ni, oi);
@@ -132,7 +132,7 @@ public class TrainBuilder {
                         currentTime, currentTime + originalInterval.getLength(), null);
             } else {
                 interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
-                        0, 0, originalInterval.getSpeed(), originalInterval.getDirection(), null,
+                        0, 0, originalInterval.getSpeedLimit(), originalInterval.getDirection(), null,
                         originalInterval.getAddedTime());
             }
             currentTime = interval.getEnd();

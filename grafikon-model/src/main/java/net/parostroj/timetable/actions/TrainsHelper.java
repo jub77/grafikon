@@ -136,7 +136,7 @@ public class TrainsHelper {
                     if (weight == null) {
                         weight = 0;
                     }
-                    WeightTableRow weightTableRow = engine.getWeightTableRowForSpeed(interval.getUsedSpeed());
+                    WeightTableRow weightTableRow = engine.getWeightTableRowForSpeed(interval.getSpeed());
                     if (weightTableRow != null) {
                         weight += weightTableRow.getWeight(lineClass);
                     }
