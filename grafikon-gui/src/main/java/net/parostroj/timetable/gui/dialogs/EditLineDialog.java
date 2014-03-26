@@ -157,8 +157,6 @@ public class EditLineDialog extends javax.swing.JDialog {
     }
 
     private void writeValuesBack() {
-        // recalculate flag
-        boolean recalculate = false;
         int length = line.getLength();
         try {
             length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
@@ -176,12 +174,10 @@ public class EditLineDialog extends javax.swing.JDialog {
         }
         if (line.getLength() != length && length > 0) {
             line.setLength(length);
-            recalculate = true;
         }
 
         if (line.getTopSpeed() != speed) {
             line.setTopSpeed(speed);
-            recalculate = true;
         }
 
         // update line tracks back - remove
@@ -211,20 +207,6 @@ public class EditLineDialog extends javax.swing.JDialog {
         // set line class back
         line.getAttributes().setRemove(Line.ATTR_CLASS_BACK, lineClassBackComboBox.getSelectedItem() == lineClassComboBox.getSelectedItem()
                         || lineClassBackComboBox.getSelectedItem() == noneLineClass ? null : lineClassBackComboBox.getSelectedItem());
-
-        if (recalculate) {
-            // collect trains
-            Set<Train> trains = new HashSet<Train>();
-            for (Track track : line.getTracks()) {
-                for (TimeInterval interval : track.getTimeIntervalList()) {
-                    trains.add(interval.getTrain());
-                }
-            }
-            // recalculate collected trains
-            for (Train train : trains) {
-                train.recalculate();
-            }
-        }
     }
 
     private void initComponents() {
