@@ -243,9 +243,10 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             @Override
             public void actionPerformed(ActionEvent e) {
                 CopyTrainDialog dialog = new CopyTrainDialog((java.awt.Frame) TrainListView.this.getTopLevelAncestor(),
-                        true, model, model.getSelectedTrain());
+                        true, model.getDiagram(), model.getSelectedTrain());
                 dialog.setLocationRelativeTo(TrainListView.this);
                 dialog.setVisible(true);
+                dialog.dispose();
             }
         });
         editButton.addActionListener(new java.awt.event.ActionListener() {

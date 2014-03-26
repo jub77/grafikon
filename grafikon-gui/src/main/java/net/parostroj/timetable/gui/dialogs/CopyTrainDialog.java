@@ -6,15 +6,18 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Frame;
+
 import net.parostroj.timetable.actions.TrainBuilder;
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import javax.swing.JCheckBox;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -27,13 +30,13 @@ public class CopyTrainDialog extends javax.swing.JDialog {
 
     private final Train train;
     private boolean reversed;
-    private final ApplicationModel model;
+    private final TrainDiagram diagram;
 
-    public CopyTrainDialog(Frame parent, boolean modal, ApplicationModel model, Train train) {
+    public CopyTrainDialog(Frame parent, boolean modal, TrainDiagram diagram, Train train) {
         super(parent, modal);
         initComponents();
         this.train = train;
-        this.model = model;
+        this.diagram = diagram;
         this.reversed = false;
         if (train != null) {
             nameTextField.setText(train.getNumber());
@@ -64,7 +67,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
@@ -72,7 +75,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
@@ -80,7 +83,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         JCheckBox checkBox = new JCheckBox(ResourceLoader.getString("copy.train.reversed")); // NOI18N
         checkBox.addActionListener(new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 reversed = ((JCheckBox) e.getSource()).isSelected();
             }
         });
@@ -147,7 +150,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
                 builder.createTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train);
 
         // add train to diagram
-        model.getDiagram().addTrain(newTrain);
+        diagram.addTrain(newTrain);
 
         // set visible to false
         this.setVisible(false);
