@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.ArrayList;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.views.TCDelegate;
@@ -156,7 +158,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
                 cycle.setAttribute(TrainsCycle.ATTR_ENGINE_CLASS, eClass);
                 boolean warning = model.getProgramSettings().isWarningAutoECCorrection();
                 StringBuilder trainsStr = null;
-                for (TrainsCycleItem item : cycle.getItems()) {
+                for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(cycle.getItems())) {
                     Train train = item.getTrain();
                     if (train.checkNeedSpeedRecalculate()) {
                         train.recalculate();
