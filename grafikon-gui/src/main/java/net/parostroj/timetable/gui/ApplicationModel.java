@@ -302,13 +302,13 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         }
     }
 
-	@Override
-	public TrainDiagram get() {
-		return getDiagram();
-	}
+    @Override
+    public TrainDiagram get() {
+        return getDiagram();
+    }
 
-	@Override
-	public void set(TrainDiagram object) {
-		setDiagram(object);
-	}
+    @Override
+    public void set(TrainDiagram object) {
+        setDiagram(object);
+    }
 }
