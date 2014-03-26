@@ -13,9 +13,7 @@ import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.model.units.UnitUtil;
-import net.parostroj.timetable.model.units.WeightUnit;
+import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
@@ -338,7 +336,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         getContentPane().add(sortComboBox, gridBagConstraints);
 
         jLabel6.setText(ResourceLoader.getString("modelinfo.crossing")); // NOI18N
-        gridBagConstraints_7 = new java.awt.GridBagConstraints();
+        java.awt.GridBagConstraints gridBagConstraints_7 = new java.awt.GridBagConstraints();
         gridBagConstraints_7.gridwidth = 3;
         gridBagConstraints_7.gridx = 0;
         gridBagConstraints_7.gridy = 8;
@@ -676,7 +674,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         Object speedUnitObject = speedUnitComboBox.getSelectedItem();
 
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, unitObject == NO_UNIT ? null : unitObject);
-        diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, unitObject == NO_UNIT ? null : speedUnitObject);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, speedUnitObject == NO_UNIT ? null : speedUnitObject);
 
         this.updateValues();
 
@@ -726,5 +724,4 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JTextField toTimeTextField;
     private javax.swing.JComboBox unitComboBox;
     private javax.swing.JComboBox speedUnitComboBox;
-    private GridBagConstraints gridBagConstraints_7;
 }
