@@ -40,8 +40,8 @@ public class NewModelDialog extends javax.swing.JDialog {
     private NewModelValues values;
 
     /** Creates new form SettingsDialog */
-    public NewModelDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public NewModelDialog(java.awt.Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         for (Scale scale : Scale.getPredefined()) {
             scaleComboBox.addItem(scale);
