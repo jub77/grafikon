@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -44,7 +43,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private static final TrainTypeCategory NONE_CATEGORY = new TrainTypeCategory(null, "-", "-");
 
-    private ApplicationModel model;
+    private TrainDiagram diagram;
     private WrapperListModel<TrainType> typesModel;
 
     /** Creates new form TrainTypesDialog */
@@ -56,33 +55,35 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
+    public void showDialog(TrainDiagram diagram) {
+        this.diagram = diagram;
+        this.updateValues();
+        this.setVisible(true);
     }
 
     public void updateValues() {
         // fill train type jlist
-        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(model.getDiagram().getTrainTypes()), null, false);
+        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(diagram.getTrainTypes()), null, false);
         typesModel.setObjectListener(new ObjectListener<TrainType>() {
             @Override
             public void added(TrainType object, int index) {
-                model.getDiagram().addTrainType(object, index);
+                diagram.addTrainType(object, index);
             }
 
             @Override
             public void removed(TrainType object) {
-                model.getDiagram().removeTrainType(object);
+                diagram.removeTrainType(object);
             }
 
             @Override
             public void moved(TrainType object, int fromIndex, int toIndex) {
-                model.getDiagram().moveTrainType(fromIndex, toIndex);
+                diagram.moveTrainType(fromIndex, toIndex);
             }
         });
         trainTypesList.setModel(typesModel);
         brakeComboBox.removeAllItems();
-        if (model.getDiagram() != null) {
-            for (TrainTypeCategory cat : model.getDiagram().getPenaltyTable().getTrainTypeCategories()) {
+        if (diagram != null) {
+            for (TrainTypeCategory cat : diagram.getPenaltyTable().getTrainTypeCategories()) {
                 brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
             }
             brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
@@ -353,10 +354,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             colorLabel.setForeground(Color.BLACK);
             brakeComboBox.setSelectedItem(NONE_CATEGORY);
             nameTemplateCheckBox.setSelected(false);
-            nameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainNameTemplate());
+            nameTemplateEditBox.setTemplate(diagram.getTrainsData().getTrainNameTemplate());
             nameTemplateEditBox.setEnabled(false);
             completeNameTemplateCheckBox.setSelected(false);
-            cNameTemplateEditBox.setTemplate(model.getDiagram().getTrainsData().getTrainCompleteNameTemplate());
+            cNameTemplateEditBox.setTemplate(diagram.getTrainsData().getTrainCompleteNameTemplate());
             cNameTemplateEditBox.setEnabled(false);
             platformNeededCheckBox.setSelected(false);
             showWeightInfoCheckBox.setSelected(false);
@@ -368,7 +369,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         TrainType type = typesModel.getIndex(trainTypesList.getSelectedIndex()).getElement();
         if (type != null) {
             // check if there is no train with this type ...
-            if (this.existsTrainWithType(type, model.getDiagram().getTrains())) {
+            if (this.existsTrainWithType(type, diagram.getTrains())) {
                 this.showErrorDialog("dialog.error.trainwithtraintype");
                 return;
             }
@@ -465,7 +466,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             this.showErrorDialog("dialog.error.missingvalues");
             return;
         }
-        TrainType type = model.getDiagram().createTrainType(IdGenerator.getInstance().getId());
+        TrainType type = diagram.createTrainType(IdGenerator.getInstance().getId());
         type.setAbbr(abbr);
         type.setDesc(desc);
         type.setPlatform(platformNeededCheckBox.isSelected());
