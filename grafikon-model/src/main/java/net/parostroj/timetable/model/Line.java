@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -105,9 +106,11 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param length length to be set
      */
     public void setLength(int length) {
-        int oldLength = this.length;
-        this.length = length;
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("length", oldLength, length)));
+        if (length != this.length) {
+            int oldLength = this.length;
+            this.length = length;
+            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(ATTR_LENGTH, oldLength, length)));
+        }
     }
 
     public LineTrack selectTrack(TimeInterval interval, LineTrack preselectedTrack) {
@@ -188,9 +191,11 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (topSpeed != null && topSpeed <= 0) {
             throw new IllegalArgumentException("Top speed should be positive number.");
         }
-        Integer oldTopSpeed = this.topSpeed;
-        this.topSpeed = topSpeed;
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange("topSpeed", oldTopSpeed, topSpeed)));
+        if (!Conversions.compareWithNull(topSpeed, this.topSpeed)) {
+            Integer oldTopSpeed = this.topSpeed;
+            this.topSpeed = topSpeed;
+            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(ATTR_SPEED, oldTopSpeed, topSpeed)));
+        }
     }
 
     public int computeSpeed(Train train, TimeInterval interval, Integer prefferedSpeed) {
