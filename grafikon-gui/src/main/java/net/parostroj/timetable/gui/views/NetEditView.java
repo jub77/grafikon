@@ -124,9 +124,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             // edit line
             if (netEditModel.getSelectedLine() != null) {
                 Line selectedLine = netEditModel.getSelectedLine();
-                editLineDialog.setLine(selectedLine);
                 editLineDialog.setLocationRelativeTo(NetEditView.this);
-                editLineDialog.setVisible(true);
+                editLineDialog.showDialog(selectedLine, model.getProgramSettings().getLengthUnit());
             }
             // edit node
             if (netEditModel.getSelectedNode() != null) {
@@ -323,7 +322,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     public void setModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
-        editLineDialog.setModel(model);
         model.addListener(this);
         updateActions(model);
         setNet(model);

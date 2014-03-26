@@ -12,7 +12,6 @@ import java.util.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
@@ -37,7 +36,6 @@ import javax.swing.GroupLayout;
 public class EditLineDialog extends javax.swing.JDialog {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditLineDialog.class.getName());
-    private ApplicationModel model;
     private Line line;
     private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
@@ -53,14 +51,11 @@ public class EditLineDialog extends javax.swing.JDialog {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
-    }
-
-    public void setLine(Line line) {
+    public void showDialog(Line line, LengthUnit lengthUnit) {
         this.line = line;
+        TrainDiagram diagram = line.getTrainDiagram();
 
-        lengthEditBox.setUnit(model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
+        lengthEditBox.setUnit(diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, lengthUnit));
 
         // update track for from and to (direct)
         Node from = line.getFrom();
@@ -95,7 +90,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED)));
 
         // update line class combo box
-        List<LineClass> classes = model.getDiagram().getNet().getLineClasses();
+        List<LineClass> classes = line.getTrainDiagram().getNet().getLineClasses();
         lineClassComboBox.removeAllItems();
         lineClassComboBox.addItem(noneLineClass);
         for (LineClass clazz : classes) {
@@ -119,6 +114,8 @@ public class EditLineDialog extends javax.swing.JDialog {
         this.updateTracks(null);
 
         this.pack();
+
+        this.setVisible(true);
     }
 
     private void updateTracks(LineTrack selected) {
