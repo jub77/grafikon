@@ -52,7 +52,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
-    private SettingsDialog settingsDialog;
     private FloatingWindowsList floatingDialogsList;
     private Locale locale;
     private OutputAction outputAction;
@@ -174,8 +173,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         model.addListener(this);
         model.addListener(statusBar);
-
-        settingsDialog = new SettingsDialog(this, true);
 
         floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
         floatingDialogsList.addToMenuItem(viewsMenu);
@@ -924,9 +921,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        SettingsDialog settingsDialog = new SettingsDialog(this, true);
         settingsDialog.setLocationRelativeTo(this);
-        settingsDialog.setTrainDiagram(model.getDiagram());
-        settingsDialog.setVisible(true);
+        settingsDialog.showDialog(model.getDiagram());
+        settingsDialog.dispose();
         // check if recalculate should be executed
         ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
         if (settingsDialog.isRecalculate()) {

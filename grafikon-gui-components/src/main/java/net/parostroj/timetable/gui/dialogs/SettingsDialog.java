@@ -94,11 +94,11 @@ public class SettingsDialog extends javax.swing.JDialog {
         pack();
     }
 
-    public void setTrainDiagram(TrainDiagram diagram) {
+    public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
         this.recalculate = false;
-
         this.updateValues();
+        this.setVisible(true);
     }
 
     private void updateValues() {
