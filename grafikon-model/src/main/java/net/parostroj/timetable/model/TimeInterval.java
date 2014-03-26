@@ -36,7 +36,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     private TimeIntervalDirection direction;
     private AttributesListener attributesListener;
     /** Speed used for calculation of running time (line as an owner). */
-    private int usedSpeed;
+    private Integer usedSpeed;
 
     /**
      * creates instance of an time interval.
@@ -185,15 +185,15 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.speed = speed;
     }
 
-    public int computeSpeed() {
-        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeed()) : 0;
+    public Integer computeSpeed() {
+        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeed()) : null;
     }
 
-    public int getUsedSpeed() {
+    public Integer getUsedSpeed() {
         return usedSpeed;
     }
 
-    public void setUsedSpeed(int usedSpeed) {
+    public void setUsedSpeed(Integer usedSpeed) {
         this.usedSpeed = usedSpeed;
     }
 

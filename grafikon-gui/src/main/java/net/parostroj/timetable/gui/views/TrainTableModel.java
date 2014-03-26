@@ -110,13 +110,19 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             // speed
             case SPEED:
-                if (interval.getOwner() instanceof Line)
-                    retValue = Integer.valueOf(interval.getSpeed());
+                if (interval.getOwner() instanceof Line) {
+                    retValue = interval.getSpeed();
+                }
+                break;
+            // used speed
+            case USED_SPEED:
+                retValue = interval.getUsedSpeed();
                 break;
             // added time
             case ADDED_TIME:
-                if (interval.isLineOwner() && interval.getAddedTime() != 0)
-                	retValue = converter.convertIntToMinutesText(interval.getAddedTime());
+                if (interval.isLineOwner() && interval.getAddedTime() != 0) {
+                    retValue = converter.convertIntToMinutesText(interval.getAddedTime());
+                }
                 break;
             // platform
             case PLATFORM:
