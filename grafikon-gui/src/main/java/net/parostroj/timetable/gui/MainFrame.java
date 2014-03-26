@@ -55,7 +55,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private SettingsDialog settingsDialog;
     private FloatingWindowsList floatingDialogsList;
     private TrainTypesDialog trainTypesDialog;
-    private LineClassesDialog lineClassesDialog;
     private EngineClassesDialog engineClassesDialog;
     private Locale locale;
     private OutputAction outputAction;
@@ -185,9 +184,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         trainTypesDialog = new TrainTypesDialog(this, true);
         trainTypesDialog.setModel(model);
-
-        lineClassesDialog = new LineClassesDialog(this, true);
-        lineClassesDialog.setModel(model);
 
         engineClassesDialog = new EngineClassesDialog(this, true);
         engineClassesDialog.setModel(model);
@@ -997,9 +993,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        lineClassesDialog.updateValues();
+        LineClassesDialog lineClassesDialog = new LineClassesDialog(this, true);
         lineClassesDialog.setLocationRelativeTo(this);
-        lineClassesDialog.setVisible(true);
+        lineClassesDialog.showDialog(model.getDiagram());
+        lineClassesDialog.dispose();
     }
 
     private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
