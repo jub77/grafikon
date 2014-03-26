@@ -1031,6 +1031,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 getClass().getResource(aboutBundle.getString("image")), true);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+        dialog.dispose();
     }
 
     private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {
