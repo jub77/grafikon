@@ -53,7 +53,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private ApplicationModel model;
     private SettingsDialog settingsDialog;
-    private EditImagesDialog imagesDialog;
     private EditInfoDialog infoDialog;
     private FloatingWindowsList floatingDialogsList;
     private TrainTypesDialog trainTypesDialog;
@@ -181,9 +180,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         model.addListener(statusBar);
 
         settingsDialog = new SettingsDialog(this, true);
-
-        imagesDialog = new EditImagesDialog(this, true);
-        imagesDialog.setModel(model);
 
         infoDialog = new EditInfoDialog(this, true);
         infoDialog.setModel(model);
@@ -969,8 +965,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void imagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        EditImagesDialog imagesDialog = new EditImagesDialog(this, true);
         imagesDialog.setLocationRelativeTo(this);
-        imagesDialog.setVisible(true);
+        imagesDialog.showDialog(model.getDiagram());
+        imagesDialog.dispose();
     }
 
     private void infoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
