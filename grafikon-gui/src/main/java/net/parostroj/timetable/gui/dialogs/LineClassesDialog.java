@@ -5,7 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -24,7 +23,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class LineClassesDialog extends javax.swing.JDialog {
 
-    private ApplicationModel model;
+    private TrainDiagram diagram;
     private WrapperListModel<LineClass> listModel;
 
     /** Creates new form LineClassesDialog */
@@ -33,27 +32,29 @@ public class LineClassesDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
+    public void showDialog(TrainDiagram diagram) {
+        this.diagram = diagram;
+        this.updateValues();
+        this.setVisible(true);
     }
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<LineClass>(Wrapper.getWrapperList(model.getDiagram().getNet().getLineClasses()), null, false);
+        listModel = new WrapperListModel<LineClass>(Wrapper.getWrapperList(diagram.getNet().getLineClasses()), null, false);
         listModel.setObjectListener(new ObjectListener<LineClass>() {
             @Override
             public void added(LineClass object, int index) {
-                model.getDiagram().getNet().addLineClass(object, index);
+                diagram.getNet().addLineClass(object, index);
             }
 
             @Override
             public void removed(LineClass object) {
-                model.getDiagram().getNet().removeLineClass(object);
+                diagram.getNet().removeLineClass(object);
             }
 
             @Override
             public void moved(LineClass object, int fromIndex, int toIndex) {
-                model.getDiagram().getNet().moveLineClass(fromIndex, toIndex);
+                diagram.getNet().moveLineClass(fromIndex, toIndex);
             }});
         lineClassesList.setModel(listModel);
         this.updateEnabled();
@@ -69,7 +70,7 @@ public class LineClassesDialog extends javax.swing.JDialog {
     private boolean deleteAllowed(LineClass lineClass) {
         if (lineClass == null)
             return false;
-        for (Line line : model.getDiagram().getNet().getLines()) {
+        for (Line line : diagram.getNet().getLines()) {
             if (line.getLineClass(TimeIntervalDirection.FORWARD) == lineClass)
                 return false;
             if (line.getLineClass(TimeIntervalDirection.BACKWARD) == lineClass)
