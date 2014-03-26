@@ -454,29 +454,34 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void setTimeBefore(int length) {
         boolean fireEvent = true;
         if (length == 0 && timeBefore != null) {
-            if (isAttached())
+            if (isAttached()) {
                 timeBefore.removeFromOwner();
+            }
             timeBefore = null;
         } else if (length != 0 && timeBefore == null) {
             TimeInterval firstInterval = this.getFirstInterval();
             timeBefore = new TimeInterval(IdGenerator.getInstance().getId(), this, firstInterval.getOwner(),
                     firstInterval.getStart() - length, firstInterval.getStart() - 1,
                     firstInterval.getTrack());
-            if (isAttached())
+            if (isAttached()) {
                 timeBefore.addToOwnerWithoutCheck();
+            }
         } else if (length != 0 && timeBefore != null) {
             TimeInterval firstInterval = this.getFirstInterval();
             // recalculate time
             timeBefore.setStart(firstInterval.getStart() - length);
             timeBefore.setLength(length - 1);
             timeBefore.setTrack(firstInterval.getTrack());
-            if (isAttached())
+            fireEvent = timeBefore.isChanged();
+            if (isAttached()) {
                 timeBefore.updateInOwner();
+            }
         } else {
             fireEvent = false;
         }
-        if (fireEvent)
+        if (fireEvent) {
             listenerSupport.fireEvent(new TrainEvent(this, GTEventType.TECHNOLOGICAL));
+        }
     }
 
     /**
@@ -485,29 +490,34 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void setTimeAfter(int length) {
         boolean fireEvent = true;
         if (length == 0 && timeAfter != null) {
-            if (isAttached())
+            if (isAttached()) {
                 timeAfter.removeFromOwner();
+            }
             timeAfter = null;
         } else if (length != 0 && timeAfter == null) {
             TimeInterval lastInterval = this.getLastInterval();
             timeAfter = new TimeInterval(IdGenerator.getInstance().getId(), this, lastInterval.getOwner(),
                     lastInterval.getEnd() + 1, lastInterval.getEnd() + length,
                     lastInterval.getTrack());
-            if (isAttached())
+            if (isAttached()) {
                 timeAfter.addToOwnerWithoutCheck();
+            }
         } else if (length != 0 && timeAfter != null) {
             TimeInterval lastInterval = this.getLastInterval();
             // recalculate time
             timeAfter.setStart(lastInterval.getEnd() + 1);
             timeAfter.setLength(length - 1);
             timeAfter.setTrack(lastInterval.getTrack());
-            if (isAttached())
+            fireEvent = timeAfter.isChanged();
+            if (isAttached()) {
                 timeAfter.updateInOwner();
+            }
         } else {
             fireEvent = false;
         }
-        if (fireEvent)
+        if (fireEvent) {
             listenerSupport.fireEvent(new TrainEvent(this, GTEventType.TECHNOLOGICAL));
+        }
     }
 
     /**
@@ -637,15 +647,19 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param nodeTrack node track to be changed
      */
     public void changeNodeTrack(TimeInterval nodeInterval, NodeTrack nodeTrack) {
-        if (!nodeInterval.isNodeOwner())
+        if (!nodeInterval.isNodeOwner()) {
             throw new IllegalArgumentException("No node interval.");
+        }
         nodeInterval.setTrack(nodeTrack);
-        if (isAttached())
+        if (isAttached()) {
             nodeInterval.updateInOwner();
-        if (this.getTimeBefore() != 0 && nodeInterval.isFirst())
+        }
+        if (this.getTimeBefore() != 0 && nodeInterval.isFirst()) {
             this.updateTechnologicalTimeBefore();
-        if (this.getTimeAfter() != 0 && nodeInterval.isLast())
+        }
+        if (this.getTimeAfter() != 0 && nodeInterval.isLast()) {
             this.updateTechnologicalTimeAfter();
+        }
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(nodeInterval)));
     }
 
@@ -659,8 +673,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (!lineInterval.isLineOwner())
             throw new IllegalArgumentException("No line interval.");
         lineInterval.setTrack(lineTrack);
-        if (isAttached())
+        if (isAttached()) {
             lineInterval.updateInOwner();
+        }
         // we do not need to update technological times
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(lineInterval)));
     }
@@ -669,8 +684,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * recalculates all line intervals.
      */
     public void recalculate() {
-        this.recalculateImpl(0);
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, 0, 0));
+        Integer changeStart = this.recalculateImpl(0);
+        if (changeStart != null) {
+            this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, changeStart, changeStart));
+        }
     }
 
     /**
@@ -695,16 +712,20 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * implementation of recalculating train intervals.
      */
-    private void recalculateImpl(int from) {
+    private Integer recalculateImpl(int from) {
+        Integer firstChanged = null;
         int nextStart = timeIntervalList.get(from).getStart();
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
             interval.move(nextStart);
-            timeIntervalList.updateInterval(interval, i);
+            if (timeIntervalList.updateInterval(interval, i) && firstChanged == null) {
+                firstChanged = i;
+            }
 
             nextStart = interval.getEnd();
         }
         this.updateTechnologicalTimes();
+        return firstChanged;
     }
 
     /**

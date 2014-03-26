@@ -37,6 +37,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     private AttributesListener attributesListener;
     /** Speed used for calculation of running time (line as an owner). */
     private Integer usedSpeed;
+    /** Changed - used for indication that the time interval for whatever reason changed. */
+    private boolean changed;
 
     /**
      * creates instance of an time interval.
@@ -89,6 +91,18 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
 
+    public void setChanged() {
+        this.changed = true;
+    }
+
+    public void clearChanged() {
+        this.changed = false;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
     /**
      * @return end time
      */
@@ -102,6 +116,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public void setEnd(int end) {
         if (end != interval.getEnd()) {
             this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+            this.setChanged();
         }
     }
 
@@ -118,6 +133,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public void setStart(int start) {
         if (start != interval.getStart()) {
             this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+            this.setChanged();
         }
     }
 
@@ -182,7 +198,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param speed the speed to set
      */
     public void setSpeedLimit(Integer speed) {
-        this.speedLimit = speed;
+        if (this.speedLimit != speed) {
+            this.speedLimit = speed;
+            this.setChanged();
+        }
     }
 
     public Integer computeSpeed() {
@@ -194,7 +213,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     public void setSpeed(Integer usedSpeed) {
-        this.usedSpeed = usedSpeed;
+        if (this.usedSpeed != usedSpeed) {
+            this.usedSpeed = usedSpeed;
+            this.setChanged();
+        }
     }
 
     /**
@@ -208,7 +230,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param addedTime the addedTime to set
      */
     public void setAddedTime(int addedTime) {
-        this.addedTime = addedTime;
+        if (this.addedTime != addedTime) {
+            this.addedTime = addedTime;
+            this.setChanged();
+        }
     }
 
     /**
@@ -222,7 +247,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param track the track to set
      */
     public void setTrack(Track track) {
-        this.track = track;
+        if (track != this.track) {
+            this.track = track;
+            setChanged();
+        }
     }
 
     /**
@@ -270,6 +298,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         if (timeShift != 0) {
             this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd()
                     + timeShift);
+            this.setChanged();
         }
     }
 
@@ -280,6 +309,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         if (aStart != this.interval.getStart()) {
             int length = this.getLength();
             this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+            this.setChanged();
         }
     }
 
@@ -300,6 +330,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public void setLength(int length) {
         if (length != this.getLength()) {
             this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+            this.setChanged();
         }
     }
 
@@ -312,6 +343,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public void setInterval(int start, int end) {
         if (start != interval.getStart() || end != interval.getEnd()) {
             this.interval = IntervalFactory.createInterval(start, end);
+            this.setChanged();
         }
     }
 
@@ -388,28 +420,35 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     public void addToOwner() {
-        if (isAttached())
+        if (isAttached()) {
             throw new IllegalStateException("Time interval is already attached.");
+        }
         owner.addTimeInterval(this);
+        this.clearChanged();
     }
 
     public void addToOwnerWithoutCheck() {
         owner.addTimeInterval(this);
+        this.clearChanged();
     }
 
     public void updateInOwner() {
-        if (!isAttached())
+        if (!isAttached()) {
             throw new IllegalStateException("Time interval is not attached.");
-        owner.updateTimeInterval(this);
+        }
+        if (isChanged()) {
+            owner.updateTimeInterval(this);
+            clearChanged();
+        }
     }
 
     @Override
-	public Attributes getAttributes() {
+    public Attributes getAttributes() {
         return attributes;
     }
 
     @Override
-	public void setAttributes(Attributes attributes) {
+    public void setAttributes(Attributes attributes) {
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
@@ -417,8 +456,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
-                train.fireEvent(new TrainEvent(train,
-                        change,train.getTimeIntervalList().indexOf(TimeInterval.this)));
+                train.fireEvent(new TrainEvent(train, change, train.getTimeIntervalList().indexOf(TimeInterval.this)));
             }
         };
         this.attributes.addListener(attributesListener);
