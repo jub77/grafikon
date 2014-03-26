@@ -239,7 +239,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
                 this.computeFromSpeed(interval, i),
                 this.computeToSpeed(interval, i), interval.getAddedTime());
         interval.setLength(runnningTime);
-        interval.setUsedSpeed(computedSpeed);
+        interval.setSpeed(computedSpeed);
         if (interval.isAttached())
             interval.updateInOwner();
     }

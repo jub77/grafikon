@@ -26,7 +26,7 @@ public class LSTrainRoutePartLine {
         intervalId = interval.getId();
         lineId = interval.getOwner().getId();
         trackId = interval.getTrack().getId();
-        speed = interval.getSpeed();
+        speed = interval.getSpeedLimit();
         if (interval.getAddedTime() != 0)
             addedTime = interval.getAddedTime();
         this.attributes = new LSAttributes(interval.getAttributes());

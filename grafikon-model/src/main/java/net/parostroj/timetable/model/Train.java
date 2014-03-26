@@ -614,7 +614,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (index == -1 || !lineInterval.isLineOwner())
             throw new IllegalArgumentException("Cannot change interval.");
 
-        lineInterval.setSpeed(speed);
+        lineInterval.setSpeedLimit(speed);
         lineInterval.setAddedTime(addedTime);
 
         int changedIndex = index;
@@ -723,7 +723,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean checkNeedSpeedRecalculate() {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isLineOwner()) {
-                if (interval.computeSpeed() != interval.getUsedSpeed())
+                if (interval.computeSpeed() != interval.getSpeed())
                     return true;
             }
         }
