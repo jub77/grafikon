@@ -212,7 +212,6 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
         prefs.setBoolean("two.sided.print", programSettings.isTwoSidedPrint());
         prefs.setBoolean("st.show.tech.time", programSettings.isStShowTechTime());
-        prefs.setBoolean("warning.auto.ec.correction", programSettings.isWarningAutoECCorrection());
         prefs.setString("unit", programSettings.getLengthUnit().getKey());
         prefs.setString("unit.speed", programSettings.getSpeedLengthUnit().getKey());
         prefs.removeWithPrefix("last.opened.");
@@ -229,7 +228,6 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
         programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
         programSettings.setStShowTechTime(prefs.getBoolean("st.show.tech.time", false));
-        programSettings.setWarningAutoECCorrection(prefs.getBoolean("warning.auto.ec.correction", true));
         LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
         LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit.speed", "km"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
