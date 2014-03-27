@@ -98,9 +98,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + this.id != null ? this.id.hashCode() : 0;
-        hash = 97 * hash + this.name != null ? this.name.hashCode() : 0;
-        hash = 97 * hash + this.description != null ? this.description.hashCode() : 0;
+        hash = 97 * hash + ((this.id != null) ? this.id.hashCode() : 0);
+        hash = 97 * hash + ((this.name != null) ? this.name.hashCode() : 0);
+        hash = 97 * hash + ((this.description != null) ? this.description.hashCode() : 0);
         return hash;
     }
 
