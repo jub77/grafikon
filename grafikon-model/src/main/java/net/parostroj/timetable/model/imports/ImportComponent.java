@@ -15,6 +15,7 @@ public enum ImportComponent {
     LINE_CLASSES("import.line_classes", LineClass.class),
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
     TRAINS("import.trains", Train.class),
+    TRAINS_CYCLES("import.cycles", TrainsCycle.class),
     OUTPUT_TEMPLATES("import.output_templates", OutputTemplate.class);
 
     private String key;
@@ -56,12 +57,18 @@ public enum ImportComponent {
             case OUTPUT_TEMPLATES:
                 map.addAll(diagram.getOutputTemplates());
                 break;
+            case TRAINS_CYCLES:
+                Map<String, List<TrainsCycle>> cMap = diagram.getCyclesMap();
+                for (List<TrainsCycle> cycles : cMap.values()) {
+                    map.addAll(cycles);
+                }
+                break;
         }
         return map;
     }
 
     public boolean sorted() {
-        return this == NODES || this == TRAINS;
+        return this == NODES || this == TRAINS || this == TRAINS_CYCLES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {

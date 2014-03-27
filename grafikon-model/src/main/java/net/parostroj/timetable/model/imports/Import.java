@@ -268,6 +268,8 @@ public abstract class Import {
                 return new EngineClassImport(diagram, library, match);
             case OUTPUT_TEMPLATES:
                 return new OutputTemplateImport(diagram, library, match);
+            case TRAINS_CYCLES:
+                return new TrainsCycleImport(diagram, library, match);
         }
         return null;
     }
