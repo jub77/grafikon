@@ -73,6 +73,7 @@
                         <manifestEntries>
                             <Implementation-Build>${grafikon.version.build}</Implementation-Build>
                             <Built-Date>${maven.build.timestamp}</Built-Date>
+                            <Permissions>all-permissions</Permissions>
                         </manifestEntries>
                     </archive>
                 </configuration>
