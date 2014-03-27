@@ -161,6 +161,8 @@ public class TrainBuilder {
             TrainDiagram diagram, int defaultStop) {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
+        train.setAttribute(Train.ATTR_DIESEL, false);
+        train.setAttribute(Train.ATTR_ELECTRIC, false);
         train.setType(trainType);
         train.setTopSpeed(topSpeed);
 
