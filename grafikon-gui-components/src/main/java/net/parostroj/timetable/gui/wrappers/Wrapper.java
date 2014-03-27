@@ -1,10 +1,10 @@
 package net.parostroj.timetable.gui.wrappers;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.imports.ImportComponent;
+import net.parostroj.timetable.model.imports.ImportMatch;
 
 /**
  * Wrapper class for lists in GUI.
@@ -78,9 +78,17 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
                 delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
             } else if (o instanceof TrainsCycleItem) {
                 delegate = new TrainsCycleWrapperItemDelegate();
+            } else if (o instanceof ImportMatch) {
+                delegate = new ImportMatchWrapperDelegate();
+            } else if (o instanceof ImportComponent) {
+                delegate = new ImportComponentWrapperDelegate();
             }
         }
         return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
+    }
+
+    public static <T> List<Wrapper<T>> getWrapperList(T... objList) {
+        return getWrapperList(Arrays.asList(objList), null);
     }
 
     public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList) {

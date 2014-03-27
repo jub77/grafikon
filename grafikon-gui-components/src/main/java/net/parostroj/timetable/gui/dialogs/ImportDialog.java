@@ -54,11 +54,11 @@ public class ImportDialog extends javax.swing.JDialog {
             components = Arrays.asList(ImportComponent.values());
         }
         for (ImportComponent comps : components) {
-            componentComboBox.addItem(comps);
+            componentComboBox.addItem(Wrapper.getWrapper(comps));
         }
         // initialize combobox for matching
-        matchComboBox.addItem(ImportMatch.NAME);
-        matchComboBox.addItem(ImportMatch.ID);
+        matchComboBox.addItem(Wrapper.getWrapper(ImportMatch.NAME));
+        matchComboBox.addItem(Wrapper.getWrapper(ImportMatch.ID));
 
         selected = false;
         this.components = components;
@@ -243,7 +243,8 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private void updateDialog() {
-        this.updateLists((ImportComponent) componentComboBox.getSelectedItem());
+        Wrapper<?> w = (Wrapper<?>) componentComboBox.getSelectedItem();
+        this.updateLists(w != null ? (ImportComponent) w.getElement() : null);
     }
 
     private void updateLists(ImportComponent comps) {
@@ -270,7 +271,8 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     public ImportMatch getImportMatch() {
-        return (ImportMatch) matchComboBox.getSelectedItem();
+        Wrapper<?> w = (Wrapper<?>) matchComboBox.getSelectedItem();
+        return w != null ? (ImportMatch) w.getElement() : null;
     }
 
     public Map<ImportComponent, Set<ObjectWithId>> getSelectedItems() {
