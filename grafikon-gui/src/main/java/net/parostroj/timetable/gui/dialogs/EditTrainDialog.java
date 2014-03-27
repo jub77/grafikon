@@ -5,6 +5,7 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
@@ -12,6 +13,7 @@ import javax.swing.DefaultComboBoxModel;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.views.CreateTrainView;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -22,13 +24,19 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.FlowLayout;
+
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
+
 import javax.swing.SwingConstants;
+
 import java.awt.Component;
+import java.awt.event.*;
+
 import javax.swing.JCheckBox;
 
 /**
@@ -61,6 +69,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
      * fills the dialog with train data.
      */
     public void showDialog(Train train) {
+        this.train = train;
         if (train != null)  {
             // model for train types
             typeComboBox.setModel(new DefaultComboBoxModel(train.getTrainDiagram().getTrainTypes().toArray()));
@@ -92,6 +101,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
             timeAfterTextField.setText(Integer.toString(train.getTimeAfter() / 60));
 
             groupsComboBox.updateGroups(train.getTrainDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
+
+            Integer weightLimit = train.getAttributes().get(Train.ATTR_WEIGHT_LIMIT, Integer.class);
+            weightLimitCheckBox.setSelected(weightLimit != null);
+            weightLimitEditBox.setEnabled(weightLimit != null);
+            if (weightLimit == null) {
+                weightLimitEditBox.setValue(BigDecimal.ZERO);
+            } else {
+                weightLimitEditBox.setValueInUnit(BigDecimal.valueOf(weightLimit), WeightUnit.T);
+            }
         }
         pack();
         setMinimumSize(getSize());
@@ -262,6 +280,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
         weightLimitPanel.setLayout(gbl_weightLimitPanel);
 
         weightLimitCheckBox = new JCheckBox();
+        weightLimitCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                weightLimitEditBox.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            }
+        });
         GridBagConstraints gbc_weightLimitCheckBox = new GridBagConstraints();
         gbc_weightLimitCheckBox.anchor = GridBagConstraints.WEST;
         gbc_weightLimitCheckBox.gridx = 1;
@@ -269,6 +293,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
         weightLimitPanel.add(weightLimitCheckBox, gbc_weightLimitCheckBox);
 
         weightLimitEditBox = new ValueWithUnitEditBox();
+        weightLimitEditBox.setUnits(Arrays.asList(WeightUnit.values()));
+        weightLimitEditBox.setUnit(WeightUnit.T);
         GridBagConstraints gbc_weightLimitEditBox = new GridBagConstraints();
         gbc_weightLimitEditBox.weightx = 1.0;
         gbc_weightLimitEditBox.fill = GridBagConstraints.HORIZONTAL;
@@ -452,6 +478,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
             newWI = oldWI;
         }
         train.getAttributes().setRemove(Train.ATTR_WEIGHT, newWI);
+
+        // weight limit
+        Integer weightLimit = null;
+        if (weightLimitCheckBox.isSelected()) {
+            weightLimit = weightLimitEditBox.getValueInUnit(WeightUnit.T).intValue();
+        }
+        train.getAttributes().setRemove(Train.ATTR_WEIGHT_LIMIT, weightLimit);
 
         // route
         try {
