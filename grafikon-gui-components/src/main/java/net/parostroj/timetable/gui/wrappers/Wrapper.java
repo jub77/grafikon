@@ -77,7 +77,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             } else if (o instanceof Route) {
                 delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
             } else if (o instanceof TrainsCycleItem) {
-                delegate = new TrainsCycleWrapperItemDelegate();
+                delegate = new TrainsCycleItemWrapperDelegate();
             } else if (o instanceof ImportMatch) {
                 delegate = new ImportMatchWrapperDelegate();
             } else if (o instanceof ImportComponent) {
