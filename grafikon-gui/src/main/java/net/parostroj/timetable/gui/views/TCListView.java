@@ -127,7 +127,9 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
                 break;
             case NEW_CYCLE:
             case DELETED_CYCLE:
-                this.updateView();
+                if (cycle.getType().getName().equals(delegate.getType())) {
+                    this.updateView();
+                }
                 break;
             case MODIFIED_CYCLE:
                 cyclesList.repaint();
