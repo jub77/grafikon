@@ -262,7 +262,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private EditTrainDialog getEditTrainDialog() {
         if (editDialog == null) {
-            editDialog = new EditTrainDialog((java.awt.Frame) this.getTopLevelAncestor(), true);
+            editDialog = new EditTrainDialog(ActionUtils.getWindow(this), true);
         }
         return editDialog;
     }
