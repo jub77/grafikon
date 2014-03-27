@@ -16,6 +16,11 @@ public interface TrainSelector {
     public void selectTrainInterval(TimeInterval interval);
 
     /**
+     * edit selected.
+     */
+    public void editSelected();
+
+    /**
      * returns selected train interval.
      *
      * @return selected train interval
