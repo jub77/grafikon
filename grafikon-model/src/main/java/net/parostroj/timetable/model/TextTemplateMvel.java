@@ -38,6 +38,7 @@ public final class TextTemplateMvel extends TextTemplate {
                 initialize();
             return TemplateRuntime.execute(compiledTemplate, binding).toString();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new GrafikonException("Error evaluating template: " + e.getMessage(), e, GrafikonException.Type.TEXT_TEMPLATE);
         }
     }
