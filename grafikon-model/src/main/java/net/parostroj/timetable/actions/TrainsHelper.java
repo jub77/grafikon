@@ -1,10 +1,7 @@
 package net.parostroj.timetable.actions;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -238,6 +235,57 @@ public class TrainsHelper {
     public static List<EngineClass> getEngineClasses(TimeInterval interval) {
         List<TrainsCycleItem> list = getEngineCyclesForInterval(interval);
         return getEngineClasses(list);
+    }
+
+    /**
+     * returns speed which is able to pull the weight.
+     *
+     * @param engineClasses engine classes
+     * @param weight weight to be pulled
+     * @return speed
+     */
+    public static Integer getSpeedForWeight(List<EngineClass> engineClasses, LineClass lineClass, int weight) {
+        if (engineClasses.isEmpty() || lineClass == null) {
+            return null;
+        }
+        List<Integer> speeds = new ArrayList<Integer>();
+        List<WeightTableRow> table = engineClasses.get(0).getWeightTable();
+        for (int i = table.size() - 1; i >= 0; i--) {
+            speeds.add(table.get(i).getSpeed());
+        }
+        if (engineClasses.size() > 1) {
+            for (int i = engineClasses.size() - 1; i >= 1; i--) {
+                // sort in
+                table = engineClasses.get(i).getWeightTable();
+                for (int j = table.size() - 1; j >= 0; j--) {
+                    int speed = table.get(j).getSpeed();
+                    for (int k = 0; k < speeds.size(); k++) {
+                        Integer current = speeds.get(k);
+                        if (speed > current) {
+                            speeds.add(k, speed);
+                            break;
+                        } else if (speed == current) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        Integer result = null;
+        for (Integer speed : speeds) {
+            int totalWeight = 0;
+            for (EngineClass ec : engineClasses) {
+                Integer w = ec.getWeightTableRowForSpeed(speed).getWeight(lineClass);
+                if (w != null) {
+                    totalWeight += w;
+                }
+            }
+            if (totalWeight >= weight) {
+                result = speed;
+                break;
+            }
+        }
+        return result;
     }
 
     /**

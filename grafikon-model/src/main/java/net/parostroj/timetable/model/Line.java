@@ -213,13 +213,24 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
 
         // adjust (engine class influence)
+        List<EngineClass> engineClasses = null;
         if (interval != null) {
-            List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(interval);
+            engineClasses = TrainsHelper.getEngineClasses(interval);
             for (EngineClass engineClass : engineClasses) {
                 WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
                 if (row != null) {
                     speed = Math.min(speed, row.getSpeed());
                 }
+            }
+        }
+
+        // if there is a weight limit, engines and line class defined ...
+        Integer weightLimit = train.getAttributes().get(Train.ATTR_WEIGHT_LIMIT, Integer.class);
+        LineClass lineClass = this.getLineClass(interval.getDirection());
+        if (!engineClasses.isEmpty() && weightLimit != null && lineClass != null) {
+            Integer limitedSpeed = TrainsHelper.getSpeedForWeight(engineClasses, lineClass, weightLimit);
+            if (limitedSpeed != null) {
+                speed = Math.min(speed, limitedSpeed);
             }
         }
 

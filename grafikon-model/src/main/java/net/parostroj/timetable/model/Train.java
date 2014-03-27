@@ -207,11 +207,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param topSpeed top speed to be set
      */
     public void setTopSpeed(int topSpeed) {
-        int oldSpeed = this.topSpeed;
-        this.topSpeed = topSpeed;
-        this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
-        if (!timeIntervalList.isEmpty()) {
-            this.recalculate();
+        if (this.topSpeed != topSpeed) {
+            int oldSpeed = this.topSpeed;
+            this.topSpeed = topSpeed;
+            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
+            if (!timeIntervalList.isEmpty()) {
+                this.recalculate();
+            }
         }
     }
 
@@ -327,6 +329,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainEvent(Train.this, change));
                 refreshCachedNames();
+                if (change.checkName(Train.ATTR_WEIGHT_LIMIT) && !timeIntervalList.isEmpty()) {
+                    Train.this.recalculate();
+                }
             }
         };
         this.attributes.addListener(attributesListener);
