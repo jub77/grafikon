@@ -100,6 +100,7 @@ public class TrainsCycleImport extends Import {
                 String message = "nodes does not match";
                 this.addError(cycle, message);
                 LOG.debug("{}: {}", cycle, message);
+                return null;
             }
             if (from == 0) {
                 fi = null;
