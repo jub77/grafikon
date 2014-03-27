@@ -60,6 +60,10 @@ public abstract class TCDelegate implements ApplicationModelListener {
                     fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
                 } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
                     fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
+                } else if (event.getType() == GTEventType.TRAINS_CYCLE_ADDED) {
+                    fireEventImpl(Action.NEW_CYCLE, (TrainsCycle) event.getObject(), null);
+                } else if (event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
+                    fireEventImpl(Action.DELETED_CYCLE, (TrainsCycle) event.getObject(), null);
                 }
             }
             @Override
