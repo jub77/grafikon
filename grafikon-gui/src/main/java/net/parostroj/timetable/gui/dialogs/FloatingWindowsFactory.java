@@ -7,7 +7,6 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.utils.NormalHTS;
@@ -88,7 +87,6 @@ public class FloatingWindowsFactory {
                         panel.updateSelectedTrain((Train)event.getObject());
                         break;
                     case SET_DIAGRAM_CHANGED:
-                        panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
                         panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
                         break;
                     default:
@@ -123,7 +121,6 @@ public class FloatingWindowsFactory {
             @Override
             public void setVisible(boolean b) {
                 if (b) {
-                    panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
                     panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
                 } else {
                     panel.removeAllTrains();
@@ -191,7 +188,6 @@ public class FloatingWindowsFactory {
                         panel.updateSelectedTrain((Train)event.getObject());
                         break;
                     case SET_DIAGRAM_CHANGED:
-                        panel.setTrainComparator(model.getDiagram() != null ? new TrainComparator(TrainComparator.Type.ASC, model.getDiagram().getTrainsData().getTrainSortPattern()) : null);
                         panel.updateAllTrains(model.getDiagram() != null ? model.getDiagram().getTrains() : null);
                         break;
                     default:
