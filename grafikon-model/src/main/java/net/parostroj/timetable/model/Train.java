@@ -211,9 +211,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             int oldSpeed = this.topSpeed;
             this.topSpeed = topSpeed;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
-            if (!timeIntervalList.isEmpty()) {
-                this.recalculate();
-            }
+            this.recalculate();
         }
     }
 
@@ -238,6 +236,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             this.type = type;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
             this.refreshCachedNames();
+            // penalties can be changed
+            this.recalculate();
         }
     }
 
@@ -337,7 +337,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             public void attributeChanged(Attributes attributes, AttributeChange change) {
                 listenerSupport.fireEvent(new TrainEvent(Train.this, change));
                 refreshCachedNames();
-                if (change.checkName(Train.ATTR_WEIGHT_LIMIT) && !timeIntervalList.isEmpty()) {
+                if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
                     Train.this.recalculate();
                 }
             }
@@ -726,6 +726,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * implementation of recalculating train intervals.
      */
     private Integer recalculateImpl(int from) {
+        if (timeIntervalList.size() <= from) {
+            return null;
+        }
         Integer firstChanged = null;
         int nextStart = timeIntervalList.get(from).getStart();
         for (int i = from; i < timeIntervalList.size(); i++) {
