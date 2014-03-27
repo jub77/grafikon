@@ -1,9 +1,7 @@
-package net.parostroj.timetable.gui.dialogs;
+package net.parostroj.timetable.model.imports;
 
 import java.util.*;
 
-import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -35,11 +33,6 @@ public enum ImportComponent {
         return clazz;
     }
 
-    @Override
-    public String toString() {
-        return ResourceLoader.getString(key);
-    }
-
     public Set<ObjectWithId> getObjects(TrainDiagram diagram) {
         if (diagram == null)
             return Collections.emptySet();
@@ -65,18 +58,6 @@ public enum ImportComponent {
                 break;
         }
         return map;
-    }
-
-    public List<Wrapper<ObjectWithId>> getListOfWrappers(Collection<? extends ObjectWithId> objects) {
-        List<Wrapper<ObjectWithId>> list = new ArrayList<Wrapper<ObjectWithId>>(objects.size());
-        for (ObjectWithId oid : objects) {
-            list.add(this.getWrapper(oid));
-        }
-        return list;
-    }
-
-    public Wrapper<ObjectWithId> getWrapper(ObjectWithId oid) {
-        return Wrapper.getWrapper(oid);
     }
 
     public boolean sorted() {

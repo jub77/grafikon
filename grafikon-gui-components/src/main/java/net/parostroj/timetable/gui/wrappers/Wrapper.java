@@ -1,7 +1,9 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.parostroj.timetable.model.*;
 
 /**
@@ -81,11 +83,11 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(List<? extends T> objList) {
+    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList) {
         return getWrapperList(objList, null);
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(List<? extends T> objList, WrapperDelegate delegate) {
+    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList, WrapperDelegate delegate) {
         List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
         Class<?> clazz = null;
         for (T o : objList) {

@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.dialogs;
+package net.parostroj.timetable.model.imports;
 
 import java.util.*;
 

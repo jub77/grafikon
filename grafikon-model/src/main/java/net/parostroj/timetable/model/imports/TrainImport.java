@@ -1,10 +1,12 @@
-package net.parostroj.timetable.gui.dialogs;
+package net.parostroj.timetable.model.imports;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import net.parostroj.timetable.actions.TrainIntervalsBuilder;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Triplet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
