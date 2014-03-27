@@ -41,20 +41,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private static final Logger LOG = LoggerFactory.getLogger(TrainView.class.getName());
     private ApplicationModel model;
     private Train train;
-    private EditTrainDialog editDialog;
 
     /**
      * Creates new form TrainView.
      */
     public TrainView() {
         initComponents();
-    }
-
-    private EditTrainDialog getEditTrainDialog() {
-        if (editDialog == null) {
-            editDialog = new EditTrainDialog((java.awt.Frame)this.getTopLevelAncestor(), true);
-        }
-        return editDialog;
     }
 
     public void editColumns() {
@@ -104,8 +96,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.train = model.getSelectedTrain();
         this.updateView();
         this.model.addListener(this);
-        ((TrainTableModel)trainTable.getModel()).setModel(model);
-        getEditTrainDialog().setModel(model);
+        ((TrainTableModel) trainTable.getModel()).setModel(model);
         model.getMediator().addColleague(new Colleague() {
             public void receiveMessage(Object message) {
                 IntervalSelectionMessage ism = (IntervalSelectionMessage) message;

@@ -252,10 +252,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         editButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getEditTrainDialog().setModel(model);
-                getEditTrainDialog().getSelectedTrainData();
                 getEditTrainDialog().setLocationRelativeTo(ActionUtils.getWindow(TrainListView.this));
-                getEditTrainDialog().setVisible(true);
+                getEditTrainDialog().showDialog(model.getSelectedTrain());
             }
         });
     }
