@@ -66,6 +66,9 @@ public abstract class Import {
             return this.getGroup((Group) orig);
         else if (orig instanceof OutputTemplate)
             return this.getOutputTemplate((OutputTemplate) orig);
+        else if (orig instanceof TrainsCycle) {
+            return this.getCycle((TrainsCycle) orig);
+        }
         else
             return null;
     }
@@ -119,6 +122,36 @@ public abstract class Import {
                 TrainType trainType = getTrainType(origTrain.getType());
                 if (train.getNumber().equals(origTrain.getNumber()) && Conversions.compareWithNull(train.getType(), trainType)) {
                     return train;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected TrainsCycle getCycle(TrainsCycle origCycle) {
+        if (match == ImportMatch.ID) {
+            return diagram.getCycleById(origCycle.getId());
+        } else {
+            Map<String, List<TrainsCycle>> map = diagram.getCyclesMap();
+            for (List<TrainsCycle> list : map.values()) {
+                for (TrainsCycle cycle : list) {
+                    TrainsCycleType cycleType = getCycleType(origCycle.getType());
+                    if (cycle.getName().equals(origCycle.getName()) && Conversions.compareWithNull(cycle.getType(), cycleType)) {
+                        return cycle;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    protected TrainsCycleType getCycleType(TrainsCycleType origCycleType) {
+        if (match == ImportMatch.ID) {
+            return diagram.getCycleTypeById(origCycleType.getId());
+        } else {
+            for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
+                if (cycleType.getName().equals(origCycleType.getName())) {
+                    return cycleType;
                 }
             }
         }
