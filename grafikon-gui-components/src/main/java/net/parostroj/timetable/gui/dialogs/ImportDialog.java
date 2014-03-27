@@ -16,8 +16,7 @@ import net.parostroj.timetable.filters.Filters;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.gui.wrappers.WrapperListModel;
+import net.parostroj.timetable.gui.wrappers.*;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.imports.ImportComponent;
@@ -265,7 +264,11 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList list, Set<ObjectWithId> set) {
-        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(Wrapper.getWrapperList(set), set, comps.sorted());
+        WrapperDelegate delegate = null;
+        if (comps == ImportComponent.TRAINS_CYCLES) {
+            delegate = new TrainsCycleWrapperDelegate(true);
+        }
+        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(Wrapper.getWrapperList(set, delegate ), set, comps.sorted());
         list.setModel(model);
         return model;
     }
