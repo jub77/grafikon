@@ -6,13 +6,13 @@ import java.util.Set;
 
 /**
  * Listener support. Acts as a delegate for distribution of events.
- * 
+ *
  * @author jub
  */
 class GTListenerSupport<T extends GTListener, E extends GTEvent<?>> {
 
-    private Set<T> listeners;
-    private GTEventSender<T, E> sender;
+    private final Set<T> listeners;
+    private final GTEventSender<T, E> sender;
 
     public GTListenerSupport(GTEventSender<T, E> sender) {
         this.listeners = new HashSet<T>();
