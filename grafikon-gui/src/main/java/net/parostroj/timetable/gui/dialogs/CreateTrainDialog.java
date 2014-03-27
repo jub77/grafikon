@@ -5,8 +5,9 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.model.Group;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -24,10 +25,10 @@ public class CreateTrainDialog extends javax.swing.JDialog {
      * @param parent parent window
      * @param model model
      */
-    public CreateTrainDialog(java.awt.Frame parent, ApplicationModel model) {
-        super(parent, true);
+    public CreateTrainDialog(java.awt.Window parent, TrainDiagram diagram) {
+        super(parent, ModalityType.APPLICATION_MODAL);
         initComponents();
-        createTrainView.setModel(model);
+        createTrainView.setDiagram(diagram);
 
         // fix size
         this.setResizable(false);
@@ -51,6 +52,10 @@ public class CreateTrainDialog extends javax.swing.JDialog {
         );
 
         pack();
+    }
+
+    public CreateTrainCommand getCreateTrainCommand() {
+        return createTrainView.getCreateTrainCommand();
     }
 
     public void updateView(Group selectedGroup) {

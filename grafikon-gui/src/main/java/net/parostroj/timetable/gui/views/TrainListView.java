@@ -25,8 +25,7 @@ import net.parostroj.timetable.filters.GroupFilter;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.EditGroupsAction;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.commands.CommandException;
-import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
+import net.parostroj.timetable.gui.commands.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
 import net.parostroj.timetable.gui.dialogs.*;
@@ -655,11 +654,21 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         // call create new train dialog
         Frame f = (Frame) this.getTopLevelAncestor();
 
-        CreateTrainDialog create = new CreateTrainDialog((Frame) this.getTopLevelAncestor(), model);
-        create.updateView(groupSelect.getGroup());
+        CreateTrainDialog createDialog = new CreateTrainDialog(ActionUtils.getWindow(this), model.getDiagram());
+        createDialog.updateView(groupSelect.getGroup());
 
-        create.setLocationRelativeTo(f);
-        create.setVisible(true);
+        createDialog.setLocationRelativeTo(f);
+        createDialog.setVisible(true);
+        createDialog.dispose();
+
+        Command command = createDialog.getCreateTrainCommand();
+        try {
+            model.applyCommand(command);
+        } catch (CommandException e) {
+            LOG.warn("Error executing create train command.", e);
+            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
+                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {
