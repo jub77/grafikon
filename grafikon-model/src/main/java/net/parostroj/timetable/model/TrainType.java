@@ -154,7 +154,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!Conversions.compareWithNull(category, this.category)) {
             TrainTypeCategory oldCategory = this.category;
             this.category = category;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange("category", oldCategory,
+            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_CATEGORY, oldCategory,
                     category)));
         }
     }
