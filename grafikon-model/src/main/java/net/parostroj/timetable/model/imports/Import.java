@@ -303,6 +303,8 @@ public abstract class Import {
                 return new OutputTemplateImport(diagram, library, match);
             case TRAINS_CYCLES:
                 return new TrainsCycleImport(diagram, library, match);
+            case TRAINS_CYCLE_TYPES:
+                return new TrainsCycleTypeImport(diagram, library, match);
         }
         return null;
     }

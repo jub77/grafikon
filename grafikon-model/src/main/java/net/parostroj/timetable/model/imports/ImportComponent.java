@@ -16,6 +16,7 @@ public enum ImportComponent {
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
     TRAINS("import.trains", Train.class),
     TRAINS_CYCLES("import.cycles", TrainsCycle.class),
+    TRAINS_CYCLE_TYPES("import.cycle_types", TrainsCycleType.class),
     OUTPUT_TEMPLATES("import.output_templates", OutputTemplate.class);
 
     private String key;
@@ -61,6 +62,13 @@ public enum ImportComponent {
                 Map<String, List<TrainsCycle>> cMap = diagram.getCyclesMap();
                 for (List<TrainsCycle> cycles : cMap.values()) {
                     map.addAll(cycles);
+                }
+                break;
+            case TRAINS_CYCLE_TYPES:
+                for (TrainsCycleType type : diagram.getCycleTypes()) {
+                    if (!TrainsCycleType.isDefaultType(type.getName())) {
+                        map.add(type);
+                    }
                 }
                 break;
         }
