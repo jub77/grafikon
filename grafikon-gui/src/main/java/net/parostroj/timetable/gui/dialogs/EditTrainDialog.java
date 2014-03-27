@@ -22,6 +22,14 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.FlowLayout;
+import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
+import javax.swing.SwingConstants;
+import java.awt.Component;
 
 /**
  * Dialog for editation of train properties.
@@ -95,100 +103,41 @@ public class EditTrainDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         typeComboBox = new javax.swing.JComboBox();
-        dieselCheckBox = new javax.swing.JCheckBox();
-        electricCheckBox = new javax.swing.JCheckBox();
-        showLengthCheckBox = new javax.swing.JCheckBox();
-        emptyCheckBox = new javax.swing.JCheckBox();
         numberTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
+        javax.swing.JLabel numberLabel = new javax.swing.JLabel();
         descriptionTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
+        javax.swing.JLabel descLabel = new javax.swing.JLabel();
         speedTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
+        javax.swing.JLabel speedLabel = new javax.swing.JLabel();
         weightTextField = new javax.swing.JTextField();
         routeEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
-        fromNodeButton = new javax.swing.JButton();
-        toNodeButton = new javax.swing.JButton();
-        stationsComboBox = new javax.swing.JComboBox();
-        insertButton = new javax.swing.JButton();
-        javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
-        timeBeforeTextField = new javax.swing.JTextField();
-        timeAfterTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel9 = new javax.swing.JLabel();
+        javax.swing.JLabel weightLabel = new javax.swing.JLabel();
+        javax.swing.JLabel routeLabel = new javax.swing.JLabel();
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
-        javax.swing.JLabel jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("edit.train")); // NOI18N
 
-        jLabel1.setText(ResourceLoader.getString("create.train.type")); // NOI18N
-
-        dieselCheckBox.setText(ResourceLoader.getString("create.train.diesel")); // NOI18N
-        dieselCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        dieselCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
-        electricCheckBox.setText(ResourceLoader.getString("create.train.electric")); // NOI18N
-        electricCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        electricCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
-        showLengthCheckBox.setText(ResourceLoader.getString("create.train.show.station.length")); // NOI18N
-        showLengthCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        showLengthCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
-        emptyCheckBox.setText(ResourceLoader.getString("create.train.empty")); // NOI18N
-        emptyCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        emptyCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        typeLabel.setText(ResourceLoader.getString("create.train.type")); // NOI18N
 
         numberTextField.setColumns(20);
 
-        jLabel2.setText(ResourceLoader.getString("create.train.number")); // NOI18N
+        numberLabel.setText(ResourceLoader.getString("create.train.number")); // NOI18N
 
         descriptionTextField.setColumns(30);
 
-        jLabel3.setText(ResourceLoader.getString("create.train.description")); // NOI18N
+        descLabel.setText(ResourceLoader.getString("create.train.description")); // NOI18N
 
         speedTextField.setColumns(10);
 
-        jLabel4.setText(ResourceLoader.getString("create.train.speed")); // NOI18N
+        speedLabel.setText(ResourceLoader.getString("create.train.speed")); // NOI18N
 
-        fromNodeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fromNodeButtonActionPerformed(evt);
-            }
-        });
+        weightLabel.setText(ResourceLoader.getString("edit.train.weight")); // NOI18N
 
-        toNodeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toNodeButtonActionPerformed(evt);
-            }
-        });
-
-        insertButton.setText("^");
-        insertButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insertButtonActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText(ResourceLoader.getString("edit.train.weight")); // NOI18N
-
-        jLabel6.setText(ResourceLoader.getString("edit.train.route")); // NOI18N
-
-        timeBeforeTextField.setColumns(6);
-
-        timeAfterTextField.setColumns(6);
-
-        jLabel7.setText(ResourceLoader.getString("create.train.technological.time")); // NOI18N
-
-        jLabel8.setText(ResourceLoader.getString("create.train.time.before")); // NOI18N
-
-        jLabel9.setText(ResourceLoader.getString("create.train.time.after")); // NOI18N
+        routeLabel.setText(ResourceLoader.getString("edit.train.route")); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -204,67 +153,57 @@ public class EditTrainDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel10.setText(ResourceLoader.getString("edit.train.insert.node")); // NOI18N
-
         groupsComboBox = new GroupsComboBox(false);
 
-        JLabel lblNewLabel = new JLabel(ResourceLoader.getString("create.train.group"));
+        JLabel groupLabel = new JLabel(ResourceLoader.getString("create.train.group"));
+
+        JPanel optionsPanel = new JPanel();
+
+        JPanel routeEditPanel = new JPanel();
+
+        JPanel techTimesPanel = new JPanel();
+        FlowLayout fl_techTimesPanel = (FlowLayout) techTimesPanel.getLayout();
+        fl_techTimesPanel.setAlignOnBaseline(true);
+        fl_techTimesPanel.setAlignment(FlowLayout.LEFT);
+        fl_techTimesPanel.setVgap(0);
+
+        valueWithUnitEditBox = new ValueWithUnitEditBox();
+
+        JLabel weightLimitLabel = new JLabel(ResourceLoader.getString("edit.train.weight.limit") + ":");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.TRAILING)
-                .addGroup(layout.createSequentialGroup()
+            layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(techTimesPanel, GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                                    .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addComponent(lblNewLabel))
+                                .addComponent(routeLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(weightLabel)
+                                .addComponent(weightLimitLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(speedLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(descLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(numberLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(groupLabel)
+                                .addComponent(typeLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel10)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(fromNodeButton)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(toNodeButton)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(stationsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(insertButton))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(dieselCheckBox)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(electricCheckBox))
-                                .addComponent(emptyCheckBox)
-                                .addComponent(descriptionTextField)
-                                .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(weightTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(showLengthCheckBox)
-                                .addComponent(numberTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(typeComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(routeEditBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(groupsComboBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel7)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(jLabel8)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(timeBeforeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(jLabel9)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(timeAfterTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(routeEditPanel, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(optionsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(descriptionTextField, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(weightTextField, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(numberTextField, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(typeComboBox, 0, 301, Short.MAX_VALUE)
+                                .addComponent(routeEditBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(groupsComboBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(valueWithUnitEditBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(speedTextField, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -272,63 +211,189 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel1)
+                        .addComponent(typeLabel)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(dieselCheckBox)
-                        .addComponent(electricCheckBox))
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(showLengthCheckBox)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(emptyCheckBox)
+                    .addComponent(optionsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(groupsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblNewLabel))
+                        .addComponent(groupLabel))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel2)
+                        .addComponent(numberLabel)
                         .addComponent(numberTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(descriptionTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
+                        .addComponent(descLabel))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(speedTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4))
+                        .addComponent(speedLabel))
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(valueWithUnitEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addComponent(weightLimitLabel)))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(weightTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5))
-                    .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(weightLabel))
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(jLabel6)
                         .addGroup(layout.createSequentialGroup()
+                            .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(routeEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                                    .addComponent(toNodeButton)
-                                    .addComponent(stationsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(insertButton))
-                                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                                    .addComponent(fromNodeButton)
-                                    .addComponent(jLabel10)))))
+                            .addComponent(routeEditPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addComponent(routeLabel)))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel7)
-                        .addComponent(jLabel8)
-                        .addComponent(timeBeforeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9)
-                        .addComponent(timeAfterTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(techTimesPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(cancelButton)
                         .addComponent(okButton))
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
+        javax.swing.JLabel techTimesLabel = new javax.swing.JLabel();
+        techTimesPanel.add(techTimesLabel);
+
+        techTimesLabel.setText(ResourceLoader.getString("create.train.technological.time"));
+        javax.swing.JLabel beforeLabel = new javax.swing.JLabel();
+        techTimesPanel.add(beforeLabel);
+
+        beforeLabel.setText(ResourceLoader.getString("create.train.time.before"));
+        timeBeforeTextField = new javax.swing.JTextField();
+        techTimesPanel.add(timeBeforeTextField);
+
+        timeBeforeTextField.setColumns(6);
+        javax.swing.JLabel afterLabel = new javax.swing.JLabel();
+        techTimesPanel.add(afterLabel);
+
+        afterLabel.setText(ResourceLoader.getString("create.train.time.after"));
+        timeAfterTextField = new javax.swing.JTextField();
+        techTimesPanel.add(timeAfterTextField);
+
+        timeAfterTextField.setColumns(6);
+        GridBagLayout gbl_routeEditPanel = new GridBagLayout();
+        routeEditPanel.setLayout(gbl_routeEditPanel);
+        javax.swing.JLabel routeInsertLabel = new javax.swing.JLabel();
+        GridBagConstraints gbc_routeInsertLabel = new GridBagConstraints();
+        gbc_routeInsertLabel.anchor = GridBagConstraints.WEST;
+        gbc_routeInsertLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_routeInsertLabel.gridx = 0;
+        gbc_routeInsertLabel.gridy = 0;
+        routeEditPanel.add(routeInsertLabel, gbc_routeInsertLabel);
+
+                routeInsertLabel.setText(ResourceLoader.getString("edit.train.insert.node"));
+        fromNodeButton = new javax.swing.JButton();
+        GridBagConstraints gbc_fromNodeButton = new GridBagConstraints();
+        gbc_fromNodeButton.weightx = 1.0;
+        gbc_fromNodeButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_fromNodeButton.anchor = GridBagConstraints.WEST;
+        gbc_fromNodeButton.insets = new Insets(0, 0, 0, 5);
+        gbc_fromNodeButton.gridx = 1;
+        gbc_fromNodeButton.gridy = 0;
+        routeEditPanel.add(fromNodeButton, gbc_fromNodeButton);
+
+        fromNodeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fromNodeButtonActionPerformed(evt);
+            }
+        });
+        toNodeButton = new javax.swing.JButton();
+        GridBagConstraints gbc_toNodeButton = new GridBagConstraints();
+        gbc_toNodeButton.weightx = 1.0;
+        gbc_toNodeButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_toNodeButton.anchor = GridBagConstraints.WEST;
+        gbc_toNodeButton.insets = new Insets(0, 0, 0, 5);
+        gbc_toNodeButton.gridx = 2;
+        gbc_toNodeButton.gridy = 0;
+        routeEditPanel.add(toNodeButton, gbc_toNodeButton);
+
+        toNodeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toNodeButtonActionPerformed(evt);
+            }
+        });
+        stationsComboBox = new javax.swing.JComboBox();
+        GridBagConstraints gbc_stationsComboBox = new GridBagConstraints();
+        gbc_stationsComboBox.weightx = 1.0;
+        gbc_stationsComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_stationsComboBox.anchor = GridBagConstraints.NORTHWEST;
+        gbc_stationsComboBox.insets = new Insets(0, 0, 0, 5);
+        gbc_stationsComboBox.gridx = 3;
+        gbc_stationsComboBox.gridy = 0;
+        routeEditPanel.add(stationsComboBox, gbc_stationsComboBox);
+        insertButton = new javax.swing.JButton();
+        GridBagConstraints gbc_insertButton = new GridBagConstraints();
+        gbc_insertButton.anchor = GridBagConstraints.EAST;
+        gbc_insertButton.gridx = 4;
+        gbc_insertButton.gridy = 0;
+        routeEditPanel.add(insertButton, gbc_insertButton);
+
+        insertButton.setText("^");
+        insertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insertButtonActionPerformed(evt);
+            }
+        });
+        GridBagLayout gbl_optionsPanel = new GridBagLayout();
+        gbl_optionsPanel.columnWeights = new double[]{0.0, 0.0};
+        gbl_optionsPanel.rowWeights = new double[]{0.0, 0.0};
+        optionsPanel.setLayout(gbl_optionsPanel);
+        dieselCheckBox = new javax.swing.JCheckBox();
+        GridBagConstraints gbc_dieselCheckBox = new GridBagConstraints();
+        gbc_dieselCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_dieselCheckBox.insets = new Insets(0, 0, 5, 5);
+        gbc_dieselCheckBox.gridx = 0;
+        gbc_dieselCheckBox.gridy = 0;
+        optionsPanel.add(dieselCheckBox, gbc_dieselCheckBox);
+
+        dieselCheckBox.setText(ResourceLoader.getString("create.train.diesel")); // NOI18N
+        dieselCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        dieselCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        emptyCheckBox = new javax.swing.JCheckBox();
+        GridBagConstraints gbc_emptyCheckBox = new GridBagConstraints();
+        gbc_emptyCheckBox.weightx = 1.0;
+        gbc_emptyCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_emptyCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_emptyCheckBox.insets = new Insets(0, 0, 5, 0);
+        gbc_emptyCheckBox.gridx = 1;
+        gbc_emptyCheckBox.gridy = 0;
+        optionsPanel.add(emptyCheckBox, gbc_emptyCheckBox);
+
+        emptyCheckBox.setText(ResourceLoader.getString("create.train.empty")); // NOI18N
+        emptyCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        emptyCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        electricCheckBox = new javax.swing.JCheckBox();
+        GridBagConstraints gbc_electricCheckBox = new GridBagConstraints();
+        gbc_electricCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_electricCheckBox.insets = new Insets(0, 0, 0, 5);
+        gbc_electricCheckBox.gridx = 0;
+        gbc_electricCheckBox.gridy = 1;
+        optionsPanel.add(electricCheckBox, gbc_electricCheckBox);
+
+        electricCheckBox.setText(ResourceLoader.getString("create.train.electric")); // NOI18N
+        electricCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        electricCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        showLengthCheckBox = new javax.swing.JCheckBox();
+        GridBagConstraints gbc_showLengthCheckBox = new GridBagConstraints();
+        gbc_showLengthCheckBox.weightx = 1.0;
+        gbc_showLengthCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_showLengthCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_showLengthCheckBox.gridx = 1;
+        gbc_showLengthCheckBox.gridy = 1;
+        optionsPanel.add(showLengthCheckBox, gbc_showLengthCheckBox);
+
+        showLengthCheckBox.setText(ResourceLoader.getString("create.train.show.station.length")); // NOI18N
+        showLengthCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        showLengthCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         getContentPane().setLayout(layout);
 
         pack();
@@ -444,4 +509,5 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JTextField weightTextField;
     private GroupsComboBox groupsComboBox;
+    private ValueWithUnitEditBox valueWithUnitEditBox;
 }
