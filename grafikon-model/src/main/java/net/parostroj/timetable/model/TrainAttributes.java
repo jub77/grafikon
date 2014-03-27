@@ -14,6 +14,7 @@ public interface TrainAttributes {
     public static final String ATTR_EMPTY = "empty";
     public static final String ATTR_ROUTE = "route";
     public static final String ATTR_WEIGHT = "weight";
+    public static final String ATTR_WEIGHT_LIMIT = "weight.limit";
     public static final String ATTR_NUMBER = "number";
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_TYPE = "type";
