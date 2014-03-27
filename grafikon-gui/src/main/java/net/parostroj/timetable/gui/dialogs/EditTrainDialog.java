@@ -30,6 +30,7 @@ import java.awt.FlowLayout;
 import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
 import javax.swing.SwingConstants;
 import java.awt.Component;
+import javax.swing.JCheckBox;
 
 /**
  * Dialog for editation of train properties.
@@ -167,7 +168,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         fl_techTimesPanel.setAlignment(FlowLayout.LEFT);
         fl_techTimesPanel.setVgap(0);
 
-        valueWithUnitEditBox = new ValueWithUnitEditBox();
+        JPanel weightLimitPanel = new JPanel();
 
         JLabel weightLimitLabel = new JLabel(ResourceLoader.getString("edit.train.weight.limit") + ":");
 
@@ -202,7 +203,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                                 .addComponent(typeComboBox, 0, 301, Short.MAX_VALUE)
                                 .addComponent(routeEditBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                                 .addComponent(groupsComboBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                                .addComponent(valueWithUnitEditBox, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addComponent(weightLimitPanel, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                                 .addComponent(speedTextField, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))))
                     .addContainerGap())
         );
@@ -234,7 +235,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(valueWithUnitEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(weightLimitPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(10)
                             .addComponent(weightLimitLabel)))
@@ -259,7 +260,28 @@ public class EditTrainDialog extends javax.swing.JDialog {
                         .addComponent(okButton))
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
+        GridBagLayout gbl_weightLimitPanel = new GridBagLayout();
+        gbl_weightLimitPanel.columnWeights = new double[] { 0.0, 0.0 };
+        gbl_weightLimitPanel.rowWeights = new double[] { 0.0 };
+        weightLimitPanel.setLayout(gbl_weightLimitPanel);
+
+        weightLimitCheckBox = new JCheckBox();
+        GridBagConstraints gbc_weightLimitCheckBox = new GridBagConstraints();
+        gbc_weightLimitCheckBox.anchor = GridBagConstraints.WEST;
+        gbc_weightLimitCheckBox.gridx = 0;
+        gbc_weightLimitCheckBox.gridy = 0;
+        weightLimitPanel.add(weightLimitCheckBox, gbc_weightLimitCheckBox);
+
+        weightLimitEditBox = new ValueWithUnitEditBox();
+        GridBagConstraints gbc_weightLimitEditBox = new GridBagConstraints();
+        gbc_weightLimitEditBox.weightx = 1.0;
+        gbc_weightLimitEditBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_weightLimitEditBox.anchor = GridBagConstraints.NORTHWEST;
+        gbc_weightLimitEditBox.gridx = 1;
+        gbc_weightLimitEditBox.gridy = 0;
+        weightLimitPanel.add(weightLimitEditBox, gbc_weightLimitEditBox);
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] { typeLabel, numberLabel, descLabel, speedLabel,
+                weightLabel, routeLabel, groupLabel, weightLimitLabel });
         javax.swing.JLabel techTimesLabel = new javax.swing.JLabel();
         techTimesPanel.add(techTimesLabel);
 
@@ -509,5 +531,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JTextField weightTextField;
     private GroupsComboBox groupsComboBox;
-    private ValueWithUnitEditBox valueWithUnitEditBox;
+    private JCheckBox weightLimitCheckBox;
+    private ValueWithUnitEditBox weightLimitEditBox;
 }
