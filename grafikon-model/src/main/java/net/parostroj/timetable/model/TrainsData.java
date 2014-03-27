@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 
@@ -15,6 +16,8 @@ public class TrainsData {
     private TextTemplate trainCompleteNameTemplate;
     private Script runningTimeScript;
     private TrainDiagram diagram;
+
+    private TrainComparator trainComparator;
 
     public TrainsData(TextTemplate trainNameTemplate, TextTemplate trainCompleteNameTemplate, SortPattern trainSortPattern, Script runningTimeScript) {
         this.trainNameTemplate = trainNameTemplate;
@@ -54,6 +57,7 @@ public class TrainsData {
     public void setTrainSortPattern(SortPattern trainSortPattern) {
         SortPattern oldValue = this.trainSortPattern;
         this.trainSortPattern = trainSortPattern;
+        this.trainComparator = null;
         this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.sort.pattern", oldValue, this.trainSortPattern)));
     }
 
@@ -69,5 +73,12 @@ public class TrainsData {
 
     void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
+    }
+
+    public TrainComparator getTrainComparator() {
+        if (trainComparator == null) {
+            trainComparator = new TrainComparator(TrainComparator.Type.ASC, getTrainSortPattern());
+        }
+        return trainComparator;
     }
 }
