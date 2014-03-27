@@ -24,7 +24,7 @@ public class TrainsCycleWrapperDelegate implements WrapperDelegate {
         TrainsCycle cycle = (TrainsCycle) element;
         String str = cycle.getName();
         if (showType) {
-            str = String.format("%s (%s)", cycle.getName(), cycle.getType().getName());
+            str = String.format("%s (%s)", cycle.getName(), cycle.getType().getDescriptionText());
         }
         return str;
     }
