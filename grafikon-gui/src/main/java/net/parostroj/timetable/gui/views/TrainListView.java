@@ -347,7 +347,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         groupsMenu.getItem(0).setSelected(true);
     }
 
-    public void setModel(ApplicationModel model) {
+    public void setModel(final ApplicationModel model) {
         this.model = model;
         javax.swing.JMenuItem groupsMenuItem = new javax.swing.JMenuItem();
         groupsMenuItem.setAction(new EditGroupsAction(model));
@@ -364,6 +364,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     case SELECTED_TRAIN_CHANGED:
                         if (!selecting) {
                             selectTrain((Train) event.getObject());
+                        }
+                        break;
+                    case EDIT_SELECTED_TRAIN:
+                        if (!selecting && model.getSelectedTrain() != null) {
+                            editAction();
                         }
                         break;
                     default:

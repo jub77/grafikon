@@ -631,6 +631,14 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     }
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {
+        if (!SwingUtilities.isLeftMouseButton(evt)) {
+            return;
+        }
+        // indicates double click
+        if (evt.getClickCount() % 2 == 0) {
+            trainSelector.editSelected();
+            return;
+        }
         // selection of the train
         if (trainRegionCollector != null) {
             List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());

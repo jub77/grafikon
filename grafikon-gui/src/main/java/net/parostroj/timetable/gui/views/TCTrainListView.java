@@ -190,6 +190,11 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         return lastSelected;
     }
 
+    @Override
+    public void editSelected() {
+        // do nothing
+    }
+
     private void initComponents() {
         filterMenu = new javax.swing.JPopupMenu();
         javax.swing.JRadioButtonMenuItem allRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();

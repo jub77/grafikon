@@ -88,6 +88,11 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
             }
             return chooserDelegate.getIntervalColor(interval);
         }
+
+        @Override
+        public void editSelected() {
+            // do nothing
+        }
     }
 
     /** Creates new form TrainsCyclesPane */
