@@ -11,7 +11,6 @@ public class ProgramSettings {
 
     private String userName;
     private boolean generateTitlePageTT;
-    private boolean warningAutoECCorrection;
     private boolean twoSidedPrint;
     private boolean stShowTechTime;
     private LengthUnit lengthUnit;
@@ -50,14 +49,6 @@ public class ProgramSettings {
 
     public void setTwoSidedPrint(boolean twoSidedPrint) {
         this.twoSidedPrint = twoSidedPrint;
-    }
-
-    public boolean isWarningAutoECCorrection() {
-        return warningAutoECCorrection;
-    }
-
-    public void setWarningAutoECCorrection(boolean warningAutoECCorrection) {
-        this.warningAutoECCorrection = warningAutoECCorrection;
     }
 
     public LengthUnit getLengthUnit() {

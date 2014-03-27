@@ -108,10 +108,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
         return train.getCycles(getType());
     }
 
-    public boolean showCorrectionWarning() {
-        return model.getProgramSettings().isWarningAutoECCorrection();
-    }
-
     public abstract String getTrainCycleErrors(TrainsCycle cycle);
 
     public abstract void showEditDialog(JComponent component);

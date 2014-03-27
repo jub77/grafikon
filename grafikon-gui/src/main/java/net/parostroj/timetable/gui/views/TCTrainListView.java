@@ -391,8 +391,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int[] selectedIndices = allTrainsList.getSelectedIndices();
-        boolean warning = delegate.showCorrectionWarning();
-        StringBuilder trainsStr = null;
         for (int indexSelected : selectedIndices) {
             Wrapper<Train> selected = allTrains.getIndex(indexSelected);
             if (selected != null) {
@@ -408,17 +406,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     }
                     // add to correct place
                     cycle.addItem(item);
-                    // recalculate if needed (engine class dependency)
-                    if (t.checkNeedSpeedRecalculate()) {
-                        t.recalculate();
-                        if (warning) {
-                            if (trainsStr == null)
-                                trainsStr = new StringBuilder();
-                            else
-                                trainsStr.append(',');
-                            trainsStr.append(t.getName());
-                        }
-                    }
 
                     delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
                 }
@@ -428,11 +415,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             this.updateListAllTrains();
             this.updateListCycle();
             this.updateErrors();
-        }
-        if (warning && trainsStr != null) {
-            ActionUtils.showWarning(
-                    String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), trainsStr),
-                    ActionUtils.getTopLevelComponent(this));
         }
     }
 
@@ -459,16 +441,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                     cTrains.setWrapper(Wrapper.getWrapper(newItem), index);
                     this.updateSelectedTrainsCycleItem(newItem);
                     this.updateErrors();
-                    if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType()))
+                    if (!overlappingEnabled && oldCovered != train.isCovered(delegate.getType())) {
                         this.updateListAllTrains();
-                    // recalculate if needed (engine class depedency)
-                    if (train.checkNeedSpeedRecalculate()) {
-                        train.recalculate();
-                        if (delegate.showCorrectionWarning()) {
-                            ActionUtils.showWarning(
-                                    String.format(ResourceLoader.getString("dialog.warning.trains.recalculated"), train.getName()),
-                                    ActionUtils.getTopLevelComponent(this));
-                        }
                     }
                 } else {
                     this.updateSelectedTrainsCycleItem(item);
