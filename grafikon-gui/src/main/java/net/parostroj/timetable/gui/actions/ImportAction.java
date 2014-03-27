@@ -22,8 +22,10 @@ import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.dialogs.*;
-import net.parostroj.timetable.gui.dialogs.Import.ImportError;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.imports.Import;
+import net.parostroj.timetable.model.imports.ImportComponent;
+import net.parostroj.timetable.model.imports.Import.ImportError;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;

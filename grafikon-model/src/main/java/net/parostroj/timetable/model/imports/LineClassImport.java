@@ -1,8 +1,9 @@
-package net.parostroj.timetable.gui.dialogs;
+package net.parostroj.timetable.model.imports;
 
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

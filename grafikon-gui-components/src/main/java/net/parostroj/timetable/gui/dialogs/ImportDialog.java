@@ -20,6 +20,8 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.imports.ImportComponent;
+import net.parostroj.timetable.model.imports.ImportMatch;
 
 /**
  * Export/Import dialog.
@@ -262,7 +264,7 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList list, Set<ObjectWithId> set) {
-        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(comps.getListOfWrappers(set), set, comps.sorted());
+        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(Wrapper.getWrapperList(set), set, comps.sorted());
         list.setModel(model);
         return model;
     }
