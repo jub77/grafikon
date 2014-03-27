@@ -121,8 +121,24 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 changeRoute();
             }
         });
+        deleteMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("button.delete"));
+        deleteMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteAction();
+            }
+        });
+        editMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("button.edit"));
+        editMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editAction();
+            }
+        });
         treePopupMenu.add(moveToGroupMenuItem);
         treePopupMenu.add(changeRouteMenuItem);
+        treePopupMenu.add(editMenuItem);
+        treePopupMenu.add(deleteMenuItem);
         listTypesMenuItem = new javax.swing.JRadioButtonMenuItem();
         listFlatMenuItem = new javax.swing.JRadioButtonMenuItem();
         listGroupsMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -230,7 +246,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
+                deleteAction();
             }
         });
         createButton.addActionListener(new java.awt.event.ActionListener() {
@@ -252,8 +268,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         editButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getEditTrainDialog().setLocationRelativeTo(ActionUtils.getWindow(TrainListView.this));
-                getEditTrainDialog().showDialog(model.getSelectedTrain());
+                editAction();
             }
         });
     }
@@ -435,6 +450,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         copyButton.setEnabled(false);
         moveToGroupMenuItem.setEnabled(false);
         changeRouteMenuItem.setEnabled(false);
+        deleteMenuItem.setEnabled(false);
+        editMenuItem.setEnabled(false);
         if (trainTreeHandler != null)
             this.selectTrain(model.getSelectedTrain());
     }
@@ -557,6 +574,8 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         editButton.setEnabled(model.getSelectedTrain() != null);
         moveToGroupMenuItem.setEnabled(!selectionEmpty);
         changeRouteMenuItem.setEnabled(model.getSelectedTrain() != null);
+        deleteMenuItem.setEnabled(!selectionEmpty);
+        editMenuItem.setEnabled(model.getSelectedTrain() != null);
         selecting = false;
     }
 
@@ -585,7 +604,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void deleteAction() {
         Set<Train> selectedTrains = this.getSelectedTrains();
 
         model.setSelectedTrain(null); // no train selected
@@ -593,6 +612,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         for (Train deletedTrain : selectedTrains) {
             this.deleteTrain(deletedTrain, model.getDiagram());
         }
+    }
+
+    private void editAction() {
+        getEditTrainDialog().setLocationRelativeTo(ActionUtils.getWindow(TrainListView.this));
+        getEditTrainDialog().showDialog(model.getSelectedTrain());
     }
 
     private Set<Train> getSelectedTrains() {
@@ -662,4 +686,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     private final javax.swing.JButton menuButton;
     private final javax.swing.JMenuItem moveToGroupMenuItem;
     private final javax.swing.JMenuItem changeRouteMenuItem;
+    private final javax.swing.JMenuItem deleteMenuItem;
+    private final javax.swing.JMenuItem editMenuItem;
 }
