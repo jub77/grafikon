@@ -18,18 +18,13 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * View for dialog with creating of the train.
@@ -38,14 +33,13 @@ import org.slf4j.LoggerFactory;
  */
 public class CreateTrainView extends javax.swing.JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CreateTrainView.class.getName());
-
     public static final TrainType NO_TYPE = new TrainType(null, null) {
         @Override
         public String toString() {return "-";}
     };
 
-    private ApplicationModel model;
+    private TrainDiagram diagram;
+    private CreateTrainCommand createTrainCommand;
     private final ThroughNodesDialog tnDialog;
     private List<Node> throughNodes;
 
@@ -57,15 +51,16 @@ public class CreateTrainView extends javax.swing.JPanel {
         tnDialog = new ThroughNodesDialog(null, true);
     }
 
-    public void setModel(ApplicationModel model) {
-        this.model = model;
+    public void setDiagram(TrainDiagram diagram) {
+        this.diagram = diagram;
     }
 
     public void updateView(Group selectedGroup) {
+        this.createTrainCommand = null;
         DefaultComboBoxModel fromModel = new DefaultComboBoxModel();
         DefaultComboBoxModel toModel = new DefaultComboBoxModel();
 
-        Collection<Node> v = model.getDiagram().getNet().getNodes();
+        Collection<Node> v = diagram.getNet().getNodes();
         NodeSort sort = new NodeSort(NodeSort.Type.ASC);
         List<Node> list = sort.sort(v);
 
@@ -80,7 +75,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         toComboBox.setModel(toModel);
 
         // model for train types
-        typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
+        typeComboBox.setModel(new DefaultComboBoxModel(diagram.getTrainTypes().toArray()));
         typeComboBox.addItem(NO_TYPE);
 
         // reset through nodes
@@ -88,7 +83,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         throughTextField.setText(throughNodes.toString());
 
         // update groups
-        groupComboBox.updateGroups(model.getDiagram(), new GroupSelect(selectedGroup != null ? GroupSelect.Type.GROUP : GroupSelect.Type.NONE, selectedGroup));
+        groupComboBox.updateGroups(diagram, new GroupSelect(selectedGroup != null ? GroupSelect.Type.GROUP : GroupSelect.Type.NONE, selectedGroup));
     }
 
     private void initComponents() {
@@ -277,76 +272,69 @@ public class CreateTrainView extends javax.swing.JPanel {
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        // test needed values
         try {
-            // test needed values
-            try {
-                Integer speed = Integer.valueOf(speedTextField.getText());
-                if (speed < 1)
-                    throw new NumberFormatException();
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
-                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
-                JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
-                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
-                JOptionPane.showMessageDialog(this.getParent(), "",
-                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            RouteBuilder routeBuilder = new RouteBuilder();
-            Route route = null;
-            if (throughNodes == null)
-                route = routeBuilder.createRoute(null, model.getDiagram().getNet(), (Node) fromComboBox.getSelectedItem(), (Node) toComboBox.getSelectedItem());
-            else {
-                List<Node> r = new ArrayList<Node>();
-                r.add((Node) fromComboBox.getSelectedItem());
-                r.addAll(throughNodes);
-                r.add((Node) toComboBox.getSelectedItem());
-                route = routeBuilder.createRoute(null, model.getDiagram().getNet(), r);
-            }
-
-            if (route == null) {
-                ActionUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
-                return;
-            }
-
-            // get start time
-            int start = model.getDiagram().getTimeConverter().convertTextToInt(startTimeTextField.getText());
-            if (start == -1)
-                // midnight if cannot be parsed
-                start = 0;
-
-            Group group = groupComboBox.getGroupSelection().getGroup();
-
-            // create command ...
-            TrainType tType = (TrainType) typeComboBox.getSelectedItem();
-            CreateTrainCommand createCommand = new CreateTrainCommand(
-                    nameTextField.getText(),
-                    tType != NO_TYPE ? tType : null,
-                    Integer.valueOf(speedTextField.getText()),
-                    route,
-                    start,
-                    (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
-                    commentTextField.getText(),
-                    dieselCheckBox.isSelected(),
-                    electricCheckBox.isSelected(), true, group);
-            // execute command
-            model.applyCommand(createCommand);
-            // hide dialog
-            this.closeDialog();
-        } catch (CommandException e) {
-            LOG.warn("Error executing create train command.", e);
-            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
-                        ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            Integer speed = Integer.valueOf(speedTextField.getText());
+            if (speed < 1)
+                throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
+                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
+            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
+                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this.getParent(), "",
+                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        RouteBuilder routeBuilder = new RouteBuilder();
+        Route route = null;
+        if (throughNodes == null)
+            route = routeBuilder.createRoute(null, diagram.getNet(), (Node) fromComboBox.getSelectedItem(), (Node) toComboBox.getSelectedItem());
+        else {
+            List<Node> r = new ArrayList<Node>();
+            r.add((Node) fromComboBox.getSelectedItem());
+            r.addAll(throughNodes);
+            r.add((Node) toComboBox.getSelectedItem());
+            route = routeBuilder.createRoute(null, diagram.getNet(), r);
+        }
+
+        if (route == null) {
+            ActionUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
+            return;
+        }
+
+        // get start time
+        int start = diagram.getTimeConverter().convertTextToInt(startTimeTextField.getText());
+        if (start == -1)
+            // midnight if cannot be parsed
+            start = 0;
+
+        Group group = groupComboBox.getGroupSelection().getGroup();
+
+        // create command ...
+        TrainType tType = (TrainType) typeComboBox.getSelectedItem();
+        CreateTrainCommand createCommand = new CreateTrainCommand(
+                nameTextField.getText(),
+                tType != NO_TYPE ? tType : null,
+                        Integer.valueOf(speedTextField.getText()),
+                        route,
+                        start,
+                        (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
+                        commentTextField.getText(),
+                        dieselCheckBox.isSelected(),
+                        electricCheckBox.isSelected(), true, group);
+        this.createTrainCommand = createCommand;
+        // hide dialog
+        this.closeDialog();
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -354,9 +342,13 @@ public class CreateTrainView extends javax.swing.JPanel {
         this.closeDialog();
     }
 
+    public CreateTrainCommand getCreateTrainCommand() {
+        return createTrainCommand;
+    }
+
     private void throughButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // show through dialog
-        tnDialog.setNodes(throughNodes, model.getDiagram().getNet().getNodes());
+        tnDialog.setNodes(throughNodes, diagram.getNet().getNodes());
         tnDialog.setLocationRelativeTo(this);
         tnDialog.setVisible(true);
         throughNodes = tnDialog.getNodes();
