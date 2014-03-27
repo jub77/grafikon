@@ -274,6 +274,7 @@ public class TrainsHelper {
         Integer result = null;
         for (Integer speed : speeds) {
             int totalWeight = 0;
+            result = speed;
             for (EngineClass ec : engineClasses) {
                 Integer w = ec.getWeightTableRowForSpeed(speed).getWeight(lineClass);
                 if (w != null) {
@@ -281,7 +282,6 @@ public class TrainsHelper {
                 }
             }
             if (totalWeight >= weight) {
-                result = speed;
                 break;
             }
         }
