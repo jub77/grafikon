@@ -105,8 +105,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     @Override
     public void tcEvent(Action action, TrainsCycle cycle, Train train) {
-        if (action == Action.REFRESH)
+        if (action == Action.DIAGRAM_CHANGE) {
             graphicalTimetableView.setTrainDiagram(delegate.getTrainDiagram());
+        }
     }
 
     public void setModel(TCDelegate delegate, TrainColorChooser chooser) {

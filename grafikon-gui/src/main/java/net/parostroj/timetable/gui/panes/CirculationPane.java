@@ -20,7 +20,10 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
@@ -97,9 +100,6 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (!delegate.getTrainDiagram().getCycleTypeNames().contains(name) && !TrainsCycleType.isDefaultType(name)) {
             TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name);
             diagram.addCyclesType(type);
-            Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>(type);
-            typesComboBox.addItem(wrapper);
-            typesComboBox.setSelectedItem(wrapper);
         }
         newNameTextField.setText("");
     }
@@ -107,9 +107,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test if empty
         if (diagram.getCycles(delegate.getType()).isEmpty()) {
-            TrainsCycleType cycleType = diagram.getCyclesType(delegate.getType());
             diagram.removeCyclesType(delegate.getType());
-            typesComboBox.removeItem(new Wrapper<TrainsCycleType>(cycleType));
         }
     }
 
@@ -207,6 +205,18 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
                     return Color.black;
                 } else {
                     return Color.gray;
+                }
+            }
+        });
+        model.getMediator().addColleague(new GTEventsReceiverColleague() {
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                if (event.getType() == GTEventType.CYCLE_TYPE_ADDED) {
+                    Wrapper<TrainsCycleType> wrapper = new Wrapper<TrainsCycleType>((TrainsCycleType) event.getObject());
+                    typesComboBox.addItem(wrapper);
+                    typesComboBox.setSelectedItem(wrapper);
+                } else if (event.getType() == GTEventType.CYCLE_TYPE_REMOVED) {
+                    typesComboBox.removeItem(new Wrapper<TrainsCycleType>((TrainsCycleType) event.getObject()));
                 }
             }
         });
