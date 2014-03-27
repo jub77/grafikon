@@ -166,8 +166,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void addItem(TrainsCycleItem item) {
-        item.getTrain().addCycleItem(item);
         addItemImpl(item);
+        item.getTrain().addCycleItem(item);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
     }
 
@@ -199,10 +199,10 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public void replaceItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
         if (newItem.getTrain() != oldItem.getTrain() || newItem.getCycle() != this || oldItem.getCycle() != this)
             throw new IllegalArgumentException("Illegal argument.");
+        this.items.set(this.items.indexOf(oldItem), newItem);
         Train t = newItem.getTrain();
         t.removeCycleItem(oldItem);
         t.addCycleItem(newItem);
-        this.items.set(this.items.indexOf(oldItem), newItem);
         this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_UPDATED, oldItem, newItem));
         this.correctItem(newItem);
     }
