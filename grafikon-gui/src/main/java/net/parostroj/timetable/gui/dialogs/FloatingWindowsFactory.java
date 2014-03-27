@@ -13,6 +13,7 @@ import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.AbstractColleague;
+import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
@@ -367,6 +368,37 @@ public class FloatingWindowsFactory {
         return dialog;
     }
 
+    private static FloatingWindow createTimeIntervalsTrainsChanged(final Frame frame, final Mediator mediator, final ApplicationModel model) {
+        final ChangedTrainsPanel panel = new ChangedTrainsPanel();
+        panel.addTrainSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    JList list = (JList)e.getSource();
+                    Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
+                    if (wrapper != null) {
+                        if (wrapper.getElement() != model.getSelectedTrain()) {
+                            model.setSelectedTrain((Train) wrapper.getElement());
+                        }
+                    }
+                }
+            }
+        });
+        final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainchanged.title", "train.changed");
+        mediator.addColleague(new GTEventsReceiverColleague() {
+            @Override
+            public void processTrainEvent(TrainEvent event) {
+                if (!dialog.isVisible())
+                    return;
+                if (event.getType() == GTEventType.TIME_INTERVAL_LIST) {
+                    panel.addTrainToList(event.getSource());
+                }
+            }
+        }, TrainEvent.class);
+        return dialog;
+    }
+
     public static FloatingWindowsList createDialogs(Frame frame, Mediator mediator, ApplicationModel model) {
         FloatingWindowsList list = new FloatingWindowsList();
         list.add(createTrainsWithConflictsDialog(frame, mediator, model));
@@ -375,6 +407,7 @@ public class FloatingWindowsFactory {
         list.add(createChangesTrackedDialog(frame, mediator, model));
         list.add(createGTViewDialog(frame, mediator, model));
         list.add(createCirculationViewDialog(frame, mediator, model));
+        list.add(createTimeIntervalsTrainsChanged(frame, mediator, model));
         return list;
     }
 }
