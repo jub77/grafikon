@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 public class ChangedTrainsPanel extends javax.swing.JPanel {
 
     private final WrapperListModel<Train> listModel = new WrapperListModel<Train>(false);
+    private long limit = 0;
 
     /** Creates new form TrainsWithConflictsPanel */
     public ChangedTrainsPanel() {
@@ -39,8 +40,8 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
                 listModel.refreshIndex(index);
                 return;
             }
-
         }
+        limitTrains(limit);
         // add to list
         Wrapper<Train> wrapper = Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram().getTrainsData().getTrainComparator()));
         listModel.addWrapper(wrapper);
@@ -68,13 +69,50 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
             }
         });
         buttonPanel.add(clearButton);
+
+        limitTextField = new javax.swing.JFormattedTextField();
+        limitTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        limitTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        limitTextField.setColumns(4);
+        limitTextField.setValue(0l);
+        buttonPanel.add(limitTextField);
+
+        JButton limitButton = new JButton(ResourceLoader.getString("eventsviewer.button.limit"));
+        limitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Long value = (Long) limitTextField.getValue();
+                if (value >= 0) {
+                    limit = value;
+                    limitTrains(limit);
+                } else {
+                    limit = 0;
+                    limitTextField.setValue(0l);
+                }
+            }
+        });
+        buttonPanel.add(limitButton);
+    }
+
+    private void limitTrains(long size) {
+        if (size <= 0) {
+            return;
+        }
+        if (listModel.getSize() > size) {
+            long removed = listModel.getSize() - size;
+            for (int i = 0; i < removed; i++) {
+                listModel.removeIndex(0);
+            }
+        }
     }
 
     public void addTrainSelectionListener(ListSelectionListener listSelectionListener) {
         trainsList.addListSelectionListener(listSelectionListener);
     }
 
+
+
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JList trainsList;
+    private javax.swing.JFormattedTextField limitTextField;
 
 }
