@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
 
-import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.views.CreateTrainView;
 import net.parostroj.timetable.model.*;
@@ -44,7 +43,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private static final String TO_STATION = "${stations.last}";
     private static final String STATION_X = "${stations.get(%d)}";
 
-    public ApplicationModel model;
+    private Train train;
 
     /**
      * Creates new form EditTrainDialog.
@@ -61,11 +60,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
     /**
      * fills the dialog with train data.
      */
-    public void getSelectedTrainData() {
-        if (model != null && model.getSelectedTrain() != null)  {
-            Train train = model.getSelectedTrain();
+    public void showDialog(Train train) {
+        if (train != null)  {
             // model for train types
-            typeComboBox.setModel(new DefaultComboBoxModel(model.getDiagram().getTrainTypes().toArray()));
+            typeComboBox.setModel(new DefaultComboBoxModel(train.getTrainDiagram().getTrainTypes().toArray()));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
@@ -93,14 +91,11 @@ public class EditTrainDialog extends javax.swing.JDialog {
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
             timeAfterTextField.setText(Integer.toString(train.getTimeAfter() / 60));
 
-            groupsComboBox.updateGroups(model.getDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
+            groupsComboBox.updateGroups(train.getTrainDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
         }
         pack();
         setMinimumSize(getSize());
-    }
-
-    public void setModel(ApplicationModel model) {
-        this.model = model;
+        this.setVisible(true);
     }
 
     private void initComponents() {
@@ -174,8 +169,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+            layout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                         .addComponent(techTimesPanel, GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
@@ -185,14 +180,14 @@ public class EditTrainDialog extends javax.swing.JDialog {
                             .addComponent(cancelButton))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(routeLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(routeLabel)
                                 .addComponent(weightLabel)
-                                .addComponent(weightLimitLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(speedLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(descLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(numberLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(weightLimitLabel)
+                                .addComponent(speedLabel)
+                                .addComponent(descLabel)
+                                .addComponent(numberLabel)
                                 .addComponent(groupLabel)
-                                .addComponent(typeLabel, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(typeLabel))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
                                 .addComponent(routeEditPanel, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
@@ -260,6 +255,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                         .addComponent(okButton))
                     .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {typeLabel, numberLabel, descLabel, speedLabel, weightLabel, routeLabel, groupLabel, weightLimitLabel});
         GridBagLayout gbl_weightLimitPanel = new GridBagLayout();
         gbl_weightLimitPanel.columnWeights = new double[] { 0.0, 0.0 };
         gbl_weightLimitPanel.rowWeights = new double[] { 0.0 };
@@ -268,7 +264,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         weightLimitCheckBox = new JCheckBox();
         GridBagConstraints gbc_weightLimitCheckBox = new GridBagConstraints();
         gbc_weightLimitCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_weightLimitCheckBox.gridx = 0;
+        gbc_weightLimitCheckBox.gridx = 1;
         gbc_weightLimitCheckBox.gridy = 0;
         weightLimitPanel.add(weightLimitCheckBox, gbc_weightLimitCheckBox);
 
@@ -277,11 +273,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_weightLimitEditBox.weightx = 1.0;
         gbc_weightLimitEditBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_weightLimitEditBox.anchor = GridBagConstraints.NORTHWEST;
-        gbc_weightLimitEditBox.gridx = 1;
+        gbc_weightLimitEditBox.gridx = 0;
         gbc_weightLimitEditBox.gridy = 0;
         weightLimitPanel.add(weightLimitEditBox, gbc_weightLimitEditBox);
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] { typeLabel, numberLabel, descLabel, speedLabel,
-                weightLabel, routeLabel, groupLabel, weightLimitLabel });
         javax.swing.JLabel techTimesLabel = new javax.swing.JLabel();
         techTimesPanel.add(techTimesLabel);
 
@@ -426,7 +420,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        Train train = model.getSelectedTrain();
         // set values to train ...
         TrainType type = (TrainType) typeComboBox.getSelectedItem();
         train.setType(type != CreateTrainView.NO_TYPE ? type : null);
