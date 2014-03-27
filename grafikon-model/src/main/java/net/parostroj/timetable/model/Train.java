@@ -734,19 +734,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     /**
-     * checks if the train needs to call have recalculate called because of speed adjustments needed.
-     */
-    public boolean checkNeedSpeedRecalculate() {
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isLineOwner()) {
-                if (interval.computeSpeed() != interval.getSpeed())
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * adds interval to the train.
      *
      * @param interval interval
