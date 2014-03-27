@@ -286,6 +286,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         _cachedCycles.addCycleItem(timeIntervalList, this.getCyclesIntern(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
+        this.checkRecalculateCycle(item.getCycle());
     }
 
     /**
@@ -296,6 +297,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         this.getCyclesIntern(cycleType).remove(item);
         _cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));
+        this.checkRecalculateCycle(item.getCycle());
+    }
+
+    private void checkRecalculateCycle(TrainsCycle cycle) {
+        if (cycle.getType().getName().equals(TrainsCycleType.ENGINE_CYCLE) && cycle.getAttributes().containsKey(TrainsCycle.ATTR_ENGINE_CLASS)) {
+            this.recalculate();
+        }
     }
 
     /**
