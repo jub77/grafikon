@@ -24,4 +24,10 @@
         <language>GROOVY</language>
         <location>show_length.groovy</location>
     </script>
+    <script>
+        <id>remove_interval_speed</id>
+        <name>Remove interval speed</name>
+        <language>GROOVY</language>
+        <location>remove_interval_speed.groovy</location>
+    </script>
 </scripts>
