@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.wrappers;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -72,8 +71,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate delegate) {
         if (delegate == null) {
             if (o instanceof Train) {
-                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, new TrainComparator(
-                        TrainComparator.Type.ASC, ((Train) o).getTrainDiagram().getTrainsData().getTrainSortPattern()));
+                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getTrainDiagram().getTrainsData().getTrainComparator());
             } else if (o instanceof Route) {
                 delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
             } else if (o instanceof TrainsCycleItem) {
