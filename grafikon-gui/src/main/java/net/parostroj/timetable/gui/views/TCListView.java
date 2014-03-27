@@ -7,6 +7,8 @@ package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -175,8 +177,12 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get selected cycles ...
         int[] selectedIndices = cyclesList.getSelectedIndices();
+        List<TrainsCycle> toBeDeleted = new ArrayList<TrainsCycle>(selectedIndices.length);
         for (int selectedIndex : selectedIndices) {
             TrainsCycle cycle = cycles.getIndex(selectedIndex).getElement();
+            toBeDeleted.add(cycle);
+        }
+        for (TrainsCycle cycle : toBeDeleted) {
             if (cycle != null) {
                 // remove from diagram
                 delegate.getTrainDiagram().removeCycle(cycle);
