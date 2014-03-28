@@ -37,7 +37,7 @@ public class TrainIntervalsBuilder {
             // create first time interval
             lastInterval = new TimeInterval(intervalId, train, node, startTime, startTime, track);
         } else {
-            if (lastInterval.getOwner().asLine() == null) {
+            if (lastInterval.getOwnerAsLine() == null) {
                 throw new IllegalStateException("Last interval owner was not line.");
             }
             lastInterval = new TimeInterval(intervalId,
@@ -55,13 +55,13 @@ public class TrainIntervalsBuilder {
         if (finished) {
             throw new IllegalStateException("Cannot add line time interval to finished train.");
         }
-        if (lastInterval == null || lastInterval.getOwner().asNode() == null) {
+        if (lastInterval == null || lastInterval.getOwnerAsNode() == null) {
             throw new IllegalStateException("Last interval owner was not node.");
         }
 
         lastInterval = new TimeInterval(
                 intervalId, train, line, 0, 0, speed,
-                lastInterval.getOwner().asNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
+                lastInterval.getOwnerAsNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
                 track, addedTime);
         lastInterval.setAttributes(attributes);
         train.addInterval(lastInterval);

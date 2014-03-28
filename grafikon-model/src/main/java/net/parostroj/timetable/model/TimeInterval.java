@@ -486,11 +486,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     public Node getOwnerAsNode() {
-        return isNodeOwner() ? (Node)owner : null;
+        return isNodeOwner() ? (Node) owner : null;
     }
 
     public Line getOwnerAsLine() {
-        return isLineOwner() ? (Line)owner : null;
+        return isLineOwner() ? (Line) owner : null;
     }
 
     public boolean isTechnological() {

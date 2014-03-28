@@ -72,7 +72,7 @@ class TrainTableModel extends AbstractTableModel {
         TimeInterval interval = train.getTimeIntervalList().get(rowIndex);
         // do not alow edit signals
         if (rowIndex % 2 == 0) {
-            Node node = (Node)interval.getOwner();
+            Node node = interval.getOwnerAsNode();
             if (node.getType() == NodeType.SIGNAL)
                 return false;
         }

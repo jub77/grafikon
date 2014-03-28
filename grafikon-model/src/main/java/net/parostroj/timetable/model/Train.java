@@ -433,7 +433,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return first node
      */
     public Node getStartNode() {
-        return timeIntervalList.get(0).getOwner().asNode();
+        return timeIntervalList.get(0).getOwnerAsNode();
     }
 
     /**
@@ -442,7 +442,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return last node
      */
     public Node getEndNode() {
-        return timeIntervalList.get(timeIntervalList.size() - 1).getOwner().asNode();
+        return timeIntervalList.get(timeIntervalList.size() - 1).getOwnerAsNode();
     }
 
     /**

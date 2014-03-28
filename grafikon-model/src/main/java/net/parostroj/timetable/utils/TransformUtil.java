@@ -41,8 +41,8 @@ public class TransformUtil {
                 found = true;
                 break;
             }
-            if (current.getOwner() instanceof Node) {
-                Node n = (Node)current.getOwner();
+            if (current.isNodeOwner()) {
+                Node n = current.getOwnerAsNode();
                 if (firstNode == null)
                     firstNode = n;
                 switch (n.getType()) {
@@ -73,8 +73,8 @@ public class TransformUtil {
                 found = true;
                 break;
             }
-            if (current.getOwner() instanceof Node) {
-                Node n = (Node)current.getOwner();
+            if (current.isNodeOwner()) {
+                Node n = current.getOwnerAsNode();
                 if (firstNode == null)
                     firstNode = n;
                 switch (n.getType()) {
