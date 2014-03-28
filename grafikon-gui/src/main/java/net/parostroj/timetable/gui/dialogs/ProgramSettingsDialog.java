@@ -112,7 +112,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                setVisible(false);
             }
         });
         buttonPanel.add(cancelButton);
@@ -125,10 +125,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
             this.setVisible(false);
         else
             ActionUtils.showError("Error", this);
-    }
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
     }
 
     public void showDialog(ProgramSettings settings) {
