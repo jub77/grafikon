@@ -61,7 +61,7 @@ import javax.swing.border.EmptyBorder;
  * @author jub
  */
 public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener,
-        ApplicationModelListener, TrainDiagramListener, mxIEventListener {
+        ApplicationModelListener, mxIEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetEditView.class);
 
@@ -337,6 +337,21 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     updateLine(event.getSource());
                 }
             }
+            @Override
+            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+                switch (event.getType()) {
+                    case ROUTE_ADDED:
+                    case ROUTE_REMOVED:
+                        Route route = (Route) event.getObject();
+                        for (RouteSegment seg : route.getSegments()) {
+                            if (seg.asLine() != null) {
+                                updateLine(seg.asLine());
+                            }
+                        }
+                    default:
+                        break;
+                }
+            }
         });
     }
 
@@ -468,7 +483,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             case SET_DIAGRAM_CHANGED:
                 if (model.getDiagram() != null) {
                     this.setNet(model);
-                    model.getDiagram().addListener(this);
                 }
                 break;
             default:
@@ -653,22 +667,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         boolean isDiagram = model != null ? model.getDiagram() != null : false;
         newNodeAction.setEnabled(isDiagram);
         saveNetImageAction.setEnabled(isDiagram);
-    }
-
-    @Override
-    public void trainDiagramChanged(TrainDiagramEvent event) {
-        switch (event.getType()) {
-            case ROUTE_ADDED:
-            case ROUTE_REMOVED:
-                Route route = (Route) event.getObject();
-                for (RouteSegment seg : route.getSegments()) {
-                    if (seg.asLine() != null) {
-                        this.updateLine(seg.asLine());
-                    }
-                }
-            default:
-                break;
-        }
     }
 
     @Override
