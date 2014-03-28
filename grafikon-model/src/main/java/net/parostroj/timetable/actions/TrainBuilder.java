@@ -132,7 +132,7 @@ public class TrainBuilder {
                         currentTime, currentTime + originalInterval.getLength(), null);
             } else {
                 interval = new TimeInterval(IdGenerator.getInstance().getId(), train, originalInterval.getOwner(),
-                        0, 0, originalInterval.getSpeedLimit(), originalInterval.getDirection(), null,
+                        0, 0, originalInterval.getSpeedLimit(), originalInterval.getDirection().reverse(), null,
                         originalInterval.getAddedTime());
             }
             currentTime = interval.getEnd();
