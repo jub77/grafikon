@@ -31,6 +31,10 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public void clearTrainList() {
+        listModel.clear();
+    }
+
     public void addTrainToList(Train train) {
         // check if the last train is the same ...
         if (listModel.getSize() > 0) {
