@@ -8,15 +8,10 @@ import net.parostroj.timetable.model.NodeType;
  *
  * @author jub
  */
-public class NodeTypeWrapperDelegate implements WrapperDelegate {
+public class NodeTypeWrapperDelegate extends BasicWrapperDelegate {
 
     @Override
     public String toString(Object element) {
         return ResourceLoader.getString("node." + ((NodeType) element).getKey() + ".text");
-    }
-
-    @Override
-    public int compare(Object o1, Object o2) {
-        return o1.toString().compareTo(o2.toString());
     }
 }

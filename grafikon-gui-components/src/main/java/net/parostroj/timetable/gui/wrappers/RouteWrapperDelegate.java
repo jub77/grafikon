@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.RouteSegment;
  *
  * @author jub
  */
-public class RouteWrapperDelegate implements WrapperDelegate {
+public class RouteWrapperDelegate extends BasicWrapperDelegate {
 
     private static final int ROUTE_LENGTH = 50;
 
@@ -18,20 +18,20 @@ public class RouteWrapperDelegate implements WrapperDelegate {
         SHORT, FULL;
     }
 
-    private Type type;
+    private final Type type;
 
     public RouteWrapperDelegate(Type type) {
         this.type = type;
     }
 
     @Override
-    public String toString(Object element) {
-        return toStringRoute((Route) element);
+    protected String toCompareString(Object element) {
+        return ((Route) element).getName();
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
-        return toStringRoute((Route) o1).compareTo(toStringRoute((Route) o2));
+    public String toString(Object element) {
+        return toStringRoute((Route) element);
     }
 
     private String toStringRoute(Route route) {
@@ -48,7 +48,7 @@ public class RouteWrapperDelegate implements WrapperDelegate {
         builder.append('[');
         List<RouteSegment> segments = route.getSegments();
         RouteSegment lastRouteSegment = segments.get(segments.size() - 1);
-        int lastItemSize = lastRouteSegment.toString().length() + 1; 
+        int lastItemSize = lastRouteSegment.toString().length() + 1;
         boolean first = true;
         for (RouteSegment segment : route.getSegments()) {
             if (segment.asNode() != null) {

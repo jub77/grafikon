@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.TrainsCycleItem;
  *
  * @author jub
  */
-public class TrainsCycleItemWrapperDelegate implements WrapperDelegate {
+public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate {
 
     private final boolean showComment;
 
@@ -23,11 +23,6 @@ public class TrainsCycleItemWrapperDelegate implements WrapperDelegate {
     @Override
     public String toString(Object element) {
         return toStringItem((TrainsCycleItem) element);
-    }
-
-    @Override
-    public int compare(Object o1, Object o2) {
-        return toStringItem((TrainsCycleItem) o1).compareTo(toStringItem((TrainsCycleItem) o2));
     }
 
     public String toStringItem(TrainsCycleItem item) {
