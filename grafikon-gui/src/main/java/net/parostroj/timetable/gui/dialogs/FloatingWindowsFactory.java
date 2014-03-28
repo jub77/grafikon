@@ -392,6 +392,14 @@ public class FloatingWindowsFactory {
                 }
             }
         }, TrainEvent.class);
+        mediator.addColleague(new ApplicationGTEventColleague() {
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+                    panel.clearTrainList();
+                }
+            }
+        }, ApplicationModelEvent.class);
         return dialog;
     }
 
