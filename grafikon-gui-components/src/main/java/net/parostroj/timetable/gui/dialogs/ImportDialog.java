@@ -97,6 +97,7 @@ public class ImportDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         componentComboBox = new javax.swing.JComboBox();
+        componentComboBox.setMaximumRowCount(ImportComponent.values().length);
         javax.swing.JLabel matchLabel = new javax.swing.JLabel();
         matchComboBox = new javax.swing.JComboBox();
 
