@@ -88,8 +88,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             weightTextField.setText(weight != null ? weight.toString() : "");
             routeEditBox.setTemplate((TextTemplate) train.getAttribute(Train.ATTR_ROUTE));
 
-            fromNodeButton.setText(((Node) train.getFirstInterval().getOwner()).getName());
-            toNodeButton.setText(((Node) train.getLastInterval().getOwner()).getName());
+            fromNodeButton.setText(train.getFirstInterval().getOwnerAsNode().getName());
+            toNodeButton.setText(train.getLastInterval().getOwnerAsNode().getName());
 
             stationsComboBox.removeAllItems();
             for (TimeInterval i : train.getTimeIntervalList()) {

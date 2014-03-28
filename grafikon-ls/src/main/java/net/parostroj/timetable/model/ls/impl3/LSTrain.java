@@ -55,7 +55,7 @@ public class LSTrain {
         route = new LinkedList<Object>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             Object part = null;
-            if (interval.getOwner() instanceof Line) {
+            if (interval.isLineOwner()) {
                 part = new LSTrainRoutePartLine(interval);
             } else {
                 part = new LSTrainRoutePartNode(interval);

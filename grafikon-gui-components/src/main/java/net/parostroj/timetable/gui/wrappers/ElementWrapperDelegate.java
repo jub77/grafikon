@@ -11,41 +11,42 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate {
 
     @Override
     public String toString(Object element) {
-        if (element instanceof EngineClass)
+        if (element instanceof EngineClass) {
             return ((EngineClass) element).getName();
-        else if (element instanceof LineClass)
+        } else if (element instanceof LineClass) {
             return ((LineClass) element).getName();
-        else if (element instanceof Node)
+        } else if (element instanceof Node) {
             return ((Node) element).getName();
-        else if (element instanceof TrainsCycle)
+        } else if (element instanceof TrainsCycle) {
             return ((TrainsCycle) element).getName();
-        else if (element instanceof TrainType)
+        } else if (element instanceof TrainType) {
             return ((TrainType) element).getDesc();
-        else if (element instanceof TrainTypeCategory)
+        } else if (element instanceof TrainTypeCategory) {
             return ((TrainTypeCategory) element).getName();
-        else if (element instanceof TimeInterval)
+        } else if (element instanceof TimeInterval) {
             return ((TimeInterval) element).getOwner().toString();
-        else if (element instanceof TimetableImage)
+        } else if (element instanceof TimetableImage) {
             return element.toString();
-        else if (element instanceof TextItem) {
+        } else if (element instanceof TextItem) {
             TextItem item = (TextItem) element;
             return new StringBuilder(item.getName()).append(" (").append(item.getType()).append(')').toString();
-        } else if (element instanceof Route)
+        } else if (element instanceof Route) {
             return element.toString();
-        else if (element instanceof Train)
+        } else if (element instanceof Train) {
             return ((Train) element).getName();
-        else if (element instanceof OutputTemplate)
+        } else if (element instanceof OutputTemplate) {
             return ((OutputTemplate)element).getName();
-        else if (element instanceof TrainsCycleType)
+        } else if (element instanceof TrainsCycleType) {
             return ((TrainsCycleType)element).getDescriptionText();
-        else if (element instanceof Group)
+        } else if (element instanceof Group) {
             return ((Group)element).getName();
-        else if (element instanceof LineTrack)
+        } else if (element instanceof LineTrack) {
             return ((LineTrack) element).getNumber();
-        else if (element instanceof NodeTrack) {
+        } else if (element instanceof NodeTrack) {
             NodeTrack nt = (NodeTrack) element;
             return nt.getNumber() + (nt.isPlatform() ? " [" : "");
-        } else
+        } else {
             return super.toString(element);
+        }
     }
 }

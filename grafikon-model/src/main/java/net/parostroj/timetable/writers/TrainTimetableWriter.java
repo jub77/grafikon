@@ -26,7 +26,7 @@ public class TrainTimetableWriter {
         str.append("Train: ");
         str.append(train.getCompleteName()).append('\n');
         for (TimeInterval time : train.getTimeIntervalList()) {
-            Node node = time.getOwner().asNode();
+            Node node = time.getOwnerAsNode();
             if (node != null) {
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", node.getName());
