@@ -65,7 +65,8 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                setVisible(false);
+                attributesPanel.stopEditing();
             }
         });
 
@@ -128,12 +129,6 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
 
         this.setVisible(false);
         cycle.getAttributes().merge(attributesPanel.stopEditing(), Attributes.USER_CATEGORY);
-    }
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // do nothing
-        this.setVisible(false);
-        attributesPanel.stopEditing();
     }
 
     private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;
