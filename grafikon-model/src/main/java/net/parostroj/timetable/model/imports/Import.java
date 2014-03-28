@@ -321,6 +321,8 @@ public abstract class Import {
                 return new TrainsCycleTypeImport(diagram, library, match);
             case LINES:
                 return new LineImport(diagram, library, match);
+            case ROUTES:
+                return new RouteImport(diagram, library, match);
         }
         return null;
     }
