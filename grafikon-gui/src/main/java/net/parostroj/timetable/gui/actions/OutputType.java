@@ -30,7 +30,7 @@ public enum OutputType {
     private ElementType selectionElement;
     private String selectionParam;
     private boolean outputFile;
-    
+
     private OutputType(String actionCommand, String outputType, boolean outputFile) {
         this.actionCommand = actionCommand;
         this.outputType = outputType;
