@@ -39,8 +39,9 @@ public class DriverCycleDelegate extends TCDelegate {
         List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
         for (Tuple<TrainsCycleItem> item : conflicts) {
             if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
-                if (result.length() != 0)
+                if (result.length() != 0) {
                     result.append('\n');
+                }
                 // get time difference
                 int difference = item.second.getStartTime() - item.first.getEndTime();
                 Integer okDifference = (Integer)diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME);
@@ -48,14 +49,16 @@ public class DriverCycleDelegate extends TCDelegate {
                 if (okDifference != null) {
                     // computed difference in model seconds
                     int computedDiff = (int)(okDifference.intValue() * ((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).doubleValue() * 60);
-                    if (difference < computedDiff)
+                    if (difference < computedDiff) {
                         template = ResourceLoader.getString("ec.move.nodes.time.problem");
+                    }
                 }
                 result.append(String.format(template,item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
             }
             if (item.first.getEndTime() >= item.second.getStartTime()) {
-                if (result.length() != 0)
+                if (result.length() != 0) {
                     result.append('\n');
+                }
                 TimeConverter c = diagram.getTimeConverter();
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(),c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
             }
@@ -65,8 +68,9 @@ public class DriverCycleDelegate extends TCDelegate {
 
     @Override
     public void showEditDialog(JComponent component) {
-        if (editDialog == null)
+        if (editDialog == null) {
             editDialog = new TCDetailsViewDialog((java.awt.Window) component.getTopLevelAncestor(), true);
+        }
         editDialog.setLocationRelativeTo(component);
         editDialog.updateValues(this);
         editDialog.setVisible(true);
