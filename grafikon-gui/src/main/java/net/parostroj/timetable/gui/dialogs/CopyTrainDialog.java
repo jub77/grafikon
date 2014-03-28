@@ -51,8 +51,8 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         timeTextField = new javax.swing.JTextField();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -68,7 +68,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         okButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
+                okAction();
             }
         });
 
@@ -76,7 +76,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                setVisible(false);
             }
         });
 
@@ -134,11 +134,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         this.setResizable(false);
     }
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
-    }
-
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void okAction() {
         // create copy of the train
         int time = train.getTrainDiagram().getTimeConverter().convertTextToInt(timeTextField.getText());
         if (time == -1)
@@ -156,8 +152,6 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }
 
-    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton okButton;
     private javax.swing.JTextField timeTextField;
 }
