@@ -131,7 +131,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                setVisible(false);
             }
         });
         panel1.add(cancelButton);
@@ -180,10 +180,6 @@ public class NewModelDialog extends javax.swing.JDialog {
         // load template
         String templateName = (String)templatesComboBox.getSelectedItem();
         values = new NewModelValues(templateName, sp, s);
-        this.setVisible(false);
-    }
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.setVisible(false);
     }
 

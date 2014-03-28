@@ -257,14 +257,15 @@ public class EditNodeDialog extends javax.swing.JDialog {
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
+                writeValuesBack();
+                setVisible(false);
             }
         });
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                setVisible(false);
             }
         });
 
@@ -391,15 +392,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
 
         pack();
-    }
-
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.writeValuesBack();
-        this.setVisible(false);
-    }
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.setVisible(false);
     }
 
     private void newTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
