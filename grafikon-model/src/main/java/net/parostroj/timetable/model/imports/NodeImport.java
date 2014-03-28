@@ -39,14 +39,14 @@ class NodeImport extends Import {
 
         // create new node
         Node node = getDiagram().createNode(this.getId(importedNode), importedNode.getType(), importedNode.getName(), importedNode.getAbbr());
-        node.setAttributes(importedNode.getAttributes());
+        node.setAttributes(this.importAttributes(importedNode.getAttributes()));
         node.setPositionX(importedNode.getPositionX());
         node.setPositionY(importedNode.getPositionY());
         // tracks
         for (NodeTrack importedTrack : importedNode.getTracks()) {
             NodeTrack track = new NodeTrack(this.getId(importedTrack), importedTrack.getNumber());
             track.setPlatform(importedTrack.isPlatform());
-            track.setAttributes(importedTrack.getAttributes());
+            track.setAttributes(this.importAttributes(importedTrack.getAttributes()));
             node.addTrack(track);
         }
 

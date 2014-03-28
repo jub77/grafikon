@@ -162,6 +162,16 @@ public abstract class Import {
         return null;
     }
 
+    protected Line getLine(Line origLine) {
+        if (match == ImportMatch.ID) {
+            return diagram.getNet().getLineById(origLine.getId());
+        } else {
+            Node n1 = this.getNode(origLine.getFrom());
+            Node n2 = this.getNode(origLine.getTo());
+            return diagram.getNet().getLine(n1, n2);
+        }
+    }
+
     protected Node getNode(Node origNode) {
         if (match == ImportMatch.ID) {
             return diagram.getNet().getNodeById(origNode.getId());
