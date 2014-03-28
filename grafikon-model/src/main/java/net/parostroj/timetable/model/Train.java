@@ -72,6 +72,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         attached = false;
         timeBefore = null;
         timeAfter = null;
+        this.setAttribute(ATTR_DIESEL, false);
+        this.setAttribute(ATTR_ELECTRIC, false);
     }
 
     /**
