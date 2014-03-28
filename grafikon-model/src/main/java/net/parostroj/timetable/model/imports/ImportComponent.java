@@ -11,8 +11,9 @@ import net.parostroj.timetable.model.*;
  */
 public enum ImportComponent {
     NODES("import.stations", Node.class),
-    TRAIN_TYPES("import.train_types", TrainType.class),
     LINE_CLASSES("import.line_classes", LineClass.class),
+    LINES("import.lines", Line.class),
+    TRAIN_TYPES("import.train_types", TrainType.class),
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
     TRAINS("import.trains", Train.class),
     TRAINS_CYCLE_TYPES("import.cycle_types", TrainsCycleType.class),
@@ -71,12 +72,15 @@ public enum ImportComponent {
                     }
                 }
                 break;
+            case LINES:
+                map.addAll(diagram.getNet().getLines());
+                break;
         }
         return map;
     }
 
     public boolean sorted() {
-        return this == NODES || this == TRAINS || this == TRAINS_CYCLES;
+        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {
