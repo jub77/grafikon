@@ -172,6 +172,20 @@ public abstract class Import {
         }
     }
 
+    protected Route getRoute(Route origRoute) {
+        if (match == ImportMatch.ID) {
+            return diagram.getRouteById(origRoute.getId());
+        } else {
+            for (Route route : diagram.getRoutes()) {
+                if (route.getName().equals(origRoute.getName()) && route.isNetPart() == origRoute.isNetPart() &&
+                        route.isTrainRoute() == origRoute.isTrainRoute()) {
+                    return route;
+                }
+            }
+            return null;
+        }
+    }
+
     protected Node getNode(Node origNode) {
         if (match == ImportMatch.ID) {
             return diagram.getNet().getNodeById(origNode.getId());
