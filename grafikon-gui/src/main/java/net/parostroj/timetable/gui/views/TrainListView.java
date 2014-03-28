@@ -663,7 +663,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
         Command command = createDialog.getCreateTrainCommand();
         try {
-            model.applyCommand(command);
+            if (command != null) {
+                model.applyCommand(command);
+            }
         } catch (CommandException e) {
             LOG.warn("Error executing create train command.", e);
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
