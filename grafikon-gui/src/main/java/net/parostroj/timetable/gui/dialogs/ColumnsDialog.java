@@ -31,7 +31,7 @@ public class ColumnsDialog extends javax.swing.JDialog {
     public ColumnsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        columnsPanel.setLayout(new GridLayout(TrainTableColumn.values().length, 1));
+        columnsPanel.setLayout(new GridLayout(TrainTableColumn.values().length / 3, 3));
         columnMap = new EnumMap<TrainTableColumn, JCheckBox>(TrainTableColumn.class);
         for (TrainTableColumn column : TrainTableColumn.values()) {
             JCheckBox checkBox = new JCheckBox(ResourceLoader.getString(column.getKey()));
@@ -69,7 +69,6 @@ public class ColumnsDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        columnsPanel.setLayout(new java.awt.GridLayout(1, 0));
         getContentPane().add(columnsPanel, java.awt.BorderLayout.CENTER);
 
         okPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
