@@ -109,8 +109,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 n.setPositionX(location.x);
                 n.setPositionY(location.y);
                 model.getDiagram().getNet().addNode(n);
-                mxCell cell = graph.getVertexToCellMap().get(n);
-                graph.moveCells(new Object[] { cell }, n.getPositionX(), n.getPositionY());
             }
         }
     }
@@ -345,8 +343,16 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 updateLine(seg.asLine());
                             }
                         }
+                        break;
                     default:
                         break;
+                }
+            }
+            @Override
+            public void processNetEvent(NetEvent event) {
+                if (event.getType() == GTEventType.NODE_ADDED) {
+                    Node node = (Node) event.getObject();
+                    updateNodeLocation(node);
                 }
             }
             @Override
@@ -488,6 +494,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateNode(Node node) {
         graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
+    }
+
+    private void updateNodeLocation(Node node) {
+        mxCell cell = graph.getVertexToCellMap().get(node);
+        graph.moveCells(new Object[] { cell }, node.getPositionX(), node.getPositionY());
     }
 
     private void updateLine(Line line) {
