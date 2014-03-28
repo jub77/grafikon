@@ -26,7 +26,6 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.graph.*;
-import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -60,8 +59,7 @@ import javax.swing.border.EmptyBorder;
  *
  * @author jub
  */
-public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener,
-        ApplicationModelListener, mxIEventListener {
+public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, mxIEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetEditView.class);
 
@@ -321,10 +319,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     public void setModel(ApplicationModel model) {
         this.initializeDialogs();
         this.model = model;
-        model.addListener(this);
         updateActions(model);
         setNet(model);
-        model.getMediator().addColleague(new GTEventsReceiverColleague() {
+        model.getMediator().addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processNodeEvent(NodeEvent event) {
                 if (event.getType() == GTEventType.ATTRIBUTE) {
@@ -348,6 +345,21 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 updateLine(seg.asLine());
                             }
                         }
+                    default:
+                        break;
+                }
+            }
+            @Override
+            public void processApplicationEvent(ApplicationModelEvent event) {
+                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
+                    updateActions(event.getModel());
+                }
+                switch (event.getType()) {
+                    case SET_DIAGRAM_CHANGED:
+                        if (event.getModel().getDiagram() != null) {
+                            setNet(event.getModel());
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -470,22 +482,6 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             case NOTHING_SELECTED:
                 editAction.setEnabled(false);
                 deleteAction.setEnabled(false);
-                break;
-        }
-    }
-
-    @Override
-    public void modelChanged(ApplicationModelEvent event) {
-        if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            updateActions(event.getModel());
-        }
-        switch (event.getType()) {
-            case SET_DIAGRAM_CHANGED:
-                if (model.getDiagram() != null) {
-                    this.setNet(model);
-                }
-                break;
-            default:
                 break;
         }
     }
