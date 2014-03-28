@@ -87,30 +87,34 @@ class TrainTableModel extends AbstractTableModel {
         switch (column) {
             // node name
             case NODE:
-                if (interval.getOwner() instanceof Node)
-                    retValue = ((Node)interval.getOwner()).getName();
-                else
+                if (interval.isNodeOwner()) {
+                    retValue = interval.getOwnerAsNode().getName();
+                } else {
                     retValue = "";
+                }
                 break;
             // arrival
             case START:
-                if (!interval.isFirst())
+                if (!interval.isFirst()) {
                     retValue = converter.convertIntToText(interval.getStart(), true);
+                }
                 break;
             // departure
             case END:
-                if (!interval.isLast())
+                if (!interval.isLast()) {
                     retValue = converter.convertIntToText(interval.getEnd(), true);
+                }
                 break;
             // stop time
             case STOP:
-                if (interval.getOwner() instanceof Node && rowIndex != 0 && rowIndex != lastRow
-                        && ((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
-                	retValue = converter.convertIntToMinutesText(interval.getLength());
+                if (interval.isNodeOwner() && rowIndex != 0 && rowIndex != lastRow
+                        && interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
+                    retValue = converter.convertIntToMinutesText(interval.getLength());
+                }
                 break;
             // speed
             case SPEED_LIMIT:
-                if (interval.getOwner() instanceof Line) {
+                if (interval.isLineOwner()) {
                     retValue = interval.getSpeedLimit();
                 }
                 break;
@@ -126,12 +130,13 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             // platform
             case PLATFORM:
-                if (interval.getOwner() instanceof Node) {
-                    if (((Node)interval.getOwner()).getType() != NodeType.SIGNAL)
+                if (interval.isNodeOwner()) {
+                    if (interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
                         retValue = interval.getTrack();
-                } else if (interval.getOwner() instanceof Line) {
+                    }
+                } else if (interval.isLineOwner()) {
                     // only for more than one track per line
-                    if (((Line)interval.getOwner()).getTracks().size() > 1) {
+                    if (interval.getOwnerAsLine().getTracks().size() > 1) {
                         return interval.getTrack();
                     }
                 }
@@ -140,8 +145,9 @@ class TrainTableModel extends AbstractTableModel {
             case CONFLICTS:
                 StringBuilder builder = new StringBuilder();
                 for (TimeInterval overlap : interval.getOverlappingIntervals()) {
-                    if (builder.length() != 0)
+                    if (builder.length() != 0) {
                         builder.append(", ");
+                    }
                     builder.append(overlap.getTrain().getName());
                 }
                 retValue = builder.toString();
@@ -151,24 +157,21 @@ class TrainTableModel extends AbstractTableModel {
                 retValue = interval.getAttribute(TimeInterval.ATTR_COMMENT);
                 break;
             case OCCUPIED_ENTRY:
-                Boolean value = (Boolean)interval.getAttribute(TimeInterval.ATTR_OCCUPIED);
-                retValue = Boolean.TRUE.equals(value);
+                retValue = interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED);
                 break;
             case SHUNT:
-                value = (Boolean)interval.getAttribute(TimeInterval.ATTR_SHUNT);
-                retValue = Boolean.TRUE.equals(value);
+                retValue = interval.getAttributes().getBool(TimeInterval.ATTR_SHUNT);
                 break;
             case COMMENT_SHOWN:
-                value = (Boolean)interval.getAttribute(TimeInterval.ATTR_COMMENT_SHOWN);
-                retValue = Boolean.TRUE.equals(value);
+                retValue = interval.getAttributes().getBool(TimeInterval.ATTR_COMMENT_SHOWN);
                 break;
             case REAL_STOP:
-                if (interval.getOwner() instanceof Node && rowIndex != 0 && rowIndex != lastRow
-                        && ((Node)interval.getOwner()).getType() != NodeType.SIGNAL) {
+                if (interval.isNodeOwner() && rowIndex != 0 && rowIndex != lastRow
+                        && interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
                     int stop = interval.getLength() / 60;
                     // celculate with time scale ...
-                    Double timeScale = (Double)model.getDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE);
-                    retValue = Double.valueOf(stop / timeScale.doubleValue());
+                    Double timeScale = model.getDiagram().getAttributes().get(TrainDiagram.ATTR_TIME_SCALE, Double.class);
+                    retValue = stop / timeScale;
                 }
                 break;
             case WEIGHT:
@@ -187,8 +190,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case IGNORE_LENGTH:
                 // ignore station length
-                value = (Boolean) interval.getAttribute(TimeInterval.ATTR_IGNORE_LENGTH);
-                retValue = Boolean.TRUE.equals(value);
+                retValue = interval.getAttributes().getBool(TimeInterval.ATTR_IGNORE_LENGTH);
                 break;
             // default (should not be reached)
             default:
