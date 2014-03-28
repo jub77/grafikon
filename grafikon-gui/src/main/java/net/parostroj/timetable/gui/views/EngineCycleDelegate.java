@@ -38,12 +38,14 @@ public class EngineCycleDelegate extends TCDelegate {
         List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
         for (Tuple<TrainsCycleItem> item : conflicts) {
             if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
-                if (result.length() != 0)
+                if (result.length() != 0) {
                     result.append('\n');
+                }
                 result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
             } else if (item.first.getEndTime() >= item.second.getStartTime()) {
-                if (result.length() != 0)
+                if (result.length() != 0) {
                     result.append('\n');
+                }
                 TimeConverter c = item.first.getTrain().getTrainDiagram().getTimeConverter();
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(), c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
             }
@@ -64,8 +66,9 @@ public class EngineCycleDelegate extends TCDelegate {
 
     @Override
     public void showEditDialog(JComponent component) {
-        if (editDialog == null)
+        if (editDialog == null) {
             editDialog = new TCDetailsViewDialogEngineClass((java.awt.Frame)component.getTopLevelAncestor(), true);
+        }
         editDialog.setLocationRelativeTo(component);
         editDialog.updateValues(this, model.getDiagram());
         editDialog.setVisible(true);
