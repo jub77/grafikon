@@ -21,6 +21,7 @@ import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -77,7 +78,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             list.add(tc);
         }
         Collections.sort(list, new Comparator<TableColumn>() {
-
             @Override
             public int compare(TableColumn o1, TableColumn o2) {
                 return Integer.valueOf(Integer.valueOf(o1.getModelIndex()).compareTo(Integer.valueOf(o2.getModelIndex())));
@@ -111,8 +111,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
                     int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
                     trainTable.setRowSelectionInterval(row, row);
-                    if (column != -1)
+                    if (column != -1) {
                         trainTable.setColumnSelectionInterval(column, column);
+                    }
                     Rectangle rect = trainTable.getCellRect(row, 0, true);
                     trainTable.scrollRectToVisible(rect);
                     trainTable.requestFocus();
@@ -178,8 +179,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private String getConflicts(TimeInterval interval) {
         StringBuilder builder = new StringBuilder();
         for (TimeInterval overlap : interval.getOverlappingIntervals()) {
-            if (builder.length() != 0)
+            if (builder.length() != 0) {
                 builder.append(", ");
+            }
             builder.append(overlap.getTrain().getName());
         }
         return builder.toString();
@@ -271,10 +273,11 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         StringBuilder order = null;
         while (columns.hasMoreElements()) {
             TableColumn column = columns.nextElement();
-            if (order != null)
+            if (order != null) {
                 order.append('|');
-            else
+            } else {
                 order = new StringBuilder();
+            }
             order.append(column.getModelIndex()).append(',').append(column.getPreferredWidth());
         }
         if (order != null) {
@@ -287,7 +290,8 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         // set displayed columns (if the prefs are empty - show all)
         String cs = prefs.getString("train.columns", null);
         List<TableColumn> shownColumns = new LinkedList<TableColumn>();
-        if (cs == null || "".equals(cs)) {
+        cs = Conversions.checkAndTrim(cs);
+        if (cs == null) {
             // all columns
             for (TrainTableColumn c : TrainTableColumn.values()) {
                 shownColumns.add(c.createTableColumn());

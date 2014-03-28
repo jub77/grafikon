@@ -19,7 +19,6 @@ import net.parostroj.timetable.model.Track;
 public class TrackCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     private final JComboBox editor;
-
     private boolean ignoreAction = true;
 
     public TrackCellEditor() {
@@ -27,8 +26,9 @@ public class TrackCellEditor extends AbstractCellEditor implements TableCellEdit
         editor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!ignoreAction)
+                if (!ignoreAction) {
                     fireEditingStopped();
+                }
             }
         });
     }
