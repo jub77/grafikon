@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -14,6 +15,49 @@ import net.parostroj.timetable.visitors.Visitable;
  * @author jub
  */
 public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes {
+
+    public static final class Location {
+        private final int x;
+        private final int y;
+
+        public Location(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + x;
+            result = prime * result + y;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Location other = (Location) obj;
+            if (x != other.x)
+                return false;
+            if (y != other.y)
+                return false;
+            return true;
+        }
+    }
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -29,10 +73,8 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     private List<NodeTrack> tracks;
     /** Node type. */
     private NodeType type;
-    /** X position in gui. */
-    private int positionX;
-    /** Y position in gui. */
-    private int positionY;
+    /** Location of node. */
+    private Location location;
     private GTListenerSupport<NodeListener, NodeEvent> listenerSupport;
     private AttributesListener attributesListener;
 
@@ -41,6 +83,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      */
     private void init() {
         tracks = new LinkedList<NodeTrack>();
+        location = new Location(0, 0);
         this.setAttributes(new Attributes());
         listenerSupport = new GTListenerSupport<NodeListener, NodeEvent>(new GTEventSender<NodeListener, NodeEvent>() {
 
@@ -165,7 +208,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("name", oldName, name)));
+        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
     }
 
     public String getAbbr() {
@@ -175,7 +218,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     public void setAbbr(String abbr) {
         String oldAbbr = this.abbr;
         this.abbr = abbr;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("abbr", oldAbbr, abbr)));
+        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
     }
 
     public NodeType getType() {
@@ -185,30 +228,18 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     public void setType(NodeType type) {
         NodeType oldType = this.type;
         this.type = type;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("type", oldType, type)));
+        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
     }
 
-    public int getPositionX() {
-        return positionX;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setPositionX(int positionX) {
-        if (positionX != this.positionX) {
-            int oldPos = this.positionX;
-            this.positionX = positionX;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionX", oldPos, positionX)));
-        }
-    }
-
-    public int getPositionY() {
-        return positionY;
-    }
-
-    public void setPositionY(int positionY) {
-        if (positionY != this.positionY) {
-            int oldPos = this.positionY;
-            this.positionY = positionY;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange("positionY", oldPos, positionY)));
+    public void setLocation(Location location) {
+        if (!Conversions.compareWithNull(location, this.location)) {
+            Location oldLocation = this.location;
+            this.location = location;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_LOCATION, oldLocation, location)));
         }
     }
 

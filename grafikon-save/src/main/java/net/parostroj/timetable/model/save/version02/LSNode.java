@@ -7,21 +7,21 @@ import net.parostroj.timetable.model.NodeTrack;
 public class LSNode {
 
     private int id;
-    
+
     private String uuid;
 
     private String name;
-    
+
     private String abbr;
 
     private LSNodeTrack[] nodeTracks;
-    
+
     private String nodeType;
-    
+
     private LSAttributes attributes;
-    
+
     private int x;
-    
+
     private int y;
 
     public LSNode() {
@@ -40,8 +40,8 @@ public class LSNode {
         abbr = node.getAbbr();
         attributes = new LSAttributes(node.getAttributes(), data);
         nodeType = node.getType().name();
-        x = node.getPositionX();
-        y = node.getPositionY();
+        x = node.getLocation().getX();
+        y = node.getLocation().getY();
         uuid = node.getId();
     }
 

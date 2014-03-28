@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Class for storing nodes.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "node")
@@ -35,8 +35,8 @@ public class LSNode {
         this.abbr = node.getAbbr();
         this.attributes = new LSAttributes(node.getAttributes());
         this.type = node.getType().toString();
-        this.x = node.getPositionX();
-        this.y = node.getPositionY();
+        this.x = node.getLocation().getX();
+        this.y = node.getLocation().getY();
         this.tracks = new LinkedList<LSNodeTrack>();
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
@@ -115,8 +115,7 @@ public class LSNode {
     public Node createNode(TrainDiagram diagram) {
         Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
         node.setAttributes(attributes.createAttributes());
-        node.setPositionX(x);
-        node.setPositionY(y);
+        node.setLocation(new Node.Location(x, y));
         // tracks
         for (LSNodeTrack track : getTracks()) {
             node.addTrack(track.createNodeTrack());
