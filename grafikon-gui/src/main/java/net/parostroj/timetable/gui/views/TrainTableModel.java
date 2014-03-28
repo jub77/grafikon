@@ -228,8 +228,9 @@ class TrainTableModel extends AbstractTableModel {
                     } else {
                         int start = TimeUtil.normalizeTime(interval.getStart());
                         time = TimeUtil.normalizeTime(time);
-                        if (time < start)
-                        	time += TimeInterval.DAY;
+                        if (time < start) {
+                            time += TimeInterval.DAY;
+                        }
                         int newStop = time - start;
                         if (newStop >= 0) {
                             train.changeStopTime(interval, newStop);
@@ -252,7 +253,7 @@ class TrainTableModel extends AbstractTableModel {
                 }
                 break;
             case SPEED_LIMIT:
-                // velocity
+                // velocity limit
                 Integer velocity = (Integer) aValue;
                 if (velocity == null || velocity > 0) {
                     train.changeSpeedAndAddedTime(interval, velocity, interval.getAddedTime());
@@ -269,8 +270,9 @@ class TrainTableModel extends AbstractTableModel {
                         // wrong conversion doesn't change anything
                         addedTime = -1;
                     }
-                    if (addedTime >= 0)
+                    if (addedTime >= 0) {
                         train.changeSpeedAndAddedTime(interval, interval.getSpeedLimit(), addedTime);
+                    }
                 } else {
                     train.changeSpeedAndAddedTime(interval, interval.getSpeedLimit(), 0);
                 }
@@ -279,13 +281,13 @@ class TrainTableModel extends AbstractTableModel {
             case PLATFORM:
                 // platform
                 Track track = (Track) aValue;
-                if (interval.getOwner() instanceof Node) {
+                if (interval.isNodeOwner()) {
                     NodeTrack newTrack = (NodeTrack) track;
                     if (newTrack != null) {
                         train.changeNodeTrack(interval, newTrack);
                         this.fireTableRowsUpdated(rowIndex, rowIndex);
                     }
-                } else if (interval.getOwner() instanceof Line) {
+                } else if (interval.isLineOwner()) {
                     LineTrack newTrack = (LineTrack) track;
                     if (newTrack != null) {
                         train.changeLineTrack(interval, newTrack);
