@@ -65,8 +65,9 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
         int div = prefs.getInt("trains.divider.2", trainsSplitPane.getDividerLocation());
         int preferredWidth = trainListView.getPreferredSize().width;
-        if (preferredWidth < div)
+        if (preferredWidth < div) {
             trainsSplitPane.setDividerLocation(div);
+        }
         GTViewSettings gtvs = null;
         try {
             gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
@@ -74,13 +75,15 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             // use default values
             LOG.warn("Wrong GTView settings - using default values.");
         }
-        if (gtvs != null)
+        if (gtvs != null) {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
+        }
         scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));
-        if (scrollPane.isVisible())
+        if (scrollPane.isVisible()) {
             splitPane.setDividerLocation(dividerLoc);
-        else
+        } else {
             splitPane.setLastDividerLocation(dividerLoc);
+        }
         String treeType = prefs.getString("trains.listtype", "TYPES");
         TreeType treeTypeEnum = TreeType.TYPES;
         try {
@@ -137,10 +140,11 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     private net.parostroj.timetable.gui.views.TrainView trainView;
 
     public void setVisibilityOfGTView(boolean state) {
-        if (state)
+        if (state) {
             splitPane.setDividerLocation(splitPane.getLastDividerLocation());
-        else
+        } else {
             splitPane.setLastDividerLocation(splitPane.getDividerLocation());
+        }
         scrollPane.setVisible(state);
     }
 }

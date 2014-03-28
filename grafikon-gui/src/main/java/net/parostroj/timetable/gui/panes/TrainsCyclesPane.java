@@ -45,10 +45,11 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         @Override
         public boolean isHighlighedInterval(TimeInterval interval) {
             TimeInterval selectedInterval = selectorDelegate.getSelectedTrainInterval();
-            if (selectedInterval == null)
+            if (selectedInterval == null) {
                 return false;
-            else
+            } else {
                 return selectedInterval.getTrain() == interval.getTrain();
+            }
         }
 
         @Override
@@ -128,12 +129,13 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     private String getKey(String suffix) {
         String prefix = "custom";
-        if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType()))
+        if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType())) {
             prefix = "driver";
-        else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType()))
+        } else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType())) {
             prefix = "engine";
-        else if (TrainsCycleType.TRAIN_UNIT_CYCLE.equals(delegate.getType()))
+        } else if (TrainsCycleType.TRAIN_UNIT_CYCLE.equals(delegate.getType())) {
             prefix = "trainunit";
+        }
         return String.format("cycles.%s.%s", prefix, suffix);
     }
 
@@ -148,8 +150,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
         try {
             GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null));
-            if (gtvs != null)
+            if (gtvs != null) {
                 graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
+            }
         } catch (Exception e) {
             LOG.warn("Wrong GTView settings - using default values.");
         }
