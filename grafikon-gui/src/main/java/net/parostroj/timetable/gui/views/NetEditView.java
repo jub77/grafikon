@@ -106,8 +106,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), "1");
                 track.setPlatform(true);
                 n.addTrack(track);
-                n.setPositionX(location.x);
-                n.setPositionY(location.y);
+                n.setLocation(new Node.Location(location.x, location.y));
                 model.getDiagram().getNet().addNode(n);
             }
         }
@@ -498,7 +497,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateNodeLocation(Node node) {
         mxCell cell = graph.getVertexToCellMap().get(node);
-        graph.moveCells(new Object[] { cell }, node.getPositionX(), node.getPositionY());
+        graph.moveCells(new Object[] { cell }, node.getLocation().getX(), node.getLocation().getY());
     }
 
     private void updateLine(Line line) {
@@ -660,8 +659,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graph.getModel().beginUpdate();
         try {
             for (Node node : net.getNodes()) {
-                mxCell cell = graph.getVertexToCellMap().get(node);
-                graph.moveCells(new Object[] { cell }, node.getPositionX(), node.getPositionY());
+                updateNodeLocation(node);
             }
         } finally {
             graph.getModel().endUpdate();
@@ -685,8 +683,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     mxCell mxCell = (mxCell) cell;
                     if (mxCell.getValue() instanceof Node) {
                         Node node = (Node) mxCell.getValue();
-                        node.setPositionX((int) (mxCell.getGeometry().getX()));
-                        node.setPositionY((int) (mxCell.getGeometry().getY()));
+
+                        int x = (int) (mxCell.getGeometry().getX());
+                        int y = (int) (mxCell.getGeometry().getY());
+                        node.setLocation(new Node.Location(x, y));
                     }
                 }
             }

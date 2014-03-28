@@ -37,8 +37,8 @@ public class LSNode {
         abbr = node.getAbbr();
         interlockingPlant = (String) node.getAttribute(Node.ATTR_INTERLOCKING_PLANT);
         nodeType = node.getType().name();
-        x = node.getPositionX();
-        y = node.getPositionY();
+        x = node.getLocation().getX();
+        y = node.getLocation().getY();
     }
 
     /**

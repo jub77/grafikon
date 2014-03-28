@@ -54,8 +54,7 @@ public class LSVisitorBuilder implements LSVisitor {
         if (lsNode.getAttributes() != null) {
             node.setAttributes(lsNode.getAttributes().convertToAttributes());
         }
-        node.setPositionX(lsNode.getX());
-        node.setPositionY(lsNode.getY());
+        node.setLocation(new Node.Location(lsNode.getX(), lsNode.getY()));
         ids.put(lsNode.getId(), node);
 
         // add to net
