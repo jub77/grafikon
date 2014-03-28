@@ -183,7 +183,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     @Override
     public String toString() {
         TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
-        return String.format("%s(%s,%s)", getOwner(), converter.convertIntToText(getStart()),
+        return String.format("%s(%s,%s)", getOwner() != null ? (isNodeOwner() ? getOwner() : getOwnerAsLine().toString(getDirection())) : "-", converter.convertIntToText(getStart()),
                 converter.convertIntToText(getEnd()));
     }
 

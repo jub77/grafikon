@@ -310,7 +310,11 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     @Override
     public String toString() {
-        return String.format("%s-%s", from.getAbbr(), to.getAbbr());
+        return this.toString(TimeIntervalDirection.FORWARD);
+    }
+
+    public String toString(TimeIntervalDirection direction) {
+        return String.format("%s-%s", direction != TimeIntervalDirection.BACKWARD ? from.getAbbr() : to.getAbbr(), direction.isForward() ? to.getAbbr() : from.getAbbr());
     }
 
     @Override
