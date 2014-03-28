@@ -138,8 +138,8 @@ public class TrainBuilder {
             currentTime = interval.getEnd();
             train.addInterval(interval);
         }
-        train.recalculate();
         train.assignEmptyTracks();
+        train.recalculate();
 
         return train;
     }
@@ -193,8 +193,8 @@ public class TrainBuilder {
             time = interval.getEnd();
             train.addInterval(interval);
         }
-        train.recalculate();
         train.assignEmptyTracks();
+        train.recalculate();
 
         return train;
     }
