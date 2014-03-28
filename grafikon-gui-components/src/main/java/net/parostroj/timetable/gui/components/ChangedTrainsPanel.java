@@ -45,6 +45,7 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
         // add to list
         Wrapper<Train> wrapper = Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram().getTrainsData().getTrainComparator()));
         listModel.addWrapper(wrapper);
+        trainsList.ensureIndexIsVisible(listModel.getSize() - 1);
     }
 
     private void initComponents() {
