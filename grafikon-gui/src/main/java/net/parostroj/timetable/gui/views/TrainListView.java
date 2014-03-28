@@ -189,7 +189,6 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         treePopupMenu.add(groupsMenu);
 
         groupL = new ItemListener() {
-
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -296,8 +295,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             }
         } else {
             GroupMenuItem item = findByGroup(group);
-            if (item.isSelected())
+            if (item.isSelected()) {
                 groupsMenu.getItem(0).setSelected(true);
+            }
             removeFromGroupsMenu(item);
         }
     }
@@ -306,18 +306,20 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         for (MenuElement e : groupsMenu.getPopupMenu().getSubElements()) {
             if (e instanceof GroupMenuItem) {
                 GroupMenuItem item = (GroupMenuItem) e;
-                if (group.equals(item.getGroupSelect().getGroup()))
+                if (group.equals(item.getGroupSelect().getGroup())) {
                     return item;
+                }
             }
         }
         return null;
     }
 
     private void addToGroupsMenu(JMenuItem item, Integer position) {
-        if (position == null)
+        if (position == null) {
             groupsMenu.add(item);
-        else
+        } else {
             groupsMenu.insert(item, position);
+        }
         groupsBG.add(item);
         item.addItemListener(groupL);
     }
@@ -456,15 +458,17 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         changeRouteMenuItem.setEnabled(false);
         deleteMenuItem.setEnabled(false);
         editMenuItem.setEnabled(false);
-        if (trainTreeHandler != null)
+        if (trainTreeHandler != null) {
             this.selectTrain(model.getSelectedTrain());
+        }
     }
 
     private Filter<Train> createFilter() {
-        if (groupSelect.getType() == Type.ALL)
+        if (groupSelect.getType() == Type.ALL) {
             return new EmptyFilter<Train>();
-        else
+        } else {
             return new GroupFilter<Train, Train>(groupSelect.getGroup());
+        }
     }
 
     private void addAndSelectTrain(Train train) {
@@ -540,8 +544,9 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             try {
                 RouteBuilder rb = new RouteBuilder();
                 Route route = rb.createRoute(null, model.getDiagram().getNet(), result);
-                if (route == null)
+                if (route == null) {
                     throw new IllegalArgumentException("No route available.");
+                }
                 TrainBuilder builder = new TrainBuilder();
                 Train newTrain = builder.createTrain(oldTrain, route);
                 model.setSelectedTrain(null);
@@ -563,12 +568,14 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             TrainTreeNode node = (TrainTreeNode) selected;
             Object item = node.getUserObject();
             if (!(item instanceof Train) || trainTree.getSelectionCount() > 1) {
-                if (model.getSelectedTrain() != null)
+                if (model.getSelectedTrain() != null) {
                     model.setSelectedTrain(null);
+                }
             } else {
                 Train train = (Train) item;
-                if (model.getSelectedTrain() != train)
+                if (model.getSelectedTrain() != train) {
                     model.setSelectedTrain(train);
+                }
             }
         }
         boolean selectionEmpty = trainTree.isSelectionEmpty() || (trainTree.getSelectionCount() == 1
@@ -602,6 +609,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                     break;
                 case GROUPS:
                     listGroupsFlatMenuItem.setSelected(true);
+                    break;
             }
             // update list
             this.updateViewDiagramChanged();
@@ -674,14 +682,15 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }
 
     private void treeTypeActionPerformed(java.awt.event.ActionEvent evt) {
-        if (evt.getSource() == listFlatMenuItem)
+        if (evt.getSource() == listFlatMenuItem) {
             treeType = TrainListView.TreeType.FLAT;
-        else if (evt.getSource() == listTypesMenuItem)
+        } else if (evt.getSource() == listTypesMenuItem) {
             treeType = TrainListView.TreeType.TYPES;
-        else if (evt.getSource() == listGroupsMenuItem)
+        } else if (evt.getSource() == listGroupsMenuItem) {
             treeType = TrainListView.TreeType.GROUPS_AND_TYPES;
-        else
+        } else {
             treeType = TrainListView.TreeType.GROUPS;
+        }
         // update list
         this.updateViewDiagramChanged();
     }
