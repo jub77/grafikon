@@ -1,6 +1,6 @@
 /*
  * TrainCycleType.java
- * 
+ *
  * Created on 15.9.2007, 20:43:01
  */
 
@@ -8,14 +8,14 @@ package net.parostroj.timetable.model;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import java.util.ResourceBundle;
+
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Train cycle type.
- * 
+ *
  * @author jub
  */
 public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable {
@@ -35,7 +35,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private String description;
     private Attributes attributes;
     private List<TrainsCycle> cycles;
-    
+
     private String _cachedDescription;
 
     public TrainsCycleType(String id) {
@@ -43,12 +43,12 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         this.cycles = new LinkedList<TrainsCycle>();
         this.setAttributes(new Attributes());
     }
-    
+
     public TrainsCycleType(String id, String name) {
         this(id);
         this.name = name;
     }
-    
+
     public TrainsCycleType(String id, String name, String description) {
         this(id, name);
         this.description = description;
@@ -58,7 +58,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public String getId() {
         return id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -99,15 +99,15 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public Object removeAttribute(String key) {
         return attributes.remove(key);
     }
-    
+
     public List<TrainsCycle> getCycles() {
         return cycles;
     }
-    
+
     public void setCycles(List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
-    
+
     public String getDescriptionText() {
         if (_cachedDescription == null) {
             if (isDefaultType(name))
@@ -116,6 +116,11 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
                 _cachedDescription = (description != null) ? description : name;
         }
         return _cachedDescription;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     @Override
