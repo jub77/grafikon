@@ -13,6 +13,7 @@ public enum ImportComponent {
     NODES("import.stations", Node.class),
     LINE_CLASSES("import.line_classes", LineClass.class),
     LINES("import.lines", Line.class),
+    ROUTES("import.routes", Route.class),
     TRAIN_TYPES("import.train_types", TrainType.class),
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
     TRAINS("import.trains", Train.class),
@@ -75,12 +76,15 @@ public enum ImportComponent {
             case LINES:
                 map.addAll(diagram.getNet().getLines());
                 break;
+            case ROUTES:
+                map.addAll(diagram.getRoutes());
+                break;
         }
         return map;
     }
 
     public boolean sorted() {
-        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES;
+        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {
