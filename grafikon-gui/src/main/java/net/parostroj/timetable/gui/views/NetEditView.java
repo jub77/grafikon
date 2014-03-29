@@ -327,7 +327,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             }
             @Override
             public void processLineEvent(LineEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE) {
+                if (event.getType() == GTEventType.ATTRIBUTE || event.getType() == GTEventType.TRACK_ADDED ||
+                        event.getType() == GTEventType.TRACK_REMOVED) {
                     updateLine(event.getSource());
                 }
             }

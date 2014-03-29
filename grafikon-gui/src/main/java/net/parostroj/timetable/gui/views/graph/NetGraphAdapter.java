@@ -140,13 +140,12 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
     @Override
     protected mxCell getEdgeCell(Line edge) {
-        mxCell cell = new mxCell(edge);
+        mxCell cell = new LineCell(edge);
         cell.setEdge(true);
         cell.setId(null);
         cell.setGeometry(new mxGeometry());
         cell.getGeometry().setRelative(true);
-        // TODO update cell style after editing edge ...
-        cell.setStyle("endArrow=none;startArrow=none" + (edge.getTracks().size() == 1 ? "" : ";strokeWidth=2"));
+        cell.setStyle("endArrow=none;startArrow=none");
         return cell;
     }
 }
