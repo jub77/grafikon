@@ -12,7 +12,7 @@ import com.mxgraph.view.mxGraph;
 /**
  * Handler for inserting a new node.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class NodeInsertHandler extends mxMouseAdapter {
 

@@ -25,7 +25,7 @@ import com.mxgraph.util.mxXmlUtils;
 /**
  * Specific adapter for graph with nodes and lines.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 

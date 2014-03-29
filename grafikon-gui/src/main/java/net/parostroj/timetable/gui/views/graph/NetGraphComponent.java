@@ -18,7 +18,7 @@ import com.mxgraph.swing.handler.mxGraphHandler;
 /**
  * Custom graph component for net.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class NetGraphComponent extends mxGraphComponent {
 

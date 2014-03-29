@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 /**
  * Extended action with location information.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class ActionEventWithLocation extends ActionEvent {
 

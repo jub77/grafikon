@@ -3,7 +3,7 @@ package net.parostroj.timetable.filters;
 /**
  * Empty filter.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class EmptyFilter<T> implements ExtractionFilter<T, T> {
 

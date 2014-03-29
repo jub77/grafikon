@@ -9,7 +9,7 @@ import com.mxgraph.shape.mxStencilRegistry;
 /**
  * Cell for nodes.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class NodeCell extends mxCell {
 

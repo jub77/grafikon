@@ -7,7 +7,7 @@ import com.mxgraph.shape.mxStencil;
 /**
  * Makes width and height of the shape visible.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class NodeShape extends mxStencil {
 
