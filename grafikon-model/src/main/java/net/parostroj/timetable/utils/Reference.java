@@ -3,7 +3,7 @@ package net.parostroj.timetable.utils;
 /**
  * Reference.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public interface Reference<T> {
 
