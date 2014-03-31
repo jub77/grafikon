@@ -77,6 +77,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
             electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
+            managedFreightCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT));
             showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH)));
             emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_EMPTY)));
 
@@ -387,7 +388,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         });
         GridBagLayout gbl_optionsPanel = new GridBagLayout();
         gbl_optionsPanel.columnWeights = new double[]{0.0, 0.0};
-        gbl_optionsPanel.rowWeights = new double[]{0.0, 0.0};
+        gbl_optionsPanel.rowWeights = new double[]{0.0, 0.0, 0.0};
         optionsPanel.setLayout(gbl_optionsPanel);
         dieselCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_dieselCheckBox = new GridBagConstraints();
@@ -416,7 +417,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         electricCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_electricCheckBox = new GridBagConstraints();
         gbc_electricCheckBox.anchor = GridBagConstraints.WEST;
-        gbc_electricCheckBox.insets = new Insets(0, 0, 0, 5);
+        gbc_electricCheckBox.insets = new Insets(0, 0, 5, 5);
         gbc_electricCheckBox.gridx = 0;
         gbc_electricCheckBox.gridy = 1;
         optionsPanel.add(electricCheckBox, gbc_electricCheckBox);
@@ -426,6 +427,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         electricCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         showLengthCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_showLengthCheckBox = new GridBagConstraints();
+        gbc_showLengthCheckBox.insets = new Insets(0, 0, 5, 0);
         gbc_showLengthCheckBox.weightx = 1.0;
         gbc_showLengthCheckBox.anchor = GridBagConstraints.WEST;
         gbc_showLengthCheckBox.fill = GridBagConstraints.HORIZONTAL;
@@ -436,6 +438,19 @@ public class EditTrainDialog extends javax.swing.JDialog {
         showLengthCheckBox.setText(ResourceLoader.getString("create.train.show.station.length")); // NOI18N
         showLengthCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         showLengthCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        managedFreightCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.managed.freight")); // NOI18N
+        managedFreightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        managedFreightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        GridBagConstraints gbc_managedFreightCheckBox = new GridBagConstraints();
+        gbc_managedFreightCheckBox.weightx = 1.0;
+        gbc_managedFreightCheckBox.gridwidth = 2;
+        gbc_managedFreightCheckBox.anchor = GridBagConstraints.NORTHWEST;
+        gbc_managedFreightCheckBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_managedFreightCheckBox.insets = new Insets(0, 0, 0, 5);
+        gbc_managedFreightCheckBox.gridx = 0;
+        gbc_managedFreightCheckBox.gridy = 2;
+        optionsPanel.add(managedFreightCheckBox, gbc_managedFreightCheckBox);
         getContentPane().setLayout(layout);
 
         pack();
@@ -521,6 +536,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
             LOG.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
         }
 
+        // managed freight
+        train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
+
         this.setVisible(false);
     }
 
@@ -559,4 +577,5 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private GroupsComboBox groupsComboBox;
     private JCheckBox weightLimitCheckBox;
     private ValueWithUnitEditBox weightLimitEditBox;
+    private javax.swing.JCheckBox managedFreightCheckBox;
 }
