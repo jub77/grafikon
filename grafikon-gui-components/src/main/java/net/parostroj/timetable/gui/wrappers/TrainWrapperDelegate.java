@@ -12,11 +12,11 @@ import net.parostroj.timetable.model.TrainDiagram;
 public class TrainWrapperDelegate implements WrapperDelegate {
 
     public enum Type {
-        NAME, NAME_AND_END_NODES, NAME_AND_END_NODES_WITH_TIME;
+        NAME, NAME_AND_END_NODES, NAME_AND_END_NODES_WITH_TIME, NAME_AND_END_NODES_WITH_TIME_TWO_LINES;
     }
 
-    private Type type;
-    private TrainComparator comparator;
+    private final Type type;
+    private final TrainComparator comparator;
 
     public TrainWrapperDelegate(Type type, TrainDiagram diagram) {
         this.type = type;
@@ -49,8 +49,10 @@ public class TrainWrapperDelegate implements WrapperDelegate {
                         train.getName(),
                         train.getStartNode(),
                         train.getEndNode());
-            case NAME_AND_END_NODES_WITH_TIME:
-                return String.format("%s (%s[%s],%s[%s])",
+            case NAME_AND_END_NODES_WITH_TIME: case NAME_AND_END_NODES_WITH_TIME_TWO_LINES:
+                String format = type == Type.NAME_AND_END_NODES_WITH_TIME ?
+                        "%s (%s[%s],%s[%s])" : "%s%n%s[%s]-%s[%s]";
+                return String.format(format,
                         train.getName(),
                         train.getStartNode().getName(),
                         train.getTrainDiagram().getTimeConverter().convertIntToText(train.getStartTime()),
