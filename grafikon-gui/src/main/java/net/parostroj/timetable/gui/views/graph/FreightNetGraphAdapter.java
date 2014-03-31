@@ -3,8 +3,7 @@ package net.parostroj.timetable.gui.views.graph;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
-import net.parostroj.timetable.model.FreightNet.FreightNetNode;
+import net.parostroj.timetable.model.FreightNet;
 
 import org.jgrapht.ListenableGraph;
 
@@ -19,10 +18,10 @@ import com.mxgraph.view.mxGraphSelectionModel;
  *
  * @author jub
  */
-public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, FreightNetConnection> {
+public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, FreightNet.Connection> {
 
     static class Node extends mxCell {
-        public Node(FreightNetNode node) {
+        public Node(FreightNet.Node node) {
             super(node);
         }
 
@@ -33,7 +32,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
     }
 
     static class Connection extends mxCell {
-        public Connection(FreightNetConnection conn) {
+        public Connection(FreightNet.Connection conn) {
             super(conn);
         }
     }
@@ -41,10 +40,10 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
     private final SelectionListener connListener;
 
     public interface SelectionListener {
-        public void selectedConnections(Collection<FreightNetConnection> connections);
+        public void selectedConnections(Collection<FreightNet.Connection> connections);
     }
 
-    public FreightNetGraphAdapter(ListenableGraph<FreightNetNode, FreightNetConnection> graph, SelectionListener listener) {
+    public FreightNetGraphAdapter(ListenableGraph<FreightNet.Node, FreightNet.Connection> graph, SelectionListener listener) {
         super(graph);
         this.connListener = listener;
         this.setConnectableEdges(false);
@@ -66,17 +65,17 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
             public void invoke(Object sender, mxEventObject evt) {
                 mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
                 mxCell cell = (mxCell) mm.getCell();
-                if (cell != null && mm.getCells().length == 1 && cell.getValue() instanceof FreightNetConnection) {
-                    connListener.selectedConnections(Collections.singletonList((FreightNetConnection) cell.getValue()));
+                if (cell != null && mm.getCells().length == 1 && cell.getValue() instanceof Connection) {
+                    connListener.selectedConnections(Collections.singletonList((FreightNet.Connection) cell.getValue()));
                 } else {
-                    connListener.selectedConnections(Collections.<FreightNetConnection>emptyList());
+                    connListener.selectedConnections(Collections.<FreightNet.Connection>emptyList());
                 }
             }
         });
     }
 
     @Override
-    protected mxCell getVertexCell(FreightNetNode vertex) {
+    protected mxCell getVertexCell(FreightNet.Node vertex) {
         mxCell cell = new Node(vertex);
         cell.setVertex(true);
         cell.setId(null);
@@ -85,7 +84,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
     }
 
     @Override
-    protected mxCell getEdgeCell(FreightNetConnection edge) {
+    protected mxCell getEdgeCell(FreightNet.Connection edge) {
         mxCell cell = new Connection(edge);
         cell.setEdge(true);
         cell.setId(null);

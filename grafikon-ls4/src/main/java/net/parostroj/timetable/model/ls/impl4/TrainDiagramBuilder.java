@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
-import net.parostroj.timetable.model.FreightNet.FreightNetNode;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -87,7 +85,7 @@ public class TrainDiagramBuilder {
         this.diagram.setFreightNet(net);
         for (LSFreightNode lsNode : lsFreightNet.getNodes()) {
             Train train = diagram.getTrainById(lsNode.getTrain());
-            FreightNetNode node = diagram.getFreightNet().addTrain(train);
+            FreightNet.Node node = diagram.getFreightNet().addTrain(train);
             node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
             node.merge(lsNode.getAttributes().createAttributes(diagram));
         }
@@ -96,7 +94,7 @@ public class TrainDiagramBuilder {
             Train to = diagram.getTrainById(lsConnection.getTrainTo());
             TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
             TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
-            FreightNetConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
+            FreightNet.Connection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
             connection.merge(lsConnection.getAttributes().createAttributes(diagram));
         }
     }
