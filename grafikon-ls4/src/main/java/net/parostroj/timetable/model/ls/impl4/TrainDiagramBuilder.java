@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
+import net.parostroj.timetable.model.FreightNet.FreightNetNode;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -57,24 +59,46 @@ public class TrainDiagramBuilder {
         Net net = lsNet.createNet();
         this.diagram.setNet(net);
         // add line classes
-        if (lsNet.getLineClasses() != null)
+        if (lsNet.getLineClasses() != null) {
             for (LSLineClass lsLineClass : lsNet.getLineClasses()) {
                 net.addLineClass(lsLineClass.createLineClass());
             }
+        }
         // create nodes ...
-        if (lsNet.getNodes() != null)
+        if (lsNet.getNodes() != null) {
             for (LSNode lsNode : lsNet.getNodes()) {
                 Node node = lsNode.createNode(diagram);
                 net.addNode(node);
             }
+        }
         // create lines ...
-        if (lsNet.getLines() != null)
+        if (lsNet.getLines() != null) {
             for (LSLine lsLine : lsNet.getLines()) {
                 Line line = lsLine.createLine(diagram);
                 Node from = net.getNodeById(lsLine.getFrom());
                 Node to = net.getNodeById(lsLine.getTo());
                 net.addLine(from, to, line);
             }
+        }
+    }
+
+    public void setFreightNet(LSFreightNet lsFreightNet) throws LSException {
+        FreightNet net = lsFreightNet.createFreightNet(diagram);
+        this.diagram.setFreightNet(net);
+        for (LSFreightNode lsNode : lsFreightNet.getNodes()) {
+            Train train = diagram.getTrainById(lsNode.getTrain());
+            FreightNetNode node = diagram.getFreightNet().addTrain(train);
+            node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
+            node.merge(lsNode.getAttributes().createAttributes(diagram));
+        }
+        for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
+            Train from = diagram.getTrainById(lsConnection.getTrainFrom());
+            Train to = diagram.getTrainById(lsConnection.getTrainTo());
+            TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
+            TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
+            FreightNetConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
+            connection.merge(lsConnection.getAttributes().createAttributes(diagram));
+        }
     }
 
     public void setRoute(LSRoute lsRoute) throws LSException {

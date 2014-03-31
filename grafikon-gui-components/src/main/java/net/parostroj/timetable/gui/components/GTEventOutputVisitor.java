@@ -89,7 +89,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     public void visit(FreightNetEvent event) {
         try {
             str.append("FreightNet[");
-            str.append(Integer.toString(event.getSource().getTrainNodes().size())).append(" trains, ");
+            str.append(Integer.toString(event.getSource().getNodes().size())).append(" trains, ");
             str.append(Integer.toString(event.getSource().getConnections().size())).append(" connections]");
             if (full) {
                 str.append('\n');
