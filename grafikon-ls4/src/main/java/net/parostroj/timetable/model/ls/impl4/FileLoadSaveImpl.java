@@ -26,6 +26,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
+    private static final String FREIGHT_NET = "freight_net.xml";
     private static final String DATA_ROUTES = "routes/";
     private static final String DATA_TRAIN_TYPES = "train_types/";
     private static final String DATA_TRAINS = "trains/";
@@ -141,6 +142,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder.setTrainsCycle(lss.load(zipInput, LSTrainsCycle.class));
                 } else if (entry.getName().startsWith(DATA_CHANGES)) {
                     builder.setDiagramChangeSet(lss.load(zipInput, LSDiagramChangeSet.class));
+                } else if (entry.getName().startsWith(FREIGHT_NET)) {
+                    builder.setFreightNet(lss.load(zipInput, LSFreightNet.class));
                 } else if (entry.getName().startsWith(DATA_IMAGES)) {
                     if (entry.getName().endsWith(".xml"))
                         builder.addImage(lss.load(zipInput, LSImage.class));
@@ -229,6 +232,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 this.save(zipOutput, createEntryName(DATA_IMAGES, "xml", cnt++), new LSImage(image));
                 saveImages.saveTimetableImage(image, zipOutput);
             }
+            // save freight net
+            this.save(zipOutput, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
 
         } catch (IOException ex) {
             throw new LSException(ex);

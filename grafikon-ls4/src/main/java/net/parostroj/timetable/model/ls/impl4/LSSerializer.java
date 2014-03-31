@@ -16,11 +16,11 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * LSSerializer for versions 4.x.
- * 
+ *
  * @author jub
  */
 public class LSSerializer {
-    
+
     public static final boolean FORMATTED = true;
 
     private static JAXBContext context_i;
@@ -35,7 +35,7 @@ public class LSSerializer {
                 LSTrainType.class, LSTrain.class, LSTrainsCycle.class,
                 LSImage.class, LSTrainsData.class, LSEngineClass.class,
                 LSPenaltyTable.class, LSTextItem.class, LSDiagramChangeSet.class,
-                LSOutputTemplate.class
+                LSOutputTemplate.class, LSFreightNet.class
             });
         }
         return context_i;
