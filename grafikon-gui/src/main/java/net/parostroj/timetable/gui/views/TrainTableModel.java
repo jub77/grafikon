@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.views;
 
 import java.text.ParseException;
+import java.util.Collection;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -205,6 +206,17 @@ class TrainTableModel extends AbstractTableModel {
                 if (train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && interval.isNodeOwner()) {
                     retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
+                break;
+            case FREIGHT_TO_STATIONS:
+                Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(train, interval);
+                StringBuilder result = new StringBuilder();
+                for (Node node : nodes) {
+                    if (result.length() != 0) {
+                        result.append(",");
+                    }
+                    result.append(node.getAbbr());
+                }
+                retValue = result.toString();
                 break;
             // default (should not be reached)
             default:
