@@ -73,8 +73,15 @@ class TrainTableModel extends AbstractTableModel {
         // do not alow edit signals
         if (rowIndex % 2 == 0) {
             Node node = interval.getOwnerAsNode();
-            if (node.getType() == NodeType.SIGNAL)
+            if (node.getType() == NodeType.SIGNAL) {
                 return false;
+            }
+            if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.getIndex()) {
+                boolean managed = train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
+                if (!managed || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
+                    return false;
+                }
+            }
         }
         return TrainTableColumn.getColumn(columnIndex).isAllowedToEdit(rowIndex, lastRow, interval);
     }
@@ -191,6 +198,13 @@ class TrainTableModel extends AbstractTableModel {
             case IGNORE_LENGTH:
                 // ignore station length
                 retValue = interval.getAttributes().getBool(TimeInterval.ATTR_IGNORE_LENGTH);
+                break;
+            case MANAGED_FREIGHT:
+                // managed freight
+                retValue = false;
+                if (train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && interval.isNodeOwner()) {
+                    retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                }
                 break;
             // default (should not be reached)
             default:
@@ -328,6 +342,9 @@ class TrainTableModel extends AbstractTableModel {
                 // ignore length of the station in computation
                 interval.getAttributes().setBool(TimeInterval.ATTR_IGNORE_LENGTH, (Boolean) aValue);
                 this.fireTableRowsUpdated(rowIndex, rowIndex);
+                break;
+            case MANAGED_FREIGHT:
+                interval.getAttributes().setBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !((Boolean) aValue));
                 break;
             default:
                 break;

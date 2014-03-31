@@ -115,7 +115,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void setEnd(int end) {
         if (end != interval.getEnd()) {
-            this.interval = IntervalFactory.createInterval(interval.getStart(), end);
+            this.setIntervalImpl(interval.getStart(), end);
             this.setChanged();
         }
     }
@@ -132,7 +132,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void setStart(int start) {
         if (start != interval.getStart()) {
-            this.interval = IntervalFactory.createInterval(start, interval.getEnd());
+            this.setIntervalImpl(start, interval.getEnd());
             this.setChanged();
         }
     }
@@ -296,8 +296,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void shift(int timeShift) {
         if (timeShift != 0) {
-            this.interval = IntervalFactory.createInterval(interval.getStart() + timeShift, interval.getEnd()
-                    + timeShift);
+            this.setIntervalImpl(interval.getStart() + timeShift, interval.getEnd() + timeShift);
             this.setChanged();
         }
     }
@@ -308,7 +307,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public void move(int aStart) {
         if (aStart != this.interval.getStart()) {
             int length = this.getLength();
-            this.interval = IntervalFactory.createInterval(aStart, aStart + length);
+            this.setIntervalImpl(aStart, aStart + length);
             this.setChanged();
         }
     }
@@ -329,7 +328,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void setLength(int length) {
         if (length != this.getLength()) {
-            this.interval = IntervalFactory.createInterval(interval.getStart(), interval.getStart() + length);
+            this.setIntervalImpl(interval.getStart(), interval.getStart() + length);
             this.setChanged();
         }
     }
@@ -342,8 +341,15 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void setInterval(int start, int end) {
         if (start != interval.getStart() || end != interval.getEnd()) {
-            this.interval = IntervalFactory.createInterval(start, end);
+            this.setIntervalImpl(start, end);
             this.setChanged();
+        }
+    }
+
+    public void setIntervalImpl(int start, int end) {
+        this.interval = IntervalFactory.createInterval(start, end);
+        if (this.getLength() == 0) {
+            this.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
         }
     }
 
