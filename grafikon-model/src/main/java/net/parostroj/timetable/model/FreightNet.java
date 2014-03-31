@@ -10,7 +10,7 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
 /**
- * Managed freight data.
+ * Managed freight data. Id is shared with train diagram.
  *
  * @author jub
  */
@@ -99,12 +99,14 @@ public class FreightNet implements Visitable, ObjectWithId {
         }
     }
 
+    private final String id;
     private final TrainDiagram diagram;
     private final ListenableDirectedGraph<FreightNetNode, FreightNetConnection> netDelegate;
     private final AttributesListener attributesListener;
     private final GTListenerSupport<FreightNetListener, FreightNetEvent> listenerSupport;
 
     public FreightNet(TrainDiagram diagram) {
+        this.id = diagram.getId();
         this.diagram = diagram;
         this.netDelegate = new ListenableDirectedGraph<FreightNetNode, FreightNetConnection>(FreightNetConnection.class);
         this.attributesListener = new AttributesListener() {
@@ -223,7 +225,7 @@ public class FreightNet implements Visitable, ObjectWithId {
 
     @Override
     public String getId() {
-        return null;
+        return id;
     }
 
     @Override
