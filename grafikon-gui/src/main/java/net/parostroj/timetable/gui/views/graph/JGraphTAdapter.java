@@ -24,6 +24,7 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
 
     public JGraphTAdapter(final ListenableGraph<V, E> graphT) {
         super();
+        this.setGridEnabled(false);
         this.graphT = graphT;
         graphT.addGraphListener(this);
         insertJGraphT(graphT);
