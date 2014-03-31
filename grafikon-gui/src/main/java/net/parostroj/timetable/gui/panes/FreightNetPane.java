@@ -156,8 +156,8 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                                     if (cells != null) {
                                         for (Object cell : cells) {
                                             mxCell mxCell = (mxCell) cell;
-                                            if (mxCell.getValue() instanceof Node) {
-                                                Node node = (Node) mxCell.getValue();
+                                            if (mxCell.getValue() instanceof FreightNet.Node) {
+                                                FreightNet.Node node = (FreightNet.Node) mxCell.getValue();
 
                                                 int x = (int) (mxCell.getGeometry().getX());
                                                 int y = (int) (mxCell.getGeometry().getY());
