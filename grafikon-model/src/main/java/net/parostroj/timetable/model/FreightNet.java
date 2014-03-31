@@ -207,7 +207,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     private void removeNodeImpl(Node node) {
         if (node != null) {
             for (Connection conn : netDelegate.edgesOf(node)) {
-                netDelegate.removeEdge(conn);
+                this.removeConnectionImpl(conn);
             }
             netDelegate.removeVertex(node);
             this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_REMOVED, node));
