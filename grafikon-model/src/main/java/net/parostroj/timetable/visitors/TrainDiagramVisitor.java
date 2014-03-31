@@ -42,4 +42,6 @@ public interface TrainDiagramVisitor {
     public void visit(TrainsCycleType type);
 
     public void visit(Group group);
+
+    public void visit(FreightNet net);
 }

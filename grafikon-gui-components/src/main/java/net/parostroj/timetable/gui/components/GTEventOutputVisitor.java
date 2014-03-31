@@ -1,9 +1,12 @@
 package net.parostroj.timetable.gui.components;
 
 import java.io.IOException;
+
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +77,31 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getFromIndex() != 0 || event.getToIndex() != 0) {
                     str.append("    From index: ").append(Integer.toString(event.getFromIndex())).append('\n');
                     str.append("    To index  : ").append(Integer.toString(event.getToIndex())).append('\n');
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visit(FreightNetEvent event) {
+        try {
+            str.append("FreightNet[");
+            str.append(Integer.toString(event.getSource().getTrainNodes().size())).append(" trains, ");
+            str.append(Integer.toString(event.getSource().getConnections().size())).append(" connections]");
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getObject() instanceof FreightNetNode) {
+                    str.append("    Train: ").append(((FreightNetNode) event.getObject()).getTrain().getName())
+                            .append('\n');
+                } else if (event.getObject() instanceof FreightNetConnection) {
+                    FreightNetConnection connection = (FreightNetConnection) event.getObject();
+                    String from = connection.getFromTrain().getName();
+                    String to = connection.getToTrain().getName();
+                    String text = String.format("%s - %s (%s)", from, to, connection.getNode().getAbbr());
+                    str.append("    Connection: ").append(text).append('\n');
                 }
             }
         } catch (IOException e) {
