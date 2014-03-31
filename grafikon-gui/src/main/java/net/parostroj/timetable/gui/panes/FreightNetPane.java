@@ -19,6 +19,7 @@ import net.parostroj.timetable.gui.views.graph.FreightNetGraphComponent;
 import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
 import net.parostroj.timetable.model.FreightNet.FreightNetNode;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.Tuple;
@@ -26,6 +27,9 @@ import net.parostroj.timetable.utils.Tuple;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.*;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxCellState;
 
 public class FreightNetPane extends javax.swing.JPanel implements StorableGuiData {
@@ -146,6 +150,34 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                                 return result;
                             }
                         });
+                        graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
+                            @Override
+                            public void invoke(Object sender, mxEventObject evt) {
+                                if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
+                                    Object[] cells = (Object[]) evt.getProperty("cells");
+                                    if (cells != null) {
+                                        for (Object cell : cells) {
+                                            mxCell mxCell = (mxCell) cell;
+                                            if (mxCell.getValue() instanceof FreightNetNode) {
+                                                FreightNetNode node = (FreightNetNode) mxCell.getValue();
+
+                                                int x = (int) (mxCell.getGeometry().getX());
+                                                int y = (int) (mxCell.getGeometry().getY());
+                                                node.setLocation(new Location(x, y));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        graph.getModel().beginUpdate();
+                        try {
+                            for (FreightNetNode node : diagram.getFreightNet().getNodes()) {
+                                updateNodeLocation(node);
+                            }
+                        } finally {
+                            graph.getModel().endUpdate();
+                        }
                     }
                 }
             }
@@ -156,18 +188,30 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                     updateNode(event.getSource());
                 }
             }
+
+            @Override
+            public void processFreightNetEvent(FreightNetEvent event) {
+                if (event.getType() == GTEventType.FREIGHT_NET_TRAIN_ADDED) {
+                    updateNodeLocation((FreightNetNode) event.getObject());
+                }
+            }
         });
     }
 
     private void updateNode(Train train) {
         FreightNetNode node = diagram.getFreightNet().getNode(train);
-        graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
+        mxCell cell = graph.getVertexToCellMap().get(node);
+        graph.cellLabelChanged(cell, node, true);
+    }
+
+    private void updateNodeLocation(FreightNetNode node) {
+        mxCell cell = graph.getVertexToCellMap().get(node);
+        graph.moveCells(new Object[] { cell }, node.getLocation().getX(), node.getLocation().getY());
     }
 
     private void createConnection(FreightNetNode from, FreightNetNode to) {
         // compute common node
         // TODO include selection if more than one node is common
-        System.out.println(from + " -> " + to);
         Tuple<TimeInterval> selected = null;
         for (TimeInterval toInterval : FilteredIterableFactory.getNodeIntervalsFreightTo(to.getTrain().getTimeIntervalList())) {
             for (TimeInterval fromInterval : FilteredIterableFactory.getNodeIntervalsFreightFrom(from.getTrain().getTimeIntervalList())) {
@@ -184,7 +228,6 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                 break;
             }
         }
-        System.out.println("Selected - > " + selected);
         if (selected != null) {
             diagram.getFreightNet().addConnection(from, to, selected.first, selected.second);
         }
