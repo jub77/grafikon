@@ -21,4 +21,5 @@ public interface TrainAttributes {
     public static final String ATTR_TOP_SPEED = "topSpeed";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_COMPLETE_NAME = "completeName";
+    public static final String ATTR_MANAGED_FREIGHT = "managed.freight";
 }
