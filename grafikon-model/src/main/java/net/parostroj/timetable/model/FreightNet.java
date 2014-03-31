@@ -24,6 +24,7 @@ public class FreightNet implements Visitable, ObjectWithId {
     public class FreightNetNode extends Attributes implements ObjectWithId, Visitable {
 
         private final Train train;
+        private Location location;
 
         FreightNetNode(Train train, AttributesListener listener) {
             this.train = train;
@@ -32,6 +33,14 @@ public class FreightNet implements Visitable, ObjectWithId {
 
         public Train getTrain() {
             return train;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        public Location getLocation() {
+            return location;
         }
 
         @Override
