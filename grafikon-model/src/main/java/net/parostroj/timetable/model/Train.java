@@ -342,6 +342,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
                 if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
                     Train.this.recalculate();
                 }
+                if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
+                    for (TimeInterval interval : timeIntervalList) {
+                        interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                    }
+                }
             }
         };
         this.attributes.addListener(attributesListener);
