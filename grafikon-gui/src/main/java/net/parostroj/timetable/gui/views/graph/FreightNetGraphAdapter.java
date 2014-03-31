@@ -66,7 +66,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
             public void invoke(Object sender, mxEventObject evt) {
                 mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
                 mxCell cell = (mxCell) mm.getCell();
-                if (cell != null && mm.getCells().length == 1 && cell.getValue() instanceof Connection) {
+                if (cell != null && mm.getCells().length == 1 && cell.getValue() instanceof FreightNet.Connection) {
                     connListener.selectedConnections(Collections.singletonList((FreightNet.Connection) cell.getValue()));
                 } else {
                     connListener.selectedConnections(Collections.<FreightNet.Connection>emptyList());
