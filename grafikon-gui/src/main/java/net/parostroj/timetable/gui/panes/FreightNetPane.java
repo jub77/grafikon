@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import net.parostroj.timetable.actions.FilteredIterableFactory;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -168,19 +169,15 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
         // TODO include selection if more than one node is common
         System.out.println(from + " -> " + to);
         Tuple<TimeInterval> selected = null;
-        for (TimeInterval toInterval : to.getTrain().getTimeIntervalList()) {
-            if (toInterval.isNodeOwner() && (toInterval.getLength() > 0 || toInterval.isFirst()) && toInterval.getOwnerAsNode().getType() != NodeType.STATION_HIDDEN) {
-                for (TimeInterval fromInterval : from.getTrain().getTimeIntervalList()) {
-                    if (fromInterval.isNodeOwner() && (fromInterval.getLength() > 0 || fromInterval.isLast()) && fromInterval.getOwnerAsNode().getType() != NodeType.STATION_HIDDEN) {
-                        Node toNode = toInterval.getOwnerAsNode();
-                        Node fromNode = fromInterval.getOwnerAsNode();
-                        if (toNode == fromNode && fromInterval.getEnd() < toInterval.getStart()) {
-                            selected = new Tuple<TimeInterval>(fromInterval, toInterval);
-                        }
-                    }
-                    if (selected != null) {
-                        break;
-                    }
+        for (TimeInterval toInterval : FilteredIterableFactory.getNodeIntervalsFreightTo(to.getTrain().getTimeIntervalList())) {
+            for (TimeInterval fromInterval : FilteredIterableFactory.getNodeIntervalsFreightFrom(from.getTrain().getTimeIntervalList())) {
+                Node toNode = toInterval.getOwnerAsNode();
+                Node fromNode = fromInterval.getOwnerAsNode();
+                if (toNode == fromNode && fromInterval.getEnd() < toInterval.getStart()) {
+                    selected = new Tuple<TimeInterval>(fromInterval, toInterval);
+                }
+                if (selected != null) {
+                    break;
                 }
             }
             if (selected != null) {
