@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
+import net.parostroj.timetable.model.FreightNet.FreightNetNode;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
 
