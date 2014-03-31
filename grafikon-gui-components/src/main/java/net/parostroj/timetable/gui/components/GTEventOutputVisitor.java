@@ -99,9 +99,9 @@ public class GTEventOutputVisitor implements EventVisitor {
                             .append('\n');
                 } else if (event.getObject() instanceof FreightNetConnection) {
                     FreightNetConnection connection = (FreightNetConnection) event.getObject();
-                    String from = connection.getFromTrain().getName();
-                    String to = connection.getToTrain().getName();
-                    String text = String.format("%s - %s (%s)", from, to, connection.getNode().getAbbr());
+                    String from = connection.getFrom().getTrain().getName();
+                    String to = connection.getTo().getTrain().getName();
+                    String text = String.format("%s - %s (%s)", from, to, connection.getFrom().getOwnerAsNode().getAbbr());
                     str.append("    Connection: ").append(text).append('\n');
                 }
             }

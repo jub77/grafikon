@@ -57,42 +57,36 @@ public class FreightNet implements Visitable, ObjectWithId {
      */
     public class FreightNetConnection extends Attributes implements ObjectWithId, Visitable {
 
-        private final Node node;
-        private final Train fromTrain;
-        private final Train toTrain;
+        private final TimeInterval from;
+        private final TimeInterval to;
 
-        FreightNetConnection(Train fromTrain, Train toTrain, Node node, AttributesListener listener) {
-            this.fromTrain = fromTrain;
-            this.toTrain = toTrain;
-            this.node = node;
+        FreightNetConnection(TimeInterval from, TimeInterval to, AttributesListener listener) {
+            this.from = from;
+            this.to = to;
             this.addListener(listener);
-        }
-
-        public Node getNode() {
-            return node;
-        }
-
-        public Train getFromTrain() {
-            return fromTrain;
-        }
-
-        public Train getToTrain() {
-            return toTrain;
         }
 
         @Override
         public String getId() {
-            return node.getId();
+            return from.getTrain().getId();
+        }
+
+        public TimeInterval getFrom() {
+            return from;
+        }
+
+        public TimeInterval getTo() {
+            return to;
         }
 
         @Override
         public void accept(TrainDiagramVisitor visitor) {
-            visitor.visit(node);
+            visitor.visit(from.getOwnerAsNode());
         }
 
         @Override
         public String toString() {
-            return node.getAbbr();
+            return from.getOwnerAsNode().getAbbr();
         }
     }
 
@@ -129,15 +123,15 @@ public class FreightNet implements Visitable, ObjectWithId {
         this.removeNodeImpl(found);
     }
 
-    public void addConnection(Train from, Train to) {
-        this.addConnection(from, to, null);
+    public void addConnection(TimeInterval from, TimeInterval to) {
+        FreightNetNode fromNode = this.getNodeImpl(from.getTrain());
+        FreightNetNode toNode = this.getNodeImpl(to.getTrain());
+        FreightNetConnection conn = new FreightNetConnection(from, to, attributesListener);
+        this.addConnectionImpl(fromNode, toNode, conn);
     }
 
-    public void addConnection(Train from, Train to, Node node) {
-        FreightNetNode fromNode = this.getNodeImpl(from);
-        FreightNetNode toNode = this.getNodeImpl(to);
-        FreightNetConnection conn = new FreightNetConnection(from, to, node, attributesListener);
-        this.addConnectionImpl(fromNode, toNode, conn);
+    public void addConnection(FreightNetNode fromNode, FreightNetNode toNode, TimeInterval from, TimeInterval to) {
+        this.addConnectionImpl(fromNode, toNode, new FreightNetConnection(from, to, attributesListener));
     }
 
     public void removeConnection(Train from, Train to) {

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 import javax.swing.*;
@@ -16,13 +17,15 @@ import net.parostroj.timetable.gui.views.graph.FreightNetGraphAdapter;
 import net.parostroj.timetable.gui.views.graph.FreightNetGraphComponent;
 import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
 import net.parostroj.timetable.model.FreightNet.FreightNetNode;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.utils.Tuple;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.swing.handler.*;
+import com.mxgraph.view.mxCellState;
 
 public class FreightNetPane extends javax.swing.JPanel implements StorableGuiData {
 
@@ -109,6 +112,39 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                         panel.add(BorderLayout.CENTER, graphOutline);
 
                         selectionHandler = new mxRubberband(graphComponent);
+
+                        mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
+                        mxCellMarker marker = connectionHandler.getMarker();
+                        marker.setHotspot(1.0);
+                        connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
+                            @Override
+                            protected Object createCell(mxCellState startState, String style) {
+                                mxCell cell = (mxCell) super.createCell(startState, style);
+                                if (graph.getModel().isEdge(cell)) {
+                                    cell.setStyle((style == null || "".equals(style) ? "" : style + ";")
+                                            + "endArrow=classic;startArrow=none");
+                                }
+                                return cell;
+                            }
+
+                            @Override
+                            public Object stop(boolean commit, MouseEvent e) {
+                                Object result = super.stop(commit, e);
+                                if (commit && result instanceof mxCell && ((mxCell) result).isEdge()) {
+                                    // check if the connection is possible an create a new connection
+
+
+                                    mxCell cell = (mxCell) result;
+                                    FreightNetNode from = (FreightNetNode) cell.getSource().getValue();
+                                    FreightNetNode to = (FreightNetNode) cell.getTarget().getValue();
+
+                                    createConnection(from, to);
+
+                                    graph.removeCells(new Object[] { result });
+                                }
+                                return result;
+                            }
+                        });
                     }
                 }
             }
@@ -125,5 +161,35 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     private void updateNode(Train train) {
         FreightNetNode node = diagram.getFreightNet().getNode(train);
         graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
+    }
+
+    private void createConnection(FreightNetNode from, FreightNetNode to) {
+        // compute common node
+        // TODO include selection if more than one node is common
+        System.out.println(from + " -> " + to);
+        Tuple<TimeInterval> selected = null;
+        for (TimeInterval toInterval : to.getTrain().getTimeIntervalList()) {
+            if (toInterval.isNodeOwner() && (toInterval.getLength() > 0 || toInterval.isFirst()) && toInterval.getOwnerAsNode().getType() != NodeType.STATION_HIDDEN) {
+                for (TimeInterval fromInterval : from.getTrain().getTimeIntervalList()) {
+                    if (fromInterval.isNodeOwner() && (fromInterval.getLength() > 0 || fromInterval.isLast()) && fromInterval.getOwnerAsNode().getType() != NodeType.STATION_HIDDEN) {
+                        Node toNode = toInterval.getOwnerAsNode();
+                        Node fromNode = fromInterval.getOwnerAsNode();
+                        if (toNode == fromNode && fromInterval.getEnd() < toInterval.getStart()) {
+                            selected = new Tuple<TimeInterval>(fromInterval, toInterval);
+                        }
+                    }
+                    if (selected != null) {
+                        break;
+                    }
+                }
+            }
+            if (selected != null) {
+                break;
+            }
+        }
+        System.out.println("Selected - > " + selected);
+        if (selected != null) {
+            diagram.getFreightNet().addConnection(from, to, selected.first, selected.second);
+        }
     }
 }
