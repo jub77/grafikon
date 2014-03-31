@@ -2,14 +2,13 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.TrainDiagram;
+
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -116,7 +115,7 @@ public class LSNode {
     public Node createNode(TrainDiagram diagram) throws LSException {
         Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
         node.setAttributes(attributes.createAttributes(diagram));
-        node.setLocation(new Node.Location(x, y));
+        node.setLocation(new Location(x, y));
         // tracks
         if (this.tracks != null)
             for (LSNodeTrack track : this.tracks) {

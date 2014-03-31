@@ -106,7 +106,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), "1");
                 track.setPlatform(true);
                 n.addTrack(track);
-                n.setLocation(new Node.Location(location.x, location.y));
+                n.setLocation(new Location(location.x, location.y));
                 model.getDiagram().getNet().addNode(n);
             }
         }
@@ -687,7 +687,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
                         int x = (int) (mxCell.getGeometry().getX());
                         int y = (int) (mxCell.getGeometry().getY());
-                        node.setLocation(new Node.Location(x, y));
+                        node.setLocation(new Location(x, y));
                     }
                 }
             }
