@@ -6,7 +6,7 @@ import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
 /**
@@ -21,7 +21,7 @@ public class FreightNet implements Visitable, ObjectWithId {
      *
      * @author jub
      */
-    public class FreightNetNode extends Attributes {
+    public class FreightNetNode extends Attributes implements ObjectWithId, Visitable {
 
         private final Train train;
 
@@ -33,6 +33,21 @@ public class FreightNet implements Visitable, ObjectWithId {
         public Train getTrain() {
             return train;
         }
+
+        @Override
+        public String getId() {
+            return train.getId();
+        }
+
+        @Override
+        public void accept(TrainDiagramVisitor visitor) {
+            visitor.visit(train);
+        }
+
+        @Override
+        public String toString() {
+            return train.getName();
+        }
     }
 
     /**
@@ -40,7 +55,7 @@ public class FreightNet implements Visitable, ObjectWithId {
      *
      * @author jub
      */
-    public class FreightNetConnection extends Attributes {
+    public class FreightNetConnection extends Attributes implements ObjectWithId, Visitable {
 
         private final Node node;
         private final Train fromTrain;
@@ -63,6 +78,21 @@ public class FreightNet implements Visitable, ObjectWithId {
 
         public Train getToTrain() {
             return toTrain;
+        }
+
+        @Override
+        public String getId() {
+            return node.getId();
+        }
+
+        @Override
+        public void accept(TrainDiagramVisitor visitor) {
+            visitor.visit(node);
+        }
+
+        @Override
+        public String toString() {
+            return node.getAbbr();
         }
     }
 
@@ -124,6 +154,10 @@ public class FreightNet implements Visitable, ObjectWithId {
         return netDelegate.edgeSet();
     }
 
+    public FreightNetNode getNode(Train train) {
+        return this.getNodeImpl(train);
+    }
+
     private FreightNetNode getNodeImpl(Train train) {
         FreightNetNode found = null;
         // get node with train
@@ -163,7 +197,7 @@ public class FreightNet implements Visitable, ObjectWithId {
         }
     }
 
-    public DirectedGraph<FreightNetNode, FreightNetConnection> getGraph() {
+    public ListenableGraph<FreightNetNode, FreightNetConnection> getGraph() {
         return netDelegate;
     }
 
