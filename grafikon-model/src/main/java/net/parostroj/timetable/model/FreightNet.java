@@ -59,7 +59,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
         @Override
         public String toString() {
-            return train.getName();
+            return String.format("%s%n%s-%s", train.getName(), train.getStartNode().getAbbr(),
+                    train.getEndNode().getAbbr());
         }
     }
 

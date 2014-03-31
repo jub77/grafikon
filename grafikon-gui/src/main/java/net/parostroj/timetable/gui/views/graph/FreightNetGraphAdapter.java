@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui.views.graph;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.parostroj.timetable.actions.TrainComparator;
+import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.model.FreightNet;
 
 import org.jgrapht.ListenableGraph;
@@ -90,5 +92,30 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
         cell.setGeometry(new mxGeometry());
         cell.getGeometry().setRelative(true);
         return cell;
+    }
+
+    @Override
+    public boolean isAutoSizeCell(Object cell) {
+        return true;
+    }
+
+    @Override
+    public String convertValueToString(Object cell) {
+        mxCell mxCell = (mxCell) cell;
+        String value;
+        if (mxCell.getValue() instanceof FreightNet.Connection) {
+            FreightNet.Connection c = (FreightNet.Connection) mxCell.getValue();
+            net.parostroj.timetable.model.Node node = c.getFrom().getOwnerAsNode();
+            value = String.format("%s [%s]->[%s]", node.getName(),
+                    node.getTrainDiagram().getTimeConverter().convertIntToText(c.getFrom().getStart()),
+                    node.getTrainDiagram().getTimeConverter().convertIntToText(c.getTo().getEnd()));
+        } else if (mxCell.getValue() instanceof FreightNet.Node) {
+            TrainWrapperDelegate d = new TrainWrapperDelegate(
+                    TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME_TWO_LINES, (TrainComparator) null);
+            value = d.toString(((FreightNet.Node) mxCell.getValue()).getTrain());
+        } else {
+            value = "";
+        }
+        return value;
     }
 }
