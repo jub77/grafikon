@@ -38,6 +38,11 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
+    public void visit(FreightNetEvent event) {
+        tracked = true;
+    }
+
+    @Override
     public void visit(NodeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE: case TRACK_ADDED: case TRACK_ATTRIBUTE: case TRACK_REMOVED:

@@ -21,6 +21,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final String id;
     /** Net. */
     private Net net;
+    /** Freight net. */
+    private final FreightNet freightNet;
     /** Predefined routes. */
     private final List<Route> routes;
     /** Trains. */
@@ -90,6 +92,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
+        this.freightNet = new FreightNet(this);
+        this.freightNet.addListener(listener);
         this.validators = new ArrayList<TrainDiagramValidator>();
         this.validators.add(new TrainNamesValidator(this));
         this.validators.add(new TrainIntervalsValidator());
@@ -244,6 +248,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public Group getGroupById(String id) {
         return getById(id, groups);
+    }
+
+    public FreightNet getFreightNet() {
+        return freightNet;
     }
 
     private <T extends ObjectWithId> T getById(String id, Collection<T> items) {

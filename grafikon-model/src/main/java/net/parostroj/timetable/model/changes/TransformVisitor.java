@@ -13,8 +13,8 @@ import net.parostroj.timetable.visitors.Visitable;
 public class TransformVisitor implements EventVisitor {
 
     private DiagramChange change;
-    private EventToChangeConvert converter = new EventToChangeConvert();
-    private NamesVisitor names = new NamesVisitor();
+    private final EventToChangeConvert converter = new EventToChangeConvert();
+    private final NamesVisitor names = new NamesVisitor();
 
     @Override
     public void visit(TrainDiagramEvent event) {
@@ -42,6 +42,20 @@ public class TransformVisitor implements EventVisitor {
             if (action == null)
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
+            // get name
+            change.setObject(this.getObjectStr(event.getObject()));
+        }
+    }
+
+    @Override
+    public void visit(FreightNetEvent event) {
+        DiagramChange.Type type = converter.getType(event.getType());
+        DiagramChange.Action action = converter.getAction(event.getType());
+        if (type != null) {
+            if (action == null) {
+                throw new IllegalArgumentException("Action missing: " + event.getType());
+            }
+            change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
         }

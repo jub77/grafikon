@@ -102,4 +102,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(Group group) {
         name = group.getName();
     }
+
+    @Override
+    public void visit(FreightNet net) {
+        name = null;
+    }
 }
