@@ -22,12 +22,12 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
      *
      * @author jub
      */
-    public class FreightNetNode extends Attributes implements ObjectWithId, Visitable {
+    public class Node extends Attributes implements ObjectWithId, Visitable {
 
         private final Train train;
         private Location location;
 
-        FreightNetNode(Train train, AttributesListener listener) {
+        Node(Train train, AttributesListener listener) {
             this.train = train;
             this.addListener(listener);
             this.location = new Location(0, 0);
@@ -68,12 +68,12 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
      *
      * @author jub
      */
-    public class FreightNetConnection extends Attributes implements ObjectWithId, Visitable {
+    public class Connection extends Attributes implements ObjectWithId, Visitable {
 
         private final TimeInterval from;
         private final TimeInterval to;
 
-        FreightNetConnection(TimeInterval from, TimeInterval to, AttributesListener listener) {
+        Connection(TimeInterval from, TimeInterval to, AttributesListener listener) {
             this.from = from;
             this.to = to;
             this.addListener(listener);
@@ -105,13 +105,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private final String id;
     private Attributes attributes;
-    private final ListenableDirectedGraph<FreightNetNode, FreightNetConnection> netDelegate;
+    private final ListenableDirectedGraph<Node, Connection> netDelegate;
     private final AttributesListener attributesListener;
     private final GTListenerSupport<FreightNetListener, FreightNetEvent> listenerSupport;
 
     public FreightNet(String id) {
         this.id = id;
-        this.netDelegate = new ListenableDirectedGraph<FreightNetNode, FreightNetConnection>(FreightNetConnection.class);
+        this.netDelegate = new ListenableDirectedGraph<Node, Connection>(Connection.class);
         this.attributesListener = new AttributesListener() {
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
@@ -128,56 +128,56 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.setAttributes(new Attributes());
     }
 
-    public FreightNetNode addTrain(Train train) {
-        FreightNetNode node = new FreightNetNode(train, attributesListener);
+    public Node addTrain(Train train) {
+        Node node = new Node(train, attributesListener);
         this.addNodeImpl(node);
         return node;
     }
 
-    public FreightNetNode removeTrain(Train train) {
-        FreightNetNode found = this.getNodeImpl(train);
+    public Node removeTrain(Train train) {
+        Node found = this.getNodeImpl(train);
         this.removeNodeImpl(found);
         return found;
     }
 
-    public FreightNetConnection addConnection(TimeInterval from, TimeInterval to) {
-        FreightNetNode fromNode = this.getNodeImpl(from.getTrain());
-        FreightNetNode toNode = this.getNodeImpl(to.getTrain());
-        FreightNetConnection conn = new FreightNetConnection(from, to, attributesListener);
+    public Connection addConnection(TimeInterval from, TimeInterval to) {
+        Node fromNode = this.getNodeImpl(from.getTrain());
+        Node toNode = this.getNodeImpl(to.getTrain());
+        Connection conn = new Connection(from, to, attributesListener);
         this.addConnectionImpl(fromNode, toNode, conn);
         return conn;
     }
 
-    public FreightNetConnection addConnection(FreightNetNode fromNode, FreightNetNode toNode, TimeInterval from, TimeInterval to) {
-        FreightNetConnection conn = new FreightNetConnection(from, to, attributesListener);
+    public Connection addConnection(Node fromNode, Node toNode, TimeInterval from, TimeInterval to) {
+        Connection conn = new Connection(from, to, attributesListener);
         this.addConnectionImpl(fromNode, toNode, conn);
         return conn;
     }
 
-    public FreightNetConnection removeConnection(Train from, Train to) {
-        FreightNetNode fromNode = this.getNodeImpl(from);
-        FreightNetNode toNode = this.getNodeImpl(to);
-        FreightNetConnection conn = netDelegate.getEdge(fromNode, toNode);
+    public Connection removeConnection(Train from, Train to) {
+        Node fromNode = this.getNodeImpl(from);
+        Node toNode = this.getNodeImpl(to);
+        Connection conn = netDelegate.getEdge(fromNode, toNode);
         this.removeConnectionImpl(conn);
         return conn;
     }
 
-    public Collection<FreightNetNode> getNodes() {
+    public Collection<Node> getNodes() {
         return netDelegate.vertexSet();
     }
 
-    public Collection<FreightNetConnection> getConnections() {
+    public Collection<Connection> getConnections() {
         return netDelegate.edgeSet();
     }
 
-    public FreightNetNode getNode(Train train) {
+    public Node getNode(Train train) {
         return this.getNodeImpl(train);
     }
 
-    private FreightNetNode getNodeImpl(Train train) {
-        FreightNetNode found = null;
+    private Node getNodeImpl(Train train) {
+        Node found = null;
         // get node with train
-        for (FreightNetNode node : netDelegate.vertexSet()) {
+        for (Node node : netDelegate.vertexSet()) {
             if (node.getTrain() == train) {
                 found = node;
                 break;
@@ -186,26 +186,26 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return found;
     }
 
-    private void addConnectionImpl(FreightNetNode from, FreightNetNode to, FreightNetConnection conn) {
+    private void addConnectionImpl(Node from, Node to, Connection conn) {
         netDelegate.addEdge(from, to, conn);
         this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_ADDED, conn));
     }
 
-    private void removeConnectionImpl(FreightNetConnection conn) {
+    private void removeConnectionImpl(Connection conn) {
         boolean removed = netDelegate.removeEdge(conn);
         if (removed) {
             this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_REMOVED, conn));
         }
     }
 
-    private void addNodeImpl(FreightNetNode node) {
+    private void addNodeImpl(Node node) {
         netDelegate.addVertex(node);
         this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_ADDED, node));
     }
 
-    private void removeNodeImpl(FreightNetNode node) {
+    private void removeNodeImpl(Node node) {
         if (node != null) {
-            for (FreightNetConnection conn : netDelegate.edgesOf(node)) {
+            for (Connection conn : netDelegate.edgesOf(node)) {
                 netDelegate.removeEdge(conn);
             }
             netDelegate.removeVertex(node);
@@ -213,7 +213,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
     }
 
-    public ListenableGraph<FreightNetNode, FreightNetConnection> getGraph() {
+    public ListenableGraph<Node, Connection> getGraph() {
         return netDelegate;
     }
 

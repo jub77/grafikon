@@ -16,8 +16,6 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.graph.FreightNetGraphAdapter;
 import net.parostroj.timetable.gui.views.graph.FreightNetGraphComponent;
-import net.parostroj.timetable.model.FreightNet.FreightNetConnection;
-import net.parostroj.timetable.model.FreightNet.FreightNetNode;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
@@ -106,7 +104,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
 
                         graph = new FreightNetGraphAdapter(diagram.getFreightNet().getGraph(), new FreightNetGraphAdapter.SelectionListener() {
                             @Override
-                            public void selectedConnections(Collection<FreightNetConnection> connections) {
+                            public void selectedConnections(Collection<FreightNet.Connection> connections) {
                                 removeButton.setEnabled(!connections.isEmpty());
                             }
                         });
@@ -140,8 +138,8 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
 
 
                                     mxCell cell = (mxCell) result;
-                                    FreightNetNode from = (FreightNetNode) cell.getSource().getValue();
-                                    FreightNetNode to = (FreightNetNode) cell.getTarget().getValue();
+                                    FreightNet.Node from = (FreightNet.Node) cell.getSource().getValue();
+                                    FreightNet.Node to = (FreightNet.Node) cell.getTarget().getValue();
 
                                     createConnection(from, to);
 
@@ -158,8 +156,8 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                                     if (cells != null) {
                                         for (Object cell : cells) {
                                             mxCell mxCell = (mxCell) cell;
-                                            if (mxCell.getValue() instanceof FreightNetNode) {
-                                                FreightNetNode node = (FreightNetNode) mxCell.getValue();
+                                            if (mxCell.getValue() instanceof Node) {
+                                                Node node = (Node) mxCell.getValue();
 
                                                 int x = (int) (mxCell.getGeometry().getX());
                                                 int y = (int) (mxCell.getGeometry().getY());
@@ -172,7 +170,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                         });
                         graph.getModel().beginUpdate();
                         try {
-                            for (FreightNetNode node : diagram.getFreightNet().getNodes()) {
+                            for (FreightNet.Node node : diagram.getFreightNet().getNodes()) {
                                 updateNodeLocation(node);
                             }
                         } finally {
@@ -192,24 +190,24 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
             @Override
             public void processFreightNetEvent(FreightNetEvent event) {
                 if (event.getType() == GTEventType.FREIGHT_NET_TRAIN_ADDED) {
-                    updateNodeLocation((FreightNetNode) event.getObject());
+                    updateNodeLocation((FreightNet.Node) event.getObject());
                 }
             }
         });
     }
 
     private void updateNode(Train train) {
-        FreightNetNode node = diagram.getFreightNet().getNode(train);
+        FreightNet.Node node = diagram.getFreightNet().getNode(train);
         mxCell cell = graph.getVertexToCellMap().get(node);
         graph.cellLabelChanged(cell, node, true);
     }
 
-    private void updateNodeLocation(FreightNetNode node) {
+    private void updateNodeLocation(FreightNet.Node node) {
         mxCell cell = graph.getVertexToCellMap().get(node);
         graph.moveCells(new Object[] { cell }, node.getLocation().getX(), node.getLocation().getY());
     }
 
-    private void createConnection(FreightNetNode from, FreightNetNode to) {
+    private void createConnection(FreightNet.Node from, FreightNet.Node to) {
         // compute common node
         // TODO include selection if more than one node is common
         Tuple<TimeInterval> selected = null;

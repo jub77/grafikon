@@ -20,7 +20,7 @@ public class LSFreightNode {
     public LSFreightNode() {
     }
 
-    public LSFreightNode(FreightNet.FreightNetNode node) {
+    public LSFreightNode(FreightNet.Node node) {
         this.train = node.getTrain().getId();
         this.x = node.getLocation().getX();
         this.y = node.getLocation().getY();

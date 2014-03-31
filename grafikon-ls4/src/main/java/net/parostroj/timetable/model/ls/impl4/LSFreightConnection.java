@@ -21,7 +21,7 @@ public class LSFreightConnection {
     public LSFreightConnection() {
     }
 
-    public LSFreightConnection(FreightNet.FreightNetConnection connection) {
+    public LSFreightConnection(FreightNet.Connection connection) {
         this.trainFrom = connection.getFrom().getTrain().getId();
         this.trainTo = connection.getTo().getTrain().getId();
         this.intervalFrom = connection.getFrom().getId();
