@@ -27,7 +27,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
 
         @Override
         public String getStyle() {
-            return "spacing=4;align=center;verticalAlign=middle";
+            return "spacing=5;align=center;verticalAlign=middle";
         }
     }
 
@@ -56,7 +56,6 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
         this.setCellsResizable(false);
         this.setCellsCloneable(false);
         this.setCellsEditable(false);
-        this.setGridEnabled(false);
         this.setCellsDisconnectable(false);
         this.setDisconnectOnMove(false);
 
