@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -37,7 +38,9 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
 
         public void setLocation(Location location) {
-            this.location = location;
+            if (!Conversions.compareWithNull(location, this.location)) {
+                this.location = location;
+            }
         }
 
         public Location getLocation() {

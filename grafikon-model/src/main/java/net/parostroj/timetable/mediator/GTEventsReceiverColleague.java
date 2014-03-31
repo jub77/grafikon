@@ -99,7 +99,7 @@ public class GTEventsReceiverColleague extends AbstractColleague {
 
     public void processTrainsCycleEvent(TrainsCycleEvent event) {}
 
-    private void processFreightNetEvent(FreightNetEvent event) {}
+    public void processFreightNetEvent(FreightNetEvent event) {}
 
     public void processGTEvent(GTEvent<?> event) {}
 

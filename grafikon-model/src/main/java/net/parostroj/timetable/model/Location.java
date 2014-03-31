@@ -41,4 +41,9 @@ public final class Location {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return String.format("<%d,%d>", x, y);
+    }
 }

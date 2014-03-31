@@ -21,6 +21,23 @@ import com.mxgraph.view.mxGraphSelectionModel;
  */
 public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, FreightNetConnection> {
 
+    static class Node extends mxCell {
+        public Node(FreightNetNode node) {
+            super(node);
+        }
+
+        @Override
+        public String getStyle() {
+            return "spacing=4;align=center;verticalAlign=middle";
+        }
+    }
+
+    static class Connection extends mxCell {
+        public Connection(FreightNetConnection conn) {
+            super(conn);
+        }
+    }
+
     private final SelectionListener connListener;
 
     public interface SelectionListener {
@@ -39,6 +56,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
         this.setAllowNegativeCoordinates(false);
         this.setCellsResizable(false);
         this.setCellsCloneable(false);
+        this.setCellsEditable(false);
         this.setGridEnabled(false);
         this.setCellsDisconnectable(false);
         this.setDisconnectOnMove(false);
@@ -59,17 +77,16 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNetNode, Freig
 
     @Override
     protected mxCell getVertexCell(FreightNetNode vertex) {
-        mxCell cell = new mxCell(vertex);
+        mxCell cell = new Node(vertex);
         cell.setVertex(true);
         cell.setId(null);
         cell.setGeometry(new mxGeometry());
-        cell.setStyle("spacing=4;align=center;verticalAlign=middle");
         return cell;
     }
 
     @Override
     protected mxCell getEdgeCell(FreightNetConnection edge) {
-        mxCell cell = new mxCell(edge);
+        mxCell cell = new Connection(edge);
         cell.setEdge(true);
         cell.setId(null);
         cell.setGeometry(new mxGeometry());
