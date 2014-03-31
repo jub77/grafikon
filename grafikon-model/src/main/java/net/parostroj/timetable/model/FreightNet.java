@@ -163,6 +163,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return conn;
     }
 
+    public void removeConnection(Connection conn) {
+        this.removeConnectionImpl(conn);
+    }
+
     public Collection<Node> getNodes() {
         return netDelegate.vertexSet();
     }

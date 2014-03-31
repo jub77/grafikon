@@ -2,10 +2,7 @@ package net.parostroj.timetable.gui.panes;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
+import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -28,7 +25,9 @@ import com.mxgraph.swing.handler.*;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
+import com.mxgraph.view.mxGraphSelectionModel;
 
 public class FreightNetPane extends javax.swing.JPanel implements StorableGuiData {
 
@@ -39,6 +38,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     private mxGraphOutline graphOutline;
     private mxRubberband selectionHandler;
     private final JButton removeButton;
+    private final Action removeAction;
 
     public FreightNetPane() {
         setLayout(new BorderLayout());
@@ -56,7 +56,21 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
         buttonPanel.add(selectButton);
         JToggleButton connectButton = GuiComponentUtils.createToggleButton(GuiIcon.CONNECT, 2);
         buttonPanel.add(connectButton);
-        removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        removeAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (graph.getSelectionCount() > 0) {
+                    Object[] cells = graph.getSelectionCells();
+                    for (Object cell : cells) {
+                        mxCell m = (mxCell) cell;
+                        if (m.getValue() instanceof FreightNet.Connection) {
+                            diagram.getFreightNet().removeConnection((FreightNet.Connection) m.getValue());
+                        }
+                    }
+                }
+            }
+        };
+        removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, removeAction);
         removeButton.setEnabled(false);
         buttonPanel.add(removeButton);
 
@@ -102,12 +116,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                             panel.remove(graphOutline);
                         }
 
-                        graph = new FreightNetGraphAdapter(diagram.getFreightNet().getGraph(), new FreightNetGraphAdapter.SelectionListener() {
-                            @Override
-                            public void selectedConnections(Collection<FreightNet.Connection> connections) {
-                                removeButton.setEnabled(!connections.isEmpty());
-                            }
-                        });
+                        graph = new FreightNetGraphAdapter(diagram.getFreightNet().getGraph());
                         graphComponent = new FreightNetGraphComponent(graph);
                         graphComponent.setPageBackgroundColor(panel.getBackground());
                         add(graphComponent, BorderLayout.CENTER);
@@ -166,6 +175,22 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                                         }
                                     }
                                 }
+                            }
+                        });
+                        graph.getSelectionModel().addListener(mxEvent.CHANGE, new mxIEventListener() {
+                            @Override
+                            public void invoke(Object sender, mxEventObject evt) {
+                                mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
+                                boolean selected = false;
+                                if (mm.getCells().length > 0) {
+                                    for (Object cell : mm.getCells()) {
+                                        if (((mxCell) cell).getValue() instanceof FreightNet.Connection) {
+                                            selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                removeAction.setEnabled(selected);
                             }
                         });
                         graph.getModel().beginUpdate();
