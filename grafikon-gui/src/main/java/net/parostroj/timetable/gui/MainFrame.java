@@ -135,6 +135,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         circulationPane.setModel(model);
+        freightNetPane.setModel(model);
 
         // add languages to menu
         LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
@@ -328,6 +329,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
         netPane = new net.parostroj.timetable.gui.panes.NetPane();
         circulationPane = new net.parostroj.timetable.gui.panes.CirculationPane();
+        freightNetPane = new net.parostroj.timetable.gui.panes.FreightNetPane();
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -415,6 +417,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         tabbedPane.addTab(ResourceLoader.getString("tab.driver.cycles"), driverCyclesPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.net"), netPane); // NOI18N
         tabbedPane.addTab(ResourceLoader.getString("tab.circulations"), circulationPane); // NOI18N
+        tabbedPane.addTab(ResourceLoader.getString("tab.freight.net"), freightNetPane); // NOI18N
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -1162,6 +1165,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.saveToPreferences(prefs);
         engineCyclesPane.saveToPreferences(prefs);
         circulationPane.saveToPreferences(prefs);
+        freightNetPane.saveToPreferences(prefs);
     }
 
     @Override
@@ -1207,6 +1211,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.loadFromPreferences(prefs);
         engineCyclesPane.loadFromPreferences(prefs);
         circulationPane.loadFromPreferences(prefs);
+        freightNetPane.loadFromPreferences(prefs);
 
         genTitlePageTTCheckBoxMenuItem.setSelected(model.getProgramSettings().isGenerateTitlePageTT());
         twoSidesPrintCheckBoxMenuItem.setSelected(model.getProgramSettings().isTwoSidedPrint());
@@ -1231,6 +1236,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
+    private net.parostroj.timetable.gui.panes.FreightNetPane freightNetPane;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private javax.swing.JMenu fileMenu;
