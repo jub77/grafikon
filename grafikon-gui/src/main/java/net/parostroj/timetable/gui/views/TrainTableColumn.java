@@ -40,7 +40,8 @@ public enum TrainTableColumn {
             "train.table.occupied.track", 30, 30, 30, "fo", Boolean.class, false, null), SHUNT("train.table.shunt", 30,
             30, 30, "fo", Boolean.class, false, null), SET_SPEED("train.table.set.speed", 50, 50, 50, "e", Integer.class, false, null),
             IGNORE_LENGTH("train.table.ignore.length", 30, 30, 30, "o", Boolean.class, false, null),
-            MANAGED_FREIGHT("train.table.managed.freight", 30, 30, 30, "o", Boolean.class, false, null);
+            MANAGED_FREIGHT("train.table.managed.freight", 30, 30, 30, "o", Boolean.class, false, null),
+            FREIGHT_TO_STATIONS("train.table.freight.to.stations", 50, 300, 75, "w", String.class, false, null);
 
     private int index;
     private String key;

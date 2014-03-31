@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.Conversions;
@@ -272,5 +273,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
         this.attributes = attributes;
         this.attributes.addListener(attributesListener);
+    }
+
+    public Collection<net.parostroj.timetable.model.Node> getFreightToNodes(Train train, TimeInterval interval) {
+        // TODO implementaiton
+        return Collections.emptyList();
     }
 }
