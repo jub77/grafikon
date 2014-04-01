@@ -7,7 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import net.parostroj.timetable.actions.FilteredIterableFactory;
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -236,8 +236,8 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
         // compute common node
         // TODO include selection if more than one node is common
         Tuple<TimeInterval> selected = null;
-        for (TimeInterval toInterval : FilteredIterableFactory.getNodeIntervalsFreightTo(to.getTrain().getTimeIntervalList())) {
-            for (TimeInterval fromInterval : FilteredIterableFactory.getNodeIntervalsFreightFrom(from.getTrain().getTimeIntervalList())) {
+        for (TimeInterval toInterval : FreightHelper.getNodeIntervalsFreightFrom(to.getTrain().getTimeIntervalList())) {
+            for (TimeInterval fromInterval : FreightHelper.getNodeIntervalsFreightTo(from.getTrain().getTimeIntervalList())) {
                 Node toNode = toInterval.getOwnerAsNode();
                 Node fromNode = fromInterval.getOwnerAsNode();
                 if (toNode == fromNode && fromInterval.getEnd() < toInterval.getStart()) {
