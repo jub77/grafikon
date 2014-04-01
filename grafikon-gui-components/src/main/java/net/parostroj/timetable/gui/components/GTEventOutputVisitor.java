@@ -93,7 +93,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getNode() != null) {
-                    str.append("    Train: ").append(event.getNode().getTrain().getName())
+                    str.append("    Node: ").append(event.getNode().getTrain().getName())
                             .append('\n');
                 } else if (event.getConnection() != null) {
                     FNConnection connection = event.getConnection();
@@ -101,6 +101,9 @@ public class GTEventOutputVisitor implements EventVisitor {
                     String to = connection.getTo().getTrain().getName();
                     String text = String.format("%s - %s (%s)", from, to, connection.getFrom().getOwnerAsNode().getAbbr());
                     str.append("    Connection: ").append(text).append('\n');
+                }
+                if (event.getAttributeChange() != null) {
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 }
             }
         } catch (IOException e) {
