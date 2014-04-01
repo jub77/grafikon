@@ -29,7 +29,15 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.attributesListener = new AttributesListener() {
             @Override
             public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new FreightNetEvent(FreightNet.this, change, attributes));
+                FreightNetEvent event = null;
+                if (attributes instanceof FNNode) {
+                    event = new FreightNetEvent(FreightNet.this, GTEventType.FREIGHT_NET_NODE_ATTRIBUTE, change, (FNNode) attributes, null);
+                } else if (attributes instanceof FNConnection) {
+                    event = new FreightNetEvent(FreightNet.this, GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change, null, (FNConnection) attributes);
+                } else {
+                    event = new FreightNetEvent(FreightNet.this, change);
+                }
+                listenerSupport.fireEvent(event);
             }
         };
         this.listenerSupport = new GTListenerSupport<FreightNetListener, FreightNetEvent>(
@@ -106,19 +114,19 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private void addConnectionImpl(FNNode from, FNNode to, FNConnection conn) {
         netDelegate.addEdge(from, to, conn);
-        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_ADDED, conn));
+        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_ADDED, null, conn));
     }
 
     private void removeConnectionImpl(FNConnection conn) {
         boolean removed = netDelegate.removeEdge(conn);
         if (removed) {
-            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_REMOVED, conn));
+            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null, conn));
         }
     }
 
     private void addNodeImpl(FNNode node) {
         netDelegate.addVertex(node);
-        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_ADDED, node));
+        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_ADDED, node, null));
     }
 
     private void removeNodeImpl(FNNode node) {
@@ -127,7 +135,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                 this.removeConnectionImpl(conn);
             }
             netDelegate.removeVertex(node);
-            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_REMOVED, node));
+            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_REMOVED, node, null));
         }
     }
 
@@ -220,5 +228,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
             }
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "FreightNet";
     }
 }

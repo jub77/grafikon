@@ -27,7 +27,7 @@ public class TransformVisitor implements EventVisitor {
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
         } else {
-            change = new DiagramChange(DiagramChange.Type.DIAGRAM, action, event.getSource().getId());
+            change = new DiagramChange(DiagramChange.Type.DIAGRAM, action, event.getSource().getId()/*event.getObject() != null ? ((ObjectWithId) event.getObject()).getId(): event.getSource().getId()*/);
             if (action == null)
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             this.addDescription(event);
@@ -51,13 +51,21 @@ public class TransformVisitor implements EventVisitor {
     public void visit(FreightNetEvent event) {
         DiagramChange.Type type = converter.getType(event.getType());
         DiagramChange.Action action = converter.getAction(event.getType());
+        ObjectWithId o = event.getConnection() != null ? event.getConnection() : event.getNode();
         if (type != null) {
             if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             }
-            change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
-            // get name
-            change.setObject(this.getObjectStr(event.getObject()));
+            change = new DiagramChange(type, action, o.getId());
+        } else {
+            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, event.getSource().getId());
+            if (action == null) {
+                throw new IllegalArgumentException("Action missing: " + event.getType());
+            }
+            this.addDescription(event);
+        }
+        if (o != null) {
+            change.setObject(this.getObjectStr(o));
         }
     }
 
@@ -188,6 +196,8 @@ public class TransformVisitor implements EventVisitor {
         AttributeChange aC = null;
         switch (event.getType()) {
             case ATTRIBUTE:
+            case FREIGHT_NET_NODE_ATTRIBUTE:
+            case FREIGHT_NET_CONNECTION_ATTRIBUTE:
                 // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();
                 change.addDescription(new DiagramChangeDescription(desc,
@@ -195,7 +205,7 @@ public class TransformVisitor implements EventVisitor {
                 break;
             case TRACK_ATTRIBUTE:
                 aC = event.getAttributeChange();
-                RouteSegmentEvent<?,?> rse = (RouteSegmentEvent<?, ?>)event;
+                RouteSegmentEvent<?,?> rse = (RouteSegmentEvent<?, ?>) event;
                 change.addDescription(new DiagramChangeDescription(desc,
                         new Parameter(aC.getName(), true),
                         new Parameter(rse.getTrack().getNumber())));
