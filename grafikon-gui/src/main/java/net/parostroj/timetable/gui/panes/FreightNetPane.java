@@ -73,8 +73,8 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                 }
             }
         };
+        removeAction.setEnabled(false);
         removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, removeAction);
-        removeButton.setEnabled(false);
         buttonPanel.add(removeButton);
 
         ButtonGroup bg = new ButtonGroup();
