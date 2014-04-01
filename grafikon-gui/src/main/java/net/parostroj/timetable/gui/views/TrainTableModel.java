@@ -223,7 +223,7 @@ class TrainTableModel extends AbstractTableModel {
                             first = false;
                             result.append(node.getAbbr());
                         }
-                        result.append("->").append(train.getName()).append(')');
+                        result.append(" > ").append(train.getName()).append(')');
                     }
                     if (FreightHelper.isFreightFrom(interval)) {
                         List<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
