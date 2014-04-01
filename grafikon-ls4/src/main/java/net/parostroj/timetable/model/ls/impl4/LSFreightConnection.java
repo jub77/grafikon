@@ -2,7 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.FreightNet;
+import net.parostroj.timetable.model.FNConnection;
 
 /**
  * Freight connection.
@@ -21,7 +21,7 @@ public class LSFreightConnection {
     public LSFreightConnection() {
     }
 
-    public LSFreightConnection(FreightNet.FNConnection connection) {
+    public LSFreightConnection(FNConnection connection) {
         this.trainFrom = connection.getFrom().getTrain().getId();
         this.trainTo = connection.getTo().getTrain().getId();
         this.intervalFrom = connection.getFrom().getId();
