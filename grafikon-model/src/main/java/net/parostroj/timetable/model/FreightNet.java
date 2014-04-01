@@ -100,6 +100,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return this.getNodeImpl(train);
     }
 
+    public FNConnection getConnection(Train from, Train to) {
+        return this.getConnection(this.getNode(from), this.getNode(to));
+    }
+
+    public FNConnection getConnection(FNNode from, FNNode to) {
+        return netDelegate.getEdge(from, to);
+    }
+
     private FNNode getNodeImpl(Train train) {
         FNNode found = null;
         // get node with train
