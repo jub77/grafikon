@@ -19,6 +19,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
 
 import com.mxgraph.model.mxCell;
@@ -248,8 +249,20 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
             }
         }
         if (!selectedList.isEmpty()) {
-            Tuple<TimeInterval> selected = selectedList.get(0);
-            diagram.getFreightNet().addConnection(from, to, selected.first, selected.second);
+            Tuple<?> selected = null;
+            if (selectedList.size() == 1) {
+                selected = selectedList.get(0);
+            } else {
+                Object selection = JOptionPane.showInputDialog(this, ResourceLoader.getString("freight.connection") + ":",
+                        ResourceLoader.getString("freight.connection"), JOptionPane.QUESTION_MESSAGE, null, selectedList.toArray(),
+                        selectedList.get(0));
+                if (selection != null) {
+                    selected = (Tuple<?>) selection;
+                }
+            }
+            if (selected != null) {
+                diagram.getFreightNet().addConnection(from, to, (TimeInterval) selected.first, (TimeInterval) selected.second);
+            }
         }
     }
 }
