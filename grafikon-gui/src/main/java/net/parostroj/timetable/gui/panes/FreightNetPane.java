@@ -236,6 +236,9 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     }
 
     private void createConnection(FNNode from, FNNode to) {
+        if (diagram.getFreightNet().getConnection(from, to) != null) {
+            return;
+        }
         // compute common node
         // TODO include selection if more than one node is common
         List<Tuple<TimeInterval>> selectedList = new LinkedList<Tuple<TimeInterval>>();
