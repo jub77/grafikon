@@ -40,6 +40,6 @@ public class FNConnection extends Attributes implements ObjectWithId, Visitable 
 
     @Override
     public String toString() {
-        return from.getOwnerAsNode().getAbbr();
+        return String.format("%s[%s]-%s[%s]", from.getTrain().getName(), from, to.getTrain().getName(), to);
     }
 }

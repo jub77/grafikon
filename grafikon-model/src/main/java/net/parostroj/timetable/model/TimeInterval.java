@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TrainEvent;
@@ -183,8 +184,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     @Override
     public String toString() {
         TimeConverter converter = this.getTrain().getTrainDiagram().getTimeConverter();
-        return String.format("%s(%s,%s)", getOwner() != null ? (isNodeOwner() ? getOwner() : getOwnerAsLine().toString(getDirection())) : "-", converter.convertIntToText(getStart()),
-                converter.convertIntToText(getEnd()));
+        Object owner = getOwner() != null ? (isNodeOwner() ? getOwner() : getOwnerAsLine().toString(getDirection()))
+                : "-";
+        return getStart() != getEnd() ? String.format("%s(%s,%s)", owner, converter.convertIntToText(getStart()),
+                converter.convertIntToText(getEnd())) : String.format("%s(%s)", owner,
+                converter.convertIntToText(getStart()));
     }
 
     /**
