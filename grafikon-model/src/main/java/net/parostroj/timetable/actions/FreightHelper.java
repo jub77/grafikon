@@ -19,6 +19,11 @@ public class FreightHelper {
                 && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
     }
 
+    public static boolean isFreight(TimeInterval interval) {
+        return interval.isNodeOwner() && (interval.isFirst() || interval.isLast() || interval.getLength() > 0)
+                && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+    }
+
     public static Iterable<TimeInterval> getNodeIntervalsFreightFrom(Iterable<TimeInterval> i) {
         return new FilteredIterable<TimeInterval>(i, new FilteredIterable.Filter<TimeInterval>() {
             @Override
