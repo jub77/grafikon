@@ -2,7 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.FreightNet;
+import net.parostroj.timetable.model.FNNode;
 
 /**
  * Freight node.
@@ -20,7 +20,7 @@ public class LSFreightNode {
     public LSFreightNode() {
     }
 
-    public LSFreightNode(FreightNet.FNNode node) {
+    public LSFreightNode(FNNode node) {
         this.train = node.getTrain().getId();
         this.x = node.getLocation().getX();
         this.y = node.getLocation().getY();

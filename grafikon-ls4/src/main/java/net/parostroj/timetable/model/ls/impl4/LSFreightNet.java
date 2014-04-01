@@ -5,8 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.*;
 
-import net.parostroj.timetable.model.FreightNet;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -31,10 +30,10 @@ public class LSFreightNet {
         this.attributes = new LSAttributes(net.getAttributes());
         this.nodes = new ArrayList<LSFreightNode>();
         this.connections = new ArrayList<LSFreightConnection>();
-        for (FreightNet.FNNode node : net.getNodes()) {
+        for (FNNode node : net.getNodes()) {
             this.nodes.add(new LSFreightNode(node));
         }
-        for (FreightNet.FNConnection connection : net.getConnections()) {
+        for (FNConnection connection : net.getConnections()) {
             this.connections.add(new LSFreightConnection(connection));
         }
 

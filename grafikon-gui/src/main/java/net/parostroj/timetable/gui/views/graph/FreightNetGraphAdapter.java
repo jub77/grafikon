@@ -2,7 +2,8 @@ package net.parostroj.timetable.gui.views.graph;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
-import net.parostroj.timetable.model.FreightNet;
+import net.parostroj.timetable.model.FNConnection;
+import net.parostroj.timetable.model.FNNode;
 
 import org.jgrapht.ListenableGraph;
 
@@ -14,10 +15,10 @@ import com.mxgraph.model.mxGeometry;
  *
  * @author jub
  */
-public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, FreightNet.FNConnection> {
+public class FreightNetGraphAdapter extends JGraphTAdapter<FNNode, FNConnection> {
 
     static class FNodeCell extends mxCell {
-        public FNodeCell(FreightNet.FNNode node) {
+        public FNodeCell(FNNode node) {
             super(node);
         }
 
@@ -28,12 +29,12 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, Fr
     }
 
     static class FNConnectionCell extends mxCell {
-        public FNConnectionCell(FreightNet.FNConnection conn) {
+        public FNConnectionCell(FNConnection conn) {
             super(conn);
         }
     }
 
-    public FreightNetGraphAdapter(ListenableGraph<FreightNet.FNNode, FreightNet.FNConnection> graph) {
+    public FreightNetGraphAdapter(ListenableGraph<FNNode, FNConnection> graph) {
         super(graph);
         this.setConnectableEdges(false);
         this.setAllowDanglingEdges(false);
@@ -50,7 +51,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, Fr
     }
 
     @Override
-    protected mxCell getVertexCell(FreightNet.FNNode vertex) {
+    protected mxCell getVertexCell(FNNode vertex) {
         mxCell cell = new FNodeCell(vertex);
         cell.setVertex(true);
         cell.setId(null);
@@ -59,7 +60,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, Fr
     }
 
     @Override
-    protected mxCell getEdgeCell(FreightNet.FNConnection edge) {
+    protected mxCell getEdgeCell(FNConnection edge) {
         mxCell cell = new FNConnectionCell(edge);
         cell.setEdge(true);
         cell.setId(null);
@@ -77,16 +78,16 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, Fr
     public String convertValueToString(Object cell) {
         mxCell mxCell = (mxCell) cell;
         String value;
-        if (mxCell.getValue() instanceof FreightNet.FNConnection) {
-            FreightNet.FNConnection c = (FreightNet.FNConnection) mxCell.getValue();
+        if (mxCell.getValue() instanceof FNConnection) {
+            FNConnection c = (FNConnection) mxCell.getValue();
             net.parostroj.timetable.model.Node node = c.getFrom().getOwnerAsNode();
             value = String.format("%s [%s]->[%s]", node.getName(),
                     node.getTrainDiagram().getTimeConverter().convertIntToText(c.getFrom().getStart()),
                     node.getTrainDiagram().getTimeConverter().convertIntToText(c.getTo().getEnd()));
-        } else if (mxCell.getValue() instanceof FreightNet.FNNode) {
+        } else if (mxCell.getValue() instanceof FNNode) {
             TrainWrapperDelegate d = new TrainWrapperDelegate(
                     TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME_TWO_LINES, (TrainComparator) null);
-            value = d.toString(((FreightNet.FNNode) mxCell.getValue()).getTrain());
+            value = d.toString(((FNNode) mxCell.getValue()).getTrain());
         } else {
             value = "";
         }

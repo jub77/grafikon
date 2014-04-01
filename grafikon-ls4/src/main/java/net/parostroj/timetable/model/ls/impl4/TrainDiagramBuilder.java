@@ -85,7 +85,7 @@ public class TrainDiagramBuilder {
         this.diagram.setFreightNet(net);
         for (LSFreightNode lsNode : lsFreightNet.getNodes()) {
             Train train = diagram.getTrainById(lsNode.getTrain());
-            FreightNet.FNNode node = diagram.getFreightNet().addTrain(train);
+            FNNode node = diagram.getFreightNet().addTrain(train);
             node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
             node.merge(lsNode.getAttributes().createAttributes(diagram));
         }
@@ -94,7 +94,7 @@ public class TrainDiagramBuilder {
             Train to = diagram.getTrainById(lsConnection.getTrainTo());
             TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
             TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
-            FreightNet.FNConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
+            FNConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
             connection.merge(lsConnection.getAttributes().createAttributes(diagram));
         }
     }
