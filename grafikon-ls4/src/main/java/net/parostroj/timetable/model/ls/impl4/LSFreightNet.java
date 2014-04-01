@@ -31,10 +31,10 @@ public class LSFreightNet {
         this.attributes = new LSAttributes(net.getAttributes());
         this.nodes = new ArrayList<LSFreightNode>();
         this.connections = new ArrayList<LSFreightConnection>();
-        for (FreightNet.Node node : net.getNodes()) {
+        for (FreightNet.FNNode node : net.getNodes()) {
             this.nodes.add(new LSFreightNode(node));
         }
-        for (FreightNet.Connection connection : net.getConnections()) {
+        for (FreightNet.FNConnection connection : net.getConnections()) {
             this.connections.add(new LSFreightConnection(connection));
         }
 
