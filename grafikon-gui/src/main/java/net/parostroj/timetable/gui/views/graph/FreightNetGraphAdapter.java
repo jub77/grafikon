@@ -14,10 +14,10 @@ import com.mxgraph.model.mxGeometry;
  *
  * @author jub
  */
-public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, FreightNet.Connection> {
+public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.FNNode, FreightNet.FNConnection> {
 
     static class FNodeCell extends mxCell {
-        public FNodeCell(FreightNet.Node node) {
+        public FNodeCell(FreightNet.FNNode node) {
             super(node);
         }
 
@@ -28,12 +28,12 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
     }
 
     static class FNConnectionCell extends mxCell {
-        public FNConnectionCell(FreightNet.Connection conn) {
+        public FNConnectionCell(FreightNet.FNConnection conn) {
             super(conn);
         }
     }
 
-    public FreightNetGraphAdapter(ListenableGraph<FreightNet.Node, FreightNet.Connection> graph) {
+    public FreightNetGraphAdapter(ListenableGraph<FreightNet.FNNode, FreightNet.FNConnection> graph) {
         super(graph);
         this.setConnectableEdges(false);
         this.setAllowDanglingEdges(false);
@@ -50,7 +50,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
     }
 
     @Override
-    protected mxCell getVertexCell(FreightNet.Node vertex) {
+    protected mxCell getVertexCell(FreightNet.FNNode vertex) {
         mxCell cell = new FNodeCell(vertex);
         cell.setVertex(true);
         cell.setId(null);
@@ -59,7 +59,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
     }
 
     @Override
-    protected mxCell getEdgeCell(FreightNet.Connection edge) {
+    protected mxCell getEdgeCell(FreightNet.FNConnection edge) {
         mxCell cell = new FNConnectionCell(edge);
         cell.setEdge(true);
         cell.setId(null);
@@ -77,16 +77,16 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
     public String convertValueToString(Object cell) {
         mxCell mxCell = (mxCell) cell;
         String value;
-        if (mxCell.getValue() instanceof FreightNet.Connection) {
-            FreightNet.Connection c = (FreightNet.Connection) mxCell.getValue();
+        if (mxCell.getValue() instanceof FreightNet.FNConnection) {
+            FreightNet.FNConnection c = (FreightNet.FNConnection) mxCell.getValue();
             net.parostroj.timetable.model.Node node = c.getFrom().getOwnerAsNode();
             value = String.format("%s [%s]->[%s]", node.getName(),
                     node.getTrainDiagram().getTimeConverter().convertIntToText(c.getFrom().getStart()),
                     node.getTrainDiagram().getTimeConverter().convertIntToText(c.getTo().getEnd()));
-        } else if (mxCell.getValue() instanceof FreightNet.Node) {
+        } else if (mxCell.getValue() instanceof FreightNet.FNNode) {
             TrainWrapperDelegate d = new TrainWrapperDelegate(
                     TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME_TWO_LINES, (TrainComparator) null);
-            value = d.toString(((FreightNet.Node) mxCell.getValue()).getTrain());
+            value = d.toString(((FreightNet.FNNode) mxCell.getValue()).getTrain());
         } else {
             value = "";
         }
