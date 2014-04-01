@@ -6,7 +6,8 @@
 package net.parostroj.timetable.gui.views;
 
 import java.text.ParseException;
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -209,14 +210,33 @@ class TrainTableModel extends AbstractTableModel {
                 }
                 break;
             case FREIGHT_TO_STATIONS:
-                if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && FreightHelper.isFreightFrom(interval)) {
-                    Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
+                if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && (FreightHelper.isFreight(interval))) {
                     StringBuilder result = new StringBuilder();
-                    for (Node node : nodes) {
-                        if (result.length() != 0) {
-                            result.append(",");
+                    Map<Train, List<Node>> passedNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
+                    for (Map.Entry<Train, List<Node>> entry : passedNodes.entrySet()) {
+                        boolean first = true;
+                        result.append('(');
+                        for (Node node : entry.getValue()) {
+                            if (!first) {
+                                result.append(',');
+                            }
+                            first = false;
+                            result.append(node.getAbbr());
                         }
-                        result.append(node.getAbbr());
+                        result.append("->").append(train.getName()).append(')');
+                    }
+                    if (FreightHelper.isFreightFrom(interval)) {
+                        List<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
+                        boolean first = true;
+                        for (Node node : nodes) {
+                            if (!first) {
+                                result.append(',');
+                            } else if (result.length() > 0) {
+                                result.append(' ');
+                            }
+                            first = false;
+                            result.append(node.getAbbr());
+                        }
                     }
                     retValue = result.toString();
                 }
@@ -360,6 +380,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case MANAGED_FREIGHT:
                 interval.getAttributes().setBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !((Boolean) aValue));
+                this.fireTableRowsUpdated(0, lastRow);
                 break;
             default:
                 break;
