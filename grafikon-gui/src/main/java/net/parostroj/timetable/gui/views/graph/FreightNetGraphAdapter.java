@@ -16,8 +16,8 @@ import com.mxgraph.model.mxGeometry;
  */
 public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, FreightNet.Connection> {
 
-    static class Node extends mxCell {
-        public Node(FreightNet.Node node) {
+    static class FNodeCell extends mxCell {
+        public FNodeCell(FreightNet.Node node) {
             super(node);
         }
 
@@ -27,8 +27,8 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
         }
     }
 
-    static class Connection extends mxCell {
-        public Connection(FreightNet.Connection conn) {
+    static class FNConnectionCell extends mxCell {
+        public FNConnectionCell(FreightNet.Connection conn) {
             super(conn);
         }
     }
@@ -51,7 +51,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
 
     @Override
     protected mxCell getVertexCell(FreightNet.Node vertex) {
-        mxCell cell = new Node(vertex);
+        mxCell cell = new FNodeCell(vertex);
         cell.setVertex(true);
         cell.setId(null);
         cell.setGeometry(new mxGeometry());
@@ -60,7 +60,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FreightNet.Node, Frei
 
     @Override
     protected mxCell getEdgeCell(FreightNet.Connection edge) {
-        mxCell cell = new Connection(edge);
+        mxCell cell = new FNConnectionCell(edge);
         cell.setEdge(true);
         cell.setId(null);
         cell.setGeometry(new mxGeometry());
