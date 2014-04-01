@@ -794,6 +794,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return Collections.unmodifiableList(timeIntervalList.subList(fromIndex, toIndex + 1));
     }
 
+    public int getIndexOfInterval(TimeInterval interval) {
+        return timeIntervalList.indexOf(interval);
+    }
+
     /**
      * checks if all lines have given attribute.
      *
