@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.FNNode;
 /**
  * Freight node.
  *
- * @author cz2b10k5
+ * @author jub
  */
 @XmlType(propOrder = { "train", "x", "y", "attributes" })
 public class LSFreightNode {
