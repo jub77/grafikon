@@ -187,13 +187,37 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.attributes.addListener(attributesListener);
     }
 
-    public List<Node> getFreightToNodes(Train train, TimeInterval fromInterval) {
+    public List<Node> getFreightToNodes(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
         List<Node> result = new LinkedList<Node>();
-        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(train.getTimeIntervalList(), fromInterval)) {
+        this.getFreightToNodesImpl(fromInterval, result);
+        return result;
+    }
+
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<Node> result) {
+        List<FNConnection> nextConns = getNextTrains(fromInterval);
+        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
             result.add(i.getOwnerAsNode());
+            for (FNConnection conn : nextConns) {
+                if (i == conn.getFrom()) {
+                    this.getFreightToNodesImpl(conn.getTo(), result);
+                }
+            }
+        }
+    }
+
+    public List<FNConnection> getNextTrains(TimeInterval fromInterval) {
+        List<FNConnection> result = new LinkedList<FNConnection>();
+        int index = fromInterval.getTrain().getIndexOfInterval(fromInterval);
+        FNNode node = getNode(fromInterval.getTrain());
+        Set<FNConnection> connections = netDelegate.outgoingEdgesOf(node);
+        for (FNConnection conn : connections) {
+            int indexConn = conn.getFrom().getTrain().getIndexOfInterval(conn.getFrom());
+            if (indexConn > index) {
+                result.add(conn);
+            }
         }
         return result;
     }

@@ -210,7 +210,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case FREIGHT_TO_STATIONS:
                 if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && FreightHelper.isFreightFrom(interval)) {
-                    Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(train, interval);
+                    Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
                     StringBuilder result = new StringBuilder();
                     for (Node node : nodes) {
                         if (result.length() != 0) {
