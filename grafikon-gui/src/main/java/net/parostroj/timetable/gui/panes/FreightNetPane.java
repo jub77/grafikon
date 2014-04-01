@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -235,23 +237,18 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     private void createConnection(FNNode from, FNNode to) {
         // compute common node
         // TODO include selection if more than one node is common
-        Tuple<TimeInterval> selected = null;
-        for (TimeInterval toInterval : FreightHelper.getNodeIntervalsFreightFrom(to.getTrain().getTimeIntervalList())) {
-            for (TimeInterval fromInterval : FreightHelper.getNodeIntervalsFreightTo(from.getTrain().getTimeIntervalList())) {
+        List<Tuple<TimeInterval>> selectedList = new LinkedList<Tuple<TimeInterval>>();
+        for (TimeInterval fromInterval : FreightHelper.getNodeIntervalsFreightTo(from.getTrain().getTimeIntervalList())) {
+            for (TimeInterval toInterval : FreightHelper.getNodeIntervalsFreightFrom(to.getTrain().getTimeIntervalList())) {
                 Node toNode = toInterval.getOwnerAsNode();
                 Node fromNode = fromInterval.getOwnerAsNode();
                 if (toNode == fromNode && fromInterval.getEnd() < toInterval.getStart()) {
-                    selected = new Tuple<TimeInterval>(fromInterval, toInterval);
+                    selectedList.add(new Tuple<TimeInterval>(fromInterval, toInterval));
                 }
-                if (selected != null) {
-                    break;
-                }
-            }
-            if (selected != null) {
-                break;
             }
         }
-        if (selected != null) {
+        if (!selectedList.isEmpty()) {
+            Tuple<TimeInterval> selected = selectedList.get(0);
             diagram.getFreightNet().addConnection(from, to, selected.first, selected.second);
         }
     }
