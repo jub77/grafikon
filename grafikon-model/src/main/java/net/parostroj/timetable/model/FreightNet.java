@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -188,8 +187,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.attributes.addListener(attributesListener);
     }
 
-    public List<net.parostroj.timetable.model.Node> getFreightToNodes(Train train, TimeInterval interval) {
-        // TODO implementaiton
-        return Collections.emptyList();
+    public List<Node> getFreightToNodes(Train train, TimeInterval fromInterval) {
+        if (!fromInterval.isNodeOwner()) {
+            throw new IllegalArgumentException("Only node intervals allowed.");
+        }
+        List<Node> result = new LinkedList<Node>();
+        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(train.getTimeIntervalList(), fromInterval)) {
+            result.add(i.getOwnerAsNode());
+        }
+        return result;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
@@ -208,15 +209,17 @@ class TrainTableModel extends AbstractTableModel {
                 }
                 break;
             case FREIGHT_TO_STATIONS:
-                Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(train, interval);
-                StringBuilder result = new StringBuilder();
-                for (Node node : nodes) {
-                    if (result.length() != 0) {
-                        result.append(",");
+                if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && FreightHelper.isFreightFrom(interval)) {
+                    Collection<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(train, interval);
+                    StringBuilder result = new StringBuilder();
+                    for (Node node : nodes) {
+                        if (result.length() != 0) {
+                            result.append(",");
+                        }
+                        result.append(node.getAbbr());
                     }
-                    result.append(node.getAbbr());
+                    retValue = result.toString();
                 }
-                retValue = result.toString();
                 break;
             // default (should not be reached)
             default:
