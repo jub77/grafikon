@@ -134,7 +134,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private void addNodeImpl(FNNode node) {
         netDelegate.addVertex(node);
-        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_ADDED, node, null));
+        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_NODE_ADDED, node, null));
     }
 
     private void removeNodeImpl(FNNode node) {
@@ -143,7 +143,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                 this.removeConnectionImpl(conn);
             }
             netDelegate.removeVertex(node);
-            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_TRAIN_REMOVED, node, null));
+            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_NODE_REMOVED, node, null));
         }
     }
 

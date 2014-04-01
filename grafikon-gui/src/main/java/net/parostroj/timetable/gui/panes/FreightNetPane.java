@@ -217,7 +217,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
 
             @Override
             public void processFreightNetEvent(FreightNetEvent event) {
-                if (event.getType() == GTEventType.FREIGHT_NET_TRAIN_ADDED) {
+                if (event.getType() == GTEventType.FREIGHT_NET_NODE_ADDED) {
                     updateNodeLocation(event.getNode());
                 }
             }
