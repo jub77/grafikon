@@ -27,7 +27,9 @@ public class FNNode extends Attributes implements ObjectWithId, Visitable {
 
     public void setLocation(Location location) {
         if (!Conversions.compareWithNull(location, this.location)) {
+            Location oldValue = this.location;
             this.location = location;
+            this.fireChange("location", oldValue, location, null);
         }
     }
 

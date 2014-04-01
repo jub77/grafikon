@@ -92,11 +92,11 @@ public class GTEventOutputVisitor implements EventVisitor {
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
-                if (event.getObject() instanceof FNNode) {
-                    str.append("    Train: ").append(((FNNode) event.getObject()).getTrain().getName())
+                if (event.getNode() != null) {
+                    str.append("    Train: ").append(event.getNode().getTrain().getName())
                             .append('\n');
-                } else if (event.getObject() instanceof FNConnection) {
-                    FNConnection connection = (FNConnection) event.getObject();
+                } else if (event.getConnection() != null) {
+                    FNConnection connection = event.getConnection();
                     String from = connection.getFrom().getTrain().getName();
                     String to = connection.getTo().getTrain().getName();
                     String text = String.format("%s - %s (%s)", from, to, connection.getFrom().getOwnerAsNode().getAbbr());

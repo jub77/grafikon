@@ -103,6 +103,8 @@ class EventToChangeConvert {
         map.put(GTEventType.FREIGHT_NET_TRAIN_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, DiagramChange.Action.MODIFIED);
+        map.put(GTEventType.FREIGHT_NET_NODE_ATTRIBUTE, DiagramChange.Action.MODIFIED);
         return map;
     }
 
@@ -159,6 +161,8 @@ class EventToChangeConvert {
         map.put(GTEventType.FREIGHT_NET_TRAIN_REMOVED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null); // nothing
+        map.put(GTEventType.FREIGHT_NET_NODE_ATTRIBUTE, "freight_net_node_attribute");
+        map.put(GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, "freight_net_connection_attribute");
         return map;
     }
 
