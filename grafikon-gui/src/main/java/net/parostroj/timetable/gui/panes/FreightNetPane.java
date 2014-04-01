@@ -236,7 +236,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     }
 
     private void createConnection(FNNode from, FNNode to) {
-        if (diagram.getFreightNet().getConnection(from, to) != null) {
+        if (diagram.getFreightNet().getConnection(from, to) != null || diagram.getFreightNet().getConnection(to, from) != null) {
             return;
         }
         // compute common node

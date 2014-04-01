@@ -39,7 +39,17 @@ public class TrackedCheckVisitor implements EventVisitor {
 
     @Override
     public void visit(FreightNetEvent event) {
-        tracked = true;
+        switch (event.getType()) {
+            case FREIGHT_NET_CONNECTION_ADDED:
+            case FREIGHT_NET_CONNECTION_REMOVED:
+            case FREIGHT_NET_TRAIN_REMOVED:
+            case FREIGHT_NET_TRAIN_ADDED:
+                tracked = true;
+                break;
+            default:
+                tracked = false;
+                break;
+        }
     }
 
     @Override
