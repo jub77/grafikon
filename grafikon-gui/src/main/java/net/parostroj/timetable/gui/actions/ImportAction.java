@@ -159,7 +159,7 @@ public class ImportAction extends AbstractAction {
                                 }
                             }
                         };
-                        processItems(new ExtractionFilterIterable<ObjectWithId, Train>(model.getDiagram().getTrains(), new GroupFilter<ObjectWithId, Train>(groupDialog.getSelectedTo())), deleteProcess);
+                        processItems(new ExtractionFilterIterable<ObjectWithId, Train>(model.getDiagram().getTrains(), new GroupFilter<ObjectWithId, Train>(groupDialog.getSelectedTo(), ObjectWithId.class)), deleteProcess);
                     }
                     // import new objects
                     Process<ObjectWithId> importProcess = new Process<ObjectWithId>() {
