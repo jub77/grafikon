@@ -212,8 +212,8 @@ class TrainTableModel extends AbstractTableModel {
             case FREIGHT_TO_STATIONS:
                 if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && (FreightHelper.isFreight(interval))) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<Node>> passedNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
-                    for (Map.Entry<Train, List<Node>> entry : passedNodes.entrySet()) {
+                    Map<Train, List<Node>> passedCargoNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
+                    for (Map.Entry<Train, List<Node>> entry : passedCargoNodes.entrySet()) {
                         TextList output = new TextList(result, "(", ")", ",");
                         for (Node node : entry.getValue()) {
                             output.add(node.getAbbr());
@@ -222,12 +222,12 @@ class TrainTableModel extends AbstractTableModel {
                         output.finish();
                     }
                     if (FreightHelper.isFreightFrom(interval)) {
-                        List<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
-                        if (!nodes.isEmpty() && result.length() > 0) {
+                        List<Node> cargoNodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
+                        if (!cargoNodes.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
                         TextList output = new TextList(result, ",");
-                        for (Node node : nodes) {
+                        for (Node node : cargoNodes) {
                             output.add(node.getAbbr());
                         }
                         output.finish();
