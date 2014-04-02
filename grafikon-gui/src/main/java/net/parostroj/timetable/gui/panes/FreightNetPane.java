@@ -42,6 +42,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     private mxRubberband selectionHandler;
     private final JButton removeButton;
     private final Action removeAction;
+    private ApplicationModel model;
 
     public FreightNetPane() {
         setLayout(new BorderLayout());
@@ -107,6 +108,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     }
 
     public void setModel(ApplicationModel model) {
+        this.model = model;
         model.getMediator().addColleague(new ApplicationGTEventColleague() {
 
             @Override
@@ -216,11 +218,16 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                 public void invoke(Object sender, mxEventObject evt) {
                     mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
                     boolean selected = false;
-                    if (mm.getCells().length > 0) {
+                    int length = mm.getCells().length;
+                    if (length > 0) {
                         for (Object cell : mm.getCells()) {
-                            if (((mxCell) cell).getValue() instanceof FNConnection) {
+                            Object value = ((mxCell) cell).getValue();
+                            if (value instanceof FNConnection) {
                                 selected = true;
                                 break;
+                            }
+                            if (length == 1 && value instanceof FNNode) {
+                                model.setSelectedTrain(((FNNode) value).getTrain());
                             }
                         }
                     }
