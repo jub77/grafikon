@@ -214,29 +214,23 @@ class TrainTableModel extends AbstractTableModel {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<Node>> passedNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<Node>> entry : passedNodes.entrySet()) {
-                        boolean first = true;
-                        result.append('(');
+                        TextList output = new TextList(result, "(", ")", ",");
                         for (Node node : entry.getValue()) {
-                            if (!first) {
-                                result.append(',');
-                            }
-                            first = false;
-                            result.append(node.getAbbr());
+                            output.add(node.getAbbr());
                         }
-                        result.append(" > ").append(train.getName()).append(')');
+                        output.append(" > ").append(train.getName());
+                        output.finish();
                     }
                     if (FreightHelper.isFreightFrom(interval)) {
                         List<Node> nodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
-                        boolean first = true;
-                        for (Node node : nodes) {
-                            if (!first) {
-                                result.append(',');
-                            } else if (result.length() > 0) {
-                                result.append(' ');
-                            }
-                            first = false;
-                            result.append(node.getAbbr());
+                        if (!nodes.isEmpty() && result.length() > 0) {
+                            result.append(' ');
                         }
+                        TextList output = new TextList(result, ",");
+                        for (Node node : nodes) {
+                            output.add(node.getAbbr());
+                        }
+                        output.finish();
                     }
                     retValue = result.toString();
                 }
