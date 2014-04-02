@@ -34,14 +34,14 @@ public enum TrainTableColumn {
             ADDED_TIME("train.table.added.time", 50, 50, 50, "e", String.class, true, null), PLATFORM(
             "train.table.platform", 50, 50, 50, "t", String.class, false, new TrackCellEditor()), WEIGHT(
             "train.table.weight", 50, 100, 50, "w", Integer.class, false, null), LENGTH("train.table.length", 50, 100,
-            50, "w", Integer.class, false, null), CONFLICTS("train.table.conflicts", 50, 200, 75, "w", String.class,
+            50, "w", Integer.class, false, null), CONFLICTS("train.table.conflicts", 50, 300, 75, "w", String.class,
             false, null), COMMENT_SHOWN("train.table.comment.shown", 30, 30, 30, "o", Boolean.class, false, null), COMMENT(
             "train.table.comment", 1, Integer.MAX_VALUE, 150, "", String.class, false, null), OCCUPIED_ENTRY(
             "train.table.occupied.track", 30, 30, 30, "fo", Boolean.class, false, null), SHUNT("train.table.shunt", 30,
             30, 30, "fo", Boolean.class, false, null), SET_SPEED("train.table.set.speed", 50, 50, 50, "e", Integer.class, false, null),
             IGNORE_LENGTH("train.table.ignore.length", 30, 30, 30, "o", Boolean.class, false, null),
             MANAGED_FREIGHT("train.table.managed.freight", 30, 30, 30, "o", Boolean.class, false, null),
-            FREIGHT_TO_STATIONS("train.table.freight.to.stations", 50, 300, 75, "w", String.class, false, null);
+            FREIGHT_TO_STATIONS("train.table.freight.to.stations", 50, Integer.MAX_VALUE, 150, "w", String.class, false, null);
 
     private int index;
     private String key;
