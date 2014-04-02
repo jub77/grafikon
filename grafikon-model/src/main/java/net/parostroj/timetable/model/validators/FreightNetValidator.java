@@ -29,6 +29,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
                 } else {
                     diagram.getFreightNet().removeTrain(tEvent.getSource());
                 }
+                return true;
             }
             if (this.isManaged(tEvent.getSource())) {
                 if (event.getType() == GTEventType.TIME_INTERVAL_ATTRIBUTE
@@ -37,12 +38,14 @@ public class FreightNetValidator implements TrainDiagramValidator {
                 } else if (event.getType() == GTEventType.TIME_INTERVAL_LIST) {
                     diagram.getFreightNet().checkNode(tEvent.getSource());
                 }
+                return true;
             }
         } else if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.TRAIN_REMOVED) {
             TrainDiagramEvent tdEvent = (TrainDiagramEvent) event;
             Train train = (Train) tdEvent.getObject();
             if (this.isManaged(train)) {
                 diagram.getFreightNet().removeTrain(train);
+                return true;
             }
         }
         return false;
