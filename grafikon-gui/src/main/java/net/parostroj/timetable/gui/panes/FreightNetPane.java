@@ -245,8 +245,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
         if (diagram.getFreightNet().getConnection(from, to) != null || diagram.getFreightNet().getConnection(to, from) != null) {
             return;
         }
-        // compute common node
-        // TODO include selection if more than one node is common
+        // compute common nodes
         List<Tuple<TimeInterval>> selectedList = new LinkedList<Tuple<TimeInterval>>();
         for (TimeInterval fromInterval : FreightHelper.getNodeIntervalsFreightTo(from.getTrain().getTimeIntervalList())) {
             for (TimeInterval toInterval : FreightHelper.getNodeIntervalsFreightFrom(to.getTrain().getTimeIntervalList())) {
