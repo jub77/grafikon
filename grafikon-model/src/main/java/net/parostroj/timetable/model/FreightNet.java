@@ -147,6 +147,29 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
     }
 
+    public void checkNode(Train train) {
+        this.checkNode(this.getNode(train));
+    }
+
+    public void checkNode(FNNode node) {
+        Set<FNConnection> connections = this.netDelegate.outgoingEdgesOf(node);
+        List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
+        for (FNConnection conn : connections) {
+            if (!FreightHelper.isFreight(conn.getFrom()) || conn.getFrom().getStart() >= conn.getTo().getEnd()) {
+                toBeDeleted.add(conn);
+            }
+        }
+        connections = this.netDelegate.incomingEdgesOf(node);
+        for (FNConnection conn : connections) {
+            if (!FreightHelper.isFreight(conn.getTo()) || conn.getFrom().getStart() >= conn.getTo().getEnd()) {
+                toBeDeleted.add(conn);
+            }
+        }
+        for (FNConnection conn : toBeDeleted) {
+            this.removeConnection(conn);
+        }
+    }
+
     public ListenableGraph<FNNode, FNConnection> getGraph() {
         return netDelegate;
     }
