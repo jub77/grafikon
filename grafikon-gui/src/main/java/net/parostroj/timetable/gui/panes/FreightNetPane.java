@@ -113,98 +113,9 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
             public void processApplicationEvent(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
                     diagram = event.getModel().get();
-                    if (diagram != null) {
-                        if (graphComponent != null) {
-                            remove(graphComponent);
-                            panel.remove(graphOutline);
-                        }
-
-                        graph = new FreightNetGraphAdapter(diagram.getFreightNet().getGraph());
-                        graphComponent = new FreightNetGraphComponent(graph);
-                        graphComponent.setPageBackgroundColor(panel.getBackground());
-                        add(graphComponent, BorderLayout.CENTER);
-                        graphOutline = graphComponent.createOutline();
-                        panel.add(BorderLayout.CENTER, graphOutline);
-
-                        selectionHandler = new mxRubberband(graphComponent);
-
-                        mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
-                        mxCellMarker marker = connectionHandler.getMarker();
-                        marker.setHotspot(1.0);
-                        connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
-                            @Override
-                            protected Object createCell(mxCellState startState, String style) {
-                                mxCell cell = (mxCell) super.createCell(startState, style);
-                                if (graph.getModel().isEdge(cell)) {
-                                    cell.setStyle((style == null || "".equals(style) ? "" : style + ";")
-                                            + "endArrow=classic;startArrow=none");
-                                }
-                                return cell;
-                            }
-
-                            @Override
-                            public Object stop(boolean commit, MouseEvent e) {
-                                Object result = super.stop(commit, e);
-                                if (commit && result instanceof mxCell && ((mxCell) result).isEdge()) {
-                                    // check if the connection is possible an create a new connection
-
-
-                                    mxCell cell = (mxCell) result;
-                                    FNNode from = (FNNode) cell.getSource().getValue();
-                                    FNNode to = (FNNode) cell.getTarget().getValue();
-
-                                    createConnection(from, to);
-
-                                    graph.removeCells(new Object[] { result });
-                                }
-                                return result;
-                            }
-                        });
-                        graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
-                            @Override
-                            public void invoke(Object sender, mxEventObject evt) {
-                                if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
-                                    Object[] cells = (Object[]) evt.getProperty("cells");
-                                    if (cells != null) {
-                                        for (Object cell : cells) {
-                                            mxCell mxCell = (mxCell) cell;
-                                            if (mxCell.getValue() instanceof FNNode) {
-                                                FNNode node = (FNNode) mxCell.getValue();
-
-                                                int x = (int) (mxCell.getGeometry().getX());
-                                                int y = (int) (mxCell.getGeometry().getY());
-                                                node.setLocation(new Location(x, y));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        graph.getSelectionModel().addListener(mxEvent.CHANGE, new mxIEventListener() {
-                            @Override
-                            public void invoke(Object sender, mxEventObject evt) {
-                                mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
-                                boolean selected = false;
-                                if (mm.getCells().length > 0) {
-                                    for (Object cell : mm.getCells()) {
-                                        if (((mxCell) cell).getValue() instanceof FNConnection) {
-                                            selected = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                removeAction.setEnabled(selected);
-                            }
-                        });
-                        graph.getModel().beginUpdate();
-                        try {
-                            for (FNNode node : diagram.getFreightNet().getNodes()) {
-                                updateNodeLocation(node);
-                            }
-                        } finally {
-                            graph.getModel().endUpdate();
-                        }
-                    }
+                    refreshDiagram();
+                } else if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
+                    selectTrain((Train) event.getObject());
                 }
             }
 
@@ -222,6 +133,109 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
                 }
             }
         });
+    }
+
+    private void selectTrain(Train train) {
+        if (train != null) {
+            FNNode node = diagram.getFreightNet().getNode(train);
+            mxCell cell = graph.getVertexToCellMap().get(node);
+            graph.setSelectionCell(cell);
+        }
+    }
+
+    private void refreshDiagram() {
+        if (diagram != null) {
+            if (graphComponent != null) {
+                remove(graphComponent);
+                panel.remove(graphOutline);
+            }
+
+            graph = new FreightNetGraphAdapter(diagram.getFreightNet().getGraph());
+            graphComponent = new FreightNetGraphComponent(graph);
+            graphComponent.setPageBackgroundColor(panel.getBackground());
+            add(graphComponent, BorderLayout.CENTER);
+            graphOutline = graphComponent.createOutline();
+            panel.add(BorderLayout.CENTER, graphOutline);
+
+            selectionHandler = new mxRubberband(graphComponent);
+
+            mxConnectionHandler connectionHandler = graphComponent.getConnectionHandler();
+            mxCellMarker marker = connectionHandler.getMarker();
+            marker.setHotspot(1.0);
+            connectionHandler.setConnectPreview(new mxConnectPreview(graphComponent) {
+                @Override
+                protected Object createCell(mxCellState startState, String style) {
+                    mxCell cell = (mxCell) super.createCell(startState, style);
+                    if (graph.getModel().isEdge(cell)) {
+                        cell.setStyle((style == null || "".equals(style) ? "" : style + ";")
+                                + "endArrow=classic;startArrow=none");
+                    }
+                    return cell;
+                }
+
+                @Override
+                public Object stop(boolean commit, MouseEvent e) {
+                    Object result = super.stop(commit, e);
+                    if (commit && result instanceof mxCell && ((mxCell) result).isEdge()) {
+                        // check if the connection is possible an create a new connection
+
+
+                        mxCell cell = (mxCell) result;
+                        FNNode from = (FNNode) cell.getSource().getValue();
+                        FNNode to = (FNNode) cell.getTarget().getValue();
+
+                        createConnection(from, to);
+
+                        graph.removeCells(new Object[] { result });
+                    }
+                    return result;
+                }
+            });
+            graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
+                @Override
+                public void invoke(Object sender, mxEventObject evt) {
+                    if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
+                        Object[] cells = (Object[]) evt.getProperty("cells");
+                        if (cells != null) {
+                            for (Object cell : cells) {
+                                mxCell mxCell = (mxCell) cell;
+                                if (mxCell.getValue() instanceof FNNode) {
+                                    FNNode node = (FNNode) mxCell.getValue();
+
+                                    int x = (int) (mxCell.getGeometry().getX());
+                                    int y = (int) (mxCell.getGeometry().getY());
+                                    node.setLocation(new Location(x, y));
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            graph.getSelectionModel().addListener(mxEvent.CHANGE, new mxIEventListener() {
+                @Override
+                public void invoke(Object sender, mxEventObject evt) {
+                    mxGraphSelectionModel mm = (mxGraphSelectionModel) sender;
+                    boolean selected = false;
+                    if (mm.getCells().length > 0) {
+                        for (Object cell : mm.getCells()) {
+                            if (((mxCell) cell).getValue() instanceof FNConnection) {
+                                selected = true;
+                                break;
+                            }
+                        }
+                    }
+                    removeAction.setEnabled(selected);
+                }
+            });
+            graph.getModel().beginUpdate();
+            try {
+                for (FNNode node : diagram.getFreightNet().getNodes()) {
+                    updateNodeLocation(node);
+                }
+            } finally {
+                graph.getModel().endUpdate();
+            }
+        }
     }
 
     private void updateNode(Train train) {
