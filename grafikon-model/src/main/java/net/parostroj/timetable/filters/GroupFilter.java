@@ -12,9 +12,11 @@ import net.parostroj.timetable.model.Group;
 public class GroupFilter<R, T extends AttributesHolder> implements ExtractionFilter<R, T> {
 
     private final Group group;
+    private final Class<R> clazz;
 
-    public GroupFilter(Group group) {
+    public GroupFilter(Group group, Class<R> clazz) {
         this.group = group;
+        this.clazz = clazz;
     }
 
     @Override
@@ -26,10 +28,9 @@ public class GroupFilter<R, T extends AttributesHolder> implements ExtractionFil
             return group.equals(foundGroup);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public R get(T item) {
-        return (R) item;
+        return clazz.cast(item);
     }
 
 }
