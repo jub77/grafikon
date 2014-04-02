@@ -25,9 +25,9 @@ public class FreightNetValidator implements TrainDiagramValidator {
             if (event.getType() == GTEventType.ATTRIBUTE
                     && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
                 if (Boolean.TRUE.equals(tEvent.getAttributeChange().getNewValue())) {
-                    diagram.getFreightNet().addTrain(tEvent.getSource());
+                    diagram.getFreightNet().addNode(tEvent.getSource());
                 } else {
-                    diagram.getFreightNet().removeTrain(tEvent.getSource());
+                    diagram.getFreightNet().removeNode(tEvent.getSource());
                 }
                 return true;
             }
@@ -44,7 +44,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
             TrainDiagramEvent tdEvent = (TrainDiagramEvent) event;
             Train train = (Train) tdEvent.getObject();
             if (this.isManaged(train)) {
-                diagram.getFreightNet().removeTrain(train);
+                diagram.getFreightNet().removeNode(train);
                 return true;
             }
         }

@@ -50,13 +50,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.setAttributes(new Attributes());
     }
 
-    public FNNode addTrain(Train train) {
+    public FNNode addNode(Train train) {
         FNNode node = new FNNode(train, attributesListener);
         this.addNodeImpl(node);
         return node;
     }
 
-    public FNNode removeTrain(Train train) {
+    public FNNode removeNode(Train train) {
         FNNode found = this.getNodeImpl(train);
         this.removeNodeImpl(found);
         return found;
