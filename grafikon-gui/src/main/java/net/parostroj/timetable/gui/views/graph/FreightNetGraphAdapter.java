@@ -4,11 +4,14 @@ import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.FNNode;
+import net.parostroj.timetable.model.Location;
 
 import org.jgrapht.ListenableGraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
 
 /**
  * Freight net graph adapter.
@@ -34,6 +37,27 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FNNode, FNConnection>
         }
     }
 
+    private static class MoveListener implements mxIEventListener {
+        @Override
+        public void invoke(Object sender, mxEventObject evt) {
+            if (mxEvent.CELLS_MOVED.equals(evt.getName())) {
+                Object[] cells = (Object[]) evt.getProperty("cells");
+                if (cells != null) {
+                    for (Object cell : cells) {
+                        mxCell mxCell = (mxCell) cell;
+                        if (mxCell.getValue() instanceof FNNode) {
+                            FNNode node = (FNNode) mxCell.getValue();
+
+                            int x = (int) (mxCell.getGeometry().getX());
+                            int y = (int) (mxCell.getGeometry().getY());
+                            node.setLocation(new Location(x, y));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public FreightNetGraphAdapter(ListenableGraph<FNNode, FNConnection> graph) {
         super(graph);
         this.setConnectableEdges(false);
@@ -48,6 +72,7 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<FNNode, FNConnection>
         this.setCellsEditable(false);
         this.setCellsDisconnectable(false);
         this.setDisconnectOnMove(false);
+        this.addListener(mxEvent.CELLS_MOVED, new MoveListener());
     }
 
     @Override
