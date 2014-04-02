@@ -94,7 +94,6 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     private final JPanel panel;
     private mxGraphOutline graphOutline;
     private mxRubberband selectionHandler;
-    private final JButton removeButton;
     private final Action removeAction;
     private ApplicationModel model;
 
@@ -129,7 +128,7 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
             }
         };
         removeAction.setEnabled(false);
-        removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, removeAction);
+        JButton removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2, removeAction);
         buttonPanel.add(removeButton);
 
         ButtonGroup bg = new ButtonGroup();
