@@ -181,10 +181,10 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     @Override
-    public void paintStationNames(Graphics g) {
+    public void paintStationNames(Graphics2D g) {
         if (positions == null)
             this.computePositions();
-        this.paintStationNames((Graphics2D) g, stations, positions);
+        this.paintStationNames(g, stations, positions);
     }
 
     protected abstract void computePositions();

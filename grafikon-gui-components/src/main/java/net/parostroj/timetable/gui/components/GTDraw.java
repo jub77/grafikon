@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import net.parostroj.timetable.model.Node;
@@ -11,7 +10,7 @@ public interface GTDraw {
 
     void draw(Graphics2D g);
 
-    void paintStationNames(Graphics g);
+    void paintStationNames(Graphics2D g);
 
     Route getRoute();
 
