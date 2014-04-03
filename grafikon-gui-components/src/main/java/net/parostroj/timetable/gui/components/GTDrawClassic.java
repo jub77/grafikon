@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.*;
  *
  * @author jub
  */
-public class GTDrawClassic extends GTDraw {
+public class GTDrawClassic extends GTDrawBase {
 
     // basic display
     private static final float TRAIN_STROKE_WIDTH = 2.5f;
