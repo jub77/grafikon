@@ -12,7 +12,6 @@ import javax.swing.*;
 
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
-import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -91,11 +90,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     }
                     config.set(GTViewSettings.Key.SIZE, saveSize);
                     config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
-                    if (settings.get(GTViewSettings.Key.TYPE) == Type.CLASSIC) {
-                        drawFile = new GTDrawClassic(config, getRoute(), null, null);
-                    } else if (settings.get(GTViewSettings.Key.TYPE) == Type.WITH_TRACKS) {
-                        drawFile = new GTDrawWithNodeTracks(config, getRoute(), null, null);
-                    }
+                    drawFile = drawFactory.createInstance(config, getRoute(), null, null);
 
                     if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                         BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
