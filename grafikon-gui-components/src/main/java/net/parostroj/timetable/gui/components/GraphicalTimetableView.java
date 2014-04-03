@@ -412,9 +412,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             GTViewSettings config = this.getSettings();
             config.set(GTViewSettings.Key.SIZE, this.getSize());
             if (settings.get(Key.TYPE) == Type.CLASSIC) {
-                draw = new GTDrawClassic(config, drawnRoute, trainRegionCollector);
+                draw = new GTDrawClassic(config, drawnRoute, trainRegionCollector, null);
             } else if (settings.get(Key.TYPE) == Type.WITH_TRACKS) {
-                draw = new GTDrawWithNodeTracks(config, drawnRoute, trainRegionCollector);
+                draw = new GTDrawWithNodeTracks(config, drawnRoute, trainRegionCollector, null);
             }
         }
         this.repaint();

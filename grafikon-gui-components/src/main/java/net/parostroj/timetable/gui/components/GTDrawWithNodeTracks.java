@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 
@@ -43,8 +44,8 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
     private Map<Track,Integer> trackPositions;
 
-    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector) {
-        super(config ,route, collector);
+    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<Train> trainFilter) {
+        super(config ,route, collector, trainFilter);
         Float zoom = config.get(Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
