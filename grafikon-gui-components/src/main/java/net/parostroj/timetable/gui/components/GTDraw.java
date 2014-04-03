@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.parostroj.timetable.filters.Filter;
+import net.parostroj.timetable.filters.ManagedFreightTrainFilter;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -72,6 +74,8 @@ abstract public class GTDraw {
     protected int startTime;
     protected int endTime;
     protected double timeStep;
+
+    protected Filter<Train> trainFilter;
 
     // caching
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
@@ -258,19 +262,20 @@ abstract public class GTDraw {
         g.setStroke(trainStroke);
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL) &&
-                        (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
-                boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
-
-                Interval normalized = interval.getInterval().normalize();
-                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
-                    g.setColor(this.getIntervalColor(interval));
-                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
-                }
-                Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
-                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
-                    g.setColor(this.getIntervalColor(interval));
-                    this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
+                if (trainFilter == null || trainFilter.is(interval.getTrain())) {
+                    boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
+                            && (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
+                    boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
+                    Interval normalized = interval.getInterval().normalize();
+                    if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
+                        g.setColor(this.getIntervalColor(interval));
+                        this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
+                    }
+                    Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
+                    if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+                        g.setColor(this.getIntervalColor(interval));
+                        this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
+                    }
                 }
             }
         }
