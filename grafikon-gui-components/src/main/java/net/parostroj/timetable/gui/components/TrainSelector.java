@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
+import java.util.List;
+
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -9,21 +11,14 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public interface TrainSelector {
     /**
-     * selects train interval.
+     * callback for selected intervals.
      *
-     * @param interval train interval to be selected
+     * @param intervals train intervals to be selected
      */
-    public void selectTrainInterval(TimeInterval interval);
+    public void intervalsSelected(List<TimeInterval> intervals);
 
     /**
-     * edit selected.
+     * edit selected (double click).
      */
     public void editSelected();
-
-    /**
-     * returns selected train interval.
-     *
-     * @return selected train interval
-     */
-    public TimeInterval getSelectedTrainInterval();
 }

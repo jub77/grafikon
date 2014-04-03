@@ -19,10 +19,6 @@ public class GTViewSettings {
         BY_TYPE, BY_COLOR_CHOOSER;
     }
 
-    public static enum Selection {
-        INTERVAL, TRAIN;
-    }
-
     public static enum Key {
         ARRIVAL_DEPARTURE_DIGITS(Boolean.class),
         EXTENDED_LINES(Boolean.class),
@@ -35,7 +31,6 @@ public class GTViewSettings {
         STATION_GAP_X(Integer.class),
         TYPE(Type.class),
         TRAIN_COLORS(TrainColors.class),
-        SELECTION(Selection.class),
         TRAIN_COLOR_CHOOSER(TrainColorChooser.class),
         HIGHLIGHTED_TRAINS(HighlightedTrains.class),
         START_TIME(Integer.class),

@@ -164,7 +164,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private TimeInterval lastSelected;
 
     @Override
-    public void selectTrainInterval(TimeInterval interval) {
+    public void intervalsSelected(List<TimeInterval> intervals) {
+        TimeInterval interval = null;
+        if (lastSelected == null)
+            interval = intervals.isEmpty() ? null : intervals.get(0);
+        else {
+            interval = intervals.isEmpty() ? null : TransformUtil.getNextSelected(intervals, lastSelected, true);
+        }
         if (interval != null) {
             // select in left list
             int index = allTrains.getIndexOfObject(interval.getTrain());
@@ -183,11 +189,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
         }
         lastSelected = interval;
-    }
-
-    @Override
-    public TimeInterval getSelectedTrainInterval() {
-        return lastSelected;
     }
 
     @Override

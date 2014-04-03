@@ -2,12 +2,8 @@ package net.parostroj.timetable.utils;
 
 import java.util.List;
 import java.util.ListIterator;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeType;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
+
+import net.parostroj.timetable.model.*;
 
 /**
  * Transformation of texts.
@@ -116,6 +112,35 @@ public class TransformUtil {
             return cl.getName();
         else {
             return ec.getDescription();
+        }
+    }
+
+    public static TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
+        return getNextSelected(list, oldInterval, false);
+    }
+
+    public static TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval, boolean trainSelection) {
+        int oldIndex = list.indexOf(oldInterval);
+        if (oldIndex == -1)
+            return list.get(0);
+        else {
+            if (!trainSelection) {
+                oldIndex += 1;
+                if (oldIndex >= list.size())
+                    oldIndex = 0;
+                return list.get(oldIndex);
+            } else {
+                int newIndex = oldIndex;
+                Train oldTrain = oldInterval.getTrain();
+                Train selectedTrain = oldTrain;
+                do {
+                    newIndex++;
+                    if (newIndex >= list.size())
+                        newIndex = 0;
+                    selectedTrain = list.get(newIndex).getTrain();
+                } while (selectedTrain == oldTrain && newIndex != oldIndex);
+                return list.get(newIndex);
+            }
         }
     }
 }
