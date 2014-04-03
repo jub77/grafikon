@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 
-public interface IGTDraw {
+public interface GTDraw {
 
     void draw(Graphics2D g);
 

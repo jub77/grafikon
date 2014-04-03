@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-abstract public class GTDrawBase implements IGTDraw {
+abstract public class GTDrawBase implements GTDraw {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(GTDrawBase.class.getName());
