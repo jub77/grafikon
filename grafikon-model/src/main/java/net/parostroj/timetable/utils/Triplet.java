@@ -6,6 +6,8 @@ public class Triplet<T, V, U> {
     public V second;
     public U third;
 
+    public Triplet() {}
+
     public Triplet(T first, V second, U third) {
         this.first = first;
         this.second = second;

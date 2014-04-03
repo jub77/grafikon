@@ -6,6 +6,8 @@ public class Pair<T, V> {
 
     public V second;
 
+    public Pair() {}
+
     public Pair(T first, V second) {
         this.first = first;
         this.second = second;
