@@ -26,7 +26,7 @@ import org.w3c.dom.Document;
 
 /**
  * GT view with save dialog.
- * 
+ *
  * @author jub
  */
 public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
@@ -36,7 +36,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
     public GraphicalTimetableViewWithSave() {
         super();
-        
+
         // extend context menu
         JMenuItem saveMenuItem = new JMenuItem(ResourceLoader.getString("gt.save"));
         popupMenu.add(new JSeparator());
@@ -64,11 +64,11 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         if (!dialog.isSave()) {
             return;
         }
-        
+
         // save action
         ActionContext actionContext = new ActionContext(ActionUtils.getTopLevelComponent(this));
         ModelAction action = new EventDispatchAfterModelAction(actionContext) {
-            
+
             private boolean error;
 
             @Override
@@ -92,18 +92,18 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     config.set(GTViewSettings.Key.SIZE, saveSize);
                     config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
                     if (settings.get(GTViewSettings.Key.TYPE) == Type.CLASSIC) {
-                        drawFile = new GTDrawClassic(config, getRoute(), null);
+                        drawFile = new GTDrawClassic(config, getRoute(), null, null);
                     } else if (settings.get(GTViewSettings.Key.TYPE) == Type.WITH_TRACKS) {
-                        drawFile = new GTDrawWithNodeTracks(config, getRoute(), null);
+                        drawFile = new GTDrawWithNodeTracks(config, getRoute(), null, null);
                     }
-    
+
                     if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                         BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
                         Graphics2D g2d = img.createGraphics();
                         g2d.setColor(Color.white);
                         g2d.fillRect(0, 0, saveSize.width, saveSize.height);
                         drawFile.draw(g2d);
-    
+
                         try {
                             ImageIO.write(img, "png", dialog.getSaveFile());
                         } catch (IOException e) {
@@ -113,18 +113,18 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
                         DOMImplementation domImpl =
                                 GenericDOMImplementation.getDOMImplementation();
-    
+
                         // Create an instance of org.w3c.dom.Document.
                         String svgNS = "http://www.w3.org/2000/svg";
                         Document document = domImpl.createDocument(svgNS, "svg", null);
-    
+
                         SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
                         SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-    
+
                         g2d.setSVGCanvasSize(saveSize);
-    
+
                         drawFile.draw(g2d);
-    
+
                         // write to ouput - do not use css style
                         boolean useCSS = false;
                         try {
@@ -147,7 +147,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     JOptionPane.showMessageDialog(context.getLocationComponent(), ResourceLoader.getString("save.image.error"), ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }; 
+        };
         ActionHandler.getInstance().execute(action);
     }
 }

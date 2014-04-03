@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.ManagedFreightTrainFilter;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -81,8 +80,9 @@ abstract public class GTDraw {
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
 
-    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector) {
+    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<Train> trainFilter) {
         this.route = route;
+        this.trainFilter = trainFilter;
         this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
         this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
         this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
