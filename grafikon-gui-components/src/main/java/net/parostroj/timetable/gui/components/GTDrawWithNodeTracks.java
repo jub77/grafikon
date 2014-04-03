@@ -44,8 +44,8 @@ public class GTDrawWithNodeTracks extends GTDraw {
 
     private Map<Track,Integer> trackPositions;
 
-    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<Train> trainFilter) {
-        super(config ,route, collector, trainFilter);
+    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+        super(config ,route, collector, intervalFilter);
         Float zoom = config.get(Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
@@ -150,7 +150,7 @@ public class GTDrawWithNodeTracks extends GTDraw {
     private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (trainFilter != null && !trainFilter.is(interval.getTrain())) {
+                if (intervalFilter != null && !intervalFilter.is(interval)) {
                     continue;
                 }
                 if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {

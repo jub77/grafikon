@@ -74,15 +74,15 @@ abstract public class GTDraw {
     protected int endTime;
     protected double timeStep;
 
-    protected Filter<Train> trainFilter;
+    protected Filter<TimeInterval> intervalFilter;
 
     // caching
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
 
-    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<Train> trainFilter) {
+    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
         this.route = route;
-        this.trainFilter = trainFilter;
+        this.intervalFilter = intervalFilter;
         this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
         this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
         this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
@@ -262,7 +262,7 @@ abstract public class GTDraw {
         g.setStroke(trainStroke);
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                if (trainFilter == null || trainFilter.is(interval.getTrain())) {
+                if (intervalFilter == null || intervalFilter.is(interval)) {
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
                             && (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
                     boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
