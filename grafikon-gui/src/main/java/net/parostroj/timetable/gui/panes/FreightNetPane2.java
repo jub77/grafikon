@@ -70,7 +70,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final GraphicalTimetableViewWithSave graphicalTimetableView;
     private final GTLayeredPane2 scrollPane;
 
-    private final Tuple<TimeInterval> connection = new Tuple<TimeInterval>(null, null);
+    private final Tuple<TimeInterval> connection = new Tuple<TimeInterval>();
 
     private final JButton newButton;
 

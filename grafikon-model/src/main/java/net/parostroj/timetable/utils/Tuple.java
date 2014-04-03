@@ -6,6 +6,8 @@ public class Tuple<V> {
 
     public V second;
 
+    public Tuple() {}
+
     public Tuple(V first, V second) {
         this.first = first;
         this.second = second;

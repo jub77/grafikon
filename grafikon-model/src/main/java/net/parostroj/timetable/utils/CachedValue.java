@@ -6,6 +6,7 @@ package net.parostroj.timetable.utils;
  * @author jub
  */
 public class CachedValue<T> {
+
     private boolean cached;
     private T value;
 
