@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -33,7 +34,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         @Override
-        public void selectTrainInterval(TimeInterval interval) {
+        public void intervalsSelected(List<TimeInterval> intervals) {
+            TimeInterval interval = intervals.isEmpty() ? null : intervals.get(0);
             boolean enabled = false;
             if (interval == null || !interval.isNodeOwner()) {
                 connection.first = null;
@@ -57,12 +59,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         public void editSelected() {
             // nothing ...
         }
-
-        @Override
-        public TimeInterval getSelectedTrainInterval() {
-            return null;
-        }
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(FreightNetPane2.class);

@@ -2,16 +2,16 @@ package net.parostroj.timetable.gui.utils;
 
 import java.awt.Color;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.ApplicationModelEvent;
-import net.parostroj.timetable.gui.ApplicationModelEventType;
-import net.parostroj.timetable.gui.ApplicationModelListener;
+
+import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.gui.components.HighlightedTrains;
 import net.parostroj.timetable.gui.components.TrainSelector;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.utils.TransformUtil;
 
 /**
  * Implementation of HighlightedTrains for normal timetable view.
@@ -55,7 +55,13 @@ public class NormalHTS implements HighlightedTrains, TrainSelector, ApplicationM
     }
 
     @Override
-    public void selectTrainInterval(TimeInterval interval) {
+    public void intervalsSelected(List<TimeInterval> intervals) {
+        TimeInterval interval = null;
+        if (selectedTimeInterval == null)
+            interval = intervals.isEmpty() ? null : intervals.get(0);
+        else {
+            interval = intervals.isEmpty() ? null : TransformUtil.getNextSelected(intervals, selectedTimeInterval, true);
+        }
         // set selected train
         Train selected = null;
         if (interval != null)
@@ -69,11 +75,6 @@ public class NormalHTS implements HighlightedTrains, TrainSelector, ApplicationM
     public void editSelected() {
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.EDIT_SELECTED_TRAIN, model));
     };
-
-    @Override
-    public TimeInterval getSelectedTrainInterval() {
-        return selectedTimeInterval;
-    }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {

@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
+import java.util.List;
 
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.StorableGuiData;
@@ -44,12 +45,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
         @Override
         public boolean isHighlighedInterval(TimeInterval interval) {
-            TimeInterval selectedInterval = selectorDelegate.getSelectedTrainInterval();
-            if (selectedInterval == null) {
-                return false;
-            } else {
-                return selectedInterval.getTrain() == interval.getTrain();
-            }
+            return false;
         }
 
         @Override
@@ -72,14 +68,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
-        public void selectTrainInterval(TimeInterval interval) {
-            selectorDelegate.selectTrainInterval(interval);
+        public void intervalsSelected(List<TimeInterval> intervals) {
+            selectorDelegate.intervalsSelected(intervals);
             graphicalTimetableView.repaint();
-        }
-
-        @Override
-        public TimeInterval getSelectedTrainInterval() {
-            return selectorDelegate.getSelectedTrainInterval();
         }
 
         @Override

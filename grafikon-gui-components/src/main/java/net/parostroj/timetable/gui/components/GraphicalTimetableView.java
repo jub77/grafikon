@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
-import net.parostroj.timetable.gui.components.GTViewSettings.Selection;
 import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
@@ -250,7 +249,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 .set(Key.STATION_GAP_X, 15)
                 .set(Key.TYPE, Type.CLASSIC)
                 .set(Key.TRAIN_COLORS, TrainColors.BY_TYPE)
-                .set(Key.SELECTION, Selection.TRAIN)
                 .set(Key.TRAIN_NAMES, Boolean.TRUE)
                 .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)
@@ -647,17 +645,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (trainRegionCollector != null) {
             List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());
             if (trainSelector != null) {
-                if (selectedIntervals.isEmpty())
-                    trainSelector.selectTrainInterval(null);
-                else {
-                    TimeInterval oldInterval = trainSelector.getSelectedTrainInterval();
-                    if (oldInterval == null)
-                        trainSelector.selectTrainInterval(selectedIntervals.get(0));
-                    else {
-                        TimeInterval newSelection = this.getNextSelected(selectedIntervals, oldInterval);
-                        trainSelector.selectTrainInterval(newSelection);
-                    }
-                }
+                trainSelector.intervalsSelected(selectedIntervals);
             }
         }
     }
@@ -683,32 +671,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             return toolTipTemplateLine.evaluate(toolTipformattingMap);
         else
             return toolTipTemplateNode.evaluate(toolTipformattingMap);
-    }
-
-    private TimeInterval getNextSelected(List<TimeInterval> list, TimeInterval oldInterval) {
-        int oldIndex = list.indexOf(oldInterval);
-        if (oldIndex == -1)
-            return list.get(0);
-        else {
-            Selection selection = settings.get(Key.SELECTION, Selection.class);
-            if (selection == Selection.INTERVAL) {
-                oldIndex += 1;
-                if (oldIndex >= list.size())
-                    oldIndex = 0;
-                return list.get(oldIndex);
-            } else {
-                int newIndex = oldIndex;
-                Train oldTrain = oldInterval.getTrain();
-                Train selectedTrain = oldTrain;
-                do {
-                    newIndex++;
-                    if (newIndex >= list.size())
-                        newIndex = 0;
-                    selectedTrain = list.get(newIndex).getTrain();
-                } while (selectedTrain == oldTrain && newIndex != oldIndex);
-                return list.get(newIndex);
-            }
-        }
     }
 
     private void preferencesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
