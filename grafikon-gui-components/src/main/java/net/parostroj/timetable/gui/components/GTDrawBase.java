@@ -483,8 +483,8 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     public int getY(Node node) {
-        int y = start.y + positions.get(node);
-        return y;
+        Integer position = positions.get(node);
+        return position != null ? start.y + position : -1;
     }
 
     protected boolean isTimeVisible(int time1, int time2) {

@@ -273,6 +273,7 @@ public class FloatingWindowsFactory {
 
     private static FloatingWindow createGTViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
+        gtView.setDrawFactory(new ManagedFreightGTDrawFactory());
         final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
