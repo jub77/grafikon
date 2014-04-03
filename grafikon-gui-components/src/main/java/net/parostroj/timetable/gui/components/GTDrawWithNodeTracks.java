@@ -149,8 +149,12 @@ public class GTDrawWithNodeTracks extends GTDraw {
     private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE)
+                if (trainFilter != null && !trainFilter.is(interval.getTrain())) {
                     continue;
+                }
+                if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
+                    continue;
+                }
                 if (!interval.isBoundary()) {
                     g.setStroke(trainStroke);
                 } else if (interval.isTechnological()) {
@@ -166,15 +170,17 @@ public class GTDrawWithNodeTracks extends GTDraw {
                 Interval normalized = interval.getInterval().normalize();
                 if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
                     Line2D line = this.createTrainLineInStation(interval, normalized);
-                    if (isCollected)
+                    if (isCollected) {
                         this.addShapeToCollector(interval, line);
+                    }
                     g.draw(line);
                 }
                 Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
                 if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
                     Line2D line = this.createTrainLineInStation(interval, overMidnight);
-                    if (isCollected)
+                    if (isCollected) {
                         this.addShapeToCollector(interval, line);
+                    }
                     g.draw(line);
                 }
             }
