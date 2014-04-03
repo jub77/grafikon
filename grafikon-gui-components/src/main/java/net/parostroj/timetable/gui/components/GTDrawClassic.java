@@ -34,8 +34,8 @@ public class GTDrawClassic extends GTDraw {
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
 
-    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<Train> trainFilter) {
-        super(config ,route, collector, trainFilter);
+    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+        super(config ,route, collector, intervalFilter);
 
         Float zoom = config.get(Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
