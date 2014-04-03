@@ -72,6 +72,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     protected GTViewSettings settings;
 
+    protected GTDrawFactory drawFactory;
     private GTDraw draw;
     private TrainRegionCollector trainRegionCollector;
     private TrainSelector trainSelector;
@@ -92,6 +93,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     public GraphicalTimetableView() {
         initComponents();
 
+        this.drawFactory = new NormalGTDrawFactory();
         this.settings = this.getDefaultViewSettings();
 
         this.setGTWidth(settings);
@@ -362,6 +364,10 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         this.trainSelector = trainSelector;
     }
 
+    public void setDrawFactory(GTDrawFactory drawFactory) {
+        this.drawFactory = drawFactory;
+    }
+
     public void setRoute(Route route) {
         if (this.route == route)
             return;
@@ -413,11 +419,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             trainRegionCollector.clear();
             GTViewSettings config = this.getSettings();
             config.set(GTViewSettings.Key.SIZE, this.getSize());
-            if (settings.get(Key.TYPE) == Type.CLASSIC) {
-                draw = new GTDrawClassic(config, drawnRoute, trainRegionCollector, null);
-            } else if (settings.get(Key.TYPE) == Type.WITH_TRACKS) {
-                draw = new GTDrawWithNodeTracks(config, drawnRoute, trainRegionCollector, null);
-            }
+            draw = drawFactory.createInstance(config, drawnRoute, trainRegionCollector, null);
         }
         this.repaint();
     }
