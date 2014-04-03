@@ -1,9 +1,7 @@
-package net.parostroj.timetable.actions;
+package net.parostroj.timetable.filters;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import net.parostroj.timetable.filters.Filter;
 
 /**
  * Iterates over time instances and applies filter.
