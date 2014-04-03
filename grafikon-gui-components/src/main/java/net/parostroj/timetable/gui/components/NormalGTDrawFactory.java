@@ -15,12 +15,12 @@ public class NormalGTDrawFactory extends GTDrawFactory {
 
     @Override
     public GTDraw createInstance(GTViewSettings settings, Route route, TrainRegionCollector collector,
-            Filter<TimeInterval> interval) {
+            Filter<TimeInterval> intervalFilter) {
         GTDraw result = null;
         if (settings.get(Key.TYPE) == Type.CLASSIC) {
-            result = new GTDrawClassic(settings, route, collector, null);
+            result = new GTDrawClassic(settings, route, collector, intervalFilter);
         } else if (settings.get(Key.TYPE) == Type.WITH_TRACKS) {
-            result = new GTDrawWithNodeTracks(settings, route, collector, null);
+            result = new GTDrawWithNodeTracks(settings, route, collector, intervalFilter);
         }
         return result;
     }
