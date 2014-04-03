@@ -3,6 +3,8 @@ package net.parostroj.timetable.actions;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import net.parostroj.timetable.filters.Filter;
+
 /**
  * Iterates over time instances and applies filter.
  *
@@ -16,10 +18,6 @@ public class FilteredIterable<T> implements Iterable<T> {
     public FilteredIterable(Iterable<T> iterable, Filter<T> filter) {
         this.iterable = iterable;
         this.filter = filter;
-    }
-
-    public interface Filter<T> {
-        boolean is(T instance);
     }
 
     @Override
