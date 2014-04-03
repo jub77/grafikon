@@ -6,11 +6,11 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 
-public abstract class GTDrawAdapter implements GTDraw {
+public abstract class GTDrawDecorator implements GTDraw {
 
     protected GTDraw draw;
 
-    public GTDrawAdapter(GTDraw draw) {
+    public GTDrawDecorator(GTDraw draw) {
         this.draw = draw;
     }
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TransformedGTDraw extends GTDrawAdapter {
+public class TransformedGTDraw extends GTDrawDecorator {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformedGTDraw.class.getName());
 
