@@ -1,6 +1,7 @@
 package net.parostroj.timetable.actions;
 
 import net.parostroj.timetable.filters.Filter;
+import net.parostroj.timetable.filters.FilteredIterable;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
