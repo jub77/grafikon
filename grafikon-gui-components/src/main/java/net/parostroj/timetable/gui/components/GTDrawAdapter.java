@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import net.parostroj.timetable.model.Node;
@@ -25,7 +24,7 @@ public abstract class GTDrawAdapter implements GTDraw {
     }
 
     @Override
-    public void paintStationNames(Graphics g) {
+    public void paintStationNames(Graphics2D g) {
         draw.paintStationNames(g);
     }
 

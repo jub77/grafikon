@@ -26,7 +26,7 @@ public class GTStationNamesOverlay extends JPanel {
             // set font size
             g.setFont(g.getFont().deriveFont(view.getGtDraw().getFontSize()));
             // draw
-            view.getGtDraw().paintStationNames(g);
+            view.getGtDraw().paintStationNames((Graphics2D) g);
         }
     }
 }
