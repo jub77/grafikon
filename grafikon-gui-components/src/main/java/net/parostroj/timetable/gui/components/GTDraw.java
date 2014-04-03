@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-abstract public class GTDraw {
+abstract public class GTDraw implements IGTDraw {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
@@ -110,6 +110,7 @@ abstract public class GTDraw {
         fontSize = zoom * FONT_SIZE;
     }
 
+    @Override
     public void draw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
@@ -179,6 +180,7 @@ abstract public class GTDraw {
         return (int) g.getFont().getStringBounds(w, g.getFontRenderContext()).getWidth();
     }
 
+    @Override
     public void paintStationNames(Graphics g) {
         if (positions == null)
             this.computePositions();
@@ -191,10 +193,12 @@ abstract public class GTDraw {
 
     protected abstract void paintTrains(Graphics2D g);
 
+    @Override
     public Route getRoute() {
         return route;
     }
 
+    @Override
     public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
@@ -486,22 +490,27 @@ abstract public class GTDraw {
         return startTime <= time && time <= endTime;
     }
 
+    @Override
     public float getFontSize() {
         return fontSize;
     }
 
+    @Override
     public void removedTrain(Train train) {
         trainTexts.remove(train);
     }
 
+    @Override
     public void changedTextTrain(Train train) {
         trainTexts.remove(train);
     }
 
+    @Override
     public void changedTextNode(Node node) {
         nodeTexts.remove(node);
     }
 
+    @Override
     public void changedTextAllTrains() {
         trainTexts.clear();
     }

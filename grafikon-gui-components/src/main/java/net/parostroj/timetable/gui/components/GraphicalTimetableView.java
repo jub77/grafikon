@@ -72,7 +72,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     protected GTViewSettings settings;
 
-    private GTDraw draw;
+    private IGTDraw draw;
     private TrainRegionCollector trainRegionCollector;
     private TrainSelector trainSelector;
     private Route route;
@@ -804,7 +804,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     }
 
-    public GTDraw getGtDraw() {
+    public IGTDraw getGtDraw() {
         return draw;
     }
 

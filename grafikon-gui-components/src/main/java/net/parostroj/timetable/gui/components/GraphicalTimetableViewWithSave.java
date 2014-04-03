@@ -79,7 +79,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                 try {
                     Dimension saveSize = dialog.getSaveSize();
                     // get values and provide save
-                    GTDraw drawFile = null;
+                    IGTDraw drawFile = null;
                     GTViewSettings config = getSettings();
                     config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
                     TrainDiagram diagram = getDiagram();

@@ -1,8 +1,14 @@
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.Train;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +17,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TransformedGTDraw {
+public class TransformedGTDraw implements IGTDraw {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformedGTDraw.class.getName());
-    private GTDraw draw;
+    private final IGTDraw draw;
     private Rectangle clipping;
     private boolean moveStationName;
 
-    public TransformedGTDraw(GTDraw draw) {
+    public TransformedGTDraw(IGTDraw draw) {
         this.draw = draw;
     }
     private static int drawCnt = 0;
@@ -56,5 +62,45 @@ public class TransformedGTDraw {
 
     public void setMoveStationNames(boolean move) {
         moveStationName = move;
+    }
+
+    @Override
+    public void paintStationNames(Graphics g) {
+        draw.paintStationNames(g);
+    }
+
+    @Override
+    public Route getRoute() {
+        return draw.getRoute();
+    }
+
+    @Override
+    public void setPositionX(int positionX) {
+        draw.setPositionX(positionX);
+    }
+
+    @Override
+    public float getFontSize() {
+        return draw.getFontSize();
+    }
+
+    @Override
+    public void removedTrain(Train train) {
+        draw.removedTrain(train);
+    }
+
+    @Override
+    public void changedTextTrain(Train train) {
+        draw.changedTextTrain(train);
+    }
+
+    @Override
+    public void changedTextNode(Node node) {
+        draw.changedTextNode(node);
+    }
+
+    @Override
+    public void changedTextAllTrains() {
+        draw.changedTextAllTrains();
     }
 }
