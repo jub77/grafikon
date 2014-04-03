@@ -1,5 +1,6 @@
 package net.parostroj.timetable.actions;
 
+import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
@@ -25,7 +26,7 @@ public class FreightHelper {
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightFrom(Iterable<TimeInterval> i) {
-        return new FilteredIterable<TimeInterval>(i, new FilteredIterable.Filter<TimeInterval>() {
+        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
             @Override
             public boolean is(TimeInterval instance) {
                 return isFreightFrom(instance);
@@ -34,7 +35,7 @@ public class FreightHelper {
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightTo(Iterable<TimeInterval> i) {
-        return new FilteredIterable<TimeInterval>(i, new FilteredIterable.Filter<TimeInterval>() {
+        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
             @Override
             public boolean is(TimeInterval instance) {
                 return isFreightTo(instance);
@@ -43,7 +44,7 @@ public class FreightHelper {
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreight(Iterable<TimeInterval> i, final TimeInterval from) {
-        return new FilteredIterable<TimeInterval>(i, new FilteredIterable.Filter<TimeInterval>() {
+        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
 
             boolean after = false;
 
