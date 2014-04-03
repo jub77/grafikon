@@ -477,9 +477,14 @@ abstract public class GTDrawBase implements GTDraw {
     	return interval.getTrain().getTrainDiagram().getTimeConverter();
     }
 
-    protected int getX(int time) {
+    public int getX(int time) {
         int x = (int)(start.x + (time - startTime) * timeStep);
         return x;
+    }
+
+    public int getY(Node node) {
+        int y = start.y + positions.get(node);
+        return y;
     }
 
     protected boolean isTimeVisible(int time1, int time2) {
