@@ -22,7 +22,6 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     @Override
     public void draw(Graphics2D g) {
-        super.draw(g);
         // draw managed trains ...
         g.setColor(Color.magenta);
         g.setStroke(s);
@@ -32,6 +31,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         FreightNet net = fSegment.asNode().getTrainDiagram().getFreightNet();
 
         Collection<FNConnection> connections = net.getConnections();
+        drawBase.init(g);
         for (FNConnection con : connections) {
             if (drawBase.positions.containsKey(con.getFrom().getOwnerAsNode())) {
                 int y = drawBase.getY(con.getFrom().getOwnerAsNode());
@@ -40,5 +40,6 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
                 g.drawLine(x1, y, x2, y);
             }
         }
+        super.draw(g);
     }
 }

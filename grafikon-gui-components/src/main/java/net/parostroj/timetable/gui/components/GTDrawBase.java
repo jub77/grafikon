@@ -112,17 +112,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public void draw(Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // set font size
-        g.setFont(g.getFont().deriveFont(fontSize));
-
-        if (this.start == null)
-            this.updateStartAndSize(g);
-
-        if (positions == null)
-            this.computePositions();
+        this.init(g);
 
         this.paintHours(g);
         this.paintStations(g);
@@ -132,6 +122,21 @@ abstract public class GTDrawBase implements GTDraw {
             this.paintStationNames(g, stations, positions);
         }
         this.finishCollecting();
+    }
+
+    protected void init(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // set font size
+        g.setFont(g.getFont().deriveFont(fontSize));
+
+        if (this.start == null) {
+            this.updateStartAndSize(g);
+        }
+
+        if (positions == null) {
+            this.computePositions();
+        }
     }
 
     private void updateStartAndSize(Graphics2D g) {
