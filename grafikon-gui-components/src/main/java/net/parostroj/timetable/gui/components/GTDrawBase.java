@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-abstract public class GTDraw implements IGTDraw {
+abstract public class GTDrawBase implements IGTDraw {
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(GTDraw.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(GTDrawBase.class.getName());
 
     // chars
     private static final String M_CHAR = "M";
@@ -80,7 +80,7 @@ abstract public class GTDraw implements IGTDraw {
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
 
-    public GTDraw(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+    public GTDrawBase(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
         this.route = route;
         this.intervalFilter = intervalFilter;
         this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
