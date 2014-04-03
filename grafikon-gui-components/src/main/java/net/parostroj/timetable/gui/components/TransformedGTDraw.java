@@ -17,14 +17,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class TransformedGTDraw implements IGTDraw {
+public class TransformedGTDraw implements GTDraw {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformedGTDraw.class.getName());
-    private final IGTDraw draw;
+    private final GTDraw draw;
     private Rectangle clipping;
     private boolean moveStationName;
 
-    public TransformedGTDraw(IGTDraw draw) {
+    public TransformedGTDraw(GTDraw draw) {
         this.draw = draw;
     }
     private static int drawCnt = 0;
