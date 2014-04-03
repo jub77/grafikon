@@ -21,12 +21,13 @@ public class GTStationNamesOverlay extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         g.translate(0, topBorder);
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (view != null && view.getGtDraw() != null) {
             // set font size
             g.setFont(g.getFont().deriveFont(view.getGtDraw().getFontSize()));
             // draw
-            view.getGtDraw().paintStationNames((Graphics2D) g);
+            view.getGtDraw().paintStationNames(g2d);
         }
     }
 }
