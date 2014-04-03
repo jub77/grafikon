@@ -185,14 +185,16 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                             routesChanged(event);
                             break;
                         case TRAIN_ADDED:
-                            if (trainRegionCollector != null)
+                            if (trainRegionCollector != null) {
                                 trainRegionCollector.newTrain((Train)event.getObject());
+                            }
                             repaint();
                             break;
                         case TRAIN_REMOVED:
-                            if (trainRegionCollector != null)
+                            if (trainRegionCollector != null) {
                                 trainRegionCollector.deleteTrain((Train)event.getObject());
-                            draw.removedTrain((Train) event.getObject());
+                            }
+                            draw.changed(GTDraw.Change.REMOVED_TRAIN, event.getObject());
                             repaint();
                             break;
                         case ATTRIBUTE:
@@ -281,7 +283,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
                 break;
             case ATTRIBUTE:
                 if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                    draw.changedTextTrain(event.getSource());
+                    draw.changed(GTDraw.Change.TRAIN_TEXT_CHANGED, event.getSource());
                     this.repaint();
                 }
                 break;
@@ -315,7 +317,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         switch (event.getType()) {
             case ATTRIBUTE:
                 if (event.getAttributeChange().getName().equals("name")) {
-                    draw.changedTextNode(event.getSource());
+                    draw.changed(GTDraw.Change.NODE_TEXT_CHANGED, event.getSource());
                 }
                 break;
             default:

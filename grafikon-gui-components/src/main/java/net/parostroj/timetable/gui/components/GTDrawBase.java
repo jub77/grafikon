@@ -496,22 +496,17 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     @Override
-    public void removedTrain(Train train) {
-        trainTexts.remove(train);
-    }
-
-    @Override
-    public void changedTextTrain(Train train) {
-        trainTexts.remove(train);
-    }
-
-    @Override
-    public void changedTextNode(Node node) {
-        nodeTexts.remove(node);
-    }
-
-    @Override
-    public void changedTextAllTrains() {
-        trainTexts.clear();
+    public void changed(Change change, Object object) {
+        switch(change) {
+            case REMOVED_TRAIN: case TRAIN_TEXT_CHANGED:
+                trainTexts.remove(object);
+                break;
+            case NODE_TEXT_CHANGED:
+                nodeTexts.remove(object);
+                break;
+            case ALL_TRAIN_TEXTS_CHANGED:
+                trainTexts.clear();
+                break;
+        }
     }
 }
