@@ -19,6 +19,7 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         detailsView.setModel(delegate);
     }
 
-    private String getKey(String suffix) {
+    private String getKey() {
         String prefix = "custom";
         if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType())) {
             prefix = "driver";
@@ -127,26 +128,30 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         } else if (TrainsCycleType.TRAIN_UNIT_CYCLE.equals(delegate.getType())) {
             prefix = "trainunit";
         }
-        return String.format("cycles.%s.%s", prefix, suffix);
+        return String.format("cycles.%s", prefix);
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.setInt(getKey("divider"), splitPane.getDividerLocation());
-        prefs.setString(getKey("gtv"), graphicalTimetableView.getSettings().getStorageString());
+    public Ini.Section saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, getKey());
+        section.put("divider", splitPane.getDividerLocation());
+        section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        splitPane.setDividerLocation(prefs.getInt(getKey("divider"), -1));
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, getKey());
+        splitPane.setDividerLocation(section.get("divider", Integer.class, -1));
         try {
-            GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(getKey("gtv"), null));
+            GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
             if (gtvs != null) {
                 graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
             }
         } catch (Exception e) {
             LOG.warn("Wrong GTView settings - using default values.");
         }
+        return section;
     }
 
     private void initComponents() {

@@ -9,6 +9,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.ini4j.Ini;
+
 import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -153,11 +155,13 @@ public class FreightNetPane extends javax.swing.JPanel implements StorableGuiDat
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
+    public Ini.Section saveToPreferences(Ini prefs) {
+        return null;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        return null;
     }
 
     public void setModel(ApplicationModel model) {

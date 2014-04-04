@@ -16,6 +16,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,15 +99,18 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.setString("freightnet.gtv", graphicalTimetableView.getSettings().getStorageString());
+    public Ini.Section saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "freigh.net");
+        section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "freigh.net");
         GTViewSettings gtvs = null;
         try {
-            gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
+            gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
         } catch (Exception e) {
             // use default values
             log.warn("Wrong GTView settings - using default values.");
@@ -114,6 +118,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         if (gtvs != null) {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         }
+        return section;
     }
 
     private boolean checkEnabled() {

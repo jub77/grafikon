@@ -4,6 +4,8 @@ import java.awt.Frame;
 
 import javax.swing.JComponent;
 
+import org.ini4j.Ini;
+
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -30,31 +32,32 @@ public class FloatingDialog extends javax.swing.JDialog implements FloatingWindo
         pack();
     }
 
-
-    protected String createStorageKey(String keySuffix) {
-        return new StringBuilder(storageKeyPrefix).append('.').append(keySuffix).toString();
+    @Override
+    public Ini.Section saveToPreferences(Ini prefs) {
+        prefs.remove(storageKeyPrefix);
+        Ini.Section section = prefs.add(storageKeyPrefix);
+        section.put("position", GuiUtils.getPosition(this));
+        section.put("visible", this.isVisible());
+        return section;
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.removeWithPrefix(storageKeyPrefix);
-        prefs.setString(this.createStorageKey("position"), GuiUtils.getPosition(this));
-        prefs.setBoolean(this.createStorageKey("visible"), this.isVisible());
-    }
-
-    @Override
-    public void loadFromPreferences(AppPreferences prefs) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, storageKeyPrefix);
         // set position
-        String positionStr = prefs.getString(this.createStorageKey("position"), null);
+        String positionStr = section.get("position");
         GuiUtils.setPosition(positionStr, this);
         // set visibility
-        if (prefs.getBoolean(this.createStorageKey("visible"), false))
-                this.visibleOnInit = true;
+        if (section.get("visible", Boolean.class, false)) {
+            this.visibleOnInit = true;
+        }
+        return section;
     }
 
     public void setVisibleOnInit() {
-        if (this.visibleOnInit)
+        if (this.visibleOnInit) {
             this.setVisible(true);
+        }
         this.visibleOnInit = false;
     }
 }

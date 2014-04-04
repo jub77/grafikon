@@ -2,16 +2,20 @@ package net.parostroj.timetable.gui.actions.impl;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.swing.JFileChooser;
+
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.utils.ResourceLoader;
+
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * File chooser factory. Instances of the same type are shared, so do not use
  * simultanously the instance of file chooser in two places at the same time.
- * 
+ *
  * @author jub
  */
 public class FileChooserFactory {
@@ -40,7 +44,7 @@ public class FileChooserFactory {
                     outputDirectoryFileChooserInstance.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     // last directory
                     try {
-                        String lastDir = AppPreferences.getPreferences().getString("last.directory.html.dir", null);
+                        String lastDir = AppPreferences.getSection("main").get("last.directory.html.dir");
                         if (lastDir != null) {
                             outputDirectoryFileChooserInstance.setCurrentDirectory(new File(lastDir));
                         }
@@ -92,7 +96,8 @@ public class FileChooserFactory {
     private void setLastDirectory(JFileChooser chooser, String key) {
         // last directory
         try {
-            String lastDir = AppPreferences.getPreferences().getString(key, null);
+            Ini.Section section = AppPreferences.getSection("main");
+            String lastDir = section.get(key);
             if (lastDir != null) {
                 chooser.setCurrentDirectory(new File(lastDir));
             }
@@ -102,15 +107,16 @@ public class FileChooserFactory {
 
     }
 
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.setString("last.directory.model",
+    public void saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "main");
+        section.put("last.directory.model",
                 this.getFileChooser(Type.GTM).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.template",
+        section.put("last.directory.template",
                 this.getFileChooser(Type.TEMPLATE).getCurrentDirectory().getAbsolutePath());
-        prefs.setString("last.directory.output",
+        section.put("last.directory.output",
                 this.getFileChooser(Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
         JFileChooser dChooser = this.getFileChooser(Type.OUTPUT_DIRECTORY);
         File oDir = dChooser.getSelectedFile() == null ? dChooser.getCurrentDirectory() : dChooser.getSelectedFile();
-        prefs.setString("last.directory.html.dir", oDir.getAbsolutePath());
+        section.put("last.directory.html.dir", oDir.getAbsolutePath());
     }
 }
