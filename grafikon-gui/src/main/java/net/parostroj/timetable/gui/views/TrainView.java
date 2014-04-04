@@ -267,7 +267,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     @Override
     public void saveToPreferences(AppPreferences prefs) {
         // get displayed columns and save theirs order
-        prefs.remove("train.columns");
+        prefs.remove("train.columns.names");
         TableColumnModel tcm = trainTable.getColumnModel();
         Enumeration<TableColumn> columns = tcm.getColumns();
         StringBuilder order = null;
@@ -278,17 +278,17 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             } else {
                 order = new StringBuilder();
             }
-            order.append(column.getModelIndex()).append(',').append(column.getPreferredWidth());
+            order.append(TrainTableColumn.values()[column.getModelIndex()].name()).append(',').append(column.getPreferredWidth());
         }
         if (order != null) {
-            prefs.setString("train.columns", order.toString());
+            prefs.setString("train.columns.names", order.toString());
         }
     }
 
     @Override
     public void loadFromPreferences(AppPreferences prefs) {
         // set displayed columns (if the prefs are empty - show all)
-        String cs = prefs.getString("train.columns", null);
+        String cs = prefs.getString("train.columns.names", null);
         List<TableColumn> shownColumns = new LinkedList<TableColumn>();
         cs = Conversions.checkAndTrim(cs);
         if (cs == null) {
@@ -302,15 +302,17 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             for (String cStr : splitted) {
                 try {
                     String[] ss = cStr.split(",");
-                    int cInt = Integer.parseInt(ss[0]);
-                    TableColumn ac = TrainTableColumn.getColumn(cInt).createTableColumn();
-                    if (ss.length > 1) {
-                        int wInt = Integer.parseInt(ss[1]);
-                        if (wInt != 0) {
-                            ac.setPreferredWidth(wInt);
+                    TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
+                    if (column != null) {
+                        TableColumn ac = column.createTableColumn();
+                        if (ss.length > 1) {
+                            int wInt = Integer.parseInt(ss[1]);
+                            if (wInt != 0) {
+                                ac.setPreferredWidth(wInt);
+                            }
                         }
+                        shownColumns.add(ac);
                     }
-                    shownColumns.add(ac);
                 } catch (NumberFormatException e) {
                     LOG.warn("Cannot load columns order for train view: {}", cStr);
                 }
