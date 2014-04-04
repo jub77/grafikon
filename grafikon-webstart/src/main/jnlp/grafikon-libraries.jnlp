@@ -44,6 +44,7 @@
         <jar href="jxlayer-${jxlayer.version}.jar" download="eager"/>
         <jar href="joda-time-${jodatime.version}.jar" download="eager"/>
         <jar href="xmlgraphics-commons-${xmlgraphics.version}.jar" download="eager"/>
+        <jar href="init4j-${ini4j.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>
