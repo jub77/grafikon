@@ -1,12 +1,9 @@
 package net.parostroj.timetable.gui;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import org.ini4j.Ini;
 
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
@@ -203,43 +200,46 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.setString("output.templates", getSerializedOutputTemplates());
-        if (programSettings.getUserName() != null)
-            prefs.setString("user.name", programSettings.getUserName());
-        else
-            prefs.remove("user.name");
-        prefs.setBoolean("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
-        prefs.setBoolean("two.sided.print", programSettings.isTwoSidedPrint());
-        prefs.setBoolean("st.show.tech.time", programSettings.isStShowTechTime());
-        prefs.setString("unit", programSettings.getLengthUnit().getKey());
-        prefs.setString("unit.speed", programSettings.getSpeedLengthUnit().getKey());
-        prefs.removeWithPrefix("last.opened.");
-        int i = 0;
+    public Ini.Section saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "model");
+        section.put("output.templates", getSerializedOutputTemplates());
+        section.put("user.name", programSettings.getUserName());
+        section.put("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
+        section.put("two.sided.print", programSettings.isTwoSidedPrint());
+        section.put("st.show.tech.time", programSettings.isStShowTechTime());
+        section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
+        section.put("unit.speed", programSettings.getSpeedLengthUnit() != null ? programSettings.getSpeedLengthUnit().getKey() : null);
+        section.remove("last.opened");
         for (File file : this.lastOpenedFiles) {
-            prefs.setString("last.opened." + (i++), file.getAbsolutePath());
+            section.add("last.opened", file.getAbsolutePath());
         }
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        deserializeOutputTemplates(prefs.getString("output.templates", ""));
-        programSettings.setUserName(prefs.getString("user.name", null));
-        programSettings.setGenerateTitlePageTT(prefs.getBoolean("generate.tt.title.page", false));
-        programSettings.setTwoSidedPrint(prefs.getBoolean("two.sided.print", false));
-        programSettings.setStShowTechTime(prefs.getBoolean("st.show.tech.time", false));
-        LengthUnit lengthUnit = LengthUnit.getByKey(prefs.getString("unit", "mm"));
-        LengthUnit speedLengthUnit = LengthUnit.getByKey(prefs.getString("unit.speed", "km"));
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "model");
+        deserializeOutputTemplates(section.get("output.templates", ""));
+        programSettings.setUserName(section.get("user.name"));
+        programSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, false));
+        programSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, false));
+        programSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
+        LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
+        LengthUnit speedLengthUnit = LengthUnit.getByKey(section.get("unit.speed", "km"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
         programSettings.setSpeedLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
-        for (int i = LAST_OPENED_COUNT - 1; i >= 0; i--) {
-            String filename = prefs.getString("last.opened." + i, null);
-            if (filename != null) {
-                File file = new File(filename);
-                if (file.exists())
-                    this.addLastOpenedFile(new File(filename));
+        List<String> filenames = section.getAll("last.opened");
+        if (filenames != null) {
+            Collections.reverse(filenames);
+            for (String filename : filenames) {
+                if (filename != null) {
+                    File file = new File(filename);
+                    if (file.exists())
+                        this.addLastOpenedFile(new File(filename));
+                }
             }
         }
+        return section;
     }
 
     private String getSerializedOutputTemplates() {

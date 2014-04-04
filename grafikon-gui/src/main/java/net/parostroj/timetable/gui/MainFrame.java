@@ -38,6 +38,7 @@ import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,8 +87,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // set local before anything else
         String loadedLocale = null;
         try {
-            loadedLocale = AppPreferences.getPreferences().getString("locale.program", null);
-            String templateLocale = AppPreferences.getPreferences().getString("locale.output", null);
+            Ini.Section section = AppPreferences.getSection("main");
+            loadedLocale = section.get("locale.program");
+            String templateLocale = section.get("locale.output");
             if (loadedLocale != null) {
                 locale = ModelUtils.parseLocale(loadedLocale);
                 Locale.setDefault(locale);
@@ -187,7 +189,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // apply preferences
         try {
-            AppPreferences.getPreferences().load();
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
             LOG.error("Error loading preferences.", e);
@@ -1121,45 +1122,42 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     public void cleanUpBeforeApplicationEnd() {
         try {
             // save preferences
-            AppPreferences prefs = AppPreferences.getPreferences();
-            this.saveToPreferences(prefs);
-            prefs.save();
+            this.saveToPreferences(AppPreferences.getPreferences());
+            AppPreferences.storePreferences();
         } catch (IOException ex) {
             LOG.error("Error saving preferences.", ex);
         }
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
+    public Ini.Section saveToPreferences(Ini prefs) {
         boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
-        prefs.removeWithPrefix("main.");
 
-        prefs.setBoolean("main.maximized", maximized);
+        Ini.Section section = AppPreferences.getSection(prefs, "main");
+
+        section.put("maximized", maximized);
 
         if (!maximized) {
             // set position
             String positionStr = GuiUtils.getPosition(this);
-            prefs.setString("main.position", positionStr);
+            section.put("position", positionStr);
+        } else {
+            section.remove("position");
         }
 
         // save to preferences last file chooser directories
         FileChooserFactory.getInstance().saveToPreferences(prefs);
 
         // save locales
-        if (locale != null)
-            prefs.setString("locale.program", locale.toString());
-        else
-            prefs.remove("locale.program");
-        if (model.getOutputLocale() != null)
-            prefs.setString("locale.output", model.getOutputLocale().toString());
-        else
-            prefs.remove("locale.output");
+
+        section.put("locale.program", locale != null ? locale.toString() : null);
+        section.put("locale.output", model.getOutputLocale() != null ? model.getOutputLocale().toString() : null);
 
         // save output type
-        prefs.setString("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
+        section.put("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
 
         // save look and feel
-        prefs.setString("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
+        section.put("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
 
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -1170,21 +1168,23 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         circulationPane.saveToPreferences(prefs);
         freightNetPane.saveToPreferences(prefs);
         freightNetPane2.saveToPreferences(prefs);
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        if (prefs.getBoolean("main.maximized", false)) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "main");
+        if (section.get("maximized", Boolean.class, false)) {
             // setting maximized state
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } else {
-            if (prefs.contains("main.position"))
+            if (section.containsKey("position"))
                 // set position
-                GuiUtils.setPosition(prefs.getString("main.position", null), this);
+                GuiUtils.setPosition(section.get("position"), this);
         }
 
         // load output type
-        String aC = prefs.getString("output.type", "html");
+        String aC = section.get("output.type", "html");
         Enumeration<AbstractButton> e = outputTypeButtonGroup.getElements();
         while (e.hasMoreElements()) {
             AbstractButton button = e.nextElement();
@@ -1196,7 +1196,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         }
 
         // load look and feel
-        String laf = prefs.getString("look.and.feel", "system");
+        String laf = section.get("look.and.feel", "system");
         e = lookAndFeelbuttonGroup.getElements();
         while (e.hasMoreElements()) {
             AbstractButton button = e.nextElement();
@@ -1206,7 +1206,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         }
 
-        showGTViewMenuItem.setSelected(prefs.getBoolean("trains.show.gtview", true));
+        showGTViewMenuItem.setSelected(section.get("trains.show.gtview", Boolean.class, true));
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);
@@ -1221,6 +1221,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         genTitlePageTTCheckBoxMenuItem.setSelected(model.getProgramSettings().isGenerateTitlePageTT());
         twoSidesPrintCheckBoxMenuItem.setSelected(model.getProgramSettings().isTwoSidedPrint());
         stShowTechTimeCheckBoxMenuItem.setSelected(model.getProgramSettings().isStShowTechTime());
+
+        return section;
     }
 
     public void forceLoad(File file) {

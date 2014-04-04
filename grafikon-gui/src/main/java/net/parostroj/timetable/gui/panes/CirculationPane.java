@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import javax.swing.JComponent;
 
+import org.ini4j.Ini;
+
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
@@ -244,12 +246,12 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private javax.swing.JComboBox typesComboBox;
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        trainsCyclesPane.saveToPreferences(prefs);
+    public Ini.Section saveToPreferences(Ini prefs) {
+        return trainsCyclesPane.saveToPreferences(prefs);
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        trainsCyclesPane.loadFromPreferences(prefs);
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        return trainsCyclesPane.loadFromPreferences(prefs);
     }
 }

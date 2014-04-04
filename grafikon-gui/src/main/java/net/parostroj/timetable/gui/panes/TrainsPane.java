@@ -14,6 +14,7 @@ import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,16 +62,17 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        int dividerLoc = prefs.getInt("trains.divider", splitPane.getDividerLocation());
-        int div = prefs.getInt("trains.divider.2", trainsSplitPane.getDividerLocation());
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "trains");
+        int dividerLoc = section.get("divider", Integer.class, splitPane.getDividerLocation());
+        int div = section.get("divider.2", Integer.class, trainsSplitPane.getDividerLocation());
         int preferredWidth = trainListView.getPreferredSize().width;
         if (preferredWidth < div) {
             trainsSplitPane.setDividerLocation(div);
         }
         GTViewSettings gtvs = null;
         try {
-            gtvs = GTViewSettings.parseStorageString(prefs.getString("trains.gtv", null));
+            gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
         } catch (Exception e) {
             // use default values
             LOG.warn("Wrong GTView settings - using default values.");
@@ -78,13 +80,13 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         if (gtvs != null) {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         }
-        scrollPane.setVisible(prefs.getBoolean("trains.show.gtview", true));
+        scrollPane.setVisible(section.get("show.gtview", Boolean.class, true));
         if (scrollPane.isVisible()) {
             splitPane.setDividerLocation(dividerLoc);
         } else {
             splitPane.setLastDividerLocation(dividerLoc);
         }
-        String treeType = prefs.getString("trains.listtype", "TYPES");
+        String treeType = section.get("listtype", "TYPES");
         TreeType treeTypeEnum = TreeType.TYPES;
         try {
             treeTypeEnum = TreeType.valueOf(treeType);
@@ -94,17 +96,20 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         trainListView.setTreeType(treeTypeEnum);
 
         trainView.loadFromPreferences(prefs);
+        return section;
     }
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        prefs.setInt("trains.divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
-        prefs.setInt("trains.divider.2", trainsSplitPane.getDividerLocation());
+    public Ini.Section saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "trains");
+        section.put("divider", scrollPane.isVisible() ? splitPane.getDividerLocation() : splitPane.getLastDividerLocation());
+        section.put("divider.2", trainsSplitPane.getDividerLocation());
         // save if the gtview in trains pane is visible
-        prefs.setBoolean("trains.show.gtview", scrollPane.isVisible());
-        prefs.setString("trains.gtv", graphicalTimetableView.getSettings().getStorageString());
-        prefs.setString("trains.listtype", trainListView.getTreeType().name());
+        section.put("show.gtview", scrollPane.isVisible());
+        section.put("gtv", graphicalTimetableView.getSettings().getStorageString());
+        section.put("listtype", trainListView.getTreeType().name());
         trainView.saveToPreferences(prefs);
+        return section;
     }
 
     public void editColumns() {

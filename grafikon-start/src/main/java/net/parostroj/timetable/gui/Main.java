@@ -35,8 +35,9 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
-        if (AppPreferences.getPreferences().getBoolean("debug", false))
+        if (AppPreferences.getSection("debug").get("debug", Boolean.class, false)) {
             setDebug();
+        }
         setLookAndFeel();
         ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
         starter.setAction(new AfterStartAction<MainFrame>() {
@@ -59,14 +60,14 @@ public class Main {
     }
 
     private static void setDebug() throws Exception {
-        if (AppPreferences.getPreferences().getBoolean("debug.edt", false))
+        if (AppPreferences.getSection("debug").get("debug.edt", Boolean.class, false))
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
-        Level level = Level.parse(AppPreferences.getPreferences().getString("debug.level", "FINER"));
+        Level level = Level.parse(AppPreferences.getSection("debug").get("debug.level", "FINEST"));
         netParostrojLogger.setLevel(level);
     }
 
     private static void setLookAndFeel() throws IOException {
-        String laf = AppPreferences.getPreferences().getString("look.and.feel", "system");
+        String laf = AppPreferences.getSection("main").get("look.and.feel", "system");
         try {
             if (laf.equals("system"))
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

@@ -2,9 +2,12 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
-import net.parostroj.timetable.gui.AppPreferences;
+
+import org.ini4j.Ini;
+
 import net.parostroj.timetable.gui.StorableGuiData;
 
 /**
@@ -15,15 +18,19 @@ import net.parostroj.timetable.gui.StorableGuiData;
 public class FloatingWindowsList extends ArrayList<FloatingWindow> implements StorableGuiData {
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
-        for (FloatingWindow dialog : this)
+    public Ini.Section saveToPreferences(Ini prefs) {
+        for (FloatingWindow dialog : this) {
             dialog.saveToPreferences(prefs);
+        }
+        return null;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        for (FloatingWindow dialog : this)
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        for (FloatingWindow dialog : this) {
             dialog.loadFromPreferences(prefs);
+        }
+        return null;
     }
 
     public void addToMenuItem(final JMenuItem menuItem) {

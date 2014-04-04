@@ -17,6 +17,7 @@ import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,7 @@ public class FloatingWindowsFactory {
                 }
             }
         });
-        final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainzeroweights.title", "train.zeroweights") {
+        final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.trainzeroweights.title", "train.zero.weights") {
             @Override
             public void setVisible(boolean b) {
                 if (b) {
@@ -208,23 +209,25 @@ public class FloatingWindowsFactory {
         final FloatingDialog dialog = new FloatingDialog(frame, panel, "dialog.eventsviewer.title", "events.viewer") {
 
             @Override
-            public void saveToPreferences(AppPreferences prefs) {
-                super.saveToPreferences(prefs);
-                prefs.setInt(createStorageKey("divider"), panel.getDividerLocation());
-                prefs.setInt(createStorageKey("limit"), panel.getLimit());
-                prefs.setBoolean(createStorageKey("show.time"), panel.isShowTime());
-                prefs.setBoolean(createStorageKey("write.to.log"), panel.isWriteToLog());
+            public Ini.Section saveToPreferences(Ini prefs) {
+                Ini.Section section = super.saveToPreferences(prefs);
+                section.put("divider", panel.getDividerLocation());
+                section.put("limit", panel.getLimit());
+                section.put("show.time", panel.isShowTime());
+                section.put("write.to.log", panel.isWriteToLog());
+                return section;
             }
 
             @Override
-            public void loadFromPreferences(AppPreferences prefs) {
-                super.loadFromPreferences(prefs);
-                int divider = prefs.getInt(createStorageKey("divider"), panel.getDividerLocation());
+            public Ini.Section loadFromPreferences(Ini prefs) {
+                Ini.Section section = super.loadFromPreferences(prefs);
+                int divider = section.get("divider", Integer.class, panel.getDividerLocation());
                 panel.setDividerLocation(divider);
-                int limit = prefs.getInt(createStorageKey("limit"), panel.getLimit());
+                int limit = section.get("limit", Integer.class, panel.getLimit());
                 panel.setLimit(limit);
-                panel.setShowTime(prefs.getBoolean(createStorageKey("show.time"), false));
-                panel.setWriteToLog(prefs.getBoolean(createStorageKey("write.to.log"), false));
+                panel.setShowTime(section.get("show.time", Boolean.class, false));
+                panel.setWriteToLog(section.get("write.to.log", Boolean.class, false));
+                return section;
             }
         };
 
@@ -253,19 +256,21 @@ public class FloatingWindowsFactory {
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.changestracker.title", "changes.tracker") {
 
             @Override
-            public void saveToPreferences(AppPreferences prefs) {
-                super.saveToPreferences(prefs);
-                prefs.setInt(createStorageKey("divider"), panel.getDividerLocation());
-                prefs.setInt(createStorageKey("divider2"), panel.getDivider2Location());
+            public Ini.Section saveToPreferences(Ini prefs) {
+                Ini.Section section = super.saveToPreferences(prefs);
+                section.put("divider", panel.getDividerLocation());
+                section.put("divider2", panel.getDivider2Location());
+                return section;
             }
 
             @Override
-            public void loadFromPreferences(AppPreferences prefs) {
-                super.loadFromPreferences(prefs);
-                int divider = prefs.getInt(createStorageKey("divider"), panel.getDividerLocation());
+            public Ini.Section loadFromPreferences(Ini prefs) {
+                Ini.Section section = super.loadFromPreferences(prefs);
+                int divider = section.get("divider", Integer.class, panel.getDividerLocation());
                 panel.setDividerLocation(divider);
-                divider = prefs.getInt(createStorageKey("divider2"), panel.getDivider2Location());
+                divider = section.get("divider2", Integer.class, panel.getDivider2Location());
                 panel.setDivider2Location(divider);
+                return section;
             }
         };
         return dialog;
@@ -278,23 +283,25 @@ public class FloatingWindowsFactory {
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         gtView.setTrainSelector(hts);
 
-        FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gtview") {
+        FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 
             @Override
-            public void saveToPreferences(AppPreferences prefs) {
-                super.saveToPreferences(prefs);
-                prefs.setString(createStorageKey("gtv"), gtView.getSettings().getStorageString());
+            public Ini.Section saveToPreferences(Ini prefs) {
+                Ini.Section section = super.saveToPreferences(prefs);
+                section.put("gtv", gtView.getSettings().getStorageString());
+                return section;
             }
 
             @Override
-            public void loadFromPreferences(AppPreferences prefs) {
-                super.loadFromPreferences(prefs);
+            public Ini.Section loadFromPreferences(Ini prefs) {
+                Ini.Section section = super.loadFromPreferences(prefs);
                 try {
-                    GTViewSettings gtvs = GTViewSettings.parseStorageString(prefs.getString(createStorageKey("gtv"), null));
+                    GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
                     gtView.setSettings(gtView.getSettings().merge(gtvs));
                 } catch (Exception e) {
                     LOG.warn("Wrong GTView settings - using default values.");
                 }
+                return section;
             }
         };
         mediator.addColleague(new ApplicationModelColleague(model) {
@@ -348,17 +355,19 @@ public class FloatingWindowsFactory {
                 panel.circulationUpdated(event.getSource());
             }
         });
-        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulationview") {
+        FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
             @Override
-            public void saveToPreferences(AppPreferences prefs) {
-                super.saveToPreferences(prefs);
-                prefs.setInt(createStorageKey("size"), panel.geSizeSlider());
+            public Ini.Section saveToPreferences(Ini prefs) {
+                Ini.Section section = super.saveToPreferences(prefs);
+                section.put("size", panel.geSizeSlider());
+                return section;
             }
 
             @Override
-            public void loadFromPreferences(AppPreferences prefs) {
-                super.loadFromPreferences(prefs);
-                panel.setSizeSlider(prefs.getInt(createStorageKey("size"), panel.geSizeSlider()));
+            public Ini.Section loadFromPreferences(Ini prefs) {
+                Ini.Section section = super.loadFromPreferences(prefs);
+                panel.setSizeSlider(section.get("size", Integer.class, panel.geSizeSlider()));
+                return section;
             }
         };
         return dialog;
@@ -381,7 +390,7 @@ public class FloatingWindowsFactory {
                 }
             }
         });
-        final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainchanged.title", "train.changed");
+        final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainchanged.title", "changed.trains");
         mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainEvent(TrainEvent event) {

@@ -24,6 +24,7 @@ import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
 
+import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -265,9 +266,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     private javax.swing.JTextField trainTextField;
 
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
+    public Ini.Section saveToPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "trains");
         // get displayed columns and save theirs order
-        prefs.remove("train.columns.names");
+        prefs.remove("columns");
         TableColumnModel tcm = trainTable.getColumnModel();
         Enumeration<TableColumn> columns = tcm.getColumns();
         StringBuilder order = null;
@@ -281,14 +283,16 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             order.append(TrainTableColumn.values()[column.getModelIndex()].name()).append(',').append(column.getPreferredWidth());
         }
         if (order != null) {
-            prefs.setString("train.columns.names", order.toString());
+            section.put("columns", order.toString());
         }
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "trains");
         // set displayed columns (if the prefs are empty - show all)
-        String cs = prefs.getString("train.columns.names", null);
+        String cs = section.get("columns");
         List<TableColumn> shownColumns = new LinkedList<TableColumn>();
         cs = Conversions.checkAndTrim(cs);
         if (cs == null) {
@@ -323,5 +327,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         for (TableColumn column : shownColumns) {
             tcm.addColumn(column);
         }
+        return section;
     }
 }

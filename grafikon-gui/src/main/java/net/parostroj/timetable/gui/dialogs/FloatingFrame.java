@@ -7,6 +7,8 @@ import java.awt.Frame;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import org.ini4j.Ini;
+
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -37,35 +39,34 @@ public class FloatingFrame extends javax.swing.JFrame implements FloatingWindow 
     }
 
 
-    protected String createStorageKey(String keySuffix) {
-        return new StringBuilder(storageKeyPrefix).append('.').append(keySuffix).toString();
-    }
-
     @Override
-    public void saveToPreferences(AppPreferences prefs) {
+    public Ini.Section saveToPreferences(Ini prefs) {
+        prefs.remove(storageKeyPrefix);
+        Ini.Section section = prefs.add(storageKeyPrefix);
         boolean maximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
-        prefs.removeWithPrefix(storageKeyPrefix);
-        prefs.setBoolean(this.createStorageKey("maximized"), maximized);
-        prefs.setString(this.createStorageKey("position"), GuiUtils.getPositionFrame(this, maximized));
-        prefs.setBoolean(this.createStorageKey("visible"), this.isVisible());
-
+        section.put("maximized", maximized);
+        section.put("position", GuiUtils.getPositionFrame(this, maximized));
+        section.put("visible", this.isVisible());
+        return section;
     }
 
     @Override
-    public void loadFromPreferences(AppPreferences prefs) {
-        String positionKey = this.createStorageKey("position");
-        if (prefs.contains(positionKey)) {
+    public Ini.Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, storageKeyPrefix);
+        String positionStr = section.get("position");
+        if (positionStr != null) {
             // set position
-            String positionStr = prefs.getString(positionKey, null);
             GuiUtils.setPosition(positionStr, this);
         }
-        if (prefs.getBoolean(this.createStorageKey("maximized"), false)) {
+        if (section.get("maximized", Boolean.class, false)) {
             // setting maximized state
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         }
         // set visibility
-        if (prefs.getBoolean(this.createStorageKey("visible"), false))
+        if (section.get("visible", Boolean.class, false)) {
             this.visibleOnInit = true;
+        }
+        return section;
     }
 
     @Override
