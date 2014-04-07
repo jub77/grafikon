@@ -72,7 +72,7 @@ public class TrainRegionCollector {
         modifiedTrains.add(train);
     }
 
-    public List<TimeInterval> getTrainForPoint(int x, int y) {
+    public List<TimeInterval> getItemsForPoint(int x, int y) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
         List<TimeInterval> list = new LinkedList<TimeInterval>();
         for (Train train : regions.keySet()) {
