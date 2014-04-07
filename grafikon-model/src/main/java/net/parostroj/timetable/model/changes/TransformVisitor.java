@@ -51,7 +51,7 @@ public class TransformVisitor implements EventVisitor {
     public void visit(FreightNetEvent event) {
         DiagramChange.Type type = converter.getType(event.getType());
         DiagramChange.Action action = converter.getAction(event.getType());
-        ObjectWithId o = event.getConnection() != null ? event.getConnection() : event.getNode();
+        ObjectWithId o = event.getConnection();
         if (type != null) {
             if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
@@ -196,7 +196,6 @@ public class TransformVisitor implements EventVisitor {
         AttributeChange aC = null;
         switch (event.getType()) {
             case ATTRIBUTE:
-            case FREIGHT_NET_NODE_ATTRIBUTE:
             case FREIGHT_NET_CONNECTION_ATTRIBUTE:
                 // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();

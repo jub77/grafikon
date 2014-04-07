@@ -54,8 +54,6 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Type.OUTPUT_TEMPLATE);
         map.put(GTEventType.GROUP_ADDED, DiagramChange.Type.GROUP);
         map.put(GTEventType.GROUP_REMOVED, DiagramChange.Type.GROUP);
-        map.put(GTEventType.FREIGHT_NET_NODE_ADDED, DiagramChange.Type.FREIGHT_NET);
-        map.put(GTEventType.FREIGHT_NET_NODE_REMOVED, DiagramChange.Type.FREIGHT_NET);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, DiagramChange.Type.FREIGHT_NET);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, DiagramChange.Type.FREIGHT_NET);
         return map;
@@ -99,12 +97,9 @@ class EventToChangeConvert {
         map.put(GTEventType.GROUP_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
-        map.put(GTEventType.FREIGHT_NET_NODE_ADDED, DiagramChange.Action.ADDED);
-        map.put(GTEventType.FREIGHT_NET_NODE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, DiagramChange.Action.MODIFIED);
-        map.put(GTEventType.FREIGHT_NET_NODE_ATTRIBUTE, DiagramChange.Action.MODIFIED);
         return map;
     }
 
@@ -157,11 +152,8 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, null); // nothing
         map.put(GTEventType.GROUP_ADDED, null); // nothing
         map.put(GTEventType.GROUP_REMOVED, null); // nothing
-        map.put(GTEventType.FREIGHT_NET_NODE_ADDED, null); // nothing
-        map.put(GTEventType.FREIGHT_NET_NODE_REMOVED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null); // nothing
-        map.put(GTEventType.FREIGHT_NET_NODE_ATTRIBUTE, "freight_net_node_attribute");
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, "freight_net_connection_attribute");
         return map;
     }
@@ -242,8 +234,6 @@ class EventToChangeConvert {
     map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, null);
     map.put(GTEventType.GROUP_ADDED, null);
     map.put(GTEventType.GROUP_REMOVED, null);
-    map.put(GTEventType.FREIGH_NET_TRAIN_ADDED, null); // nothing
-    map.put(GTEventType.FREIGH_NET_TRAIN_REMOVED, null); // nothing
     map.put(GTEventType.FREIGH_NET_CONNECTION_ADDED, null); // nothing
     map.put(GTEventType.FREIGH_NET_CONNECTION_REMOVED, null); // nothing
  */
