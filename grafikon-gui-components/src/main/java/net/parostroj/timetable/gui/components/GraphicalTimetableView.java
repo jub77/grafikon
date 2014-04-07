@@ -643,7 +643,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         }
         // selection of the train
         if (trainRegionCollector != null) {
-            List<TimeInterval> selectedIntervals = trainRegionCollector.getTrainForPoint(evt.getX(), evt.getY());
+            List<TimeInterval> selectedIntervals = trainRegionCollector.getItemsForPoint(evt.getX(), evt.getY());
             if (trainSelector != null) {
                 trainSelector.intervalsSelected(selectedIntervals);
             }
@@ -654,7 +654,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     public String getToolTipText(MouseEvent event) {
         if (trainRegionCollector == null)
             return null;
-        List<TimeInterval> intervals = trainRegionCollector.getTrainForPoint(event.getX(), event.getY());
+        List<TimeInterval> intervals = trainRegionCollector.getItemsForPoint(event.getX(), event.getY());
 
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty())
