@@ -36,24 +36,47 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         @Override
         public void intervalsSelected(List<TimeInterval> intervals) {
-            TimeInterval interval = intervals.isEmpty() ? null : intervals.get(0);
+            TimeInterval interval = this.chooseInterval(intervals);
             boolean enabled = false;
-            if (interval == null || !interval.isNodeOwner()) {
+            if (interval == null) {
                 connection.first = null;
                 connection.second = null;
             } else {
+                if (connection.first != null && connection.second != null) {
+                    connection.first = null;
+                    connection.second = null;
+                }
                 if (connection.first == null) {
                     connection.first = interval;
                 } else if (connection.second == null) {
                     connection.second = interval;
                     enabled = checkEnabled();
-                } else {
-                    connection.first = null;
-                    connection.second = null;
                 }
             }
             newButton.setEnabled(enabled);
             graphicalTimetableView.repaint();
+        }
+
+        private TimeInterval lastInterval;
+
+        private TimeInterval chooseInterval(List<TimeInterval> intervals) {
+            TimeInterval selected = null;
+            TimeInterval first = null;
+            for (TimeInterval interval : intervals) {
+                if (interval.isNodeOwner() && first == null) {
+                    first = interval;
+                }
+                if (interval.isNodeOwner() && selected == null) {
+                    selected = interval;
+                } else if (interval == lastInterval) {
+                    selected = null;
+                }
+            }
+            if (selected == null) {
+                selected = first;
+            }
+            lastInterval = selected;
+            return selected;
         }
 
         @Override
