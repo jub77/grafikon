@@ -175,6 +175,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // select in left list
             int index = allTrains.getIndexOfObject(interval.getTrain());
             allTrainsList.setSelectedIndex(index);
+            allTrainsList.ensureIndexIsVisible(index);
             // select all intervals in right list
             boolean selection = false;
             for (int i = 0; i < cTrains.getSize(); i++) {
