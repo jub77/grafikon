@@ -83,12 +83,6 @@ public class TrainDiagramBuilder {
     public void setFreightNet(LSFreightNet lsFreightNet) throws LSException {
         FreightNet net = lsFreightNet.createFreightNet(diagram);
         this.diagram.setFreightNet(net);
-        for (LSFreightNode lsNode : lsFreightNet.getNodes()) {
-            Train train = diagram.getTrainById(lsNode.getTrain());
-            FNNode node = diagram.getFreightNet().addNode(train);
-            node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
-            node.merge(lsNode.getAttributes().createAttributes(diagram));
-        }
         for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
             Train from = diagram.getTrainById(lsConnection.getTrainFrom());
             Train to = diagram.getTrainById(lsConnection.getTrainTo());

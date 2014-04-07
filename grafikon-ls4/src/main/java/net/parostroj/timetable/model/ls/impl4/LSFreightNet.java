@@ -14,12 +14,11 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "freightNet")
-@XmlType(propOrder = {"id", "attributes", "nodes", "connections"})
+@XmlType(propOrder = {"id", "attributes", "connections"})
 public class LSFreightNet {
 
     private String id;
     private LSAttributes attributes;
-    private List<LSFreightNode> nodes;
     private List<LSFreightConnection> connections;
 
     public LSFreightNet() {
@@ -28,11 +27,7 @@ public class LSFreightNet {
     public LSFreightNet(FreightNet net) {
         this.id = net.getId();
         this.attributes = new LSAttributes(net.getAttributes());
-        this.nodes = new ArrayList<LSFreightNode>();
         this.connections = new ArrayList<LSFreightConnection>();
-        for (FNNode node : net.getNodes()) {
-            this.nodes.add(new LSFreightNode(node));
-        }
         for (FNConnection connection : net.getConnections()) {
             this.connections.add(new LSFreightConnection(connection));
         }
@@ -45,19 +40,6 @@ public class LSFreightNet {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @XmlElementWrapper
-    @XmlElement(name = "node")
-    public List<LSFreightNode> getNodes() {
-        if (nodes == null) {
-            nodes = new ArrayList<LSFreightNode>();
-        }
-        return nodes;
-    }
-
-    public void setNodes(List<LSFreightNode> nodes) {
-        this.nodes = nodes;
     }
 
     @XmlElementWrapper
