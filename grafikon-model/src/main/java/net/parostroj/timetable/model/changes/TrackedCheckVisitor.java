@@ -42,8 +42,6 @@ public class TrackedCheckVisitor implements EventVisitor {
         switch (event.getType()) {
             case FREIGHT_NET_CONNECTION_ADDED:
             case FREIGHT_NET_CONNECTION_REMOVED:
-            case FREIGHT_NET_NODE_REMOVED:
-            case FREIGHT_NET_NODE_ADDED:
                 tracked = true;
                 break;
             default:

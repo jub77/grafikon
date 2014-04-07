@@ -80,8 +80,7 @@ class TrainTableModel extends AbstractTableModel {
                 return false;
             }
             if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.getIndex()) {
-                boolean managed = train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
-                if (!managed || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
+                if (!FreightHelper.isManaged(train) || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
                     return false;
                 }
             }
@@ -205,12 +204,12 @@ class TrainTableModel extends AbstractTableModel {
             case MANAGED_FREIGHT:
                 // managed freight
                 retValue = false;
-                if (train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && interval.isNodeOwner()) {
+                if (FreightHelper.isManaged(train) && interval.isNodeOwner()) {
                     retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
                 break;
             case FREIGHT_TO_STATIONS:
-                if (rowIndex % 2 == 0 && train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT) && (FreightHelper.isFreight(interval))) {
+                if (rowIndex % 2 == 0 && FreightHelper.isFreight(interval)) {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<Node>> passedCargoNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<Node>> entry : passedCargoNodes.entrySet()) {

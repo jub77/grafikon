@@ -3,6 +3,7 @@ package net.parostroj.timetable.actions;
 import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.filters.FilteredIterable;
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
 
 /**
  * Tests for freight manipulations.
@@ -12,17 +13,19 @@ import net.parostroj.timetable.model.TimeInterval;
 public class FreightHelper {
 
     public static boolean isFreightFrom(TimeInterval interval) {
-        return interval.isNodeOwner() && (interval.isFirst() || interval.getLength() > 0)
-                && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+        return isFreightCommon(interval) && (interval.isFirst() || interval.getLength() > 0);
     }
 
     public static boolean isFreightTo(TimeInterval interval) {
-        return interval.isNodeOwner() && (interval.isLast() || interval.getLength() > 0)
-                && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+        return isFreightCommon(interval) && (interval.isLast() || interval.getLength() > 0);
     }
 
     public static boolean isFreight(TimeInterval interval) {
-        return interval.isNodeOwner() && (interval.isFirst() || interval.isLast() || interval.getLength() > 0)
+        return isFreightCommon(interval) && (interval.isFirst() || interval.isLast() || interval.getLength() > 0);
+    }
+
+    private static boolean isFreightCommon(TimeInterval interval) {
+        return interval.isNodeOwner() && isManaged(interval.getTrain())
                 && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
     }
 
@@ -59,5 +62,9 @@ public class FreightHelper {
                 }
             }
         });
+    }
+
+    public static boolean isManaged(Train train) {
+        return train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
     }
 }
