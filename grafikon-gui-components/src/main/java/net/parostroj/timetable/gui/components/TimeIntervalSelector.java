@@ -5,11 +5,11 @@ import java.util.List;
 import net.parostroj.timetable.model.TimeInterval;
 
 /**
- * Selects train after clicking in the graphical timetable view.
+ * Selects time intervals after clicking in the graphical timetable view.
  *
  * @author jub
  */
-public interface TrainSelector {
+public interface TimeIntervalSelector {
     /**
      * callback for selected intervals.
      *

@@ -15,7 +15,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.filters.TrainTypeFilter;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
-import net.parostroj.timetable.gui.components.TrainSelector;
+import net.parostroj.timetable.gui.components.TimeIntervalSelector;
 import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -33,7 +33,7 @@ import net.parostroj.timetable.utils.*;
  *
  * @author jub
  */
-public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, TrainSelector {
+public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, TimeIntervalSelector {
 
     private static final int BUTTON_MARGIN = 1;
 
