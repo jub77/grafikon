@@ -35,7 +35,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         @Override
-        public void intervalsSelected(List<TimeInterval> intervals) {
+        public void regionsSelected(List<TimeInterval> intervals) {
             TimeInterval interval = this.chooseInterval(intervals);
             boolean enabled = false;
             if (interval == null) {

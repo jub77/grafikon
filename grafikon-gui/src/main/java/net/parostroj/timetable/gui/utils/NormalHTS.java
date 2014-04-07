@@ -55,7 +55,7 @@ public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, Appli
     }
 
     @Override
-    public void intervalsSelected(List<TimeInterval> intervals) {
+    public void regionsSelected(List<TimeInterval> intervals) {
         TimeInterval interval = null;
         if (selectedTimeInterval == null)
             interval = intervals.isEmpty() ? null : intervals.get(0);

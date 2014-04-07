@@ -86,6 +86,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
     private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
+    private final Map<Class<?>, RegionCollector<?>> collectors = new HashMap<Class<?>, RegionCollector<?>>();
+
     private JMenuItem routesMenuItem;
 
     /** Creates new form TrainGraphicalTimetableView */
@@ -360,6 +362,22 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     public void setTrainSelector(TimeIntervalSelector trainSelector) {
         this.trainSelector = trainSelector;
+    }
+
+    public <T> void addRegionCollector(Class<T> clazz, RegionCollector<T> collector) {
+        collectors.put(clazz, collector);
+    }
+
+    public <T> void removeRegionCollector(Class<T> clazz) {
+        collectors.remove(clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> void setSelector(Class<T> clazz, RegionSelector<T> selector) {
+        RegionCollector<?> collector = collectors.get(clazz);
+        if (collector != null) {
+            ((RegionCollector<T>) collector).setSelector(selector);
+        }
     }
 
     public void setDrawFactory(GTDrawFactory drawFactory) {
@@ -645,8 +663,12 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (trainRegionCollector != null) {
             List<TimeInterval> selectedIntervals = trainRegionCollector.getItemsForPoint(evt.getX(), evt.getY());
             if (trainSelector != null) {
-                trainSelector.intervalsSelected(selectedIntervals);
+                trainSelector.regionsSelected(selectedIntervals);
             }
+        }
+        // collector/selector
+        for (RegionCollector<?> collector : collectors.values()) {
+            collector.selectItems(evt.getX(), evt.getY());
         }
     }
 
