@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
-    private class HighlightSelection implements HighlightedTrains, TrainSelector {
+    private class HighlightSelection implements HighlightedTrains, TimeIntervalSelector {
 
         @Override
         public boolean isHighlighedInterval(TimeInterval interval) {

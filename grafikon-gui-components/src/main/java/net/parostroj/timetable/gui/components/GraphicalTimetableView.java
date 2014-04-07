@@ -74,7 +74,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     protected GTDrawFactory drawFactory;
     private GTDraw draw;
     private TrainRegionCollector trainRegionCollector;
-    private TrainSelector trainSelector;
+    private TimeIntervalSelector trainSelector;
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
@@ -358,7 +358,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         this.revalidate();
     }
 
-    public void setTrainSelector(TrainSelector trainSelector) {
+    public void setTrainSelector(TimeIntervalSelector trainSelector) {
         this.trainSelector = trainSelector;
     }
 

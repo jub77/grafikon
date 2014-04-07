@@ -33,12 +33,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private static final Logger LOG = LoggerFactory.getLogger(TrainsCyclesPane.class.getName());
     private TCDelegate delegate;
 
-    private class HighligterAndSelector implements HighlightedTrains, TrainSelector, TrainColorChooser, TCDelegate.Listener {
+    private class HighligterAndSelector implements HighlightedTrains, TimeIntervalSelector, TrainColorChooser, TCDelegate.Listener {
 
         private final TrainColorChooser chooserDelegate;
-        private final TrainSelector selectorDelegate;
+        private final TimeIntervalSelector selectorDelegate;
 
-        public HighligterAndSelector(TrainColorChooser chooser, TrainSelector selector) {
+        public HighligterAndSelector(TrainColorChooser chooser, TimeIntervalSelector selector) {
             this.chooserDelegate = chooser;
             this.selectorDelegate = selector;
         }
