@@ -9,13 +9,13 @@ import net.parostroj.timetable.model.TimeInterval;
  *
  * @author jub
  */
-public interface TimeIntervalSelector {
+public interface TimeIntervalSelector extends RegionSelector<TimeInterval> {
     /**
      * callback for selected intervals.
      *
      * @param intervals train intervals to be selected
      */
-    public void intervalsSelected(List<TimeInterval> intervals);
+    public void regionsSelected(List<TimeInterval> intervals);
 
     /**
      * edit selected (double click).

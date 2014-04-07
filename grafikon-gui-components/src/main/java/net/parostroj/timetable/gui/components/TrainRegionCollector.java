@@ -17,7 +17,7 @@ import net.parostroj.timetable.utils.Pair;
  *
  * @author jub
  */
-public class TrainRegionCollector {
+public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
     private final Map<Train,List<Pair<Shape, TimeInterval>>> regions;
 
@@ -72,6 +72,7 @@ public class TrainRegionCollector {
         modifiedTrains.add(train);
     }
 
+    @Override
     public List<TimeInterval> getItemsForPoint(int x, int y) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
         List<TimeInterval> list = new LinkedList<TimeInterval>();
