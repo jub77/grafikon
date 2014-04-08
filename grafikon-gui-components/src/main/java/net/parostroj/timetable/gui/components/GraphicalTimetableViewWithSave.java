@@ -90,7 +90,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     }
                     config.set(GTViewSettings.Key.SIZE, saveSize);
                     config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
-                    drawFile = drawFactory.createInstance(config, getRoute(), null, null);
+                    drawFile = drawFactory.createInstance(config, getRoute(), gtStorage);
 
                     if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
                         BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);

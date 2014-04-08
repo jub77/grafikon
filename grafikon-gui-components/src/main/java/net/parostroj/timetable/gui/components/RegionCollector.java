@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Shape;
 import java.util.List;
 
 public abstract class RegionCollector<T> {
@@ -21,4 +22,14 @@ public abstract class RegionCollector<T> {
             this.selector.regionsSelected(this.getItemsForPoint(x, y));
         }
     }
+
+    public void editSelected() {
+        if (this.selector != null) {
+            this.selector.editSelected();
+        }
+    }
+
+    abstract public void clear();
+
+    abstract public void addRegion(T interval, Shape shape);
 }
