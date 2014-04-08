@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.panes;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -30,11 +28,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         @Override
         public void regionsSelected(List<FNConnection> regions) {
-            FNConnection newSelected = regions.isEmpty() ? null : regions.get(0);
-            if (newSelected != selected) {
-                graphicalTimetableView.repaint();
-            }
-            selected = newSelected;
+            this.setSelected(regions.isEmpty() ? null : regions.get(0));
         }
 
         @Override
@@ -50,6 +44,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         @Override
         public Color getColor() {
             return Color.GREEN;
+        }
+
+        public void setSelected(FNConnection conn) {
+            FNConnection current = selected;
+            selected = conn;
+            if (conn != current) {
+                graphicalTimetableView.repaint();
+            }
+            deleteButton.setEnabled(selected != null);
         }
     }
 
@@ -124,13 +127,14 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final Tuple<TimeInterval> connection = new Tuple<TimeInterval>();
 
     private final JButton newButton;
+    private final JButton deleteButton;
 
     private ApplicationModel model;
 
     public FreightNetPane2() {
         setLayout(new BorderLayout());
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        ConnectionSelector selector = new ConnectionSelector();
+        final ConnectionSelector selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory(selector));
         RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>(5);
         collector.setSelector(selector);
@@ -152,7 +156,18 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 newButton.setEnabled(false);
             }
         });
+        deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        deleteButton.setEnabled(false);
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FNConnection toBeDeleted = selector.getSelected();
+                selector.setSelected(null);
+                model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
+            }
+        });
         buttonPanel.add(newButton);
+        buttonPanel.add(deleteButton);
         add(buttonPanel, BorderLayout.NORTH);
     }
 
