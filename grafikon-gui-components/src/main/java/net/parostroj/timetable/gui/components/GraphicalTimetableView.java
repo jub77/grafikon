@@ -74,7 +74,6 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     protected GTDrawFactory drawFactory;
     private GTDraw draw;
     private TrainRegionCollector trainRegionCollector;
-    private TimeIntervalSelector trainSelector;
     private Route route;
     private EditRoutesDialog editRoutesDialog;
     private TrainDiagram diagram;
@@ -86,7 +85,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
     private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
-    private final Map<Class<?>, RegionCollector<?>> collectors = new HashMap<Class<?>, RegionCollector<?>>();
+    protected final GTStorage gtStorage = new GTStorage();
 
     private JMenuItem routesMenuItem;
 
@@ -109,6 +108,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         });
 
         trainRegionCollector = new TrainRegionCollector(SELECTION_RADIUS);
+        gtStorage.setCollector(TimeInterval.class, trainRegionCollector);
 
         this.addSizesToMenu();
 
@@ -361,23 +361,22 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
     }
 
     public void setTrainSelector(TimeIntervalSelector trainSelector) {
-        this.trainSelector = trainSelector;
+        RegionCollector<TimeInterval> collector = this.getRegionCollector(TimeInterval.class);
+        if (collector != null) {
+            collector.setSelector(trainSelector);
+        }
     }
 
     public <T> void addRegionCollector(Class<T> clazz, RegionCollector<T> collector) {
-        collectors.put(clazz, collector);
+        gtStorage.setCollector(clazz, collector);
     }
 
     public <T> void removeRegionCollector(Class<T> clazz) {
-        collectors.remove(clazz);
+        gtStorage.removeCollector(clazz);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> void setSelector(Class<T> clazz, RegionSelector<T> selector) {
-        RegionCollector<?> collector = collectors.get(clazz);
-        if (collector != null) {
-            ((RegionCollector<T>) collector).setSelector(selector);
-        }
+    public <T> RegionCollector<T> getRegionCollector(Class<T> clazz) {
+        return gtStorage.getCollector(clazz);
     }
 
     public void setDrawFactory(GTDrawFactory drawFactory) {
@@ -435,7 +434,7 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             trainRegionCollector.clear();
             GTViewSettings config = this.getSettings();
             config.set(GTViewSettings.Key.SIZE, this.getSize());
-            draw = drawFactory.createInstance(config, drawnRoute, trainRegionCollector, null);
+            draw = drawFactory.createInstance(config, drawnRoute, gtStorage);
         }
         this.repaint();
     }
@@ -654,21 +653,15 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (!SwingUtilities.isLeftMouseButton(evt)) {
             return;
         }
-        // indicates double click
-        if (evt.getClickCount() % 2 == 0) {
-            trainSelector.editSelected();
-            return;
-        }
-        // selection of the train
-        if (trainRegionCollector != null) {
-            List<TimeInterval> selectedIntervals = trainRegionCollector.getItemsForPoint(evt.getX(), evt.getY());
-            if (trainSelector != null) {
-                trainSelector.regionsSelected(selectedIntervals);
-            }
-        }
         // collector/selector
-        for (RegionCollector<?> collector : collectors.values()) {
-            collector.selectItems(evt.getX(), evt.getY());
+        for (RegionCollector<?> collector : gtStorage.collectors()) {
+            if (evt.getClickCount() % 2 == 0) {
+                // indicates double click
+                collector.editSelected();
+                return;
+            } else {
+                collector.selectItems(evt.getX(), evt.getY());
+            }
         }
     }
 
