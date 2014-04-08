@@ -31,5 +31,5 @@ public abstract class RegionCollector<T> {
 
     abstract public void clear();
 
-    abstract public void addRegion(T interval, Shape shape);
+    abstract public void addRegion(T region, Shape shape);
 }

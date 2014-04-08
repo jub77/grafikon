@@ -12,8 +12,10 @@ import javax.swing.JPanel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.ini4j.Ini;
@@ -22,7 +24,36 @@ import org.slf4j.LoggerFactory;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
-    private class HighlightSelection implements HighlightedTrains, TimeIntervalSelector {
+    private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
+
+        private FNConnection selected = null;
+
+        @Override
+        public void regionsSelected(List<FNConnection> regions) {
+            FNConnection newSelected = regions.isEmpty() ? null : regions.get(0);
+            if (newSelected != selected) {
+                graphicalTimetableView.repaint();
+            }
+            selected = newSelected;
+        }
+
+        @Override
+        public void editSelected() {
+            // do nothing - no edit action is specified
+        }
+
+        @Override
+        public FNConnection getSelected() {
+            return selected;
+        }
+
+        @Override
+        public Color getColor() {
+            return Color.GREEN;
+        }
+    }
+
+    private final class HighlightSelection implements HighlightedTrains, TimeIntervalSelector {
 
         @Override
         public boolean isHighlighedInterval(TimeInterval interval) {
@@ -99,13 +130,17 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     public FreightNetPane2() {
         setLayout(new BorderLayout());
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory());
+        ConnectionSelector selector = new ConnectionSelector();
+        graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory(selector));
+        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>(5);
+        collector.setSelector(selector);
+        graphicalTimetableView.addRegionCollector(FNConnection.class, collector);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        newButton = new JButton(ResourceLoader.getString("button.new"));
+        newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
         newButton.addActionListener(new ActionListener() {
             @Override
