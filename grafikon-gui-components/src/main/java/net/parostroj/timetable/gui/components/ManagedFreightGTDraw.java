@@ -8,14 +8,22 @@ import net.parostroj.timetable.model.*;
 
 public class ManagedFreightGTDraw extends GTDrawDecorator {
 
+    public interface Highlight {
+        FNConnection getSelected();
+
+        Color getColor();
+    }
+
     private static final Stroke s = new BasicStroke(2);
 
     private GTDrawBase drawBase;
     private final RegionCollector<FNConnection> collector;
+    private final Highlight highlight;
 
-    public ManagedFreightGTDraw(GTDraw draw, RegionCollector<FNConnection> collector) {
+    public ManagedFreightGTDraw(GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
         super(draw);
         this.collector = collector;
+        this.highlight = highlight;
         if (draw instanceof GTDrawBase) {
             drawBase = (GTDrawBase) draw;
         } else {
@@ -26,7 +34,6 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     @Override
     public void draw(Graphics2D g) {
         // draw managed trains ...
-        g.setColor(Color.magenta);
         g.setStroke(s);
 
         Route route = drawBase.getRoute();
@@ -38,7 +45,15 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         if (collector != null) {
             collector.clear();
         }
+        g.setColor(Color.magenta);
         for (FNConnection con : connections) {
+            if (highlight != null) {
+                if (con == highlight.getSelected()) {
+                    g.setColor(highlight.getColor());
+                } else {
+                    g.setColor(Color.magenta);
+                }
+            }
             if (drawBase.positions.containsKey(con.getFrom().getOwnerAsNode())) {
                 int y = drawBase.getY(con.getFrom().getOwnerAsNode());
                 int x1 = drawBase.getX(con.getFrom().getStart());
