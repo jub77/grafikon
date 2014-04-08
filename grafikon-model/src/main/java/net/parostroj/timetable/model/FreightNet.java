@@ -94,13 +94,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Collection<FNConnection> connections = this.get(train, fromMap);
         List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
         for (FNConnection conn : connections) {
-            if (!FreightHelper.isFreight(conn.getFrom()) || conn.getFrom().getStart() >= conn.getTo().getEnd()) {
+            if (!FreightHelper.isFreight(conn.getFrom())) {
                 toBeDeleted.add(conn);
             }
         }
         connections = this.get(train, toMap);
         for (FNConnection conn : connections) {
-            if (!FreightHelper.isFreight(conn.getTo()) || conn.getFrom().getStart() >= conn.getTo().getEnd()) {
+            if (!FreightHelper.isFreight(conn.getTo())) {
                 toBeDeleted.add(conn);
             }
         }
