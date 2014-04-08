@@ -200,11 +200,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     }
 
     private boolean checkEnabled() {
-        boolean result = false;
-        if (connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode()) {
-            result = connection.first.getStart() < connection.second.getEnd();
-        }
-        return result;
+        return connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() && !connection.second.isLast() && !connection.first.isFirst();
     }
 
     public void setModel(ApplicationModel model) {
