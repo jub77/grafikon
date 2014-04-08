@@ -12,8 +12,11 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.events.FreightNetEvent;
+import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.ini4j.Ini;
@@ -131,10 +134,12 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private ApplicationModel model;
 
+    private final ConnectionSelector selector;
+
     public FreightNetPane2() {
         setLayout(new BorderLayout());
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
-        final ConnectionSelector selector = new ConnectionSelector();
+        selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory(selector));
         RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>(5);
         collector.setSelector(selector);
@@ -216,5 +221,16 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 }
             }
         });
+        model.getMediator().addColleague(new Colleague() {
+            @Override
+            public void receiveMessage(Object message) {
+                FreightNetEvent event = (FreightNetEvent) message;
+                if (event.getType() == GTEventType.FREIGHT_NET_CONNECTION_REMOVED &&
+                        selector.getSelected() == event.getConnection()) {
+                    selector.setSelected(null);
+                }
+                graphicalTimetableView.repaint();
+            }
+        }, FreightNetEvent.class);
     }
 }
