@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Storage class for attributes.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "attributes")
@@ -37,7 +37,7 @@ public class LSAttributes {
         for (String category : attributes.getCategories())
             this.addAttributes(attributes.getAttributesMap(category), category);
     }
-    
+
     private void addAttributes(Map<String, Object> map, String category) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() != null)
@@ -66,7 +66,7 @@ public class LSAttributes {
                 if (value != null)
                     lAttributes.set(lItem.getKey(), value, lItem.getCategory());
                 else
-                    LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValue());
+                    LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
             }
         }
         return lAttributes;

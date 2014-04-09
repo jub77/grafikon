@@ -1,11 +1,16 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.*;
+
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.WeightUnit;
 import net.parostroj.timetable.utils.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +19,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-@XmlType(propOrder = {"key", "value", "type", "category"})
+@XmlType(propOrder = {"key", "values", "type", "category"})
 public class LSAttributesItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
     private String key;
-    private String value;
+    private List<LSAttributesValue> values;
     private String type;
     private String category;
 
@@ -32,44 +37,50 @@ public class LSAttributesItem {
     public LSAttributesItem(String key, Object value, String category) {
         this.key = key;
         this.category = category;
+        if (value instanceof Set || value instanceof List) {
+            type = value instanceof Set ? "set" : "list";
+            for (Object item : (Collection<?>) value) {
+                LSAttributesValue cValue = extractSimpleValue(key, item);
+                this.getValues().add(cValue);
+            }
+        } else {
+            LSAttributesValue cValue = extractSimpleValue(key, value);
+            if (value != null) {
+                this.getValues().add(cValue);
+            }
+        }
+    }
+
+    private LSAttributesValue extractSimpleValue(String key, Object value) {
+        LSAttributesValue cValue = null;
         if (value instanceof String) {
-            this.value = (String) value;
-            this.type = "string";
+            cValue = new LSAttributesValue((String) value, "string");
         } else if (value instanceof Boolean) {
-            this.value = value.toString();
-            this.type = "boolean";
+            cValue = new LSAttributesValue(value.toString(), "boolean");
         } else if (value instanceof Integer) {
-            this.value = value.toString();
-            this.type = "integer";
+            cValue = new LSAttributesValue(value.toString(), "integer");
         } else if (value instanceof Long) {
-            this.value = value.toString();
-            this.type = "long";
+            cValue = new LSAttributesValue(value.toString(), "long");
         } else if (value instanceof Float) {
-            this.value = value.toString();
-            this.type = "float";
+            cValue = new LSAttributesValue(value.toString(), "float");
         } else if (value instanceof Double) {
-            this.value = value.toString();
-            this.type = "double";
+            cValue = new LSAttributesValue(value.toString(), "double");
         } else if (value instanceof Scale) {
-            this.value = value.toString();
-            this.type = "scale";
+            cValue = new LSAttributesValue(value.toString(), "scale");
         } else if (value instanceof LengthUnit) {
-            this.value = ((LengthUnit) value).getKey();
-            this.type = "length.unit";
+            cValue = new LSAttributesValue(((LengthUnit) value).getKey(), "length.unit");
         } else if (value instanceof WeightUnit) {
-            this.value = ((WeightUnit) value).getKey();
-            this.type = "length.unit";
+            cValue = new LSAttributesValue(((WeightUnit) value).getKey(), "weight.unit");
         } else if (value instanceof TextTemplate) {
             TextTemplate tt = (TextTemplate) value;
-            this.type = "text.template." + tt.getLanguage().name();
-            this.value = tt.getTemplate();
+            cValue = new LSAttributesValue(tt.getTemplate(), "text.template." + tt.getLanguage().name());
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
-            this.type = pair.first;
-            this.value = pair.second;
+            cValue = new LSAttributesValue(pair.second, pair.first);
         } else {
             LOG.warn("Cannot convert value to string: {}", key);
         }
+        return cValue;
     }
 
     public String getKey() {
@@ -88,12 +99,16 @@ public class LSAttributesItem {
         this.type = type;
     }
 
-    public String getValue() {
-        return value;
+    @XmlElement(name = "value")
+    public List<LSAttributesValue> getValues() {
+        if (values == null) {
+            values = new ArrayList<LSAttributesValue>();
+        }
+        return values;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setValues(List<LSAttributesValue> values) {
+        this.values = values;
     }
 
     public String getCategory() {
@@ -105,39 +120,57 @@ public class LSAttributesItem {
     }
 
     public Object convertValue(TrainDiagram diagram) throws LSException {
-        if (type == null) {
+        if ("set".equals(type) || "list".equals(type)) {
+            Collection<Object> result = null;
+            if (type.equals("set")) {
+                result = new HashSet<Object>();
+            } else {
+                result = new ArrayList<Object>();
+            }
+            for (LSAttributesValue value : getValues()) {
+                result.add(convertSimpleValue(diagram, value.getValue(), value.getType()));
+            }
+            return result;
+        } else {
+            LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
+            return convertSimpleValue(diagram, value.getValue(), value.getType() == null ? type : value.getType());
+        }
+    }
+
+    private Object convertSimpleValue(TrainDiagram diagram, String value, String valueType) throws LSException {
+        if (valueType == null) {
             return null;
-        } else if (type.equals("string")) {
+        } else if (valueType.equals("string")) {
             return value;
-        } else if (type.equals("boolean")) {
+        } else if (valueType.equals("boolean")) {
             return Boolean.valueOf(value);
-        } else if (type.equals("integer")) {
+        } else if (valueType.equals("integer")) {
             return Integer.valueOf(value);
-        } else if (type.equals("double")) {
+        } else if (valueType.equals("double")) {
             return Double.valueOf(value);
-        } else if (type.equals("long")) {
+        } else if (valueType.equals("long")) {
             return Long.valueOf(value);
-        } else if (type.equals("float")) {
+        } else if (valueType.equals("float")) {
             return Float.valueOf(value);
-        } else if (type.equals("scale")) {
+        } else if (valueType.equals("scale")) {
             return Scale.fromString(value);
-        } else if (type.equals("length.unit")) {
+        } else if (valueType.equals("length.unit")) {
             return LengthUnit.getByKey(value);
-        } else if (type.equals("weight.unit")) {
+        } else if (valueType.equals("weight.unit")) {
             return WeightUnit.getByKey(value);
-        } else if (type.startsWith("text.template.")) {
-            return this.convertTextTemplate();
-        } else if (type.startsWith("model.")) {
-            return this.convertModelValue(diagram);
+        } else if (valueType.startsWith("text.template.")) {
+            return this.convertTextTemplate(value, valueType);
+        } else if (valueType.startsWith("model.")) {
+            return this.convertModelValue(diagram, value, valueType);
         } else {
             // it didn't recognize the type
-            LOG.warn("Not recognized type: {}", type);
+            LOG.warn("Not recognized type: {}", valueType);
             return null;
         }
     }
 
-    private Object convertTextTemplate() throws LSException {
-        String languageStr = type.substring("text.template.".length());
+    private Object convertTextTemplate(String value, String valueType) throws LSException {
+        String languageStr = valueType.substring("text.template.".length());
         TextTemplate.Language language = TextTemplate.Language.valueOf(languageStr);
         try {
             return TextTemplate.createTextTemplate(value, language);
@@ -146,19 +179,19 @@ public class LSAttributesItem {
         }
     }
 
-    private Object convertModelValue(TrainDiagram diagram) {
+    private Object convertModelValue(TrainDiagram diagram, String value, String valueType) {
         if (diagram == null) {
             LOG.warn("Cannot convert model value without diagram.");
             return null;
         } else {
-            if (type.equals("model.engine.class")) {
+            if (valueType.equals("model.engine.class")) {
                 return diagram.getEngineClassById(value);
-            } else if (type.equals("model.line.class")) {
+            } else if (valueType.equals("model.line.class")) {
                 return diagram.getNet().getLineClassById(value);
-            } else if (type.equals("model.object")) {
+            } else if (valueType.equals("model.object")) {
                 return diagram.getObjectById(value);
             } else {
-                LOG.warn("Not recognized model type: {}", type);
+                LOG.warn("Not recognized model type: {}", valueType);
                 return null;
             }
         }
@@ -182,6 +215,6 @@ public class LSAttributesItem {
 
     @Override
     public String toString() {
-        return String.format("item(%s,%s,%s)", key, type, value);
+        return String.format("item(%s,%s,%s,%s)", key, type, values);
     }
 }
