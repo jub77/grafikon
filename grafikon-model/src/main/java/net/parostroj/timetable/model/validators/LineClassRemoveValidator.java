@@ -35,6 +35,7 @@ public class LineClassRemoveValidator implements TrainDiagramValidator {
                     line.removeAttribute(Line.ATTR_CLASS_BACK);
                 }
             }
+            return true;
         }
         return false;
     }
