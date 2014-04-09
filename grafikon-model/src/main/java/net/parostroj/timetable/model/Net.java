@@ -40,7 +40,8 @@ public class Net implements ObjectWithId, Visitable {
             @Override
             protected void fireEvent(net.parostroj.timetable.model.ItemList.Type type, GTEventType eventType,
                     Region item, int newIndex, int oldIndex) {
-                fireEvent(new NetEvent(Net.this, eventType, item, oldIndex, newIndex));
+                NetEvent event = new NetEvent(Net.this, eventType, item, oldIndex, newIndex);
+                Net.this.fireEvent(event);
             }
         };
         listenerSupport = new GTListenerSupport<NetListener, NetEvent>(new GTEventSender<NetListener, NetEvent>() {
