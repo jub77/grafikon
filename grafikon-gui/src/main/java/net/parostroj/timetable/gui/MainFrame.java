@@ -358,6 +358,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem infoMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem trainTypesMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem lineClassesMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem regionsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem weightTablesMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem penaltyTableMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
@@ -560,6 +561,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         diagramMenu.add(lineClassesMenuItem);
+
+        regionsMenuItem.setText(ResourceLoader.getString("menu.file.regions")); // NOI18N
+        regionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                regionsMenuItemActionPerformed(evt);
+            }
+        });
+        diagramMenu.add(regionsMenuItem);
 
         weightTablesMenuItem.setText(ResourceLoader.getString("menu.file.weighttables")); // NOI18N
         weightTablesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -992,6 +1002,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lineClassesDialog.setLocationRelativeTo(this);
         lineClassesDialog.showDialog(model.getDiagram());
         lineClassesDialog.dispose();
+    }
+
+    private void regionsMenuItemActionPerformed(ActionEvent evt) {
+        EditRegionsDialog dialog = new EditRegionsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
     }
 
     private void weightTablesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
