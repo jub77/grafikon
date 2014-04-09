@@ -67,6 +67,8 @@ public class LSAttributesItem {
             cValue = new LSAttributesValue(value.toString(), "double");
         } else if (value instanceof Scale) {
             cValue = new LSAttributesValue(value.toString(), "scale");
+        } else if (value instanceof FreightColor) {
+            cValue = new LSAttributesValue(((FreightColor) value).getKey(), "freight.color");
         } else if (value instanceof LengthUnit) {
             cValue = new LSAttributesValue(((LengthUnit) value).getKey(), "length.unit");
         } else if (value instanceof WeightUnit) {
@@ -158,6 +160,8 @@ public class LSAttributesItem {
             return LengthUnit.getByKey(value);
         } else if (valueType.equals("weight.unit")) {
             return WeightUnit.getByKey(value);
+        } else if (valueType.equals("freight.color")) {
+            return FreightColor.getByKey(value);
         } else if (valueType.startsWith("text.template.")) {
             return this.convertTextTemplate(value, valueType);
         } else if (valueType.startsWith("model.")) {
