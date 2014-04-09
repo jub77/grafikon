@@ -287,4 +287,30 @@ public class Attributes implements Map<String, Object> {
     public Set<java.util.Map.Entry<String, Object>> entrySet() {
         return values.entrySet();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if (!values.isEmpty()) {
+            printAttributes("default", values, result);
+        }
+        if (valuesWithCategory != null) {
+            for (Map.Entry<String, Map<String, Object>> categoryEntry : valuesWithCategory.entrySet()) {
+                if (!categoryEntry.getValue().isEmpty()) {
+                    printAttributes(categoryEntry.getKey(), categoryEntry.getValue(), result);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    private void printAttributes(String category, Map<String, Object> attrs, StringBuilder builder) {
+        if (builder.length() != 0) {
+            builder.append('\n');
+        }
+        builder.append(category).append(':');
+        for (Map.Entry<String, Object> entry : attrs.entrySet()) {
+            builder.append("\n  ").append(entry.getKey()).append('=').append(entry.getValue());
+        }
+    }
 }
