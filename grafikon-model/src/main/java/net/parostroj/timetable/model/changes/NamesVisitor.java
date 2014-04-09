@@ -107,4 +107,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(FreightNet net) {
         name = null;
     }
+
+    @Override
+    public void visit(Region region) {
+        name = region.getName();
+    }
 }

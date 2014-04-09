@@ -24,6 +24,7 @@ public class Net implements ObjectWithId, Visitable {
 
     private final String id;
     private final List<LineClass> lineClasses;
+    private final ItemList<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
     private final GTListenerNetImpl listener;
     private final GTListenerSupport<NetListener, NetEvent> listenerSupport;
@@ -35,6 +36,13 @@ public class Net implements ObjectWithId, Visitable {
     public Net(String id) {
         netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         lineClasses = new LinkedList<LineClass>();
+        regions = new ItemList<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_REMOVED) {
+            @Override
+            protected void fireEvent(net.parostroj.timetable.model.ItemList.Type type, GTEventType eventType,
+                    Region item, int newIndex, int oldIndex) {
+                fireEvent(new NetEvent(Net.this, eventType, item, oldIndex, newIndex));
+            }
+        };
         listenerSupport = new GTListenerSupport<NetListener, NetEvent>(new GTEventSender<NetListener, NetEvent>() {
 
             @Override
@@ -109,6 +117,10 @@ public class Net implements ObjectWithId, Visitable {
         return Collections.unmodifiableList(lineClasses);
     }
 
+    public ItemList<Region> getRegions() {
+        return regions;
+    }
+
     public void addLineClass(LineClass lineClass) {
         lineClasses.add(lineClass);
         this.fireEvent(new NetEvent(this, GTEventType.LINE_CLASS_ADDED, lineClass));
@@ -157,6 +169,15 @@ public class Net implements ObjectWithId, Visitable {
         for (LineClass lineClass : getLineClasses()) {
             if (lineClass.getId().equals(id))
                 return lineClass;
+        }
+        return null;
+    }
+
+    public Region getRegionById(String id) {
+        for (Region region : regions.get()) {
+            if (region.getId().equals(id)) {
+                return region;
+            }
         }
         return null;
     }
@@ -221,6 +242,9 @@ public class Net implements ObjectWithId, Visitable {
         for (LineClass lineClass : lineClasses) {
             lineClass.accept(visitor);
         }
+        for (Region region : regions.get()) {
+            region.accept(visitor);
+        }
         visitor.visitAfter(this);
     }
 
@@ -228,6 +252,9 @@ public class Net implements ObjectWithId, Visitable {
         if (getId().equals(id))
             return this;
         ObjectWithId object = getLineById(id);
+        if (object != null)
+            return object;
+        object = getRegionById(id);
         if (object != null)
             return object;
         object = getNodeById(id);

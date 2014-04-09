@@ -44,4 +44,6 @@ public interface TrainDiagramVisitor {
     public void visit(Group group);
 
     public void visit(FreightNet net);
+
+    public void visit(Region region);
 }
