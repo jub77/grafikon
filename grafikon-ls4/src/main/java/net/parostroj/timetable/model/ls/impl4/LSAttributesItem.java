@@ -41,6 +41,12 @@ public class LSAttributesItem {
         } else if (value instanceof Integer) {
             this.value = value.toString();
             this.type = "integer";
+        } else if (value instanceof Long) {
+            this.value = value.toString();
+            this.type = "long";
+        } else if (value instanceof Float) {
+            this.value = value.toString();
+            this.type = "float";
         } else if (value instanceof Double) {
             this.value = value.toString();
             this.type = "double";
@@ -109,6 +115,10 @@ public class LSAttributesItem {
             return Integer.valueOf(value);
         } else if (type.equals("double")) {
             return Double.valueOf(value);
+        } else if (type.equals("long")) {
+            return Long.valueOf(value);
+        } else if (type.equals("float")) {
+            return Float.valueOf(value);
         } else if (type.equals("scale")) {
             return Scale.fromString(value);
         } else if (type.equals("length.unit")) {
