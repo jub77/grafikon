@@ -66,12 +66,15 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getObject() instanceof Node)
-                    str.append("    Node: ").append(((Node)event.getObject()).getName()).append('\n');
+                    str.append("    Node: ").append(((Node) event.getObject()).getName()).append('\n');
                 if (event.getObject() instanceof LineClass)
-                    str.append("    Line class: ").append(((LineClass)event.getObject()).getName()).append('\n');
+                    str.append("    Line class: ").append(((LineClass) event.getObject()).getName()).append('\n');
                 if (event.getObject() instanceof Line) {
                     str.append("    Line: ").append(((Line)event.getObject()).getFrom().getName()).append('-');
-                    str.append(((Line)event.getObject()).getTo().getName()).append('\n');
+                    str.append(((Line) event.getObject()).getTo().getName()).append('\n');
+                }
+                if (event.getObject() instanceof Region) {
+                    str.append("    Region: ").append(((Region) event.getObject()).getName()).append('\n');
                 }
                 if (event.getFromIndex() != 0 || event.getToIndex() != 0) {
                     str.append("    From index: ").append(Integer.toString(event.getFromIndex())).append('\n');
