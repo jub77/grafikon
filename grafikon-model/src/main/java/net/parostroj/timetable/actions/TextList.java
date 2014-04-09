@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.views;
+package net.parostroj.timetable.actions;
 
 public class TextList {
 

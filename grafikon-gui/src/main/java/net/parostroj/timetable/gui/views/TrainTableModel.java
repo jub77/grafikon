@@ -11,9 +11,7 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.parostroj.timetable.actions.FreightDst;
-import net.parostroj.timetable.actions.FreightHelper;
-import net.parostroj.timetable.actions.TrainsHelper;
+import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Conversions;
