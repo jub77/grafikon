@@ -22,6 +22,7 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
             for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(tcEvent.getSource().getItems())) {
                 item.getTrain().recalculate();
             }
+            return true;
         }
         return false;
     }
