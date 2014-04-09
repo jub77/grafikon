@@ -1,7 +1,8 @@
 package net.parostroj.timetable.actions;
 
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Region;
+import java.util.List;
+
+import net.parostroj.timetable.model.*;
 
 /**
  * Destination for cargo.
@@ -33,6 +34,18 @@ public class FreightDst {
 
     @Override
     public String toString() {
-        return node == null ? region.getName() : node.getAbbr();
+        StringBuilder colorsStr = null;
+        if (node != null) {
+            List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
+            if (cs != null && !cs.isEmpty()) {
+                colorsStr = new StringBuilder();
+                TextList o = new TextList(colorsStr, "[", "]", ",");
+                for (Object i : cs) {
+                    o.add(((FreightColor) i).getName());
+                }
+                o.finish();
+            }
+        }
+        return node == null ? region.getName() : node.getAbbr() + (colorsStr != null ? colorsStr.toString() : "");
     }
 }
