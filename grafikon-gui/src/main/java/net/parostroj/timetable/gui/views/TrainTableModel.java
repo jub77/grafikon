@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.parostroj.timetable.actions.FreightDst;
 import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -212,10 +213,11 @@ class TrainTableModel extends AbstractTableModel {
                 if (rowIndex % 2 == 0 && FreightHelper.isFreight(interval)) {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<Node>> passedCargoNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
+                    Region region = interval.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
                     for (Map.Entry<Train, List<Node>> entry : passedCargoNodes.entrySet()) {
                         TextList output = new TextList(result, "(", ")", ",");
-                        for (Node node : entry.getValue()) {
-                            output.add(node.getAbbr());
+                        for (FreightDst dst : FreightHelper.convertFreightDst(region, entry.getValue())) {
+                            output.add(dst.toString());
                         }
                         output.append(" > ").append(entry.getKey().getName());
                         output.finish();
@@ -226,8 +228,8 @@ class TrainTableModel extends AbstractTableModel {
                             result.append(' ');
                         }
                         TextList output = new TextList(result, ",");
-                        for (Node node : cargoNodes) {
-                            output.add(node.getAbbr());
+                        for (FreightDst dst : FreightHelper.convertFreightDst(region, cargoNodes)) {
+                            output.add(dst.toString());
                         }
                         output.finish();
                     }

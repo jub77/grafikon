@@ -1,9 +1,10 @@
 package net.parostroj.timetable.actions;
 
+import java.util.*;
+
 import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.filters.FilteredIterable;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.*;
 
 /**
  * Tests for freight manipulations.
@@ -62,6 +63,23 @@ public class FreightHelper {
                 }
             }
         });
+    }
+
+    public static List<FreightDst> convertFreightDst(Region region, List<Node> nodes) {
+        List<FreightDst> result = new LinkedList<FreightDst>();
+        Set<Region> used = new HashSet<Region>();
+        for (Node node : nodes) {
+            Region nRegion = node.getAttributes().get(Node.ATTR_REGION, Region.class);
+            if (nRegion != null && nRegion != region) {
+                if (!used.contains(nRegion)) {
+                    result.add(new FreightDst(nRegion));
+                    used.add(nRegion);
+                }
+            } else {
+                result.add(new FreightDst(node));
+            }
+        }
+        return result;
     }
 
     public static boolean isManaged(Train train) {
