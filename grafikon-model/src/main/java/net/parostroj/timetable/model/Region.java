@@ -58,6 +58,11 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder {
     }
 
     @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
     }
