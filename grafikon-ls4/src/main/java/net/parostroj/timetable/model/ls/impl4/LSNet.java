@@ -2,28 +2,28 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
+
+import net.parostroj.timetable.model.*;
 
 /**
  * Class for storing net.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "net")
-@XmlType(propOrder = {"id", "nodes", "lines", "lineClasses"})
+@XmlType(propOrder = {"id", "nodes", "lines", "lineClasses", "regions"})
 public class LSNet {
 
     private String id;
     private List<LSNode> nodes;
     private List<LSLine> lines;
     private List<LSLineClass> lineClasses;
+    private List<LSRegion> regions;
 
     public LSNet(Net net) {
         this.id = net.getId();
@@ -38,6 +38,10 @@ public class LSNet {
         this.lineClasses = new LinkedList<LSLineClass>();
         for (LineClass lineClass : net.getLineClasses()) {
             this.lineClasses.add(new LSLineClass(lineClass));
+        }
+        this.regions = new LinkedList<LSRegion>();
+        for (Region region : net.getRegions().get()) {
+            this.regions.add(new LSRegion(region));
         }
     }
 
@@ -80,6 +84,16 @@ public class LSNet {
 
     public void setLineClasses(List<LSLineClass> lineClasses) {
         this.lineClasses = lineClasses;
+    }
+
+    @XmlElementWrapper
+    @XmlElement(name = "region")
+    public List<LSRegion> getRegions() {
+        return regions;
+    }
+
+    public void setRegions(List<LSRegion> regions) {
+        this.regions = regions;
     }
 
     public Net createNet() {

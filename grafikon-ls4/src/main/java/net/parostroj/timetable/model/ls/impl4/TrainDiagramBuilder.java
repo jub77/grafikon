@@ -56,6 +56,12 @@ public class TrainDiagramBuilder {
     public void setNet(LSNet lsNet) throws LSException {
         Net net = lsNet.createNet();
         this.diagram.setNet(net);
+        // add regions
+        if (lsNet.getRegions() != null) {
+            for (LSRegion lsRegion : lsNet.getRegions()) {
+                net.getRegions().add(lsRegion.createRegion(diagram));
+            }
+        }
         // add line classes
         if (lsNet.getLineClasses() != null) {
             for (LSLineClass lsLineClass : lsNet.getLineClasses()) {
