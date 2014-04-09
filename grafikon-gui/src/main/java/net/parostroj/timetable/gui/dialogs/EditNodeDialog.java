@@ -5,10 +5,11 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -34,6 +35,8 @@ import javax.swing.GroupLayout;
 import javax.swing.JPanel;
 
 import java.awt.FlowLayout;
+
+import javax.swing.JButton;
 
 /**
  * Edit dialog for node.
@@ -76,6 +79,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private Node node;
     private List<EditTrack> removed;
+    private Collection<FreightColor> colors;
     private final WrapperListModel<NodeType> types;
 
     /** Creates new form EditNodeDialog */
@@ -121,6 +125,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
         controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_CONTROL_STATION)));
         trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_TRAPEZOID_SIGN)));
+        updateColors();
 
         // set node length
         Integer length = (Integer) node.getAttribute(Node.ATTR_LENGTH);
@@ -138,6 +143,14 @@ public class EditNodeDialog extends javax.swing.JDialog {
             listModel.addElement(new EditTrack(track));
         }
         trackList.setModel(listModel);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateColors() {
+        colors = (Collection<FreightColor>) node.getAttribute(Node.ATTR_FREIGHT_COLORS);
+        if (colors == null) {
+            colors = Collections.emptyList();
+        }
     }
 
     private void writeValuesBack() {
@@ -189,6 +202,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
             if (!node.getTracks().contains(t.track))
                 node.addTrack(t.track);
         }
+
+        // colors
+        if (colors.isEmpty()) {
+            colors = null;
+        }
+        node.getAttributes().setRemove(Node.ATTR_FREIGHT_COLORS, colors);
     }
 
     private void initComponents() {
@@ -295,14 +314,28 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         JPanel panel = new JPanel();
 
+        colorsButton = new JButton(ResourceLoader.getString("ne.colors") + "...");
+        colorsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FreightColorsDialog dialog = new FreightColorsDialog(EditNodeDialog.this);
+                dialog.setLocationRelativeTo(EditNodeDialog.this);
+                List<FreightColor> result = dialog.showDialog(colors);
+                if (result != null) {
+                    colors = result;
+                }
+                dialog.dispose();
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(platformCheckBox)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -313,7 +346,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(renameTrackButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(deleteTrackButton)
-                            .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addGap(18)
+                            .addComponent(colorsButton)
+                            .addPreferredGap(ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
@@ -325,11 +360,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
                                 .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                                .addComponent(typeComboBox, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                                .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                .addComponent(typeComboBox, 0, 326, Short.MAX_VALUE)
+                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                                .addComponent(nameTextField)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lengthEditBox, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lengthEditBox, GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                                     .addPreferredGap(ComponentPlacement.RELATED)
                                     .addComponent(lengthCheckBox)))))
                     .addContainerGap())
@@ -349,10 +384,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jLabel3)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGap(6)
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGap(8)
                             .addComponent(jLabel4)
                             .addGap(3))
                         .addComponent(lengthEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -373,7 +407,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(deleteTrackButton))
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(cancelButton)
-                            .addComponent(okButton)))
+                            .addComponent(okButton)
+                            .addComponent(colorsButton)))
                     .addContainerGap())
         );
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 0));
@@ -488,4 +523,5 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JList trackList;
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox typeComboBox;
+    private JButton colorsButton;
 }
