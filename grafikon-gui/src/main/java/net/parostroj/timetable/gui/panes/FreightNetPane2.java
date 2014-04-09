@@ -15,8 +15,10 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.ini4j.Ini;
@@ -228,5 +230,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 graphicalTimetableView.repaint();
             }
         }, FreightNetEvent.class);
+        model.getMediator().addColleague(new Colleague() {
+            @Override
+            public void receiveMessage(Object message) {
+                TrainEvent event = (TrainEvent) message;
+                if (event.getType() == GTEventType.ATTRIBUTE &&
+                        event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                    graphicalTimetableView.repaint();
+                }
+            }
+        }, TrainEvent.class);
     }
 }
