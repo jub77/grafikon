@@ -36,7 +36,7 @@ public class Net implements ObjectWithId, Visitable {
     public Net(String id) {
         netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         lineClasses = new LinkedList<LineClass>();
-        regions = new ItemList<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_REMOVED) {
+        regions = new ItemList<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_MOVED) {
             @Override
             protected void fireEvent(net.parostroj.timetable.model.ItemList.Type type, GTEventType eventType,
                     Region item, int newIndex, int oldIndex) {
