@@ -998,7 +998,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void lineClassesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        LineClassesDialog lineClassesDialog = new LineClassesDialog(this, true);
+        EditLineClassesDialog lineClassesDialog = new EditLineClassesDialog(this, true);
         lineClassesDialog.setLocationRelativeTo(this);
         lineClassesDialog.showDialog(model.getDiagram());
         lineClassesDialog.dispose();
