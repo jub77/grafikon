@@ -17,6 +17,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder {
     public Region(String id, String name) {
         this.id = id;
         this.name = name;
+        this.setAttributes(new Attributes());
     }
 
     @Override
