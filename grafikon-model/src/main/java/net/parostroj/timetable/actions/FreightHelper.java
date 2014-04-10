@@ -68,9 +68,13 @@ public class FreightHelper {
     public static List<FreightDst> convertFreightDst(Train train, Region region, List<FreightDst> list) {
         List<FreightDst> result = new LinkedList<FreightDst>();
         Set<Region> used = new HashSet<Region>();
+        Set<FreightDst> visited = new HashSet<FreightDst>();
         for (FreightDst dst : list) {
             if (!dst.isNode()) {
                 throw new IllegalArgumentException("Only node destinations allowed.");
+            }
+            if (visited.contains(dst)) {
+                continue;
             }
             Region nRegion = dst.getRegion();
             if (nRegion != null && nRegion != region && train != dst.getTrain() &&
@@ -80,6 +84,7 @@ public class FreightHelper {
                     used.add(nRegion);
                 }
             } else {
+                visited.add(dst);
                 result.add(dst);
             }
         }
