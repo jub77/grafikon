@@ -28,7 +28,7 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
         });
         GTDraw draw = super.createInstance(settings, route, storage);
         // decorate
-        return new ManagedFreightGTDraw(draw, storage.getCollector(FNConnection.class), highlight);
+        return new ManagedFreightGTDraw(settings, draw, storage.getCollector(FNConnection.class), highlight);
     }
 
 }

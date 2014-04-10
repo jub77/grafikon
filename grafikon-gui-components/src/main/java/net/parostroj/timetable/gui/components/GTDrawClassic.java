@@ -118,4 +118,9 @@ public class GTDrawClassic extends GTDrawBase {
         Line2D line2D = new Line2D.Double(x1, y1, x2, y2);
         return line2D;
     }
+
+    @Override
+    protected Stroke getTrainStroke() {
+        return trainStroke;
+    }
 }
