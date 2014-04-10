@@ -130,9 +130,9 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             p.addPoint(x2, y);
             p.addPoint(x2 - arrow, y + arrow);
         } else {
-            p.addPoint(x1 + arrow, y - arrow);
-            p.addPoint(x1, y);
-            p.addPoint(x1 + arrow, y + arrow);
+            p.addPoint(x1, y - arrow);
+            p.addPoint(x1 + arrow, y);
+            p.addPoint(x1, y + arrow);
         }
         g.fill(p);
 
