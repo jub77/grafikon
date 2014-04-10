@@ -69,16 +69,17 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
                         g.setColor(Color.magenta);
                     }
                 }
-                Tuple<Point> location = getLocation(conn);
+                int dir = conn.getFrom().getOwnerAsNode() == fSegment ? -1 : 1;
+                Tuple<Point> location = getLocation(conn, dir);
                 // name
                 TextLayout layout = new TextLayout(this.createText(conn), g.getFont(), g.getFontRenderContext());
                 Rectangle bounds = layout.getBounds().getBounds();
                 int width = bounds.width;
-                paintText(conn, g, layout, location.first, width);
-                paintText(conn, g, layout, location.second, width);
+                paintText(conn, g, layout, location.first, width, dir);
+                paintText(conn, g, layout, location.second, width, dir);
                 // line
-                paintLine(conn, g, location.first, width, true);
-                paintLine(conn, g, location.second, width, false);
+                paintLine(conn, g, location.first, width, true, dir);
+                paintLine(conn, g, location.second, width, false, dir);
             }
         }
     }
@@ -94,11 +95,15 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         return collision;
     }
 
-    private void paintText(FNConnection conn, Graphics2D g, TextLayout layout, Point point, int width) {
+    private void paintText(FNConnection conn, Graphics2D g, TextLayout layout, Point point, int width, int dir) {
         Rectangle rectangle = layout.getBounds().getBounds();
-        rectangle.translate(point.x - (width / 2), point.y - 2 * arrow);
+        int dyStart = dir > 0 ? point.y - 2 * arrow : point.y + rectangle.height;
+        if (dir < 0) {
+            point.y += rectangle.height;
+        }
+        rectangle.translate(point.x - (width / 2), dyStart);
         while (collisions(rectangle)) {
-            int dy = - (rectangle.height + 2 * arrow);
+            int dy = - (rectangle.height + 2 * arrow) * dir;
             rectangle.translate(0, dy);
             point.y += dy;
         }
@@ -109,10 +114,10 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         }
     }
 
-    private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left) {
+    private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left, int dir) {
         int half = (width + lineExtend) / 2;
         int x1 = point.x - half;
-        int y = point.y - arrow;
+        int y = point.y - (arrow * dir);
         int x2 = point.x + half;
         Line2D line = new Line2D.Float(x1, y, x2, y);
         g.draw(line);
@@ -138,9 +143,11 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         return String.format("%s > %s", conn.getFrom().getTrain().getName(), conn.getTo().getTrain().getName());
     }
 
-    private Tuple<Point> getLocation(FNConnection conn) {
+    private Tuple<Point> getLocation(FNConnection conn, int dir) {
         Node node = conn.getFrom().getOwnerAsNode();
-        int y = drawBase.getY(node, node.getTracks().get(0));
+        List<NodeTrack> tracks = node.getTracks();
+        NodeTrack track = dir > 0 ? node.getTracks().get(0) : tracks.get(tracks.size() - 1);
+        int y = drawBase.getY(node, track);
         int x1 = drawBase.getX((conn.getFrom().getStart() + conn.getFrom().getEnd()) / 2);
         int x2 = drawBase.getX((conn.getTo().getStart() + conn.getTo().getEnd()) / 2);
 
