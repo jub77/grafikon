@@ -50,7 +50,7 @@ public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, Appli
     }
 
     @Override
-    public Color getColor() {
+    public Color getColor(TimeInterval interval) {
         return this.selectionColor;
     }
 
