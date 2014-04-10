@@ -13,6 +13,8 @@ import net.parostroj.timetable.utils.Tuple;
 
 public class ManagedFreightGTDraw extends GTDrawDecorator {
 
+    private static final Color CONNECTION_COLOR = Color.RED;
+
     public interface Highlight {
         FNConnection getSelected();
 
@@ -66,7 +68,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
                     if (conn == highlight.getSelected()) {
                         g.setColor(highlight.getColor());
                     } else {
-                        g.setColor(Color.magenta);
+                        g.setColor(CONNECTION_COLOR);
                     }
                 }
                 int dir = conn.getFrom().getOwnerAsNode() == fSegment ? -1 : 1;
