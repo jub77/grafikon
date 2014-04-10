@@ -13,15 +13,18 @@ public class FreightDst {
 
     private final Node node;
     private final Region region;
-
-    public FreightDst(Region region) {
+    private final Train train;
+    
+    public FreightDst(Region region, Train train) {
         this.region = region;
         this.node = null;
+        this.train = train;
     }
 
-    public FreightDst(Node node) {
+    public FreightDst(Node node, Train train) {
         this.region = null;
         this.node = node;
+        this.train = train;
     }
 
     public Node getNode() {
@@ -29,7 +32,15 @@ public class FreightDst {
     }
 
     public Region getRegion() {
-        return region;
+        return region != null ? region : node.getAttributes().get(Node.ATTR_REGION, Region.class);
+    }
+
+    public Train getTrain() {
+        return train;
+    }
+
+    public boolean isNode() {
+        return this.node != null;
     }
 
     @Override

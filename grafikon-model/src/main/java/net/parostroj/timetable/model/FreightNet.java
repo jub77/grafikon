@@ -161,32 +161,32 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.attributes.addListener(attributesListener);
     }
 
-    public Map<Train, List<Node>> getFreightPassedInNode(TimeInterval fromInterval) {
+    public Map<Train, List<FreightDst>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        Map<Train, List<Node>> result = new HashMap<Train, List<Node>>();
+        Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<Node> nodes = this.getFreightToNodes(conn.getTo());
+            List<FreightDst> nodes = this.getFreightToNodes(conn.getTo());
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
     }
 
-    public List<Node> getFreightToNodes(TimeInterval fromInterval) {
+    public List<FreightDst> getFreightToNodes(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        List<Node> result = new LinkedList<Node>();
+        List<FreightDst> result = new LinkedList<FreightDst>();
         this.getFreightToNodesImpl(fromInterval, result);
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<Node> result) {
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<FreightDst> result) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
         for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
-            result.add(i.getOwnerAsNode());
+            result.add(new FreightDst(i.getOwnerAsNode(), i.getTrain()));
             for (FNConnection conn : nextConns) {
                 if (i == conn.getFrom()) {
                     this.getFreightToNodesImpl(conn.getTo(), result);

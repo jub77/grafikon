@@ -210,26 +210,20 @@ class TrainTableModel extends AbstractTableModel {
             case FREIGHT_TO_STATIONS:
                 if (rowIndex % 2 == 0 && FreightHelper.isFreight(interval)) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<Node>> passedCargoNodes = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
+                    Map<Train, List<FreightDst>> passedCargoDst = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
                     Region region = interval.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
-                    for (Map.Entry<Train, List<Node>> entry : passedCargoNodes.entrySet()) {
-                        TextList output = new TextList(result, "(", ")", ",");
-                        for (FreightDst dst : FreightHelper.convertFreightDst(region, entry.getValue())) {
-                            output.add(dst.toString());
-                        }
-                        output.append(" > ").append(entry.getKey().getName());
-                        output.finish();
+                    for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
+                        List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, entry.getValue());
+                        result.append('(').append(FreightHelper.freightDstListToString(mList));
+                        result.append(" > ").append(entry.getKey().getName()).append(')');
                     }
                     if (FreightHelper.isFreightFrom(interval)) {
-                        List<Node> cargoNodes = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
-                        if (!cargoNodes.isEmpty() && result.length() > 0) {
+                        List<FreightDst> cargoDst = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
+                        List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, cargoDst);
+                        if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
-                        TextList output = new TextList(result, ",");
-                        for (FreightDst dst : FreightHelper.convertFreightDst(region, cargoNodes)) {
-                            output.add(dst.toString());
-                        }
-                        output.finish();
+                        result.append(FreightHelper.freightDstListToString(mList));
                     }
                     retValue = result.toString();
                 }
