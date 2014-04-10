@@ -41,7 +41,7 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         updateRight("");
         timer = new Timer(TIMEOUT, new ActionListener() {
             @Override
-			public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 updateCenter("");
             }
         });
