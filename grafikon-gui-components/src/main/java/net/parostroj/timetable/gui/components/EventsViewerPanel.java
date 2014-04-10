@@ -1,9 +1,15 @@
 package net.parostroj.timetable.gui.components;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
+
 import javax.swing.AbstractListModel;
+import javax.swing.Timer;
+
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Triplet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +20,13 @@ import org.slf4j.LoggerFactory;
  */
 public class EventsViewerPanel extends javax.swing.JPanel {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EventsViewerPanel.class.getName());
+    private static final int TIMEOUT = 100;
+
+
     private final Map<Class<?>, EventsViewerTypeConverter> converterMap;
     private boolean writeToLog = false;
-    private static final Logger LOG = LoggerFactory.getLogger(EventsViewerPanel.class.getName());
+    private final Timer timer;
 
     class EventListModel extends AbstractListModel {
 
@@ -102,6 +112,13 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     public EventsViewerPanel() {
         initComponents();
         converterMap = new HashMap<Class<?>, EventsViewerTypeConverter>();
+        timer = new Timer(TIMEOUT, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scrollToLastPosition();
+            }
+        });
+        timer.setRepeats(false);
     }
 
     private void initComponents() {
@@ -239,11 +256,13 @@ public class EventsViewerPanel extends javax.swing.JPanel {
 
     public void addEvent(Object event) {
         getEventsModel().addEvent(event);
-        scrollToPosition(getEventsModel().getSize() - 1);
+        timer.stop();
+        timer.setInitialDelay(TIMEOUT);
+        timer.start();
     }
 
-    private void scrollToPosition(int position) {
-        eventsList.ensureIndexIsVisible(position);
+    private void scrollToLastPosition() {
+        eventsList.ensureIndexIsVisible(getEventsModel().getSize() - 1);
     }
 
     public void clearEvents() {
