@@ -487,7 +487,7 @@ abstract public class GTDrawBase implements GTDraw {
         return x;
     }
 
-    public int getY(Node node) {
+    public int getY(Node node, Track track) {
         Integer position = positions.get(node);
         return position != null ? start.y + position : -1;
     }
@@ -519,4 +519,6 @@ abstract public class GTDrawBase implements GTDraw {
                 break;
         }
     }
+
+    abstract protected Stroke getTrainStroke();
 }

@@ -195,4 +195,15 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         Line2D line2D = new Line2D.Float(x1, y, x2, y);
         return line2D;
     }
+
+    @Override
+    public int getY(Node node, Track track) {
+        Integer position = trackPositions.get(track);
+        return position != null ? start.y + position : -1;
+    }
+
+    @Override
+    protected Stroke getTrainStroke() {
+        return trainStroke;
+    }
 }
