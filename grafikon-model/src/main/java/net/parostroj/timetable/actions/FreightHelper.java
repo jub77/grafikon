@@ -65,21 +65,35 @@ public class FreightHelper {
         });
     }
 
-    public static List<FreightDst> convertFreightDst(Region region, List<Node> nodes) {
+    public static List<FreightDst> convertFreightDst(Train train, Region region, List<FreightDst> list) {
         List<FreightDst> result = new LinkedList<FreightDst>();
         Set<Region> used = new HashSet<Region>();
-        for (Node node : nodes) {
-            Region nRegion = node.getAttributes().get(Node.ATTR_REGION, Region.class);
-            if (nRegion != null && nRegion != region) {
+        for (FreightDst dst : list) {
+            if (!dst.isNode()) {
+                throw new IllegalArgumentException("Only node destinations allowed.");
+            }
+            Region nRegion = dst.getRegion();
+            if (nRegion != null && nRegion != region && train != dst.getTrain() &&
+                    dst.getNode().getType() != NodeType.STATION_HIDDEN) {
                 if (!used.contains(nRegion)) {
-                    result.add(new FreightDst(nRegion));
+                    result.add(new FreightDst(nRegion, null));
                     used.add(nRegion);
                 }
             } else {
-                result.add(new FreightDst(node));
+                result.add(dst);
             }
         }
         return result;
+    }
+
+    public static String freightDstListToString(Collection<FreightDst> list) {
+        StringBuilder builder = new StringBuilder();
+        TextList output = new TextList(builder, ",");
+        for (FreightDst dst : list) {
+            output.add(dst.toString());
+        }
+        output.finish();
+        return builder.toString();
     }
 
     public static boolean isManaged(Train train) {
