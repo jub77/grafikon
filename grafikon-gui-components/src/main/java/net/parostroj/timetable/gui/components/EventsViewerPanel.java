@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.AbstractListModel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -244,8 +243,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     }
 
     private void scrollToPosition(int position) {
-        Rectangle cellBounds = eventsList.getCellBounds(position, position);
-        eventsList.scrollRectToVisible(cellBounds);
+        eventsList.ensureIndexIsVisible(position);
     }
 
     public void clearEvents() {
