@@ -5,11 +5,12 @@ import net.parostroj.timetable.model.TimeInterval;
 
 /**
  * Highlighted trains.
- * 
+ *
  * @author jub
  */
 public interface HighlightedTrains {
+
     public boolean isHighlighedInterval(TimeInterval interval);
-    
-    public Color getColor();
+
+    public Color getColor(TimeInterval interval);
 }
