@@ -14,7 +14,7 @@ public class FreightDst {
     private final Node node;
     private final Region region;
     private final Train train;
-    
+
     public FreightDst(Region region, Train train) {
         this.region = region;
         this.node = null;
@@ -58,5 +58,36 @@ public class FreightDst {
             }
         }
         return node == null ? region.getName() : node.getAbbr() + (colorsStr != null ? colorsStr.toString() : "");
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((node == null) ? 0 : node.hashCode());
+        result = prime * result + ((region == null) ? 0 : region.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FreightDst other = (FreightDst) obj;
+        if (node == null) {
+            if (other.node != null)
+                return false;
+        } else if (!node.equals(other.node))
+            return false;
+        if (region == null) {
+            if (other.region != null)
+                return false;
+        } else if (!region.equals(other.region))
+            return false;
+        return true;
     }
 }
