@@ -1,8 +1,8 @@
-package net.parostroj.timetable.actions;
+package net.parostroj.timetable.model;
 
 import java.util.List;
 
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.actions.TextList;
 
 /**
  * Destination for cargo.
