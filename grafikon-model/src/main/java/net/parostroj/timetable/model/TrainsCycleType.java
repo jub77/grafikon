@@ -6,10 +6,9 @@
 
 package net.parostroj.timetable.model;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import net.parostroj.timetable.utils.ResourceBundleUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -109,10 +108,15 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public String getDescriptionText() {
+        return getDescriptionText(Locale.getDefault());
+    }
+
+    public String getDescriptionText(Locale locale) {
         if (_cachedDescription == null) {
-            if (isDefaultType(name))
-                _cachedDescription = ResourceBundle.getBundle("net.parostroj.timetable.model.cycle_type_texts").getString(name);
-            else
+            if (isDefaultType(name)) {
+                ResourceBundle bundle = ResourceBundleUtil.getBundle("net.parostroj.timetable.model.cycle_type_texts", TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
+                _cachedDescription = bundle.getString(name);
+            } else
                 _cachedDescription = (description != null) ? description : name;
         }
         return _cachedDescription;
