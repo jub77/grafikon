@@ -32,9 +32,6 @@ public class FreightDst {
         this.node = node;
         this.train = train;
         this.path = path;
-
-        System.out.println(this);
-        System.out.println(path);
     }
 
     public Node getNode() {
