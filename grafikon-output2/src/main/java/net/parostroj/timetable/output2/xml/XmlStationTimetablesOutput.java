@@ -1,12 +1,16 @@
 package net.parostroj.timetable.output2.xml;
 
 import net.parostroj.timetable.output2.impl.StationTimetables;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Locale;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -21,8 +25,8 @@ import net.parostroj.timetable.output2.impl.StationTimetablesExtractor;
  */
 class XmlStationTimetablesOutput extends OutputWithCharset {
 
-    public XmlStationTimetablesOutput(Charset charset) {
-        super(charset);
+    public XmlStationTimetablesOutput(Locale locale, Charset charset) {
+        super(locale, charset);
     }
 
     @Override
@@ -32,7 +36,7 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
             if (params.paramExistWithValue("tech.time"))
                 techTime = params.getParam("tech.time").getValue(Boolean.class);
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime);
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime, this.getLocale());
             StationTimetables st = new StationTimetables(se.getStationTimetables());
 
             JAXBContext context = JAXBContext.newInstance(StationTimetables.class);

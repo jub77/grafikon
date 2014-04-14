@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -27,12 +28,20 @@ public enum FreightColor {
         return key;
     }
 
+    public String getName(Locale locale) {
+        return getText(key, locale);
+    }
+
+    public String getAbbr(Locale locale) {
+        return getText(key + ".abbr", locale);
+    }
+
     public String getName() {
-        return getText(key);
+        return getName(Locale.getDefault());
     }
 
     public String getAbbr() {
-        return getText(key + ".abbr");
+        return getAbbr(Locale.getDefault());
     }
 
     public static FreightColor getByKey(String key) {
@@ -44,7 +53,7 @@ public enum FreightColor {
         return null;
     }
 
-    private static String getText(String key) {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.color_texts").getString(key);
+    private static String getText(String key, Locale locale) {
+        return ResourceBundle.getBundle("net.parostroj.timetable.model.color_texts", locale).getString(key);
     }
 }

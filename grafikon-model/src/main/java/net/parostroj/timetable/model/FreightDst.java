@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.List;
+import java.util.Locale;
 
 import net.parostroj.timetable.actions.TextList;
 
@@ -56,6 +57,10 @@ public class FreightDst {
 
     @Override
     public String toString() {
+        return this.toString(Locale.getDefault());
+    }
+
+    public String toString(Locale locale) {
         StringBuilder colorsStr = null;
         if (node != null) {
             List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
@@ -63,7 +68,7 @@ public class FreightDst {
                 colorsStr = new StringBuilder();
                 TextList o = new TextList(colorsStr, "[", "]", ",");
                 for (Object i : cs) {
-                    o.add(((FreightColor) i).getName());
+                    o.add(((FreightColor) i).getName(locale));
                 }
                 o.finish();
             }

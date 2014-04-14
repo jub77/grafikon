@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author jub
  */
 @XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "track", "technologicalTime", "occupied", "comment",
-    "engine", "trainUnit", "cycle", "length"})
+    "engine", "trainUnit", "cycle", "length", "freightTo", "freightFromTrain", "freightToTrain"})
 public class StationTimetableRow {
 
     private String trainName;
@@ -23,6 +23,9 @@ public class StationTimetableRow {
     private boolean technologicalTime;
     private boolean occupied;
     private String comment;
+    private List<String> freightTo;
+    private List<String> freightFromTrain;
+    private List<String> freightToTrain;
     private List<CycleFromTo> engine;
     private List<CycleFromTo> trainUnit;
     private List<CycleWithTypeFromTo> cycle;
@@ -120,6 +123,30 @@ public class StationTimetableRow {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public List<String> getFreightTo() {
+        return freightTo;
+    }
+
+    public void setFreightTo(List<String> freightTo) {
+        this.freightTo = freightTo;
+    }
+
+    public void setFreightFromTrain(List<String> freightFromTrain) {
+        this.freightFromTrain = freightFromTrain;
+    }
+
+    public void setFreightToTrain(List<String> freightToTrain) {
+        this.freightToTrain = freightToTrain;
+    }
+
+    public List<String> getFreightFromTrain() {
+        return freightFromTrain;
+    }
+
+    public List<String> getFreightToTrain() {
+        return freightToTrain;
     }
 
     public List<CycleFromTo> getEngine() {

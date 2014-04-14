@@ -104,6 +104,15 @@
     // comment
     if (row.comment != null)
       note_parts << row.comment
+    if (row.freightTo != null) {
+      note_parts << "<i>${row.freightTo.collect{i -> i}.join(', ')}</i>"
+    }
+    if (row.freightToTrain != null) {
+      note_parts << "<i>(${row.freightToTrain.collect{i -> i}.join(', ')} &#8594;)</i>"
+    }
+    if (row.freightFromTrain != null) {
+      note_parts << "<i>(&#8594; ${row.freightFromTrain.collect{i -> i}.join(', ')})</i>"
+    }
     // occupied track
     if (row.occupied)
       note_parts << occupied
@@ -112,13 +121,7 @@
   }
 
   def create_note_str(note_parts) {
-    result = note_parts.inject("") {
-      str, item ->
-        if (str != "")
-          str += ", "
-        str + item
-    }
-    return result
+    return note_parts.collect{i -> i}.join(", ");
   }
 %>
 <body>

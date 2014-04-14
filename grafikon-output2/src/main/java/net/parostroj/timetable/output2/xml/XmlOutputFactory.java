@@ -2,9 +2,8 @@ package net.parostroj.timetable.output2.xml;
 
 import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import net.parostroj.timetable.output2.Output;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputFactory;
@@ -39,6 +38,13 @@ public class XmlOutputFactory extends OutputFactory {
         return charset;
     }
 
+    private Locale getLocale() {
+        Locale locale = (Locale) this.getParameter("locale");
+        if (locale == null)
+            locale = Locale.getDefault();
+        return locale;
+    }
+
     @Override
     public Set<String> getOutputTypes() {
         return OUTPUT_TYPES.keySet();
@@ -50,8 +56,8 @@ public class XmlOutputFactory extends OutputFactory {
         if (outputClass == null)
             throw new OutputException("Unknown type: " + type);
         try {
-            Constructor<? extends Output> constructor = outputClass.getConstructor(Charset.class);
-            return constructor.newInstance(this.getCharset());
+            Constructor<? extends Output> constructor = outputClass.getConstructor(Locale.class, Charset.class);
+            return constructor.newInstance(this.getLocale(), this.getCharset());
         } catch (Exception e) {
             throw new OutputException(e);
         }

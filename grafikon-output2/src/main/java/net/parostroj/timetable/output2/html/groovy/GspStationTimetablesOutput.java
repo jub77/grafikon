@@ -36,7 +36,7 @@ public class GspStationTimetablesOutput extends GspOutput {
             if (params.paramExistWithValue("tech.time"))
                 techTime = params.getParam("tech.time").getValue(Boolean.class);
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime);
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime, this.getLocale());
             List<StationTimetable> timetables = se.getStationTimetables();
 
             // call template

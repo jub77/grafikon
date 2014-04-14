@@ -1,8 +1,8 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -19,11 +19,13 @@ public class StationTimetablesExtractor {
     private final List<Node> nodes;
     private final TimeConverter converter;
     private final boolean techTime;
+    private final Locale locale;
 
-    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime) {
+    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, Locale locale) {
         this.diagram = diagram;
         this.nodes = nodes;
         this.techTime = techTime;
+        this.locale = locale;
         this.converter = diagram.getTimeConverter();
     }
 
@@ -89,6 +91,32 @@ public class StationTimetablesExtractor {
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!TrainsCycleType.isDefaultType(type.getName())) {
                 this.addCycles(interval, type, row.getCycle());
+            }
+        }
+        if (FreightHelper.isFreight(interval)) {
+            List<FreightDst> freightDests = FreightHelper.convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+            if (!freightDests.isEmpty()) {
+                ArrayList<String> fl = new ArrayList<String>(freightDests.size());
+                for (FreightDst dst : freightDests) {
+                    fl.add(dst.toString(locale));
+                }
+                row.setFreightTo(fl);
+            }
+            List<FNConnection> toTrains = diagram.getFreightNet().getTrainsFrom(interval);
+            if (!toTrains.isEmpty()) {
+                ArrayList<String> nt = new ArrayList<String>(toTrains.size());
+                for (FNConnection conn : toTrains) {
+                    nt.add(conn.getTo().getTrain().getName());
+                }
+                row.setFreightToTrain(nt);
+            }
+            List<FNConnection> trainsFrom = diagram.getFreightNet().getTrainsTo(interval);
+            if (!trainsFrom.isEmpty()) {
+                ArrayList<String> nt = new ArrayList<String>(trainsFrom.size());
+                for (FNConnection conn : trainsFrom) {
+                    nt.add(conn.getFrom().getTrain().getName());
+                }
+                row.setFreightFromTrain(nt);
             }
         }
         row.setComment((String) interval.getAttribute(TimeInterval.ATTR_COMMENT));

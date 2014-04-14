@@ -1,13 +1,17 @@
 package net.parostroj.timetable.output2.xml;
 
 import net.parostroj.timetable.output2.impl.EndPositions;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Locale;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -22,8 +26,8 @@ import net.parostroj.timetable.output2.impl.PositionsExtractor;
  */
 class XmlEndPositionsOutput extends OutputWithCharset {
 
-    public XmlEndPositionsOutput(Charset charset) {
-        super(charset);
+    public XmlEndPositionsOutput(Locale locale, Charset charset) {
+        super(locale, charset);
     }
 
     @Override
