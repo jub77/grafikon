@@ -179,18 +179,21 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
         List<FreightDst> result = new LinkedList<FreightDst>();
-        this.getFreightToNodesImpl(fromInterval, result, new HashSet<FNConnection>());
+        this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>());
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<FreightDst> result, Set<FNConnection> used) {
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
         for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
-            result.add(new FreightDst(i.getOwnerAsNode(), i.getTrain()));
+            result.add(new FreightDst(i.getOwnerAsNode(), i.getTrain(), path));
             for (FNConnection conn : nextConns) {
                 if (i == conn.getFrom() && !used.contains(conn)) {
                     used.add(conn);
-                    this.getFreightToNodesImpl(conn.getTo(), result, used);
+                    List<TimeInterval> newPath = new ArrayList<TimeInterval>(path.size() + 1);
+                    newPath.addAll(path);
+                    newPath.add(conn.getFrom());
+                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used);
                 }
             }
         }

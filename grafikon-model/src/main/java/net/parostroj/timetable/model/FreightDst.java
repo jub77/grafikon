@@ -14,17 +14,27 @@ public class FreightDst {
     private final Node node;
     private final Region region;
     private final Train train;
+    private final List<TimeInterval> path;
 
     public FreightDst(Region region, Train train) {
         this.region = region;
         this.node = null;
         this.train = train;
+        this.path = null;
     }
 
     public FreightDst(Node node, Train train) {
+        this(node, train, null);
+    }
+
+    public FreightDst(Node node, Train train, List<TimeInterval> path) {
         this.region = null;
         this.node = node;
         this.train = train;
+        this.path = path;
+
+        System.out.println(this);
+        System.out.println(path);
     }
 
     public Node getNode() {
@@ -37,6 +47,10 @@ public class FreightDst {
 
     public Train getTrain() {
         return train;
+    }
+
+    public List<TimeInterval> getPath() {
+        return path;
     }
 
     public boolean isNode() {
