@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.text.NumberFormatter;
+
+import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +57,8 @@ public class UnitUtil {
         }
     }
 
-    static String getText(String key) {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.unit_texts").getString(key);
+    static String getText(String key, Locale locale) {
+        ResourceBundle bundle = ResourceBundleUtil.getBundle("net.parostroj.timetable.model.unit_texts", UnitUtil.class.getClassLoader(), locale, Locale.ENGLISH);
+        return bundle.getString(key);
     }
 }

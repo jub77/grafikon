@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.units;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * Unit of speed.
@@ -59,17 +60,32 @@ public enum SpeedUnit implements Unit {
 
     @Override
     public String getUnitString() {
-        return UnitUtil.getText("unit." + key);
+        return getUnitString(Locale.getDefault());
+    }
+
+    @Override
+    public String getUnitString(Locale locale) {
+        return UnitUtil.getText("unit." + key, locale);
     }
 
     @Override
     public String getUnitsString() {
-        return UnitUtil.getText("units." + key);
+        return getUnitsString(Locale.getDefault());
+    }
+
+    @Override
+    public String getUnitsString(Locale locale) {
+        return UnitUtil.getText("units." + key, locale);
     }
 
     @Override
     public String getUnitsOfString() {
-        return UnitUtil.getText("units.of." + key);
+        return getUnitsOfString(Locale.getDefault());
+    }
+
+    @Override
+    public String getUnitsOfString(Locale locale) {
+        return UnitUtil.getText("units.of." + key, locale);
     }
 
     @Override
