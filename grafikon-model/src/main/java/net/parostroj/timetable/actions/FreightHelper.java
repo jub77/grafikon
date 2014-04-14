@@ -65,6 +65,11 @@ public class FreightHelper {
         });
     }
 
+    public static List<FreightDst> convertFreightDst(TimeInterval from, List<FreightDst> list) {
+        Region region = from.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
+        return convertFreightDst(from.getTrain(), region, list);
+    }
+
     public static List<FreightDst> convertFreightDst(Train train, Region region, List<FreightDst> list) {
         List<FreightDst> result = new LinkedList<FreightDst>();
         Set<Region> used = new HashSet<Region>();

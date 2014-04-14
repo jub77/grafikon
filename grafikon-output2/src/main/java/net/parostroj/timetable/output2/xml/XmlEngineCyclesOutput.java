@@ -1,12 +1,16 @@
 package net.parostroj.timetable.output2.xml;
 
 import net.parostroj.timetable.output2.impl.EngineCycles;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Locale;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.OutputException;
@@ -22,8 +26,8 @@ import net.parostroj.timetable.output2.util.SelectionHelper;
  */
 class XmlEngineCyclesOutput extends OutputWithCharset {
 
-    public XmlEngineCyclesOutput(Charset charset) {
-        super(charset);
+    public XmlEngineCyclesOutput(Locale locale, Charset charset) {
+        super(locale, charset);
     }
 
     @Override

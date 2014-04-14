@@ -5,8 +5,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Locale;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -23,8 +26,8 @@ import net.parostroj.timetable.output2.impl.TrainTimetablesExtractor;
  */
 class XmlTrainTimetablesOutput extends OutputWithCharset {
 
-    public XmlTrainTimetablesOutput(Charset charset) {
-        super(charset);
+    public XmlTrainTimetablesOutput(Locale locale, Charset charset) {
+        super(locale, charset);
     }
 
     @Override

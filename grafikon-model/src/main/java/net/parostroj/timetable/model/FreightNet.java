@@ -223,6 +223,17 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return result;
     }
 
+    public List<FNConnection> getTrainsTo(TimeInterval toInterval) {
+        List<FNConnection> result = new LinkedList<FNConnection>();
+        Collection<FNConnection> connections = this.get(toInterval.getTrain(), toMap);
+        for (FNConnection conn : connections) {
+            if (toInterval == conn.getTo()) {
+                result.add(conn);
+            }
+        }
+        return result;
+    }
+
     private Collection<FNConnection> get(Train train, Map<Train, List<FNConnection>> map) {
         Collection<FNConnection> list = map.get(train);
         return list == null ? Collections.<FNConnection>emptyList() : list;
