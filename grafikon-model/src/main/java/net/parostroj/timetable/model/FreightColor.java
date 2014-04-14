@@ -1,7 +1,8 @@
 package net.parostroj.timetable.model;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
+
+import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 /**
  * Freight color.
@@ -54,6 +55,6 @@ public enum FreightColor {
     }
 
     private static String getText(String key, Locale locale) {
-        return ResourceBundle.getBundle("net.parostroj.timetable.model.color_texts", locale).getString(key);
+        return ResourceBundleUtil.getBundle("net.parostroj.timetable.model.color_texts", FreightColor.class.getClassLoader(), locale, Locale.ENGLISH).getString(key);
     }
 }
