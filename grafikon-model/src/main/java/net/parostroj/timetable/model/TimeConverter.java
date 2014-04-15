@@ -20,16 +20,22 @@ import org.joda.time.format.ISODateTimeFormat;
 public class TimeConverter {
 
     public static enum Rounding {
-        MINUTE("minute"), HALF_MINUTE("half.minute"), TENTH_OF_MINUTE("tenth.of.minute");
+        MINUTE("minute", 60), HALF_MINUTE("half.minute", 30), TENTH_OF_MINUTE("tenth.of.minute", 6);
 
         private final String key;
+        private final int min;
 
-        private Rounding(String key) {
+        private Rounding(String key, int min) {
             this.key = key;
+            this.min = min;
         }
 
         public String getKey() {
             return key;
+        }
+
+        public int getMin() {
+            return min;
         }
 
         public static Rounding fromString(String str) {
