@@ -2,9 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 
-import net.parostroj.timetable.actions.TrainComparator;
-import net.parostroj.timetable.actions.TrainSort;
-import net.parostroj.timetable.actions.TrainsHelper;
+import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.Pair;
@@ -214,6 +212,18 @@ public class TrainTimetablesExtractor {
 
             row.setRoutePosition(routePosition);
             row.setRoutePositionOut(routePositionOut);
+
+            // freight
+            if (nodeI.isFirst() && FreightHelper.isFreight(nodeI)) {
+                List<FreightDst> freightDests = FreightHelper.convertFreightDst(nodeI, diagram.getFreightNet().getFreightToNodes(nodeI));
+                if (!freightDests.isEmpty()) {
+                    ArrayList<String> fl = new ArrayList<String>(freightDests.size());
+                    for (FreightDst dst : freightDests) {
+                        fl.add(dst.toString(locale));
+                    }
+                    row.setFreightDest(fl);
+                }
+            }
 
             timetable.getRows().add(row);
 

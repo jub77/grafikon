@@ -550,6 +550,7 @@
   def lastTo = null
   def lastLineClass = null
   def cChar = "*"
+  def fChar = "&dagger;"
   for (row in train.rows) {
     def speed = row.setSpeed != null ? row.setSpeed : row.speed
     def speed2 = row.speed
@@ -573,6 +574,7 @@
     if (row.occupied) desc += "&Omicron;"
     if (row.shunt) desc += "&loz;"
     if (row.comment != null) {desc += cChar; cChar += "*"}
+    if (freight && row.freightDest != null) {desc += fChar; fChar += "&dagger;"}
     if (desc == "") desc = "&nbsp;"
     def speed2Str = (lastSpeed2 == null || lastSpeed2 != speed2) && speed2 != null && isSpeed2 ? speed2 : null;
     def lineClassStr = "&nbsp;"
@@ -729,6 +731,7 @@
 
   def createComments(train) {
     def symbol = "*";
+    def fSymbol = "&dagger;"
     def list = []
     def shunt = false
     def occupied = false
@@ -749,6 +752,10 @@
       if (row.comment != null) {
         list << [symbol,row.comment]
         symbol += "*"
+      }
+      if (freight && row.freightDest != null) {
+        list << [fSymbol, row.freightDest.collect{i -> i}.join(', ')]
+        fSymbol += "&dagger;"
       }
     }
     return list
