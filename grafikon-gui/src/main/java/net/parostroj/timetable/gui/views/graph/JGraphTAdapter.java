@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.views.graph;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
@@ -8,6 +8,8 @@ import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 
@@ -17,10 +19,8 @@ import com.mxgraph.view.mxGraph;
 public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListener<V, E> {
 
     private final ListenableGraph<V, E> graphT;
-    private final HashMap<V, mxCell> vertexToCellMap = new HashMap<V, mxCell>();
-    private final HashMap<E, mxCell> edgeToCellMap = new HashMap<E, mxCell>();
-    private final HashMap<mxCell, V> cellToVertexMap = new HashMap<mxCell, V>();
-    private final HashMap<mxCell, E> cellToEdgeMap = new HashMap<mxCell, E>();
+    private final BiMap<V, mxCell> vertexToCellMap = HashBiMap.create();
+    private final BiMap<E, mxCell> edgeToCellMap = HashBiMap.create();
 
     public JGraphTAdapter(final ListenableGraph<V, E> graphT) {
         super();
@@ -37,7 +37,6 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
             addCell(cell, defaultParent);
             this.updateCellSize(cell);
             vertexToCellMap.put(vertex, cell);
-            cellToVertexMap.put(cell, vertex);
         } finally {
             getModel().endUpdate();
         }
@@ -51,26 +50,25 @@ public abstract class JGraphTAdapter<V, E> extends mxGraph implements GraphListe
             mxCell cell = this.getEdgeCell(edge);
             addEdge(cell, defaultParent, vertexToCellMap.get(source), vertexToCellMap.get(target), null);
             edgeToCellMap.put(edge, cell);
-            cellToEdgeMap.put(cell, edge);
         } finally {
             getModel().endUpdate();
         }
     }
 
-    public HashMap<V, mxCell> getVertexToCellMap() {
+    public Map<V, mxCell> getVertexToCellMap() {
         return vertexToCellMap;
     }
 
-    public HashMap<E, mxCell> getEdgeToCellMap() {
+    public Map<E, mxCell> getEdgeToCellMap() {
         return edgeToCellMap;
     }
 
-    public HashMap<mxCell, E> getCellToEdgeMap() {
-        return cellToEdgeMap;
+    public Map<mxCell, E> getCellToEdgeMap() {
+        return edgeToCellMap.inverse();
     }
 
-    public HashMap<mxCell, V> getCellToVertexMap() {
-        return cellToVertexMap;
+    public Map<mxCell, V> getCellToVertexMap() {
+        return vertexToCellMap.inverse();
     }
 
     @Override
