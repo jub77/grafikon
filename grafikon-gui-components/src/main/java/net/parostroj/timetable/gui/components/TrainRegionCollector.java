@@ -2,15 +2,14 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.Pair;
+
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Class for collecting regions of the trains from graphical timetable.
@@ -19,7 +18,7 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
-    private final Map<Train,List<Pair<Shape, TimeInterval>>> regions;
+    private final Multimap<Train, Pair<Shape, TimeInterval>> regions;
 
     private boolean collected;
 
@@ -29,25 +28,23 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     private final int radius;
 
     public TrainRegionCollector(int radius) {
-        regions = new HashMap<Train, List<Pair<Shape, TimeInterval>>>();
+        regions = LinkedListMultimap.create();
         collected = false;
         modifiedTrains = new HashSet<Train>();
         this.radius = radius;
     }
 
+    @Override
     public void clear() {
         regions.clear();
         collected = false;
         modifiedTrains = new HashSet<Train>();
     }
 
+    @Override
     public void addRegion(TimeInterval interval,Shape shape) {
-        // create key if doesn't exist
-        if (!regions.containsKey(interval.getTrain())) {
-            regions.put(interval.getTrain(), new LinkedList<Pair<Shape, TimeInterval>>());
-        }
         // add shape
-        regions.get(interval.getTrain()).add(new Pair<Shape, TimeInterval>(shape, interval));
+        regions.put(interval.getTrain(), new Pair<Shape, TimeInterval>(shape, interval));
     }
 
     public void finishCollecting() {
@@ -60,7 +57,7 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     }
 
     public void deleteTrain(Train train) {
-        regions.remove(train);
+        regions.removeAll(train);
     }
 
     public void newTrain(Train train) {
@@ -68,7 +65,7 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     }
 
     public void modifiedTrain(Train train) {
-        regions.remove(train);
+        regions.removeAll(train);
         modifiedTrains.add(train);
     }
 
