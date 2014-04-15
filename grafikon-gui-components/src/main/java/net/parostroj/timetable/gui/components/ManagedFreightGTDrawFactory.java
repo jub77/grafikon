@@ -1,11 +1,10 @@
 package net.parostroj.timetable.gui.components;
 
-import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.ManagedFreightTrainFilter;
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.components.ManagedFreightGTDraw.Highlight;
-import net.parostroj.timetable.model.FNConnection;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.*;
+
+import com.google.common.base.Predicate;
 
 public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
 
@@ -18,12 +17,12 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
     @Override
     public GTDraw createInstance(GTViewSettings settings, Route route, GTStorage storage) {
         // replace filter ...
-        storage.setFilter(TimeInterval.class, new Filter<TimeInterval>() {
-            private final ManagedFreightTrainFilter trainFilter = new ManagedFreightTrainFilter();
+        storage.setFilter(TimeInterval.class, new Predicate<TimeInterval>() {
+            private final Predicate<Train> trainPredicate = ModelPredicates.managedTrain();
 
             @Override
-            public boolean is(TimeInterval item) {
-                return trainFilter.is(item.getTrain());
+            public boolean apply(TimeInterval item) {
+                return trainPredicate.apply(item.getTrain());
             }
         });
         GTDraw draw = super.createInstance(settings, route, storage);

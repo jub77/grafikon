@@ -19,9 +19,7 @@ import javax.swing.tree.*;
 
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.actions.TrainBuilder;
-import net.parostroj.timetable.filters.EmptyFilter;
-import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.GroupFilter;
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.EditGroupsAction;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
@@ -38,6 +36,9 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * View with list of trains.
@@ -463,11 +464,11 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         }
     }
 
-    private Filter<Train> createFilter() {
+    private Predicate<Train> createFilter() {
         if (groupSelect.getType() == Type.ALL) {
-            return new EmptyFilter<Train>();
+            return Predicates.alwaysTrue();
         } else {
-            return new GroupFilter<Train, Train>(groupSelect.getGroup(), Train.class);
+            return ModelPredicates.inGroup(groupSelect.getGroup());
         }
     }
 

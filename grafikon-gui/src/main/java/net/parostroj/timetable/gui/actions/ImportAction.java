@@ -11,9 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import net.parostroj.timetable.filters.ExtractionFilterIterable;
-import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.GroupFilter;
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
@@ -21,15 +19,19 @@ import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
 import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
-import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
+import net.parostroj.timetable.gui.dialogs.ImportDialog;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.imports.Import;
-import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.model.imports.Import.ImportError;
+import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Import action.
@@ -38,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImportAction extends AbstractAction {
 
-    private final class TrainOidFilter implements Filter<ObjectWithId> {
+    private final class TrainOidFilter implements Predicate<ObjectWithId> {
         private final Group group;
 
         private TrainOidFilter(Group group) {
@@ -46,7 +48,7 @@ public class ImportAction extends AbstractAction {
         }
 
         @Override
-        public boolean is(ObjectWithId item) {
+        public boolean apply(ObjectWithId item) {
             if (item instanceof Train) {
                 Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
                 if (group == null)
@@ -99,7 +101,7 @@ public class ImportAction extends AbstractAction {
             protected void eventDispatchAction() {
                 TrainDiagram diagram = (TrainDiagram) context.getAttribute("diagram");
                 boolean cancelled = false;
-                Filter<ObjectWithId> filter = null;
+                Predicate<ObjectWithId> filter = null;
                 if (trainImport) {
                     groupDialog.setLocationRelativeTo(parent);
                     groupDialog.showDialog(diagram, null, model.getDiagram(), null);
@@ -159,7 +161,8 @@ public class ImportAction extends AbstractAction {
                                 }
                             }
                         };
-                        processItems(new ExtractionFilterIterable<ObjectWithId, Train>(model.getDiagram().getTrains(), new GroupFilter<ObjectWithId, Train>(groupDialog.getSelectedTo(), ObjectWithId.class)), deleteProcess);
+                        Iterable<Train> filteredTrains = Iterables.filter(model.getDiagram().getTrains(), ModelPredicates.inGroup(groupDialog.getSelectedTo()));
+                        processItems(filteredTrains, deleteProcess);
                     }
                     // import new objects
                     Process<ObjectWithId> importProcess = new Process<ObjectWithId>() {
@@ -180,7 +183,7 @@ public class ImportAction extends AbstractAction {
                 }
             }
 
-            private void processItems(Iterable<ObjectWithId> list, Process<ObjectWithId> importProcess) {
+            private void processItems(Iterable<? extends ObjectWithId> list, Process<ObjectWithId> importProcess) {
                 List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
                 int cnt = 0;
                 for (ObjectWithId o : list) {

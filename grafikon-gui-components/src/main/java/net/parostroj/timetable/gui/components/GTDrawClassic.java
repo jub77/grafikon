@@ -4,7 +4,8 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 
-import net.parostroj.timetable.filters.Filter;
+import com.google.common.base.Predicate;
+
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 
@@ -34,7 +35,7 @@ public class GTDrawClassic extends GTDrawBase {
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
 
-    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
 
         Float zoom = config.get(Key.ZOOM, Float.class);

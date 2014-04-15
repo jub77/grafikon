@@ -26,6 +26,7 @@
         <jodatime.version>2.3</jodatime.version>
         <xmlgraphics.version>1.5</xmlgraphics.version>
         <ini4j.version>0.5.2</ini4j.version>
+        <guava.version>16.0.1</guava.version>
         <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
     </properties>
 

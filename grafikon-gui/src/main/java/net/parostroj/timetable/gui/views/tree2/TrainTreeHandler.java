@@ -4,7 +4,8 @@ import java.util.*;
 
 import javax.swing.tree.DefaultTreeModel;
 
-import net.parostroj.timetable.filters.Filter;
+import com.google.common.base.Predicate;
+
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.Pair;
 
@@ -16,10 +17,10 @@ import net.parostroj.timetable.utils.Pair;
 public class TrainTreeHandler {
 
     private final List<Pair<NodeDelegate, ChildrenDelegate>> structure;
-    private final Filter<Train> filter;
+    private final Predicate<Train> filter;
     private final DefaultTreeModel treeModel;
 
-    public TrainTreeHandler(List<Pair<NodeDelegate, ChildrenDelegate>> structure, Filter<Train> filter) {
+    public TrainTreeHandler(List<Pair<NodeDelegate, ChildrenDelegate>> structure, Predicate<Train> filter) {
         this.structure = structure;
         this.filter = filter;
         this.treeModel = new DefaultTreeModel(this.createNode(structure.get(0), null));
@@ -32,7 +33,7 @@ public class TrainTreeHandler {
     }
 
     public TrainTreeNode addTrain(Train train) {
-        if (filter != null && !filter.is(train))
+        if (filter != null && !filter.apply(train))
             return null;
         TrainTreeNode root = (TrainTreeNode) treeModel.getRoot();
         TrainTreeNode node = root;
