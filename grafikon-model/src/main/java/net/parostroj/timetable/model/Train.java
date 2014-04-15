@@ -8,6 +8,8 @@ import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
+import com.google.common.collect.*;
+
 /**
  * Train.
  *
@@ -30,7 +32,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** Top speed. */
     private int topSpeed = Integer.MAX_VALUE;
     /** Cycles. */
-    private final Map<String, List<TrainsCycleItem>> cycles;
+    private final ListMultimap<String, TrainsCycleItem> cycles;
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
@@ -62,7 +64,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         _cachedCompleteName = new CachedValue<String>();
         timeIntervalList = new TimeIntervalList();
         this.setAttributes(new Attributes());
-        cycles = new HashMap<String, List<TrainsCycleItem>>();
+        cycles = LinkedListMultimap.create();
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
             @Override
             public void fireEvent(TrainListener listener, TrainEvent event) {
@@ -253,12 +255,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * @return map with trains cycle items
      */
-    public Map<String, List<TrainsCycleItem>> getCyclesMap() {
-        Map<String, List<TrainsCycleItem>> modMap = new HashMap<String, List<TrainsCycleItem>>();
-        for (Map.Entry<String, List<TrainsCycleItem>> entry : cycles.entrySet()) {
-            modMap.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
-        }
-        return Collections.unmodifiableMap(cycles);
+    public ListMultimap<String, TrainsCycleItem> getCyclesMap() {
+        return Multimaps.unmodifiableListMultimap(cycles);
     }
 
     /**
@@ -266,18 +264,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list with trains cycle items of specified type (list cannot be modified)
      */
     public List<TrainsCycleItem> getCycles(String type) {
-        return Collections.unmodifiableList(this.getCyclesIntern(type));
-    }
-
-    /**
-     * @param type type of the cycles
-     * @return list with trains cycle items - for internal use only, the list can be modified
-     */
-    private List<TrainsCycleItem> getCyclesIntern(String type) {
-        if (!cycles.containsKey(type)) {
-            cycles.put(type, new LinkedList<TrainsCycleItem>());
-        }
-        return cycles.get(type);
+        return Collections.unmodifiableList(cycles.get(type));
     }
 
     /**
@@ -285,7 +272,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     protected void addCycleItem(TrainsCycleItem item) {
         String cycleType = item.getCycle().getType().getName();
-        _cachedCycles.addCycleItem(timeIntervalList, this.getCyclesIntern(cycleType), item, true);
+        _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
         this.checkRecalculateCycle(item.getCycle());
@@ -296,7 +283,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     protected void removeCycleItem(TrainsCycleItem item) {
         String cycleType = item.getCycle().getType().getName();
-        this.getCyclesIntern(cycleType).remove(item);
+        this.cycles.remove(cycleType, item);
         _cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));
         this.checkRecalculateCycle(item.getCycle());
