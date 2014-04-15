@@ -299,7 +299,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (!(result instanceof Number))
             throw new IllegalStateException("Unexpected result: " + result);
 
-        return converter.round(((Number)result).intValue());
+        return ((Number)result).intValue();
     }
 
     @Override

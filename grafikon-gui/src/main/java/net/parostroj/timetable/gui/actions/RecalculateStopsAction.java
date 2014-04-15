@@ -9,8 +9,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
 import net.parostroj.timetable.gui.actions.execution.*;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -52,6 +51,8 @@ public class RecalculateStopsAction extends AbstractAction {
 
         final double ratio = cRatio;
 
+        final TrainDiagram diagram = model.getDiagram();
+
         TrainAction trainAction = new TrainAction() {
 
             @Override
@@ -85,10 +86,10 @@ public class RecalculateStopsAction extends AbstractAction {
                 // recalculate
                 time = (int) (convertRatio * time);
                 // round to minutes
-                time = ((time + 40) / 60) * 60;
+                TimeConverter converter = diagram.getTimeConverter();
+                time = converter.round(time);
                 // do not change stop to 0
-                time = (time == 0) ? 1 : time;
-                return time;
+                return Math.max(time, converter.getRounding().getMin());
             }
         };
 
