@@ -110,7 +110,7 @@
                   if (lastNode != null && lastNode != item.from) {
                     %>
         <tr>
-          <td colspan="4" class="move">&#151;  ${move_to_station} ${item.from} &#151; </td>
+          <td colspan="4" class="move">&mdash;  ${move_to_station} ${item.from} &mdash; </td>
         </tr><%
                   }
               %>
