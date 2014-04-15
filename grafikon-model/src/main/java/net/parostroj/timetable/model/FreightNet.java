@@ -2,6 +2,9 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -19,8 +22,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     private final AttributesListener attributesListener;
     private final GTListenerSupport<FreightNetListener, FreightNetEvent> listenerSupport;
 
-    private final Map<Train, List<FNConnection>> fromMap = new HashMap<Train, List<FNConnection>>();
-    private final Map<Train, List<FNConnection>> toMap = new HashMap<Train, List<FNConnection>>();
+    private final Multimap<Train, FNConnection> fromMap = HashMultimap.create();
+    private final Multimap<Train, FNConnection> toMap = HashMultimap.create();
     private final Set<FNConnection> connections = new HashSet<FNConnection>();
 
     public FreightNet(String id) {
@@ -77,17 +80,12 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
     }
 
-    private void addConn(Map<Train, List<FNConnection>> map, FNConnection conn, Train train) {
-        if (!map.containsKey(train)) {
-            map.put(train, new ArrayList<FNConnection>());
-        }
-        map.get(train).add(conn);
+    private void addConn(Multimap<Train, FNConnection> map, FNConnection conn, Train train) {
+        map.put(train, conn);
     }
 
-    private void removeConn(Map<Train, List<FNConnection>> map, FNConnection conn, Train train) {
-        if (map.containsKey(train)) {
-            map.get(train).remove(conn);
-        }
+    private void removeConn(Multimap<Train, FNConnection> map, FNConnection conn, Train train) {
+        map.remove(train, conn);
     }
 
     public void checkTrain(Train train) {
@@ -234,9 +232,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return result;
     }
 
-    private Collection<FNConnection> get(Train train, Map<Train, List<FNConnection>> map) {
-        Collection<FNConnection> list = map.get(train);
-        return list == null ? Collections.<FNConnection>emptyList() : list;
+    private Collection<FNConnection> get(Train train, Multimap<Train, FNConnection> map) {
+        return map.get(train);
     }
 
     @Override
