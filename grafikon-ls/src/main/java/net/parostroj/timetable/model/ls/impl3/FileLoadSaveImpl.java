@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
@@ -30,7 +29,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
-    private LSSerializer lss;
+    private final LSSerializer lss;
     private static final List<ModelVersion> VERSIONS;
 
     static {
@@ -171,11 +170,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
             }
             cnt = 0;
             // save trains cycles
-            Map<String, List<TrainsCycle>> cyclesMap = diagram.getCyclesMap();
-            for (Map.Entry<String, List<TrainsCycle>> entry : cyclesMap.entrySet()) {
-                for (TrainsCycle cycle : entry.getValue()) {
-                    this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
-                }
+            for (TrainsCycle cycle : diagram.getCycles()) {
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
             }
 
             // save images

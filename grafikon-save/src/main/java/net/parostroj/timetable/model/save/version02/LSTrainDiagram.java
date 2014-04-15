@@ -1,8 +1,11 @@
 package net.parostroj.timetable.model.save.version02;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Line;
@@ -19,15 +22,15 @@ public class LSTrainDiagram {
     private LSTrain[] trains;
 
     private LSLine[] lines;
-    
+
     private LSModelInfo info;
-    
+
     private LSRoute[] routes;
-    
+
     private LSTrainsCycle[] cycles;
-    
+
     private LSImage[] images;
-    
+
     private LSAttributes attributes;
 
     public LSTrainDiagram(TrainDiagram diagram, LSTransformationData data) {
@@ -55,7 +58,7 @@ public class LSTrainDiagram {
             LSTrain lsTrain = new LSTrain(train, data);
             trains[i++] = lsTrain;
         }
-        
+
         // routes
         routes = new LSRoute[diagram.getRoutes().size()];
         i = 0;
@@ -63,21 +66,17 @@ public class LSTrainDiagram {
             LSRoute lsRoute = new LSRoute(route, data);
             routes[i++] = lsRoute;
         }
-        
+
         // cycles
-        int size = 0;
-        for (List<TrainsCycle> lCycles : diagram.getCyclesMap().values()) {
-            size += lCycles.size();
-        }
+        Collection<TrainsCycle> lCycles = diagram.getCycles();
+        int size = lCycles.size();
         cycles = new LSTrainsCycle[size];
         i = 0;
-        for (List<TrainsCycle> lCycles : diagram.getCyclesMap().values()) {
-            for (TrainsCycle cycle : lCycles) {
-                LSTrainsCycle lsCycle = new LSTrainsCycle(cycle, data, cycle.getType().getName());
-                cycles[i++] = lsCycle;
-            }
+        for (TrainsCycle cycle : lCycles) {
+            LSTrainsCycle lsCycle = new LSTrainsCycle(cycle, data, cycle.getType().getName());
+            cycles[i++] = lsCycle;
         }
-        
+
         i = 0;
         images = new LSImage[diagram.getImages().size()];
         for (TimetableImage image : diagram.getImages()) {
@@ -193,25 +192,25 @@ public class LSTrainDiagram {
                 lsTrain.visit(visitor);
             }
         }
-        
+
         // visit engine cycles
         if (cycles != null) {
             for (LSTrainsCycle lsCycle : cycles) {
                 lsCycle.visit(visitor);
             }
         }
-        
+
         // model info
         if (info != null)
             info.visit(visitor);
-        
+
         // routes
         if (routes != null) {
             for (LSRoute lSRoute : routes) {
                 lSRoute.visit(visitor);
             }
         }
-        
+
         // visit images
         if (images != null) {
             for (LSImage lsImage : images) {
