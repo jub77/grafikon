@@ -1,9 +1,6 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
@@ -28,12 +25,12 @@ public class WeightDataExtractor {
         this.collapseData();
     }
 
-    private void testWeights(List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list) {
+    private void testWeights(List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> list) {
         boolean showWeight = (train.getType() != null && train.getType().getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO))
             || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
         // test if all weight are defined
         boolean defined = true;
-        for (Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item : list) {
+        for (Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> item : list) {
             if (item.first.isLineOwner() && item.second == null) {
                 defined = false;
                 break;
@@ -41,21 +38,21 @@ public class WeightDataExtractor {
         }
         // clear if all weights are not defined or shouldn't be shown
         if (!defined || !showWeight)
-            for (Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item : list) {
+            for (Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> item : list) {
                 if (item.first.isLineOwner())
                     item.second = null;
             }
     }
 
     private void processData() {
-        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> list = TrainsHelper.getWeightList(train);
+        List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> list = TrainsHelper.getWeightList(train);
         this.testWeights(list);
 
         Integer weight = null;
         Node startNode = null;
         List<String> eClasses = null;
         for (int i = 0; i < list.size(); i++) {
-            Triplet<TimeInterval, Integer, List<TrainsCycleItem>> item = list.get(i);
+            Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> item = list.get(i);
 
             if (item.first.isLineOwner()) {
                 // process line interval
@@ -73,7 +70,7 @@ public class WeightDataExtractor {
                     if (item.first.isLast())
                         process = true;
                     else {
-                        Triplet<TimeInterval, Integer, List<TrainsCycleItem>> itemNext = list.get(i + 1);
+                        Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> itemNext = list.get(i + 1);
                         eClasses2 = this.convertItemList(itemNext.third);
                         if (!this.compareEngineLists(eClasses, eClasses2))
                             process = true;
@@ -93,7 +90,7 @@ public class WeightDataExtractor {
         }
     }
 
-    private List<String> convertItemList(List<TrainsCycleItem> items) {
+    private List<String> convertItemList(Collection<TrainsCycleItem> items) {
         List<String> result = new LinkedList<String>();
         for (TrainsCycleItem item : items) {
             result.add(TransformUtil.getEngineCycleDescription(item.getCycle()));

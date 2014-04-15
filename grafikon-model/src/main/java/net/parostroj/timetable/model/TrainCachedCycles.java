@@ -2,76 +2,77 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResultList;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Cached map with time intervals and cycle items.
- * 
+ *
  * @author jub
  */
 class TrainCachedCycles {
-    
-    private Map<TimeInterval, Map<String, List<TrainsCycleItem>>> map;
-    
+
+    private final Map<TimeInterval, Multimap<String, TrainsCycleItem>> map;
+
     public TrainCachedCycles() {
-        map = new HashMap<TimeInterval, Map<String, List<TrainsCycleItem>>>();
+        map = new HashMap<TimeInterval, Multimap<String, TrainsCycleItem>>();
     }
-    
+
     public void add(List<TimeInterval> intervals, TrainsCycleItem item) {
         boolean in = false;
         for (TimeInterval interval : intervals) {
-            if (interval == item.getFromInterval())
+            if (interval == item.getFromInterval()) {
                 in = true;
-            if (in)
+            }
+            if (in) {
                 this.add(interval, item);
-            if (interval == item.getToInterval())
+            }
+            if (interval == item.getToInterval()) {
                 break;
+            }
         }
     }
-    
+
     private void add(TimeInterval interval, TrainsCycleItem item) {
-        Map<String, List<TrainsCycleItem>> types = map.get(interval);
+        Multimap<String, TrainsCycleItem> types = map.get(interval);
         if (types == null) {
-            types = new HashMap<String, List<TrainsCycleItem>>();
+            types = HashMultimap.create();
             map.put(interval, types);
         }
-        List<TrainsCycleItem> list = types.get(item.getCycle().getType().getName());
-        if (list == null) {
-            list = new LinkedList<TrainsCycleItem>();
-            types.put(item.getCycle().getType().getName(), list);
-        }
-        list.add(item);
+        types.put(item.getCycle().getType().getName(), item);
     }
-    
+
     public void remove(TrainsCycleItem item) {
-        for (Map<String, List<TrainsCycleItem>> types : map.values()) {
-            List<TrainsCycleItem> items = types.get(item.getCycle().getType().getName());
-            if (items != null)
-                items.remove(item);
+        for (Multimap<String, TrainsCycleItem> types : map.values()) {
+            types.remove(item.getCycle().getType().getName(), item);
         }
     }
-    
-    public List<TrainsCycleItem> get(TimeInterval interval, String type) {
-        List<TrainsCycleItem> items = null;
-        Map<String, List<TrainsCycleItem>> types = map.get(interval);
+
+    public Collection<TrainsCycleItem> get(TimeInterval interval, String type) {
+        Collection<TrainsCycleItem> items = null;
+        Multimap<String, TrainsCycleItem> types = map.get(interval);
         if (types != null) {
             items = types.get(type);
+        } else {
+            items = Collections.emptyList();
         }
-        return items != null ? Collections.unmodifiableList(items) : Collections.<TrainsCycleItem>emptyList();
+        return items;
     }
-    
+
     public boolean isCovered(TimeInterval interval, String type) {
-        List<TrainsCycleItem> list = this.get(interval, type);
+        Collection<TrainsCycleItem> list = this.get(interval, type);
         return !list.isEmpty();
     }
-    
+
     public boolean isCovered(TimeInterval interval, String type, TrainsCycleItem ignored) {
         if (ignored == null)
             return isCovered(interval, type);
         else {
-            List<TrainsCycleItem> list = this.get(interval, type);
+            Collection<TrainsCycleItem> list = this.get(interval, type);
             boolean contains = list.contains(ignored);
             if (contains)
                 return list.size() > 1;
@@ -79,7 +80,7 @@ class TrainCachedCycles {
                 return !list.isEmpty();
         }
     }
-    
+
     public boolean isCovered(List<TimeInterval> intervals, String type) {
         for (TimeInterval interval : intervals) {
             if (!this.isCovered(interval, type))
@@ -87,7 +88,7 @@ class TrainCachedCycles {
         }
         return true;
     }
-    
+
     public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, String type) {
         TimeInterval last = null;
         ResultList<Tuple<TimeInterval>> result = new ResultList<Tuple<TimeInterval>>();
@@ -112,7 +113,7 @@ class TrainCachedCycles {
         }
         return result.get();
     }
-    
+
     public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, String type) {
         List<Pair<TimeInterval, Boolean>> result = new LinkedList<Pair<TimeInterval,Boolean>>();
         for (TimeInterval interval : intervals)
@@ -128,7 +129,7 @@ class TrainCachedCycles {
         // if overlapping is allowed return true
         if (overlapping)
             return true;
-        
+
         String type = newItem.getCycle().getType().getName();
 
         // test not overlapping cycle item

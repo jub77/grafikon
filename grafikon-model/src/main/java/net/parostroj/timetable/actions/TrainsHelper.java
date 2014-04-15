@@ -50,7 +50,7 @@ public class TrainsHelper {
      * @return weight
      */
     public static Integer getWeightFromLineAndEngine(TimeInterval interval) {
-        Pair<Integer, List<TrainsCycleItem>> weightAndCycle = getWeightAndCycles(interval);
+        Pair<Integer, Collection<TrainsCycleItem>> weightAndCycle = getWeightAndCycles(interval);
         if (weightAndCycle == null || weightAndCycle.first == null)
             return null;
         else
@@ -117,13 +117,13 @@ public class TrainsHelper {
      * @param interval time interval
      * @return weight and train cycle items
      */
-    public static Pair<Integer, List<TrainsCycleItem>> getWeightAndCycles(TimeInterval interval) {
+    public static Pair<Integer, Collection<TrainsCycleItem>> getWeightAndCycles(TimeInterval interval) {
         if (!interval.isLineOwner()) {
             throw new IllegalArgumentException("Weight can be returned only for line interval.");
         }
-        Pair<Integer, List<TrainsCycleItem>> retValue = null;
+        Pair<Integer, Collection<TrainsCycleItem>> retValue = null;
         LineClass lineClass = interval.getLineClass();
-        List<TrainsCycleItem> items = getEngineCyclesForInterval(interval);
+        Collection<TrainsCycleItem> items = getEngineCyclesForInterval(interval);
         if (lineClass != null) {
             // compute weight
             Integer weight = null;
@@ -140,7 +140,7 @@ public class TrainsHelper {
                 }
             }
             if (weight != null)
-                retValue = new Pair<Integer, List<TrainsCycleItem>>(weight, items);
+                retValue = new Pair<Integer, Collection<TrainsCycleItem>>(weight, items);
         }
         return retValue;
     }
@@ -221,7 +221,7 @@ public class TrainsHelper {
      * @param interval time interval
      * @return list of engine cycle items
      */
-    public static List<TrainsCycleItem> getEngineCyclesForInterval(TimeInterval interval) {
+    public static Collection<TrainsCycleItem> getEngineCyclesForInterval(TimeInterval interval) {
         Train train = interval.getTrain();
         return train.getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
     }
@@ -233,7 +233,7 @@ public class TrainsHelper {
      * @return list of engine classes
      */
     public static List<EngineClass> getEngineClasses(TimeInterval interval) {
-        List<TrainsCycleItem> list = getEngineCyclesForInterval(interval);
+        Collection<TrainsCycleItem> list = getEngineCyclesForInterval(interval);
         return getEngineClasses(list);
     }
 
@@ -276,7 +276,8 @@ public class TrainsHelper {
             int totalWeight = 0;
             result = speed;
             for (EngineClass ec : engineClasses) {
-                Integer w = ec.getWeightTableRowForSpeed(speed).getWeight(lineClass);
+                WeightTableRow rowForSpeed = ec.getWeightTableRowForSpeed(speed);
+                Integer w = rowForSpeed != null ? rowForSpeed.getWeight(lineClass) : null;
                 if (w != null) {
                     totalWeight += w;
                 }
@@ -294,7 +295,7 @@ public class TrainsHelper {
      * @param list list of cycle items
      * @return list of engines
      */
-    public static List<EngineClass> getEngineClasses(List<TrainsCycleItem> list) {
+    public static List<EngineClass> getEngineClasses(Collection<TrainsCycleItem> list) {
         ResultList<EngineClass> result = new ResultList<EngineClass>();
         for (TrainsCycleItem item : list) {
             EngineClass eClass = getEngineClass(item);
@@ -320,17 +321,17 @@ public class TrainsHelper {
      * @param train train
      * @return list with weights
      */
-    public static List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> getWeightList(Train train) {
+    public static List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> getWeightList(Train train) {
         List<TimeInterval> intervals = train.getTimeIntervalList();
-        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> result =
-            new ArrayList<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>>(intervals.size());
+        List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> result =
+            new ArrayList<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>>(intervals.size());
         for (TimeInterval interval : intervals) {
             if (interval.isNodeOwner())
-                result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, null, null));
+                result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, null, null));
             else {
                 Integer weight = getWeight(interval);
-                List<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);
-                result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, weight, cycles));
+                Collection<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);
+                result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, weight, cycles));
             }
         }
         return result;
@@ -343,14 +344,14 @@ public class TrainsHelper {
      * @param diagram trains diagram
      * @return list of lengths
      */
-    public static List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> getLengthList(Train train) {
+    public static List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> getLengthList(Train train) {
         List<TimeInterval> intervals = train.getTimeIntervalList();
-        List<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>> result =
-            new ArrayList<Triplet<TimeInterval, Integer, List<TrainsCycleItem>>>(intervals.size());
+        List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> result =
+            new ArrayList<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>>(intervals.size());
         for (TimeInterval interval : intervals) {
             Integer length = getLength(interval);
-            List<TrainsCycleItem> cycles = interval.isLineOwner() ? getEngineCyclesForInterval(interval) : null;
-            result.add(new Triplet<TimeInterval, Integer, List<TrainsCycleItem>>(interval, length, cycles));
+            Collection<TrainsCycleItem> cycles = interval.isLineOwner() ? getEngineCyclesForInterval(interval) : null;
+            result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, length, cycles));
         }
         return result;
     }
