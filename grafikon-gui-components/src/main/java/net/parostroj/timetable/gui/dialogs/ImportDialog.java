@@ -11,8 +11,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
-import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.Filters;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
+
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -33,7 +34,7 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
-    private Filter<ObjectWithId> filter;
+    private Predicate<ObjectWithId> filter;
     private final Map<ImportComponent, Set<ObjectWithId>> selectedItems;
     private WrapperListModel<ObjectWithId> left;
     private WrapperListModel<ObjectWithId> right;
@@ -69,7 +70,7 @@ public class ImportDialog extends javax.swing.JDialog {
      * @param diagram diagram
      * @param libraryDiagram library diagram
      */
-    public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram, Filter<ObjectWithId> filter) {
+    public void setTrainDiagrams(TrainDiagram diagram, TrainDiagram libraryDiagram, Predicate<ObjectWithId> filter) {
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
         this.filter = filter;
@@ -255,8 +256,9 @@ public class ImportDialog extends javax.swing.JDialog {
             selectedComponentsList.setModel(EMPTY_LIST_MODEL);
             return;
         }
-        if (filter != null)
-            all = Filters.filter(all, filter, new HashSet<ObjectWithId>());
+        if (filter != null) {
+            all = new HashSet<ObjectWithId>(Sets.filter(all, filter));
+        }
         Set<ObjectWithId> sel = selectedItems.get(comps);
         // remove already selected
         all.removeAll(sel);

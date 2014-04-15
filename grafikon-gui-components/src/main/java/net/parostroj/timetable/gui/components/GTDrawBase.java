@@ -8,13 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 
 /**
  * Abstract class for all graphical timetable draws.
@@ -74,13 +75,13 @@ abstract public class GTDrawBase implements GTDraw {
     protected int endTime;
     protected double timeStep;
 
-    protected Filter<TimeInterval> intervalFilter;
+    protected Predicate<TimeInterval> intervalFilter;
 
     // caching
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
 
-    public GTDrawBase(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+    public GTDrawBase(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         this.route = route;
         this.intervalFilter = intervalFilter;
         this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
@@ -271,7 +272,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setStroke(trainStroke);
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
-                if (intervalFilter == null || intervalFilter.is(interval)) {
+                if (intervalFilter == null || intervalFilter.apply(interval)) {
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
                             && (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
                     boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;

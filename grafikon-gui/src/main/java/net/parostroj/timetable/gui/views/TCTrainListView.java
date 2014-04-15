@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import net.parostroj.timetable.filters.TrainTypeFilter;
+import net.parostroj.timetable.filters.TrainTypePredicate;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TimeIntervalSelector;
 import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
@@ -57,7 +57,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private TCDelegate delegate;
-    private TrainTypeFilter filter;
+    private TrainTypePredicate filter;
     private boolean overlappingEnabled;
     private final TCItemChangeDialog changeDialog;
 
@@ -120,7 +120,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             List<Train> trainsList = new ArrayList<Train>();
             for (Train train : delegate.getTrainDiagram().getTrains()) {
                 if (overlappingEnabled || !train.isCovered(delegate.getType())) {
-                    if (filter == null || filter.is(train))
+                    if (filter == null || filter.apply(train))
                         trainsList.add(train);
                 }
             }
@@ -523,9 +523,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void setFilter(String type, Component component) {
         if (TrainFilter.PASSENGER.isType(type)) {
-            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.PASSENGER);
+            filter = TrainTypePredicate.getTrainsByType(TrainTypePredicate.PredefinedType.PASSENGER);
         } else if (TrainFilter.FREIGHT.isType(type)) {
-            filter = TrainTypeFilter.getTrainFilter(TrainTypeFilter.PredefinedType.FREIGHT);
+            filter = TrainTypePredicate.getTrainsByType(TrainTypePredicate.PredefinedType.FREIGHT);
         } else if (TrainFilter.CUSTOM.isType(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
@@ -535,7 +535,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             dialog.dispose();
 
             this.selectedTypes = dialog.getSelectedTypes();
-            this.filter = TrainTypeFilter.getTrainFilter(selectedTypes);
+            this.filter = TrainTypePredicate.getTrainsByType(selectedTypes);
         } else {
             filter = null;
         }

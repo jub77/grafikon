@@ -4,7 +4,8 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 
-import net.parostroj.timetable.filters.Filter;
+import com.google.common.base.Predicate;
+
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 
@@ -44,7 +45,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     private Map<Track,Integer> trackPositions;
 
-    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Filter<TimeInterval> intervalFilter) {
+    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
         Float zoom = config.get(Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
@@ -150,7 +151,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     private void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
-                if (intervalFilter != null && !intervalFilter.is(interval)) {
+                if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
                 if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {

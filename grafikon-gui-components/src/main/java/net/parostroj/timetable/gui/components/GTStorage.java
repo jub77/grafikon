@@ -3,12 +3,12 @@ package net.parostroj.timetable.gui.components;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.parostroj.timetable.filters.Filter;
+import com.google.common.base.Predicate;
 
 public class GTStorage {
 
     private final Map<Class<?>, RegionCollector<?>> collectors = new HashMap<Class<?>, RegionCollector<?>>();
-    private final Map<Class<?>, Filter<?>> filters = new HashMap<Class<?>, Filter<?>>();
+    private final Map<Class<?>, Predicate<?>> filters = new HashMap<Class<?>, Predicate<?>>();
 
     public <T> void setCollector(Class<T> clazz, RegionCollector<T> collector) {
         collectors.put(clazz, collector);
@@ -31,20 +31,20 @@ public class GTStorage {
         return collectors.values();
     }
 
-    public <T> void setFilter(Class<?> clazz, Filter<T> filter) {
+    public <T> void setFilter(Class<?> clazz, Predicate<T> filter) {
         filters.put(clazz, filter);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Filter<T> getFilter(Class<T> clazz) {
-        return (Filter<T>) filters.get(clazz);
+    public <T> Predicate<T> getFilter(Class<T> clazz) {
+        return (Predicate<T>) filters.get(clazz);
     }
 
     public <T> void removeFilter(Class<T> clazz) {
         filters.remove(clazz);
     }
 
-    public Iterable<Filter<?>> filters() {
+    public Iterable<Predicate<?>> filters() {
         return filters.values();
     }
 }

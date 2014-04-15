@@ -2,9 +2,10 @@ package net.parostroj.timetable.actions;
 
 import java.util.*;
 
-import net.parostroj.timetable.filters.Filter;
-import net.parostroj.timetable.filters.FilteredIterable;
 import net.parostroj.timetable.model.*;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests for freight manipulations.
@@ -31,30 +32,28 @@ public class FreightHelper {
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightFrom(Iterable<TimeInterval> i) {
-        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
+        return Iterables.filter(i, new Predicate<TimeInterval>() {
             @Override
-            public boolean is(TimeInterval instance) {
+            public boolean apply(TimeInterval instance) {
                 return isFreightFrom(instance);
             }
         });
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightTo(Iterable<TimeInterval> i) {
-        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
+        return Iterables.filter(i, new Predicate<TimeInterval>() {
             @Override
-            public boolean is(TimeInterval instance) {
+            public boolean apply(TimeInterval instance) {
                 return isFreightTo(instance);
             }
         });
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreight(Iterable<TimeInterval> i, final TimeInterval from) {
-        return new FilteredIterable<TimeInterval>(i, new Filter<TimeInterval>() {
-
+        return Iterables.filter(i, new Predicate<TimeInterval>() {
             boolean after = false;
-
             @Override
-            public boolean is(TimeInterval instance) {
+            public boolean apply(TimeInterval instance) {
                 if (after) {
                     return FreightHelper.isFreightTo(instance);
                 } else {

@@ -3,8 +3,9 @@ package net.parostroj.timetable.actions;
 import java.text.Collator;
 import java.util.*;
 
-import net.parostroj.timetable.filters.Filter;
 import net.parostroj.timetable.model.Node;
+
+import com.google.common.base.Predicate;
 
 /**
  * Sorting of nodes.
@@ -39,10 +40,10 @@ public class NodeSort {
      * @param nodes collection of nodes
      * @return sorted collections
      */
-    public List<Node> sort(Collection<Node> nodes, Filter<Node> filter) {
+    public List<Node> sort(Collection<Node> nodes, Predicate<Node> filter) {
         List<Node> newNodes = new ArrayList<Node>(nodes.size());
         for (Node node : nodes) {
-            if (filter.is(node))
+            if (filter.apply(node))
                 newNodes.add(node);
         }
         this.sortInternal(newNodes);

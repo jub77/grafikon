@@ -2,6 +2,8 @@ package net.parostroj.timetable.filters;
 
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
@@ -11,7 +13,7 @@ import net.parostroj.timetable.model.TrainTypeCategory;
  *
  * @author jub
  */
-public abstract class TrainTypeFilter implements Filter<Train> {
+public abstract class TrainTypePredicate implements Predicate<Train> {
 
     public static enum PredefinedType {
         FREIGHT("freight"), PASSENGER("passenger");
@@ -27,20 +29,20 @@ public abstract class TrainTypeFilter implements Filter<Train> {
         }
     }
 
-    public static TrainTypeFilter getTrainFilter(PredefinedType type) {
+    public static TrainTypePredicate getTrainsByType(PredefinedType type) {
         switch (type) {
             case FREIGHT:
-                return new TrainTypeFilter() {
+                return new TrainTypePredicate() {
                     @Override
-                    public boolean is(Train train) {
+                    public boolean apply(Train train) {
                         TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
                         return category != null ? category.getKey().equals(PredefinedType.FREIGHT.getKey()) : false;
                     }
                 };
             case PASSENGER:
-                return new TrainTypeFilter() {
+                return new TrainTypePredicate() {
                     @Override
-                    public boolean is(Train train) {
+                    public boolean apply(Train train) {
                         TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
                         return category != null ? category.getKey().equals(PredefinedType.PASSENGER.getKey()) : false;
                     }
@@ -50,10 +52,10 @@ public abstract class TrainTypeFilter implements Filter<Train> {
         }
     }
 
-    public static TrainTypeFilter getTrainFilter(final Set<TrainType> types) {
-        return new TrainTypeFilter() {
+    public static TrainTypePredicate getTrainsByType(final Set<TrainType> types) {
+        return new TrainTypePredicate() {
             @Override
-            public boolean is(Train train) {
+            public boolean apply(Train train) {
                 return types.contains(train.getType());
             }
         };
