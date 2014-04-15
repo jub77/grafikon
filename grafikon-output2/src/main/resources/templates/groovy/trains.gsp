@@ -564,7 +564,7 @@
     if (row.stationType == "stop.with.freight") stationName += " ${abbr_stop_freight}"
     if (row.stationType == "stop") stationName += " ${abbr_stop}"
     if (emphName) stationName = "<span class=\"emph\">${stationName}</span>"
-    if (row.straight == false && !row.lightSignals) desc += "&#8594;"
+    if (row.straight == false && !row.lightSignals) desc += "&rarr;"
     if (row.lightSignals) { desc += "<img src=\"signal.gif\" class=\"signal\">"; images.add("signal.gif")}
     if (train.controlled && row.trapezoid) {
       desc += "<img src=\"trapezoid_sign.gif\" class=\"trapezoid\">"
@@ -835,7 +835,7 @@
             if (lastNode != null && lastNode != item.from) {
               %>
   <tr>
-    <td colspan="4" class="move">&#151;  ${move_to_station} ${item.from} &#151; </td>
+    <td colspan="4" class="move">&mdash;  ${move_to_station} ${item.from} &mdash; </td>
   </tr><%
             }
         %>
