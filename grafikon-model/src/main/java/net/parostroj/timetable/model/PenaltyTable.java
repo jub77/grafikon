@@ -1,15 +1,9 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 
 /**
  * Penalty table.
@@ -19,11 +13,11 @@ import java.util.Set;
 public class PenaltyTable implements ObjectWithId {
 
     private String id;
-    private Map<TrainTypeCategory, List<PenaltyTableRow>> rowsMap;
-    private List<TrainTypeCategory> categories;
+    private final ListMultimap<TrainTypeCategory, PenaltyTableRow> rowsMap;
+    private final List<TrainTypeCategory> categories;
 
     public PenaltyTable(String id) {
-        rowsMap = new HashMap<TrainTypeCategory, List<PenaltyTableRow>>();
+        rowsMap = LinkedListMultimap.create();
         categories = new ArrayList<TrainTypeCategory>();
         this.id = id;
     }
@@ -130,20 +124,18 @@ public class PenaltyTable implements ObjectWithId {
 
     public void addTrainTypeCategory(TrainTypeCategory category) {
         if (!rowsMap.containsKey(category)) {
-            rowsMap.put(category, new LinkedList<PenaltyTableRow>());
             categories.add(category);
         }
     }
 
     public void addTrainTypeCategory(TrainTypeCategory category, int index) {
         if (!rowsMap.containsKey(category)) {
-            rowsMap.put(category, new LinkedList<PenaltyTableRow>());
             categories.add(index, category);
         }
     }
 
     public void removeTrainTypeCategory(TrainTypeCategory category) {
-        rowsMap.remove(category);
+        rowsMap.removeAll(category);
         categories.remove(category);
     }
 
