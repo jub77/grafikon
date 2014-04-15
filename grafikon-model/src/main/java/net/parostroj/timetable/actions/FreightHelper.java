@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.*;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -98,14 +99,21 @@ public class FreightHelper {
     public static String freightDstListToString(Collection<FreightDst> list) {
         StringBuilder builder = new StringBuilder();
         TextList output = new TextList(builder, ",");
-        for (FreightDst dst : list) {
-            output.add(dst.toString());
-        }
+        output.addItems(list);
         output.finish();
         return builder.toString();
     }
 
     public static boolean isManaged(Train train) {
         return train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
+    }
+
+    public static Function<FreightColor, String> colorToString(final Locale loc) {
+        return new Function<FreightColor, String>() {
+            @Override
+            public String apply(FreightColor color) {
+                return color.getName(loc);
+            }
+        };
     }
 }
