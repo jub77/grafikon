@@ -7,6 +7,9 @@ import java.io.Reader;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import net.parostroj.timetable.utils.ResourceBundleUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,7 @@ public class ResourceHelper {
     }
 
     public static void addTextsToMap(Map<String, Object> map, String prefix, Locale locale, String bundleName) {
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+        ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
         int prefixLength = prefix.length();
         for (String key : bundle.keySet()) {
             if (key.startsWith(prefix)) {
