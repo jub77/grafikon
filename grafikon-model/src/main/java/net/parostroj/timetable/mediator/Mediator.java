@@ -2,6 +2,9 @@ package net.parostroj.timetable.mediator;
 
 import java.util.*;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 /**
  * Mediator for messages.
  *
@@ -9,9 +12,9 @@ import java.util.*;
  */
 public class Mediator {
 
-    private Map<Colleague, Class<?>> colleagues = new HashMap<Colleague, Class<?>>();
+    private final Map<Colleague, Class<?>> colleagues = new HashMap<Colleague, Class<?>>();
 
-    private Map<Class<?>, Set<Colleague>> colleaguesForClass = new HashMap<Class<?>, Set<Colleague>>();
+    private final SetMultimap<Class<?>, Colleague> colleaguesForClass = HashMultimap.create();
 
     public void addColleague(Colleague collegue) {
         this.addColleague(collegue, Object.class);
@@ -23,7 +26,7 @@ public class Mediator {
         if (colleague instanceof ColleagueWithBackReference)
             ((ColleagueWithBackReference)colleague).setMediator(this);
         colleagues.put(colleague, clazz);
-        this.getSetForClass(clazz).add(colleague);
+        this.colleaguesForClass.put(clazz, colleague);
     }
 
     public void removeColleague(Colleague collegue) {
@@ -32,7 +35,7 @@ public class Mediator {
         if (collegue instanceof ColleagueWithBackReference)
             ((ColleagueWithBackReference)collegue).setMediator(null);
         Class<?> clazz = colleagues.remove(collegue);
-        this.getSetForClass(clazz).remove(collegue);
+        this.colleaguesForClass.remove(clazz, collegue);
     }
 
     public Set<Colleague> getColleagues() {
@@ -51,24 +54,14 @@ public class Mediator {
         }
     }
 
-    private Set<Colleague> getSetForClass(Class<?> clazz) {
-        if (!colleaguesForClass.containsKey(clazz)) {
-            Set<Colleague> set = new HashSet<Colleague>();
-            colleaguesForClass.put(clazz, set);
-            return set;
-        } else {
-            return colleaguesForClass.get(clazz);
-        }
-    }
-
     public void sendMessage(Object message) {
         // skip null values
         if (message == null)
             return;
         // distribute per class
-        for (Map.Entry<Class<?>, Set<Colleague>> entry : colleaguesForClass.entrySet()) {
-            if (entry.getKey().equals(Object.class) || entry.getKey().isAssignableFrom(message.getClass())) {
-                distributeMessage(message, entry.getValue());
+        for (Class<?> cls : colleaguesForClass.keySet()) {
+            if (cls.equals(Object.class) || cls.isAssignableFrom(message.getClass())) {
+                distributeMessage(message, colleaguesForClass.get(cls));
             }
         }
     }
