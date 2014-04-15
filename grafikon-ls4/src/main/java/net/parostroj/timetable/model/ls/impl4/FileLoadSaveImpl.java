@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
@@ -219,11 +218,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
             }
             cnt = 0;
             // save trains cycles
-            Map<String, List<TrainsCycle>> cyclesMap = diagram.getCyclesMap();
-            for (Map.Entry<String, List<TrainsCycle>> entry : cyclesMap.entrySet()) {
-                for (TrainsCycle cycle : entry.getValue()) {
-                    this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
-                }
+            for (TrainsCycle cycle : diagram.getCycles()) {
+                this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
             }
 
             // save images

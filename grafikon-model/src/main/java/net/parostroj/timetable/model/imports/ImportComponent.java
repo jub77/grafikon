@@ -61,10 +61,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getOutputTemplates());
                 break;
             case TRAINS_CYCLES:
-                Map<String, List<TrainsCycle>> cMap = diagram.getCyclesMap();
-                for (List<TrainsCycle> cycles : cMap.values()) {
-                    map.addAll(cycles);
-                }
+                map.addAll(diagram.getCycles());
                 break;
             case TRAINS_CYCLE_TYPES:
                 for (TrainsCycleType type : diagram.getCycleTypes()) {

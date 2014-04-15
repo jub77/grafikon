@@ -132,13 +132,10 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getCycleById(origCycle.getId());
         } else {
-            Map<String, List<TrainsCycle>> map = diagram.getCyclesMap();
-            for (List<TrainsCycle> list : map.values()) {
-                for (TrainsCycle cycle : list) {
-                    TrainsCycleType cycleType = getCycleType(origCycle.getType());
-                    if (cycle.getName().equals(origCycle.getName()) && Conversions.compareWithNull(cycle.getType(), cycleType)) {
-                        return cycle;
-                    }
+            for (TrainsCycle cycle : diagram.getCycles()) {
+                TrainsCycleType cycleType = getCycleType(origCycle.getType());
+                if (cycle.getName().equals(origCycle.getName()) && Conversions.compareWithNull(cycle.getType(), cycleType)) {
+                    return cycle;
                 }
             }
         }

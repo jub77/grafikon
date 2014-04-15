@@ -180,12 +180,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return getById(id, trains);
     }
 
-    public Map<String, List<TrainsCycle>> getCyclesMap() {
-        Map<String, List<TrainsCycle>> modMap = new HashMap<String, List<TrainsCycle>>();
+    public Collection<TrainsCycle> getCycles() {
+        List<TrainsCycle> result = new ArrayList<TrainsCycle>();
         for (TrainsCycleType type : cycles.values()) {
-            modMap.put(type.getName(), Collections.unmodifiableList(type.getCycles()));
+            result.addAll(type.getCycles());
         }
-        return Collections.unmodifiableMap(modMap);
+        return result;
     }
 
     public Set<String> getCycleTypeNames() {
