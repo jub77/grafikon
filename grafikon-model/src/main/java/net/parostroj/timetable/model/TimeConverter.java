@@ -96,7 +96,7 @@ public class TimeConverter {
      * @return adjusted time
      */
     public int round(int time) {
-    	return round(time, rounding);
+        return round(time, rounding);
     }
 
     /**
