@@ -2,11 +2,15 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 public class RegionCollectorAdapter<T> extends RegionCollector<T> {
 
-    protected Map<T, List<Shape>> regions = new HashMap<T, List<Shape>>();;
+    protected Multimap<T, Shape> regions = LinkedListMultimap.create();
     protected int radius;
 
     public RegionCollectorAdapter(int radius) {
@@ -35,9 +39,6 @@ public class RegionCollectorAdapter<T> extends RegionCollector<T> {
 
     @Override
     public void addRegion(T region, Shape shape) {
-        if (!regions.containsKey(region)) {
-            regions.put(region, new LinkedList<Shape>());
-        }
-        regions.get(region).add(shape);
+        regions.put(region, shape);
     }
 }
