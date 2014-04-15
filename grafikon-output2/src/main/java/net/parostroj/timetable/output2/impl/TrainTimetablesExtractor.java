@@ -21,12 +21,14 @@ public class TrainTimetablesExtractor {
     private final List<Route> routes;
     private final TrainsCycle cycle;
     private final Map<Pair<Line, Node>, Double> cachedRoutePositions;
+    private final Locale locale;
 
-    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle) {
+    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle, Locale locale) {
         this.diagram = diagram;
         this.trains = trains;
         this.routes = routes;
         this.cycle = cycle;
+        this.locale = locale;
         this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
     }
 
@@ -118,7 +120,7 @@ public class TrainTimetablesExtractor {
                 LengthData data = new LengthData();
                 data.setLength(length.second);
                 data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
-                data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
+                data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString(locale) : null);
                 timetable.setLengthData(data);
             }
         }

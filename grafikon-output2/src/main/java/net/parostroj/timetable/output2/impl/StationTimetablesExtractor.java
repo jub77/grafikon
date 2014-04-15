@@ -186,7 +186,7 @@ public class StationTimetablesExtractor {
                 lengthInfo.setLength(length.second);
                 LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
                 lengthInfo.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
-                lengthInfo.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString() : null);
+                lengthInfo.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString(locale) : null);
                 lengthInfo.setStationAbbr(length.first.getAbbr());
             }
         }
