@@ -1,23 +1,22 @@
 package net.parostroj.timetable.output2;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.TrainDiagram;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+
 /**
  * Saves html needed for HTML pages with output.
- * 
+ *
  * @author jub
  */
 public class ImageSaver {
@@ -25,7 +24,7 @@ public class ImageSaver {
     private static final Set<String> PREDEFINED_IMAGES;
     private static final Logger LOG = LoggerFactory.getLogger(ImageSaver.class.getName());
 
-    private TrainDiagram diagram;
+    private final TrainDiagram diagram;
 
     static {
         Set<String> images = new HashSet<String>();
@@ -38,7 +37,7 @@ public class ImageSaver {
     public ImageSaver(TrainDiagram diagram) {
         this.diagram = diagram;
     }
-    
+
     public void saveImage(String image, File directory) throws IOException {
         URL resLocation = null;
         if (PREDEFINED_IMAGES.contains(image))
@@ -59,17 +58,6 @@ public class ImageSaver {
 
     private void saveImage(File location, URL resLocation) throws IOException {
         LOG.trace("Saving file {}.", location.getName());
-        InputStream s = resLocation.openStream();
-        OutputStream os = new FileOutputStream(location);
-        try {
-            byte[] buffer = new byte[5000];
-            int len = 0;
-            while ((len = s.read(buffer)) != -1) {
-                os.write(buffer, 0, len);
-            }
-        } finally {
-            os.close();
-            s.close();
-        }
+        Resources.asByteSource(resLocation).copyTo(Files.asByteSink(location));
     }
 }
