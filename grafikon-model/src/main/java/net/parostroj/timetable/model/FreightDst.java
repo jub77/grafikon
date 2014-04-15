@@ -3,6 +3,9 @@ package net.parostroj.timetable.model;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.collect.Iterables;
+
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TextList;
 
 /**
@@ -67,9 +70,7 @@ public class FreightDst {
             if (cs != null && !cs.isEmpty()) {
                 colorsStr = new StringBuilder();
                 TextList o = new TextList(colorsStr, "[", "]", ",");
-                for (Object i : cs) {
-                    o.add(((FreightColor) i).getName(locale));
-                }
+                o.addItems(Iterables.filter(cs, FreightColor.class), FreightHelper.colorToString(locale));
                 o.finish();
             }
         }

@@ -1,5 +1,8 @@
 package net.parostroj.timetable.actions;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 public class TextList {
 
     private final StringBuilder output;
@@ -37,9 +40,21 @@ public class TextList {
         return this;
     }
 
+    public <T> TextList addItems(Iterable<T> iterable) {
+        for (T item : iterable) {
+            this.add(item.toString());
+        }
+        return this;
+    }
+
+    public <T> TextList addItems(Iterable<T> iterable, Function<T, String> f) {
+        return this.addItems(Iterables.transform(iterable, f));
+    }
+
     public void finish() {
         if (!first) {
             output.append(end);
         }
+        first = true;
     }
 }
