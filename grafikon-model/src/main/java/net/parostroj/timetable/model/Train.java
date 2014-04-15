@@ -313,7 +313,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param interval time interval
      * @return list of train cycle items that covers given interval (empty list if there are none)
      */
-    public List<TrainsCycleItem> getCycleItemsForInterval(String type, TimeInterval interval) {
+    public Collection<TrainsCycleItem> getCycleItemsForInterval(String type, TimeInterval interval) {
         return _cachedCycles.get(interval, type);
     }
 
@@ -943,7 +943,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return covered
      */
     public boolean isCovered(TrainsCycle cycle, TimeInterval interval) {
-        List<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType().getName());
+        Collection<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType().getName());
         for (TrainsCycleItem item : list) {
             if (item.getCycle() == cycle)
                 return true;

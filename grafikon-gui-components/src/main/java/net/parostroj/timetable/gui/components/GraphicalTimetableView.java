@@ -42,9 +42,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
 
     private interface ToolTipHelper {
 
-        public List<TrainsCycleItem> getEngineCycles(TimeInterval interval);
-        public List<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
-        public List<TrainsCycleItem> getDriverCycles(TimeInterval interval);
+        public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
+        public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
+        public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
     }
 
     private static class RouteRadioButtonMenuItem extends JRadioButtonMenuItem {
@@ -123,17 +123,17 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         toolTipformattingMap.put("helper", new ToolTipHelper() {
 
             @Override
-            public List<TrainsCycleItem> getEngineCycles(TimeInterval interval) {
+            public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
             }
 
             @Override
-            public List<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) {
+            public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.TRAIN_UNIT_CYCLE, interval);
             }
 
             @Override
-            public List<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
+            public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
             }
         });
