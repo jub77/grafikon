@@ -42,7 +42,7 @@ public class GspTrainTimetablesOutput extends GspOutput {
             List<Train> trains = SelectionHelper.selectTrains(params, diagram);
             List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
             TrainsCycle cycle = SelectionHelper.getDriverCycle(params);
-            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes, cycle);
+            TrainTimetablesExtractor tte = new TrainTimetablesExtractor(diagram, trains, routes, cycle, this.getLocale());
             TrainTimetables timetables = tte.getTrainTimetables();
 
             // call template

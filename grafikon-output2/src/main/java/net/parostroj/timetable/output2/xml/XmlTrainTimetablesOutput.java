@@ -37,7 +37,7 @@ class XmlTrainTimetablesOutput extends OutputWithCharset {
             List<Train> trains = SelectionHelper.selectTrains(params, diagram);
             List<Route> routes = SelectionHelper.getRoutes(params, diagram, trains);
             TrainsCycle cycle = SelectionHelper.getDriverCycle(params);
-            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, trains, routes, cycle);
+            TrainTimetablesExtractor te = new TrainTimetablesExtractor(diagram, trains, routes, cycle, this.getLocale());
             TrainTimetables tt = te.getTrainTimetables();
 
             JAXBContext context = JAXBContext.newInstance(TrainTimetables.class);
