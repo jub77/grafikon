@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder={"station", "stationType", "track", "straight", "arrival", "departure",
     "speed", "setSpeed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
     "onControlled", "trapezoid", "trapezoidTrains", "lineClass", "routePosition", "routePositionOut",
-    "lineTracks"
+    "lineTracks", "freightDest"
 })
 public class TrainTimetableRow {
 
@@ -38,6 +38,7 @@ public class TrainTimetableRow {
     private Double routePosition;
     private Double routePositionOut;
     private Integer lineTracks;
+    private List<String> freightDest;
 
     public String getArrival() {
         return arrival;
@@ -207,5 +208,15 @@ public class TrainTimetableRow {
 
     public void setLineTracks(Integer lineTracks) {
         this.lineTracks = lineTracks;
+    }
+
+    public void setFreightDest(List<String> freightDest) {
+        this.freightDest = freightDest;
+    }
+
+    @XmlElement(name="dest")
+    @XmlElementWrapper(name="freight")
+    public List<String> getFreightDest() {
+        return freightDest;
     }
 }
