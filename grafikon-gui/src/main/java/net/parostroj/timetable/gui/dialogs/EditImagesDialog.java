@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -25,6 +24,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
@@ -186,18 +187,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
                 TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), fileName, img.getWidth(), img.getHeight());
 
                 File tempFile = File.createTempFile("gt_", ".temp");
-                FileChannel ic = null;
-                FileChannel oc = null;
-                try {
-                    ic = new FileInputStream(chooser.getSelectedFile()).getChannel();
-                    oc = new FileOutputStream(tempFile).getChannel();
-                    ic.transferTo(0, ic.size(), oc);
-                } finally {
-                    if (ic != null)
-                        ic.close();
-                    if (oc != null)
-                        oc.close();
-                }
+                Files.asByteSource(chooser.getSelectedFile()).copyTo(Files.asByteSink(tempFile));
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
                 diagram.addImage(image);
