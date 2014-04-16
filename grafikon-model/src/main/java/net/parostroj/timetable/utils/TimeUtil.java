@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TimeInterval;
  */
 public class TimeUtil {
 
-	/**
+    /**
      * adjusts time between 0:00 and 23:59.
      *
      * @param time time
@@ -17,10 +17,11 @@ public class TimeUtil {
      */
     public static int normalizeTime(int time) {
         while (!isNormalizedTime(time)) {
-            if (time < 0)
+            if (time < 0) {
                 time += TimeInterval.DAY;
-            else if (time >= TimeInterval.DAY)
+            } else if (time >= TimeInterval.DAY) {
                 time -= TimeInterval.DAY;
+            }
         }
         return time;
     }
