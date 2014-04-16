@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.awt.Color;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.Conversions;
+import net.parostroj.timetable.utils.StringUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -78,7 +78,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param abbr the abbreviation to set
      */
     public void setAbbr(String abbr) {
-        if (!Conversions.compareWithNull(abbr, this.abbr)) {
+        if (!StringUtil.compareWithNull(abbr, this.abbr)) {
             String oldAbbr = this.abbr;
             this.abbr = abbr;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
@@ -96,7 +96,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param color the color to be set
      */
     public void setColor(Color color) {
-        if (!Conversions.compareWithNull(color, this.color)) {
+        if (!StringUtil.compareWithNull(color, this.color)) {
             Color oldColor = this.color;
             this.color = color;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_COLOR, oldColor, color)));
@@ -114,7 +114,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param desc description to set
      */
     public void setDesc(String desc) {
-        if (!Conversions.compareWithNull(desc, this.desc)) {
+        if (!StringUtil.compareWithNull(desc, this.desc)) {
             String oldDesc = this.desc;
             this.desc = desc;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_DESC, oldDesc, desc)));
@@ -151,7 +151,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param category sets category of train type
      */
     public void setCategory(TrainTypeCategory category) {
-        if (!Conversions.compareWithNull(category, this.category)) {
+        if (!StringUtil.compareWithNull(category, this.category)) {
             TrainTypeCategory oldCategory = this.category;
             this.category = category;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_CATEGORY, oldCategory,
@@ -170,7 +170,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param trainNameTemplate sets train name template
      */
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
-        if (!Conversions.compareWithNull(trainNameTemplate, this.trainNameTemplate)) {
+        if (!StringUtil.compareWithNull(trainNameTemplate, this.trainNameTemplate)) {
             TextTemplate oldTemplate = this.trainNameTemplate;
             this.trainNameTemplate = trainNameTemplate;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_TRAIN_NAME_TEMPLATE,
@@ -189,7 +189,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * @param trainCompleteNameTemplate sets template with complete train name
      */
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
-        if (!Conversions.compareWithNull(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
+        if (!StringUtil.compareWithNull(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
             TextTemplate oldTemplate = this.trainCompleteNameTemplate;
             this.trainCompleteNameTemplate = trainCompleteNameTemplate;
             this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(

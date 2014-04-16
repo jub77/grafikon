@@ -6,8 +6,8 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.StringUtil;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -241,10 +241,10 @@ public class EditInfoDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // save values
-        String number = Conversions.checkAndTrim(routeNumberTextArea.getText());
-        String nodes = Conversions.checkAndTrim(routesTextArea.getText());
-        String validity = Conversions.checkAndTrim(validityTextField.getText());
-        String info = Conversions.checkAndTrim(infoTextArea.getText());
+        String number = StringUtil.checkAndTrim(routeNumberTextArea.getText());
+        String nodes = StringUtil.checkAndTrim(routesTextArea.getText());
+        String validity = StringUtil.checkAndTrim(validityTextField.getText());
+        String info = StringUtil.checkAndTrim(infoTextArea.getText());
 
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NUMBERS, number);
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_NODES, nodes);

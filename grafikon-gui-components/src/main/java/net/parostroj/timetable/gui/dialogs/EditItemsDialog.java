@@ -11,7 +11,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.Conversions;
+import net.parostroj.timetable.utils.StringUtil;
 
 /**
  * Dialog for editing list of items.
@@ -164,7 +164,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = Conversions.checkAndTrim(nameTextField.getText());
+        String name = StringUtil.checkAndTrim(nameTextField.getText());
         if (name != null) {
             // create new item
             T item = this.createNew(name);

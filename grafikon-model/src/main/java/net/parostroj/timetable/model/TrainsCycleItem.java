@@ -11,7 +11,7 @@ import java.util.List;
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainsCycleEvent;
-import net.parostroj.timetable.utils.Conversions;
+import net.parostroj.timetable.utils.StringUtil;
 
 /**
  * Train cycle item.
@@ -66,7 +66,7 @@ public class TrainsCycleItem {
     }
 
     public void setComment(String comment) {
-        if (!Conversions.compareWithNull(comment, this.comment)) {
+        if (!StringUtil.compareWithNull(comment, this.comment)) {
             String oldComment = this.comment;
             this.comment = comment;
             TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);

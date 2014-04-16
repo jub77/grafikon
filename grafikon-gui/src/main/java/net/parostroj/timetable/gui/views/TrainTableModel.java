@@ -14,7 +14,7 @@ import javax.swing.table.AbstractTableModel;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.Conversions;
+import net.parostroj.timetable.utils.StringUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
@@ -333,7 +333,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case COMMENT:
                 // comment
-                String commentStr = Conversions.checkAndTrim((String) aValue);
+                String commentStr = StringUtil.checkAndTrim((String) aValue);
                 interval.getAttributes().setRemove(TimeInterval.ATTR_COMMENT, commentStr);
                 break;
             case OCCUPIED_ENTRY:

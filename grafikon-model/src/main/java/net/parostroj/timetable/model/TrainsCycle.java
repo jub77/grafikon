@@ -8,7 +8,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.Conversions;
+import net.parostroj.timetable.utils.StringUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -63,7 +63,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setDescription(String description) {
-        if (!Conversions.compareWithNull(description, this.description)) {
+        if (!StringUtil.compareWithNull(description, this.description)) {
             String oldDescription = this.description;
             this.description = description;
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_DESCRIPTION,
@@ -76,7 +76,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setName(String name) {
-        if (!Conversions.compareWithNull(name, this.name)) {
+        if (!StringUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
@@ -251,7 +251,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public void setType(TrainsCycleType type) {
-        if (!Conversions.compareWithNull(type, this.type)) {
+        if (!StringUtil.compareWithNull(type, this.type)) {
             TrainsCycleType oldType = this.type;
             this.type = type;
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
