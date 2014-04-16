@@ -233,9 +233,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
             Collections.reverse(filenames);
             for (String filename : filenames) {
                 if (filename != null) {
-                    File file = new File(filename);
-                    if (file.exists())
-                        this.addLastOpenedFile(new File(filename));
+                    this.addLastOpenedFile(new File(filename));
                 }
             }
         }
