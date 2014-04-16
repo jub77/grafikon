@@ -15,9 +15,9 @@ import java.util.Map;
 public abstract class TextTemplate {
 
     public static enum Language {
-        MVEL, GROOVY, PLAIN;
+        GROOVY, MVEL, PLAIN;
     }
-    
+
     private final String template;
 
     protected TextTemplate(String template) {
@@ -27,7 +27,7 @@ public abstract class TextTemplate {
     public String getTemplate() {
         return template;
     }
-    
+
     public abstract String evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
     public String evaluateWithException(Object object, Map<String, Object> binding) throws GrafikonException {
@@ -35,7 +35,7 @@ public abstract class TextTemplate {
         binding.putAll(bindingObj);
         return this.evaluateWithException(binding);
     }
-    
+
     public String evaluateWithException(Object object) throws GrafikonException {
         return this.evaluateWithException(this.getBinding(object));
     }
@@ -47,11 +47,11 @@ public abstract class TextTemplate {
         binding.putAll(bindingObj);
         return this.evaluate(binding);
     }
-    
+
     public String evaluate(Object object) {
         return this.evaluate(this.getBinding(object));
     }
-    
+
     public void evaluate(OutputStream output, Map<String, Object> binding) throws GrafikonException {
         try {
             this.evaluate(new OutputStreamWriter(output, "utf-8"), binding);
@@ -63,7 +63,7 @@ public abstract class TextTemplate {
     public abstract void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException;
 
     public abstract Language getLanguage();
-    
+
     protected Map<String, Object> getBinding(Object object) {
         if (object instanceof Train)
             return ((Train) object).createTemplateBinding();
@@ -91,7 +91,7 @@ public abstract class TextTemplate {
     public void freeResources() {
         // nothing
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
