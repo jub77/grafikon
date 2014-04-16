@@ -23,7 +23,7 @@ public class CachedValue<T> {
     }
 
     public boolean set(T value) {
-        boolean different = !Conversions.compareWithNull(value, this.value) && cached;
+        boolean different = !StringUtil.compareWithNull(value, this.value) && cached;
         this.value = value;
         this.cached = true;
         return different;
