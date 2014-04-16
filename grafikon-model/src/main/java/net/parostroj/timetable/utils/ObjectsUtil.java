@@ -1,6 +1,6 @@
 package net.parostroj.timetable.utils;
 
-public class StringUtil {
+public class ObjectsUtil {
 
     public static String checkAndTrim(String str) {
         if (str != null) {

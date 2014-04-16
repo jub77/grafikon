@@ -13,7 +13,7 @@ import javax.swing.table.TableColumn;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import javax.swing.JComboBox;
 
@@ -120,7 +120,7 @@ public class AttributesPanel extends javax.swing.JPanel {
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
             protected void change() {
-                String txt = StringUtil.checkAndTrim(nameTextField.getText());
+                String txt = ObjectsUtil.checkAndTrim(nameTextField.getText());
                 addButton.setEnabled(txt != null);
             }
         });

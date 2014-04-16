@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -191,7 +191,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (topSpeed != null && topSpeed <= 0) {
             throw new IllegalArgumentException("Top speed should be positive number.");
         }
-        if (!StringUtil.compareWithNull(topSpeed, this.topSpeed)) {
+        if (!ObjectsUtil.compareWithNull(topSpeed, this.topSpeed)) {
             Integer oldTopSpeed = this.topSpeed;
             this.topSpeed = topSpeed;
             this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(ATTR_SPEED, oldTopSpeed, topSpeed)));

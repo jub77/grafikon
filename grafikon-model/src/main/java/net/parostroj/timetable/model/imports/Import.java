@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Imports trains from one diagram to another.
@@ -120,7 +120,7 @@ public abstract class Import {
             for (Train train : diagram.getTrains()) {
                 // compare number and type
                 TrainType trainType = getTrainType(origTrain.getType());
-                if (train.getNumber().equals(origTrain.getNumber()) && StringUtil.compareWithNull(train.getType(), trainType)) {
+                if (train.getNumber().equals(origTrain.getNumber()) && ObjectsUtil.compareWithNull(train.getType(), trainType)) {
                     return train;
                 }
             }
@@ -134,7 +134,7 @@ public abstract class Import {
         } else {
             for (TrainsCycle cycle : diagram.getCycles()) {
                 TrainsCycleType cycleType = getCycleType(origCycle.getType());
-                if (cycle.getName().equals(origCycle.getName()) && StringUtil.compareWithNull(cycle.getType(), cycleType)) {
+                if (cycle.getName().equals(origCycle.getName()) && ObjectsUtil.compareWithNull(cycle.getType(), cycleType)) {
                     return cycle;
                 }
             }

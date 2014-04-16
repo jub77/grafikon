@@ -120,7 +120,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param number number to be set
      */
     public void setNumber(String number) {
-        if (!StringUtil.compareWithNull(number, this.number)) {
+        if (!ObjectsUtil.compareWithNull(number, this.number)) {
             String oldNumber = this.number;
             this.number = number;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
@@ -191,7 +191,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param description sets description
      */
     public void setDescription(String description) {
-        if (!StringUtil.compareWithNull(description, this.description)) {
+        if (!ObjectsUtil.compareWithNull(description, this.description)) {
             String oldDesc = this.description;
             this.description = description;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc,
@@ -235,7 +235,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type the type to set
      */
     public void setType(TrainType type) {
-        if (!StringUtil.compareWithNull(type, this.type)) {
+        if (!ObjectsUtil.compareWithNull(type, this.type)) {
             TrainType oldType = this.type;
             this.type = type;
             this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));

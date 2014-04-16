@@ -19,7 +19,7 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,7 +182,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-        copyEnable(StringUtil.checkAndTrim(nameTextField.getText()), enabled);
+        copyEnable(ObjectsUtil.checkAndTrim(nameTextField.getText()), enabled);
         speedTextField.setText("");
         this.enableDisableDeleteRow();
     }
@@ -204,7 +204,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
             protected void change() {
-                String text = StringUtil.checkAndTrim(nameTextField.getText());
+                String text = ObjectsUtil.checkAndTrim(nameTextField.getText());
                 newButton.setEnabled(text != null);
                 copyEnable(text, !engineClassesList.isSelectionEmpty());
             }
@@ -434,7 +434,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             int selected = engineClassesList.getSelectedIndex();
             EngineClass copiedClazz = listModel.getIndex(selected).getElement();
 
-            String newName = StringUtil.checkAndTrim(nameTextField.getText());
+            String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
             if (newName != null) {
                 // create new LineClass
                 EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
