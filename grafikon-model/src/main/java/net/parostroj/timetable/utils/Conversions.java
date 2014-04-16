@@ -3,6 +3,9 @@ package net.parostroj.timetable.utils;
 import java.awt.Color;
 import java.io.*;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+
 /**
  * Converting utility.
  *
@@ -38,13 +41,12 @@ public class Conversions {
         }
     }
 
-    public static String loadFile(InputStream is) throws IOException {
-        StringBuilder b = new StringBuilder();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            b.append(line).append('\n');
-        }
-        return b.toString();
+    public static String loadFile(final InputStream is) throws IOException {
+        return new ByteSource() {
+            @Override
+            public InputStream openStream() throws IOException {
+                return is;
+            }
+        }.asCharSource(Charsets.UTF_8).read();
     }
 }
