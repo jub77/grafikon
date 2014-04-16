@@ -22,7 +22,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -294,7 +294,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         // set displayed columns (if the prefs are empty - show all)
         String cs = section.get("columns");
         List<TableColumn> shownColumns = new LinkedList<TableColumn>();
-        cs = StringUtil.checkAndTrim(cs);
+        cs = ObjectsUtil.checkAndTrim(cs);
         if (cs == null) {
             // all columns
             for (TrainTableColumn c : TrainTableColumn.values()) {

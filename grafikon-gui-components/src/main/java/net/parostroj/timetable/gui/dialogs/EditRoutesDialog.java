@@ -13,7 +13,7 @@ import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import javax.swing.JPanel;
 
@@ -181,7 +181,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         routeNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
             protected void change() {
-                String text = StringUtil.checkAndTrim(routeNameTextField.getText());
+                String text = ObjectsUtil.checkAndTrim(routeNameTextField.getText());
                 newButton.setEnabled(text != null);
             }
         });

@@ -1,7 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -51,7 +51,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setName(String name) {
-        if (!StringUtil.compareWithNull(name, this.name)) {
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
             this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
@@ -63,7 +63,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setTemplate(TextTemplate template) {
-        if (!StringUtil.compareWithNull(template, this.template)) {
+        if (!ObjectsUtil.compareWithNull(template, this.template)) {
             TextTemplate oldTemplate = this.template;
             this.template = template;
             this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
@@ -75,7 +75,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     }
 
     public void setScript(Script script) {
-        if (!StringUtil.compareWithNull(script, this.script)) {
+        if (!ObjectsUtil.compareWithNull(script, this.script)) {
             Script oldScript = this.script;
             this.script = script;
             this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_SCRIPT, oldScript, script)));

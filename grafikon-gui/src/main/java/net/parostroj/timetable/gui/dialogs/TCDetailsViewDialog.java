@@ -9,7 +9,7 @@ import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Dialog for editing
@@ -118,11 +118,11 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // write values back and close
         TrainsCycle cycle = delegate.getSelectedCycle();
-        String name = StringUtil.checkAndTrim(nameTextField.getText());
+        String name = ObjectsUtil.checkAndTrim(nameTextField.getText());
         if (name != null) {
             cycle.setName(name);
         }
-        cycle.setDescription(StringUtil.checkAndTrim(descTextField.getText()));
+        cycle.setDescription(ObjectsUtil.checkAndTrim(descTextField.getText()));
 
         // event
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, cycle);

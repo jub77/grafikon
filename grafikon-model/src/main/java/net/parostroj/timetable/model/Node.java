@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -193,7 +193,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setLocation(Location location) {
-        if (!StringUtil.compareWithNull(location, this.location)) {
+        if (!ObjectsUtil.compareWithNull(location, this.location)) {
             Location oldLocation = this.location;
             this.location = location;
             this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_LOCATION, oldLocation, location)));

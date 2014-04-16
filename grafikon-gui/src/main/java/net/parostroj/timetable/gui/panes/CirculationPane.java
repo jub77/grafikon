@@ -27,7 +27,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.StringUtil;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -72,7 +72,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         newNameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
             @Override
             protected void change() {
-                createButton.setEnabled(StringUtil.checkAndTrim(newNameTextField.getText()) != null);
+                createButton.setEnabled(ObjectsUtil.checkAndTrim(newNameTextField.getText()) != null);
             }
         });
         controlPanel.add(newNameTextField);
