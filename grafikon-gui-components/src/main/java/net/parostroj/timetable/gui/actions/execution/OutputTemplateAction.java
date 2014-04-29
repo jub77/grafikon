@@ -12,6 +12,13 @@ import org.slf4j.LoggerFactory;
 
 public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
+    private interface OutputCollector {
+
+        public void add(String name, Map<String, Object> values);
+
+        public void add(String name, Map<String, Object> values, String encoding);
+    }
+
     private static class OutputSetting {
 
         public String name;
@@ -120,13 +127,13 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
             final List<OutputSetting> out = new ArrayList<OutputSetting>();
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", diagram);
-            binding.put("outputs", new Object() {
-                @SuppressWarnings("unused")
+            binding.put("outputs", new OutputCollector() {
+                @Override
                 public void add(String name, Map<String, Object> values) {
                     out.add(new OutputSetting(name, values, null));
                 }
 
-                @SuppressWarnings("unused")
+                @Override
                 public void add(String name, Map<String, Object> values, String encoding) {
                     out.add(new OutputSetting(name, values, encoding));
                 }
