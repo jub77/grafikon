@@ -6,12 +6,24 @@ import java.util.*;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.utils.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OutputTemplateAction extends EventDispatchAfterModelAction {
+
+    private static class OutputSetting {
+
+        public String name;
+        public Map<String, Object> binding;
+        public String encoding;
+
+        public OutputSetting(String name, Map<String, Object> binding, String encoding) {
+            this.name = name;
+            this.binding = binding;
+            this.encoding = encoding;
+        }
+    }
 
     public static class Settings {
 
@@ -102,16 +114,21 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         }
     }
 
-    private List<Pair<String, Map<String, Object>>> createOutputs(OutputTemplate template) {
-        List<Pair<String, Map<String, Object>>> result = null;
+    private List<OutputSetting> createOutputs(OutputTemplate template) {
+        List<OutputSetting> result = null;
         if (template.getScript() != null) {
-            final List<Pair<String, Map<String, Object>>> out = new ArrayList<Pair<String, Map<String, Object>>>();
+            final List<OutputSetting> out = new ArrayList<OutputSetting>();
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", diagram);
             binding.put("outputs", new Object() {
                 @SuppressWarnings("unused")
                 public void add(String name, Map<String, Object> values) {
-                    out.add(new Pair<String, Map<String, Object>>(name, values));
+                    out.add(new OutputSetting(name, values, null));
+                }
+
+                @SuppressWarnings("unused")
+                public void add(String name, Map<String, Object> values, String encoding) {
+                    out.add(new OutputSetting(name, values, encoding));
                 }
             });
             template.getScript().evaluate(binding);
@@ -125,13 +142,13 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE) == Boolean.TRUE ? null : template.getTemplate();
-        List<Pair<String, Map<String, Object>>> outputNames = this.createOutputs(template);
+        List<OutputSetting> outputNames = this.createOutputs(template);
         if (outputNames == null) {
             this.generateOutput(
                     output,
                     this.getFile(template.getName(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                    textTemplate, type, null, null);
+                    textTemplate, type, null, null, null);
             if ("trains".equals(type)) {
                 // for each driver circulation
                 for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
@@ -139,18 +156,18 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                             output,
                             this.getFile(template.getName() + "_" + cycle.getName(),
                                     template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                            textTemplate, type, cycle, null);
+                            textTemplate, type, cycle, null, null);
                 }
             }
         } else {
-            for(Pair<String, Map<String, Object>> outputName : outputNames) {
-                this.generateOutput(output, this.getFile(outputName.first), textTemplate, type, null, outputName.second);
+            for(OutputSetting outputName : outputNames) {
+                this.generateOutput(output, this.getFile(outputName.name), textTemplate, type, null, outputName.binding, outputName.encoding);
             }
         }
     }
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
-            Object param, Map<String, Object> context) throws OutputException {
+            Object param, Map<String, Object> context, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
             params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
@@ -159,6 +176,9 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
         if (context != null) {
             params.setParam(DefaultOutputParam.CONTEXT, context);
+        }
+        if (encoding != null) {
+            params.setParam(DefaultOutputParam.OUTPUT_ENCODING, encoding);
         }
         // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
         if ("trains".equals(type) && param != null) {

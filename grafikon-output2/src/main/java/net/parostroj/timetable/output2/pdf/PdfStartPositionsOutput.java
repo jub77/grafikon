@@ -52,7 +52,7 @@ class PdfStartPositionsOutput extends PdfOutput {
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
-                textTemplate.evaluate(stream, Collections.<String, Object>singletonMap("stream", xml));
+                textTemplate.evaluate(stream, Collections.<String, Object>singletonMap("stream", xml), this.getEncoding(params));
             } else {
                 InputStream xsl = null;
                 if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {

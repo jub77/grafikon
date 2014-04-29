@@ -61,11 +61,11 @@ public abstract class GspOutput extends OutputWithLocale {
         return template;
     }
 
-    protected void writeOutput(OutputStream stream, Template template, Map<String, Object> binding) throws OutputException {
+    protected void writeOutput(OutputStream stream, Template template, Map<String, Object> binding, String encoding) throws OutputException {
         Writable result = template.make(binding);
         Writer writer;
         try {
-            writer = new OutputStreamWriter(stream, "utf-8");
+            writer = new OutputStreamWriter(stream, encoding);
             result.writeTo(writer);
             writer.flush();
         } catch (UnsupportedEncodingException e) {

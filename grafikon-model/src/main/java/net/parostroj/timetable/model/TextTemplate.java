@@ -42,19 +42,13 @@ public abstract class TextTemplate {
 
     public abstract String evaluate(Map<String, Object> binding);
 
-    public String evaluate(Object object, Map<String, Object> binding) {
-        Map<String, Object> bindingObj = this.getBinding(object);
-        binding.putAll(bindingObj);
-        return this.evaluate(binding);
-    }
-
     public String evaluate(Object object) {
         return this.evaluate(this.getBinding(object));
     }
 
-    public void evaluate(OutputStream output, Map<String, Object> binding) throws GrafikonException {
+    public void evaluate(OutputStream output, Map<String, Object> binding, String encoding) throws GrafikonException {
         try {
-            this.evaluate(new OutputStreamWriter(output, "utf-8"), binding);
+            this.evaluate(new OutputStreamWriter(output, encoding), binding);
         } catch (UnsupportedEncodingException e) {
             throw new GrafikonException("Error creating writer.", e);
         }

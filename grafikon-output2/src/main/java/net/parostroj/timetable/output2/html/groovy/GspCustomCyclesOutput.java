@@ -48,10 +48,10 @@ public class GspCustomCyclesOutput extends GspOutput {
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
-                textTemplate.evaluate(stream, map);
+                textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 Template template = this.getTemplate(params, "templates/groovy/custom_cycles.gsp", this.getClass().getClassLoader());
-                this.writeOutput(stream, template, map);
+                this.writeOutput(stream, template, map, this.getEncoding(params));
             }
         } catch (OutputException e) {
             throw e;
