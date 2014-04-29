@@ -32,7 +32,7 @@ public class GspDiagramOutput extends GspOutput {
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
-                textTemplate.evaluate(stream, map);
+                textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 // do nothing - no default template exists.
             }

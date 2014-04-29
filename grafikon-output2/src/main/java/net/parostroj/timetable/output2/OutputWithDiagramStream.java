@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.util.OutputParamsUtil;
 
@@ -52,6 +53,15 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
     @Override
     public OutputParams getAvailableParams() {
         return OutputParamsUtil.createParams(DefaultOutputParam.OUTPUT_STREAM, DefaultOutputParam.TRAIN_DIAGRAM);
+    }
+
+    protected String getEncoding(OutputParams params) {
+        // default encoding -> utf-8
+        String encoding = "utf-8";
+        if (params.paramExistWithValue(DefaultOutputParam.OUTPUT_ENCODING)) {
+            encoding = params.getParam(DefaultOutputParam.OUTPUT_ENCODING).getValue(String.class);
+        }
+        return encoding;
     }
 
     protected abstract void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException;

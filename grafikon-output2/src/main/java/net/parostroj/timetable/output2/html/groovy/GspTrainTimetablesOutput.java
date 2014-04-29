@@ -59,10 +59,10 @@ public class GspTrainTimetablesOutput extends GspOutput {
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
-                textTemplate.evaluate(stream, map);
+                textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
-                this.writeOutput(stream, template, map);
+                this.writeOutput(stream, template, map, this.getEncoding(params));
             }
 
             // write images if possible
