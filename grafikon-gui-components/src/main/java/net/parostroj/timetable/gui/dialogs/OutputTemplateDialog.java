@@ -37,7 +37,7 @@ import java.awt.event.ActionListener;
  */
 public class OutputTemplateDialog extends javax.swing.JDialog {
 
-    private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:])";
+    private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
