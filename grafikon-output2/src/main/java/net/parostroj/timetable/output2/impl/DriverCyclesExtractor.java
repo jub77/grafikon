@@ -16,9 +16,9 @@ import net.parostroj.timetable.model.TrainsCycleItem;
  */
 public class DriverCyclesExtractor {
 
-    private List<TrainsCycle> cycles;
-    private TrainDiagram diagram;
-    private AttributesExtractor ae = new AttributesExtractor();
+    private final List<TrainsCycle> cycles;
+    private final TrainDiagram diagram;
+    private final AttributesExtractor ae = new AttributesExtractor();
 
     private RoutesExtractor routesExtractor;
 
@@ -36,9 +36,9 @@ public class DriverCyclesExtractor {
         }
         DriverCycles outputCycles = new DriverCycles(outputCyclesList);
         // fill in other data
-        outputCycles.setRouteNumbers((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
-        outputCycles.setRouteStations((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
-        outputCycles.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
+        outputCycles.setRouteNumbers(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class));
+        outputCycles.setRouteStations(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES, String.class));
+        outputCycles.setValidity(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
         return outputCycles;
     }
 

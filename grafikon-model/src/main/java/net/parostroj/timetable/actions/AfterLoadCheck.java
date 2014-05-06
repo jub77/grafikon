@@ -26,23 +26,23 @@ public class AfterLoadCheck {
         }
 
         // add transfer time if missing
-        if (diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME) == null)
+        if (diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Object.class) == null)
             diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, STATION_TRANSFER_TIME);
 
         // axle length
-        if (diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE) == null)
+        if (diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, Object.class) == null)
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, AXLE_LENGTH);
 
         // weight per axle
-        if (diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE) == null)
+        if (diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, Object.class) == null)
             diagram.setAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, WEIGHT_PER_AXLE);
 
         // weight per axle (empty)
-        if (diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY) == null)
+        if (diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, Object.class) == null)
             diagram.setAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, WEIGHT_PER_AXLE_EMPTY);
 
         // length unit
-        if (diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT) == null)
+        if (diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, Object.class) == null)
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LENGTH_UNIT);
 
         // add default trains cycle types (if already defined - no action)

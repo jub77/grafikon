@@ -95,8 +95,8 @@ public class TransformUtil {
         }
 
         String result = (ec.getDescription() != null) ? ec.getDescription().trim() : "";
-        if (ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS) != null) {
-            EngineClass cl = (EngineClass) ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
+        EngineClass cl = ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
+        if (cl != null) {
             String desc = result;
             result = cl.getName();
             if (!"".equals(desc)) {
@@ -107,7 +107,7 @@ public class TransformUtil {
     }
 
     public static String getEngineDescription(TrainsCycle ec) {
-        EngineClass cl = (EngineClass) ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
+        EngineClass cl = ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
         if (cl != null)
             return cl.getName();
         else {

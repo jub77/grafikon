@@ -263,8 +263,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @return pair running time and speed
      */
     public int computeRunningTime(final Train train, int speed, int fromSpeed, int toSpeed, int addedTime) {
-        Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
-        double timeScale = (Double) diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE);
+        Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
+        double timeScale = diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
         PenaltySolver ps = new PenaltySolver() {
 
@@ -370,9 +370,9 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     public LineClass getLineClass(TimeIntervalDirection direction) {
         LineClass result = null;
         if (direction == TimeIntervalDirection.BACKWARD)
-            result = (LineClass) getAttribute(ATTR_CLASS_BACK);
+            result = getAttribute(ATTR_CLASS_BACK, LineClass.class);
         if (direction == TimeIntervalDirection.FORWARD || result == null)
-            result = (LineClass) getAttribute(ATTR_CLASS);
+            result = getAttribute(ATTR_CLASS, LineClass.class);
         return result;
     }
 
@@ -402,8 +402,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public Object getAttribute(String key) {
-        return attributes.get(key);
+    public <T> T getAttribute(String key, Class<T> clazz) {
+        return attributes.get(key, clazz);
     }
 
     @Override

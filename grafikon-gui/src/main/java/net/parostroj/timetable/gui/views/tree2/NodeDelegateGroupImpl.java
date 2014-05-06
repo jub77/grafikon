@@ -19,7 +19,7 @@ public class NodeDelegateGroupImpl implements NodeDelegate {
 
     @Override
     public Object getUserObject(Train train) {
-        return train.getAttribute(Train.ATTR_GROUP);
+        return train.getAttribute(Train.ATTR_GROUP, Group.class);
     }
 
     @Override

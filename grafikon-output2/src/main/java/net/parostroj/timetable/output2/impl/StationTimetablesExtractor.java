@@ -119,8 +119,8 @@ public class StationTimetablesExtractor {
                 row.setFreightFromTrain(nt);
             }
         }
-        row.setComment((String) interval.getAttribute(TimeInterval.ATTR_COMMENT));
-        row.setOccupied(Boolean.TRUE.equals(interval.getAttribute(TimeInterval.ATTR_OCCUPIED)));
+        row.setComment(interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class));
+        row.setOccupied(interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED));
     }
 
     private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles) {
@@ -184,7 +184,7 @@ public class StationTimetablesExtractor {
                 // update length with station lengths
                 lengthInfo = new LengthInfo();
                 lengthInfo.setLength(length.second);
-                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                LengthUnit lengthUnitObj = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
                 lengthInfo.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
                 lengthInfo.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString(locale) : null);
                 lengthInfo.setStationAbbr(length.first.getAbbr());

@@ -1,6 +1,6 @@
 /*
  * LSEngineCycle.java
- * 
+ *
  * Created on 12.9.2007, 13:00:29
  */
 
@@ -11,17 +11,17 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 
 /**
  * Storage object for engine cycle.
- * 
+ *
  * @author jub
  */
 public class LSTrainsCycle {
-    
+
     private String name;
-    
+
     private String description;
-    
+
     private String comment;
-    
+
     private LSTrainsCycleItem[] items;
 
     private String type;
@@ -29,8 +29,8 @@ public class LSTrainsCycle {
     public LSTrainsCycle(TrainsCycle trainsCycle, LSTransformationData data, String type) {
         this.name = trainsCycle.getName();
         this.description = trainsCycle.getDescription();
-        this.comment = (String)trainsCycle.getAttribute("comment");
-        
+        this.comment = trainsCycle.getAttribute("comment", String.class);
+
         items = new LSTrainsCycleItem[trainsCycle.getItems().size()];
         int i = 0;
         for (TrainsCycleItem item : trainsCycle) {
@@ -38,7 +38,7 @@ public class LSTrainsCycle {
         }
         this.type = type;
     }
-    
+
     public LSTrainsCycle() {}
 
     public String getComment() {
@@ -79,7 +79,7 @@ public class LSTrainsCycle {
     public void setItems(LSTrainsCycleItem[] items) {
         this.items = items;
     }
-    
+
     public void visit(LSVisitor visitor) {
         visitor.visit(this);
     }

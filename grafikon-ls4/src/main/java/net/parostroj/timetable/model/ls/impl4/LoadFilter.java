@@ -30,7 +30,7 @@ public class LoadFilter {
             }
             // fix route info
             for (Train train : diagram.getTrains()) {
-                String routeInfo = (String) train.getAttribute("route.info");
+                String routeInfo = train.getAttribute("route.info", String.class);
                 if (routeInfo != null)
                     routeInfo = routeInfo.trim();
                 if (routeInfo != null && !"".equals(routeInfo)) {

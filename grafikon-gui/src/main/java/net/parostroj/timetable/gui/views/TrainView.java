@@ -149,7 +149,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         } else {
             // train type
             String name = train.getCompleteName();
-            TextTemplate routeTemplate = (TextTemplate) train.getAttribute(Train.ATTR_ROUTE);
+            TextTemplate routeTemplate = train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class);
             if (routeTemplate != null)
                 name = String.format("%s (%s)", name, routeTemplate.evaluate(train));
             trainTextField.setText(name);

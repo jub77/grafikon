@@ -83,8 +83,8 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
                     TrainDiagram diagram = getDiagram();
                     if (diagram != null) {
-                        Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
-                        Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+                        Integer from = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
+                        Integer to = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
                         config.set(GTViewSettings.Key.START_TIME, from);
                         config.set(GTViewSettings.Key.END_TIME, to);
                     }

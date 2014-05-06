@@ -341,8 +341,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     @Override
-    public Object getAttribute(String key) {
-        return attributes.get(key);
+    public <T> T getAttribute(String key, Class<T> clazz) {
+        return attributes.get(key, clazz);
     }
 
     @Override
@@ -795,7 +795,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean allLinesHaveAttribute(String key, Object value) {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isLineOwner()) {
-                if (!value.equals(interval.getOwnerAsLine().getAttribute(key))) {
+                if (!value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
                     return false;
                 }
             }
@@ -813,7 +813,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean allNodesHaveAttribute(String key, Object value) {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isNodeOwner()) {
-                if (!value.equals(interval.getOwnerAsNode().getAttribute(key))) {
+                if (!value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
                     return false;
                 }
             }
@@ -831,7 +831,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean oneLineHasAttribute(String key, Object value) {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isLineOwner()) {
-                if (value.equals(interval.getOwnerAsLine().getAttribute(key))) {
+                if (value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
                     return true;
                 }
             }
@@ -849,7 +849,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean oneNodeHasAttribute(String key, Object value) {
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isNodeOwner()) {
-                if (value.equals(interval.getOwnerAsNode().getAttribute(key))) {
+                if (value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
                     return true;
                 }
             }
