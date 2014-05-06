@@ -136,9 +136,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
         types.setSelectedObject(node.getType());
-        signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT)));
-        controlCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_CONTROL_STATION)));
-        trapezoidCheckBox.setSelected(Boolean.TRUE.equals(node.getAttribute(Node.ATTR_TRAPEZOID_SIGN)));
+        signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
+        controlCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_CONTROL_STATION));
+        trapezoidCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN));
         updateColors();
 
         regionComboBox.removeAllItems();
@@ -152,7 +152,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         regionComboBox.setSelectedItem(region == null ? NONE_REGION : region);
 
         // set node length
-        Integer length = (Integer) node.getAttribute(Node.ATTR_LENGTH);
+        Integer length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
         if (length != null) {
             lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
         } else {
@@ -171,7 +171,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     @SuppressWarnings("unchecked")
     private void updateColors() {
-        colors = (Collection<FreightColor>) node.getAttribute(Node.ATTR_FREIGHT_COLORS);
+        colors = node.getAttribute(Node.ATTR_FREIGHT_COLORS, Collection.class);
         if (colors == null) {
             colors = Collections.emptyList();
         }
@@ -200,7 +200,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (lengthCheckBox.isSelected()) {
             try {
                 Integer length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
-                Integer oldLength = (Integer) node.getAttribute(Node.ATTR_LENGTH);
+                Integer oldLength = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
                 if (!length.equals(oldLength))
                     node.setAttribute(Node.ATTR_LENGTH, length);
             } catch (ArithmeticException e) {

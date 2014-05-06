@@ -87,7 +87,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         lengthEditBox.setValueInUnit(new BigDecimal(line.getLength()), LengthUnit.MM);
 
-        controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED)));
+        controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class)));
 
         // update line class combo box
         List<LineClass> classes = line.getTrainDiagram().getNet().getLineClasses();
@@ -96,20 +96,20 @@ public class EditLineDialog extends javax.swing.JDialog {
         for (LineClass clazz : classes) {
             lineClassComboBox.addItem(clazz);
         }
-        if (line.getAttribute(Line.ATTR_CLASS) == null)
+        if (line.getAttribute(Line.ATTR_CLASS, LineClass.class) == null)
             lineClassComboBox.setSelectedItem(noneLineClass);
         else
-            lineClassComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS));
+            lineClassComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS, LineClass.class));
 
         // update line class back combo box
         lineClassBackComboBox.removeAllItems();
         lineClassBackComboBox.addItem(noneLineClass);
         for (LineClass clazz : classes)
             lineClassBackComboBox.addItem(clazz);
-        if (line.getAttribute(Line.ATTR_CLASS_BACK) == null)
+        if (line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class) == null)
             lineClassBackComboBox.setSelectedItem(lineClassComboBox.getSelectedItem());
         else
-            lineClassBackComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS_BACK));
+            lineClassBackComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class));
 
         this.updateTracks(null);
 
@@ -198,7 +198,7 @@ public class EditLineDialog extends javax.swing.JDialog {
                 line.addTrack(track);
         }
 
-        Boolean bool = (Boolean) line.getAttribute(Line.ATTR_CONTROLLED);
+        Boolean bool = line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class);
         if ((bool == null && controlledCheckBox.isSelected()) || (bool != null && controlledCheckBox.isSelected() != bool.booleanValue()))
             line.setAttribute(Line.ATTR_CONTROLLED, controlledCheckBox.isSelected());
 

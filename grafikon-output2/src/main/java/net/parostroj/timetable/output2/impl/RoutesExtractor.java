@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.*;
  */
 public class RoutesExtractor {
 
-    private Map<Line, Route> routeMap;
+    private final Map<Line, Route> routeMap;
 
     public RoutesExtractor(TrainDiagram diagram) {
         routeMap = new HashMap<Line, Route>();
@@ -118,7 +118,7 @@ public class RoutesExtractor {
             List<NetPartRouteInfo> infos = new LinkedList<NetPartRouteInfo>();
             // get ratio ...
             TrainDiagram diagram = ((Node) routes.iterator().next().getSegments().get(0)).getTrainDiagram();
-            Double ratio = (Double) diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             if (ratio == null)
                 ratio = 1.0;
             for (Route route : routes) {

@@ -210,10 +210,10 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         int newCount = 0, newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
         if (diagram != null && type != null) {
             newCount = diagram.getCycles(type.getName()).size();
-            Integer value = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
+            Integer value = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
             if (value != null)
                 newLowerLimit = value.intValue();
-            value = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            value = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
             if (value != null)
                 newUpperLimit = value.intValue();
         }

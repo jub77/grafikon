@@ -131,8 +131,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     }
 
     @Override
-    public Object getAttribute(String key) {
-        return this.attributes.get(key);
+    public <T> T getAttribute(String key, Class<T> clazz) {
+        return this.attributes.get(key, clazz);
     }
 
     @Override

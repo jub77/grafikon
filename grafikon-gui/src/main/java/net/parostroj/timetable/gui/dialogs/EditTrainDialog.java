@@ -75,19 +75,19 @@ public class EditTrainDialog extends javax.swing.JDialog {
             typeComboBox.setModel(new DefaultComboBoxModel(train.getTrainDiagram().getTrainTypes().toArray()));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
-            dieselCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_DIESEL));
-            electricCheckBox.setSelected((Boolean) train.getAttribute(Train.ATTR_ELECTRIC));
+            dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
+            electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
             managedFreightCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT));
-            showLengthCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH)));
-            emptyCheckBox.setSelected(Boolean.TRUE.equals(train.getAttribute(Train.ATTR_EMPTY)));
+            showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
+            emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
 
             numberTextField.setText(train.getNumber());
 
             descriptionTextField.setText(train.getDescription());
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
-            Integer weight = (Integer) train.getAttribute(Train.ATTR_WEIGHT);
+            Integer weight = train.getAttribute(Train.ATTR_WEIGHT, Integer.class);
             weightTextField.setText(weight != null ? weight.toString() : "");
-            routeEditBox.setTemplate((TextTemplate) train.getAttribute(Train.ATTR_ROUTE));
+            routeEditBox.setTemplate(train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class));
 
             fromNodeButton.setText(train.getFirstInterval().getOwnerAsNode().getName());
             toNodeButton.setText(train.getLastInterval().getOwnerAsNode().getName());
@@ -464,12 +464,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // set values to train ...
         TrainType type = (TrainType) typeComboBox.getSelectedItem();
         train.setType(type != CreateTrainView.NO_TYPE ? type : null);
-        if (!train.getAttribute(Train.ATTR_DIESEL).equals(dieselCheckBox.isSelected())) {
-            train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
-        }
-        if (!train.getAttribute(Train.ATTR_ELECTRIC).equals(electricCheckBox.isSelected())) {
-            train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
-        }
+        train.setAttribute(Train.ATTR_DIESEL, dieselCheckBox.isSelected());
+        train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_EMPTY, emptyCheckBox.isSelected());
         if (!numberTextField.getText().equals(train.getNumber())) {
@@ -482,7 +478,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
 
         // weight
-        Integer oldWI = (Integer) train.getAttribute(Train.ATTR_WEIGHT);
+        Integer oldWI = train.getAttribute(Train.ATTR_WEIGHT, Integer.class);
         Integer newWI = null;
         try {
             String weightStr = weightTextField.getText().trim();

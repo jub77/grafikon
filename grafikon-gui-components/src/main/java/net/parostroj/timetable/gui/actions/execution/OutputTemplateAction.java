@@ -145,10 +145,10 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     }
 
     private void generateOutput(OutputTemplate template) throws OutputException {
-        String type = (String) template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE);
+        String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
         OutputFactory factory = OutputFactory.newInstance("groovy");
         Output output = factory.createOutput(type);
-        TextTemplate textTemplate = template.getAttribute(OutputTemplate.ATTR_DEFAULT_TEMPLATE) == Boolean.TRUE ? null : template.getTemplate();
+        TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
         List<OutputSetting> outputNames = this.createOutputs(template);
         if (outputNames == null) {
             this.generateOutput(

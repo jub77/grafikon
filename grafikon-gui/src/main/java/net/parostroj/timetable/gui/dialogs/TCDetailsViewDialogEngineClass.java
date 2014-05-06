@@ -30,7 +30,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
     public void updateValues(TCDelegate delegate, TrainDiagram diagram) {
         this.delegate = delegate;
         TrainsCycle cycle = delegate.getSelectedCycle();
-        EngineClass clazz = (EngineClass) cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
+        EngineClass clazz = cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
         this.nameTextField.setText(cycle.getName());
         this.descTextField.setText(cycle.getDescription());
         this.engineClassComboBox.removeAllItems();
@@ -149,7 +149,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
             cycle.removeAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
         } else {
             EngineClass eClass = (EngineClass) engineClassComboBox.getSelectedItem();
-            if (eClass != cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS)) {
+            if (eClass != cycle.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class)) {
                 cycle.setAttribute(TrainsCycle.ATTR_ENGINE_CLASS, eClass);
             }
         }

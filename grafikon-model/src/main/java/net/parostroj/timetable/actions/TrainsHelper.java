@@ -33,7 +33,7 @@ public class TrainsHelper {
         if (interval.isNodeOwner()) {
             Node node = interval.getOwnerAsNode();
             if (shouldCheckLength(node, interval.getTrain(), interval) && interval.isStop()) {
-                length = (Integer) node.getAttribute(Node.ATTR_LENGTH);
+                length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
                 length = convertLength(node.getTrainDiagram(), length);
             }
         } else {
@@ -81,7 +81,7 @@ public class TrainsHelper {
      * @return weight
      */
     public static Integer getWeightFromAttribute(Train train) {
-        return (Integer) train.getAttribute(Train.ATTR_WEIGHT);
+        return train.getAttribute(Train.ATTR_WEIGHT, Integer.class);
     }
 
     /**
@@ -93,7 +93,7 @@ public class TrainsHelper {
      */
     public static Integer getWeightFromInfoAttribute(Train train) {
         Integer weight = null;
-        String weightStr = (String) train.getAttribute("weight.info");
+        String weightStr = train.getAttribute("weight.info", String.class);
         // try to convert weight string to number
         if (weightStr != null) {
             try {
@@ -155,10 +155,10 @@ public class TrainsHelper {
     public static Integer convertLength(TrainDiagram diagram, Integer length) {
         if (length == null)
             return null;
-        LengthUnit lengthUnit = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+        LengthUnit lengthUnit = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
         if (lengthUnit == LengthUnit.AXLE) {
-            Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
-            Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+            Integer lpa = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, Integer.class);
+            Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
             length = (length * scale.getRatio()) / lpa;
         } else if (lengthUnit != null) {
             BigDecimal converted = lengthUnit.convertFrom(new BigDecimal(length), LengthUnit.MM);
@@ -185,10 +185,10 @@ public class TrainsHelper {
             return null;
         // weight in kg
         TrainDiagram diagram = train.getTrainDiagram();
-        Integer wpa = Boolean.TRUE.equals(train.getAttribute(Train.ATTR_EMPTY)) ?
-            (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY) :
-            (Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE);
-        LengthUnit lu = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+        Integer wpa = train.getAttributes().getBool(Train.ATTR_EMPTY) ?
+            diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, Integer.class) :
+            diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, Integer.class);
+        LengthUnit lu = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
         // length in mm
         double axles = (double) (weight * 1000) / wpa;
         Integer result = null;
@@ -196,8 +196,8 @@ public class TrainsHelper {
             // number of axles should be an even number
             result = (int) axles;
         } else {
-            Integer lpa = (Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE);
-            Scale scale = (Scale) diagram.getAttribute(TrainDiagram.ATTR_SCALE);
+            Integer lpa = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, Integer.class);
+            Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
             // length in mm
             result = (int)(axles * lpa);
             // adjust by scale
@@ -312,7 +312,7 @@ public class TrainsHelper {
      * @return cycle item
      */
     public static EngineClass getEngineClass(TrainsCycleItem item) {
-        return (EngineClass) item.getCycle().getAttribute(TrainsCycle.ATTR_ENGINE_CLASS);
+        return item.getCycle().getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
     }
 
     /**
@@ -460,7 +460,7 @@ public class TrainsHelper {
      * @return if the length should be taken into account
      */
     public static boolean shouldCheckLength(Node node, Train train, TimeInterval interval) {
-        boolean ignore = Boolean.TRUE.equals(interval.getAttribute(TimeInterval.ATTR_IGNORE_LENGTH));
+        boolean ignore = interval.getAttributes().getBool(TimeInterval.ATTR_IGNORE_LENGTH);
         TrainType type = train.getType();
         return (node.getType().isStation() || (node.getType().isStop() && (type != null && type.isPlatform()))) && !ignore;
     }

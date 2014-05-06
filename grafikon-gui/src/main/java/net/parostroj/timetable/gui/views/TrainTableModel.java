@@ -162,7 +162,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             // comment
             case COMMENT:
-                retValue = interval.getAttribute(TimeInterval.ATTR_COMMENT);
+                retValue = interval.getAttribute(TimeInterval.ATTR_COMMENT, Object.class);
                 break;
             case OCCUPIED_ENTRY:
                 retValue = interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED);
@@ -194,7 +194,7 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case SET_SPEED:
                 // train speed
-                retValue = interval.getAttribute(TimeInterval.ATTR_SET_SPEED);
+                retValue = interval.getAttribute(TimeInterval.ATTR_SET_SPEED, Object.class);
                 break;
             case IGNORE_LENGTH:
                 // ignore station length

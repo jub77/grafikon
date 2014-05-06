@@ -102,8 +102,8 @@ public class SettingsDialog extends javax.swing.JDialog {
     private void updateValues() {
         if (diagram != null) {
             // set original values ...
-            scaleComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_SCALE));
-            ratioComboBox.setSelectedItem(((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).toString());
+            scaleComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_SCALE, Object.class));
+            ratioComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).toString());
 
             // sorting
             TrainsData trainsData = diagram.getTrainsData();
@@ -114,7 +114,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             nameTemplateEditBox.setTemplate(trainsData.getTrainNameTemplate());
 
             // set crossing time in minutes
-            Integer transferTime = (Integer)diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME);
+            Integer transferTime = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
             if (transferTime != null) {
                 stationTransferTextField.setText(transferTime.toString());
             } else {
@@ -129,20 +129,20 @@ public class SettingsDialog extends javax.swing.JDialog {
             scriptEditBox.setScript(trainsData.getRunningTimeScript());
 
             // route length
-            Double routeLengthRatio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            Double routeLengthRatio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             rlRatioTextField.setText(routeLengthRatio != null ? routeLengthRatio.toString() : "");
-            String routeLengthUnit = (String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
+            String routeLengthUnit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class);
             rlUnitTextField.setText(routeLengthUnit != null ? routeLengthUnit : "");
 
             // weight -> length conversion
-            loadedWeightEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE)), WeightUnit.KG);
-            emptyWeightEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY)), WeightUnit.KG);
-            lengthPerAxleEditBox.setValueInUnit(new BigDecimal((Integer) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE)), LengthUnit.MM);
-            lengthUnitComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT));
+            loadedWeightEditBox.setValueInUnit(new BigDecimal(diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, Integer.class)), WeightUnit.KG);
+            emptyWeightEditBox.setValueInUnit(new BigDecimal(diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, Integer.class)), WeightUnit.KG);
+            lengthPerAxleEditBox.setValueInUnit(new BigDecimal(diagram.getAttribute(TrainDiagram.ATTR_LENGTH_PER_AXLE, Integer.class)), LengthUnit.MM);
+            lengthUnitComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, Object.class));
 
             // time range
-            Integer fromTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
-            Integer toTime = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            Integer fromTime = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
+            Integer toTime = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
             this.setTimeRange(fromTime, toTime);
 
             LengthUnit lUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class);
@@ -573,11 +573,11 @@ public class SettingsDialog extends javax.swing.JDialog {
             LOG.debug("Cannot covert ratio.", ex);
             return;
         }
-        if (s != null && !s.equals(diagram.getAttribute(TrainDiagram.ATTR_SCALE))) {
+        if (s != null && !s.equals(diagram.getAttribute(TrainDiagram.ATTR_SCALE, Object.class))) {
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, s);
             recalculateUpate = true;
         }
-        if (sp != ((Double)diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE)).doubleValue()) {
+        if (sp != diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue()) {
             diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, sp);
             recalculateUpate = true;
         }
@@ -612,7 +612,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         // set transfer time
         try {
             Integer difference = Integer.valueOf(stationTransferTextField.getText());
-            if (difference != null && !difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME)))
+            if (difference != null && !difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Object.class)))
                 diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, difference);
         } catch (NumberFormatException e) {
             LOG.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
@@ -647,7 +647,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         BigDecimal wpae = emptyWeightEditBox.getValueInUnit(WeightUnit.KG);
         BigDecimal lpa = lengthPerAxleEditBox.getValueInUnit(LengthUnit.MM);
         LengthUnit lu = (LengthUnit) lengthUnitComboBox.getSelectedItem();
-        if (lu != diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT))
+        if (lu != diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class))
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, lu);
         this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE, wpa);
         this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, wpae);
@@ -685,7 +685,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private void setAttributeBDtoInt(String attr, BigDecimal value) {
         try {
             Integer cValue = UnitUtil.convert(value);
-            if (!cValue.equals(diagram.getAttribute(attr)))
+            if (!cValue.equals(diagram.getAttribute(attr, Object.class)))
                 diagram.setAttribute(attr, cValue);
         } catch (ArithmeticException e) {
             LOG.warn("Cannot convert {} attribute to int: {}", attr, e.getMessage());

@@ -75,7 +75,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
         textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
         extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class) : null);
-        outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE));
+        outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, Object.class));
         scriptCheckBox.setSelected(isScript);
         scriptButton.setEnabled(isScript);
         extensionTextField.setEnabled(!isScript);

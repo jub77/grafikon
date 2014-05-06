@@ -338,8 +338,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     @Override
-    public Object getAttribute(String key) {
-        return attributes.get(key);
+    public <T> T getAttribute(String key, Class<T> clazz) {
+        return attributes.get(key, clazz);
     }
 
     @Override

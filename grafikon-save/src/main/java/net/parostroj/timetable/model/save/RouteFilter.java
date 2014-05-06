@@ -19,7 +19,7 @@ public class RouteFilter implements TrainDiagramFilter {
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
         for (Train train : diagram.getTrains()) {
-            String routeInfo = (String) train.getAttribute("route.info");
+            String routeInfo = train.getAttribute("route.info", String.class);
             if (routeInfo != null)
                 routeInfo = routeInfo.trim();
             if (routeInfo != null && !"".equals(routeInfo)) {

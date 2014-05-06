@@ -413,8 +413,8 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
             settings.remove(Key.START_TIME);
             settings.remove(Key.END_TIME);
         } else {
-            Integer from = (Integer) diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME);
-            Integer to = (Integer) diagram.getAttribute(TrainDiagram.ATTR_TO_TIME);
+            Integer from = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
+            Integer to = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
             if (from != null)
                 settings.set(Key.START_TIME, from);
             else

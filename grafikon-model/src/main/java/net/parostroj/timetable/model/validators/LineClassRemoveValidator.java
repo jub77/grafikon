@@ -28,10 +28,10 @@ public class LineClassRemoveValidator implements TrainDiagramValidator {
             }
             // remove line class from lines
             for (Line line : diagram.getNet().getLines()) {
-                if (line.getAttribute(Line.ATTR_CLASS) == lineClass) {
+                if (line.getAttribute(Line.ATTR_CLASS, LineClass.class) == lineClass) {
                     line.removeAttribute(Line.ATTR_CLASS);
                 }
-                if (line.getAttribute(Line.ATTR_CLASS_BACK) == lineClass) {
+                if (line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class) == lineClass) {
                     line.removeAttribute(Line.ATTR_CLASS_BACK);
                 }
             }

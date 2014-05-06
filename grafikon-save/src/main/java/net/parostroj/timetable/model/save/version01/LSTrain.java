@@ -41,10 +41,10 @@ public class LSTrain {
         }
         name = train.getNumber();
         description = train.getDescription();
-        electric = (Boolean) train.getAttribute(Train.ATTR_ELECTRIC);
-        diesel = (Boolean) train.getAttribute(Train.ATTR_DIESEL);
-        routeInfo = (String) train.getAttribute("route.info");
-        weightInfo = (String) train.getAttribute("weight.info");
+        electric = train.getAttribute(Train.ATTR_ELECTRIC, Boolean.class);
+        diesel = train.getAttribute(Train.ATTR_DIESEL, Boolean.class);
+        routeInfo = train.getAttribute("route.info", String.class);
+        weightInfo = train.getAttribute("weight.info", String.class);
     }
 
     /**

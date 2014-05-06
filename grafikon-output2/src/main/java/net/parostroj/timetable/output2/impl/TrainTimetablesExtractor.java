@@ -53,15 +53,15 @@ public class TrainTimetablesExtractor {
         timetables.setRoutes(RoutesExtractor.convert(routes));
 
         // route length unit
-        String unit = (String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT);
+        String unit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class);
         if (unit != null && !"".equals(unit))
             timetables.setRouteLengthUnit(unit);
 
         // route info (lower priority)
-        timetables.setRouteNumbers((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS));
-        timetables.setRouteStations((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES));
+        timetables.setRouteNumbers(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class));
+        timetables.setRouteStations(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NODES, String.class));
         // validity
-        timetables.setValidity((String)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY));
+        timetables.setValidity(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_VALIDITY, String.class));
 
         // cycle
         if (cycle != null) {
@@ -88,17 +88,20 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractDieselElectric(Train train, TrainTimetable timetable) {
-        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_DIESEL)))
+        if (train.getAttributes().getBool(Train.ATTR_DIESEL)) {
             timetable.setDiesel(true);
-        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_ELECTRIC)))
+        }
+        if (train.getAttributes().getBool(Train.ATTR_ELECTRIC)) {
             timetable.setElectric(true);
+        }
     }
 
     private void extractRouteInfo(Train train, TrainTimetable timetable) {
-        if (train.getAttribute(Train.ATTR_ROUTE) == null) {
+        TextTemplate routeTemplate = train.getAttribute(Train.ATTR_ROUTE, TextTemplate.class);
+        if (routeTemplate == null) {
             return;
         }
-        String result = ((TextTemplate) train.getAttribute(Train.ATTR_ROUTE)).evaluate(train);
+        String result = routeTemplate.evaluate(train);
         timetable.setRouteInfo(new LinkedList<RouteInfoPart>());
         // split
         String[] splitted = result.split("-");
@@ -109,12 +112,12 @@ public class TrainTimetablesExtractor {
     }
 
     private void extractLengthData(Train train, TrainTimetable timetable) {
-        if (Boolean.TRUE.equals(train.getAttribute(Train.ATTR_SHOW_STATION_LENGTH))) {
+        if (train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH)) {
             // compute maximal length
             Pair<Node, Integer> length = TrainsHelper.getNextLength(train.getStartNode(), train, TrainsHelper.NextType.LAST_STATION);
             if (length != null && length.second != null) {
                 // get length unit
-                LengthUnit lengthUnitObj = (LengthUnit) diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT);
+                LengthUnit lengthUnitObj = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
                 LengthData data = new LengthData();
                 data.setLength(length.second);
                 data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
@@ -139,10 +142,12 @@ public class TrainTimetablesExtractor {
 
             TrainTimetableRow row = new TrainTimetableRow();
 
-            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_CONTROL_STATION)))
+            if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_CONTROL_STATION)) {
                 row.setControlStation(true);
-            if (Node.IP_NEW_SIGNALS.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_INTERLOCKING_PLANT)))
+            }
+            if (Node.IP_NEW_SIGNALS.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class))) {
                 row.setLightSignals(true);
+            }
             row.setStation(nodeI.getOwnerAsNode().getName());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
             if (!nodeI.isFirst())
@@ -152,27 +157,28 @@ public class TrainTimetablesExtractor {
             if (lineI != null) {
                 row.setSpeed(lineI.getSpeed());
                 row.setLineTracks(lineI.getOwnerAsLine().getTracks().size());
-                row.setSetSpeed((Integer) lineI.getAttribute(TimeInterval.ATTR_SET_SPEED));
+                row.setSetSpeed(lineI.getAttribute(TimeInterval.ATTR_SET_SPEED, Integer.class));
             }
 
             // comment
-            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_COMMENT_SHOWN))) {
-                String comment = (String)nodeI.getAttribute(TimeInterval.ATTR_COMMENT);
-                if (comment != null && !comment.trim().equals(""))
+            if (nodeI.getAttributes().getBool(TimeInterval.ATTR_COMMENT_SHOWN)) {
+                String comment = nodeI.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
+                if (comment != null && !comment.trim().equals("")) {
                     row.setComment(comment);
+                }
             }
             // check line end
             if (nodeI.isLast() || nodeI.isInnerStop()) {
-                if (Boolean.TRUE.equals(nodeI.getTrack().getAttribute(Track.ATTR_LINE_END))) {
+                if (nodeI.getTrack().getAttributes().getBool(Track.ATTR_LINE_END)) {
                     row.setLineEnd(Boolean.TRUE);
                 }
             }
             // check occupied track
-            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_OCCUPIED))) {
+            if (nodeI.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED)) {
                 row.setOccupied(Boolean.TRUE);
             }
             // check shunt
-            if (Boolean.TRUE.equals(nodeI.getAttribute(TimeInterval.ATTR_SHUNT))) {
+            if (nodeI.getAttributes().getBool(TimeInterval.ATTR_SHUNT)) {
                 row.setShunt(Boolean.TRUE);
             }
 
@@ -185,7 +191,7 @@ public class TrainTimetablesExtractor {
 
             if (lastLineI != null && lastLineI.getToStraightTrack() != null)
                 row.setStraight(lastLineI.getToStraightTrack() == nodeI.getTrack());
-            if (Boolean.TRUE.equals(nodeI.getOwnerAsNode().getAttribute(Node.ATTR_TRAPEZOID_SIGN))) {
+            if (nodeI.getOwnerAsNode().getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN)) {
                 Pair<Boolean, List<String>> trapezoidTrains = this.getTrapezoidTrains(nodeI);
                 if (trapezoidTrains != null) {
                     row.setTrapezoidTrains(trapezoidTrains.second);
@@ -235,7 +241,7 @@ public class TrainTimetablesExtractor {
         // get all lines for node
         boolean check = true;
         for (Line line : diagram.getNet().getLinesOf(node)) {
-            check = check && Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED));
+            check = check && Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class));
         }
         return check;
     }
@@ -329,7 +335,7 @@ public class TrainTimetablesExtractor {
                 else if (seg.asLine() != null)
                     length += seg.asLine().getLength();
             }
-            Double ratio = (Double)diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO);
+            Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             if (ratio == null)
                 ratio = 1.0;
             return ratio * length;

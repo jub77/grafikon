@@ -17,8 +17,8 @@ import net.parostroj.timetable.utils.TransformUtil;
  */
 public class EngineCyclesExtractor {
 
-    private List<TrainsCycle> cycles;
-    private AttributesExtractor attributesExtractor = new AttributesExtractor();
+    private final List<TrainsCycle> cycles;
+    private final AttributesExtractor attributesExtractor = new AttributesExtractor();
 
     public EngineCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
@@ -60,7 +60,7 @@ public class EngineCyclesExtractor {
         if (previous != null) {
             int time = current.getStartTime() - previous.getEndTime();
             // recalculate to real seconds
-            Double timeScale = (Double)current.getTrain().getTrainDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE);
+            Double timeScale = current.getTrain().getTrainDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
             time = (int)Math.round((1.0d / timeScale) * time);
             row.setWait(time);
         }
