@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Graphics2D;
 
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.Track;
 
 public interface GTDraw {
 
@@ -21,4 +23,8 @@ public interface GTDraw {
     float getFontSize();
 
     void changed(Change change, Object object);
+
+    int getX(int time);
+
+    int getY(Node node, Track track);
 }
