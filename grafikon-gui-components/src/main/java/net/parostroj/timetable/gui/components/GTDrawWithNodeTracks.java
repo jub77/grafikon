@@ -199,7 +199,12 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     @Override
     public int getY(Node node, Track track) {
-        Integer position = trackPositions.get(track);
+        Integer position = null;
+        if (track != null) {
+            position = trackPositions.get(track);
+        } else {
+            position = positions.get(node);
+        }
         return position != null ? start.y + position : -1;
     }
 
