@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Graphics2D;
 
+import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.Track;
 
 public abstract class GTDrawDecorator implements GTDraw {
 
@@ -44,5 +46,15 @@ public abstract class GTDrawDecorator implements GTDraw {
     @Override
     public void changed(Change change, Object object) {
         draw.changed(change, object);
+    }
+
+    @Override
+    public int getX(int time) {
+        return draw.getX(time);
+    }
+
+    @Override
+    public int getY(Node node, Track track) {
+        return draw.getY(node, track);
     }
 }
