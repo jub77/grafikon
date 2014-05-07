@@ -383,6 +383,11 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         this.drawFactory = drawFactory;
     }
 
+    /**
+     * sets route and refreshes view.
+     *
+     * @param route route to be set
+     */
     public void setRoute(Route route) {
         if (this.route == route)
             return;
@@ -392,6 +397,13 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         if (rsListener != null) {
             rsListener.routeSelected(route);
         }
+    }
+
+    /**
+     * refreshes gt draw and repaints view.
+     */
+    public void refresh() {
+        this.recreateDraw();
     }
 
     /**
@@ -433,7 +445,9 @@ public class GraphicalTimetableView extends javax.swing.JPanel implements Scroll
         } else {
             trainRegionCollector.clear();
             GTViewSettings config = this.getSettings();
-            config.set(GTViewSettings.Key.SIZE, this.getSize());
+            if (!config.contains(GTViewSettings.Key.SIZE)) {
+                config.set(GTViewSettings.Key.SIZE, this.getSize());
+            }
             draw = drawFactory.createInstance(config, drawnRoute, gtStorage);
         }
         this.repaint();

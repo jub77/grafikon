@@ -79,6 +79,10 @@ public class GTViewSettings {
         return preferences.remove(key);
     }
 
+    public boolean contains(Key key) {
+        return preferences.containsKey(key);
+    }
+
     public GTViewSettings merge(GTViewSettings merged) {
         for (Map.Entry<Key, Object> pair : merged.preferences.entrySet()) {
             preferences.put(pair.getKey(), pair.getValue());
