@@ -14,6 +14,7 @@ import net.parostroj.timetable.utils.Tuple;
 public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private static final Color CONNECTION_COLOR = Color.RED;
+    private static final float CONNECTION_STROKE_WIDTH = 1.5f;
 
     public interface Highlight {
         FNConnection getSelected();
@@ -21,7 +22,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         Color getColor();
     }
 
-    private GTDrawBase drawBase;
+    private final GTDraw draw;
     private final RegionCollector<FNConnection> collector;
     private final Highlight highlight;
     private final List<Rectangle> written;
@@ -29,19 +30,18 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private final int arrow;
     private final int lineExtend;
 
+    private final Stroke connectionStroke;
+
     public ManagedFreightGTDraw(GTViewSettings config, GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
         super(draw);
         this.written = new ArrayList<Rectangle>();
         this.collector = collector;
         this.highlight = highlight;
-        if (draw instanceof GTDrawBase) {
-            drawBase = (GTDrawBase) draw;
-        } else {
-            throw new IllegalArgumentException("Has to be instance of base gt draw.");
-        }
+        this.draw = draw;
         Float zoom = config.get(Key.ZOOM, Float.class);
         arrow = (int) (zoom * 5);
         lineExtend = (int) (zoom * 16);
+        connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);
     }
 
     @Override
@@ -50,20 +50,19 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         super.draw(g);
         // draw managed trains ...
         this.written.clear();
-        g.setStroke(drawBase.getTrainStroke());
+        g.setStroke(connectionStroke);
 
-        Route route = drawBase.getRoute();
+        Route route = draw.getRoute();
         RouteSegment fSegment = route.getSegments().get(0);
         FreightNet net = fSegment.asNode().getTrainDiagram().getFreightNet();
 
         Collection<FNConnection> connections = net.getConnections();
-        drawBase.init(g);
         if (collector != null) {
             collector.clear();
         }
         g.setColor(Color.magenta);
         for (FNConnection conn : connections) {
-            if (drawBase.positions.containsKey(conn.getFrom().getOwnerAsNode())) {
+            if (draw.getY(conn.getFrom().getOwnerAsNode(), null) != -1) {
                 if (highlight != null) {
                     if (conn == highlight.getSelected()) {
                         g.setColor(highlight.getColor());
@@ -149,9 +148,9 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         Node node = conn.getFrom().getOwnerAsNode();
         List<NodeTrack> tracks = node.getTracks();
         NodeTrack track = dir > 0 ? node.getTracks().get(0) : tracks.get(tracks.size() - 1);
-        int y = drawBase.getY(node, track);
-        int x1 = drawBase.getX((conn.getFrom().getStart() + conn.getFrom().getEnd()) / 2);
-        int x2 = drawBase.getX((conn.getTo().getStart() + conn.getTo().getEnd()) / 2);
+        int y = draw.getY(node, track);
+        int x1 = draw.getX((conn.getFrom().getStart() + conn.getFrom().getEnd()) / 2);
+        int x2 = draw.getX((conn.getTo().getStart() + conn.getTo().getEnd()) / 2);
 
         return new Tuple<Point>(
                 new Point(x1, y),
