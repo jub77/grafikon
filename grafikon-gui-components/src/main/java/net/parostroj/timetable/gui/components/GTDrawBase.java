@@ -484,7 +484,7 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     public int getX(int time) {
-        int x = (int)(start.x + (time - startTime) * timeStep);
+        int x = start != null ? (int)(start.x + (time - startTime) * timeStep) : -1;
         return x;
     }
 
