@@ -11,14 +11,12 @@ import com.google.common.collect.Multimap;
 public class RegionCollectorAdapter<T> extends RegionCollector<T> {
 
     protected Multimap<T, Shape> regions = LinkedListMultimap.create();
-    protected int radius;
 
-    public RegionCollectorAdapter(int radius) {
-        this.radius = radius;
+    public RegionCollectorAdapter() {
     }
 
     @Override
-    protected List<T> getItemsForPoint(int x, int y) {
+    protected List<T> getItemsForPoint(int x, int y, int radius) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
         List<T> list = new LinkedList<T>();
         for (T region : regions.keySet()) {

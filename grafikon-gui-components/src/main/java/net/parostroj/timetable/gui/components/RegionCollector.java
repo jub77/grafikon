@@ -15,11 +15,11 @@ public abstract class RegionCollector<T> {
         this.selector = selector;
     }
 
-    protected abstract List<T> getItemsForPoint(int x, int y);
+    protected abstract List<T> getItemsForPoint(int x, int y, int radius);
 
-    public void selectItems(int x, int y) {
+    public void selectItems(int x, int y, int radius) {
         if (this.selector != null) {
-            this.selector.regionsSelected(this.getItemsForPoint(x, y));
+            this.selector.regionsSelected(this.getItemsForPoint(x, y, radius));
         }
     }
 
