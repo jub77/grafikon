@@ -24,14 +24,10 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
     private Set<Train> modifiedTrains;
 
-    // sensitivity radius
-    private final int radius;
-
-    public TrainRegionCollector(int radius) {
+    public TrainRegionCollector() {
         regions = LinkedListMultimap.create();
         collected = false;
         modifiedTrains = new HashSet<Train>();
-        this.radius = radius;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     }
 
     @Override
-    public List<TimeInterval> getItemsForPoint(int x, int y) {
+    public List<TimeInterval> getItemsForPoint(int x, int y, int radius) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
         List<TimeInterval> list = new LinkedList<TimeInterval>();
         for (Train train : regions.keySet()) {

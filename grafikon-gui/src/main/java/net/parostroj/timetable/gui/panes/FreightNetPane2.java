@@ -143,7 +143,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         graphicalTimetableView = new net.parostroj.timetable.gui.components.GraphicalTimetableViewWithSave();
         selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory(selector));
-        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>(5);
+        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>();
         collector.setSelector(selector);
         graphicalTimetableView.addRegionCollector(FNConnection.class, collector);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
