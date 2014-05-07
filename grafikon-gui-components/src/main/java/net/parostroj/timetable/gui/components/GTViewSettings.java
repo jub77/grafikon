@@ -37,7 +37,9 @@ public class GTViewSettings {
         END_TIME(Integer.class),
         IGNORE_TIME_LIMITS(Boolean.class),
         DISABLE_STATION_NAMES(Boolean.class),
-        ZOOM(Float.class);
+        ZOOM(Float.class),
+        START_TIME_OVERRIDE(Integer.class),
+        END_TIME_OVERRIDE(Integer.class);
 
         private Class<?> valueClass;
 
@@ -64,6 +66,15 @@ public class GTViewSettings {
         if (value != null && !key.getValueClass().isInstance(value))
             throw new IllegalArgumentException("Wrong class of parameter.");
         preferences.put(key, value);
+        return this;
+    }
+
+    public GTViewSettings setRemove(Key key, Object value) {
+        if (value == null) {
+            this.remove(key);
+        } else {
+            this.set(key, value);
+        }
         return this;
     }
 
