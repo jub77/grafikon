@@ -277,14 +277,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         } else {
             Integer from = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
             Integer to = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
-            if (from != null)
-                settings.set(Key.START_TIME, from);
-            else
-                settings.remove(Key.START_TIME);
-            if (to != null)
-                settings.set(Key.END_TIME, to);
-            else
-                settings.remove(Key.END_TIME);
+            settings.setRemove(Key.START_TIME, from);
+            settings.setRemove(Key.END_TIME, to);
         }
     }
 
