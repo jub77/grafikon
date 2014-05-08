@@ -231,8 +231,8 @@ public class TimeConverter {
      * @param time time in seconds
      * @return last digit of minutes
      */
-    public String getLastDigitOfMinutes(int time) {
-        return Integer.toString((time / 60) % 10);
+    public int getLastDigitOfMinutes(int time) {
+        return (time / 60) % 10;
     }
 
     /**

@@ -174,12 +174,6 @@ abstract public class GTDrawBase implements GTDraw {
         this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
         // time step
         timeStep = (double) size.width / (endTime - startTime);
-
-        // prepare cached minutes
-        this.prepareCached(g);
-    }
-
-    private void prepareCached(Graphics2D g) {
     }
 
     private int computeInitialGapX(Graphics2D g, int gapx) {
@@ -436,14 +430,16 @@ abstract public class GTDrawBase implements GTDraw {
         if (interval.getFrom().getType() != NodeType.SIGNAL) {
             int xp = (int) startP.getX();
             int yp = (int) startP.getY();
-            g.drawString(c.getLastDigitOfMinutes(interval.getStart()), xp, yp);
+            int lastDigit = c.getLastDigitOfMinutes(interval.getStart());
+            g.drawString(Integer.toString(lastDigit), xp, yp);
             if (c.isHalfMinute(interval.getStart()))
             	drawUnderscore(g, xp, yp, dSize.getWidth());
         }
         if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck) {
             int xp = (int) endP.getX();
             int yp = (int) endP.getY();
-            g.drawString(c.getLastDigitOfMinutes(interval.getEnd()), xp, yp);
+            int lastDigit = c.getLastDigitOfMinutes(interval.getEnd());
+            g.drawString(Integer.toString(lastDigit), xp, yp);
             if (c.isHalfMinute(interval.getEnd()))
             	drawUnderscore(g, xp, yp, dSize.getWidth());
         }
