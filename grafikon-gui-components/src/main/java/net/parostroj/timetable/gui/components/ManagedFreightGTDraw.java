@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
@@ -53,36 +52,39 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         g.setStroke(connectionStroke);
 
         Route route = draw.getRoute();
-        RouteSegment fSegment = route.getSegments().get(0);
-        FreightNet net = fSegment.asNode().getTrainDiagram().getFreightNet();
+        Node firstNode = route.getSegments().get(0).asNode();
+        FreightNet net = firstNode.asNode().getTrainDiagram().getFreightNet();
 
-        Collection<FNConnection> connections = net.getConnections();
         if (collector != null) {
             collector.clear();
         }
         g.setColor(Color.magenta);
-        for (FNConnection conn : connections) {
-            if (draw.getY(conn.getFrom().getOwnerAsNode(), null) != -1) {
-                if (highlight != null) {
-                    if (conn == highlight.getSelected()) {
-                        g.setColor(highlight.getColor());
-                    } else {
-                        g.setColor(CONNECTION_COLOR);
-                    }
-                }
-                int dir = conn.getFrom().getOwnerAsNode() == fSegment ? -1 : 1;
-                Tuple<Point> location = getLocation(conn, dir);
-                // name
-                TextLayout layout = new TextLayout(this.createText(conn), g.getFont(), g.getFontRenderContext());
-                Rectangle bounds = layout.getBounds().getBounds();
-                int width = bounds.width;
-                paintText(conn, g, layout, location.first, width, dir);
-                paintText(conn, g, layout, location.second, width, dir);
-                // line
-                paintLine(conn, g, location.first, width, true, dir);
-                paintLine(conn, g, location.second, width, false, dir);
+        for (Node node : route.nodes()) {
+            for (FNConnection conn : net.getConnections(node)) {
+                drawConnection(g, firstNode, conn);
             }
         }
+    }
+
+    private void drawConnection(Graphics2D g, Node firstNode, FNConnection conn) {
+        if (highlight != null) {
+            if (conn == highlight.getSelected()) {
+                g.setColor(highlight.getColor());
+            } else {
+                g.setColor(CONNECTION_COLOR);
+            }
+        }
+        int dir = conn.getFrom().getOwnerAsNode() == firstNode ? -1 : 1;
+        Tuple<Point> location = getLocation(conn, dir);
+        // name
+        TextLayout layout = new TextLayout(this.createText(conn), g.getFont(), g.getFontRenderContext());
+        Rectangle bounds = layout.getBounds().getBounds();
+        int width = bounds.width;
+        paintText(conn, g, layout, location.first, width, dir);
+        paintText(conn, g, layout, location.second, width, dir);
+        // line
+        paintLine(conn, g, location.first, width, true, dir);
+        paintLine(conn, g, location.second, width, false, dir);
     }
 
     private boolean collisions(Rectangle rec) {
