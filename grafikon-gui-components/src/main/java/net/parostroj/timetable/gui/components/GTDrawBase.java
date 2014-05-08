@@ -40,7 +40,7 @@ abstract public class GTDrawBase implements GTDraw {
     // extended display
     private static final float HALF_HOURS_STROKE_EXT_WIDTH = 1.1f;
     private static final float HHSE_DASH_1 = 15f;
-    private static final float HHSE_DAST_2 = 7f;
+    private static final float HHSE_DASH_2 = 7f;
 
     // other
     private static final int MINIMAL_SPACE_WIDTH = 25;
@@ -107,7 +107,7 @@ abstract public class GTDrawBase implements GTDraw {
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
         underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DAST_2 }, 0f);
+                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DASH_2 }, 0f);
         minimalSpace = zoom * MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
     }
