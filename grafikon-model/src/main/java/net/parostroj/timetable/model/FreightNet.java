@@ -25,6 +25,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     private final Multimap<Train, FNConnection> fromMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toMap = HashMultimap.create();
     private final Set<FNConnection> connections = new HashSet<FNConnection>();
+    private final Multimap<Node, FNConnection> nodeMap = HashMultimap.create();
 
     public FreightNet(String id) {
         this.id = id;
@@ -64,8 +65,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return Collections.unmodifiableCollection(connections);
     }
 
+    public Collection<FNConnection> getConnections(Node node) {
+        return Collections.unmodifiableCollection(nodeMap.get(node));
+    }
+
     private void addConnectionImpl(FNConnection conn) {
         connections.add(conn);
+        nodeMap.put(conn.getFrom().getOwnerAsNode(), conn);
         this.addConn(fromMap, conn, conn.getFrom().getTrain());
         this.addConn(toMap, conn, conn.getTo().getTrain());
         this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_ADDED, null, conn));
@@ -74,6 +80,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     private void removeConnectionImpl(FNConnection conn) {
         boolean removed = connections.remove(conn);
         if (removed) {
+            nodeMap.remove(conn.getFrom().getOwnerAsNode(), conn);
             this.removeConn(fromMap, conn, conn.getFrom().getTrain());
             this.removeConn(toMap, conn, conn.getTo().getTrain());
             this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null, conn));

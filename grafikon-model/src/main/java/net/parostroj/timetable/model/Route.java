@@ -12,7 +12,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Route implements ObjectWithId, Visitable {
+public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
 
     /** Route parts. */
     private final List<RouteSegment> segments;
@@ -208,6 +208,11 @@ public class Route implements ObjectWithId, Visitable {
      */
     public Iterable<Node> nodes() {
         return Iterables.filter(segments, Node.class);
+    }
+
+    @Override
+    public Iterator<RouteSegment> iterator() {
+        return segments.iterator();
     }
 
     /**
