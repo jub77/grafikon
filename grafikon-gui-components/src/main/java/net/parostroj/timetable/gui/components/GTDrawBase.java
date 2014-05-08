@@ -80,6 +80,7 @@ abstract public class GTDrawBase implements GTDraw {
     // caching
     private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
+    private final Map<Integer, TextLayout> hoursTexts = new HashMap<Integer, TextLayout>();
 
     public GTDrawBase(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         this.route = route;
@@ -239,9 +240,14 @@ abstract public class GTDrawBase implements GTDraw {
                 if ((i & 1) == 0) {
                     // draw hours
                     g.setColor(Color.black);
-                    String text = Integer.toString(i / 2);
-                    Rectangle2D rr = g.getFont().getStringBounds(text, g.getFontRenderContext());
-                    g.drawString(text, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
+                    Integer h = i / 2;
+                    TextLayout tl = hoursTexts.get(h);
+                    if (tl == null) {
+                        tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
+                        hoursTexts.put(h, tl);
+                    }
+                    Rectangle2D rr = tl.getBounds();
+                    tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
                 }
             }
 
