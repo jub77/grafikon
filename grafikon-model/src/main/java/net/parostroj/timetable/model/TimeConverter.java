@@ -232,7 +232,7 @@ public class TimeConverter {
      * @return last digit of minutes
      */
     public String getLastDigitOfMinutes(int time) {
-    	return Integer.toString(this.getLocalTime(time).getMinuteOfHour() % 10);
+        return Integer.toString((time / 60) % 10);
     }
 
     /**
