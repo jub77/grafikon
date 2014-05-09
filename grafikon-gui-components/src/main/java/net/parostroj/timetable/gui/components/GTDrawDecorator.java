@@ -34,8 +34,8 @@ public abstract class GTDrawDecorator implements GTDraw {
     }
 
     @Override
-    public void setPositionX(int positionX) {
-        draw.setPositionX(positionX);
+    public void setStationNamesPosition(int position) {
+        draw.setStationNamesPosition(position);
     }
 
     @Override

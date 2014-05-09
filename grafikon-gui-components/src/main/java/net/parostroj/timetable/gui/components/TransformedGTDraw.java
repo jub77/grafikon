@@ -45,9 +45,9 @@ public class TransformedGTDraw extends GTDrawDecorator {
             transform.translate(-clipping.x, -clipping.y);
             g.setTransform(transform);
             if (moveStationName) {
-                draw.setPositionX(clipping.x);
+                draw.setStationNamesPosition(clipping.x);
             } else {
-                draw.setPositionX(0);
+                draw.setStationNamesPosition(0);
             }
         }
     }
