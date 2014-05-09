@@ -39,11 +39,6 @@ public abstract class GTDrawDecorator implements GTDraw {
     }
 
     @Override
-    public float getFontSize() {
-        return draw.getFontSize();
-    }
-
-    @Override
     public void changed(Change change, Object object) {
         draw.changed(change, object);
     }

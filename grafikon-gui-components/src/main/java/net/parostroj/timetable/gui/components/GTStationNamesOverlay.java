@@ -24,9 +24,6 @@ public class GTStationNamesOverlay extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (view != null && view.getGtDraw() != null) {
-            // set font size
-            g.setFont(g.getFont().deriveFont(view.getGtDraw().getFontSize()));
-            // draw
             view.getGtDraw().paintStationNames(g2d);
         }
     }

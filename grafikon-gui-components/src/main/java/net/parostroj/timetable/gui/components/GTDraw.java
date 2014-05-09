@@ -20,8 +20,6 @@ public interface GTDraw {
 
     void setPositionX(int positionX);
 
-    float getFontSize();
-
     void changed(Change change, Object object);
 
     int getX(int time);

@@ -309,6 +309,7 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     protected void paintStationNames(Graphics2D g, List<Node> stations, Map<Node, Integer> positions) {
+        g.setFont(g.getFont().deriveFont(fontSize));
         for (Node s : stations) {
             // ignore signals
             if (s.getType() == NodeType.SIGNAL)
@@ -501,11 +502,6 @@ abstract public class GTDrawBase implements GTDraw {
 
     protected boolean isTimeVisible(int time) {
         return startTime <= time && time <= endTime;
-    }
-
-    @Override
-    public float getFontSize() {
-        return fontSize;
     }
 
     @Override
