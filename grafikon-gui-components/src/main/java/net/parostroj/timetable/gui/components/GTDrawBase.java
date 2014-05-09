@@ -62,7 +62,7 @@ abstract public class GTDrawBase implements GTDraw {
     protected int borderX;
     protected int borderY;
     protected Route route;
-    protected int positionX = 0;
+    protected int stationNamesPosition = 0;
     protected HighlightedTrains hTrains;
     private final GTViewSettings.TrainColors colors;
     private final TrainColorChooser trainColorChooser;
@@ -200,8 +200,8 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     @Override
-    public void setPositionX(int positionX) {
-        this.positionX = positionX;
+    public void setStationNamesPosition(int position) {
+        this.stationNamesPosition = position;
     }
 
     protected void paintHours(Graphics2D g) {
@@ -334,7 +334,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
             TextLayout tl = nodeTexts.get(s);
             Rectangle2D r = tl.getBounds();
-            Rectangle2D r2 = new Rectangle2D.Float(this.borderX + positionX, (float) (y + r.getY() - 1 + r.getHeight() / 2),
+            Rectangle2D r2 = new Rectangle2D.Float(this.borderX + stationNamesPosition, (float) (y + r.getY() - 1 + r.getHeight() / 2),
                     (float) (r.getWidth() + 2), (float) (r.getHeight() + 2));
             g.setColor(background);
             g.fill(r2);
