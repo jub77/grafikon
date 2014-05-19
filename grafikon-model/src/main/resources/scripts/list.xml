@@ -30,4 +30,10 @@
         <language>GROOVY</language>
         <location>remove_interval_speed.groovy</location>
     </script>
+    <script>
+        <id>copy_engines_to_engineers</id>
+        <name>Copy engine to engineers circulations</name>
+        <language>GROOVY</language>
+        <location>copy_engines_to_engineers.groovy</location>
+    </script>
 </scripts>
