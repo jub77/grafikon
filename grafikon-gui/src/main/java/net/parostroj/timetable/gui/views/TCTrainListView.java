@@ -13,6 +13,9 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.filters.TrainTypePredicate;
 import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TimeIntervalSelector;
@@ -35,6 +38,7 @@ import net.parostroj.timetable.utils.*;
  */
 public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, TimeIntervalSelector {
 
+    private static final Logger log = LoggerFactory.getLogger(TCTrainListView.class);
     private static final int BUTTON_MARGIN = 1;
 
     private static enum TrainFilter {
@@ -106,6 +110,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 break;
             case REFRESH_TRAIN_NAME:
                 this.updateTrainName(train);
+                break;
+            case NEW_CYCLE:
+                this.updateListAllTrains();
                 break;
             default:
                 // nothing
@@ -409,6 +416,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                         item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval());
                     } else {
                         Tuple<TimeInterval> tuple = t.getFirstUncoveredPart(delegate.getType());
+                        if (tuple == null) {
+                            log.warn("Uncovered part does not exists for {}", t);
+                            continue;
+                        }
                         item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                     }
                     // add to correct place
