@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Action that executes script over diagram.
- * 
+ *
  * @author jub
  */
 public class ScriptAction {
@@ -17,7 +17,7 @@ public class ScriptAction {
     private final String name;
     private final String description;
     private final Script script;
-    private Map<String, Object> binding; 
+    private Map<String, Object> binding;
 
     public ScriptAction(String name, String description, Script script) {
         this.name = name;
@@ -44,7 +44,13 @@ public class ScriptAction {
     public void execute(TrainDiagram diagram) throws GrafikonException {
         script.evaluateWithException(getBinding(diagram));
     }
-    
+
+    public void execute(TrainDiagram diagram, Map<String, Object> binding) throws GrafikonException {
+        Map<String, Object> b = new HashMap<String, Object>(getBinding(diagram));
+        b.putAll(binding);
+        script.evaluateWithException(b);
+    }
+
     private Map<String, Object> getBinding(TrainDiagram diagram) {
         if (binding == null) {
             binding = new HashMap<String, Object>();
