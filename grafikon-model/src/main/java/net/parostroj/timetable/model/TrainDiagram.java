@@ -574,6 +574,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     // -------------------------- creational methods ---------------------------
 
     /**
+     * @return new (not used) id
+     */
+    public String createId() {
+        return IdGenerator.getInstance().getId();
+    }
+
+    /**
      * creates new train.
      *
      * @param id train id
