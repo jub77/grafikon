@@ -209,7 +209,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         new GroovyShell().parse("");
 
         // add predefined scripts
-        for (ScriptDescription sd : PredefinedScriptsLoader.getPredefinedScripts()) {
+        for (ScriptDescription sd : PredefinedScriptsLoader.getScripts()) {
             JMenuItem item = new JMenuItem();
             item.setAction(executeScriptAction);
             item.setText(sd.getLocalizedName());

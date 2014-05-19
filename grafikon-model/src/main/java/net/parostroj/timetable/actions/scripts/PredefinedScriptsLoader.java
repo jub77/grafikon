@@ -1,8 +1,7 @@
 package net.parostroj.timetable.actions.scripts;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,7 +27,7 @@ public class PredefinedScriptsLoader {
 
     private static List<ScriptDescription> list;
 
-    public static synchronized List<ScriptDescription> getPredefinedScripts() {
+    public static synchronized List<ScriptDescription> getScripts() {
         if (list == null) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ScriptList.class);
@@ -55,8 +54,17 @@ public class PredefinedScriptsLoader {
         return desc == null ? null : desc.getScriptAction();
     }
 
+    public Collection<String> getScriptIds() {
+        List<ScriptDescription> scripts = getScripts();
+        List<String> result = new ArrayList<String>(scripts.size());
+        for (ScriptDescription s : scripts) {
+            result.add(s.getId());
+        }
+        return result;
+    }
+
     private static ScriptDescription getById(String id) {
-        for (ScriptDescription desc : getPredefinedScripts()) {
+        for (ScriptDescription desc : getScripts()) {
             if (desc.getId().equals(id))
                 return desc;
         }
