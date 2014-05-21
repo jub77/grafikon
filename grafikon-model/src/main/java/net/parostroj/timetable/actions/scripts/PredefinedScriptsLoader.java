@@ -1,6 +1,5 @@
 package net.parostroj.timetable.actions.scripts;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PredefinedScriptsLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PredefinedScriptsLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(PredefinedScriptsLoader.class);
 
     private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
     private static final String LIST = "list.xml";
@@ -46,11 +45,11 @@ public class PredefinedScriptsLoader {
             try {
                 JAXBContext context = JAXBContext.newInstance(ScriptList.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                InputStream stream = PredefinedScriptsLoader.class.getClassLoader().getResourceAsStream(location + File.separator + LIST);
+                InputStream stream = PredefinedScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
                 ScriptList scriptList = (ScriptList) unmarshaller.unmarshal(stream);
                 list = scriptList.getScripts();
             } catch (JAXBException e) {
-                LOG.error("Error loading list of scripts.", e);
+                log.error("Error loading list of scripts.", e);
             }
             if (list == null)
                 list = Collections.emptyList();
@@ -98,7 +97,7 @@ public class PredefinedScriptsLoader {
         try {
             return Conversions.loadFile(is);
         } catch (Exception e) {
-            LOG.error("Error reading file.", e);
+            log.error("Error reading file.", e);
             return "";
         }
     }
