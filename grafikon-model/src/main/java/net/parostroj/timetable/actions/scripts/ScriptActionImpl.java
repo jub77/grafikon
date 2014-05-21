@@ -22,7 +22,6 @@ class ScriptActionImpl implements ScriptAction {
 
     private final String location;
     private final ScriptDescription desc;
-    private Map<String, Object> binding;
 
     private Script _cachedScript;
 
@@ -65,19 +64,19 @@ class ScriptActionImpl implements ScriptAction {
 
     @Override
     public void execute(TrainDiagram diagram) throws GrafikonException {
-        getScript().evaluateWithException(getBinding(diagram));
+        getScript().evaluateWithException(getBinding(diagram, null));
     }
 
     @Override
     public void execute(TrainDiagram diagram, Map<String, Object> binding) throws GrafikonException {
-        Map<String, Object> b = new HashMap<String, Object>(getBinding(diagram));
-        b.putAll(binding);
+        Map<String, Object> b = new HashMap<String, Object>(getBinding(diagram, binding));
         getScript().evaluateWithException(b);
     }
 
-    private Map<String, Object> getBinding(TrainDiagram diagram) {
-        if (binding == null) {
-            binding = new HashMap<String, Object>();
+    private Map<String, Object> getBinding(TrainDiagram diagram, Map<String, Object> params) {
+        HashMap<String, Object> binding = new HashMap<String, Object>();
+        if (params != null) {
+            binding.putAll(params);
         }
         binding.put("diagram", diagram);
         return  binding;
