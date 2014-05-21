@@ -21,13 +21,10 @@ import org.slf4j.LoggerFactory;
  */
 public class PredefinedScriptsLoader {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(PredefinedScriptsLoader.class);
 
     private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
     private static final String LIST = "list.xml";
-
-    private static final Map<String, PredefinedScriptsLoader> loaders = new HashMap<String, PredefinedScriptsLoader>();
 
     private final String location;
     private List<ScriptDescription> list;
@@ -36,17 +33,12 @@ public class PredefinedScriptsLoader {
         this.location = location;
     }
 
-    public synchronized static PredefinedScriptsLoader getScriptsLoader(String location) {
-        PredefinedScriptsLoader loader = loaders.get(location);
-        if (loader == null) {
-            loader = new PredefinedScriptsLoader(location);
-            loaders.put(location, loader);
-        }
-        return loader;
+    public static PredefinedScriptsLoader newScriptsLoader(String location) {
+        return new PredefinedScriptsLoader(location);
     }
 
-    public static PredefinedScriptsLoader getDefaultScriptsLoader() {
-        return getScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
+    public static PredefinedScriptsLoader newDefaultScriptsLoader() {
+        return newScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
     }
 
     public synchronized List<ScriptDescription> getScripts() {

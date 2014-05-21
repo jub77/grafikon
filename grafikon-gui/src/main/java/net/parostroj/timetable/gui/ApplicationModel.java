@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.ini4j.Ini;
 
+import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
@@ -36,6 +37,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     private Locale outputLocale;
     private ProgramSettings programSettings;
     private LinkedList<File> lastOpenedFiles;
+    private final PredefinedScriptsLoader psLoader;
 
     /**
      * Default constructor.
@@ -49,6 +51,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         outputTemplates = new HashMap<String, File>();
         programSettings = new ProgramSettings();
         lastOpenedFiles = new LinkedList<File>();
+        psLoader = PredefinedScriptsLoader.newDefaultScriptsLoader();
     }
 
     /**
@@ -306,5 +309,9 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     @Override
     public void set(TrainDiagram object) {
         setDiagram(object);
+    }
+
+    public PredefinedScriptsLoader getScriptsLoader() {
+        return psLoader;
     }
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 
-import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -56,7 +55,7 @@ public class ExecuteScriptAction extends AbstractAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                ScriptAction scriptAction = PredefinedScriptsLoader.getDefaultScriptsLoader().getScriptAction(e.getActionCommand());
+                ScriptAction scriptAction = model.getScriptsLoader().getScriptAction(e.getActionCommand());
                 scriptAction.execute(model.getDiagram());
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());

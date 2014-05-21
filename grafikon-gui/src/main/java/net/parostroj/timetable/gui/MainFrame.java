@@ -18,7 +18,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptDescription;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
@@ -209,7 +208,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         new GroovyShell().parse("");
 
         // add predefined scripts
-        for (ScriptDescription sd : PredefinedScriptsLoader.getDefaultScriptsLoader().getScripts()) {
+        for (ScriptDescription sd : model.getScriptsLoader().getScripts()) {
             JMenuItem item = new JMenuItem();
             item.setAction(executeScriptAction);
             item.setText(sd.getLocalizedName());
