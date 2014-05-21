@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scripts>
+    <script>
+        <id>copy_engines_to_engineers_select</id>
+        <name>Copy engine to engineers circulations (selection)</name>
+        <language>GROOVY</language>
+        <location>copy_engines_to_engineers_select.groovy</location>
+    </script>
+</scripts>
