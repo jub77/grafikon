@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * List of scripts.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "scripts")
 class ScriptList {
-    
+
     private List<ScriptDescription> scripts;
-    
+
     @XmlElement(name = "script")
     public List<ScriptDescription> getScripts() {
         return scripts;
