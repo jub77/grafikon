@@ -40,6 +40,7 @@ class ScriptActionImpl implements ScriptAction {
             ResourceBundle bundle = ResourceBundle.getBundle(location + ".names");
             return bundle.getString(getId());
         } catch (Exception e) {
+            // default name in case non-existence of resource for language
             return getName();
         }
     }
