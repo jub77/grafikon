@@ -209,14 +209,23 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // add predefined scripts
         for (ScriptAction sd : model.getScriptsLoader().getScriptActions()) {
-            JMenuItem item = new JMenuItem();
-            item.setAction(executeScriptAction);
-            item.setText(sd.getLocalizedName());
-            item.setActionCommand(sd.getId());
-            scriptsMenu.add(item);
+            addScriptAction(sd, ExecuteScriptAction.MODEL_PREFIX);
+        }
+
+        // add gui scripts
+        for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActions()) {
+            addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX);
         }
 
         statusBar.setModel(model);
+    }
+
+    private void addScriptAction(ScriptAction sd, String type) {
+        JMenuItem item = new JMenuItem();
+        item.setAction(executeScriptAction);
+        item.setText(sd.getLocalizedName());
+        item.setActionCommand(type + sd.getId());
+        scriptsMenu.add(item);
     }
 
     @Override

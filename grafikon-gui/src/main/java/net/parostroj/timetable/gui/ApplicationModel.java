@@ -38,6 +38,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     private ProgramSettings programSettings;
     private LinkedList<File> lastOpenedFiles;
     private final PredefinedScriptsLoader psLoader;
+    private final PredefinedScriptsLoader guiPsLoader;
 
     /**
      * Default constructor.
@@ -52,6 +53,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         programSettings = new ProgramSettings();
         lastOpenedFiles = new LinkedList<File>();
         psLoader = PredefinedScriptsLoader.newDefaultScriptsLoader();
+        guiPsLoader = PredefinedScriptsLoader.newScriptsLoader("gui_scripts");
     }
 
     /**
@@ -313,5 +315,9 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
 
     public PredefinedScriptsLoader getScriptsLoader() {
         return psLoader;
+    }
+
+    public PredefinedScriptsLoader getGuiScriptsLoader() {
+        return guiPsLoader;
     }
 }

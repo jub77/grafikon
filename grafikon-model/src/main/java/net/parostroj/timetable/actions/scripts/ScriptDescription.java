@@ -50,7 +50,6 @@ class ScriptDescription {
             ResourceBundle bundle = ResourceBundle.getBundle(loader.getLocation() + ".names");
             return bundle.getString(getId());
         } catch (Exception e) {
-            LOG.error("Error getting name.", e);
             return getName();
         }
     }

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 
+import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -31,6 +32,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ExecuteScriptAction extends AbstractAction {
 
+    public static final String MODEL_PREFIX = "model.";
+    public static final String GUI_PREFIX = "gui.";
+
     private static final Logger LOG = LoggerFactory.getLogger(ExecuteScriptAction.class);
 
     private final ApplicationModel model;
@@ -45,21 +49,30 @@ public class ExecuteScriptAction extends AbstractAction {
         if (e.getActionCommand() == null || "".equals(e.getActionCommand())) {
             editScriptExecution(e);
         } else {
-            predefinedExecution(e);
+            String id = null;
+            PredefinedScriptsLoader loader = null;
+            if (e.getActionCommand().startsWith(MODEL_PREFIX)) {
+                id = e.getActionCommand().substring(MODEL_PREFIX.length());
+                loader = model.getScriptsLoader();
+            } else {
+                id = e.getActionCommand().substring(GUI_PREFIX.length());
+                loader = model.getGuiScriptsLoader();
+            }
+            predefinedExecution(loader, (Component) e.getSource(), id);
         }
     }
 
-    private void predefinedExecution(ActionEvent e) {
-        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
+    private void predefinedExecution(PredefinedScriptsLoader loader, Component comp, String scriptId) {
+        Component parent = ActionUtils.getTopLevelComponent(comp);
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         long time = System.currentTimeMillis();
         try {
             try {
-                ScriptAction scriptAction = model.getScriptsLoader().getScriptAction(e.getActionCommand());
+                ScriptAction scriptAction = loader.getScriptAction(scriptId);
                 scriptAction.execute(model.getDiagram());
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());
-                LOG.debug("Script {} finished in {}ms", e.getActionCommand(), System.currentTimeMillis() - time);
+                LOG.debug("Script {} finished in {}ms", scriptId, System.currentTimeMillis() - time);
             }
         } catch (GrafikonException ex) {
             LOG.error("Error executing script.", ex);
