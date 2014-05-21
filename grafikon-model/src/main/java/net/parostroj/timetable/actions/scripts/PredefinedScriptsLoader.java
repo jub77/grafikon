@@ -41,7 +41,7 @@ public class PredefinedScriptsLoader {
         return newScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
     }
 
-    public synchronized List<ScriptDescription> getScripts() {
+    synchronized List<ScriptDescription> getScripts() {
         if (list == null) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ScriptList.class);
@@ -66,6 +66,15 @@ public class PredefinedScriptsLoader {
     public ScriptAction getScriptAction(String id) {
         ScriptDescription desc = getById(id);
         return desc == null ? null : desc.getScriptAction(this);
+    }
+
+    public List<ScriptAction> getScriptActions() {
+        List<ScriptDescription> scripts = getScripts();
+        List<ScriptAction> result = new ArrayList<ScriptAction>(scripts.size());
+        for (ScriptDescription script : scripts) {
+            result.add(script.getScriptAction(this));
+        }
+        return result;
     }
 
     public Collection<String> getScriptIds() {
@@ -94,7 +103,7 @@ public class PredefinedScriptsLoader {
         }
     }
 
-    public String getLocation() {
+    String getLocation() {
         return location;
     }
 }

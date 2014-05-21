@@ -14,23 +14,29 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public class ScriptAction {
 
+    private final String id;
     private final String name;
-    private final String description;
+    private final String localizedName;
     private final Script script;
     private Map<String, Object> binding;
 
-    public ScriptAction(String name, String description, Script script) {
+    public ScriptAction(String id, String name, String localizedName, Script script) {
+        this.id = id;
         this.name = name;
-        this.description = description;
         this.script = script;
+        this.localizedName = localizedName;
     }
 
     public ScriptAction(Script script) {
-        this(null, null, script);
+        this(null, null, null, script);
     }
 
-    public String getDescription() {
-        return description;
+    public String getId() {
+        return id;
+    }
+
+    public String getLocalizedName() {
+        return localizedName;
     }
 
     public String getName() {

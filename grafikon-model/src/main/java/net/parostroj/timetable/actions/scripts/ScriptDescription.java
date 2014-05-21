@@ -16,14 +16,13 @@ import net.parostroj.timetable.model.Script.Language;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "language", "location" })
-public class ScriptDescription {
+@XmlType(propOrder = {"id", "name", "language", "location" })
+class ScriptDescription {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScriptDescription.class);
 
     private String id;
     private String name;
-    private String description;
     private Language language;
     private String location;
 
@@ -46,22 +45,14 @@ public class ScriptDescription {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getLocalizedName() {
+    public String getLocalizedName(PredefinedScriptsLoader loader) {
         try {
-            ResourceBundle bundle = ResourceBundle.getBundle("scripts.names");
+            ResourceBundle bundle = ResourceBundle.getBundle(loader.getLocation() + ".names");
             return bundle.getString(getId());
         } catch (Exception e) {
             LOG.error("Error getting name.", e);
             return getName();
         }
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Language getLanguage() {
@@ -95,7 +86,7 @@ public class ScriptDescription {
 
     public ScriptAction getScriptAction(PredefinedScriptsLoader loader) {
         if (_cachedScriptAction == null) {
-            _cachedScriptAction = new ScriptAction(getName(), getDescription(), getScript(loader));
+            _cachedScriptAction = new ScriptAction(getId(), getName(), getLocalizedName(loader), getScript(loader));
         }
         return _cachedScriptAction;
     }
