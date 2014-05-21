@@ -1,14 +1,7 @@
 package net.parostroj.timetable.actions.scripts;
 
-import java.util.ResourceBundle;
-
 import javax.xml.bind.annotation.XmlType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
 
 /**
@@ -19,15 +12,10 @@ import net.parostroj.timetable.model.Script.Language;
 @XmlType(propOrder = {"id", "name", "language", "location" })
 class ScriptDescription {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptDescription.class);
-
     private String id;
     private String name;
     private Language language;
     private String location;
-
-    private Script _cachedScript;
-    private ScriptAction _cachedScriptAction;
 
     public String getId() {
         return id;
@@ -45,15 +33,6 @@ class ScriptDescription {
         this.name = name;
     }
 
-    public String getLocalizedName(PredefinedScriptsLoader loader) {
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle(loader.getLocation() + ".names");
-            return bundle.getString(getId());
-        } catch (Exception e) {
-            return getName();
-        }
-    }
-
     public Language getLanguage() {
         return language;
     }
@@ -68,25 +47,5 @@ class ScriptDescription {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public Script getScript(PredefinedScriptsLoader loader) {
-        if (_cachedScript == null) {
-            String sLoc = loader.getLocation() + "/" + getLocation();
-            String src = PredefinedScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
-            try {
-                _cachedScript = Script.createScript(src, getLanguage());
-            } catch (GrafikonException e) {
-                LOG.error("Couldn't create script.", e);
-            }
-        }
-        return _cachedScript;
-    }
-
-    public ScriptAction getScriptAction(PredefinedScriptsLoader loader) {
-        if (_cachedScriptAction == null) {
-            _cachedScriptAction = new ScriptAction(getId(), getName(), getLocalizedName(loader), getScript(loader));
-        }
-        return _cachedScriptAction;
     }
 }
