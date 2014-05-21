@@ -56,7 +56,7 @@ public class ExecuteScriptAction extends AbstractAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                ScriptAction scriptAction = PredefinedScriptsLoader.getScriptAction(e.getActionCommand());
+                ScriptAction scriptAction = PredefinedScriptsLoader.getDefaultScriptsLoader().getScriptAction(e.getActionCommand());
                 scriptAction.execute(model.getDiagram());
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());

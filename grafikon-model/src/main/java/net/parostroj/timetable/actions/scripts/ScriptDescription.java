@@ -13,12 +13,12 @@ import net.parostroj.timetable.model.Script.Language;
 
 /**
  * Description of script.
- *  
+ *
  * @author jub
  */
 @XmlType(propOrder = {"id", "name", "description", "language", "location" })
 public class ScriptDescription {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ScriptDescription.class);
 
     private String id;
@@ -26,7 +26,7 @@ public class ScriptDescription {
     private String description;
     private Language language;
     private String location;
-    
+
     private Script _cachedScript;
     private ScriptAction _cachedScriptAction;
 
@@ -79,10 +79,10 @@ public class ScriptDescription {
     public void setLocation(String location) {
         this.location = location;
     }
-    
-    public Script getScript() {
+
+    public Script getScript(PredefinedScriptsLoader loader) {
         if (_cachedScript == null) {
-            String sLoc = PredefinedScriptsLoader.SCRIPTS_LOCATION + "/" + getLocation();
+            String sLoc = loader.getLocation() + "/" + getLocation();
             String src = PredefinedScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
                 _cachedScript = Script.createScript(src, getLanguage());
@@ -92,10 +92,10 @@ public class ScriptDescription {
         }
         return _cachedScript;
     }
-    
-    public ScriptAction getScriptAction() {
+
+    public ScriptAction getScriptAction(PredefinedScriptsLoader loader) {
         if (_cachedScriptAction == null) {
-            _cachedScriptAction = new ScriptAction(getName(), getDescription(), getScript());
+            _cachedScriptAction = new ScriptAction(getName(), getDescription(), getScript(loader));
         }
         return _cachedScriptAction;
     }

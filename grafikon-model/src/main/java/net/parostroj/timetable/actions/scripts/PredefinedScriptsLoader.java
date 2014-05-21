@@ -1,5 +1,6 @@
 package net.parostroj.timetable.actions.scripts;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -20,19 +21,40 @@ import org.slf4j.LoggerFactory;
  */
 public class PredefinedScriptsLoader {
 
+
     private static final Logger LOG = LoggerFactory.getLogger(PredefinedScriptsLoader.class);
 
-    static final String LIST_LOCATION = "scripts/list.xml";
-    static final String SCRIPTS_LOCATION = "scripts";
+    private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
+    private static final String LIST = "list.xml";
 
-    private static List<ScriptDescription> list;
+    private static final Map<String, PredefinedScriptsLoader> loaders = new HashMap<String, PredefinedScriptsLoader>();
 
-    public static synchronized List<ScriptDescription> getScripts() {
+    private final String location;
+    private List<ScriptDescription> list;
+
+    private PredefinedScriptsLoader(String location) {
+        this.location = location;
+    }
+
+    public synchronized static PredefinedScriptsLoader getScriptsLoader(String location) {
+        PredefinedScriptsLoader loader = loaders.get(location);
+        if (loader == null) {
+            loader = new PredefinedScriptsLoader(location);
+            loaders.put(location, loader);
+        }
+        return loader;
+    }
+
+    public static PredefinedScriptsLoader getDefaultScriptsLoader() {
+        return getScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
+    }
+
+    public synchronized List<ScriptDescription> getScripts() {
         if (list == null) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ScriptList.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                InputStream stream = PredefinedScriptsLoader.class.getClassLoader().getResourceAsStream(LIST_LOCATION);
+                InputStream stream = PredefinedScriptsLoader.class.getClassLoader().getResourceAsStream(location + File.separator + LIST);
                 ScriptList scriptList = (ScriptList) unmarshaller.unmarshal(stream);
                 list = scriptList.getScripts();
             } catch (JAXBException e) {
@@ -44,14 +66,14 @@ public class PredefinedScriptsLoader {
         return list;
     }
 
-    public static Script getScript(String id) {
+    public Script getScript(String id) {
         ScriptDescription desc = getById(id);
-        return desc == null ? null : desc.getScript();
+        return desc == null ? null : desc.getScript(this);
     }
 
-    public static ScriptAction getScriptAction(String id) {
+    public ScriptAction getScriptAction(String id) {
         ScriptDescription desc = getById(id);
-        return desc == null ? null : desc.getScriptAction();
+        return desc == null ? null : desc.getScriptAction(this);
     }
 
     public Collection<String> getScriptIds() {
@@ -63,7 +85,7 @@ public class PredefinedScriptsLoader {
         return result;
     }
 
-    private static ScriptDescription getById(String id) {
+    private ScriptDescription getById(String id) {
         for (ScriptDescription desc : getScripts()) {
             if (desc.getId().equals(id))
                 return desc;
@@ -78,5 +100,9 @@ public class PredefinedScriptsLoader {
             LOG.error("Error reading file.", e);
             return "";
         }
+    }
+
+    public String getLocation() {
+        return location;
     }
 }
