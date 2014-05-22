@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.ini4j.Ini;
 
-import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
+import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
@@ -37,8 +37,8 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     private Locale outputLocale;
     private ProgramSettings programSettings;
     private LinkedList<File> lastOpenedFiles;
-    private final PredefinedScriptsLoader psLoader;
-    private final PredefinedScriptsLoader guiPsLoader;
+    private final ScriptsLoader psLoader;
+    private final ScriptsLoader guiPsLoader;
 
     /**
      * Default constructor.
@@ -52,8 +52,8 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         outputTemplates = new HashMap<String, File>();
         programSettings = new ProgramSettings();
         lastOpenedFiles = new LinkedList<File>();
-        psLoader = PredefinedScriptsLoader.newDefaultScriptsLoader();
-        guiPsLoader = PredefinedScriptsLoader.newScriptsLoader("gui_scripts");
+        psLoader = ScriptsLoader.newDefaultScriptsLoader();
+        guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
     }
 
     /**
@@ -313,11 +313,11 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         setDiagram(object);
     }
 
-    public PredefinedScriptsLoader getScriptsLoader() {
+    public ScriptsLoader getScriptsLoader() {
         return psLoader;
     }
 
-    public PredefinedScriptsLoader getGuiScriptsLoader() {
+    public ScriptsLoader getGuiScriptsLoader() {
         return guiPsLoader;
     }
 }

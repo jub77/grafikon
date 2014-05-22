@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 
-import net.parostroj.timetable.actions.scripts.PredefinedScriptsLoader;
+import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
@@ -50,7 +50,7 @@ public class ExecuteScriptAction extends AbstractAction {
             editScriptExecution(e);
         } else {
             String id = null;
-            PredefinedScriptsLoader loader = null;
+            ScriptsLoader loader = null;
             if (e.getActionCommand().startsWith(MODEL_PREFIX)) {
                 id = e.getActionCommand().substring(MODEL_PREFIX.length());
                 loader = model.getScriptsLoader();
@@ -62,7 +62,7 @@ public class ExecuteScriptAction extends AbstractAction {
         }
     }
 
-    private void predefinedExecution(PredefinedScriptsLoader loader, Component comp, String scriptId) {
+    private void predefinedExecution(ScriptsLoader loader, Component comp, String scriptId) {
         Component parent = ActionUtils.getTopLevelComponent(comp);
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         long time = System.currentTimeMillis();

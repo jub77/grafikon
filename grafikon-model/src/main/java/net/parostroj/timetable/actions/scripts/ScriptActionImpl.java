@@ -53,7 +53,7 @@ class ScriptActionImpl implements ScriptAction {
     public Script getScript() {
         if (_cachedScript == null) {
             String sLoc = location + "/" + desc.getLocation();
-            String src = PredefinedScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
+            String src = ScriptsLoader.loadFile(getClass().getClassLoader().getResourceAsStream(sLoc));
             try {
                 _cachedScript = Script.createScript(src, desc.getLanguage());
             } catch (GrafikonException e) {
