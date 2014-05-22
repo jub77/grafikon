@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class PredefinedScriptsLoader {
+public class ScriptsLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PredefinedScriptsLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptsLoader.class);
 
     private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
     private static final String LIST = "list.xml";
@@ -31,15 +31,15 @@ public class PredefinedScriptsLoader {
     private Collection<ScriptAction> _actionsView;
     private Collection<String> _keyView;
 
-    private PredefinedScriptsLoader(String location) {
+    private ScriptsLoader(String location) {
         this.location = location;
     }
 
-    public static PredefinedScriptsLoader newScriptsLoader(String location) {
-        return new PredefinedScriptsLoader(location);
+    public static ScriptsLoader newScriptsLoader(String location) {
+        return new ScriptsLoader(location);
     }
 
-    public static PredefinedScriptsLoader newDefaultScriptsLoader() {
+    public static ScriptsLoader newDefaultScriptsLoader() {
         return newScriptsLoader(DEFAULT_SCRIPTS_LOCATION);
     }
 
@@ -48,7 +48,7 @@ public class PredefinedScriptsLoader {
             try {
                 JAXBContext context = JAXBContext.newInstance(ScriptList.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                InputStream stream = PredefinedScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
+                InputStream stream = ScriptsLoader.class.getClassLoader().getResourceAsStream(location + "/" + LIST);
                 ScriptList scriptList = (ScriptList) unmarshaller.unmarshal(stream);
                 List<ScriptDescription> sList = scriptList.getScripts();
                 scriptActions = new LinkedHashMap<String, ScriptAction>(sList.size());
