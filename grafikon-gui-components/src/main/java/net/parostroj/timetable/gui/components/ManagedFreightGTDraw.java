@@ -3,7 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
@@ -31,6 +31,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private final Stroke connectionStroke;
 
+    private final Set<Node> routeNodes;
+
     public ManagedFreightGTDraw(GTViewSettings config, GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
         super(draw);
         this.written = new ArrayList<Rectangle>();
@@ -41,6 +43,11 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         arrow = (int) (zoom * 5);
         lineExtend = (int) (zoom * 16);
         connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);
+
+        routeNodes = new HashSet<Node>();
+        for (Node node : draw.getRoute().nodes()) {
+            routeNodes.add(node);
+        }
     }
 
     @Override
@@ -76,15 +83,17 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         }
         int dir = conn.getFrom().getOwnerAsNode() == firstNode ? -1 : 1;
         Tuple<Point> location = getLocation(conn, dir);
-        // name
         TextLayout layout = new TextLayout(this.createText(conn), g.getFont(), g.getFontRenderContext());
         Rectangle bounds = layout.getBounds().getBounds();
         int width = bounds.width;
-        paintText(conn, g, layout, location.first, width, dir);
-        paintText(conn, g, layout, location.second, width, dir);
-        // line
-        paintLine(conn, g, location.first, width, true, dir);
-        paintLine(conn, g, location.second, width, false, dir);
+        if (location.first != null) {
+            paintText(conn, g, layout, location.first, width, dir);
+            paintLine(conn, g, location.first, width, true, dir);
+        }
+        if (location.second != null) {
+            paintText(conn, g, layout, location.second, width, dir);
+            paintLine(conn, g, location.second, width, false, dir);
+        }
     }
 
     private boolean collisions(Rectangle rec) {
@@ -154,8 +163,26 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         int x1 = draw.getX((conn.getFrom().getStart() + conn.getFrom().getEnd()) / 2);
         int x2 = draw.getX((conn.getTo().getStart() + conn.getTo().getEnd()) / 2);
 
-        return new Tuple<Point>(
-                new Point(x1, y),
-                new Point(x2, y));
+        Point firstPoint = this.isWithLine(conn.getFrom()) ? new Point(x1, y) : null;
+        Point secondPoint = this.isWithLine(conn.getTo()) ? new Point(x2, y) : null;
+        return new Tuple<Point>(firstPoint, secondPoint);
+    }
+
+    private boolean isWithLine(TimeInterval interval) {
+        List<TimeInterval> list = interval.getTrain().getTimeIntervalList();
+        int index = list.indexOf(interval);
+        int prevIndex = index - 2;
+        if (prevIndex > 0) {
+            if (routeNodes.contains(list.get(prevIndex).getOwnerAsNode())) {
+                return true;
+            }
+        }
+        int nextIndex = index + 2;
+        if (nextIndex < list.size()) {
+            if (routeNodes.contains(list.get(nextIndex).getOwnerAsNode())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
