@@ -108,10 +108,10 @@
       note_parts << "<i>${row.freightTo.collect{i -> i}.join(', ')}</i>"
     }
     if (row.freightToTrain != null) {
-      note_parts << "<i>(${row.freightToTrain.collect{i -> i}.join(', ')} &rarr;)</i>"
+      note_parts << "<i>(&rarr; ${row.freightToTrain.collect{i -> i}.join(', ')})</i>"
     }
     if (row.freightFromTrain != null) {
-      note_parts << "<i>(&rarr; ${row.freightFromTrain.collect{i -> i}.join(', ')})</i>"
+      note_parts << "<i>(${row.freightFromTrain.collect{i -> i}.join(', ')} &rarr;)</i>"
     }
     // occupied track
     if (row.occupied)
