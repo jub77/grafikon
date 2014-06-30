@@ -169,17 +169,15 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     }
 
     private boolean isWithLine(TimeInterval interval) {
-        List<TimeInterval> list = interval.getTrain().getTimeIntervalList();
-        int index = list.indexOf(interval);
-        int prevIndex = index - 2;
-        if (prevIndex > 0) {
-            if (routeNodes.contains(list.get(prevIndex).getOwnerAsNode())) {
+        TimeInterval prevNodeInterval = interval.getTrainInterval(-2);
+        TimeInterval nextNodeInterval = interval.getTrainInterval(2);
+        if (prevNodeInterval != null) {
+            if (routeNodes.contains(prevNodeInterval.getOwnerAsNode())) {
                 return true;
             }
         }
-        int nextIndex = index + 2;
-        if (nextIndex < list.size()) {
-            if (routeNodes.contains(list.get(nextIndex).getOwnerAsNode())) {
+        if (nextNodeInterval != null) {
+            if (routeNodes.contains(nextNodeInterval.getOwnerAsNode())) {
                 return true;
             }
         }

@@ -65,8 +65,8 @@ public class StationTimetablesExtractor {
     }
 
     private StationTimetableRow createRow(TimeInterval interval) {
-        TimeInterval from = interval.getTrain().getIntervalBefore(interval);
-        TimeInterval to = interval.getTrain().getIntervalAfter(interval);
+        TimeInterval from = interval.getTrain().getInterval(interval, -1);
+        TimeInterval to = interval.getTrain().getInterval(interval, 1);
 
         String fromNodeName = TransformUtil.getFromAbbr(interval);
         String toNodeName = TransformUtil.getToAbbr(interval);
@@ -177,7 +177,7 @@ public class StationTimetablesExtractor {
         LengthInfo lengthInfo = null;
         Train train = interval.getTrain();
         TrainType trainType = train.getType();
-        if (train.getIntervalAfter(interval) != null && interval.isStop() && trainType != null && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
+        if (train.getInterval(interval, 1) != null && interval.isStop() && trainType != null && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
             Pair<Node, Integer> length = TrainsHelper.getNextLength(interval.getOwnerAsNode(), train, TrainsHelper.NextType.LAST_STATION);
             // if length was calculated
             if (length != null && length.second != null) {

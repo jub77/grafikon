@@ -527,12 +527,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return isFirst() || isLast();
     }
 
-    public TimeInterval getNextTrainInterval() {
-        return train.getIntervalAfter(this);
-    }
-
-    public TimeInterval getPreviousTrainInterval() {
-        return train.getIntervalBefore(this);
+    public TimeInterval getTrainInterval(int relativeIndex) {
+        return train.getInterval(this, relativeIndex);
     }
 
     @Override

@@ -751,19 +751,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     /**
-     * @param interval interval
-     * @return interval directly before given interval
+     * @see TimeIntervalList#getInterval(TimeInterval, int)
      */
-    public TimeInterval getIntervalBefore(TimeInterval interval) {
-        return timeIntervalList.getIntervalBefore(interval);
-    }
-
-    /**
-     * @param interval interval
-     * @return interval directly after given interval
-     */
-    public TimeInterval getIntervalAfter(TimeInterval interval) {
-        return timeIntervalList.getIntervalAfter(interval);
+    public TimeInterval getInterval(TimeInterval interval, int relativeIndex) {
+        return timeIntervalList.getInterval(interval, relativeIndex);
     }
 
     /**

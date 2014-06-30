@@ -141,8 +141,8 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     protected Line2D createTrainLine(TimeInterval interval, Interval i) {
         int x1 = this.getX(i.getStart());
         int x2 = this.getX(i.getEnd());
-        int y1 = start.y + trackPositions.get(interval.getTrain().getIntervalBefore(interval).getTrack());
-        int y2 = start.y + trackPositions.get(interval.getTrain().getIntervalAfter(interval).getTrack());
+        int y1 = start.y + trackPositions.get(interval.getTrain().getInterval(interval, -1).getTrack());
+        int y2 = start.y + trackPositions.get(interval.getTrain().getInterval(interval, 1).getTrack());
 
         Line2D line2D = new Line2D.Float(x1, y1, x2, y2);
         return line2D;
