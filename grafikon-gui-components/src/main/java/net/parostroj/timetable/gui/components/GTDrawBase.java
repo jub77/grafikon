@@ -404,7 +404,7 @@ abstract public class GTDrawBase implements GTDraw {
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
         // check if I should draw end time
         boolean endTimeCheck = true;
-        if (!interval.getNextTrainInterval().isStop()) {
+        if (!interval.getTrainInterval(1).isStop()) {
             Train train = interval.getTrain();
             int ind = train.getTimeIntervalList().indexOf(interval);
             if ((ind + 2) < train.getTimeIntervalList().size()) {

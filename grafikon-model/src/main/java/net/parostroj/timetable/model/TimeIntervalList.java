@@ -31,18 +31,23 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         return null;
     }
 
-    public TimeInterval getIntervalBefore(TimeInterval i) {
-        int ind = this.indexOf(i);
-        if (ind < 1)
-            return null;
-        return this.get(ind - 1);
-    }
-
-    public TimeInterval getIntervalAfter(TimeInterval i) {
-        int ind = this.indexOf(i);
-        if (ind == -1 || ind > (this.size() - 2))
-            return null;
-        return this.get(ind + 1);
+    /**
+     * returns time interval relative to the one passed as an argument.
+     *
+     * @param i reference interval
+     * @param relativeIndex relative position
+     * @return target interval
+     */
+    public TimeInterval getInterval(TimeInterval i, int relativeIndex) {
+        if (relativeIndex == 0) {
+            return i;
+        } else {
+            int ind = this.indexOf(i) + relativeIndex;
+            if (ind < 0 || ind >= this.size()) {
+                return null;
+            }
+            return this.get(ind);
+        }
     }
 
     /**
