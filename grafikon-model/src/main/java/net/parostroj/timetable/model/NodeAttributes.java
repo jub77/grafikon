@@ -19,4 +19,5 @@ public interface NodeAttributes {
     public static final String ATTR_LOCATION = "location";
     public static final String ATTR_FREIGHT_COLORS = "freight.colors";
     public static final String ATTR_REGION = "region";
+    public static final String ATTR_REGION_START = "region.start";
 }
