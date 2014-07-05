@@ -92,6 +92,12 @@ public class FreightHelper {
                 visited.add(dst);
                 result.add(dst);
             }
+            if (isStartRegion(dst.getNode()) && nRegion != null) {
+                if (!used.contains(nRegion)) {
+                    result.add(new FreightDst(nRegion, null));
+                    used.add(nRegion);
+                }
+            }
         }
         return result;
     }
@@ -106,6 +112,10 @@ public class FreightHelper {
 
     public static boolean isManaged(Train train) {
         return train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
+    }
+
+    public static boolean isStartRegion(Node node) {
+        return node.getAttributes().getBool(Node.ATTR_REGION_START);
     }
 
     public static Function<FreightColor, String> colorToString(final Locale loc) {
