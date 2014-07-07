@@ -43,7 +43,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
             TrainDiagramEvent tdEvent = (TrainDiagramEvent) event;
             Train train = (Train) tdEvent.getObject();
             if (FreightHelper.isManaged(train)) {
-                diagram.getFreightNet().checkTrain(train);
+                diagram.getFreightNet().removeTrain(train);
                 return true;
             }
         }

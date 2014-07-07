@@ -114,6 +114,15 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
     }
 
+    public void removeTrain(Train train) {
+        List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
+        toBeDeleted.addAll(this.get(train, fromMap));
+        toBeDeleted.addAll(this.get(train, toMap));
+        for (FNConnection conn : toBeDeleted) {
+            this.removeConnection(conn);
+        }
+    }
+
     public void addListener(FreightNetListener listener) {
         listenerSupport.addListener(listener);
     }
