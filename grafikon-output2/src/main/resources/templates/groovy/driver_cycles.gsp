@@ -26,13 +26,13 @@
     table.list2 {font-size: 4mm; width: 125mm;}
     table.list2 tr td {vertical-align: text-bottom;}
     tr.listh {height: 5mm; font-size: 3mm;}
-    td.ctrainh {width: 25mm; text-align: center;}
-    td.cdepartureh {width: 15mm; text-align: center;}
-    td.cfromtoh {width: 22mm; text-align: center;}
-    td.cnoteh {width: 53mm; padding-left: 5mm;}
+    td.ctrainh {width: 25mm; text-align: left;}
+    td.cdepartureh {width: 15mm; text-align: left;}
+    td.cfromtoh {width: 30mm; text-align: left;}
+    td.cnoteh {width: 45mm; padding-left: 5mm;}
     td.ctrain {vertical-align: bottom;}
     td.cdeparture {vertical-align: bottom; text-align: right; font-weight: bold; padding-right: 3mm;}
-    td.cfromto {vertical-align: bottom; text-align: left; padding-left: 1mm;}
+    td.cfromto {vertical-align: bottom; text-align: left;}
     td.cnote {font-size: 3mm; padding-left: 2mm; vertical-align: bottom;}
     td.move {vertical-align: bottom;}
     tr.listabbr {font-size: 3.25mm;}
