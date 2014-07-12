@@ -36,4 +36,10 @@
         <language>GROOVY</language>
         <location>copy_engines_to_engineers.groovy</location>
     </script>
+    <script>
+        <id>add_managed_freight</id>
+        <name>Add trains to managed freight</name>
+        <language>GROOVY</language>
+        <location>add_managed_freight.groovy</location>
+    </script>
 </scripts>
