@@ -12,8 +12,8 @@
     td.value {border-width: 0mm; font-size:5mm; font-weight:bold;}
     div.spacer {height: 10mm;}
     tr.header {height: 12mm;}
-    td.headerw1 {width: 20mm;}
-    td.headerw2 {width: 93mm;}
+    td.headerw1 {width: 24mm;}
+    td.headerw2 {width: 89mm;}
     td.ctrain {width: 20mm; text-align: center; vertical-align: top;}
     td.cdepartureh {width: 12mm; text-align: center; vertical-align: top; font-weight:bold; padding-right: 1mm;}
     td.cdeparture {text-align: right; vertical-align: top; font-weight:bold;}
