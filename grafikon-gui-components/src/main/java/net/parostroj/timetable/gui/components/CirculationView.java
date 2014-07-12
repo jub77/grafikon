@@ -9,8 +9,10 @@ import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.Collections;
 
 import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -133,8 +135,10 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     private void paintCirculations(Graphics2D g, Collection<TrainsCycle> circulations) {
         paintTimeTimeline(g);
         int row = 0;
-        for (TrainsCycle circulation : circulations) {
-            paintCirculation(g, circulation, row++);
+        java.util.List<Wrapper<TrainsCycle>> wrappers = Wrapper.getWrapperList(circulations);
+        Collections.sort(wrappers);
+        for (Wrapper<TrainsCycle> wrapper : wrappers) {
+            paintCirculation(g, wrapper.getElement(), row++);
         }
     }
 
