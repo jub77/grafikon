@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import net.parostroj.timetable.gui.components.ElementSelectionPanel;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -54,7 +56,7 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
         panel.add(cancelButton);
 
         JPanel editPanel = new JPanel();
-        editPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        editPanel.setBorder(new TitledBorder(null, ResourceLoader.getString("edit.fnc.last.nodes"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
         getContentPane().add(editPanel, BorderLayout.CENTER);
         editPanel.setLayout(new BorderLayout(0, 0));
 
