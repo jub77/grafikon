@@ -9,7 +9,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FNConnection extends Attributes implements ObjectWithId, Visitable {
+public class FNConnection extends Attributes implements ObjectWithId, Visitable, FNConnectionAttributes {
 
     private final TimeInterval from;
     private final TimeInterval to;
@@ -31,6 +31,11 @@ public class FNConnection extends Attributes implements ObjectWithId, Visitable 
 
     public TimeInterval getTo() {
         return to;
+    }
+
+    public FreightDstFilter getFreightDstFilter(FreightDstFilter parent) {
+        FreightDstFilter filter = new FreightDstFilter(parent, this);
+        return filter;
     }
 
     @Override

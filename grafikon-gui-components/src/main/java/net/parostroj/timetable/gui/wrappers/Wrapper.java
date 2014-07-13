@@ -107,4 +107,16 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         }
         return list;
     }
+
+    public static <T> T unwrap(Wrapper<T> wrapper) {
+        return wrapper.getElement();
+    }
+
+    public static <T> List<T> unwrap(List<Wrapper<T>> list) {
+        List<T> result = new ArrayList<T>(list.size());
+        for (Wrapper<T> w : list) {
+            result.add(unwrap(w));
+        }
+        return result;
+    }
 }

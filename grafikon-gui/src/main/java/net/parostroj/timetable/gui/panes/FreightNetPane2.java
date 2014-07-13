@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
+import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.mediator.Colleague;
@@ -38,7 +39,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         @Override
         public void editSelected() {
-            // do nothing - no edit action is specified
+            EditFNConnetionDialog dialog = new EditFNConnetionDialog((Window) getTopLevelAncestor(), true);
+            dialog.edit(FreightNetPane2.this, selected, model.getDiagram());
         }
 
         @Override
@@ -58,6 +60,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 graphicalTimetableView.repaint();
             }
             deleteButton.setEnabled(selected != null);
+            editButton.setEnabled(selected != null);
         }
     }
 
@@ -133,6 +136,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private final JButton newButton;
     private final JButton deleteButton;
+    private final JButton editButton;
 
     private ApplicationModel model;
 
@@ -173,8 +177,18 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
             }
         });
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        editButton.setEnabled(false);
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EditFNConnetionDialog dialog = new EditFNConnetionDialog((Window) getTopLevelAncestor(), true);
+                dialog.edit(FreightNetPane2.this, selector.selected, model.getDiagram());
+            }
+        });
         buttonPanel.add(newButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(editButton);
         add(buttonPanel, BorderLayout.NORTH);
     }
 
