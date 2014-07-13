@@ -19,9 +19,14 @@ public class CombinedRegionSelector<T> implements RegionSelector<T> {
     }
 
     @Override
-    public void editSelected() {
+    public boolean editSelected() {
+        boolean edited = false;
         for (RegionSelector<T> selector : selectors) {
-            selector.editSelected();
+            edited = selector.editSelected();
+            if (edited) {
+                break;
+            }
         }
+        return edited;
     }
 }
