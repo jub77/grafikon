@@ -23,10 +23,12 @@ public abstract class RegionCollector<T> {
         }
     }
 
-    public void editSelected() {
+    public boolean editSelected() {
+        boolean edited = false;
         if (this.selector != null) {
-            this.selector.editSelected();
+            edited = this.selector.editSelected();
         }
+        return edited;
     }
 
     abstract public void clear();

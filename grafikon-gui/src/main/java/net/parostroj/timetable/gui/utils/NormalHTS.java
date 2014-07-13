@@ -72,8 +72,9 @@ public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, Appli
     }
 
     @Override
-    public void editSelected() {
+    public boolean editSelected() {
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.EDIT_SELECTED_TRAIN, model));
+        return true;
     };
 
     @Override

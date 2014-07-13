@@ -83,8 +83,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
-        public void editSelected() {
+        public boolean editSelected() {
             // do nothing
+            return false;
         }
     }
 

@@ -6,6 +6,6 @@ public interface RegionSelector<T> {
 
     void regionsSelected(List<T> regions);
 
-    void editSelected();
+    boolean editSelected();
 
 }

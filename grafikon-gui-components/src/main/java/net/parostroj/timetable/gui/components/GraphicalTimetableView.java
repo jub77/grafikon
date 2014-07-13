@@ -389,8 +389,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 for (RegionCollector<?> collector : gtStorage.collectors()) {
                     if (evt.getClickCount() % 2 == 0) {
                         // indicates double click
-                        collector.editSelected();
-                        return;
+                        if (collector.editSelected()) {
+                            return;
+                        }
                     } else {
                         collector.selectItems(evt.getX(), evt.getY(), SELECTION_RADIUS);
                     }

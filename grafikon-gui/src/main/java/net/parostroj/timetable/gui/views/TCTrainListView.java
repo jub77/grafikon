@@ -200,8 +200,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     @Override
-    public void editSelected() {
+    public boolean editSelected() {
         // do nothing
+        return false;
     }
 
     private void initComponents() {
