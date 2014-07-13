@@ -33,8 +33,8 @@ public class FNConnection extends Attributes implements ObjectWithId, Visitable,
         return to;
     }
 
-    public FreightDstFilter getFreightDstFilter(FreightDstFilter parent) {
-        FreightDstFilter filter = new FreightDstFilter(parent, this);
+    public FreightDstFilter getFreightDstFilter(FreightDstFilter current) {
+        FreightDstFilter filter = FreightDstFilter.createFilter(current, this);
         return filter;
     }
 

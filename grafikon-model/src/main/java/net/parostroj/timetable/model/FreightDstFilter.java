@@ -13,9 +13,14 @@ public class FreightDstFilter {
     private final List<?> lastNodes;
     private boolean stop;
 
-    public FreightDstFilter(FreightDstFilter parent, FNConnection connection) {
+    public static FreightDstFilter createFilter(FreightDstFilter current, FNConnection connection) {
+        List<?> lastNodes = connection.get(FNConnection.ATTR_LAST_NODES, List.class);
+        return lastNodes == null ? current : new FreightDstFilter(current, lastNodes);
+    }
+
+    protected FreightDstFilter(FreightDstFilter parent, List<?> lastNodes) {
         this.parent = parent;
-        this.lastNodes = connection != null ? connection.get(FNConnection.ATTR_LAST_NODES, List.class) : null;
+        this.lastNodes = lastNodes;
     }
 
     public boolean accepted(FreightDst dst) {
