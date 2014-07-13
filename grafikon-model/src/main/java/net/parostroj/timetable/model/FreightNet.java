@@ -193,7 +193,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(null));
+            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(new EmptyFilter()));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
