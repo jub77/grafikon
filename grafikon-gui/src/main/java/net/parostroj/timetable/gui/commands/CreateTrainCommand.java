@@ -28,6 +28,7 @@ public class CreateTrainCommand extends Command {
     private final boolean electric;
     private final boolean showLength;
     private final Group group;
+    private final boolean managedFreight;
 
     /**
      * creates instance of create train command.
@@ -43,8 +44,9 @@ public class CreateTrainCommand extends Command {
      * @param electric if the train is diesel
      * @param showLength show max. length in timetable
      * @param group group
+     * @param managedFreight managed freight
      */
-    public CreateTrainCommand(String number, TrainType type, int topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group) {
+    public CreateTrainCommand(String number, TrainType type, int topSpeed, Route route, int time, int defaultStop, String description, boolean diesel, boolean electric, boolean showLength, Group group, boolean managedFreight) {
         this.number = number;
         this.type = type;
         this.topSpeed = topSpeed;
@@ -56,6 +58,7 @@ public class CreateTrainCommand extends Command {
         this.electric = electric;
         this.showLength = showLength;
         this.group = group;
+        this.managedFreight = managedFreight;
     }
 
     @Override
@@ -76,6 +79,7 @@ public class CreateTrainCommand extends Command {
         if (group != null) {
             train.setAttribute(Train.ATTR_GROUP, group);
         }
+        train.setAttribute(Train.ATTR_MANAGED_FREIGHT, managedFreight);
 
         // add train to diagram
         model.getDiagram().addTrain(train);
