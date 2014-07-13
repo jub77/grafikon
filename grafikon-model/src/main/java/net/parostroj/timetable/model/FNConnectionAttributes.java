@@ -6,5 +6,5 @@ package net.parostroj.timetable.model;
  * @author jub
  */
 public interface FNConnectionAttributes {
-    public static final String ATTR_LAST_NODES = "last.node";
+    public static final String ATTR_LAST_NODES = "last.nodes";
 }

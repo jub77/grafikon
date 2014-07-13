@@ -67,6 +67,12 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
 
         // add nodes and data
         selectionPanel.setListForSelection(Wrapper.getWrapperList(diagram.getNet().getNodes()));
+        List<?> lastNodes = connection.get(FNConnection.ATTR_LAST_NODES, List.class);
+        if (lastNodes != null) {
+            for (Object node : lastNodes) {
+                selectionPanel.addSelected(Wrapper.getWrapper((Node) node));
+            }
+        }
 
         pack();
         setLocationRelativeTo(center);

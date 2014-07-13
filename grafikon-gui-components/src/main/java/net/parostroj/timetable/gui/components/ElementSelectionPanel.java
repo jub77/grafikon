@@ -39,6 +39,17 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         rightListModel.setListOfWrappers(new ArrayList<Wrapper<T>>());
     }
 
+    public void addSelected(List<Wrapper<T>> selectedList) {
+        for (Wrapper<T> wrapper : selectedList) {
+            addSelected(wrapper);
+        }
+    }
+
+    public void addSelected(Wrapper<T> wrapper) {
+        leftListModel.removeWrapper(wrapper);
+        rightListModel.addWrapper(wrapper);
+    }
+
     public List<Wrapper<T>> getSelectedList() {
         return rightListModel.getListOfWrappers();
     }
