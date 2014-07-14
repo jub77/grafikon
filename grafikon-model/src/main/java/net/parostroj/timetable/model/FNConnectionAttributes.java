@@ -7,4 +7,5 @@ package net.parostroj.timetable.model;
  */
 public interface FNConnectionAttributes {
     public static final String ATTR_LAST_NODES = "last.nodes";
+    public static final String ATTR_TRANSITION_LIMIT = "transition.limit";
 }

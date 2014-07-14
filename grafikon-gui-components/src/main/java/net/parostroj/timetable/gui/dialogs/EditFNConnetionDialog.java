@@ -1,8 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -17,10 +16,29 @@ import net.parostroj.timetable.model.FNConnection;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
 
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.border.EtchedBorder;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Edit dialog for freight net connections.
+ *
+ * @author jub
+ */
 public class EditFNConnetionDialog extends javax.swing.JDialog {
+
+    private static final Logger log = LoggerFactory.getLogger(EditFNConnetionDialog.class);
 
     private final ElementSelectionPanel<Node> selectionPanel;
     private FNConnection connection;
+    private final JTextField transLimitTextField;
+    private final JCheckBox transLimitCheckBox;
 
     public EditFNConnetionDialog(Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
@@ -35,12 +53,7 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<Wrapper<Node>> selectedList = selectionPanel.getSelectedList();
-                List<Node> res = Wrapper.unwrap(selectedList);
-                if (res.isEmpty()) {
-                    res = null;
-                }
-                connection.set(FNConnection.ATTR_LAST_NODES, res);
+                writeValuesBack();
                 setVisible(false);
             }
         });
@@ -56,18 +69,64 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
         panel.add(cancelButton);
 
         JPanel editPanel = new JPanel();
-        editPanel.setBorder(new TitledBorder(null, ResourceLoader.getString("edit.fnc.last.nodes"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
         getContentPane().add(editPanel, BorderLayout.CENTER);
-        editPanel.setLayout(new BorderLayout(0, 0));
+        editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
+
+        JPanel stopNodesPanel = new JPanel();
+        editPanel.add(stopNodesPanel);
+        stopNodesPanel.setBorder(new TitledBorder(null, ResourceLoader.getString("edit.fnc.last.nodes"),
+                TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        stopNodesPanel.setLayout(new BorderLayout(0, 0));
 
         selectionPanel = new ElementSelectionPanel<Node>();
-        editPanel.add(selectionPanel, BorderLayout.CENTER);
+        stopNodesPanel.add(selectionPanel, BorderLayout.CENTER);
+
+        JPanel transLimitPanel = new JPanel();
+        FlowLayout fl_transLimitPanel = (FlowLayout) transLimitPanel.getLayout();
+        fl_transLimitPanel.setAlignment(FlowLayout.LEFT);
+        transLimitPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "TransLimit",
+                TitledBorder.LEFT, TitledBorder.TOP, null, null));
+        editPanel.add(transLimitPanel);
+
+        transLimitCheckBox = new JCheckBox((String) null);
+        transLimitPanel.add(transLimitCheckBox);
+        transLimitCheckBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    transLimitTextField.setEnabled(false);
+                    transLimitTextField.setText("");
+                } else {
+                    transLimitTextField.setEnabled(true);
+                    transLimitTextField.setText("0");
+                }
+            }
+        });
+
+        JLabel limitLabel = new JLabel("Limit");
+        transLimitPanel.add(limitLabel);
+
+        transLimitTextField = new JTextField();
+        transLimitTextField.setHorizontalAlignment(SwingConstants.RIGHT);
+        transLimitPanel.add(transLimitTextField);
+        transLimitTextField.setColumns(5);
+        transLimitTextField.setEnabled(false);
     }
 
     public void edit(Component center, FNConnection connection, TrainDiagram diagram) {
         this.connection = connection;
 
         // add nodes and data
+        updateValues(diagram);
+
+        pack();
+        setLocationRelativeTo(center);
+        setVisible(true);
+    }
+
+    private void updateValues(TrainDiagram diagram) {
+        // last nodes
         selectionPanel.setListForSelection(Wrapper.getWrapperList(diagram.getNet().getNodes()));
         List<?> lastNodes = connection.get(FNConnection.ATTR_LAST_NODES, List.class);
         if (lastNodes != null) {
@@ -75,10 +134,29 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
                 selectionPanel.addSelected(Wrapper.getWrapper((Node) node));
             }
         }
-
-        pack();
-        setLocationRelativeTo(center);
-        setVisible(true);
+        // transition limit
+        Integer transLimit = connection.get(FNConnection.ATTR_TRANSITION_LIMIT, Integer.class);
+        transLimitCheckBox.setSelected(transLimit != null);
+        transLimitTextField.setText(transLimit != null ? transLimit.toString() : "");
     }
 
+    private void writeValuesBack() {
+        // last nodes
+        List<Wrapper<Node>> selectedList = selectionPanel.getSelectedList();
+        List<Node> list = Wrapper.unwrap(selectedList);
+        if (list.isEmpty()) {
+            list = null;
+        }
+        connection.set(FNConnection.ATTR_LAST_NODES, list);
+        // transition limit
+        Integer transLimit = null;
+        if (transLimitCheckBox.isSelected()) {
+            try {
+                transLimit = Integer.valueOf(transLimitTextField.getText());
+            } catch (NumberFormatException e) {
+                log.warn("Error converting: " + e.getMessage());
+            }
+        }
+        connection.set(FNConnection.ATTR_TRANSITION_LIMIT, transLimit);
+    }
 }
