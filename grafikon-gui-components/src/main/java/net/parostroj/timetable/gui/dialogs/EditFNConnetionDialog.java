@@ -84,7 +84,7 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
         JPanel transLimitPanel = new JPanel();
         FlowLayout fl_transLimitPanel = (FlowLayout) transLimitPanel.getLayout();
         fl_transLimitPanel.setAlignment(FlowLayout.LEFT);
-        transLimitPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "TransLimit",
+        transLimitPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), ResourceLoader.getString("edit.fnc.trans.limit"),
                 TitledBorder.LEFT, TitledBorder.TOP, null, null));
         editPanel.add(transLimitPanel);
 
@@ -104,7 +104,7 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
             }
         });
 
-        JLabel limitLabel = new JLabel("Limit");
+        JLabel limitLabel = new JLabel(ResourceLoader.getString("edit.fnc.limit") + ": ");
         transLimitPanel.add(limitLabel);
 
         transLimitTextField = new JTextField();
