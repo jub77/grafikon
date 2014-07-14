@@ -27,17 +27,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     private final Set<FNConnection> connections = new HashSet<FNConnection>();
     private final Multimap<Node, FNConnection> nodeMap = HashMultimap.create();
 
-    private static class EmptyFilter extends FreightDstFilter {
-        public EmptyFilter() {
-            super(null, null);
-        }
-
-        @Override
-        public boolean accepted(FreightDst dst) {
-            return true;
-        }
-    }
-
     public FreightNet(String id) {
         this.id = id;
         this.attributesListener = new AttributesListener() {
@@ -193,7 +182,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(new EmptyFilter()));
+            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilter.createFilter()));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -203,7 +192,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        return this.getFreightToNodesImpl(fromInterval, new EmptyFilter());
+        return this.getFreightToNodesImpl(fromInterval, new FreightDstFilterEmpty());
     }
 
     private List<FreightDst> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
@@ -216,7 +205,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
         for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
             FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
-            if (!filter.accepted(newDst)) {
+            if (!filter.accepted(newDst, 0)) {
                 break;
             }
             result.add(newDst);
