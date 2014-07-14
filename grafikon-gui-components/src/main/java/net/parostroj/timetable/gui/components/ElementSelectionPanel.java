@@ -54,6 +54,11 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         return rightListModel.getListOfWrappers();
     }
 
+    public void clear() {
+        leftListModel.clear();
+        rightListModel.clear();
+    }
+
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         leftList = new javax.swing.JList();
