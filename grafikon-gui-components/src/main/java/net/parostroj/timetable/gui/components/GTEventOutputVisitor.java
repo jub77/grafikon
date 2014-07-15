@@ -89,7 +89,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     @Override
     public void visit(FreightNetEvent event) {
         try {
-            str.append("FreightNet[");
+            str.append(event.getType() == GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE ? "FreightNet(connection)[" : "FreightNet[");
             str.append(Integer.toString(event.getSource().getConnections().size())).append(" connections]");
             if (full) {
                 str.append('\n');

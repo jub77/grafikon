@@ -35,7 +35,7 @@ public class FreightNetEvent extends GTEvent<FreightNet> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("FreightNetEvent[");
+        StringBuilder builder = new StringBuilder(getType() != GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE ? "FreightNetEvent[" : "FreightNetEvent(connection)[");
         builder.append(getSource()).append(',');
         builder.append(getType());
         builder.append(']');
