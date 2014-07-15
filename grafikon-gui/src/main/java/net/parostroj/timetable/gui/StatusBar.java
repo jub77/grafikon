@@ -100,10 +100,11 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                     if (change.getDescriptions() != null) {
                         boolean endl = false;
                         for (DiagramChangeDescription d : change.getDescriptions()) {
-                            if (endl)
+                            if (endl) {
                                 b.append(',');
-                            else
+                            } else {
                                 endl = true;
+                            }
                             b.append(d.getFormattedDescription());
                         }
                     }
@@ -182,7 +183,6 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     private void initComponents() {
-
         left = new javax.swing.JTextField();
         left.setColumns(25);
         center = new javax.swing.JTextField();
