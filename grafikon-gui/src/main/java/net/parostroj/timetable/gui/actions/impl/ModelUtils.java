@@ -7,9 +7,11 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
@@ -21,7 +23,9 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.utils.LocaleUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,17 +103,6 @@ public class ModelUtils {
     }
 
     public static Locale parseLocale(String localeString) {
-        Locale returnedLocale = null;
-        if (localeString != null) {
-            String parts[] = localeString.split("_");
-            if (parts.length == 1) {
-                returnedLocale = new Locale(parts[0]);
-            } else if (parts.length == 2) {
-                returnedLocale = new Locale(parts[0],parts[1]);
-            } else if (parts.length == 3) {
-                returnedLocale = new Locale(parts[0], parts[1], parts[2]);
-            }
-        }
-        return returnedLocale;
+        return LocaleUtils.parseLocale(localeString);
     }
 }
