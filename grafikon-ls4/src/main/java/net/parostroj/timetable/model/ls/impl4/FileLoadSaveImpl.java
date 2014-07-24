@@ -26,6 +26,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
     private static final String FREIGHT_NET = "freight_net.xml";
+    private static final String LOCALIZATION = "localization.xml";
     private static final String DATA_ROUTES = "routes/";
     private static final String DATA_TRAIN_TYPES = "train_types/";
     private static final String DATA_TRAINS = "trains/";
@@ -50,7 +51,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 new ModelVersion(4, 7),
                 new ModelVersion(4, 8),
                 new ModelVersion(4, 9),
-                new ModelVersion(4, 10));
+                new ModelVersion(4, 10),
+                new ModelVersion(4, 11));
         VERSIONS = Collections.unmodifiableList(versions);
         METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }
@@ -144,6 +146,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder.setDiagramChangeSet(lss.load(zipInput, LSDiagramChangeSet.class));
                 } else if (entry.getName().startsWith(FREIGHT_NET)) {
                     builder.setFreightNet(lss.load(zipInput, LSFreightNet.class));
+                } else if (entry.getName().startsWith(LOCALIZATION)) {
+                    builder.setLocalization(lss.load(zipInput, LSLocalization.class));
                 } else if (entry.getName().startsWith(DATA_IMAGES)) {
                     if (entry.getName().endsWith(".xml"))
                         builder.addImage(lss.load(zipInput, LSImage.class));
@@ -231,6 +235,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
             }
             // save freight net
             this.save(zipOutput, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
+            // save localization
+            this.save(zipOutput, LOCALIZATION, new LSLocalization(diagram.getLocalization()));
 
         } catch (IOException ex) {
             throw new LSException(ex);
