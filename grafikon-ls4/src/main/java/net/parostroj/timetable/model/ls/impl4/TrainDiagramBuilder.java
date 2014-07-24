@@ -99,6 +99,11 @@ public class TrainDiagramBuilder {
         }
     }
 
+    public void setLocalization(LSLocalization lsLocalization) throws LSException {
+        // add of localization items is implemented in LSLocalization class)
+        lsLocalization.createLocalization(diagram);
+    }
+
     public void setRoute(LSRoute lsRoute) throws LSException {
         Route route = lsRoute.createRoute(diagram.getNet());
         Route foundRoute = null;
