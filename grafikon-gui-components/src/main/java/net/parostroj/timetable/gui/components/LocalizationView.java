@@ -9,7 +9,7 @@ import java.awt.BorderLayout;
 import javax.swing.ScrollPaneConstants;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.Localization;
+import net.parostroj.timetable.model.TrainDiagram;
 
 import javax.swing.JButton;
 
@@ -47,7 +47,7 @@ public class LocalizationView extends JPanel {
         panel.add(removeNoExistingButton);
     }
 
-    public void setLocalization(Localization localization) {
-        table.setModel(new LocalizationViewModel(localization));
+    public void setDiagram(TrainDiagram diagram) {
+        table.setModel(new LocalizationViewModel(diagram.getLocalization()));
     }
 }

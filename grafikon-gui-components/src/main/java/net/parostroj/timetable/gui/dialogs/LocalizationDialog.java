@@ -6,7 +6,7 @@ import java.awt.Window;
 import javax.swing.JDialog;
 
 import net.parostroj.timetable.gui.components.LocalizationView;
-import net.parostroj.timetable.model.Localization;
+import net.parostroj.timetable.model.TrainDiagram;
 
 public class LocalizationDialog extends JDialog {
 
@@ -22,8 +22,8 @@ public class LocalizationDialog extends JDialog {
         pack();
     }
 
-    public void showDialog(Localization localization) {
-        this.localizationView.setLocalization(localization);
+    public void showDialog(TrainDiagram diagram) {
+        this.localizationView.setDiagram(diagram);
         this.pack();
         this.setVisible(true);
     }
