@@ -18,7 +18,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  *
  * @author jub
  */
-public class TrainsCycleItem {
+public class TrainsCycleItem implements TrainsCycleItemAttributes {
 
     private final Train train;
     private String comment;
@@ -72,7 +72,7 @@ public class TrainsCycleItem {
             TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
             event.setNewCycleItem(this);
             event.setOldCycleItem(this);
-            event.setAttributeChange(new AttributeChange("comment", oldComment, comment));
+            event.setAttributeChange(new AttributeChange(ATTR_COMMENT, oldComment, comment));
             getCycle().fireEvent(event);
         }
     }
