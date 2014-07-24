@@ -128,6 +128,19 @@ public class Localization {
         }
     }
 
+    public String getTranslation(String key, Locale locale) {
+        this.keyCheck(key);
+        List<Translation> list = texts.get(key);
+        String result = null;
+        if (list != null) {
+            int index = list.indexOf(new Translation(locale, null));
+            if (index != -1) {
+                result = list.get(index).getText();
+            }
+        }
+        return result;
+    }
+
     public Collection<Translation> getTranslations(String key) {
         List<Translation> list = texts.get(key);
         return list != null ? list : Collections.<Translation>emptyList();
