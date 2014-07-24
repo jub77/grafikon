@@ -47,6 +47,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final List<Group> groups;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
+    /** Localization. */
+    private final Localization localization;
 
     private final List<TrainDiagramValidator> validators;
     private final GTListenerTrainDiagramImpl listener;
@@ -70,6 +72,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.outputTemplates = new LinkedList<OutputTemplate>();
         this.groups = new LinkedList<Group>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
+        this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId());
         this.trainTypes = new LinkedList<TrainType>();
         this.setAttributes(new Attributes());
@@ -502,6 +505,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public PenaltyTable getPenaltyTable() {
         return penaltyTable;
+    }
+
+    public Localization getLocalization() {
+        return localization;
     }
 
     public void setPenaltyTable(PenaltyTable penaltyTable) {
