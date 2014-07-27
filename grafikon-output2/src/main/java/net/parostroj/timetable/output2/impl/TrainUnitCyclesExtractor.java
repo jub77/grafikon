@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.*;
 
@@ -13,10 +14,12 @@ import net.parostroj.timetable.model.*;
 public class TrainUnitCyclesExtractor {
 
     private final List<TrainsCycle> cycles;
+    private final Locale locale;
     private final AttributesExtractor ae = new AttributesExtractor();
 
-    public TrainUnitCyclesExtractor(List<TrainsCycle> cycles) {
+    public TrainUnitCyclesExtractor(List<TrainsCycle> cycles, Locale locale) {
         this.cycles = cycles;
+        this.locale = locale;
     }
 
     public List<TrainUnitCycle> getTrainUnitCycles() {
@@ -46,7 +49,11 @@ public class TrainUnitCyclesExtractor {
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
-        row.setComment((item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment());
+        String comment = (item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment();
+        if (comment != null) {
+            comment = item.getTrain().getTrainDiagram().getLocalization().translate(comment, locale);
+        }
+        row.setComment(comment);
         this.getCustomCyclesItem(row.getCycle(), item);
         return row;
     }

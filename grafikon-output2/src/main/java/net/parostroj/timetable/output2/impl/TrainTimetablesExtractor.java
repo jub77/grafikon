@@ -65,7 +65,7 @@ public class TrainTimetablesExtractor {
 
         // cycle
         if (cycle != null) {
-            DriverCyclesExtractor ex = new DriverCyclesExtractor(diagram, null, false);
+            DriverCyclesExtractor ex = new DriverCyclesExtractor(diagram, null, false, locale);
             timetables.setCycle(ex.createCycle(cycle));
         }
 

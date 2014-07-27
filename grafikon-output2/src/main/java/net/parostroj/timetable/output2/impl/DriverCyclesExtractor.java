@@ -1,8 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -18,13 +17,15 @@ public class DriverCyclesExtractor {
 
     private final List<TrainsCycle> cycles;
     private final TrainDiagram diagram;
+    private final Locale locale;
     private final AttributesExtractor ae = new AttributesExtractor();
 
     private RoutesExtractor routesExtractor;
 
-    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, boolean addRoutes) {
+    public DriverCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, boolean addRoutes, Locale locale) {
         this.cycles = cycles;
         this.diagram = diagram;
+        this.locale = locale;
         if (addRoutes)
             this.routesExtractor = new RoutesExtractor(diagram);
     }
@@ -70,7 +71,11 @@ public class DriverCyclesExtractor {
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
-        row.setComment((item.getComment() != null && !item.getComment().trim().equals("")) ? item.getComment() : null);
+        String comment = (item.getComment() != null && !item.getComment().trim().equals("")) ? item.getComment() : null;
+        if (comment != null) {
+            comment = diagram.getLocalization().translate(comment, locale);
+        }
+        row.setComment(comment);
         return row;
     }
 }
