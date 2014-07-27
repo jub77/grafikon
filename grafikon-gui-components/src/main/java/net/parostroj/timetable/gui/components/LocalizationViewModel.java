@@ -4,9 +4,11 @@ import java.util.*;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.parostroj.timetable.gui.utils.LanguagesUtil;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Localization;
 import net.parostroj.timetable.model.Localization.Translation;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Model for localization view.
@@ -17,7 +19,7 @@ public class LocalizationViewModel extends AbstractTableModel {
 
     private final Localization localization;
 
-    private List<Locale> columns;
+    private List<Pair<String, Locale>> columns;
     private List<String> keys;
 
     public LocalizationViewModel(Localization localization) {
@@ -26,7 +28,7 @@ public class LocalizationViewModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return column == 0 ? ResourceLoader.getString("localization.default.value") : getColumnsImpl().get(column - 1).getDisplayName();
+        return column == 0 ? ResourceLoader.getString("localization.default.value") : getColumnsImpl().get(column - 1).first;
     }
 
     @Override
@@ -45,14 +47,14 @@ public class LocalizationViewModel extends AbstractTableModel {
             return getKeysImpl().get(rowIndex);
         } else {
             String key = getKeysImpl().get(rowIndex);
-            Locale locale = getColumnsImpl().get(columnIndex - 1);
+            Locale locale = getColumnsImpl().get(columnIndex - 1).second;
             return localization.getTranslation(key, locale);
         }
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        Locale locale = getColumnsImpl().get(columnIndex - 1);
+        Locale locale = getColumnsImpl().get(columnIndex - 1).second;
         String key = getKeysImpl().get(rowIndex);
         localization.addTranslation(key, new Translation(locale, (String) value));
     }
@@ -62,13 +64,25 @@ public class LocalizationViewModel extends AbstractTableModel {
         return columnIndex != 0;
     }
 
-    private List<Locale> getColumnsImpl() {
+    private List<Pair<String, Locale>> getColumnsImpl() {
         if (columns == null) {
-            columns = new ArrayList<Locale>(localization.getLocales());
-            Collections.sort(columns, new Comparator<Locale>() {
+            Map<Locale, String> map = LanguagesUtil.getLocaleMap();
+            columns = new ArrayList<Pair<String, Locale>>(localization.getLocales().size());
+            for (Locale l : localization.getLocales()) {
+                columns.add(new Pair<String, Locale>(map.get(l), l));
+            }
+            Collections.sort(columns, new Comparator<Pair<String, Locale>>() {
                 @Override
-                public int compare(Locale o1, Locale o2) {
-                    return o1.getDisplayName().compareTo(o2.getDisplayName());
+                public int compare(Pair<String, Locale> o1, Pair<String, Locale> o2) {
+                    if (o1.first == null && o2.first == null) {
+                        return 0;
+                    } else if (o1.first == null) {
+                        return -1;
+                    } else if (o2.first == null) {
+                        return 1;
+                    } else {
+                        return o1.first.compareTo(o2.first);
+                    }
                 }
             });
         }
