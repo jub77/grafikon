@@ -1,17 +1,15 @@
 package net.parostroj.timetable.gui;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
+
 import javax.swing.JRadioButtonMenuItem;
 
-import net.parostroj.timetable.gui.actions.impl.ModelUtils;
-
-import org.slf4j.LoggerFactory;
+import net.parostroj.timetable.gui.utils.LanguagesUtil;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Creates menu with languages.
- * 
+ *
  * @author jub
  */
 public class LanguageMenuBuilder {
@@ -35,30 +33,16 @@ public class LanguageMenuBuilder {
     }
 
     public List<LanguageMenuItem> createLanguageMenuItems() {
-        try {
-            List<LanguageMenuItem> languages = new LinkedList<LanguageMenuItem>();
-            
-            // load propertis
-            Properties langProps = new Properties();
-            InputStream stream = LanguageMenuBuilder.class.getResourceAsStream("/languages.properties");
-            try {
-                langProps.load(stream);
-            } finally {
-                stream.close();
-            }
-            for (Map.Entry<Object,Object> entry : langProps.entrySet()) {
-                Locale language = ModelUtils.parseLocale((String)entry.getKey());
-                String text = (String)entry.getValue();
-                languages.add(new LanguageMenuItem(text, language));
-            }
+        List<LanguageMenuItem> languages = new LinkedList<LanguageMenuItem>();
 
-            return this.sort(languages);
-        } catch (IOException ex) {
-            LoggerFactory.getLogger(LanguageMenuBuilder.class.getName()).warn("Cannot find languages property file.", ex);
-            return Collections.emptyList();
+        // load languages
+        List<Pair<String, Locale>> locales = LanguagesUtil.getLocales();
+        for (Pair<String, Locale> locale : locales) {
+            languages.add(new LanguageMenuItem(locale.first, locale.second));
         }
+        return this.sort(languages);
     }
-    
+
     private List<LanguageMenuItem> sort(List<LanguageMenuItem> items) {
         Collections.sort(items, new Comparator<LanguageMenuItem>() {
             @Override
