@@ -33,7 +33,7 @@ class XmlDriverCyclesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, TrainsCycleType.DRIVER_CYCLE), true);
+            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, TrainsCycleType.DRIVER_CYCLE), true, getLocale());
             DriverCycles cycles = dce.getDriverCycles();
 
             JAXBContext context = JAXBContext.newInstance(DriverCycles.class);
