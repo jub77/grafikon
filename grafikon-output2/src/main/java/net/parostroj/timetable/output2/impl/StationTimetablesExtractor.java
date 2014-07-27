@@ -119,7 +119,11 @@ public class StationTimetablesExtractor {
                 row.setFreightFromTrain(nt);
             }
         }
-        row.setComment(interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class));
+        String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
+        if (comment != null) {
+            comment = diagram.getLocalization().translate(comment, locale);
+        }
+        row.setComment(comment);
         row.setOccupied(interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED));
     }
 
