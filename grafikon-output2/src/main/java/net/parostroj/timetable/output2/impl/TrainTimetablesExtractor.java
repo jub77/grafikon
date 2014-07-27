@@ -164,6 +164,7 @@ public class TrainTimetablesExtractor {
             if (nodeI.getAttributes().getBool(TimeInterval.ATTR_COMMENT_SHOWN)) {
                 String comment = nodeI.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
                 if (comment != null && !comment.trim().equals("")) {
+                    comment = diagram.getLocalization().translate(comment, locale);
                     row.setComment(comment);
                 }
             }
