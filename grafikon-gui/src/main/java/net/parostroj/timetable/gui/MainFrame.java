@@ -369,6 +369,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem regionsMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem weightTablesMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem penaltyTableMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem localizationMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem trainTimetableListMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem nodeTimetableListMenuItem = new javax.swing.JMenuItem();
@@ -596,6 +597,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             }
         });
         diagramMenu.add(penaltyTableMenuItem);
+
+        localizationMenuItem.setText(ResourceLoader.getString("menu.file.localization")); // NOI18N
+        localizationMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                localizationMenuItemActionPerformed(e);
+            }
+        });
+        diagramMenu.add(localizationMenuItem);
 
         groupsMenuItem.setAction(new EditGroupsAction(model));
         groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
@@ -923,6 +933,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         enabled.add(lineClassesMenuItem);
         enabled.add(weightTablesMenuItem);
         enabled.add(penaltyTableMenuItem);
+        enabled.add(localizationMenuItem);
+        enabled.add(regionsMenuItem);
         enabled.add(trainTimetableListByTimeFilteredMenuItem);
         enabled.add(fileImportMenuItem);
         enabled.add(fileImportGroupMenuItem);
@@ -1040,6 +1052,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         TrainTypesCategoriesDialog dialog = new TrainTypesCategoriesDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }
+
+    private void localizationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        LocalizationDialog dialog = new LocalizationDialog(this, true);
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
