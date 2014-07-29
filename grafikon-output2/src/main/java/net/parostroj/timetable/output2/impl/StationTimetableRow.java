@@ -25,7 +25,7 @@ public class StationTimetableRow {
     private String comment;
     private List<String> freightTo;
     private List<String> freightFromTrain;
-    private List<String> freightToTrain;
+    private List<FreightToTrain> freightToTrain;
     private List<CycleFromTo> engine;
     private List<CycleFromTo> trainUnit;
     private List<CycleWithTypeFromTo> cycle;
@@ -137,7 +137,7 @@ public class StationTimetableRow {
         this.freightFromTrain = freightFromTrain;
     }
 
-    public void setFreightToTrain(List<String> freightToTrain) {
+    public void setFreightToTrain(List<FreightToTrain> freightToTrain) {
         this.freightToTrain = freightToTrain;
     }
 
@@ -145,7 +145,7 @@ public class StationTimetableRow {
         return freightFromTrain;
     }
 
-    public List<String> getFreightToTrain() {
+    public List<FreightToTrain> getFreightToTrain() {
         return freightToTrain;
     }
 
