@@ -102,13 +102,21 @@ public class StationTimetablesExtractor {
                 }
                 row.setFreightTo(fl);
             }
-            List<FNConnection> toTrains = diagram.getFreightNet().getTrainsFrom(interval);
-            if (!toTrains.isEmpty()) {
-                ArrayList<String> nt = new ArrayList<String>(toTrains.size());
-                for (FNConnection conn : toTrains) {
-                    nt.add(conn.getTo().getTrain().getName());
+            Map<Train, List<FreightDst>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
+            if (!passedCargoDst.isEmpty()) {
+                List<FreightToTrain> fttl = new ArrayList<FreightToTrain>();
+                for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
+                    FreightToTrain ftt = new FreightToTrain();
+                    ftt.setTrain(entry.getKey().getName());
+                    List<FreightDst> mList = FreightHelper.convertFreightDst(interval, entry.getValue());
+                    List<String> fl = new ArrayList<String>();
+                    for (FreightDst dst : mList) {
+                        fl.add(dst.toString(locale));
+                    }
+                    ftt.setFreightTo(fl);
+                    fttl.add(ftt);
                 }
-                row.setFreightToTrain(nt);
+                row.setFreightToTrain(fttl);
             }
             List<FNConnection> trainsFrom = diagram.getFreightNet().getTrainsTo(interval);
             if (!trainsFrom.isEmpty()) {
