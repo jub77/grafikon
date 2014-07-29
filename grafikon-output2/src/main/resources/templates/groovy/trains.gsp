@@ -116,6 +116,7 @@
     table.list2 {font-size: 4mm; width: 120mm; padding-left: 5mm;}
     table.list2 tr td {vertical-align: text-bottom;}
     tr.listh {height: 5mm; font-size: 3mm;}
+    tr.listh td {border-color: black; border-style: solid; border-width: 0.2mm 0 0.2mm 0;}
     td.ctrainh {width: 25mm; text-align: left;}
     td.cdepartureh {width: 15mm; text-align: left;}
     td.cfromtoh {width: 30mm; text-align: left;}
@@ -822,6 +823,9 @@
   def show_cycle(page) {
     %>
 <table class="list2" border="0" cellspacing="0" align="center">
+  <tr>
+    <td colspan="4">${list_train_title}:</td>
+  </tr>
   <tr class="listh">
     <td class="ctrainh">${column_train}</td>
     <td class="cdepartureh">${column_departure}</td>
