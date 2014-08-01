@@ -60,7 +60,7 @@ public class TrainsCycleImport extends Import {
         for (int i = 0; i < items.size(); i++) {
             Triplet<Train, TimeInterval, TimeInterval> item = items.get(i);
             TrainsCycleItem importedItem = importedCycle.getItems().get(i);
-            TrainsCycleItem cycleItem = new TrainsCycleItem(cycle, item.first, importedItem.getComment(), item.second, item.third);
+            TrainsCycleItem cycleItem = new TrainsCycleItem(cycle, item.first, importedItem.getComment(), item.second, item.third, this.importAttributes(importedItem.getAttributes()));
             cycle.addItem(cycleItem);
         }
 
