@@ -8,9 +8,7 @@ package net.parostroj.timetable.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainsCycleEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
@@ -18,7 +16,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  *
  * @author jub
  */
-public class TrainsCycleItem implements TrainsCycleItemAttributes {
+public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHolder {
 
     private final Train train;
     private String comment;
@@ -26,12 +24,16 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes {
     private final TimeInterval from;
     private final TimeInterval to;
 
-    public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to) {
+    private Attributes attributes;
+    private AttributesListener attributesListener;
+
+    public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to, Attributes attributes) {
         this.cycle = cycle;
         this.train = train;
         this.comment = comment;
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
+        this.setAttributes(attributes != null ? attributes : new Attributes());
     }
 
     public boolean containsInterval(TimeInterval interval) {
@@ -128,6 +130,45 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes {
     public int getEndTime() {
         // TODO normalized ??
         return this.getToInterval().getStart();
+    }
+
+    @Override
+    public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
+        this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
+                event.setNewCycleItem(TrainsCycleItem.this);
+                event.setOldCycleItem(TrainsCycleItem.this);
+                event.setAttributeChange(change);
+                getCycle().fireEvent(event);
+            }
+        };
+        this.attributes.addListener(attributesListener);
+    }
+
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public <T> T getAttribute(String key, Class<T> clazz) {
+        return attributes.get(key, clazz);
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        attributes.set(key, value);
+    }
+
+    @Override
+    public Object removeAttribute(String key) {
+        return attributes.remove(key);
     }
 
     @Override
