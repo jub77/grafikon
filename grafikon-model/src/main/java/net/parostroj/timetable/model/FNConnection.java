@@ -17,7 +17,9 @@ public class FNConnection extends Attributes implements ObjectWithId, Visitable,
     FNConnection(TimeInterval from, TimeInterval to, AttributesListener listener) {
         this.from = from;
         this.to = to;
-        this.addListener(listener);
+        if (listener != null) {
+            this.addListener(listener);
+        }
     }
 
     @Override
