@@ -14,9 +14,7 @@ import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.mediator.Colleague;
-import net.parostroj.timetable.model.FNConnection;
-import net.parostroj.timetable.model.TimeInterval;
-import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainEvent;
@@ -166,7 +164,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         newButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.getDiagram().getFreightNet().addConnection(connection.first, connection.second);
+                FreightNet fn = model.getDiagram().getFreightNet();
+                if (fn.getConnection(connection.first, connection.second) == null) {
+                    fn.addConnection(connection.first, connection.second);
+                }
                 connection.first = null;
                 connection.second = null;
                 graphicalTimetableView.repaint();

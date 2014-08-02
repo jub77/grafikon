@@ -69,6 +69,15 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         return Collections.unmodifiableCollection(nodeMap.get(node));
     }
 
+    public FNConnection getConnection(TimeInterval from, TimeInterval to) {
+        for (FNConnection i : connections) {
+            if (i.getFrom() == from && i.getTo() == to) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     private void addConnectionImpl(FNConnection conn) {
         connections.add(conn);
         nodeMap.put(conn.getFrom().getOwnerAsNode(), conn);
