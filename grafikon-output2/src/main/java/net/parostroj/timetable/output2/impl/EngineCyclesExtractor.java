@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -63,6 +64,10 @@ public class EngineCyclesExtractor {
             Double timeScale = current.getTrain().getTrainDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
             time = (int)Math.round((1.0d / timeScale) * time);
             row.setWait(time);
+        }
+        // check helper status
+        if (TrainsHelper.isHelperEngine(current)) {
+            row.setHelper(true);
         }
         return row;
     }

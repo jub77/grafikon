@@ -227,6 +227,32 @@ public class TrainsHelper {
     }
 
     /**
+     * @param item circulation item to be checked
+     * @return if the circulation item for engine is helper or not
+     */
+    public static boolean isHelperEngine(TrainsCycleItem item) {
+        if (!TrainsCycleType.ENGINE_CYCLE.equals(item.getCycle().getType().getName())) {
+            throw new IllegalArgumentException("Engine cycle expected.");
+        }
+        List<TimeInterval> intervals = item.getIntervals();
+        int length = intervals.size();
+        for (TimeInterval interval : intervals) {
+            // check only line intervals (first and last node intervals overlap and it is enough
+            // to check line intervals)
+            if (interval.isNodeOwner()) {
+                continue;
+            }
+            Collection<TrainsCycleItem> items = interval.getTrain().getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
+            for (TrainsCycleItem i : items) {
+                if (i != item && length < i.getIntervals().size()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * returns list of engine classes for time interval.
      *
      * @param interval time interval

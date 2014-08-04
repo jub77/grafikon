@@ -12,6 +12,7 @@
         tr.header_station td {font-weight:bold ; font-size: 5mm; text-align: center;}
         span.no {visibility: hidden;}
         td.time {text-align: right; padding-left: 1mm; padding-right: 0mm;}
+        span.emph {font-style: italic;}
     </style>
 </head>
 <%
@@ -33,6 +34,10 @@
     
     def highlight(str) {
         return "<b>${str}</b>"
+    }
+    
+    def highlightHelper(str) {
+        return "<span class=\"emph\">${str}</span>";
     }
     
     def comment(separator, str) {
@@ -73,7 +78,9 @@
             str = "${engine}: ${engine_t.name} ${ends}"
           else
             str = "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
-        note_parts << (engine_t.start ? highlight(str) : str)
+        str = engine_t.start ? highlight(str) : str
+        str = engine_t.helper == true ? highlightHelper(str) : str
+        note_parts << str
       }
     // train unit
     if (row.trainUnit != null)
