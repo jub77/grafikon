@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "toTime", "toAbbr", "wait"})
+@XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "toTime", "toAbbr", "wait", "helper"})
 public class EngineCycleRow {
 
     private String trainName;
@@ -16,6 +16,7 @@ public class EngineCycleRow {
     private String toTime;
     private String toAbbr;
     private Integer wait;
+    private Boolean helper;
 
     public String getFromAbbr() {
         return fromAbbr;
@@ -63,5 +64,13 @@ public class EngineCycleRow {
 
     public void setToTime(String toTime) {
         this.toTime = toTime;
+    }
+
+    public Boolean getHelper() {
+        return helper;
+    }
+
+    public void setHelper(Boolean helper) {
+        this.helper = helper;
     }
 }

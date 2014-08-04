@@ -15,6 +15,7 @@ public class CycleFromTo {
     private String desc;
     private String trainName;
     private String time;
+    private Boolean helper;
 
     public CycleFromTo() {
     }
@@ -69,12 +70,21 @@ public class CycleFromTo {
         this.in = in;
     }
 
+    @XmlAttribute
     public boolean isStart() {
         return start;
     }
 
-    @XmlAttribute
     public void setStart(boolean start) {
         this.start = start;
+    }
+
+    @XmlAttribute
+    public Boolean getHelper() {
+        return helper;
+    }
+
+    public void setHelper(Boolean helper) {
+        this.helper = helper;
     }
 }

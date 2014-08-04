@@ -18,6 +18,7 @@
     td.timeh {border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 13mm;}
     td.fromtoh {border-color: black; border-style: solid; border-width: 0.2mm 0mm 0mm 0mm; font-size: 2mm; width: 17mm;}
     tr.row {height: 4mm; text-align: center;}
+    tr.emph {font-style: italic;}
     td.trow {text-align: left;}
     td.drow {font-weight: bold; text-align: right; padding-right: 1mm;}
     td.ftrow {}
@@ -80,7 +81,7 @@
         </tr><%
                   }
               %>
-        <tr class="row">
+        <tr class="row${row.helper == true ? " emph" : ""}">
           <td class="trow">&nbsp;${row.trainName}</td>
           <td class="drow">${convertTime(row.fromTime)}</td>
           <td class="ftrow">${row.fromAbbr} - ${row.toAbbr}</td>
