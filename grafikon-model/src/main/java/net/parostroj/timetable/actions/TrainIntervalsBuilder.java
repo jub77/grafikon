@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainIntervalsBuilder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainIntervalsBuilder.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainIntervalsBuilder.class);
     private final Train train;
     private TimeInterval lastInterval;
     private final int startTime;
@@ -27,7 +27,7 @@ public class TrainIntervalsBuilder {
 
     public void addNode(String intervalId, Node node, NodeTrack track, int stop, Attributes attributes) {
         if (intervalId == null) {
-            LOG.warn("Adding interval with not specified id (fix - generated): {}", node);
+            log.warn("Adding interval with not specified id (fix - generated): {}", node);
             intervalId = IdGenerator.getInstance().getId();
         }
         if (finished) {
@@ -49,7 +49,7 @@ public class TrainIntervalsBuilder {
 
     public void addLine(String intervalId, Line line, LineTrack track, Integer speed, int addedTime, Attributes attributes) {
         if (intervalId == null) {
-            LOG.warn("Adding interval with not specified id (fix - generated): {}", line);
+            log.warn("Adding interval with not specified id (fix - generated): {}", line);
             intervalId = IdGenerator.getInstance().getId();
         }
         if (finished) {

@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SaveAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SaveAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SaveAction.class);
     private final ApplicationModel model;
 
     public SaveAction(ApplicationModel model) {
@@ -87,13 +87,13 @@ public class SaveAction extends AbstractAction {
                 try {
                     ModelUtils.saveModelData(model, file);
                 } catch (LSException e) {
-                    LOG.warn("Error saving model.", e);
+                    log.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } catch (Exception e) {
-                    LOG.warn("Error saving model.", e);
+                    log.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } finally {
-                    LOG.debug("Saved in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Saved in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }

@@ -35,7 +35,7 @@ public class SaveImageAction extends EventDispatchAfterModelAction {
         public void paintImage(Graphics g);
     }
     
-    private static final Logger LOG = LoggerFactory.getLogger(SaveImageAction.class);
+    private static final Logger log = LoggerFactory.getLogger(SaveImageAction.class);
     private boolean error;
     private final SaveImageDialog dialog;
     private final Image image;
@@ -63,7 +63,7 @@ public class SaveImageAction extends EventDispatchAfterModelAction {
                 try {
                     ImageIO.write(img, "png", dialog.getSaveFile());
                 } catch (IOException e) {
-                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                    log.warn("Error saving file: " + dialog.getSaveFile(), e);
                     error = true;
                 }
             } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
@@ -86,12 +86,12 @@ public class SaveImageAction extends EventDispatchAfterModelAction {
                     Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
                     g2d.stream(out, useCSS);
                 } catch (IOException e) {
-                    LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                    log.warn("Error saving file: " + dialog.getSaveFile(), e);
                     error = true;
                 }
             }
         } finally {
-            LOG.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
+            log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
             setWaitDialogVisible(false);
         }
     }

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResourceLoader.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ResourceLoader.class);
 
     /**
      * returns localized string for key.
@@ -27,7 +27,7 @@ public class ResourceLoader {
         try {
             return ResourceBundle.getBundle("net.parostroj.timetable.gui.components_texts").getString(key);
         } catch (MissingResourceException e) {
-            LOG.warn("Error getting text for key: {}", key);
+            log.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
     }
@@ -58,7 +58,7 @@ public class ResourceLoader {
         if (imgURL != null) {
             return description == null ? new ImageIcon(imgURL) : new ImageIcon(imgURL, description);
         } else {
-            LOG.warn("Could not find icon: {}", path);
+            log.warn("Could not find icon: {}", path);
             return null;
         }
     }

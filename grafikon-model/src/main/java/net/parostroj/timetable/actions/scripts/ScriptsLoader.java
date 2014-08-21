@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScriptsLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptsLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(ScriptsLoader.class);
 
     private static final String DEFAULT_SCRIPTS_LOCATION = "scripts";
     private static final String LIST = "list.xml";
@@ -58,7 +58,7 @@ public class ScriptsLoader {
                 _keyView = Collections.unmodifiableCollection(scriptActions.keySet());
                 _actionsView = Collections.unmodifiableCollection(scriptActions.values());
             } catch (JAXBException e) {
-                LOG.error("Error loading list of scripts.", e);
+                log.error("Error loading list of scripts.", e);
             }
             if (scriptActions == null)
                 scriptActions = Collections.emptyMap();
@@ -93,7 +93,7 @@ public class ScriptsLoader {
         try {
             return Conversions.loadFile(is);
         } catch (Exception e) {
-            LOG.error("Error reading file.", e);
+            log.error("Error reading file.", e);
             return "";
         }
     }

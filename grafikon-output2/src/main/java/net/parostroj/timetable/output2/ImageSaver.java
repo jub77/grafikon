@@ -21,8 +21,9 @@ import com.google.common.io.Resources;
  */
 public class ImageSaver {
 
+    private static final Logger log = LoggerFactory.getLogger(ImageSaver.class);
+
     private static final Set<String> PREDEFINED_IMAGES;
-    private static final Logger LOG = LoggerFactory.getLogger(ImageSaver.class.getName());
 
     private final TrainDiagram diagram;
 
@@ -53,11 +54,11 @@ public class ImageSaver {
         if (resLocation != null)
             this.saveImage(new File(directory,image), resLocation);
         else
-            LOG.warn("Image {} not found.", image);
+            log.warn("Image {} not found.", image);
     }
 
     private void saveImage(File location, URL resLocation) throws IOException {
-        LOG.trace("Saving file {}.", location.getName());
+        log.trace("Saving file {}.", location.getName());
         Resources.asByteSource(resLocation).copyTo(Files.asByteSink(location));
     }
 }

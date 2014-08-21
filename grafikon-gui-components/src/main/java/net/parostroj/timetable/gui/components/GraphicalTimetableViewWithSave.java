@@ -33,7 +33,7 @@ import org.w3c.dom.Document;
  */
 public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableViewWithSave.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewWithSave.class);
     private SaveImageDialog dialog;
 
     public GraphicalTimetableViewWithSave() {
@@ -105,7 +105,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                         try {
                             ImageIO.write(img, "png", dialog.getSaveFile());
                         } catch (IOException e) {
-                            LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                            log.warn("Error saving file: " + dialog.getSaveFile(), e);
                             error = true;
                         }
                     } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
@@ -129,12 +129,12 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                             Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
                             g2d.stream(out, useCSS);
                         } catch (IOException e) {
-                            LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                            log.warn("Error saving file: " + dialog.getSaveFile(), e);
                             error = true;
                         }
                     }
                 } finally {
-                    LOG.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }

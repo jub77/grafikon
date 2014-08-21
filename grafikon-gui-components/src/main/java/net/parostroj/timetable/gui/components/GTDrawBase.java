@@ -25,7 +25,7 @@ import com.google.common.base.Predicate;
 abstract public class GTDrawBase implements GTDraw {
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(GTDrawBase.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(GTDrawBase.class);
 
     // chars
     private static final String M_CHAR = "M";
@@ -373,7 +373,7 @@ abstract public class GTDrawBase implements GTDraw {
                 try {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
                 } catch (Exception e) {
-                    LOG.error("Error transform name shape.", e);
+                    log.error("Error transform name shape.", e);
                 }
             }
         }

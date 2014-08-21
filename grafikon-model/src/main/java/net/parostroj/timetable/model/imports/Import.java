@@ -34,7 +34,7 @@ public abstract class Import {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(Import.class);
+    private static final Logger log = LoggerFactory.getLogger(Import.class);
 
     private final ImportMatch match;
     private final TrainDiagram diagram;
@@ -252,7 +252,7 @@ public abstract class Import {
             if (entry.getValue() instanceof ObjectWithId) {
                 ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
                 if (objectWithId == null)
-                    LOG.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId)entry.getValue()).getId(), entry.getValue().getClass());
+                    log.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId)entry.getValue()).getId(), entry.getValue().getClass());
                 else
                     dest.set(entry.getKey(), objectWithId);
             } else {

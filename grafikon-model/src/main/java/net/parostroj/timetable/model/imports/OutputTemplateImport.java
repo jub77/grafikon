@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.*;
 
 public class OutputTemplateImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateImport.class);
+    private static final Logger log = LoggerFactory.getLogger(OutputTemplateImport.class);
 
     public OutputTemplateImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -25,7 +25,7 @@ public class OutputTemplateImport extends Import {
         if (checkedOutputTemplate != null) {
             String message = "output template already exists";
             this.addError(importedOutputTemplate, message);
-            LOG.debug("{}: {}", message, checkedOutputTemplate);
+            log.debug("{}: {}", message, checkedOutputTemplate);
             return null;
         }
 
@@ -39,7 +39,7 @@ public class OutputTemplateImport extends Import {
         // add to diagram
         this.getDiagram().addOutputTemplate(outputTemplate);
         this.addImportedObject(outputTemplate);
-        LOG.trace("Successfully imported output template: " + outputTemplate);
+        log.trace("Successfully imported output template: " + outputTemplate);
         return outputTemplate;
     }
 }

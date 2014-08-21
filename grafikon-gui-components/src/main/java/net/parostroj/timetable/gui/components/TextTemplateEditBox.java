@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.TextTemplate;
  */
 public class TextTemplateEditBox extends javax.swing.JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TextTemplateEditBox.class);
+    private static final Logger log = LoggerFactory.getLogger(TextTemplateEditBox.class);
 
     private Collection<Language> languages;
 
@@ -105,7 +105,7 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
             }
             templateTextField.getDocument().insertString(templateTextField.getCaretPosition(), text, null);
         } catch (BadLocationException e) {
-            LOG.warn("Error inserting text: {}", e.getMessage());
+            log.warn("Error inserting text: {}", e.getMessage());
         }
     }
 

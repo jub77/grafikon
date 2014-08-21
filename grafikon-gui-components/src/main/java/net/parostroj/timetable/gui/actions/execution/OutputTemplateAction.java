@@ -70,7 +70,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateAction.class);
+    private static final Logger log = LoggerFactory.getLogger(OutputTemplateAction.class);
 
     private String errorMessage;
     private OutputTemplate errorTemplate;
@@ -101,18 +101,18 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                         generateOutput(template);
                     }
                 } catch (OutputException e) {
-                    LOG.error(e.getMessage(), e);
+                    log.error(e.getMessage(), e);
                     errorMessage = e.getMessage();
                 }
             }
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
             errorMessage = ResourceLoader.getString("ot.message.error");
         } finally {
             setWaitDialogVisible(false);
         }
         time = System.currentTimeMillis() - time;
-        LOG.debug("Generated in {}ms", time);
+        log.debug("Generated in {}ms", time);
     }
 
     @Override

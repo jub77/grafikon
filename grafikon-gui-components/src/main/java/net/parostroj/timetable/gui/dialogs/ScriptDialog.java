@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScriptDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
 
     private Script selectedScript;
 
@@ -84,7 +84,7 @@ public class ScriptDialog extends javax.swing.JDialog {
             selectedScript = this.getScript();
             this.setVisible(false);
         } catch (GrafikonException e) {
-            LOG.error("Error creating script.", e);
+            log.error("Error creating script.", e);
             String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             GuiComponentUtils.showError(message, this);
         }

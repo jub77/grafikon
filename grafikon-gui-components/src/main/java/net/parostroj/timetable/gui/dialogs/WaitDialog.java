@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WaitDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(WaitDialog.class);
     private static final int WIDTH = 300;
 
     private int level = 0;
@@ -101,7 +101,7 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        LOG.trace("Event received: {}, {}", evt.getPropertyName(), evt.getNewValue());
+        log.trace("Event received: {}, {}", evt.getPropertyName(), evt.getNewValue());
         if ("state".equals(evt.getPropertyName())) {
             if (evt.getNewValue() == ActionContext.WaitDialogState.HIDE) {
                 this.setVisible(false);

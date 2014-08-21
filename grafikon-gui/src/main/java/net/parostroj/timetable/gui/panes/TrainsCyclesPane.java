@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiData, TCDelegate.Listener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsCyclesPane.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
+
     private TCDelegate delegate;
 
     private class HighligterAndSelector implements HighlightedTrains, TimeIntervalSelector, TrainColorChooser, TCDelegate.Listener {
@@ -150,7 +151,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
                 graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
             }
         } catch (Exception e) {
-            LOG.warn("Wrong GTView settings - using default values.");
+            log.warn("Wrong GTView settings - using default values.");
         }
         return section;
     }

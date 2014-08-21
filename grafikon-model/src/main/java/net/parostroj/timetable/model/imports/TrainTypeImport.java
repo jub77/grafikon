@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainTypeImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainTypeImport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainTypeImport.class);
 
     public TrainTypeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -33,7 +33,7 @@ public class TrainTypeImport extends Import {
         if (checkedType != null) {
             String message = "train type already exists";
             this.addError(importedType, message);
-            LOG.debug("{}: {}", message, checkedType);
+            log.debug("{}: {}", message, checkedType);
             return null;
         }
 
@@ -42,7 +42,7 @@ public class TrainTypeImport extends Import {
         if (checkedCategory == null) {
             String message = "category missing: " + importedType.getCategory();
             this.addError(importedType, message);
-            LOG.debug(message);
+            log.debug(message);
             return null;
         }
 
@@ -59,7 +59,7 @@ public class TrainTypeImport extends Import {
         // add to diagram
         this.getDiagram().addTrainType(type);
         this.addImportedObject(type);
-        LOG.trace("Successfully imported type: " + type);
+        log.trace("Successfully imported type: " + type);
         return type;
     }
 }

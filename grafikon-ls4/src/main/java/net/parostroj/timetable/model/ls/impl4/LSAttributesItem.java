@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 @XmlType(propOrder = {"key", "values", "type", "category"})
 public class LSAttributesItem {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSAttributesItem.class);
+
     private String key;
     private List<LSAttributesValue> values;
     private String type;
@@ -80,7 +81,7 @@ public class LSAttributesItem {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             cValue = new LSAttributesValue(pair.second, pair.first);
         } else {
-            LOG.warn("Cannot convert value to string: {}", key);
+            log.warn("Cannot convert value to string: {}", key);
         }
         return cValue;
     }
@@ -168,7 +169,7 @@ public class LSAttributesItem {
             return this.convertModelValue(diagram, value, valueType);
         } else {
             // it didn't recognize the type
-            LOG.warn("Not recognized type: {}", valueType);
+            log.warn("Not recognized type: {}", valueType);
             return null;
         }
     }
@@ -185,7 +186,7 @@ public class LSAttributesItem {
 
     private Object convertModelValue(TrainDiagram diagram, String value, String valueType) {
         if (diagram == null) {
-            LOG.warn("Cannot convert model value without diagram.");
+            log.warn("Cannot convert model value without diagram.");
             return null;
         } else {
             if (valueType.equals("model.engine.class")) {
@@ -195,7 +196,7 @@ public class LSAttributesItem {
             } else if (valueType.equals("model.object")) {
                 return diagram.getObjectById(value);
             } else {
-                LOG.warn("Not recognized model type: {}", valueType);
+                log.warn("Not recognized model type: {}", valueType);
                 return null;
             }
         }

@@ -49,7 +49,7 @@ import java.awt.BorderLayout;
  */
 public class EditNodeDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditNodeDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
 
     private static Region NONE_REGION = new Region(null, "-");
 
@@ -206,8 +206,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 if (!length.equals(oldLength))
                     node.setAttribute(Node.ATTR_LENGTH, length);
             } catch (ArithmeticException e) {
-                LOG.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
-                LOG.warn(e.getMessage());
+                log.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
+                log.warn(e.getMessage());
             }
         } else {
             node.removeAttribute(Node.ATTR_LENGTH);

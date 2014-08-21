@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EngineClassImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EngineClassImport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EngineClassImport.class);
 
     public EngineClassImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -36,7 +36,7 @@ public class EngineClassImport extends Import {
         if (checkedEngineClass != null) {
             String message = "engine class already exists";
             this.addError(importedEngineClass, message);
-            LOG.debug("{}: {}", message, checkedEngineClass);
+            log.debug("{}: {}", message, checkedEngineClass);
             return null;
         }
 
@@ -51,7 +51,7 @@ public class EngineClassImport extends Import {
                 if (lineClass == null) {
                     String message = "line class missing: " + impEntry.getKey().getName();
                     this.addError(importedEngineClass, message);
-                    LOG.debug(message);
+                    log.debug(message);
                     return null;
                 }
                 row.setWeightInfo(lineClass, impEntry.getValue());
@@ -62,7 +62,7 @@ public class EngineClassImport extends Import {
         // add to diagram
         this.getDiagram().addEngineClass(engineClass);
         this.addImportedObject(engineClass);
-        LOG.trace("Successfully imported engine class: " + engineClass);
+        log.trace("Successfully imported engine class: " + engineClass);
         return engineClass;
     }
 }

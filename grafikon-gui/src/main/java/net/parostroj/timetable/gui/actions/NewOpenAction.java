@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NewOpenAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NewOpenAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
     private final ApplicationModel model;
 
     /**
@@ -110,7 +110,7 @@ public class NewOpenAction extends AbstractAction {
                         FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                         diagram = ls.load(selectedFile);
                     } catch (LSException e) {
-                        LOG.warn("Error loading model.", e);
+                        log.warn("Error loading model.", e);
                         if (e.getCause() instanceof FileNotFoundException) {
                             // remove from last opened
                             model.removeLastOpenedFile(selectedFile);
@@ -123,11 +123,11 @@ public class NewOpenAction extends AbstractAction {
                             errorException = e;
                         }
                     } catch (Exception e) {
-                        LOG.warn("Error loading model.", e);
+                        log.warn("Error loading model.", e);
                         errorMessage = ResourceLoader.getString("dialog.error.loading");
                     }
                 } finally {
-                    LOG.debug("Loaded in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Loaded in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }
@@ -209,7 +209,7 @@ public class NewOpenAction extends AbstractAction {
                     diagram.setAttribute(TrainDiagram.ATTR_SCALE, values.scale);
                     diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, values.timeScale);
                 } finally {
-                    LOG.debug("Template loaded in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Template loaded in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }
@@ -223,7 +223,7 @@ public class NewOpenAction extends AbstractAction {
                 }
 
                 if (error != null) {
-                    LOG.warn("Cannot load template.", error);
+                    log.warn("Cannot load template.", error);
                     JOptionPane.showMessageDialog(parent, error.getMessage(),
                             ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
                 }

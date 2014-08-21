@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsPane.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainsPane.class);
 
     /** Creates new form TrainsPane */
     public TrainsPane() {
@@ -75,7 +75,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
             gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
         } catch (Exception e) {
             // use default values
-            LOG.warn("Wrong GTView settings - using default values.");
+            log.warn("Wrong GTView settings - using default values.");
         }
         if (gtvs != null) {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));

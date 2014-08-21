@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 class NodeImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NodeImport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(NodeImport.class);
 
     public NodeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch importMatch) {
         super(diagram, libraryDiagram, importMatch);
@@ -33,7 +33,7 @@ class NodeImport extends Import {
         if (checkedNode != null) {
             String message = "station already exists";
             this.addError(importedNode, message);
-            LOG.debug("{}: {}", message, checkedNode);
+            log.debug("{}: {}", message, checkedNode);
             return null;
         }
 
@@ -52,7 +52,7 @@ class NodeImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addNode(node);
         this.addImportedObject(node);
-        LOG.trace("Successfully imported node: " + node);
+        log.trace("Successfully imported node: " + node);
         return node;
     }
 }

@@ -38,7 +38,7 @@ import javax.swing.event.DocumentListener;
  */
 public class TrainTypesDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainTypesDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainTypesDialog.class);
 
     private static final TrainTypeCategory NONE_CATEGORY = new TrainTypeCategory(null, "-", "-");
 
@@ -415,7 +415,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                         type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     GuiComponentUtils.showWarning(e.getMessage(), this);
-                    LOG.warn(e.getMessage(), e);
+                    log.warn(e.getMessage(), e);
                 }
             } else {
                 if (type.getTrainNameTemplate() != null)
@@ -428,7 +428,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                         type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     GuiComponentUtils.showWarning(e.getMessage(), this);
-                    LOG.warn(e.getMessage(), e);
+                    log.warn(e.getMessage(), e);
                 }
             } else {
                 if (type.getTrainCompleteNameTemplate() != null)
@@ -481,7 +481,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             }
         } catch (GrafikonException e) {
             GuiComponentUtils.showError(e.getMessage(), this);
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
             return;
         }
         type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());

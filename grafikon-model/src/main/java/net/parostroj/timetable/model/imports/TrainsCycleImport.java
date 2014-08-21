@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsCycleImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsCycleImport.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainsCycleImport.class);
 
     public TrainsCycleImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -36,7 +36,7 @@ public class TrainsCycleImport extends Import {
         if (checkedCycle != null) {
             String message = "circulation already exists";
             this.addError(importedCycle, message);
-            LOG.debug("{}: {}", message, checkedCycle);
+            log.debug("{}: {}", message, checkedCycle);
             return null;
         }
 
@@ -45,7 +45,7 @@ public class TrainsCycleImport extends Import {
         if (cycleType == null) {
             String message = "circulation type missing: " + importedCycle.getType();
             this.addError(importedCycle, message);
-            LOG.debug(message);
+            log.debug(message);
             return null;
         }
         TrainsCycle cycle = new TrainsCycle(this.getId(importedCycle), importedCycle.getName(), importedCycle.getDescription(), cycleType);
@@ -66,7 +66,7 @@ public class TrainsCycleImport extends Import {
 
         this.getDiagram().addCycle(cycle);
         this.addImportedObject(cycle);
-        LOG.trace("Successfully imported circulation: " + cycle);
+        log.trace("Successfully imported circulation: " + cycle);
         return cycle;
     }
 
@@ -77,7 +77,7 @@ public class TrainsCycleImport extends Import {
             if (train == null) {
                 String message = "train missing: " + item.getTrain();
                 this.addError(cycle, message);
-                LOG.debug(message);
+                log.debug(message);
                 return null;
             }
             // get intervals
@@ -90,7 +90,7 @@ public class TrainsCycleImport extends Import {
             if (fi == null || ti == null) {
                 String message = "intervals does not match";
                 this.addError(cycle, message);
-                LOG.debug("{}: {}", cycle, message);
+                log.debug("{}: {}", cycle, message);
                 return null;
             }
             // check nodes of intervals
@@ -99,7 +99,7 @@ public class TrainsCycleImport extends Import {
             if (fn != fi.getOwnerAsNode() || tn != ti.getOwnerAsNode()) {
                 String message = "nodes does not match";
                 this.addError(cycle, message);
-                LOG.debug("{}: {}", cycle, message);
+                log.debug("{}: {}", cycle, message);
                 return null;
             }
             if (from == 0) {

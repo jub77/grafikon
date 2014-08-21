@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TransformedGTDraw extends GTDrawDecorator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransformedGTDraw.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TransformedGTDraw.class);
 
     private Rectangle clipping;
     private boolean moveStationName;
@@ -30,7 +30,7 @@ public class TransformedGTDraw extends GTDrawDecorator {
         this.applyTranslation(g);
         this.applyClipping(g);
         super.draw(g);
-        LOG.trace("DRAW TIME(" + (drawCnt++) + "): " + (System.currentTimeMillis() - time) + "ms");
+        log.trace("DRAW TIME(" + (drawCnt++) + "): " + (System.currentTimeMillis() - time) + "ms");
     }
 
     private void applyClipping(Graphics2D g) {

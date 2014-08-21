@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EventsViewerPanel extends javax.swing.JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventsViewerPanel.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EventsViewerPanel.class);
     private static final int TIMEOUT = 100;
 
 
@@ -43,7 +43,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
             fireIntervalAdded(this, position, position);
             removeOverLimit();
             if (writeToLog)
-                LOG.debug(str);
+                log.debug(str);
         }
 
         @Override

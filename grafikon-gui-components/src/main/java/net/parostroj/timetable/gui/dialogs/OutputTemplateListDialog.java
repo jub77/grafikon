@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OutputTemplateListDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OutputTemplateListDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
     private TrainDiagram diagram;
     private WrapperListModel<OutputTemplate> templatesModel;
@@ -255,7 +255,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         try {
             template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
         } catch (GrafikonException e) {
-            LOG.error("Error creating template.", e);
+            log.error("Error creating template.", e);
         }
         template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, "diagram");
         Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template);
@@ -307,7 +307,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
             copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
                     template.getTemplate().getLanguage()));
         } catch (GrafikonException e) {
-            LOG.error("Error creating copy of template.", e);
+            log.error("Error creating copy of template.", e);
         }
         copy.setName(template.getName());
         copy.setAttributes(new Attributes(template.getAttributes()));
@@ -317,7 +317,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
                         template.getScript().getLanguage()));
             }
         } catch (GrafikonException e) {
-            LOG.error("Error creating script.", e);
+            log.error("Error creating script.", e);
         }
         return copy;
     }

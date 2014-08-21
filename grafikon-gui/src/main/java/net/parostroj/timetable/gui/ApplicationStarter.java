@@ -12,23 +12,23 @@ import org.slf4j.LoggerFactory;
 /**
  * Application starter class. It creates splash screen and after initialization
  * it starts application.
- * 
+ *
  * @author jub
  */
 public class ApplicationStarter<T extends JFrame> {
-    
+
     public static interface AfterStartAction<T> {
 
         public void action(T frame);
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationStarter.class.getName());
-    
+    private static final Logger log = LoggerFactory.getLogger(ApplicationStarter.class);
+
     private Class<T> applicationClass;
     private Image image;
     private int x,y;
     private AfterStartAction<T> action;
-    
+
     private ApplicationStarter(Class<T> applicationClass, int x, int y) {
         this.applicationClass = applicationClass;
         this.x = x;
@@ -39,30 +39,30 @@ public class ApplicationStarter<T extends JFrame> {
         this(applicationClass, x, y);
         this.image = image;
     }
-    
+
     public ApplicationStarter(Class<T> applicationClass, int x, int y, URL url) {
         this(applicationClass, x, y);
         this.image = this.loadImage(url);
     }
-    
+
     public void setAction(AfterStartAction<T> action) {
         this.action = action;
     }
-    
+
     private Image loadImage(URL url) {
         return Toolkit.getDefaultToolkit().getImage(url);
     }
-    
+
     public void start() throws ApplicationStarterException {
-            LOG.trace("Start starter.");
+            log.trace("Start starter.");
             if (SplashScreen.getSplashScreen() == null)
                 startFrame();
             else {
                 startOriginal();
             }
-            LOG.trace("End starter.");
+            log.trace("End starter.");
     }
-    
+
     private T getApplicationInstance(SplashScreenInfo splash) throws ApplicationStarterException {
         try {
             return applicationClass.getConstructor(SplashScreenInfo.class).newInstance(splash);
@@ -70,17 +70,17 @@ public class ApplicationStarter<T extends JFrame> {
             try {
                 return applicationClass.newInstance();
             } catch (Exception ex) {
-                LOG.error(ex.getMessage(), ex);
+                log.error(ex.getMessage(), ex);
                 throw new ApplicationStarterException(ex);
             }
         } catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
             throw new ApplicationStarterException(ex);
         }
     }
-    
+
     private void startOriginal() throws ApplicationStarterException {
-        LOG.debug("Using Java 1.6 splash screen.");
+        log.debug("Using Java 1.6 splash screen.");
         SplashScreen splash = SplashScreen.getSplashScreen();
         SplashScreenInfoOrig info = new SplashScreenInfoOrig(splash, x, y);
         final T frm = this.getApplicationInstance(info);
@@ -89,7 +89,7 @@ public class ApplicationStarter<T extends JFrame> {
             public void run() {
                 frm.setVisible(true);
                 SwingUtilities.invokeLater(new Runnable() {
-                    
+
                     @Override
                     public void run() {
                         if (action != null)
@@ -99,12 +99,12 @@ public class ApplicationStarter<T extends JFrame> {
             }
         });
     }
-    
+
     private void startFrame() throws ApplicationStarterException {
-        LOG.debug("Showing JFrame splash screen.");
+        log.debug("Showing JFrame splash screen.");
         final SplashScreenFrame spl = new SplashScreenFrame(x, y, image);
         spl.setVisible(true);
-        LOG.trace("Splash initialized.");
+        log.trace("Splash initialized.");
         final T frm = this.getApplicationInstance(spl);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -113,7 +113,7 @@ public class ApplicationStarter<T extends JFrame> {
                 spl.dispose();
                 frm.setVisible(true);
                 SwingUtilities.invokeLater(new Runnable() {
-                    
+
                     @Override
                     public void run() {
                         if (action != null)

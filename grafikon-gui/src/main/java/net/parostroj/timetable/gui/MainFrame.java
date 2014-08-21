@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainFrame extends javax.swing.JFrame implements ApplicationModelListener, StorableGuiData {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
+    private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
 
     private ApplicationModel model;
@@ -98,7 +98,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
-            LOG.warn("Cannot load preferences.", e);
+            log.warn("Cannot load preferences.", e);
         }
 
         outputAction = new OutputAction(model, this);
@@ -190,7 +190,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         try {
             this.loadFromPreferences(AppPreferences.getPreferences());
         } catch (IOException e) {
-            LOG.error("Error loading preferences.", e);
+            log.error("Error loading preferences.", e);
         }
 
         this.setSelectedLocale();
@@ -1073,7 +1073,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         try {
             fls = f.createLatestForSave();
         } catch (LSException e) {
-            LOG.warn("Cannot create FileLoadSave", e);
+            log.warn("Cannot create FileLoadSave", e);
         }
         AboutDialog dialog = new AboutDialog(this, true,
                 String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
@@ -1167,7 +1167,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             this.saveToPreferences(AppPreferences.getPreferences());
             AppPreferences.storePreferences();
         } catch (IOException ex) {
-            LOG.error("Error saving preferences.", ex);
+            log.error("Error saving preferences.", ex);
         }
     }
 

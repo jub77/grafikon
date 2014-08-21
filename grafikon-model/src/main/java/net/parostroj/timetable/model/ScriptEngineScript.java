@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ScriptEngineScript extends Script {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptEngineScript.class);
+    private static final Logger log = LoggerFactory.getLogger(ScriptEngineScript.class);
 
     private CompiledScript script;
 
@@ -40,7 +40,7 @@ public final class ScriptEngineScript extends Script {
         try {
             return this.evaluateWithException(binding);
         } catch (GrafikonException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             return null;
         }
     }

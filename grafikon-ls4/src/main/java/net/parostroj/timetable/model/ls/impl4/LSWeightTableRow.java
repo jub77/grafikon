@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Storage for weight table row.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"speed", "weights"})
 public class LSWeightTableRow {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSWeightTableRow.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSWeightTableRow.class);
 
     private int speed;
     private List<LSWeightLimit> weights;
@@ -52,14 +52,14 @@ public class LSWeightTableRow {
     public void setWeights(List<LSWeightLimit> weights) {
         this.weights = weights;
     }
-    
+
     public WeightTableRow createWeightTableRow(Net net, EngineClass engineClass) {
         WeightTableRow row = engineClass.createWeightTableRow(speed);
         if (weights != null)
             for (LSWeightLimit limit : weights) {
                 LineClass lineClass = net.getLineClassById(limit.getLineClass());
                 if (lineClass == null)
-                    LOG.warn("Non-existent line class: {}", limit.getLineClass());
+                    log.warn("Non-existent line class: {}", limit.getLineClass());
                 else
                     row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());
             }

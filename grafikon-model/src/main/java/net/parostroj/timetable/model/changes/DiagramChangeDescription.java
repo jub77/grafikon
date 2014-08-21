@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DiagramChangeDescription {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiagramChangeDescription.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DiagramChangeDescription.class);
 
     private String description;
     private Parameter[] params;
@@ -57,10 +57,10 @@ public class DiagramChangeDescription {
                 String desc = DiagramChange.getStringWithException(description);
                 _cachedOutput = String.format(desc, (Object[])this.convertParams());
             } catch (MissingResourceException e) {
-                LOG.warn("Key not found: {}", e.getKey());
+                log.warn("Key not found: {}", e.getKey());
                 _cachedOutput = DiagramChange.getString("not_found");
             } catch (Exception e) {
-                LOG.warn("Not enough parameters for key: {}", description);
+                log.warn("Not enough parameters for key: {}", description);
                 _cachedOutput = DiagramChange.getString("not_found");
             }
         }

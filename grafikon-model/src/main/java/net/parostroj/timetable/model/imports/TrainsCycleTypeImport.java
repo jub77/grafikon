@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.*;
  */
 public class TrainsCycleTypeImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsCycleTypeImport.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainsCycleTypeImport.class);
 
     public TrainsCycleTypeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -32,7 +32,7 @@ public class TrainsCycleTypeImport extends Import {
         if (checkedCycleType != null) {
             String message = "circulation type already exists";
             this.addError(importedCycleType, message);
-            LOG.debug("{}: {}", message, checkedCycleType);
+            log.debug("{}: {}", message, checkedCycleType);
             return null;
         }
 
@@ -41,7 +41,7 @@ public class TrainsCycleTypeImport extends Import {
 
         this.getDiagram().addCyclesType(type);
         this.addImportedObject(type);
-        LOG.trace("Successfully imported circulation type: " + type);
+        log.trace("Successfully imported circulation type: " + type);
         return type;
     }
 

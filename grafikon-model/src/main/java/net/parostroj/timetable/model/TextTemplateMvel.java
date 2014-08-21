@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class TextTemplateMvel extends TextTemplate {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TextTemplateMvel.class);
+    private static final Logger log = LoggerFactory.getLogger(TextTemplateMvel.class);
 
     private CompiledTemplate compiledTemplate;
 
@@ -48,7 +48,7 @@ public final class TextTemplateMvel extends TextTemplate {
         try {
             return this.evaluateWithException(binding);
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            log.warn(e.getMessage());
             return "-- Template error --";
         }
     }

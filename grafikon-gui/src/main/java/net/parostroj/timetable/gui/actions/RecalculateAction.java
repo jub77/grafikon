@@ -25,7 +25,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
  */
 public class RecalculateAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecalculateAction.class);
+    private static final Logger log = LoggerFactory.getLogger(RecalculateAction.class);
 
     public static interface TrainAction {
         public void execute(Train train) throws Exception;
@@ -86,7 +86,7 @@ public class RecalculateAction extends AbstractAction {
                         setWaitProgress(100);
                     }
                 } finally {
-                    LOG.debug("{} finished in {}ms", actionName, System.currentTimeMillis() - time);
+                    log.debug("{} finished in {}ms", actionName, System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }
@@ -101,13 +101,13 @@ public class RecalculateAction extends AbstractAction {
                                 try {
                                     trainAction.execute(train);
                                 } catch (Exception e) {
-                                    LOG.error("Modification of train failed.", e);
+                                    log.error("Modification of train failed.", e);
                                 }
                         } finally {
                             try {
                                 barrier.await();
                             } catch (Exception e) {
-                                LOG.error("Recalculate action - await interrupted.", e);
+                                log.error("Recalculate action - await interrupted.", e);
                             }
                         }
                     }
@@ -115,7 +115,7 @@ public class RecalculateAction extends AbstractAction {
                 try {
                     barrier.await();
                 } catch (Exception e) {
-                    LOG.error("Recalculate - await interrupted.", e);
+                    log.error("Recalculate - await interrupted.", e);
                 }
             }
         };

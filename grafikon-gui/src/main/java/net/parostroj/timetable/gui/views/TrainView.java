@@ -40,7 +40,8 @@ import javax.swing.SwingConstants;
  */
 public class TrainView extends javax.swing.JPanel implements ApplicationModelListener, StorableGuiData {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainView.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainView.class);
+
     private ApplicationModel model;
     private Train train;
 
@@ -318,7 +319,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                         shownColumns.add(ac);
                     }
                 } catch (NumberFormatException e) {
-                    LOG.warn("Cannot load columns order for train view: {}", cStr);
+                    log.warn("Cannot load columns order for train view: {}", cStr);
                 }
             }
         }

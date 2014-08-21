@@ -11,14 +11,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of splash screen info for splash screen from java 1.6.
- * 
+ *
  * @author jub
  */
 public class SplashScreenInfoOrig implements SplashScreenInfo {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplashScreenInfoOrig.class.getName());
-    private int x,  y;
-    private SplashScreen splash;
+    private static final Logger log = LoggerFactory.getLogger(SplashScreenInfoOrig.class);
+
+    private final int x,  y;
+    private final SplashScreen splash;
 
     public SplashScreenInfoOrig(SplashScreen splash, int x, int y) {
         this.splash = splash;
@@ -28,7 +29,7 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
 
     @Override
     public void setText(String text) {
-        Graphics2D g = (Graphics2D) splash.createGraphics();
+        Graphics2D g = splash.createGraphics();
         Dimension size = splash.getSize();
         g.setComposite(AlphaComposite.Clear);
         g.fillRect(0, 0, size.width, size.height);
@@ -41,7 +42,7 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
             for (String str : texts) {
                 g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
                 g.setColor(Color.BLACK);
-                LOG.trace(String.format("Text %d,%d,%s", x, posY, str));
+                log.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;
             }

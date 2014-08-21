@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UnitUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UnitUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(UnitUtil.class);
 
     public static BigDecimal convert(BigDecimal value, Unit from, Unit to) {
         if (to == null || from == null)
@@ -52,7 +52,7 @@ public class UnitUtil {
         try {
             return formatter.valueToString(value);
         } catch (ParseException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             return "-";
         }
     }

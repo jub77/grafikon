@@ -14,12 +14,12 @@ import org.slf4j.LoggerFactory;
  * Converting old style of train names into the new one ... Effectivelly
  * stripping all other stuff except for train number and adding templates
  * and sort pattern.
- * 
+ *
  * @author jub
  */
 public class TrainsNamesLoadFilter implements TrainDiagramFilter {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsNamesLoadFilter.class.getName());
+
+    private static final Logger log = LoggerFactory.getLogger(TrainsNamesLoadFilter.class);
 
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
@@ -42,10 +42,10 @@ public class TrainsNamesLoadFilter implements TrainDiagramFilter {
                     if (m.matches()) {
                         train.setNumber(m.group(1));
                     } else {
-                        LOG.warn("Cannot convert train name. Name doesn't match: {}", train.getNumber());
+                        log.warn("Cannot convert train name. Name doesn't match: {}", train.getNumber());
                     }
                 } catch (Exception e) {
-                    LOG.warn("Cannot convert train name.", e);
+                    log.warn("Cannot convert train name.", e);
                 }
             }
         }

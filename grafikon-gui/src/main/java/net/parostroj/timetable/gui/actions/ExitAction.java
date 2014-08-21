@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExitAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExitAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ExitAction.class);
     private final ApplicationModel model;
     private final MainFrame parent;
 
@@ -64,12 +64,12 @@ public class ExitAction extends AbstractAction {
                         setWaitMessage(ResourceLoader.getString("wait.message.savemodel"));
                         long time = System.currentTimeMillis();
                         ModelUtils.saveModelData(model, model.getOpenedFile());
-                        LOG.debug("Save before exit finished in {}ms", System.currentTimeMillis() - time);
+                        log.debug("Save before exit finished in {}ms", System.currentTimeMillis() - time);
                     }
                     setWaitMessage(ResourceLoader.getString("wait.message.programclose"));
                     parent.cleanUpBeforeApplicationEnd();
                 } catch (Exception e) {
-                    LOG.warn("Error saving model.", e);
+                    log.warn("Error saving model.", e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } finally {
                     setWaitDialogVisible(false);
@@ -87,7 +87,7 @@ public class ExitAction extends AbstractAction {
                 // dispose main window - it should close application
                 parent.dispose();
 
-                LOG.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
+                log.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
 
                 // close application by force (possible problems with web start)
                 if (exit)

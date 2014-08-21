@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FloatingWindowsFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FloatingWindowsFactory.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FloatingWindowsFactory.class);
 
     private static FloatingWindow createTrainsWithConflictsDialog(final Frame frame, final Mediator mediator, final ApplicationModel model) {
         final TrainsWithConflictsPanel panel = new TrainsWithConflictsPanel();
@@ -299,7 +299,7 @@ public class FloatingWindowsFactory {
                     GTViewSettings gtvs = GTViewSettings.parseStorageString(section.get("gtv"));
                     gtView.setSettings(gtView.getSettings().merge(gtvs));
                 } catch (Exception e) {
-                    LOG.warn("Wrong GTView settings - using default values.");
+                    log.warn("Wrong GTView settings - using default values.");
                 }
                 return section;
             }

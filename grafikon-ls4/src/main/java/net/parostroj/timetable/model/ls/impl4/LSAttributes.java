@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "attributes")
 public class LSAttributes {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSAttributes.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSAttributes.class);
+
     private List<LSAttributesItem> attributes;
 
     /**
@@ -66,7 +67,7 @@ public class LSAttributes {
                 if (value != null)
                     lAttributes.set(lItem.getKey(), value, lItem.getCategory());
                 else
-                    LOG.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
+                    log.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
             }
         }
         return lAttributes;
