@@ -41,7 +41,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         public boolean editSelected() {
             boolean edited = false;
             if (selected != null) {
-                EditFNConnetionDialog dialog = new EditFNConnetionDialog((Window) getTopLevelAncestor(), true);
+                EditFNConnetionDialog dialog = new EditFNConnetionDialog(GuiComponentUtils.getWindow(FreightNetPane2.this), true);
                 dialog.edit(FreightNetPane2.this, selected, model.getDiagram());
                 edited = true;
             }
@@ -200,7 +200,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditFNConnetionDialog dialog = new EditFNConnetionDialog((Window) getTopLevelAncestor(), true);
+                EditFNConnetionDialog dialog = new EditFNConnetionDialog(GuiComponentUtils.getWindow(FreightNetPane2.this), true);
                 dialog.edit(FreightNetPane2.this, selector.selected, model.getDiagram());
             }
         });
