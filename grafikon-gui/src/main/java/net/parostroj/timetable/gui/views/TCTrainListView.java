@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.filters.TrainTypePredicate;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.TimeIntervalSelector;
 import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
@@ -540,9 +539,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             filter = TrainTypePredicate.getTrainsByType(TrainTypePredicate.PredefinedType.FREIGHT);
         } else if (TrainFilter.CUSTOM.isType(type)) {
             // custom filter
-            TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)ActionUtils.getTopLevelComponent(component), true);
+            TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)GuiComponentUtils.getTopLevelComponent(component), true);
             dialog.setTrainTypes(delegate.getTrainDiagram(), selectedTypes);
-            dialog.setLocationRelativeTo(ActionUtils.getTopLevelComponent(component));
+            dialog.setLocationRelativeTo(GuiComponentUtils.getTopLevelComponent(component));
             dialog.setVisible(true);
             dialog.dispose();
 

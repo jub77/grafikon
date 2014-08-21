@@ -18,13 +18,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import javax.swing.JCheckBox;
 
 /**
@@ -314,7 +315,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         }
 
         if (route == null) {
-            ActionUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
+            GuiComponentUtils.showError(ResourceLoader.getString("create.train.createtrainerror"), this.getParent());
             return;
         }
 

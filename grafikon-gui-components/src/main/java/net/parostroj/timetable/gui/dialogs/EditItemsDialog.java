@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Collection;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -177,7 +176,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         if (!itemList.isSelectionEmpty()) {
             int selected = itemList.getSelectedIndex();
             if (!this.deleteAllowed(listModel.getIndex(selected).getElement())) {
-                ActionUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
+                GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
                 return;
             }
             listModel.removeIndex(selected);

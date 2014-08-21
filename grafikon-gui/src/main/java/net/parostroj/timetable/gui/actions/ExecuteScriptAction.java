@@ -14,9 +14,9 @@ import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.dialogs.ScriptDialog;
 import net.parostroj.timetable.gui.dialogs.ScriptOutputDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
@@ -63,7 +63,7 @@ public class ExecuteScriptAction extends AbstractAction {
     }
 
     private void predefinedExecution(ScriptsLoader loader, Component comp, String scriptId) {
-        Component parent = ActionUtils.getTopLevelComponent(comp);
+        Component parent = GuiComponentUtils.getTopLevelComponent(comp);
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         long time = System.currentTimeMillis();
         try {
@@ -77,12 +77,12 @@ public class ExecuteScriptAction extends AbstractAction {
         } catch (GrafikonException ex) {
             LOG.error("Error executing script.", ex);
             String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
-            ActionUtils.showError(message, parent);
+            GuiComponentUtils.showError(message, parent);
         }
     }
 
     private void editScriptExecution(ActionEvent e) {
-        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
+        Component parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
         model.getDiagram();
         ScriptDialog dialog = new ScriptDialog((Frame)parent, true);
         if (lastScript == null) {
@@ -122,7 +122,7 @@ public class ExecuteScriptAction extends AbstractAction {
             } catch (Exception ex) {
                 LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
-                ActionUtils.showError(message, parent);
+                GuiComponentUtils.showError(message, parent);
             }
         }
     }

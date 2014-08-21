@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
@@ -63,7 +63,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
             String text = errorMessage + " " + xmlFileChooser.getSelectedFile().getName();
-            ActionUtils.showError(text, parent);
+            GuiComponentUtils.showError(text, parent);
         }
     }
 }

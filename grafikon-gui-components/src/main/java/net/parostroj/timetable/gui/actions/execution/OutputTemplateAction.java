@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions.execution;
 import java.io.File;
 import java.util.*;
 
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
@@ -117,7 +118,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            ActionUtils.showError(errorTemplate.getName() + ": " + errorMessage, context.getLocationComponent());
+            GuiComponentUtils.showError(errorTemplate.getName() + ": " + errorMessage, context.getLocationComponent());
         }
     }
 

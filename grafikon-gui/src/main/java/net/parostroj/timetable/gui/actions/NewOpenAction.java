@@ -18,6 +18,7 @@ import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog.NewModelValues;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
@@ -50,7 +51,7 @@ public class NewOpenAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
+        Component parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
         if (e.getActionCommand().equals("open")) {
             this.open(parent, null);
         } else if (e.getActionCommand().equals("new")) {
@@ -142,7 +143,7 @@ public class NewOpenAction extends AbstractAction {
                     if (errorException != null) {
                         text = text + "\n(" + errorException.getMessage() + ")";
                     }
-                    ActionUtils.showError(text, parent);
+                    GuiComponentUtils.showError(text, parent);
                     model.setDiagram(null);
                 }
             }

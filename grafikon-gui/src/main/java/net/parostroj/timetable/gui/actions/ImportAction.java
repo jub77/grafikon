@@ -21,6 +21,7 @@ import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
 import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
 import net.parostroj.timetable.gui.dialogs.ImportDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.imports.Import;
 import net.parostroj.timetable.model.imports.Import.ImportError;
@@ -78,7 +79,7 @@ public class ImportAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        final Component parent = ActionUtils.getTopLevelComponent(event.getSource());
+        final Component parent = GuiComponentUtils.getTopLevelComponent(event.getSource());
         // select imported model
         final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
         final int retVal = xmlFileChooser.showOpenDialog(parent);
@@ -200,7 +201,7 @@ public class ImportAction extends AbstractAction {
             }
 
             private void processChunk(final Collection<ObjectWithId> objects, final Process<ObjectWithId> action) {
-                ModelActionUtilities.runLaterInEDT(new Runnable() {
+                GuiComponentUtils.runLaterInEDT(new Runnable() {
 
                     @Override
                     public void run() {

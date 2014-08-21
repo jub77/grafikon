@@ -7,14 +7,17 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
+
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -65,7 +68,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         }
 
         // save action
-        ActionContext actionContext = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        ActionContext actionContext = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
         ModelAction action = new EventDispatchAfterModelAction(actionContext) {
 
             private boolean error;

@@ -10,9 +10,9 @@ import java.awt.event.ItemEvent;
 
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -156,7 +156,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         if (!dialog.isSave()) {
             return;
         }
-        ActionContext actionContext = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        ActionContext actionContext = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
         SaveImageAction action = new SaveImageAction(actionContext, dialog, circulationView);
         ActionHandler.getInstance().execute(action);
     }

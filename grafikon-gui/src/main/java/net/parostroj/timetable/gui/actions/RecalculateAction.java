@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -38,7 +39,7 @@ public class RecalculateAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(e.getSource()));
+        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(e.getSource()));
         ModelAction recalculateAction = getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
 
             @Override
@@ -91,7 +92,7 @@ public class RecalculateAction extends AbstractAction {
             }
 
             private void processChunk(final Collection<Train> trains) {
-                ModelActionUtilities.runLaterInEDT(new Runnable() {
+                GuiComponentUtils.runLaterInEDT(new Runnable() {
 
                     @Override
                     public void run() {

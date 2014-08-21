@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -44,7 +44,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
                 if (createResult()) {
                     setVisible(false);
                 } else {
-                    ActionUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), TrainTypesCategoriesNewDialog.this);
+                    GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), TrainTypesCategoriesNewDialog.this);
                 }
             }
         });
