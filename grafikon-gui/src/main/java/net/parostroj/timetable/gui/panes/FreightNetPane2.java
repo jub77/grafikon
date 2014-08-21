@@ -24,6 +24,8 @@ import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.JTextField;
+
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private final class ConnectionSelector implements RegionSelector<FNConnection>, ManagedFreightGTDraw.Highlight {
@@ -64,6 +66,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             }
             deleteButton.setEnabled(selected != null);
             editButton.setEnabled(selected != null);
+            updateInfo();
         }
     }
 
@@ -94,12 +97,18 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 if (connection.first == null) {
                     connection.first = interval;
                 } else if (connection.second == null) {
-                    connection.second = interval;
+                    if (connection.first.getOwnerAsNode() != interval.getOwnerAsNode() ||
+                            connection.first == interval) {
+                        connection.first = interval;
+                    } else {
+                        connection.second = interval;
+                    }
                     enabled = checkEnabled();
                 }
             }
             newButton.setEnabled(enabled);
             graphicalTimetableView.repaint();
+            updateInfo();
         }
 
         private TimeInterval lastInterval;
@@ -141,6 +150,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final JButton newButton;
     private final JButton deleteButton;
     private final JButton editButton;
+    private final JTextField infoTextField;
 
     private ApplicationModel model;
 
@@ -172,6 +182,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 connection.second = null;
                 graphicalTimetableView.repaint();
                 newButton.setEnabled(false);
+                updateInfo();
             }
         });
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -197,6 +208,11 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         buttonPanel.add(deleteButton);
         buttonPanel.add(editButton);
         add(buttonPanel, BorderLayout.NORTH);
+
+        infoTextField = new JTextField();
+        infoTextField.setEditable(false);
+        buttonPanel.add(infoTextField);
+        infoTextField.setColumns(35);
     }
 
     @Override
@@ -223,7 +239,30 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     }
 
     private boolean checkEnabled() {
-        return connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() && !connection.second.isLast() && !connection.first.isFirst();
+        return connection.first != null && connection.second != null &&
+                connection.first.getOwnerAsNode() == connection.second.getOwnerAsNode() &&
+                !connection.second.isLast() && !connection.first.isFirst();
+    }
+
+    private void updateInfo() {
+        StringBuilder builder = new StringBuilder();
+        FNConnection conn = selector.getSelected();
+        TimeInterval from = conn != null ? conn.getFrom() : connection.first;
+        TimeInterval to = conn != null ? conn.getTo() : connection.second;
+        if (from != null) {
+            builder.append(from.getOwnerAsNode().getAbbr()).append(": ");
+            builder.append(getIntervalInfo(from, true));
+        }
+        if (to != null) {
+            builder.append(" -> ").append(getIntervalInfo(to, false));
+        }
+        infoTextField.setText(builder.toString());
+    }
+
+    private String getIntervalInfo(TimeInterval interval, boolean first) {
+        TimeConverter converter = model.getDiagram().getTimeConverter();
+        return String.format("%s [%s]", interval.getTrain().getName(),
+                converter.convertIntToText(first ? interval.getStart() : interval.getEnd()));
     }
 
     public void setModel(ApplicationModel model) {
