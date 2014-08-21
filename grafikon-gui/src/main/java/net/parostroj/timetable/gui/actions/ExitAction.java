@@ -9,6 +9,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.MainFrame;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -22,8 +23,8 @@ import org.slf4j.LoggerFactory;
 public class ExitAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExitAction.class.getName());
-    private ApplicationModel model;
-    private MainFrame parent;
+    private final ApplicationModel model;
+    private final MainFrame parent;
 
     public ExitAction(ApplicationModel model, MainFrame parent) {
         this.model = model;
@@ -80,14 +81,14 @@ public class ExitAction extends AbstractAction {
                 if (result == JOptionPane.CANCEL_OPTION)
                     return;
                 if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage, parent);
+                    GuiComponentUtils.showError(errorMessage, parent);
                     return;
                 }
                 // dispose main window - it should close application
                 parent.dispose();
-                
+
                 LOG.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
-                
+
                 // close application by force (possible problems with web start)
                 if (exit)
                     System.exit(0);

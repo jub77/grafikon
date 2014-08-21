@@ -5,8 +5,10 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
@@ -15,10 +17,12 @@ import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.dialogs.SelectNodesDialog;
 import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +51,7 @@ public class OutputAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        parent = ActionUtils.getTopLevelComponent(e.getSource());
+        parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
         outputFile = null;
         templateFile = null;
         outputType = OutputType.fromActionCommand(e.getActionCommand());
@@ -67,7 +71,7 @@ public class OutputAction extends AbstractAction {
         } catch (Exception ex) {
             LOG.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
-            ActionUtils.showError(errorMessage + " " + ex.getMessage(), parent);
+            GuiComponentUtils.showError(errorMessage + " " + ex.getMessage(), parent);
         }
     }
 
@@ -279,7 +283,7 @@ public class OutputAction extends AbstractAction {
             @Override
             protected void eventDispatchActionAfter() {
                 if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage + " " + outputFile.getName(), parent);
+                    GuiComponentUtils.showError(errorMessage + " " + outputFile.getName(), parent);
                 }
             }
         };

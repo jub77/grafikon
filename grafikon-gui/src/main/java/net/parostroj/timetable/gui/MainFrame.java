@@ -27,6 +27,7 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiUtils;
 import net.parostroj.timetable.gui.views.DriverCycleDelegate;
 import net.parostroj.timetable.gui.views.EngineCycleDelegate;
@@ -254,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void removeLastOpened(final File file) {
-        ModelActionUtilities.runLaterInEDT(new Runnable() {
+        GuiComponentUtils.runLaterInEDT(new Runnable() {
 
             @Override
             public void run() {
@@ -268,7 +269,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void addLastOpenedFile(final File file) {
-        ModelActionUtilities.runLaterInEDT(new Runnable() {
+        GuiComponentUtils.runLaterInEDT(new Runnable() {
 
             @Override
             public void run() {
@@ -960,7 +961,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         settingsDialog.showDialog(model.getDiagram());
         settingsDialog.dispose();
         // check if recalculate should be executed
-        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(this));
+        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(this));
         if (settingsDialog.isRecalculate()) {
             ModelAction action = RecalculateAction.getAllTrainsAction(context, model.getDiagram(), new TrainAction() {
 

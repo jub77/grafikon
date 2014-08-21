@@ -1,9 +1,10 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class ScriptDialog extends javax.swing.JDialog {
         } catch (GrafikonException e) {
             LOG.error("Error creating script.", e);
             String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
-            ActionUtils.showError(message, this);
+            GuiComponentUtils.showError(message, this);
         }
     }
 

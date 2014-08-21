@@ -1,9 +1,11 @@
 package net.parostroj.timetable.gui.actions.execution;
 
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+
 /**
  * Model action with a method which is executed in event dispatch thread after
  * background action.
- * 
+ *
  * @author jub
  */
 public abstract class EventDispatchAfterModelAction extends CheckedModelAction {
@@ -15,8 +17,8 @@ public abstract class EventDispatchAfterModelAction extends CheckedModelAction {
     @Override
     final protected void action() {
         this.backgroundAction();
-        ModelActionUtilities.runNowInEDT(new Runnable() {
-            
+        GuiComponentUtils.runNowInEDT(new Runnable() {
+
             @Override
             public void run() {
                 eventDispatchActionAfter();
@@ -25,6 +27,6 @@ public abstract class EventDispatchAfterModelAction extends CheckedModelAction {
     }
 
     protected void backgroundAction() {}
-    
+
     protected void eventDispatchActionAfter() {}
 }

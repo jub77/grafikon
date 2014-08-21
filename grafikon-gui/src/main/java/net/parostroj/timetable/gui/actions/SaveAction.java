@@ -13,6 +13,7 @@ import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class SaveAction extends AbstractAction {
 
     private static final Logger LOG = LoggerFactory.getLogger(SaveAction.class.getName());
-    private ApplicationModel model;
+    private final ApplicationModel model;
 
     public SaveAction(ApplicationModel model) {
         this.model = model;
@@ -35,7 +36,7 @@ public class SaveAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Component parent = ActionUtils.getTopLevelComponent(e.getSource());
+        Component parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
         if (e.getActionCommand().equals("save")) {
             this.save(parent);
         } else if (e.getActionCommand().equals("save_as")) {
@@ -49,7 +50,7 @@ public class SaveAction extends AbstractAction {
             return;
         }
         if (model.getDiagram() == null) {
-            ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
+            GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
             return;
         }
         ActionContext c = new ActionContext(parent);
@@ -59,7 +60,7 @@ public class SaveAction extends AbstractAction {
 
     private void saveAs(Component parent) {
         if (model.getDiagram() == null) {
-            ActionUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
+            GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.nodiagram"), parent);
             return;
         }
         // saving train diagram
@@ -96,11 +97,11 @@ public class SaveAction extends AbstractAction {
                     setWaitDialogVisible(false);
                 }
             }
-            
+
             @Override
             protected void eventDispatchActionAfter() {
                 if (errorMessage != null) {
-                    ActionUtils.showError(errorMessage + " " + file.getName(), parent);
+                    GuiComponentUtils.showError(errorMessage + " " + file.getName(), parent);
                 } else {
                     model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.MODEL_SAVED, model));
                 }

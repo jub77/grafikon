@@ -22,7 +22,6 @@ import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.actions.EditGroupsAction;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.commands.*;
 import net.parostroj.timetable.gui.components.GroupSelect;
 import net.parostroj.timetable.gui.components.GroupSelect.Type;
@@ -274,7 +273,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
 
     private EditTrainDialog getEditTrainDialog() {
         if (editDialog == null) {
-            editDialog = new EditTrainDialog(ActionUtils.getWindow(this), true);
+            editDialog = new EditTrainDialog(GuiComponentUtils.getWindow(this), true);
         }
         return editDialog;
     }
@@ -556,7 +555,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 model.setSelectedTrain(newTrain);
             } catch (Exception e) {
                 LOG.warn("Error changing route of the train.", e);
-                ActionUtils.showError(ResourceLoader.getString("dialog.error.title") + ": " + e.getMessage(), this);
+                GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.title") + ": " + e.getMessage(), this);
             }
         }
     }
@@ -628,7 +627,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
     }
 
     private void editAction() {
-        getEditTrainDialog().setLocationRelativeTo(ActionUtils.getWindow(TrainListView.this));
+        getEditTrainDialog().setLocationRelativeTo(GuiComponentUtils.getWindow(TrainListView.this));
         getEditTrainDialog().showDialog(model.getSelectedTrain());
     }
 
@@ -663,7 +662,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         // call create new train dialog
         Frame f = (Frame) this.getTopLevelAncestor();
 
-        CreateTrainDialog createDialog = new CreateTrainDialog(ActionUtils.getWindow(this), model.getDiagram());
+        CreateTrainDialog createDialog = new CreateTrainDialog(GuiComponentUtils.getWindow(this), model.getDiagram());
         createDialog.updateView(groupSelect.getGroup());
 
         createDialog.setLocationRelativeTo(f);

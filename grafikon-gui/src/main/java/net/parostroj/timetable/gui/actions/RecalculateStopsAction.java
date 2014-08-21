@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -31,7 +32,7 @@ public class RecalculateStopsAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        Component top = ActionUtils.getTopLevelComponent(event.getSource());
+        Component top = GuiComponentUtils.getTopLevelComponent(event.getSource());
 
         // get ratio
         String ratioStr = (String) JOptionPane.showInputDialog(top, ResourceLoader.getString("recalculate.stops.ratio"),
@@ -93,7 +94,7 @@ public class RecalculateStopsAction extends AbstractAction {
             }
         };
 
-        ActionContext context = new ActionContext(ActionUtils.getTopLevelComponent(event.getSource()));
+        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(event.getSource()));
         ModelAction recalculateAction = RecalculateAction.getAllTrainsAction(context, model.getDiagram(),
                 trainAction, ResourceLoader.getString("wait.message.recalculate"), "Recalculate stops");
         ActionHandler.getInstance().execute(recalculateAction);

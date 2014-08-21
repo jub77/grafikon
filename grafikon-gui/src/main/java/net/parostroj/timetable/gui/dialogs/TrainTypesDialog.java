@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -415,7 +414,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                             !nameTemplateEditBox.getTemplate().equals(type.getTrainNameTemplate()))
                         type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
-                    ActionUtils.showWarning(e.getMessage(), this);
+                    GuiComponentUtils.showWarning(e.getMessage(), this);
                     LOG.warn(e.getMessage(), e);
                 }
             } else {
@@ -428,7 +427,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                             !cNameTemplateEditBox.getTemplate().equals(type.getTrainCompleteNameTemplate()))
                         type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
-                    ActionUtils.showWarning(e.getMessage(), this);
+                    GuiComponentUtils.showWarning(e.getMessage(), this);
                     LOG.warn(e.getMessage(), e);
                 }
             } else {
@@ -481,7 +480,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
             }
         } catch (GrafikonException e) {
-            ActionUtils.showError(e.getMessage(), this);
+            GuiComponentUtils.showError(e.getMessage(), this);
             LOG.warn(e.getMessage(), e);
             return;
         }

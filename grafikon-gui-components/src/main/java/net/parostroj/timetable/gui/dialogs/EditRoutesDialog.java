@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.actions.RouteBuilder;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -255,7 +254,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         newRoute = builder.createRoute(UUID.randomUUID().toString(), diagram.getNet(), nodes);
         // do not create route with duplicate nodes
         if (newRoute == null || newRoute.checkDuplicateNodes()) {
-            ActionUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), this);
+            GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), this);
             return;
         }
         // set name

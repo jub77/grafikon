@@ -9,7 +9,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TextTemplate.Language;
@@ -207,7 +207,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             this.setVisible(false);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
-            ActionUtils.showError(e.getMessage(), this);
+            GuiComponentUtils.showError(e.getMessage(), this);
         }
     }
 
@@ -219,10 +219,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             this.convertToTemplate();
-            ActionUtils.showInformation(ResourceLoader.getString("ot.verification.ok"), this);
+            GuiComponentUtils.showInformation(ResourceLoader.getString("ot.verification.ok"), this);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
-            ActionUtils.showError(e.getMessage(), this);
+            GuiComponentUtils.showError(e.getMessage(), this);
         }
     }
 

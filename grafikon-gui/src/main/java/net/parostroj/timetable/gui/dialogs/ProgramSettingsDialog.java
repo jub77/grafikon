@@ -12,9 +12,10 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 
 import net.parostroj.timetable.gui.ProgramSettings;
-import net.parostroj.timetable.gui.actions.execution.ActionUtils;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import java.awt.FlowLayout;
 
 /**
@@ -121,10 +122,11 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (writeBackValues())
+        if (writeBackValues()) {
             this.setVisible(false);
-        else
-            ActionUtils.showError("Error", this);
+        } else {
+            GuiComponentUtils.showError("Error", this);
+        }
     }
 
     public void showDialog(ProgramSettings settings) {
