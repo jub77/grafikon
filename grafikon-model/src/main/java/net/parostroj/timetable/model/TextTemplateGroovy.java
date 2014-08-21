@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class TextTemplateGroovy extends TextTemplate {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TextTemplateGroovy.class);
+    private static final Logger log = LoggerFactory.getLogger(TextTemplateGroovy.class);
 
     private Template templateGString;
     
@@ -56,7 +56,7 @@ public final class TextTemplateGroovy extends TextTemplate {
         try {
             return this.evaluateWithException(binding);
         } catch (GrafikonException e) {
-            LOG.warn(e.getMessage());
+            log.warn(e.getMessage());
             return "-- Template error --";
         }
     }

@@ -19,7 +19,7 @@ import net.parostroj.timetable.utils.ResourceLoader;
 
 public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoadDiagramModelAction.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadDiagramModelAction.class);
 
     private final File selectedFile;
     private final Component parent;
@@ -44,17 +44,17 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
                 FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                 context.setAttribute("diagram", ls.load(selectedFile));
             } catch (LSException e) {
-                LOG.warn("Error loading model.", e);
+                log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException)
                     errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
                 else
                     errorMessage = ResourceLoader.getString("dialog.error.loading");
             } catch (Exception e) {
-                LOG.warn("Error loading model.", e);
+                log.warn("Error loading model.", e);
                 errorMessage = ResourceLoader.getString("dialog.error.loading");
             }
         } finally {
-            LOG.debug("Library loaded in {}ms", System.currentTimeMillis() - time);
+            log.debug("Library loaded in {}ms", System.currentTimeMillis() - time);
             setWaitDialogVisible(false);
         }
     }

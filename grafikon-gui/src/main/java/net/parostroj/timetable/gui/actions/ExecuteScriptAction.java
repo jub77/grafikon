@@ -35,7 +35,7 @@ public class ExecuteScriptAction extends AbstractAction {
     public static final String MODEL_PREFIX = "model.";
     public static final String GUI_PREFIX = "gui.";
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExecuteScriptAction.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecuteScriptAction.class);
 
     private final ApplicationModel model;
     private Script lastScript;
@@ -72,10 +72,10 @@ public class ExecuteScriptAction extends AbstractAction {
                 scriptAction.execute(model.getDiagram());
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());
-                LOG.debug("Script {} finished in {}ms", scriptId, System.currentTimeMillis() - time);
+                log.debug("Script {} finished in {}ms", scriptId, System.currentTimeMillis() - time);
             }
         } catch (GrafikonException ex) {
-            LOG.error("Error executing script.", ex);
+            log.error("Error executing script.", ex);
             String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
             GuiComponentUtils.showError(message, parent);
         }
@@ -109,7 +109,7 @@ public class ExecuteScriptAction extends AbstractAction {
                     saveScriptToPreferences();
                 } finally {
                     parent.setCursor(Cursor.getDefaultCursor());
-                    LOG.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Script execution finished in {}ms", System.currentTimeMillis() - time);
                 }
                 String outString = output.toString();
                 if (!outString.isEmpty()) {
@@ -120,7 +120,7 @@ public class ExecuteScriptAction extends AbstractAction {
                     outputDialog.setVisible(true);
                 }
             } catch (Exception ex) {
-                LOG.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
+                log.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 GuiComponentUtils.showError(message, parent);
             }
@@ -133,7 +133,7 @@ public class ExecuteScriptAction extends AbstractAction {
             scriptStr = AppPreferences.getSection("scripts").get("last.script");
             scriptStr = scriptStr != null ? EscapeTool.getInstance().unescape(scriptStr) : null;
         } catch (IOException ex) {
-            LOG.error("Error reading script from preferences.", ex);
+            log.error("Error reading script from preferences.", ex);
         }
         if (scriptStr == null) {
             // default script
@@ -145,7 +145,7 @@ public class ExecuteScriptAction extends AbstractAction {
         try {
             lastScript = Script.createScript(scriptSource, lang);
         } catch (GrafikonException e) {
-            LOG.error("Error converting script.", e);
+            log.error("Error converting script.", e);
         }
     }
 
@@ -156,7 +156,7 @@ public class ExecuteScriptAction extends AbstractAction {
                 scriptStr = EscapeTool.getInstance().escape(scriptStr);
                 AppPreferences.getSection("scripts").put("last.script", scriptStr);
             } catch (IOException e) {
-                LOG.error("Error writing script to preferences.", e);
+                log.error("Error writing script to preferences.", e);
             }
     }
 }

@@ -15,7 +15,7 @@ import net.parostroj.timetable.model.*;
  */
 public class RouteImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RouteImport.class);
+    private static final Logger log = LoggerFactory.getLogger(RouteImport.class);
 
     public RouteImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -35,7 +35,7 @@ public class RouteImport extends Import {
         if (checkedRoute != null) {
             String message = "route already exists";
             this.addError(importedRoute, message);
-            LOG.debug("{}: {}", message, checkedRoute);
+            log.debug("{}: {}", message, checkedRoute);
             return null;
         }
 
@@ -44,7 +44,7 @@ public class RouteImport extends Import {
         if (segments == null) {
             String message = "nodes missing";
             this.addError(importedRoute, message);
-            LOG.debug("{}: {}", message, importedRoute);
+            log.debug("{}: {}", message, importedRoute);
             return null;
         }
 
@@ -55,7 +55,7 @@ public class RouteImport extends Import {
         // add to diagram
         this.getDiagram().addRoute(route);
         this.addImportedObject(route);
-        LOG.trace("Successfully imported route: " + route);
+        log.trace("Successfully imported route: " + route);
         return route;
     }
 

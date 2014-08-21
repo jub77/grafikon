@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LineClassImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LineClassImport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LineClassImport.class);
 
     public LineClassImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -32,7 +32,7 @@ public class LineClassImport extends Import {
         if (checkedLineClass != null) {
             String message = "line class already exists";
             this.addError(importedLineClass, message);
-            LOG.debug("{}: {}", message, checkedLineClass);
+            log.debug("{}: {}", message, checkedLineClass);
             return null;
         }
 
@@ -42,7 +42,7 @@ public class LineClassImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addLineClass(lineClass);
         this.addImportedObject(lineClass);
-        LOG.trace("Successfully imported line class: " + lineClass);
+        log.trace("Successfully imported line class: " + lineClass);
         return lineClass;
     }
 }

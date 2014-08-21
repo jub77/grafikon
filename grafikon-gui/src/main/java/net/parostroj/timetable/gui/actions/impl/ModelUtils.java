@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ModelUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ModelUtils.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ModelUtils.class);
 
     public static void saveModelData(final ApplicationModel model, File file) throws LSException {
         // update author and date before save
@@ -54,7 +54,7 @@ public class ModelUtils {
                     }
                 });
             } catch (Exception e) {
-                LOG.warn("Error updating values for current diagram change set.", e);
+                log.warn("Error updating values for current diagram change set.", e);
             }
         }
         FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();

@@ -20,7 +20,7 @@ import com.google.common.io.Files;
  */
 public class FileLoadSaveImages {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileLoadSaveImages.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FileLoadSaveImages.class);
     private final String location;
 
     public FileLoadSaveImages(String location) {
@@ -39,7 +39,7 @@ public class FileLoadSaveImages {
         ZipEntry entry = new ZipEntry(location + image.getFilename());
         if (image.getImageFile() == null) {
             // skip images without image file
-            LOG.warn("Skipping image {} because the gtm doesn't contain a file.", image.getFilename());
+            log.warn("Skipping image {} because the gtm doesn't contain a file.", image.getFilename());
             return;
         }
 

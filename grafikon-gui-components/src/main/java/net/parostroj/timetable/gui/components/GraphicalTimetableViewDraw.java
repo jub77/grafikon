@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Scrollable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableViewDraw.class);
+    private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewDraw.class);
 
     protected GTViewSettings settings;
 
@@ -359,7 +359,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             // draw information about context menu
             g.drawString(ResourceLoader.getString("gt.contextmenu.info"), 20, 20);
         }
-        LOG.trace("Finished paint in {}ms", Long.toString(System.currentTimeMillis() - time));
+        log.trace("Finished paint in {}ms", Long.toString(System.currentTimeMillis() - time));
     }
 
     public GTDraw getGtDraw() {

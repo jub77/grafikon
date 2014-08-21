@@ -46,7 +46,7 @@ import com.google.common.base.Predicates;
  */
 public class TrainListView extends javax.swing.JPanel implements TreeSelectionListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainListView.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainListView.class);
 
     private ApplicationModel model;
     private ButtonGroup groupsBG;
@@ -554,7 +554,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 model.getDiagram().addTrain(newTrain);
                 model.setSelectedTrain(newTrain);
             } catch (Exception e) {
-                LOG.warn("Error changing route of the train.", e);
+                log.warn("Error changing route of the train.", e);
                 GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.title") + ": " + e.getMessage(), this);
             }
         }
@@ -654,7 +654,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         try {
             model.applyCommand(deleteCommand);
         } catch (CommandException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -675,7 +675,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 model.applyCommand(command);
             }
         } catch (CommandException e) {
-            LOG.warn("Error executing create train command.", e);
+            log.warn("Error executing create train command.", e);
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.createtrainerror"),
                         ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
         }

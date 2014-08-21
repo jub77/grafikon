@@ -18,7 +18,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 class ScriptActionImpl implements ScriptAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptActionImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ScriptActionImpl.class);
 
     private final String location;
     private final ScriptDescription desc;
@@ -57,7 +57,7 @@ class ScriptActionImpl implements ScriptAction {
             try {
                 _cachedScript = Script.createScript(src, desc.getLanguage());
             } catch (GrafikonException e) {
-                LOG.error("Couldn't create script.", e);
+                log.error("Couldn't create script.", e);
             }
         }
         return _cachedScript;

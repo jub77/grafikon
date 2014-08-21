@@ -11,38 +11,38 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Comparator that uses train numbers.
- * 
+ *
  * @author jub
  */
 public class TrainComparator implements Comparator<Train> {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(TrainComparator.class.getName());
-    
+
+    private static final Logger log = LoggerFactory.getLogger(TrainComparator.class);
+
     public enum Type {ASC, DESC; }
-    
-    private Type type;
-    
-    private Pattern pattern;
-    
-    private SortPattern sortPattern;
+
+    private final Type type;
+
+    private final Pattern pattern;
+
+    private final SortPattern sortPattern;
 
     public TrainComparator(Type type, SortPattern pattern) {
         this.type = type;
         this.pattern = Pattern.compile(pattern.getPattern());
         this.sortPattern = pattern;
     }
-    
+
     @Override
     public int compare(Train o1, Train o2) {
         // checks
         if (sortPattern.getGroups().isEmpty()) {
-            LOG.error("Pattern groups are empty.");
+            log.error("Pattern groups are empty.");
             throw new IllegalArgumentException("Pattern groups are empty.");
         }
         Matcher m1 = pattern.matcher(o1.getNumber());
         Matcher m2 = pattern.matcher(o2.getNumber());
         if (!m1.matches() || !m2.matches()) {
-            LOG.error("Pattern doesn't match: {}", sortPattern.getPattern());
+            log.error("Pattern doesn't match: {}", sortPattern.getPattern());
             throw new IllegalArgumentException("Pattern doesn't match: " + sortPattern.getPattern());
         }
         // loop

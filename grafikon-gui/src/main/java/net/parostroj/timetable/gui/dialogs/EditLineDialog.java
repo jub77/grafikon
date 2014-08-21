@@ -35,7 +35,8 @@ import javax.swing.GroupLayout;
  */
 public class EditLineDialog extends javax.swing.JDialog {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EditLineDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EditLineDialog.class);
+
     private Line line;
     private final Map<LineTrack,Tuple<NodeTrack>> connections = new HashMap<LineTrack, Tuple<NodeTrack>>();
     private static final NodeTrack noneTrack = new NodeTrack(null, ResourceLoader.getString("node.track.none"));
@@ -161,7 +162,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         try {
             length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
         } catch (ArithmeticException e) {
-            LOGGER.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
+            log.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
         }
         Integer speed = line.getTopSpeed();
         try {
@@ -170,7 +171,7 @@ public class EditLineDialog extends javax.swing.JDialog {
             else
                 speed = null;
         } catch (NumberFormatException e) {
-            LOGGER.warn("Cannot convert string to int (speed).", e);
+            log.warn("Cannot convert string to int (speed).", e);
         }
         if (line.getLength() != length && length > 0) {
             line.setLength(length);

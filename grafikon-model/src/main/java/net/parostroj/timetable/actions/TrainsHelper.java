@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainsHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainsHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainsHelper.class);
 
     public static enum NextType {
         LAST_STATION, FIRST_STATION, BRANCH_STATION;
@@ -103,7 +103,7 @@ public class TrainsHelper {
                     weight = Integer.valueOf(number);
                 }
             } catch (NumberFormatException e) {
-                LOG.debug("Cannot convert weight to number: {}", weightStr);
+                log.debug("Cannot convert weight to number: {}", weightStr);
             }
         }
         return weight;
@@ -165,8 +165,8 @@ public class TrainsHelper {
             try {
                 length = UnitUtil.convert(converted);
             } catch (ArithmeticException e) {
-                LOG.warn("Couldn't convert value {} to {}.", length, lengthUnit.getKey());
-                LOG.warn(e.getMessage());
+                log.warn("Couldn't convert value {} to {}.", length, lengthUnit.getKey());
+                log.warn(e.getMessage());
             }
         }
         return length;
@@ -207,8 +207,8 @@ public class TrainsHelper {
             try {
                 result = UnitUtil.convert(converted);
             } catch (ArithmeticException e) {
-                LOG.warn("Couldn't convert value {} to {}.", result, lu.getKey());
-                LOG.warn(e.getMessage());
+                log.warn("Couldn't convert value {} to {}.", result, lu.getKey());
+                log.warn(e.getMessage());
                 result = null;
             }
         }

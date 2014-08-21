@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @XmlType(propOrder = {"id", "name", "netPart", "trainRoute", "segments"})
 public class LSRoute {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSRoute.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSRoute.class);
 
     private String id;
     private String name;
@@ -105,7 +105,7 @@ public class LSRoute {
                 }
                 if (routeSegment == null) {
                     String message = String.format("Segment with id:%s not found. Cannot create route with id:%s.", segment, id);
-                    LOG.warn(message);
+                    log.warn(message);
                     throw new LSException(message);
                 }
                 route.getSegments().add(routeSegment);

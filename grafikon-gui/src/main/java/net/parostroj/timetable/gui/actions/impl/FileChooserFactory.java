@@ -26,7 +26,7 @@ public class FileChooserFactory {
 
     public static final String FILE_EXTENSION = "gtm";
     private static final FileChooserFactory INSTANCE = new FileChooserFactory();
-    private static final Logger LOG = LoggerFactory.getLogger(FileChooserFactory.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FileChooserFactory.class);
     private JFileChooser outputFileChooserInstance;
     private JFileChooser gtmFileChooserInstance;
     private JFileChooser outputDirectoryFileChooserInstance;
@@ -49,7 +49,7 @@ public class FileChooserFactory {
                             outputDirectoryFileChooserInstance.setCurrentDirectory(new File(lastDir));
                         }
                     } catch (IOException e) {
-                        LOG.warn("Cannot get last directory from preferences.", e);
+                        log.warn("Cannot get last directory from preferences.", e);
                     }
                 }
                 return outputDirectoryFileChooserInstance;
@@ -102,7 +102,7 @@ public class FileChooserFactory {
                 chooser.setCurrentDirectory(new File(lastDir));
             }
         } catch (IOException e) {
-            LOG.warn("Cannot get last directory from preferences.", e);
+            log.warn("Cannot get last directory from preferences.", e);
         }
 
     }

@@ -61,7 +61,7 @@ public class ImportAction extends AbstractAction {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(ImportAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ImportAction.class);
 
     private final ImportDialog importDialog;
     private final GroupChooserFromToDialog groupDialog;
@@ -158,7 +158,7 @@ public class ImportAction extends AbstractAction {
                                 try {
                                     model.applyCommand(dc);
                                 } catch (CommandException e) {
-                                    LOG.error(e.getMessage(), e);
+                                    log.error(e.getMessage(), e);
                                 }
                             }
                         };
@@ -173,13 +173,13 @@ public class ImportAction extends AbstractAction {
                                 ObjectWithId imported = i.importObject(item);
                                 processImportedObject(imported);
                             } else {
-                                LOG.warn("No import for class {}", item.getClass().getName());
+                                log.warn("No import for class {}", item.getClass().getName());
                             }
                         }
                     };
                     processItems(list, importProcess);
                 } finally {
-                    LOG.debug("Import finished in {}ms", System.currentTimeMillis() - time);
+                    log.debug("Import finished in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
                 }
             }
@@ -213,7 +213,7 @@ public class ImportAction extends AbstractAction {
                             try {
                                 barrier.await();
                             } catch (Exception e) {
-                                LOG.error("Import action - await interrupted.", e);
+                                log.error("Import action - await interrupted.", e);
                             }
                         }
                     }
@@ -221,7 +221,7 @@ public class ImportAction extends AbstractAction {
                 try {
                     barrier.await();
                 } catch (Exception e) {
-                    LOG.error("Import - await interrupted.", e);
+                    log.error("Import - await interrupted.", e);
                 }
             }
 

@@ -61,7 +61,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class NetEditView extends javax.swing.JPanel implements NetSelectionModel.NetSelectionListener, mxIEventListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NetEditView.class);
+    private static final Logger log = LoggerFactory.getLogger(NetEditView.class);
 
     private ApplicationModel model;
     private NetSelectionModel netEditModel;
@@ -216,7 +216,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             try {
                                 ImageIO.write(img, "png", dialog.getSaveFile());
                             } catch (Exception e) {
-                                LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                                log.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
                             }
                         } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
@@ -239,12 +239,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                                 Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
                                 g2d.stream(out, useCSS);
                             } catch (Exception e) {
-                                LOG.warn("Error saving file: " + dialog.getSaveFile(), e);
+                                log.warn("Error saving file: " + dialog.getSaveFile(), e);
                                 error = true;
                             }
                         }
                     } finally {
-                        LOG.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
+                        log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
                         setWaitDialogVisible(false);
                     }
                 }

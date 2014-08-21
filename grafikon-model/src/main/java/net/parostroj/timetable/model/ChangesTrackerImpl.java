@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChangesTrackerImpl.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ChangesTrackerImpl.class);
 
     private final List<DiagramChangeSetImpl> sets;
     private final TrackedCheckVisitor trackedVisitor;
@@ -57,7 +57,7 @@ class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
     public void addChange(DiagramChange change) {
         if (_currentChangeSet == null) {
             String message = "Current change set is empty.";
-            LOG.warn(message);
+            log.warn(message);
             throw new IllegalStateException(message);
         }
         List<Pair<DiagramChange, ChangesTrackerEvent.Type>> arChanges = _currentChangeSet.addChange(change);
@@ -175,7 +175,7 @@ class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
             ilv++;
             lastVersion = Integer.toString(ilv);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot parse version string: {} ({})", lastVersion, e.getMessage());
+            log.warn("Cannot parse version string: {} ({})", lastVersion, e.getMessage());
             lastVersion = "1";
         }
         return lastVersion;

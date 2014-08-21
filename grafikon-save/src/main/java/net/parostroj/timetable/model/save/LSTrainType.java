@@ -17,8 +17,8 @@ import net.parostroj.timetable.utils.Conversions;
  * @author jub
  */
 public class LSTrainType {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(LSTrainType.class);
+
+    private static final Logger log = LoggerFactory.getLogger(LSTrainType.class);
 
     private String key;
     private String abbr;
@@ -28,9 +28,9 @@ public class LSTrainType {
     private boolean platform;
     private String trainNameTemplate;
     private String trainCompleteNameTemplate;
-    
+
     public LSTrainType() {}
-    
+
     public LSTrainType(TrainType type, String key) {
         this.key = key;
         this.abbr = type.getAbbr();
@@ -119,13 +119,13 @@ public class LSTrainType {
             type.setTrainNameTemplate(this.trainNameTemplate != null ?
                 TextTemplate.createTextTemplate(this.trainNameTemplate, TextTemplate.Language.MVEL) : null);
         } catch (GrafikonException e) {
-            LOG.error("Couldn't create train name template.", e);
+            log.error("Couldn't create train name template.", e);
         }
         try {
             type.setTrainCompleteNameTemplate(this.trainCompleteNameTemplate != null ?
                 TextTemplate.createTextTemplate(this.trainCompleteNameTemplate, TextTemplate.Language.MVEL) : null);
         } catch (GrafikonException e) {
-            LOG.error("Couldn't create complete train name template.", e);
+            log.error("Couldn't create complete train name template.", e);
         }
         return type;
     }

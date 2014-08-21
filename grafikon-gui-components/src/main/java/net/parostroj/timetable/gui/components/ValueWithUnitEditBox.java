@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
  */
 public class ValueWithUnitEditBox extends javax.swing.JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValueWithUnitEditBox.class);
+    private static final Logger log = LoggerFactory.getLogger(ValueWithUnitEditBox.class);
     private BigDecimal value;
     private List<? extends Unit> units;
 
@@ -85,7 +85,7 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
             BigDecimal dValue = this.getValueFromField();
             return dValue;
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             setValueImpl(this.value);
             return this.value;
         }

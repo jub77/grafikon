@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TrainImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrainImport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TrainImport.class);
 
     public TrainImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -37,7 +37,7 @@ public class TrainImport extends Import {
         if (checkedTrain != null) {
             String message = "train already exists";
             this.addError(importedTrain, message);
-            LOG.debug("{}: {}", message, checkedTrain);
+            log.debug("{}: {}", message, checkedTrain);
             return null;
         }
         // create a new train
@@ -45,7 +45,7 @@ public class TrainImport extends Import {
         if (trainType == null) {
             String message = "train type missing: " + importedTrain.getType();
             this.addError(importedTrain, message);
-            LOG.debug(message);
+            log.debug(message);
             return null;
         }
         Train train = getDiagram().createTrain(this.getId(importedTrain));
@@ -61,7 +61,7 @@ public class TrainImport extends Import {
         if (route == null) {
             String message = "error creating route for train";
             this.addError(importedTrain, message);
-            LOG.debug("{}: {}", message, importedTrain);
+            log.debug("{}: {}", message, importedTrain);
             return null;
         }
         for (Triplet<RouteSegment, Track, TimeInterval> seg : route) {
@@ -81,7 +81,7 @@ public class TrainImport extends Import {
 
         this.getDiagram().addTrain(train);
         this.addImportedObject(train);
-        LOG.trace("Successfully imported train: " + train);
+        log.trace("Successfully imported train: " + train);
         return train;
     }
 
@@ -95,7 +95,7 @@ public class TrainImport extends Import {
                 Node node = this.getNode(interval.getOwnerAsNode());
                 Track nodeTrack = node != null ? this.getTrack(node, interval.getTrack()) : null;
                 if (node == null || nodeTrack == null) {
-                    LOG.trace("Cannot find node or track: " + interval.getOwnerAsNode());
+                    log.trace("Cannot find node or track: " + interval.getOwnerAsNode());
                     return null;
                 }
                 if (previousNode != null) {
@@ -103,7 +103,7 @@ public class TrainImport extends Import {
                     Line line = this.getDiagram().getNet().getLine(previousNode, node);
                     Track lineTrack = line != null ? this.getTrack(line, previousLineTrack) : null;
                     if (line == null || lineTrack == null) {
-                        LOG.trace("Cannot find line or track: " + previousNode + ", " + node);
+                        log.trace("Cannot find line or track: " + previousNode + ", " + node);
                         return null;
                     }
                     segments.add(new Triplet<RouteSegment, Track, TimeInterval>(line, lineTrack, previousLineInterval));

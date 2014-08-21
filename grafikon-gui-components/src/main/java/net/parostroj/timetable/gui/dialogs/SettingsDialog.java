@@ -32,7 +32,7 @@ import javax.swing.JLabel;
  */
 public class SettingsDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SettingsDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SettingsDialog.class);
 
     private static final String NO_UNIT = "-";
 
@@ -118,7 +118,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (transferTime != null) {
                 stationTransferTextField.setText(transferTime.toString());
             } else {
-                LOG.warn("Station transfer time information missing.");
+                log.warn("Station transfer time information missing.");
                 stationTransferTextField.setText("");
             }
 
@@ -557,7 +557,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (GrafikonException e) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.emptytemplates"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.debug("Error setting templates.", e);
+            log.debug("Error setting templates.", e);
             return;
         }
 
@@ -570,7 +570,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.badratio"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.debug("Cannot covert ratio.", ex);
+            log.debug("Cannot covert ratio.", ex);
             return;
         }
         if (s != null && !s.equals(diagram.getAttribute(TrainDiagram.ATTR_SCALE, Object.class))) {
@@ -615,7 +615,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (difference != null && !difference.equals(diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Object.class)))
                 diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, difference);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
+            log.warn("Cannot parse station transfer time: {}", stationTransferTextField.getText());
         }
 
         // changes tracking
@@ -638,7 +638,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (GrafikonException e) {
             JOptionPane.showMessageDialog(this.getParent(), String.format(ResourceLoader.getString("dialog.error.script"), e.getCause().getMessage()),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.debug("Error setting script.", e);
+            log.debug("Error setting script.", e);
             return;
         }
 
@@ -661,7 +661,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             }
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot convert route length ratio to double.", e);
+            log.warn("Cannot convert route length ratio to double.", e);
         }
         diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, !"".equals(rlUnitTextField.getText().trim()) ? rlUnitTextField.getText().trim() : null);
 
@@ -688,7 +688,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             if (!cValue.equals(diagram.getAttribute(attr, Object.class)))
                 diagram.setAttribute(attr, cValue);
         } catch (ArithmeticException e) {
-            LOG.warn("Cannot convert {} attribute to int: {}", attr, e.getMessage());
+            log.warn("Cannot convert {} attribute to int: {}", attr, e.getMessage());
         }
     }
 

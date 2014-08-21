@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OutputAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OutputAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OutputAction.class);
     private final ApplicationModel model;
     private Component parent;
     private final TemplateSelectDialog templateSelectDialog;
@@ -69,7 +69,7 @@ public class OutputAction extends AbstractAction {
             else
                 this.multipleOutputs();
         } catch (Exception ex) {
-            LOG.warn(ex.getMessage(), ex);
+            log.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             GuiComponentUtils.showError(errorMessage + " " + ex.getMessage(), parent);
         }
@@ -271,13 +271,13 @@ public class OutputAction extends AbstractAction {
                         output.execute();
                     }
                 } catch (Exception e) {
-                    LOG.warn(e.getMessage(), e);
+                    log.warn(e.getMessage(), e);
                     errorMessage = ResourceLoader.getString("dialog.error.saving");
                 } finally {
                     setWaitDialogVisible(false);
                 }
                 time = System.currentTimeMillis() - time;
-                LOG.debug("Generated in {}ms", time);
+                log.debug("Generated in {}ms", time);
             }
 
             @Override

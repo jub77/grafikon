@@ -12,13 +12,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * One item for LSAttributes.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"key", "value", "type"})
 public class LSAttributesItem {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSAttributesItem.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSAttributesItem.class);
+
     private String key;
     private String value;
     private String type;
@@ -51,7 +52,7 @@ public class LSAttributesItem {
             this.type = pair.first;
             this.value = pair.second;
         } else {
-            LOG.warn("Cannot convert value to string: {}", key);
+            log.warn("Cannot convert value to string: {}", key);
         }
     }
 
@@ -96,14 +97,14 @@ public class LSAttributesItem {
             return this.convertModelValue(diagram);
         } else {
             // it didn't recognize the type
-            LOG.warn("Not recognized type: ", type);
+            log.warn("Not recognized type: ", type);
             return null;
         }
     }
 
     private Object convertModelValue(TrainDiagram diagram) {
         if (diagram == null) {
-            LOG.warn("Cannot convert model value without diagram.");
+            log.warn("Cannot convert model value without diagram.");
             return null;
         } else {
             if (type.equals("model.engine.class")) {
@@ -111,7 +112,7 @@ public class LSAttributesItem {
             } else if (type.equals("model.line.class")) {
                 return diagram.getNet().getLineClassById(value);
             } else {
-                LOG.warn("Not recognized model type: ", type);
+                log.warn("Not recognized model type: ", type);
                 return null;
             }
         }
@@ -127,7 +128,7 @@ public class LSAttributesItem {
             lKey = "model.line.class";
             lValue = object.getId();
         } else {
-            LOG.warn("Not recognized class: {}", object.getClass().getName());
+            log.warn("Not recognized class: {}", object.getClass().getName());
         }
         return new Pair<String, String>(lKey, lValue);
     }

@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  */
 public class LoadFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoadFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadFilter.class);
 
     public void checkDiagram(TrainDiagram diagram, ModelVersion version) {
         // fix weight info
@@ -34,7 +34,7 @@ public class LoadFilter {
                 try {
                     train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                 } catch (GrafikonException e) {
-                    LOG.warn("Couldn't convert route info to template: {}", e.getMessage());
+                    log.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
                 train.removeAttribute("route.info");
             }

@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TemplatesLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TemplatesLoader.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TemplatesLoader.class);
+
     private static final String TEMPLATE_LIST_FILE = "/templates/list.xml";
     private static final String TEMPLATES_LOCATION = "/templates/";
     private static TemplateList templateList;
@@ -39,13 +40,13 @@ public class TemplatesLoader {
                 } finally {
                     is.close();
                 }
-                LOG.debug("Loaded list of templates.");
+                log.debug("Loaded list of templates.");
             } catch (JAXBException e) {
-                LOG.error("Cannot load list of templates.", e);
+                log.error("Cannot load list of templates.", e);
                 // empty template list
                 templateList = new TemplateList();
             } catch (IOException e) {
-                LOG.error("Error reading/closing template file.", e);
+                log.error("Error reading/closing template file.", e);
                 // empty template list
                 templateList = new TemplateList();
             }

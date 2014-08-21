@@ -38,7 +38,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class EditImagesDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditImagesDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EditImagesDialog.class);
     private static JFileChooser fileChooserInstance;
 
     private TrainDiagram diagram;
@@ -193,7 +193,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
                 diagram.addImage(image);
                 listModel.addWrapper(new Wrapper<TimetableImage>(image));
             } catch (IOException e) {
-                LOG.warn("Cannot save temporary image file.", e);
+                log.warn("Cannot save temporary image file.", e);
                 JOptionPane.showMessageDialog(this,
                         ResourceLoader.getString("dialog.error.temporaryfile"),
                         ResourceLoader.getString("dialog.error.title"),
@@ -245,7 +245,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
         if (!selected.getImageFile().delete())
-            LOG.debug("Cannot remove temporary file: {}", selected.getImageFile().getPath());
+            log.debug("Cannot remove temporary file: {}", selected.getImageFile().getPath());
     }
 
     private javax.swing.JButton deleteButton;

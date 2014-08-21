@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NewModelDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NewModelDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(NewModelDialog.class);
 
     public static class NewModelValues {
 
@@ -173,7 +173,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ex.getMessage(),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            LOG.warn("Cannot convert ratio value.", ex);
+            log.warn("Cannot convert ratio value.", ex);
             return;
         }
 

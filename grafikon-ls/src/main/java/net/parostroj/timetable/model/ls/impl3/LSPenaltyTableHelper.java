@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
  */
 public class LSPenaltyTableHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSPenaltyTableHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(LSPenaltyTableHelper.class);
     /** Filename of the file with information. */
     private static final String SPEEDING_BRAKING_PENALTIES_FILENAME = "/speeding_braking_penalties.xml";
-    
+
     /**
      * @return penalty table
      */
@@ -33,10 +33,10 @@ public class LSPenaltyTableHelper {
                 throw new RuntimeException("Cannot find speeding braking table to load.");
             }
             LSPenaltyTable t = u.unmarshal(new javax.xml.transform.stream.StreamSource(url.openStream()), LSPenaltyTable.class).getValue();
-            LOG.trace("Penalty table loaded.");
+            log.trace("Penalty table loaded.");
             return t;
         } catch (Exception e) {
-            LOG.error("Error loading penalty table.", e);
+            log.error("Error loading penalty table.", e);
             return null;
         }
     }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphicalTimetableView.class);
+    private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableView.class);
 
     private final static int INITIAL_WIDTH = 4;
     private final static int SELECTION_RADIUS = 5;
@@ -106,7 +106,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             toolTipTemplateLine = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.line"), TextTemplate.Language.GROOVY);
             toolTipTemplateNode = TextTemplate.createTextTemplate(ResourceLoader.getString("gt.desc.interval.node"), TextTemplate.Language.GROOVY);
         } catch (GrafikonException e) {
-            LOG.error("Error creating template for time interval.", e);
+            log.error("Error creating template for time interval.", e);
         }
         // routes menu
         routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes") + "...");

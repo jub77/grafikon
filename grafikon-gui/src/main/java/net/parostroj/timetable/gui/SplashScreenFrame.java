@@ -15,12 +15,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Splash frame.
- * 
+ *
  * @author jub
  */
 public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplashScreenFrame.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SplashScreenFrame.class);
+
     private Dimension splSize;
     private ImagePanel imagePanel;
 
@@ -44,7 +45,7 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
             this.setSplashPosition();
         } catch (InterruptedException ex) {
-            LOG.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -68,10 +69,11 @@ public class SplashScreenFrame extends JFrame implements SplashScreenInfo {
 
 class ImagePanel extends JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ImagePanel.class.getName());
-    private Image image;
-    private int x;
-    private int y;
+    private static final Logger log = LoggerFactory.getLogger(ImagePanel.class);
+
+    private final Image image;
+    private final int x;
+    private final int y;
     private String[] text;
 
     public ImagePanel(int x, int y, Image image) {
@@ -86,7 +88,7 @@ class ImagePanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        LOG.trace("Splash paint start.");
+        log.trace("Splash paint start.");
         super.paint(g);
         g.drawImage(image, 0, 0, null);
 
@@ -98,11 +100,11 @@ class ImagePanel extends JPanel {
             for (String str : text) {
                 g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
                 g.setColor(Color.BLACK);
-                LOG.trace(String.format("Text %d,%d,%s", x, posY, str));
+                log.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;
             }
         }
-        LOG.trace("Splash paint end.");
+        log.trace("Splash paint end.");
     }
 }

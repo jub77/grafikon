@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GTEventOutputVisitor implements EventVisitor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GTEventOutputVisitor.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(GTEventOutputVisitor.class);
 
     private final Appendable str;
     private final boolean full;
@@ -52,7 +52,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Cycle: ").append(((TrainsCycle) event.getObject()).getName());
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -82,7 +82,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -106,7 +106,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -134,7 +134,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -168,7 +168,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -195,7 +195,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -212,7 +212,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -236,7 +236,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -253,7 +253,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -270,7 +270,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
@@ -291,7 +291,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
             }
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 

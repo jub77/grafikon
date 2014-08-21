@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.*;
  */
 public class LineImport extends Import {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LineImport.class);
+    private static final Logger log = LoggerFactory.getLogger(LineImport.class);
 
     public LineImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
         super(diagram, libraryDiagram, match);
@@ -32,7 +32,7 @@ public class LineImport extends Import {
         if (checkedLine != null) {
             String message = "line already exists";
             this.addError(importedLine, message);
-            LOG.debug("{}: {}", message, checkedLine);
+            log.debug("{}: {}", message, checkedLine);
             return null;
         }
 
@@ -43,7 +43,7 @@ public class LineImport extends Import {
         if (iNodeFrom == null || iNodeTo == null) {
             String message = "nodes not found";
             this.addError(importedLine, message);
-            LOG.debug("{}: {}", message, checkedLine);
+            log.debug("{}: {}", message, checkedLine);
             return null;
         }
 
@@ -60,7 +60,7 @@ public class LineImport extends Import {
         // add to diagram
         this.getDiagram().getNet().addLine(iNodeFrom, iNodeTo, line);
         this.addImportedObject(line);
-        LOG.trace("Successfully imported line: " + line);
+        log.trace("Successfully imported line: " + line);
         return line;
     }
 

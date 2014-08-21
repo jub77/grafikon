@@ -46,7 +46,8 @@ import javax.swing.JCheckBox;
  */
 public class EditTrainDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EditTrainDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EditTrainDialog.class);
+
     private static final String FROM_STATION = "${stations.first}";
     private static final String TO_STATION = "${stations.last}";
     private static final String STATION_X = "${stations.get(%d)}";
@@ -485,7 +486,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             if (!"".equals(weightStr))
                 newWI = Integer.valueOf(weightStr);
         } catch (NumberFormatException e) {
-            LOG.warn("Couldn't convert weight to int.");
+            log.warn("Couldn't convert weight to int.");
             newWI = oldWI;
         }
         train.getAttributes().setRemove(Train.ATTR_WEIGHT, newWI);
@@ -502,7 +503,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             TextTemplate newRI = routeEditBox.getTemplateEmpty();
             train.getAttributes().setRemove(Train.ATTR_ROUTE, newRI);
         } catch (GrafikonException e) {
-            LOG.warn("Error creating template: {}", e.getMessage());
+            log.warn("Error creating template: {}", e.getMessage());
         }
 
         // check max speed - modify if changed
@@ -513,9 +514,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 train.setTopSpeed(maxSpeed);
             }
             if (maxSpeed <= 0)
-                LOG.warn("Speed has to be positive number: {}", maxSpeed);
+                log.warn("Speed has to be positive number: {}", maxSpeed);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot convert speed to number: {}", speedTextField.getText());
+            log.warn("Cannot convert speed to number: {}", speedTextField.getText());
         }
 
         // technological times
@@ -529,7 +530,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 train.setTimeAfter(timeAfter);
             }
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
+            log.warn("Cannot convert technological time: {}, {}", timeBeforeTextField.getText(), timeAfterTextField.getText());
         }
 
         // managed freight

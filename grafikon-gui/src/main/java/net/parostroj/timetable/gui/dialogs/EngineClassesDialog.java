@@ -124,10 +124,12 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             this.fireTableRowsDeleted(index, index);
         }
     }
+
+    private static final Logger log = LoggerFactory.getLogger(EngineClassesDialog.class);
+
     private TrainDiagram diagram;
     private WrapperListModel<EngineClass> listModel;
     private final WeightTableModel tableModel;
-    private static final Logger LOG = LoggerFactory.getLogger(EngineClassesDialog.class.getName());
 
     /** Creates new form EngineClassesDialog */
     public EngineClassesDialog(java.awt.Frame parent, boolean modal) {
@@ -418,7 +420,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             speedTextField.setText("");
 
         } catch (NumberFormatException e) {
-            LOG.trace("Cannot convert speed string to int.", e);
+            log.trace("Cannot convert speed string to int.", e);
         }
     }
 

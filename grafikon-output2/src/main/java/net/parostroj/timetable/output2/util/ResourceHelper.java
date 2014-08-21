@@ -22,7 +22,7 @@ import com.google.common.io.CharSource;
  */
 public class ResourceHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
     public static String readResource(final String filename, final ClassLoader cl) {
         try {
@@ -37,7 +37,7 @@ public class ResourceHelper {
             CharSource cs = bs.asCharSource(Charsets.UTF_8);
             return cs.read();
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
             return "";
         }
     }

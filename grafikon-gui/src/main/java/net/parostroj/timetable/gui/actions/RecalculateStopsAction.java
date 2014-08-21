@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RecalculateStopsAction extends AbstractAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecalculateStopsAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(RecalculateStopsAction.class);
     private final ApplicationModel model;
 
     public RecalculateStopsAction(ApplicationModel model) {
@@ -46,7 +46,7 @@ public class RecalculateStopsAction extends AbstractAction {
         try {
             cRatio = Double.parseDouble(ratioStr);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot convert to double: {}", ratioStr);
+            log.warn("Cannot convert to double: {}", ratioStr);
             return;
         }
 

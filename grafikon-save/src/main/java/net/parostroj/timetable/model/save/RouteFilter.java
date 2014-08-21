@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  */
 public class RouteFilter implements TrainDiagramFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RouteFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(RouteFilter.class);
 
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
@@ -26,7 +26,7 @@ public class RouteFilter implements TrainDiagramFilter {
                 try {
                     train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                 } catch (GrafikonException e) {
-                    LOG.warn("Couldn't convert route info to template: {}", e.getMessage());
+                    log.warn("Couldn't convert route info to template: {}", e.getMessage());
                 }
                 train.removeAttribute("route.info");
             }

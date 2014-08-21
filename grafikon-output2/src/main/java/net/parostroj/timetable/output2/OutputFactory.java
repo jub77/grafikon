@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class OutputFactory {
 
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private final Map<String, Object> parameters = new HashMap<String, Object>();
 
     private static final ServiceLoader<OutputFactory> loader = ServiceLoader.load(OutputFactory.class);
     private static final Map<String, Class<? extends OutputFactory>> cache = new ConcurrentHashMap<String, Class<? extends OutputFactory>>();
@@ -39,7 +39,7 @@ public abstract class OutputFactory {
                 // create new instance
                 return clazz.newInstance();
             } catch (Exception e) {
-                LoggerFactory.getLogger(OutputFactory.class.getName()).error("Cannot create instance.", e);
+                LoggerFactory.getLogger(OutputFactory.class).error("Cannot create instance.", e);
             }
         }
         throw new IllegalArgumentException("Unknown output factory type: " + type);

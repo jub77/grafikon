@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.*;
 @XmlRootElement
 public class LSTrainTypeList {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LSTrainTypeList.class);
+    private static final Logger log = LoggerFactory.getLogger(LSTrainTypeList.class);
 
     private final Map<TrainType, LSTrainType> mapping;
     private final Map<String, TrainType> mappingByKey;
@@ -84,7 +84,7 @@ public class LSTrainTypeList {
                 "time = ((int)((time + 40) / 60)) * 60;\n" +
                 "return time;\n", Script.Language.GROOVY));
         } catch (GrafikonException e) {
-            LOG.error("Couldn't create trains data." ,e);
+            log.error("Couldn't create trains data." ,e);
         }
     }
 

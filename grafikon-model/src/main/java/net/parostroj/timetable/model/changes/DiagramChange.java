@@ -56,7 +56,7 @@ public class DiagramChange {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiagramChange.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DiagramChange.class);
 
     private Type type;
     private Action action;
@@ -140,7 +140,7 @@ public class DiagramChange {
         try {
             return getStringWithException(key);
         } catch (MissingResourceException e) {
-            LOG.warn("Error getting text for key: {}", key);
+            log.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
         }
     }
@@ -154,7 +154,7 @@ public class DiagramChange {
         try {
             result = getStringWithException(key);
         } catch (MissingResourceException e) {
-            LOG.warn("Key not found: {}", e.getKey());
+            log.warn("Key not found: {}", e.getKey());
             result = key;
         }
         return result;

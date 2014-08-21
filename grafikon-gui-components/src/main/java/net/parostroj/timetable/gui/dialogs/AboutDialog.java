@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AboutDialog extends javax.swing.JDialog {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AboutDialog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(AboutDialog.class);
 
     /** Creates new form AboutDialog */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
@@ -53,7 +53,7 @@ public class AboutDialog extends javax.swing.JDialog {
                 AffineTransformOp op = new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
                 image = op.filter(src, null);
             } catch (Exception e) {
-                LOG.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
             }
         }
 
