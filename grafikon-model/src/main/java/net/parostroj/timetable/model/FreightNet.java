@@ -52,6 +52,9 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
     }
 
     public FNConnection addConnection(TimeInterval from, TimeInterval to) {
+        if (from == to || from.getOwnerAsNode() != to.getOwnerAsNode()) {
+            throw new IllegalArgumentException(String.format("Invalid connection: %s -> %s", from, to));
+        }
         FNConnection conn = new FNConnection(from, to, attributesListener);
         this.addConnectionImpl(conn);
         return conn;
