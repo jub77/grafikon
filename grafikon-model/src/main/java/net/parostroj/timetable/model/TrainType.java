@@ -207,7 +207,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         TextTemplate template = (trainNameTemplate == null) ?
             getTrainDiagram().getTrainsData().getTrainNameTemplate() :
             trainNameTemplate;
-        return template.evaluate(train);
+        return template.evaluate(TextTemplate.getBinding(train));
     }
 
     /**
@@ -220,7 +220,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         TextTemplate template = (trainCompleteNameTemplate == null) ?
             getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
             trainCompleteNameTemplate;
-        return template.evaluate(train);
+        return template.evaluate(TextTemplate.getBinding(train));
     }
 
     /**
