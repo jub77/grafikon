@@ -27,7 +27,7 @@ public class LSTextItem {
     public LSTextItem(TextItem item) {
         this.id = item.getId();
         this.template = item.getTemplate() == null ? null : new LSTextTemplate(item.getTemplate());
-        this.type = item.getType();
+        this.type = item.getType().getKey();
         this.name = item.getName();
         this.attributes = new LSAttributes(item.getAttributes());
     }
@@ -78,7 +78,7 @@ public class LSTextItem {
         if (template != null) {
             item.setTemplate(template.createTextTemplate());
         }
-        item.setType(type);
+        item.setType(TextItem.Type.fromKey(type));
         item.setName(name);
         return item;
     }

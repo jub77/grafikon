@@ -11,11 +11,34 @@ import net.parostroj.timetable.visitors.Visitable;
  */
 public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes {
 
+    public static enum Type {
+        PLAIN_TEXT("plain");
+
+        private String key;
+
+        private Type(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public static Type fromKey(String key) {
+            for (Type type : values()) {
+                if (type.getKey().equals(key)) {
+                    return type;
+                }
+            }
+            return PLAIN_TEXT;
+        }
+    }
+
     private final String id;
     private final TrainDiagram diagram;
 
     private String name;
-    private String type;
+    private Type type;
     private TextTemplate template;
     private Attributes attributes;
     private final GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
@@ -43,12 +66,12 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         return diagram;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
-        String oldType = this.type;
+    public void setType(Type type) {
+        Type oldType = this.type;
         this.type = type;
         this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
     }

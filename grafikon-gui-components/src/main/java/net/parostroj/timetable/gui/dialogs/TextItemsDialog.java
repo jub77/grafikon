@@ -202,7 +202,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TextItem item = new TextItem(IdGenerator.getInstance().getId(), diagram);
         item.setName(nameTextField.getText().trim());
-        item.setType((String)typeComboBox.getSelectedItem());
+        item.setType(TextItem.Type.fromKey((String) typeComboBox.getSelectedItem()));
         item.setTemplate(null);
         Wrapper<TextItem> wrapper = Wrapper.getWrapper(item);
         itemsModel.addWrapper(wrapper);
