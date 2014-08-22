@@ -73,6 +73,10 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
     }
 
+    public String getText() {
+        return template != null ? template.evaluate(diagram) : "";
+    }
+
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
