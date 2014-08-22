@@ -19,26 +19,37 @@ import net.parostroj.timetable.model.TextTemplate.Language;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.JCheckBox;
 
 /**
  * Dialog for editing text template.
  *
  * @author jub
  */
-public class EditTextTemplateDialog extends javax.swing.JDialog {
+public class TextItemDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(EditTextTemplateDialog.class);
+    public static class TextItemModel {
+        TextTemplate template;
+        boolean trainTimetableInfo;
 
-    private TextTemplate template;
+        public TextItemModel(TextTemplate template, boolean trainTimetableInfo) {
+            this.template = template;
+            this.trainTimetableInfo = trainTimetableInfo;
+        }
+    }
 
-    public EditTextTemplateDialog(Window parent, boolean modal) {
+    private static final Logger log = LoggerFactory.getLogger(TextItemDialog.class);
+
+    private TextItemModel itemModel;
+
+    public TextItemDialog(Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         init();
     }
 
-    public void showDialog(TextTemplate template) {
-        this.template = template;
+    public void showDialog(TextItemModel template) {
+        this.itemModel = template;
         this.updateValues();
         this.setVisible(true);
     }
@@ -47,13 +58,14 @@ public class EditTextTemplateDialog extends javax.swing.JDialog {
         textTemplateEditBox.setTemplateLanguages(Arrays.asList(Language.PLAIN, Language.GROOVY));
     }
 
-    public TextTemplate getTemplate() {
-        return template;
+    public TextItemModel getModel() {
+        return itemModel;
     }
 
     private void updateValues() {
         textTemplateEditBox.setEnabled(true);
-        textTemplateEditBox.setTemplate(this.template);
+        textTemplateEditBox.setTemplate(this.itemModel.template);
+        trainTimetableInfoCheckBox.setSelected(itemModel.trainTimetableInfo);
     }
 
     private void initComponents() {
@@ -75,6 +87,9 @@ public class EditTextTemplateDialog extends javax.swing.JDialog {
         verifyPanel.add(verifyButton);
 
         verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
+
+        trainTimetableInfoCheckBox = new JCheckBox(ResourceLoader.getString("text.item.train.timetable.info")); // NOI18N
+        verifyPanel.add(trainTimetableInfoCheckBox);
         verifyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verifyButtonActionPerformed(evt);
@@ -109,7 +124,8 @@ public class EditTextTemplateDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            this.template = this.convertToTemplate();
+            TextTemplate template = this.convertToTemplate();
+            this.itemModel = new TextItemModel(template, trainTimetableInfoCheckBox.isSelected());
             this.setVisible(false);
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
@@ -118,7 +134,7 @@ public class EditTextTemplateDialog extends javax.swing.JDialog {
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.template = null;
+        this.itemModel = null;
         this.setVisible(false);
     }
 
@@ -140,4 +156,5 @@ public class EditTextTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
+    private JCheckBox trainTimetableInfoCheckBox;
 }
