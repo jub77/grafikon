@@ -1,20 +1,19 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.border.EmptyBorder;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
+import net.parostroj.timetable.gui.dialogs.TextItemDialog.TextItemModel;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TextTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
-import java.awt.BorderLayout;
 
 /**
  * Dialog for text items.
@@ -226,12 +225,13 @@ public class TextItemsDialog extends javax.swing.JDialog {
     }
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        EditTextTemplateDialog dialog = new EditTextTemplateDialog(this, true);
+        TextItemDialog dialog = new TextItemDialog(this, true);
         dialog.setLocationRelativeTo(this);
-        dialog.showDialog(selectedItem.getTemplate());
-        TextTemplate newTemplate = dialog.getTemplate();
-        if (newTemplate != null) {
-            selectedItem.setTemplate(newTemplate);
+        dialog.showDialog(new TextItemModel(selectedItem.getTemplate(), selectedItem.getAttributes().getBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO)));
+        TextItemModel newItemModel = dialog.getModel();
+        if (newItemModel != null) {
+            selectedItem.setTemplate(newItemModel.template);
+            selectedItem.getAttributes().setBool(TextItemAttributes.ATTR_TRAIN_TIMETABLE_INFO, newItemModel.trainTimetableInfo);
         }
     }
 
