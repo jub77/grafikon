@@ -292,7 +292,7 @@ public class TrainTimetablesExtractor {
     }
 
     private Text createText(TextItem item) {
-        Text t = new Text(item.getName(), item.getType(), item.getTemplate() == null ? "" : item.getTemplate().evaluate());
+        Text t = new Text(item.getName(), item.getType(), item.getTemplate() == null ? "" : item.getTemplate().evaluate(diagram));
         return t;
     }
 
