@@ -22,13 +22,13 @@ public final class TextTemplateGroovy extends TextTemplate {
     private static final Logger log = LoggerFactory.getLogger(TextTemplateGroovy.class);
 
     private Template templateGString;
-    
+
     protected TextTemplateGroovy(String template, boolean initialize) throws GrafikonException {
         super(template);
         if (initialize)
             initialize();
     }
-    
+
     private void initialize() throws GrafikonException {
         TemplateEngine engine = new SimpleTemplateEngine();
         try {
@@ -56,7 +56,7 @@ public final class TextTemplateGroovy extends TextTemplate {
         try {
             return this.evaluateWithException(binding);
         } catch (GrafikonException e) {
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(), e);
             return "-- Template error --";
         }
     }
@@ -65,7 +65,7 @@ public final class TextTemplateGroovy extends TextTemplate {
     public Language getLanguage() {
         return Language.GROOVY;
     }
-    
+
     @Override
     public void freeResources() {
         templateGString = null;
