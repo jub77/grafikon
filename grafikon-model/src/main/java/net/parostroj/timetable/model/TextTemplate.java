@@ -46,6 +46,10 @@ public abstract class TextTemplate {
         return this.evaluate(this.getBinding(object));
     }
 
+    public String evaluate() {
+        return this.evaluate(Collections.emptyMap());
+    }
+
     public void evaluate(OutputStream output, Map<String, Object> binding, String encoding) throws GrafikonException {
         try {
             this.evaluate(new OutputStreamWriter(output, encoding), binding);

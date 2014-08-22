@@ -12,12 +12,12 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name="text_item")
-@XmlType(propOrder={"id", "name", "text", "type", "attributes"})
+@XmlType(propOrder={"id", "name", "template", "type", "attributes"})
 public class LSTextItem {
 
     private String id;
     private String name;
-    private String text;
+    private LSTextTemplate template;
     private String type;
     private LSAttributes attributes;
 
@@ -26,7 +26,7 @@ public class LSTextItem {
 
     public LSTextItem(TextItem item) {
         this.id = item.getId();
-        this.text = item.getText();
+        this.template = item.getTemplate() == null ? null : new LSTextTemplate(item.getTemplate());
         this.type = item.getType();
         this.name = item.getName();
         this.attributes = new LSAttributes(item.getAttributes());
@@ -40,12 +40,12 @@ public class LSTextItem {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public LSTextTemplate getTemplate() {
+        return template;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTemplate(LSTextTemplate template) {
+        this.template = template;
     }
 
     public String getType() {
@@ -75,7 +75,9 @@ public class LSTextItem {
     public TextItem createTextItem(TrainDiagram diagram) throws LSException {
         TextItem item = new TextItem(id, diagram);
         item.setAttributes(attributes.createAttributes(diagram));
-        item.setText(text);
+        if (template != null) {
+            item.setTemplate(template.createTextTemplate());
+        }
         item.setType(type);
         item.setName(name);
         return item;
