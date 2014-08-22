@@ -22,4 +22,7 @@ public class ObjectsUtil {
         }
     }
 
+    public static boolean isEmpty(String str) {
+        return null == checkAndTrim(str);
+    }
 }
