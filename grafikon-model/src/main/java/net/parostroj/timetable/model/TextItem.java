@@ -109,7 +109,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     }
 
     public String getText() {
-        return template != null ? template.evaluate(diagram) : "";
+        return template != null ? template.evaluate(TextTemplate.getBinding("diagram", diagram)) : "";
     }
 
     @Override

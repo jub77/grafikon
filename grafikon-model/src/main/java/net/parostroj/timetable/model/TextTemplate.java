@@ -27,21 +27,7 @@ public abstract class TextTemplate {
 
     public abstract String evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
-    public String evaluateWithException(Object object, Map<String, Object> binding) throws GrafikonException {
-        Map<String, Object> bindingObj = this.getBinding(object);
-        binding.putAll(bindingObj);
-        return this.evaluateWithException(binding);
-    }
-
-    public String evaluateWithException(Object object) throws GrafikonException {
-        return this.evaluateWithException(this.getBinding(object));
-    }
-
     public abstract String evaluate(Map<String, Object> binding);
-
-    public String evaluate(Object object) {
-        return this.evaluate(this.getBinding(object));
-    }
 
     public void evaluate(OutputStream output, Map<String, Object> binding, String encoding) throws GrafikonException {
         try {
@@ -55,20 +41,14 @@ public abstract class TextTemplate {
 
     public abstract Language getLanguage();
 
-    protected Map<String, Object> getBinding(Object object) {
-        if (object instanceof Train) {
-            return ((Train) object).createTemplateBinding();
-        } else if (object instanceof TrainDiagram) {
-            return this.createMap("diagram", object);
-        } else {
-            return this.createMap("object", object);
-        }
-    }
-
-    private Map<String, Object> createMap(String key, Object value) {
+    public static Map<String, Object> getBinding(String key, Object value) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(key, value);
         return map;
+    }
+
+    public static Map<String, Object> getBinding(Train train) {
+        return train.createTemplateBinding();
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
