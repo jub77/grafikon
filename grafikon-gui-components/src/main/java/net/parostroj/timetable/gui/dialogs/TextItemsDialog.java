@@ -3,14 +3,15 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.event.*;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.model.TextItem;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -19,6 +20,8 @@ import net.parostroj.timetable.utils.IdGenerator;
  * @author jub
  */
 public class TextItemsDialog extends javax.swing.JDialog {
+
+    private static final Logger log = LoggerFactory.getLogger(TextItemsDialog.class);
 
     private TrainDiagram diagram;
     private final WrapperListModel<TextItem> itemsModel;
@@ -80,7 +83,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     private void writeChangedValueBack() {
         if (selectedItem != null && changed) {
-            selectedItem.setText(textArea.getText());
+            try {
+                selectedItem.setTemplate(TextTemplate.createTextTemplate(textArea.getText(), TextTemplate.Language.PLAIN));
+            } catch (GrafikonException e) {
+                log.error("Error setting template.", e);
+            }
             changed = false;
         }
     }
@@ -196,7 +203,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         TextItem item = new TextItem(IdGenerator.getInstance().getId(), diagram);
         item.setName(nameTextField.getText().trim());
         item.setType((String)typeComboBox.getSelectedItem());
-        item.setText("");
+        item.setTemplate(null);
         Wrapper<TextItem> wrapper = Wrapper.getWrapper(item);
         itemsModel.addWrapper(wrapper);
         nameTextField.setText("");
@@ -210,7 +217,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
             int index = itemList.getSelectedIndex();
             if (index != -1) {
                 selectedItem = itemsModel.getIndex(index).getElement();
-                textArea.setText(selectedItem.getText());
+                textArea.setText(selectedItem.getTemplate() != null ? selectedItem.getTemplate().getTemplate() : "");
                 textArea.setSyntaxEditingStyle(selectedItem.getType().equals("bbcode") ?
                         SyntaxConstants.SYNTAX_STYLE_BBCODE :
                         SyntaxConstants.SYNTAX_STYLE_HTML);

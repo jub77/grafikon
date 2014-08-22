@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.AttributesListener;
-import net.parostroj.timetable.model.events.TextItemEvent;
-import net.parostroj.timetable.model.events.TextItemListener;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -12,14 +9,14 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes {
 
     private final String id;
     private final TrainDiagram diagram;
 
-    private String text;
     private String name;
     private String type;
+    private TextTemplate template;
     private Attributes attributes;
     private final GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
     private AttributesListener attributesListener;
@@ -46,16 +43,6 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
         return diagram;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        String oldText = this.text;
-        this.text = text;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("text", oldText, text)));
-    }
-
     public String getType() {
         return type;
     }
@@ -63,7 +50,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     public void setType(String type) {
         String oldType = this.type;
         this.type = type;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("type", oldType, type)));
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
     }
 
     public String getName() {
@@ -73,7 +60,17 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable {
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange("name", oldName, name)));
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+    }
+
+    public TextTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(TextTemplate template) {
+        TextTemplate oldTemplate = this.template;
+        this.template = template;
+        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
     }
 
     @Override
