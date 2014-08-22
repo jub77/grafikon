@@ -63,10 +63,13 @@ public abstract class TextTemplate {
     public abstract Language getLanguage();
 
     protected Map<String, Object> getBinding(Object object) {
-        if (object instanceof Train)
+        if (object instanceof Train) {
             return ((Train) object).createTemplateBinding();
-        else
-            return Collections.emptyMap();
+        } else if (object instanceof TrainDiagram) {
+            return Collections.singletonMap("diagram", object);
+        } else {
+            return Collections.singletonMap("object", object);
+        }
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
