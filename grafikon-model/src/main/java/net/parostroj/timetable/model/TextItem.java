@@ -33,6 +33,11 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
             }
             return PLAIN_TEXT;
         }
+
+        @Override
+        public String toString() {
+            return key;
+        }
     }
 
     private final String id;
