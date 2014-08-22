@@ -262,12 +262,8 @@
 
   def addTextPages(texts, pages) {
     for (text in texts) {
-      if (text.type == "bbcode" || text.type == "html") {
+      if (text.type == "plain") {
         def str = text.text
-        if (text.type == "bbcode") {
-          // transform bbcode to html
-          str = transformBBCode(str)
-        }
         def page = new Page()
         page.text = true
         page.textStr = str
@@ -878,52 +874,6 @@
     for (i in (page.textStr =~ /src="(.*?)"/)) {
       images.add(i[1])
     }
-  }
-
-  // not a nice or efficient way how to implement this, but it works (mostly)
-  def transformBBCode(str) {
-    // escape
-    str = str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-    // bold, italic, underline
-    str = str.replaceAll(/(?s)\[b\](.*?)\[\/b\]/, "<span class=\"bold\">\$1</span>")
-    str = str.replaceAll(/(?s)\[i\](.*?)\[\/i\]/, "<span class=\"italic\">\$1</span>")
-    str = str.replaceAll(/(?s)\[u\](.*?)\[\/u\]/, "<span class=\"underline\">\$1</span>")
-    str = str.replaceAll(/(?s)\[s\](.*?)\[\/s\]/, "<span class=\"strike\">\$1</span>")
-    // quote
-    str = str.replaceAll(/(?s)\[quote\](.*?)\[\/quote\](?:\n?)/, "<blockquote>\$1</blockquote>")
-    // code - preformatted text
-    str = str.replaceAll(/(?s)\[code\](.*?)\[\/code\](?:\n?)/, "<pre>\$1</pre>")
-    // font
-    str = str.replaceAll(/\[size=(.*?)\](.*?)\[\/size\]/, "<span style=\"font-size: \$1mm\">\$2</span>")
-    str = str.replaceAll(/\[color=(.*?)\](.*?)\[\/color\]/, "<span style=\"color: \$1\">\$2</span>")
-    str = str.replaceAll(/\[font=(.*?)\](.*?)\[\/font\]/, "<span style=\"font-family: \$1\">\$2</span>")
-    // images
-    str = str.replaceAll(/\[img\](.*?)\[\/img\]/, "<img src=\"\$1\">")
-    str = str.replaceAll(/\[img=(.*?)\](.*?)\[\/img\]/, "<img style=\"width: \$1mm\" src=\"\$2\">")
-    // align
-    str = str.replaceAll(/(?s)\[center\](.*?)\[\/center\]/, "<div class=\"center\">\$1</div>")
-    // list (ul)
-    str = str.replaceAll(/(?s)\[list\](.*?)\[\*\](.*?)\[\/list\](?:\n?)/, "<ul><li>\$2</li></ul>")
-    str = str.replaceAll(/(?s)\[list=\](.*?)\[\*\](.*?)\[\/list\](?:\n?)/, "<ol><li>\$2</li></ol>")
-    str = str.replaceAll(/\[\*\]/, "</li><li>")
-    // end lines
-    str = str.replaceAll("\n", "<br>\n")
-    // remove <br> from <pre>
-    str = removeBrFromPre(str)
-    return str
-  }
-
-  // a bit convoluted way to remove <br> from <pred> (the <br>s were of course added in a previous step :) )
-  def removeBrFromPre(str) {
-    def m = str =~ /(?s)<pre>(.*?)<\/pre>/
-    def result = new StringBuffer()
-    while (m.find()) {
-      def i = m.group(1)
-      i = i.replaceAll("<br>", "")
-      m.appendReplacement(result, "<pre>${i}</pre>")
-    }
-    m.appendTail(result)
-    return result.toString()
   }
 
   def concat(strs, delim) {
