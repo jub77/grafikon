@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -71,9 +72,11 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     }
 
     public void setType(Type type) {
-        Type oldType = this.type;
-        this.type = type;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        if (type != this.type) {
+            Type oldType = this.type;
+            this.type = type;
+            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        }
     }
 
     public String getName() {
@@ -81,9 +84,11 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        }
     }
 
     public TextTemplate getTemplate() {
@@ -91,9 +96,11 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     }
 
     public void setTemplate(TextTemplate template) {
-        TextTemplate oldTemplate = this.template;
-        this.template = template;
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+        if (!ObjectsUtil.compareWithNull(template, this.template)) {
+            TextTemplate oldTemplate = this.template;
+            this.template = template;
+            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+        }
     }
 
     public String getText() {
