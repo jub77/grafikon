@@ -41,9 +41,13 @@ public class TrainTimetablesExtractor {
 
         // texts
         for (TextItem item : diagram.getTextItems()) {
-            if (texts == null)
-                texts = new LinkedList<Text>();
-            texts.add(this.createText(item));
+            Text text = this.createText(item);
+            if (text != null) {
+                if (texts == null) {
+                    texts = new LinkedList<Text>();
+                }
+                texts.add(text);
+            }
         }
 
         TrainTimetables timetables = new TrainTimetables(result);
@@ -292,8 +296,12 @@ public class TrainTimetablesExtractor {
     }
 
     private Text createText(TextItem item) {
-        Text t = new Text(item.getName(), item.getType().getKey(), item.getText());
-        return t;
+        if (item.getAttributes().getBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO)) {
+            Text t = new Text(item.getName(), item.getType().getKey(), item.getText());
+            return t;
+        } else {
+            return null;
+        }
     }
 
     private Double getRoutePosition(Line line, Node node) {
