@@ -9,4 +9,5 @@ public interface TextItemAttributes {
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_TEMPLATE = "template";
+    public static final String ATTR_TRAIN_TIMETABLE_INFO = "train.timetable.info";
 }
