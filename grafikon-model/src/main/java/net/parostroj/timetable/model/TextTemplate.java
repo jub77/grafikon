@@ -1,10 +1,7 @@
 package net.parostroj.timetable.model;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.Collections;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,10 +43,6 @@ public abstract class TextTemplate {
         return this.evaluate(this.getBinding(object));
     }
 
-    public String evaluate() {
-        return this.evaluate(Collections.emptyMap());
-    }
-
     public void evaluate(OutputStream output, Map<String, Object> binding, String encoding) throws GrafikonException {
         try {
             this.evaluate(new OutputStreamWriter(output, encoding), binding);
@@ -66,10 +59,16 @@ public abstract class TextTemplate {
         if (object instanceof Train) {
             return ((Train) object).createTemplateBinding();
         } else if (object instanceof TrainDiagram) {
-            return Collections.singletonMap("diagram", object);
+            return this.createMap("diagram", object);
         } else {
-            return Collections.singletonMap("object", object);
+            return this.createMap("object", object);
         }
+    }
+
+    private Map<String, Object> createMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(key, value);
+        return map;
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
