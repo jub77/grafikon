@@ -1,13 +1,8 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 
 /**
  * Extracts information for custom cycles.
@@ -18,9 +13,13 @@ public class CustomCyclesExtractor {
 
     private final List<TrainsCycle> cycles;
     private final AttributesExtractor attributesExtractor = new AttributesExtractor();
+    private final Locale locale;
+    private final TrainDiagram diagram;
 
-    public CustomCyclesExtractor(List<TrainsCycle> cycles) {
+    public CustomCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, Locale locale) {
+        this.diagram = diagram;
         this.cycles = cycles;
+        this.locale = locale;
     }
 
     public List<CustomCycle> getCycles() {
@@ -35,7 +34,7 @@ public class CustomCyclesExtractor {
         CustomCycle outputCycle = new CustomCycle();
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
-        outputCycle.setType(cycle.getType().getDescriptionText());
+        outputCycle.setType(diagram.getLocalization().getTranslation(cycle.getType().getName(), locale));
         outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
         TrainsCycleItem current = null;

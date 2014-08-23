@@ -38,7 +38,7 @@ public class GspCustomCyclesOutput extends GspOutput {
             OutputParam param = params.get("cycle_type");
             TrainsCycleType type = param != null ? param.getValue(TrainsCycleType.class) : null;
             // extract cycles
-            CustomCyclesExtractor ece = new CustomCyclesExtractor(SelectionHelper.selectCycles(params, diagram, type));
+            CustomCyclesExtractor ece = new CustomCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, type), getLocale());
             List<CustomCycle> cycles = ece.getCycles();
 
             // call template

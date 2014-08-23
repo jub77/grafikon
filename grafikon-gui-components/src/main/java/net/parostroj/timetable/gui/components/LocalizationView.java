@@ -115,6 +115,12 @@ public class LocalizationView extends JPanel {
                 }
             }
         }
+        // name of custom circulations
+        for (TrainsCycleType type : diagram.getCycleTypes()) {
+            if (!type.isDefaultType()) {
+                texts.add(type.getName());
+            }
+        }
         return texts;
     }
 

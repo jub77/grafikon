@@ -163,6 +163,10 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         listenerSupport.removeListener(listener);
     }
 
+    public boolean isDefaultType() {
+        return isDefaultType(this);
+    }
+
     @Override
     public String toString() {
         return name;
