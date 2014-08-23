@@ -151,6 +151,14 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
+    public void visit(TrainsCycleTypeEvent event) {
+        change = new DiagramChange(DiagramChange.Type.CYCLE_TYPE, event.getSource().getId());
+        change.setObject(event.getSource().getName());
+        change.setAction(DiagramChange.Action.MODIFIED);
+        this.addDescription(event);
+    }
+
+    @Override
     public void visit(TextItemEvent event) {
         change = new DiagramChange(DiagramChange.Type.TEXT_ITEM, event.getSource().getId());
         change.setObject(event.getSource().getName());

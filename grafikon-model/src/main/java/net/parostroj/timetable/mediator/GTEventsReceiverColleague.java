@@ -35,6 +35,11 @@ public class GTEventsReceiverColleague extends AbstractColleague {
             }
 
             @Override
+            public void visit(TrainsCycleTypeEvent event) {
+                processTrainsCycleTypeEvent(event);
+            }
+
+            @Override
             public void visit(TrainTypeEvent event) {
                 processTrainTypeEvent(event);
             }
@@ -98,6 +103,8 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     public void processTrainTypeEvent(TrainTypeEvent event) {}
 
     public void processTrainsCycleEvent(TrainsCycleEvent event) {}
+
+    public void processTrainsCycleTypeEvent(TrainsCycleTypeEvent event) {}
 
     public void processFreightNetEvent(FreightNetEvent event) {}
 
