@@ -94,7 +94,7 @@ public class LSVisitorBuilder implements LSVisitor {
         lt.setToStraightTrack((NodeTrack) ids.get(lsLine.getTargetTrackId()));
         ids.put(lsLine.getId(), line);
 
-        line.setTopSpeed(lsLine.getTopSpeed());
+        line.setTopSpeed(lsLine.getTopSpeed() > 0 ? lsLine.getTopSpeed() : null);
 
         // add to net
         Net net = diagram.getNet();

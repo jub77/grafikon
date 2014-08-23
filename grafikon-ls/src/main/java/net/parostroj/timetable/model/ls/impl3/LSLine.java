@@ -15,7 +15,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Class for storing lines.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "line")
@@ -108,7 +108,7 @@ public class LSLine {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
-        Line line = diagram.createLine(id, length, fromNode, toNode, speed);
+        Line line = diagram.createLine(id, length, fromNode, toNode, speed > 0 ? speed : null);
         line.setAttributes(attributes.createAttributes(diagram));
         // tracks
         for (LSLineTrack lsLineTrack : getTracks()) {
