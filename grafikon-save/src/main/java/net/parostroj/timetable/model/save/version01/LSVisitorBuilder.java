@@ -109,7 +109,9 @@ public class LSVisitorBuilder implements LSVisitor {
         train.setType(type);
         ids.put(lsTrain.getId(), train);
 
-        train.setTopSpeed(lsTrain.getTopSpeed());
+        if (lsTrain.getTopSpeed() > 0) {
+            train.setTopSpeed(lsTrain.getTopSpeed());
+        }
         train.setType(type);
         train.setDescription(lsTrain.getDescription());
         train.setAttribute(Train.ATTR_ELECTRIC, lsTrain.isElectric());
