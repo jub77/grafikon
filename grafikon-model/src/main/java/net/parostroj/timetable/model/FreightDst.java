@@ -64,8 +64,9 @@ public class FreightDst {
     }
 
     public String toString(Locale locale) {
-        StringBuilder colorsStr = null;
+        StringBuilder freighStr = new StringBuilder();
         if (node != null) {
+            StringBuilder colorsStr = null;
             List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
             if (cs != null && !cs.isEmpty()) {
                 colorsStr = new StringBuilder();
@@ -73,8 +74,16 @@ public class FreightDst {
                 o.addItems(Iterables.filter(cs, FreightColor.class), FreightHelper.colorToString(locale));
                 o.finish();
             }
+            if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {
+                freighStr.append(node.getAbbr());
+            }
+            if (colorsStr != null) {
+                freighStr.append(colorsStr.toString());
+            }
+        } else {
+            freighStr.append(region.getName());
         }
-        return node == null ? region.getName() : node.getAbbr() + (colorsStr != null ? colorsStr.toString() : "");
+        return freighStr.toString();
     }
 
     @Override
