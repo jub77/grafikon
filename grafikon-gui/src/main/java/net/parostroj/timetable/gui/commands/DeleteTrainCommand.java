@@ -23,7 +23,7 @@ public class DeleteTrainCommand extends Command {
     public void execute(ApplicationModel model) throws CommandException {
         TrainDiagram diagram = model.getDiagram();
         // remove train from cycles
-        for (String type : diagram.getCycleTypeNames()) {
+        for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!train.getCycles(type).isEmpty()) {
                 this.removeTrainFromCycles(train.getCycles(type), model);
             }

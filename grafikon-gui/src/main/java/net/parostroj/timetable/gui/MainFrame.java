@@ -112,7 +112,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         engineCyclesPane.setModel(new EngineCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                if (!interval.getTrain().isCovered(TrainsCycleType.ENGINE_CYCLE, interval))
+                TrainsCycleType type = interval.getTrain().getTrainDiagram().getEngineCycleType();
+                if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
                     return Color.gray;
@@ -121,7 +122,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.setModel(new TrainUnitCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                if (!interval.getTrain().isCovered(TrainsCycleType.TRAIN_UNIT_CYCLE, interval))
+                TrainsCycleType type = interval.getTrain().getTrainDiagram().getTrainUnitCycleType();
+                if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
                     return Color.gray;
@@ -130,7 +132,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.setModel(new DriverCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                if (!interval.getTrain().isCovered(TrainsCycleType.DRIVER_CYCLE, interval))
+                TrainsCycleType type = interval.getTrain().getTrainDiagram().getDriverCycleType();
+                if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
                     return Color.gray;

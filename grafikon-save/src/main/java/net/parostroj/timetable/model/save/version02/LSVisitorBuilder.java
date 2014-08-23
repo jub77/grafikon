@@ -176,7 +176,12 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSTrainsCycle lsCycle) {
-        TrainsCycleType type = diagram.getCyclesType(lsCycle.getType());
+        TrainsCycleType type = null;
+        for (TrainsCycleType t : diagram.getCycleTypes()) {
+            if (lsCycle.getType().equals(t.getName())) {
+                type = t;
+            }
+        }
         TrainsCycle cycle = new TrainsCycle(lsCycle.getUuid(), lsCycle.getName(), lsCycle.getDescription(), type);
         cycle.setAttribute("comment", lsCycle.getComment());
         if (lsCycle.getItems() != null) {

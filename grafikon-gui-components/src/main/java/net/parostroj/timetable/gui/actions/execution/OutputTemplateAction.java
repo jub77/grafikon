@@ -159,7 +159,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                     textTemplate, type, null, null, null);
             if ("trains".equals(type)) {
                 // for each driver circulation
-                for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.DRIVER_CYCLE)) {
+                for (TrainsCycle cycle : diagram.getCycles(diagram.getEngineCycleType())) {
                     this.generateOutput(
                             output,
                             this.getFile(template.getName() + "_" + cycle.getName(),

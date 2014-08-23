@@ -123,11 +123,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     private String getKey() {
         String prefix = "custom";
-        if (TrainsCycleType.DRIVER_CYCLE.equals(delegate.getType())) {
+        TrainsCycleType type = delegate.getType();
+        if (type != null && TrainsCycleType.DRIVER_CYCLE.equals(type.getName())) {
             prefix = "driver";
-        } else if (TrainsCycleType.ENGINE_CYCLE.equals(delegate.getType())) {
+        } else if (type != null && TrainsCycleType.ENGINE_CYCLE.equals(type.getName())) {
             prefix = "engine";
-        } else if (TrainsCycleType.TRAIN_UNIT_CYCLE.equals(delegate.getType())) {
+        } else if (type != null && TrainsCycleType.TRAIN_UNIT_CYCLE.equals(type.getName())) {
             prefix = "trainunit";
         }
         return String.format("cycles.%s", prefix);

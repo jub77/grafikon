@@ -84,7 +84,7 @@ public class TrainTimetablesExtractor {
         this.extractDieselElectric(train, timetable);
         if (train.oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
-        WeightDataExtractor wex = new WeightDataExtractor(train);
+        WeightDataExtractor wex = new WeightDataExtractor(train, diagram.getTrainUnitCycleType());
         timetable.setWeightData(wex.getData());
         this.extractLengthData(train, timetable);
         this.extractRows(train, timetable);

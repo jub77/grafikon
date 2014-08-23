@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
 
 /**
  * Storage for train diagram data.
@@ -36,8 +37,8 @@ public class LSTrainDiagram {
         trainsData = new LSTrainsData(diagram.getTrainsData());
         attributes = new LSAttributes(diagram.getAttributes());
         changesTracking = diagram.getChangesTracker().isTrackingEnabled();
-        for (String typeName : diagram.getCycleTypeNames()) {
-            LSTrainsCycleType lsType = new LSTrainsCycleType(diagram.getCyclesType(typeName));
+        for (TrainsCycleType type : diagram.getCycleTypes()) {
+            LSTrainsCycleType lsType = new LSTrainsCycleType(type);
             getCycleTypes().add(lsType);
         }
         for (Group group : diagram.getGroups()) {

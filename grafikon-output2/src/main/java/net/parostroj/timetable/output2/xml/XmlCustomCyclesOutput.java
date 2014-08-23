@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
@@ -34,7 +35,7 @@ class XmlCustomCyclesOutput extends OutputWithCharset {
         try {
             // check for type
             OutputParam param = params.get("cycle_type");
-            String type = param != null ? param.getValue(String.class) : null;
+            TrainsCycleType type = param != null ? param.getValue(TrainsCycleType.class) : null;
             // extract
             CustomCyclesExtractor tuce = new CustomCyclesExtractor(SelectionHelper.selectCycles(params, diagram, type));
             CustomCycles cycles = new CustomCycles(tuce.getCycles());

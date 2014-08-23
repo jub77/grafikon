@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
@@ -33,7 +32,7 @@ class XmlDriverCyclesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
-            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, TrainsCycleType.DRIVER_CYCLE), true, getLocale());
+            DriverCyclesExtractor dce = new DriverCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, diagram.getDriverCycleType()), true, getLocale());
             DriverCycles cycles = dce.getDriverCycles();
 
             JAXBContext context = JAXBContext.newInstance(DriverCycles.class);

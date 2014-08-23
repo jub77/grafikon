@@ -2,16 +2,19 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Storage for train cycles.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "trains_cycle")
@@ -32,7 +35,7 @@ public class LSTrainsCycle {
         this.id = cycle.getId();
         this.name = cycle.getName();
         this.description = cycle.getDescription();
-        this.type = cycle.getType().getName();
+        this.type = cycle.getType().getId();
         this.attributes = new LSAttributes(cycle.getAttributes());
         this.items = new LinkedList<LSTrainsCycleItem>();
         for (TrainsCycleItem item : cycle) {
@@ -89,9 +92,18 @@ public class LSTrainsCycle {
     public void setItems(List<LSTrainsCycleItem> items) {
         this.items = items;
     }
-    
+
     public TrainsCycle createTrainsCycle(TrainDiagram diagram) throws LSException {
-        TrainsCycle cycle = new TrainsCycle(id, name, description, diagram.getCyclesType(type));
+        TrainsCycleType cycleType = diagram.getCycleTypeById(type);
+        if (cycleType == null) {
+            // fallback to name
+            for (TrainsCycleType t : diagram.getCycleTypes()) {
+                if (ObjectsUtil.compareWithNull(t.getName(), type)) {
+                    cycleType = t;
+                }
+            }
+        }
+        TrainsCycle cycle = new TrainsCycle(id, name, description, cycleType);
         cycle.setAttributes(attributes.createAttributes(diagram));
         if (this.items != null)
             for (LSTrainsCycleItem item : this.items) {

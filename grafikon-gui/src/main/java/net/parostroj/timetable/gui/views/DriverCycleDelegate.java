@@ -87,7 +87,7 @@ public class DriverCycleDelegate extends TCDelegate {
     }
 
     @Override
-    public String getType() {
-        return TrainsCycleType.DRIVER_CYCLE;
+    public TrainsCycleType getType() {
+        return model.getDiagram() != null ? model.getDiagram().getDriverCycleType() : null;
     }
 }

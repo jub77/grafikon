@@ -10,7 +10,6 @@ import java.util.Map;
 
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -34,7 +33,7 @@ public class GspEngineCyclesOutput extends GspOutput {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
             // extract engine cycles
-            EngineCyclesExtractor ece = new EngineCyclesExtractor(SelectionHelper.selectCycles(params, diagram, TrainsCycleType.ENGINE_CYCLE));
+            EngineCyclesExtractor ece = new EngineCyclesExtractor(SelectionHelper.selectCycles(params, diagram, diagram.getEngineCycleType()));
             List<EngineCycle> cycles = ece.getEngineCycles();
 
             // call template

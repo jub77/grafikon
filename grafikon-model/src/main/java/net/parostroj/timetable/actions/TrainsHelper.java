@@ -223,7 +223,7 @@ public class TrainsHelper {
      */
     public static Collection<TrainsCycleItem> getEngineCyclesForInterval(TimeInterval interval) {
         Train train = interval.getTrain();
-        return train.getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
+        return train.getCycleItemsForInterval(train.getTrainDiagram().getEngineCycleType(), interval);
     }
 
     /**
@@ -231,7 +231,8 @@ public class TrainsHelper {
      * @return if the circulation item for engine is helper or not
      */
     public static boolean isHelperEngine(TrainsCycleItem item) {
-        if (!TrainsCycleType.ENGINE_CYCLE.equals(item.getCycle().getType().getName())) {
+        TrainsCycleType engineType = item.getTrain().getTrainDiagram().getEngineCycleType();
+        if (item.getCycle().getType() != engineType) {
             throw new IllegalArgumentException("Engine cycle expected.");
         }
         List<TimeInterval> intervals = item.getIntervals();
@@ -242,7 +243,7 @@ public class TrainsHelper {
             if (interval.isNodeOwner()) {
                 continue;
             }
-            Collection<TrainsCycleItem> items = interval.getTrain().getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
+            Collection<TrainsCycleItem> items = interval.getTrain().getCycleItemsForInterval(engineType, interval);
             for (TrainsCycleItem i : items) {
                 if (i != item && length < i.getIntervals().size()) {
                     return true;

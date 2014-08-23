@@ -28,7 +28,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Trains. */
     private final List<Train> trains;
     /** Cycles. */
-    private final Map<String, TrainsCycleType> cycles;
+    private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
     private final List<TimetableImage> images;
     /** Train types available. */
@@ -65,7 +65,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.id = id;
         this.routes = new ArrayList<Route>();
         this.trains = new ArrayList<Train>();
-        this.cycles = new HashMap<String, TrainsCycleType>();
+        this.cycles = new HashSet<TrainsCycleType>();
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
@@ -186,65 +186,91 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public Collection<TrainsCycle> getCycles() {
         List<TrainsCycle> result = new ArrayList<TrainsCycle>();
-        for (TrainsCycleType type : cycles.values()) {
+        for (TrainsCycleType type : cycles) {
             result.addAll(type.getCycles());
         }
         return result;
     }
 
-    public Set<String> getCycleTypeNames() {
-        return Collections.unmodifiableSet(cycles.keySet());
+    public Collection<TrainsCycleType> getCycleTypes() {
+        return Collections.unmodifiableCollection(cycles);
     }
 
-    public Collection<TrainsCycleType> getCycleTypes() {
-        return Collections.unmodifiableCollection(cycles.values());
+    public List<TrainsCycle> getEngineCycles() {
+        return this.getCycles(this.getEngineCycleType());
+    }
+
+    public TrainsCycleType getEngineCycleType() {
+        return this.getCycleTypeByNameImpl(TrainsCycleType.ENGINE_CYCLE);
+    }
+
+    public TrainsCycleType getTrainUnitCycleType() {
+        return this.getCycleTypeByNameImpl(TrainsCycleType.TRAIN_UNIT_CYCLE);
+    }
+
+    public List<TrainsCycle> getTrainUnitCycles() {
+        return this.getCycles(this.getTrainUnitCycleType());
+    }
+
+    public TrainsCycleType getDriverCycleType() {
+        return this.getCycleTypeByNameImpl(TrainsCycleType.DRIVER_CYCLE);
+    }
+
+    public TrainsCycleType getDefaultCycleType(String typeName) {
+        return this.getCycleTypeByNameImpl(typeName);
+    }
+
+    public List<TrainsCycle> getDriverCycles() {
+        return this.getCycles(this.getDriverCycleType());
+    }
+
+    private TrainsCycleType getCycleTypeByNameImpl(String typeName) {
+        for (TrainsCycleType type : cycles) {
+            if (typeName.equals(type.getName())) {
+                return type;
+            }
+        }
+        return null;
     }
 
     public void addCyclesType(TrainsCycleType type) {
-        if (!cycles.containsKey(type.getName())) {
-            cycles.put(type.getName(), type);
+        if (!cycles.contains(type)) {
+            cycles.add(type);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_ADDED, type));
         }
     }
 
-    public TrainsCycleType getCyclesType(String typeName) {
-        return cycles.get(typeName);
-    }
-
-    public void removeCyclesType(String typeName) {
-        TrainsCycleType removed = cycles.get(typeName);
-        if (removed != null) {
+    public void removeCyclesType(TrainsCycleType type) {
+        if (cycles.contains(type)) {
             // remove all cycles ...
-            List<TrainsCycle> copy = new ArrayList<TrainsCycle>(removed.getCycles());
+            List<TrainsCycle> copy = new ArrayList<TrainsCycle>(type.getCycles());
             for (TrainsCycle cycle : copy) {
                 this.removeCycle(cycle);
             }
-        }
-        cycles.remove(typeName);
-        if (removed != null) {
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_REMOVED, removed));
+            cycles.remove(type);
+            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_REMOVED, type));
         }
     }
 
-    public List<TrainsCycle> getCycles(String type) {
+    public List<TrainsCycle> getCycles(TrainsCycleType type) {
         return Collections.unmodifiableList(this.getCyclesIntern(type));
     }
 
     public void addCycle(TrainsCycle cycle) {
         cycle.addListener(listener);
-        this.getCyclesIntern(cycle.getType().getName()).add(cycle);
+        this.getCyclesIntern(cycle.getType()).add(cycle);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_ADDED, cycle));
     }
 
     public void removeCycle(TrainsCycle cycle) {
         cycle.clear();
-        this.getCyclesIntern(cycle.getType().getName()).remove(cycle);
+        this.getCyclesIntern(cycle.getType()).remove(cycle);
         cycle.removeListener(listener);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_REMOVED, cycle));
     }
 
     public TrainsCycle getCycleById(String id) {
-        for (TrainsCycleType type : cycles.values()) {
+        for (TrainsCycleType type : cycles) {
             TrainsCycle found = getById(id, type.getCycles());
             if (found != null)
                 return found;
@@ -253,10 +279,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycleType getCycleTypeById(String id) {
-        return this.getById(id, cycles.values());
+        return this.getById(id, cycles);
     }
 
-    public TrainsCycle getCycleByIdAndType(String id, String type) {
+    public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
         return getById(id, getCyclesIntern(type));
     }
 
@@ -276,12 +302,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    private List<TrainsCycle> getCyclesIntern(String type) {
+    private List<TrainsCycle> getCyclesIntern(TrainsCycleType type) {
         if (type == null)
             throw new IllegalArgumentException("Type cannot be null");
-        if (!cycles.containsKey(type))
+        if (!cycles.contains(type))
             throw new IllegalArgumentException("Unknown type: " + type);
-        return cycles.get(type).getCycles();
+        return type.getCycles();
     }
 
     public List<TimetableImage> getImages() {
@@ -694,7 +720,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for(Train train : trains) {
             train.accept(visitor);
         }
-        for (TrainsCycleType type : cycles.values()) {
+        for (TrainsCycleType type : cycles) {
             type.accept(visitor);
         }
         for (TimetableImage image : images) {

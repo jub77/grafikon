@@ -84,7 +84,7 @@ public class TrainUnitCycleDelegate extends TCDelegate {
     }
 
     @Override
-    public String getType() {
-        return TrainsCycleType.TRAIN_UNIT_CYCLE;
+    public TrainsCycleType getType() {
+        return model.getDiagram() != null ? model.getDiagram().getTrainUnitCycleType() : null;
     }
 }

@@ -15,10 +15,12 @@ import net.parostroj.timetable.utils.Triplet;
 public class WeightDataExtractor {
 
     private final Train train;
+    private final TrainsCycleType trainUnitCycleType;
     private final List<WeightDataRow> data;
 
-    public WeightDataExtractor(Train train) {
+    public WeightDataExtractor(Train train, TrainsCycleType trainUnitCycleType) {
         this.train = train;
+        this.trainUnitCycleType = trainUnitCycleType;
         this.data = new LinkedList<WeightDataRow>();
 
         this.processData();
@@ -27,7 +29,7 @@ public class WeightDataExtractor {
 
     private void testWeights(List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> list) {
         boolean showWeight = (train.getType() != null && train.getType().getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO))
-            || !train.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).isEmpty();
+            || !train.getCycles(trainUnitCycleType).isEmpty();
         // test if all weight are defined
         boolean defined = true;
         for (Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>> item : list) {

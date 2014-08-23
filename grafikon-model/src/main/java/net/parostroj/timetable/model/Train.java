@@ -32,7 +32,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** Top speed. */
     private int topSpeed = Integer.MAX_VALUE;
     /** Cycles. */
-    private final ListMultimap<String, TrainsCycleItem> cycles;
+    private final ListMultimap<TrainsCycleType, TrainsCycleItem> cycles;
     /* Attributes of the train. */
     private Attributes attributes;
     /* cached data */
@@ -255,7 +255,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * @return map with trains cycle items
      */
-    public ListMultimap<String, TrainsCycleItem> getCyclesMap() {
+    public ListMultimap<TrainsCycleType, TrainsCycleItem> getCyclesMap() {
         return Multimaps.unmodifiableListMultimap(cycles);
     }
 
@@ -263,7 +263,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type type of the cycles
      * @return list with trains cycle items of specified type (list cannot be modified)
      */
-    public List<TrainsCycleItem> getCycles(String type) {
+    public List<TrainsCycleItem> getCycles(TrainsCycleType type) {
         return Collections.unmodifiableList(cycles.get(type));
     }
 
@@ -271,7 +271,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param item train cycle item to be added
      */
     protected void addCycleItem(TrainsCycleItem item) {
-        String cycleType = item.getCycle().getType().getName();
+        TrainsCycleType cycleType = item.getCycle().getType();
         _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
@@ -300,7 +300,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param interval time interval
      * @return list of train cycle items that covers given interval (empty list if there are none)
      */
-    public Collection<TrainsCycleItem> getCycleItemsForInterval(String type, TimeInterval interval) {
+    public Collection<TrainsCycleItem> getCycleItemsForInterval(TrainsCycleType type, TimeInterval interval) {
         return _cachedCycles.get(interval, type);
     }
 
@@ -898,7 +898,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type trains cycle type
      * @return covered
      */
-    public boolean isCovered(String type) {
+    public boolean isCovered(TrainsCycleType type) {
         return _cachedCycles.isCovered(timeIntervalList, type);
     }
 
@@ -909,7 +909,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param interval time interval
      * @return covered
      */
-    public boolean isCovered(String type, TimeInterval interval) {
+    public boolean isCovered(TrainsCycleType type, TimeInterval interval) {
         return !_cachedCycles.get(interval, type).isEmpty();
     }
 
@@ -921,7 +921,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return covered
      */
     public boolean isCovered(TrainsCycle cycle, TimeInterval interval) {
-        Collection<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType().getName());
+        Collection<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType());
         for (TrainsCycleItem item : list) {
             if (item.getCycle() == cycle)
                 return true;
@@ -935,7 +935,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type trains cycle type
      * @return interval
      */
-    public Tuple<TimeInterval> getFirstUncoveredPart(String type) {
+    public Tuple<TimeInterval> getFirstUncoveredPart(TrainsCycleType type) {
         List<Tuple<TimeInterval>> tuples = _cachedCycles.getUncovered(timeIntervalList, type);
         return tuples.isEmpty() ? null : tuples.get(0);
     }
@@ -946,7 +946,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type trains cycle type
      * @return list of intervals
      */
-    public List<Tuple<TimeInterval>> getAllUncoveredParts(String type) {
+    public List<Tuple<TimeInterval>> getAllUncoveredParts(TrainsCycleType type) {
         return _cachedCycles.getUncovered(timeIntervalList, type);
     }
 
@@ -956,7 +956,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param type trains cycle type
      * @return list of intervals
      */
-    public List<Pair<TimeInterval, Boolean>> getRouteCoverage(String type) {
+    public List<Pair<TimeInterval, Boolean>> getRouteCoverage(TrainsCycleType type) {
         return _cachedCycles.getCoverage(timeIntervalList, type);
     }
 

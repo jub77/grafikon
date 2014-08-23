@@ -13,8 +13,8 @@ import net.parostroj.timetable.utils.TransformUtil;
  */
 public class PositionsExtractor {
 
-    private TrainDiagram diagram;
-    private AttributesExtractor ae = new AttributesExtractor();
+    private final TrainDiagram diagram;
+    private final AttributesExtractor ae = new AttributesExtractor();
 
 
     public PositionsExtractor(TrainDiagram diagram) {
@@ -23,7 +23,7 @@ public class PositionsExtractor {
 
     public List<Position> getStartPositionsEngines() {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
+        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getEngineCycles())) {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem start = ecCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
@@ -37,7 +37,7 @@ public class PositionsExtractor {
 
     public List<Position> getStartPositionsTrainUnits() {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE))) {
+        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getTrainUnitCycles())) {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem start = tucCycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
@@ -51,7 +51,7 @@ public class PositionsExtractor {
 
     public List<Position> getEndPositionsEngines() {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.ENGINE_CYCLE))) {
+        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getEngineCycles())) {
             if (!ecCycle.isEmpty()) {
                 TrainsCycleItem end = ecCycle.getItems().get(ecCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
@@ -65,7 +65,7 @@ public class PositionsExtractor {
 
     public List<Position> getEndPositionsTrainUnits() {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE))) {
+        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getTrainUnitCycles())) {
             if (!tucCycle.isEmpty()) {
                 TrainsCycleItem end = tucCycle.getItems().get(tucCycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();

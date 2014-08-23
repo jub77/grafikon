@@ -15,10 +15,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 
 /**
@@ -93,7 +90,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
         listeners.remove(listener);
     }
 
-    public abstract String getType();
+    public abstract TrainsCycleType getType();
 
     public void fireEvent(Action action, TrainsCycle cycle) {
         this.fireEventImpl(action, cycle, null);

@@ -17,7 +17,6 @@ import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
@@ -85,11 +84,11 @@ public class ModelUtils {
             case LINE:
                 return new ArrayList<Line>(diagram.getNet().getLines());
             case TRAIN_UNIT_CYCLE:
-                return diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE);
+                return diagram.getTrainUnitCycles();
             case ENGINE_CYCLE:
-                return diagram.getCycles(TrainsCycleType.ENGINE_CYCLE);
+                return diagram.getEngineCycles();
             case DRIVER_CYCLE:
-                return diagram.getCycles(TrainsCycleType.DRIVER_CYCLE);
+                return diagram.getDriverCycles();
             case TRAIN:
                 return diagram.getTrains();
             case ROUTE:

@@ -87,17 +87,17 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
             @Override
             public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval) {
-                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.ENGINE_CYCLE, interval);
+                return interval.getTrain().getCycleItemsForInterval(diagram.getEngineCycleType(), interval);
             }
 
             @Override
             public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval) {
-                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.TRAIN_UNIT_CYCLE, interval);
+                return interval.getTrain().getCycleItemsForInterval(diagram.getTrainUnitCycleType(), interval);
             }
 
             @Override
             public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
-                return interval.getTrain().getCycleItemsForInterval(TrainsCycleType.DRIVER_CYCLE, interval);
+                return interval.getTrain().getCycleItemsForInterval(diagram.getDriverCycleType(), interval);
             }
         });
         // tool tips

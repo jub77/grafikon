@@ -2,15 +2,17 @@ package net.parostroj.timetable.model.ls.impl3;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.*;
 
 /**
  * Storage for train cycles.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "trainsCycle")
@@ -88,9 +90,15 @@ public class LSTrainsCycle {
     public void setItems(List<LSTrainsCycleItem> items) {
         this.items = items;
     }
-    
+
     public TrainsCycle createTrainsCycle(TrainDiagram diagram) {
-        TrainsCycle cycle = new TrainsCycle(id, name, description, diagram.getCyclesType(type));
+        TrainsCycleType cycleType = null;
+        for (TrainsCycleType t : diagram.getCycleTypes()) {
+            if (this.type.equals(t.getName())) {
+                cycleType = t;
+            }
+        }
+        TrainsCycle cycle = new TrainsCycle(id, name, description, cycleType);
         cycle.setAttributes(attributes.createAttributes(diagram));
         for (LSTrainsCycleItem item : items) {
             cycle.addItem(item.createTrainsCycleItem(cycle, diagram));
