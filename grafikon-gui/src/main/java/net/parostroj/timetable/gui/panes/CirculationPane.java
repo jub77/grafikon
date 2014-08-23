@@ -10,11 +10,12 @@ import java.awt.event.ItemEvent;
 import java.util.List;
 import java.util.UUID;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 
-import org.ini4j.Ini;
-
-import net.parostroj.timetable.gui.*;
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
@@ -26,9 +27,11 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Tuple;
+
+import org.ini4j.Ini;
 
 /**
  * Editing of circulations.
@@ -49,10 +52,11 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void initComponents() {
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
-        typesComboBox = new javax.swing.JComboBox();
+        typesComboBox = new javax.swing.JComboBox(new CPModel());
         newNameTextField = new javax.swing.JTextField();
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
+        editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         trainsCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
 
         setLayout(new java.awt.BorderLayout());
@@ -85,6 +89,14 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         });
         controlPanel.add(createButton);
 
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+        controlPanel.add(editButton);
+
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -113,6 +125,15 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         }
     }
 
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, type.getName());
+        name = ObjectsUtil.checkAndTrim(name);
+        if (name != null) {
+            type.setName(name);
+            ((CPModel) typesComboBox.getModel()).refreshSelected();
+        }
+    }
+
     private void typesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // select circulation type
@@ -132,6 +153,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             }
         }
         deleteButton.setEnabled(type != null);
+        editButton.setEnabled(type != null);
     }
 
     public void setModel(ApplicationModel model) {
@@ -236,10 +258,12 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             typesComboBox.setSelectedIndex(0);
         }
         deleteButton.setEnabled(type != null);
+        editButton.setEnabled(type != null);
     }
 
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton editButton;
     private javax.swing.JTextField newNameTextField;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainsCyclesPane;
     private javax.swing.JComboBox typesComboBox;
@@ -252,5 +276,12 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     @Override
     public Ini.Section loadFromPreferences(Ini prefs) {
         return trainsCyclesPane.loadFromPreferences(prefs);
+    }
+
+    private class CPModel extends DefaultComboBoxModel {
+        public void refreshSelected() {
+            int index = getIndexOf(getSelectedItem());
+            fireContentsChanged(this, index, index);
+        }
     }
 }
