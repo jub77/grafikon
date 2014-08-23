@@ -235,6 +235,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public void addCyclesType(TrainsCycleType type) {
         if (!cycles.contains(type)) {
+            type.addListener(listener);
             cycles.add(type);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_ADDED, type));
         }
@@ -248,6 +249,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 this.removeCycle(cycle);
             }
             cycles.remove(type);
+            type.removeListener(listener);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_REMOVED, type));
         }
     }

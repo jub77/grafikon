@@ -8,6 +8,8 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -17,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable {
+public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, TrainsCycleTypeAttributes {
 
     public static final String ENGINE_CYCLE = "ENGINE_CYCLE";
     public static final String DRIVER_CYCLE = "DRIVER_CYCLE";
@@ -39,11 +41,20 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private Attributes attributes;
     private final List<TrainsCycle> cycles;
 
+    private AttributesListener attributesListener;
+    private final GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent> listenerSupport;
+
     private String _cachedDescription;
 
     public TrainsCycleType(String id) {
         this.id = id;
         this.cycles = new LinkedList<TrainsCycle>();
+        listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(new GTEventSender<TrainsCycleTypeListener, TrainsCycleTypeEvent>() {
+            @Override
+            public void fireEvent(TrainsCycleTypeListener listener, TrainsCycleTypeEvent event) {
+                listener.trainsCycleTypeChanged(event);
+            }
+        });
         this.setAttributes(new Attributes());
     }
 
@@ -67,7 +78,12 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this._cachedDescription = null;
+            this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        }
     }
 
     public String getDescription() {
@@ -75,7 +91,13 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        if (!ObjectsUtil.compareWithNull(description, this.description)) {
+            String oldDescription = this.description;
+            this.description = description;
+            this._cachedDescription = null;
+            this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_DESCRIPTION,
+                    oldDescription, description)));
+        }
     }
 
     @Override
@@ -85,7 +107,17 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     @Override
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                listenerSupport.fireEvent(new TrainsCycleTypeEvent(TrainsCycleType.this, change));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override
@@ -116,10 +148,19 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
             if (isDefaultType(name)) {
                 ResourceBundle bundle = ResourceBundleUtil.getBundle("net.parostroj.timetable.model.cycle_type_texts", TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
                 _cachedDescription = bundle.getString(name);
-            } else
+            } else {
                 _cachedDescription = (description != null) ? description : name;
+            }
         }
         return _cachedDescription;
+    }
+
+    public void addListener(TrainsCycleTypeListener listener) {
+        listenerSupport.addListener(listener);
+    }
+
+    public void removeListener(TrainsCycleTypeListener listener) {
+        listenerSupport.removeListener(listener);
     }
 
     @Override
