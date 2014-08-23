@@ -63,8 +63,8 @@ public class LSTrainTypeList {
     private void createData() {
         try {
             data = new TrainsData(
-                TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL),
-                TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL),
+                TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}", TextTemplate.Language.MVEL),
+                TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}@if{train.description != ''} @{train.description}@end{}", TextTemplate.Language.MVEL),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,
                 Script.createScript(
                 "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +
