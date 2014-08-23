@@ -244,11 +244,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Train train = fromInterval.getTrain();
         if (FreightHelper.isFreightTo(train.getLastInterval())&& !FreightHelper.isStartRegion(train.getFirstInterval()) && FreightHelper.isStartRegion(train.getLastInterval())) {
             Set<Node> result = new HashSet<Node>();
-            Node tNode = train.getLastInterval().getOwnerAsNode();
+            Node tNode = train.getEndNode();
             for (NodeTrack track : tNode.getTracks()) {
                 for (TimeInterval interval : track.getTimeIntervalList()) {
                     Train tTrain = interval.getTrain();
-                    if (FreightHelper.isRegionTransferTrain(tTrain)) {
+                    if (tNode == tTrain.getStartNode() && FreightHelper.isRegionTransferTrain(tTrain)) {
                         result.add(tTrain.getLastInterval().getOwnerAsNode());
                     }
                 }
