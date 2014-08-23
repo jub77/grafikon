@@ -118,6 +118,15 @@ public class FreightHelper {
         return node.getAttributes().getBool(Node.ATTR_REGION_START);
     }
 
+    public static boolean isStartRegion(TimeInterval interval) {
+        return isStartRegion(interval.getOwnerAsNode());
+    }
+
+    public static boolean isRegionTransferTrain(Train train) {
+        return isFreightFrom(train.getFirstInterval()) && isFreightTo(train.getLastInterval())
+                && isStartRegion(train.getFirstInterval()) && isStartRegion(train.getLastInterval());
+    }
+
     public static Function<FreightColor, String> colorToString(final Locale loc) {
         return new Function<FreightColor, String>() {
             @Override

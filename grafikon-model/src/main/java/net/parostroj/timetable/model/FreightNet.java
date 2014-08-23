@@ -231,6 +231,32 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                 }
             }
         }
+        Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
+        for (Node rtNode : rtNodes) {
+            FreightDst regionDst = new FreightDst(rtNode, null);
+            if (filter.accepted(regionDst, 1)) {
+                result.add(regionDst);
+            }
+        }
+    }
+
+    private Collection<Node> getRegionTransferNodes(TimeInterval fromInterval) {
+        Train train = fromInterval.getTrain();
+        if (FreightHelper.isFreightTo(train.getLastInterval())&& !FreightHelper.isStartRegion(train.getFirstInterval()) && FreightHelper.isStartRegion(train.getLastInterval())) {
+            Set<Node> result = new HashSet<Node>();
+            Node tNode = train.getLastInterval().getOwnerAsNode();
+            for (NodeTrack track : tNode.getTracks()) {
+                for (TimeInterval interval : track.getTimeIntervalList()) {
+                    Train tTrain = interval.getTrain();
+                    if (FreightHelper.isRegionTransferTrain(tTrain)) {
+                        result.add(tTrain.getLastInterval().getOwnerAsNode());
+                    }
+                }
+            }
+            return result;
+        } else {
+            return Collections.emptySet();
+        }
     }
 
     public List<FNConnection> getNextTrains(TimeInterval fromInterval) {
