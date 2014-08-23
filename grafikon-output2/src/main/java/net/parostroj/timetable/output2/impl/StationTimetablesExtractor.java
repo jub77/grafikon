@@ -89,7 +89,7 @@ public class StationTimetablesExtractor {
         this.addEnginesAndTrainUnits(interval, diagram.getEngineCycleType(), row.getEngine());
         this.addEnginesAndTrainUnits(interval, diagram.getTrainUnitCycleType(), row.getTrainUnit());
         for (TrainsCycleType type : diagram.getCycleTypes()) {
-            if (!TrainsCycleType.isDefaultType(type.getName())) {
+            if (!type.isDefaultType()) {
                 this.addCycles(interval, type, row.getCycle());
             }
         }
@@ -146,7 +146,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null,
-                        type.getName()));
+                        diagram.getLocalization().translate(type.getName(), locale)));
             }
             if (item.getFromInterval() == interval) {
                 // start
@@ -156,7 +156,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null,
-                        type.getName()));
+                                diagram.getLocalization().translate(type.getName(), locale)));
             }
         }
     }

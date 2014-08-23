@@ -37,7 +37,7 @@ class XmlCustomCyclesOutput extends OutputWithCharset {
             OutputParam param = params.get("cycle_type");
             TrainsCycleType type = param != null ? param.getValue(TrainsCycleType.class) : null;
             // extract
-            CustomCyclesExtractor tuce = new CustomCyclesExtractor(SelectionHelper.selectCycles(params, diagram, type));
+            CustomCyclesExtractor tuce = new CustomCyclesExtractor(diagram, SelectionHelper.selectCycles(params, diagram, type), getLocale());
             CustomCycles cycles = new CustomCycles(tuce.getCycles());
 
             JAXBContext context = JAXBContext.newInstance(CustomCycles.class);
