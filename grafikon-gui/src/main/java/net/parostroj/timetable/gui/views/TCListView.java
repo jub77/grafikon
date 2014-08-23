@@ -127,7 +127,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
                 break;
             case NEW_CYCLE:
             case DELETED_CYCLE:
-                if (cycle.getType().getName().equals(delegate.getType())) {
+                if (cycle.getType().equals(delegate.getType())) {
                     this.updateView();
                 }
                 break;
@@ -198,7 +198,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         // get name from text field (ignore shorter than one character
         if (newNameTextField.getText().length() > 0 && delegate.getType() != null) {
             TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(), "",
-                    delegate.getTrainDiagram().getCyclesType(delegate.getType()));
+                    delegate.getType());
             delegate.getTrainDiagram().addCycle(cycle);
 
             // clear field

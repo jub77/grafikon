@@ -64,7 +64,7 @@ public class TrainUnitCyclesExtractor {
         int endIndex = train.getTimeIntervalList().indexOf(tuItem.getToInterval());
         for (TrainsCycleType type : train.getTrainDiagram().getCycleTypes()) {
             if (!TrainsCycleType.isDefaultType(type.getName())) {
-                List<TrainsCycleItem> items = train.getCycles(type.getName());
+                List<TrainsCycleItem> items = train.getCycles(type);
                 for (TrainsCycleItem item : items) {
                     if (item.getFrom() == tuItem.getFrom() && item.getTo() == tuItem.getTo()) {
                         // the cover the same interval

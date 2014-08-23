@@ -38,9 +38,15 @@ public class TrainDiagramBuilder {
             this.diagram.addGroup(lsGroup.createGroup(diagram));
         }
         // add default trains cycle types (if already defined - no action)
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
-        diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
+        if (diagram.getDriverCycleType() == null) {
+            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
+        }
+        if (diagram.getEngineCycleType() == null) {
+            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
+        }
+        if (diagram.getTrainUnitCycleType() == null) {
+            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
+        }
     }
 
     public void setTrainsData(LSTrainsData lsData) throws LSException {
@@ -160,7 +166,7 @@ public class TrainDiagramBuilder {
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
-        if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType().getName())) != null) {
+        if ((foundCycle = diagram.getCycleById(cycle.getId())) != null) {
             diagram.removeCycle(foundCycle);
         }
         diagram.addCycle(cycle);

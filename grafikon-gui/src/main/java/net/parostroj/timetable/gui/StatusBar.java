@@ -14,7 +14,6 @@ import javax.swing.Timer;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.changes.DiagramChange.Action;
 import net.parostroj.timetable.model.events.GTEvent;
@@ -143,9 +142,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         if (diagram == null) {
             updateLeft("");
         } else {
-            int drivers = diagram.getCycles(TrainsCycleType.DRIVER_CYCLE).size();
-            int engines = diagram.getCycles(TrainsCycleType.ENGINE_CYCLE).size();
-            int trainUnits = diagram.getCycles(TrainsCycleType.TRAIN_UNIT_CYCLE).size();
+            int drivers = diagram.getDriverCycles().size();
+            int engines = diagram.getEngineCycles().size();
+            int trainUnits = diagram.getTrainUnitCycles().size();
             String text = String.format("%s: %d, %s: %d, %s: %d",
                     ResourceLoader.getString("sbar.engines"), engines,
                     ResourceLoader.getString("sbar.train.units"), trainUnits,

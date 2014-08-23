@@ -23,17 +23,21 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public static final String DRIVER_CYCLE = "DRIVER_CYCLE";
     public static final String TRAIN_UNIT_CYCLE = "TRAIN_UNIT_CYCLE";
 
-    public static boolean isDefaultType(String type) {
-        return TrainsCycleType.DRIVER_CYCLE.equals(type) ||
-            TrainsCycleType.ENGINE_CYCLE.equals(type) ||
-            TrainsCycleType.TRAIN_UNIT_CYCLE.equals(type);
+    public static boolean isDefaultType(String typeName) {
+        return TrainsCycleType.DRIVER_CYCLE.equals(typeName) ||
+            TrainsCycleType.ENGINE_CYCLE.equals(typeName) ||
+            TrainsCycleType.TRAIN_UNIT_CYCLE.equals(typeName);
+    }
+
+    public static boolean isDefaultType(TrainsCycleType type) {
+        return isDefaultType(type.getName());
     }
 
     private final String id;
     private String name;
     private String description;
     private Attributes attributes;
-    private List<TrainsCycle> cycles;
+    private final List<TrainsCycle> cycles;
 
     private String _cachedDescription;
 
@@ -99,12 +103,8 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return attributes.remove(key);
     }
 
-    public List<TrainsCycle> getCycles() {
+    List<TrainsCycle> getCycles() {
         return cycles;
-    }
-
-    public void setCycles(List<TrainsCycle> cycles) {
-        this.cycles = cycles;
     }
 
     public String getDescriptionText() {

@@ -16,10 +16,10 @@ import net.parostroj.timetable.utils.Tuple;
  */
 class TrainCachedCycles {
 
-    private final Map<TimeInterval, Multimap<String, TrainsCycleItem>> map;
+    private final Map<TimeInterval, Multimap<TrainsCycleType, TrainsCycleItem>> map;
 
     public TrainCachedCycles() {
-        map = new HashMap<TimeInterval, Multimap<String, TrainsCycleItem>>();
+        map = new HashMap<TimeInterval, Multimap<TrainsCycleType, TrainsCycleItem>>();
     }
 
     public void add(List<TimeInterval> intervals, TrainsCycleItem item) {
@@ -38,23 +38,23 @@ class TrainCachedCycles {
     }
 
     private void add(TimeInterval interval, TrainsCycleItem item) {
-        Multimap<String, TrainsCycleItem> types = map.get(interval);
+        Multimap<TrainsCycleType, TrainsCycleItem> types = map.get(interval);
         if (types == null) {
             types = HashMultimap.create();
             map.put(interval, types);
         }
-        types.put(item.getCycle().getType().getName(), item);
+        types.put(item.getCycle().getType(), item);
     }
 
     public void remove(TrainsCycleItem item) {
-        for (Multimap<String, TrainsCycleItem> types : map.values()) {
+        for (Multimap<TrainsCycleType, TrainsCycleItem> types : map.values()) {
             types.remove(item.getCycle().getType().getName(), item);
         }
     }
 
-    public Collection<TrainsCycleItem> get(TimeInterval interval, String type) {
+    public Collection<TrainsCycleItem> get(TimeInterval interval, TrainsCycleType type) {
         Collection<TrainsCycleItem> items = null;
-        Multimap<String, TrainsCycleItem> types = map.get(interval);
+        Multimap<TrainsCycleType, TrainsCycleItem> types = map.get(interval);
         if (types != null) {
             items = types.get(type);
         } else {
@@ -63,12 +63,12 @@ class TrainCachedCycles {
         return items;
     }
 
-    public boolean isCovered(TimeInterval interval, String type) {
+    public boolean isCovered(TimeInterval interval, TrainsCycleType type) {
         Collection<TrainsCycleItem> list = this.get(interval, type);
         return !list.isEmpty();
     }
 
-    public boolean isCovered(TimeInterval interval, String type, TrainsCycleItem ignored) {
+    public boolean isCovered(TimeInterval interval, TrainsCycleType type, TrainsCycleItem ignored) {
         if (ignored == null)
             return isCovered(interval, type);
         else {
@@ -81,7 +81,7 @@ class TrainCachedCycles {
         }
     }
 
-    public boolean isCovered(List<TimeInterval> intervals, String type) {
+    public boolean isCovered(List<TimeInterval> intervals, TrainsCycleType type) {
         for (TimeInterval interval : intervals) {
             if (!this.isCovered(interval, type))
                 return false;
@@ -89,7 +89,7 @@ class TrainCachedCycles {
         return true;
     }
 
-    public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, String type) {
+    public List<Tuple<TimeInterval>> getUncovered(List<TimeInterval> intervals, TrainsCycleType type) {
         TimeInterval last = null;
         ResultList<Tuple<TimeInterval>> result = new ResultList<Tuple<TimeInterval>>();
         Tuple<TimeInterval> current = null;
@@ -114,7 +114,7 @@ class TrainCachedCycles {
         return result.get();
     }
 
-    public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, String type) {
+    public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, TrainsCycleType type) {
         List<Pair<TimeInterval, Boolean>> result = new LinkedList<Pair<TimeInterval,Boolean>>();
         for (TimeInterval interval : intervals)
             result.add(new Pair<TimeInterval, Boolean>(interval, this.isCovered(interval, type)));
@@ -130,7 +130,7 @@ class TrainCachedCycles {
         if (overlapping)
             return true;
 
-        String type = newItem.getCycle().getType().getName();
+        TrainsCycleType type = newItem.getCycle().getType();
 
         // test not overlapping cycle item
         boolean in = false;

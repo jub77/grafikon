@@ -23,7 +23,7 @@ public class EngineClassRemoveValidator implements TrainDiagramValidator {
         if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.ENGINE_CLASS_REMOVED) {
             EngineClass clazz = (EngineClass) ((TrainDiagramEvent) event).getObject();
             // remove engine class from engine cycles
-            for (TrainsCycle cycle : diagram.getCycles(TrainsCycleType.ENGINE_CYCLE)) {
+            for (TrainsCycle cycle : diagram.getEngineCycles()) {
                 EngineClass eClass = cycle.getAttributes().get(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
                 if (eClass == clazz)
                     cycle.removeAttribute(TrainsCycle.ATTR_ENGINE_CLASS);

@@ -145,7 +145,7 @@ public abstract class Import {
     protected TrainsCycleType getCycleType(TrainsCycleType origCycleType) {
         // special handling for default types - engines, train units and drivers
         if (TrainsCycleType.isDefaultType(origCycleType.getName())) {
-            return diagram.getCyclesType(origCycleType.getName());
+            return diagram.getDefaultCycleType(origCycleType.getName());
         }
         if (match == ImportMatch.ID) {
             return diagram.getCycleTypeById(origCycleType.getId());

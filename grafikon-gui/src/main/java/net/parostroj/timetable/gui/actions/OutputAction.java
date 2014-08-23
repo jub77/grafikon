@@ -19,7 +19,6 @@ import net.parostroj.timetable.gui.dialogs.SelectNodesDialog;
 import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -133,7 +132,7 @@ public class OutputAction extends AbstractAction {
             if (selection == null)
                 return false;
         } else if (outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
-            selection = model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE);
+            selection = model.getDiagram().getDriverCycles();
         }
         return true;
     }
@@ -193,7 +192,7 @@ public class OutputAction extends AbstractAction {
             oFile = new File(outputFile, ResourceLoader.getString("out.ep") + "." + suffix);
             eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENDS)));
             // tt by dc
-            List<TrainsCycle> cycles = model.getDiagram().getCycles(TrainsCycleType.DRIVER_CYCLE);
+            Collection<TrainsCycle> cycles = model.getDiagram().getDriverCycles();
             output = of.createOutput("trains");
             for (TrainsCycle cycle : cycles) {
                 OutputParams params = this.createParams(output, createUniqueOutputFile(cycle, outputFile, OutputType.TRAINS_BY_DRIVER_CYCLES), cycle, OutputType.TRAINS_BY_DRIVER_CYCLES);

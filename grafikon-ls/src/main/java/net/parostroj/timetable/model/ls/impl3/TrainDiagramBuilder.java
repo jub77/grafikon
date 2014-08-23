@@ -102,7 +102,7 @@ public class TrainDiagramBuilder {
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
-        if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType().getName())) != null) {
+        if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType())) != null) {
             diagram.removeCycle(foundCycle);
         }
         diagram.addCycle(cycle);

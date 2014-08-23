@@ -88,7 +88,7 @@ public class SelectionHelper {
         }
     }
 
-    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, String type) {
+    public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
         OutputParam param = params.getParam("cycles");
         if (param != null && param.getValue() != null) {
             return getList((List<?>) param.getValue(), TrainsCycle.class);
@@ -112,13 +112,13 @@ public class SelectionHelper {
         });
     }
 
-    private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, String type) {
+    private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {
         if (type != null) {
             return diagram.getCycles(type);
         } else {
             // collect all non-default
             List<TrainsCycle> result = new LinkedList<TrainsCycle>();
-            for (String aType : diagram.getCycleTypeNames()) {
+            for (TrainsCycleType aType : diagram.getCycleTypes()) {
                 if (!TrainsCycleType.isDefaultType(aType))
                     result.addAll(diagram.getCycles(aType));
             }

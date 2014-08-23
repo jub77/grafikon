@@ -122,7 +122,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     public void paint(Graphics g) {
         super.paint(g);
         if (diagram != null && type != null && layout.rows > 0) {
-            paintCirculations((Graphics2D) g, diagram.getCycles(type.getName()));
+            paintCirculations((Graphics2D) g, diagram.getCycles(type));
         }
     }
 
@@ -213,7 +213,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     private void repaintAndUpdateSize() {
         int newCount = 0, newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
         if (diagram != null && type != null) {
-            newCount = diagram.getCycles(type.getName()).size();
+            newCount = diagram.getCycles(type).size();
             Integer value = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
             if (value != null)
                 newLowerLimit = value.intValue();

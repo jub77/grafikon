@@ -37,7 +37,7 @@ import net.parostroj.timetable.utils.Tuple;
  */
 public class CirculationPane extends javax.swing.JPanel implements StorableGuiData {
 
-    private String type;
+    private TrainsCycleType type;
     private TrainDiagram diagram;
     private TCDelegate delegate;
 
@@ -99,7 +99,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String name = newNameTextField.getText();
-        if (!delegate.getTrainDiagram().getCycleTypeNames().contains(name) && !TrainsCycleType.isDefaultType(name)) {
+        if (!TrainsCycleType.isDefaultType(name)) {
             TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), name);
             diagram.addCyclesType(type);
         }
@@ -116,9 +116,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void typesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // select circulation type
-            String selectedItem = ((TrainsCycleType) ((Wrapper<?>) typesComboBox.getSelectedItem()).getElement())
-                    .getName();
-            String oldType = type;
+            TrainsCycleType selectedItem = (TrainsCycleType) ((Wrapper<?>) typesComboBox.getSelectedItem()).getElement();
+            TrainsCycleType oldType = type;
             type = selectedItem;
             if (oldType == null || !oldType.equals(type)) {
                 // update view
@@ -186,7 +185,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
             }
 
             @Override
-            public String getType() {
+            public TrainsCycleType getType() {
                 return type;
             }
 

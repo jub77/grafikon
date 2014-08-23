@@ -86,8 +86,8 @@ public class StationTimetablesExtractor {
             return;
 
         row.setLength(this.getLength(interval));
-        this.addEnginesAndTrainUnits(interval, TrainsCycleType.ENGINE_CYCLE, row.getEngine());
-        this.addEnginesAndTrainUnits(interval, TrainsCycleType.TRAIN_UNIT_CYCLE, row.getTrainUnit());
+        this.addEnginesAndTrainUnits(interval, diagram.getEngineCycleType(), row.getEngine());
+        this.addEnginesAndTrainUnits(interval, diagram.getTrainUnitCycleType(), row.getTrainUnit());
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!TrainsCycleType.isDefaultType(type.getName())) {
                 this.addCycles(interval, type, row.getCycle());
@@ -137,7 +137,7 @@ public class StationTimetablesExtractor {
 
     private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles) {
         Train train = interval.getTrain();
-        for (TrainsCycleItem item : train.getCycles(type.getName())) {
+        for (TrainsCycleItem item : train.getCycles(type)) {
             if (item.getToInterval() == interval) {
                 // end
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
@@ -161,7 +161,7 @@ public class StationTimetablesExtractor {
         }
     }
 
-    private void addEnginesAndTrainUnits(TimeInterval interval, String type, List<CycleFromTo> cycles) {
+    private void addEnginesAndTrainUnits(TimeInterval interval, TrainsCycleType type, List<CycleFromTo> cycles) {
         Train train = interval.getTrain();
         for (TrainsCycleItem item : train.getCycles(type)) {
             CycleFromTo cycleFromTo = null;
