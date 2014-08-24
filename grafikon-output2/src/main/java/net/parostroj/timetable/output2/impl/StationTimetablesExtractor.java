@@ -170,7 +170,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
                 cycleFromTo = new CycleFromTo(false, false, cycle.getName(),
-                        type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        type.getName().equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null);
             }
@@ -179,12 +179,12 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
                 cycleFromTo = new CycleFromTo(itemPrev == null, true, cycle.getName(),
-                        type.equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        type.getName().equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
             }
             if (cycleFromTo != null) {
-                if (type.equals(TrainsCycleType.ENGINE_CYCLE) && TrainsHelper.isHelperEngine(item)) {
+                if (type.getName().equals(TrainsCycleType.ENGINE_CYCLE) && TrainsHelper.isHelperEngine(item)) {
                     cycleFromTo.setHelper(true);
                 }
                 cycles.add(cycleFromTo);
