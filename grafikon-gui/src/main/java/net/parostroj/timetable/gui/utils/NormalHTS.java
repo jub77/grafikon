@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.parostroj.timetable.gui.*;
-import net.parostroj.timetable.gui.components.GraphicalTimetableView;
-import net.parostroj.timetable.gui.components.HighlightedTrains;
-import net.parostroj.timetable.gui.components.TimeIntervalSelector;
+import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -33,7 +31,8 @@ public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, Appli
             @Override
             public void modelChanged(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
-                    set = Collections.singleton(model.getSelectedTrain());
+                    Train selectedTrain = model.getSelectedTrain();
+                    set = selectedTrain == null ? Collections.<Train>emptySet() : Collections.singleton(selectedTrain);
                     view.repaint();
                 }
             }
