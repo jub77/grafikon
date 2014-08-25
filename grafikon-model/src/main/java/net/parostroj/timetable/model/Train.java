@@ -282,7 +282,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param item train cycle item to be removed
      */
     protected void removeCycleItem(TrainsCycleItem item) {
-        String cycleType = item.getCycle().getType().getName();
+        TrainsCycleType cycleType = item.getCycle().getType();
         this.cycles.remove(cycleType, item);
         _cachedCycles.remove(item);
         this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));

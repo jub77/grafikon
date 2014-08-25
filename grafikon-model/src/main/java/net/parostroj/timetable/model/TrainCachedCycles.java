@@ -48,7 +48,7 @@ class TrainCachedCycles {
 
     public void remove(TrainsCycleItem item) {
         for (Multimap<TrainsCycleType, TrainsCycleItem> types : map.values()) {
-            types.remove(item.getCycle().getType().getName(), item);
+            types.remove(item.getCycle().getType(), item);
         }
     }
 
