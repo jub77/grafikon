@@ -65,7 +65,7 @@ public enum ImportComponent {
                 break;
             case TRAINS_CYCLE_TYPES:
                 for (TrainsCycleType type : diagram.getCycleTypes()) {
-                    if (!TrainsCycleType.isDefaultType(type.getName())) {
+                    if (!TrainsCycleType.isDefaultType(type)) {
                         map.add(type);
                     }
                 }
