@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -76,5 +77,26 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
             }
         }
         return list;
+    }
+
+    public boolean containsTrain(Train train) {
+        return regions.containsKey(train);
+    }
+
+    public Rectangle getRegionForTrain(Train train) {
+        Collection<Pair<Shape, TimeInterval>> shapes = regions.get(train);
+        Rectangle result = null;
+        if (shapes != null) {
+            for (Pair<Shape, TimeInterval> pair : shapes) {
+                Shape shape = pair.first;
+                Rectangle bounds = shape.getBounds();
+                if (result == null) {
+                    result = bounds;
+                } else {
+                    result = result.union(bounds);
+                }
+            }
+        }
+        return result;
     }
 }

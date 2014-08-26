@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
@@ -11,6 +12,7 @@ import javax.swing.SwingConstants;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.components.GTViewSettings.Type;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
@@ -35,6 +37,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     protected final TrainRegionCollector trainRegionCollector;
     protected Route route;
     protected TrainDiagram diagram;
+    private Rectangle2D mSize;
 
     protected final GTStorage gtStorage = new GTStorage();
 
@@ -146,7 +149,9 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)
                 .set(Key.TECHNOLOGICAL_TIME, Boolean.FALSE)
                 .set(Key.IGNORE_TIME_LIMITS, Boolean.FALSE)
-                .set(Key.ZOOM, 1.0f);
+                .set(Key.ZOOM, 1.0f)
+                .set(Key.TO_TRAIN_SCROLL, Boolean.FALSE)
+                .set(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.FALSE);
         return config;
     }
 
@@ -353,9 +358,10 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         long time = System.currentTimeMillis();
         super.paint(g);
 
-        if (draw != null)
-            draw.draw((Graphics2D)g);
-        else {
+        if (draw != null) {
+            draw.draw((Graphics2D) g);
+            mSize = draw.getMSize((Graphics2D) g);
+        } else {
             // draw information about context menu
             g.drawString(ResourceLoader.getString("gt.contextmenu.info"), 20, 20);
         }
@@ -419,5 +425,38 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     @Override
     public boolean getScrollableTracksViewportHeight() {
         return false;
+    }
+
+    public void selectTrain(final Train selectedTrain) {
+        if (selectedTrain != null) {
+            if (!trainRegionCollector.containsTrain(selectedTrain) &&
+                    settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE)) {
+                Route newRoute = selectedTrain.getBestRouteMatch();
+                if (newRoute != null) {
+                    this.setRoute(newRoute);
+                }
+            }
+            if (settings.getOption(Key.TO_TRAIN_SCROLL)) {
+                GuiComponentUtils.runLaterInEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollToTrain(selectedTrain);
+                    }
+
+                });
+            }
+        }
+        this.repaint();
+    }
+
+    private void scrollToTrain(Train train) {
+        if (trainRegionCollector.containsTrain(train)) {
+            Rectangle region = trainRegionCollector.getRegionForTrain(train);
+            if (region != null) {
+                region.setLocation((int) (region.x - mSize.getWidth()), 0);
+                region.setSize((int) (region.width + mSize.getWidth() * 2), 0);
+                this.scrollRectToVisible(region);
+            }
+        }
     }
 }

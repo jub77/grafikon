@@ -387,14 +387,16 @@ abstract public class GTDrawBase implements GTDraw {
     private Rectangle2D digitSize;
     private Rectangle2D mSize;
 
-    private Rectangle2D getDigitSize(Graphics2D g) {
+    @Override
+    public Rectangle2D getDigitSize(Graphics2D g) {
         if (digitSize == null) {
             digitSize = g.getFont().getStringBounds(DIGIT_CHAR, g.getFontRenderContext());
         }
         return digitSize;
     }
 
-    private Rectangle2D getMSize(Graphics2D g) {
+    @Override
+    public Rectangle2D getMSize(Graphics2D g) {
         if (mSize == null) {
             mSize = g.getFont().getStringBounds(M_CHAR, g.getFontRenderContext());
         }

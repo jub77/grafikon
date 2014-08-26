@@ -39,7 +39,9 @@ public class GTViewSettings {
         DISABLE_STATION_NAMES(Boolean.class),
         ZOOM(Float.class),
         START_TIME_OVERRIDE(Integer.class),
-        END_TIME_OVERRIDE(Integer.class);
+        END_TIME_OVERRIDE(Integer.class),
+        TO_TRAIN_SCROLL(Boolean.class),
+        TO_TRAIN_CHANGE_ROUTE(Boolean.class);
 
         private Class<?> valueClass;
 
@@ -113,13 +115,16 @@ public class GTViewSettings {
     }
 
     public String getStorageString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
                 getOption(Key.TRAIN_NAMES).toString(),
                 getOption(Key.ARRIVAL_DEPARTURE_DIGITS).toString(),
                 getOption(Key.EXTENDED_LINES).toString(),
                 getOption(Key.TECHNOLOGICAL_TIME).toString(),
                 getOption(Key.IGNORE_TIME_LIMITS).toString(),
-                get(Key.ZOOM).toString());
+                get(Key.ZOOM).toString(),
+                getOption(Key.TO_TRAIN_SCROLL).toString(),
+                getOption(Key.TO_TRAIN_CHANGE_ROUTE).toString()
+            );
     }
 
     public static GTViewSettings parseStorageString(String str) {
@@ -132,10 +137,16 @@ public class GTViewSettings {
             settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]));
             settings.setOption(Key.EXTENDED_LINES, Boolean.parseBoolean(split[4]));
             settings.setOption(Key.TECHNOLOGICAL_TIME, Boolean.parseBoolean(split[5]));
-            if (split.length > 6)
+            if (split.length > 6) {
                 settings.setOption(Key.IGNORE_TIME_LIMITS, Boolean.parseBoolean(split[6]));
-            if (split.length > 7)
+            }
+            if (split.length > 7) {
                 settings.set(Key.ZOOM, Float.parseFloat(split[7]));
+            }
+            if (split.length > 8) {
+                settings.setOption(Key.TO_TRAIN_SCROLL, Boolean.parseBoolean(split[8]));
+                settings.setOption(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.parseBoolean(split[9]));
+            }
         }
         return settings;
     }

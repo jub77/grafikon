@@ -461,6 +461,10 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         visitor.visitAfter(this);
     }
 
+    public Iterable<TimeInterval> getTimeIntervals() {
+        return TrainsHelper.getTimeIntervals(this);
+    }
+
     private Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction) {
         if (direction == TimeIntervalDirection.FORWARD) {
             return tracks;
