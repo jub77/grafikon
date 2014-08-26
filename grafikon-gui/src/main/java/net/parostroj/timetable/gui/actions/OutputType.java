@@ -23,7 +23,8 @@ public enum OutputType {
     TRAINS_BY_DRIVER_CYCLES("trains_by_driver_cycles", "trains", false, null, "driver_cycle"),
     TRAINS_SELECT_ROUTES("trains_select_routes", "trains", true, ElementType.ROUTE, "routes"),
     ALL("all", null, false, null, null),
-    CUSTOM_CYCLES("custom_cycles", "custom_cycles", true);
+    CUSTOM_CYCLES("custom_cycles", "custom_cycles", true),
+    CUSTOM_CYCLES_SELECT("custom_cycles_select", "custom_cycles", true, ElementType.CUSTOM_CYCLE, "cycles");
 
     private String actionCommand;
     private String outputType;

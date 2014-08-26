@@ -393,6 +393,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem ecListSelectMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem tucListSelectMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem dcListSelectMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem ccListSelectMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem allHtmlMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator3 = new javax.swing.JSeparator();
@@ -703,6 +704,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dcListSelectMenuItem.setText(ResourceLoader.getString("menu.acion.dclist.select")); // NOI18N
         dcListSelectMenuItem.setActionCommand("driver_cycles_select");
         actionMenu.add(dcListSelectMenuItem);
+
+        ccListSelectMenuItem.setAction(outputAction);
+        ccListSelectMenuItem.setText(ResourceLoader.getString("menu.action.cclist.select")); // NOI18N
+        ccListSelectMenuItem.setActionCommand("custom_cycles_select");
+        actionMenu.add(ccListSelectMenuItem);
         actionMenu.add(jSeparator4);
 
         allHtmlMenuItem.setAction(outputAction);
@@ -943,6 +949,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         enabled.add(fileImportMenuItem);
         enabled.add(fileImportGroupMenuItem);
         enabled.add(dcListSelectMenuItem);
+        enabled.add(ccListSelectMenuItem);
         enabled.add(trainTimetableListByDcSelectMenuItem);
         enabled.add(nodeTimetableListSelectMenuItem);
         enabled.add(ecListSelectMenuItem);

@@ -13,10 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
@@ -97,6 +94,14 @@ public class ModelUtils {
                     if (r.isNetPart())
                         routes.add(r);
                 return routes;
+            case CUSTOM_CYCLE:
+                List<TrainsCycle> cycles = new LinkedList<TrainsCycle>();
+                for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
+                    if (!cycleType.isDefaultType()) {
+                        cycles.addAll(diagram.getCycles(cycleType));
+                    }
+                }
+                return cycles;
         }
         return null;
     }
