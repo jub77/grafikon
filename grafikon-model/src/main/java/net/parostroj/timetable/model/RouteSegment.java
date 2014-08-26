@@ -1,6 +1,6 @@
 /*
  * RouteSegment.java
- * 
+ *
  * Created on 31.8.2007, 9:59:23
  */
 package net.parostroj.timetable.model;
@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Route segment.
- * 
+ *
  * @author jub
  */
 public interface RouteSegment extends ObjectWithId {
@@ -36,4 +36,6 @@ public interface RouteSegment extends ObjectWithId {
     public String getId();
 
     public Track findTrackById(String id);
+
+    public Iterable<TimeInterval> getTimeIntervals();
 }

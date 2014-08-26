@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -337,6 +338,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             }
         }
         return null;
+    }
+
+    @Override
+    public Iterable<TimeInterval> getTimeIntervals() {
+        return TrainsHelper.getTimeIntervals(this);
     }
 
     void fireTrackAttributeChanged(String attributeName, NodeTrack track, Object oldValue, Object newValue) {
