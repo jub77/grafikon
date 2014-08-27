@@ -4,8 +4,8 @@ def numbers = [:]
 def duplicate = [:]
 
 for (train in diagram.trains) {
-    if (numbers.containsKey(train.number)) {
-        if (duplicate.containsKey(train.number)) {
+    if (train.number in numbers) {
+        if (train.number in duplicate) {
             duplicate[train.number] << train
         } else {
             duplicate[train.number] = [numbers[train.number], train]
@@ -15,7 +15,7 @@ for (train in diagram.trains) {
     }
 }
 
-if (!duplicate.isEmpty()) {
+if (duplicate) {
     def area = new JTextArea()
     area.text = duplicate.values().collect{i -> i.join(", ")}.join('\n')
     area.columns = 35
