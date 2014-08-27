@@ -258,6 +258,18 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return Collections.unmodifiableList(this.getCyclesIntern(type));
     }
 
+    public List<TrainsCycle> getCycles(String typeName) {
+        TrainsCycleType type = this.getCycleType(typeName);
+        return type != null ? this.getCycles(type) : Collections.<TrainsCycle>emptyList();
+    }
+
+    public TrainsCycleType getCycleType(String typeName) {
+        if (!TrainsCycleType.isDefaultType(typeName)) {
+            throw new IllegalArgumentException("Only default types allowed");
+        }
+        return this.getCycleTypeByNameImpl(typeName);
+    }
+
     public void addCycle(TrainsCycle cycle) {
         cycle.addListener(listener);
         this.getCyclesIntern(cycle.getType()).add(cycle);
