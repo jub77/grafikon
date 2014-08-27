@@ -22,5 +22,5 @@ if (duplicate) {
     area.rows = 15
     area.setFont(new java.awt.Font("Monospaced", 0, 12))
     def pane = new JScrollPane(area)
-    JOptionPane.showMessageDialog(null, pane)
+    JOptionPane.showMessageDialog(parent, pane)
 }

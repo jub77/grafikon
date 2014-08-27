@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class ExecuteScriptAction extends AbstractAction {
         try {
             try {
                 ScriptAction scriptAction = loader.getScriptAction(scriptId);
-                scriptAction.execute(model.getDiagram());
+                scriptAction.execute(model.getDiagram(), Collections.<String, Object>singletonMap("parent", parent));
             } finally {
                 parent.setCursor(Cursor.getDefaultCursor());
                 log.debug("Script {} finished in {}ms", scriptId, System.currentTimeMillis() - time);
@@ -100,6 +101,7 @@ public class ExecuteScriptAction extends AbstractAction {
             binding.put("diagram", model.getDiagram());
             CharArrayWriter output = new CharArrayWriter();
             binding.put("output", new PrintWriter(output));
+            binding.put("parent", parent);
             try {
                 parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 long time = System.currentTimeMillis();
