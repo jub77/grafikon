@@ -267,6 +267,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return Collections.unmodifiableList(cycles.get(type));
     }
 
+    public List<TrainsCycleItem> getCycles(String typeName) {
+        TrainsCycleType type = diagram.getCycleType(typeName);
+        return this.getCycles(type);
+    }
+
     /**
      * @param item train cycle item to be added
      */
@@ -755,6 +760,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public TimeInterval getInterval(TimeInterval interval, int relativeIndex) {
         return timeIntervalList.getInterval(interval, relativeIndex);
+    }
+
+    public TimeInterval getIntervalBefore(TimeInterval interval) {
+        return this.getInterval(interval, -1);
+    }
+
+    public TimeInterval getIntervalAfter(TimeInterval interval) {
+        return this.getInterval(interval, 1);
     }
 
     /**
