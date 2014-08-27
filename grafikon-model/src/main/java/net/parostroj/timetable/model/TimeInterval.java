@@ -531,6 +531,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return train.getInterval(this, relativeIndex);
     }
 
+    public TimeInterval getNextTrainInterval() {
+        return this.getTrainInterval(1);
+    }
+
+    public TimeInterval getPreviousTrainInterval() {
+        return this.getTrainInterval(-1);
+    }
+
     @Override
     public String getId() {
         return id;
