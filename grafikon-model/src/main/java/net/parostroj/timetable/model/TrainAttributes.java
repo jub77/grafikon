@@ -22,4 +22,5 @@ public interface TrainAttributes {
     public static final String ATTR_NAME = "name";
     public static final String ATTR_COMPLETE_NAME = "completeName";
     public static final String ATTR_MANAGED_FREIGHT = "managed.freight";
+    public static final String ATTR_NO_TRANSITIVE_REGION_START = "no.transitive.region.start";
 }

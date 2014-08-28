@@ -114,6 +114,14 @@ public class FreightHelper {
         return train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT);
     }
 
+    public static boolean isNoTransitiveRegionStart(TimeInterval interval) {
+        return isNoTransitiveRegionStart(interval.getTrain());
+    }
+
+    public static boolean isNoTransitiveRegionStart(Train train) {
+        return train.getAttributes().getBool(Train.ATTR_NO_TRANSITIVE_REGION_START);
+    }
+
     public static boolean isStartRegion(Node node) {
         return node.getAttributes().getBool(Node.ATTR_REGION_START);
     }

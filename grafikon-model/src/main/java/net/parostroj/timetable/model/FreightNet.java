@@ -242,7 +242,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private Collection<Node> getRegionTransferNodes(TimeInterval fromInterval) {
         Train train = fromInterval.getTrain();
-        if (FreightHelper.isFreightTo(train.getLastInterval())&& !FreightHelper.isStartRegion(train.getFirstInterval()) && FreightHelper.isStartRegion(train.getLastInterval())) {
+        if (FreightHelper.isFreightTo(train.getLastInterval()) &&
+                !FreightHelper.isStartRegion(train.getFirstInterval()) &&
+                FreightHelper.isStartRegion(train.getLastInterval()) &&
+                !FreightHelper.isNoTransitiveRegionStart(train.getLastInterval())) {
             Set<Node> result = new HashSet<Node>();
             Node tNode = train.getEndNode();
             for (NodeTrack track : tNode.getTracks()) {
