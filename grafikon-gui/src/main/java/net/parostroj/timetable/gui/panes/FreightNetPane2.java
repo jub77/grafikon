@@ -296,6 +296,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 TrainEvent event = (TrainEvent) message;
                 if (event.getType() == GTEventType.ATTRIBUTE &&
                         event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                    TrainRegionCollector collector = (TrainRegionCollector) graphicalTimetableView.getRegionCollector(TimeInterval.class);
+                    collector.modifiedTrain(event.getSource());
                     graphicalTimetableView.repaint();
                 }
             }
