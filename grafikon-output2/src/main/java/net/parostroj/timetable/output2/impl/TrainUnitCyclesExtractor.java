@@ -66,15 +66,17 @@ public class TrainUnitCyclesExtractor {
             if (!TrainsCycleType.isDefaultType(type)) {
                 List<TrainsCycleItem> items = train.getCycles(type);
                 for (TrainsCycleItem item : items) {
+                    String typeName = item.getCycle().getType().getName();
+                    typeName = item.getTrain().getTrainDiagram().getLocalization().translate(typeName, locale);
                     if (item.getFrom() == tuItem.getFrom() && item.getTo() == tuItem.getTo()) {
                         // the cover the same interval
-                        list.add(new TrainUnitCustomCycle(item.getCycle().getType().getName(),
+                        list.add(new TrainUnitCustomCycle(typeName,
                                 item.getCycle().getName(), null, null));
                     } else {
                         int i1 = train.getTimeIntervalList().indexOf(item.getFromInterval());
                         int i2 = train.getTimeIntervalList().indexOf(item.getToInterval());
                         if (startIndex <= i1 && i2 <= endIndex) {
-                            list.add(new TrainUnitCustomCycle(item.getCycle().getType().getName(),
+                            list.add(new TrainUnitCustomCycle(typeName,
                                     item.getCycle().getName(), item.getFromInterval().getOwnerAsNode().getAbbr(),
                                     item.getToInterval().getOwnerAsNode().getAbbr()));
                         }
