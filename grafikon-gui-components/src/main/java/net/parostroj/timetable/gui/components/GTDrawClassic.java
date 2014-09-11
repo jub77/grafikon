@@ -100,13 +100,8 @@ public class GTDrawClassic extends GTDrawBase {
     }
 
     @Override
-    protected void paintTrains(Graphics2D g) {
-        for (RouteSegment part : route.getSegments()) {
-            // only segments for lines
-            if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, trainStroke);
-            }
-        }
+    protected void paintTrainsInStation(Node asNode, Graphics2D g, Stroke trainStroke) {
+        // nothing to paint
     }
 
     @Override

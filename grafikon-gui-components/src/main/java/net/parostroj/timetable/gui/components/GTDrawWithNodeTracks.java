@@ -127,17 +127,6 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     }
 
     @Override
-    protected void paintTrains(Graphics2D g) {
-        for (RouteSegment part : route.getSegments()) {
-            if (part.asNode() != null) {
-                this.paintTrainsInStation(part.asNode(), g);
-            } else if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, trainStroke);
-            }
-        }
-    }
-
-    @Override
     protected Line2D createTrainLine(TimeInterval interval, Interval i) {
         int x1 = this.getX(i.getStart());
         int x2 = this.getX(i.getEnd());
@@ -148,7 +137,8 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         return line2D;
     }
 
-    private void paintTrainsInStation(Node station, Graphics2D g) {
+    @Override
+    protected void paintTrainsInStation(Node station, Graphics2D g, Stroke trainStroke) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
