@@ -183,8 +183,9 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public void paintStationNames(Graphics2D g) {
-        if (positions == null)
+        if (positions == null) {
             this.computePositions();
+        }
         this.paintStationNames(g, stations, positions);
     }
 
@@ -232,10 +233,11 @@ abstract public class GTDrawBase implements GTDraw {
                 } else {
                     // half hours
                     g.setColor(Color.orange);
-                    if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE)
+                    if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                         g.setStroke(halfHoursExtStroke);
-                    else
+                    } else {
                         g.setStroke(halfHoursStroke);
+                    }
                 }
 
                 if (((i & 1) != 1) || step >= minimalSpace)
@@ -323,15 +325,18 @@ abstract public class GTDrawBase implements GTDraw {
         Line2D line2D = this.createTrainLine(interval, i);
 
         // add shape to collector
-        if (this.isCollectorCollecting(interval.getTrain()))
+        if (this.isCollectorCollecting(interval.getTrain())) {
             this.addShapeToCollector(interval, line2D);
+        }
 
         g.draw(line2D);
 
-        if (paintTrainName)
+        if (paintTrainName) {
             this.paintTrainNameOnLine(g, interval, line2D);
-        if (paintMinutes)
+        }
+        if (paintMinutes) {
             this.paintMinutesOnLine(g, interval, line2D);
+        }
 
     }
 
@@ -339,8 +344,9 @@ abstract public class GTDrawBase implements GTDraw {
         g.setFont(g.getFont().deriveFont(fontSize));
         for (Node s : stations) {
             // ignore signals
-            if (s.getType() == NodeType.SIGNAL)
+            if (s.getType() == NodeType.SIGNAL) {
                 continue;
+            }
             String name = TransformUtil.transformStation(s, null, null).trim();
             int y = start.y + positions.get(s);
             // draw name of the station
@@ -439,8 +445,9 @@ abstract public class GTDrawBase implements GTDraw {
             if ((ind + 2) < train.getTimeIntervalList().size()) {
                 TimeInterval nextLineInterval = train.getTimeIntervalList().get(ind + 2);
                 Node endNode2 = nextLineInterval.getTo();
-                if (stations.contains(endNode2))
+                if (stations.contains(endNode2)) {
                     endTimeCheck = false;
+                }
             }
         }
 
@@ -462,16 +469,18 @@ abstract public class GTDrawBase implements GTDraw {
             int yp = (int) startP.getY();
             int lastDigit = c.getLastDigitOfMinutes(interval.getStart());
             g.drawString(Integer.toString(lastDigit), xp, yp);
-            if (c.isHalfMinute(interval.getStart()))
+            if (c.isHalfMinute(interval.getStart())) {
             	drawUnderscore(g, xp, yp, dSize.getWidth());
+            }
         }
         if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck) {
             int xp = (int) endP.getX();
             int yp = (int) endP.getY();
             int lastDigit = c.getLastDigitOfMinutes(interval.getEnd());
             g.drawString(Integer.toString(lastDigit), xp, yp);
-            if (c.isHalfMinute(interval.getEnd()))
+            if (c.isHalfMinute(interval.getEnd())) {
             	drawUnderscore(g, xp, yp, dSize.getWidth());
+            }
         }
     }
 
@@ -482,8 +491,9 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     protected Color getIntervalColor(TimeInterval interval) {
-        if (hTrains != null && hTrains.isHighlighedInterval(interval))
+        if (hTrains != null && hTrains.isHighlighedInterval(interval)) {
             return hTrains.getColor(interval);
+        }
         switch (colors) {
             case BY_TYPE:
                 return interval.getTrain().getType() != null ? interval.getTrain().getType().getColor() : Color.black;
@@ -501,13 +511,15 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     protected void finishCollecting() {
-        if (trainRegionCollector != null)
+        if (trainRegionCollector != null) {
             trainRegionCollector.finishCollecting();
+        }
     }
 
     protected boolean isCollectorCollecting(Train train) {
-        if (trainRegionCollector == null)
+        if (trainRegionCollector == null) {
             return false;
+        }
         return trainRegionCollector.isCollecting(train);
     }
 
