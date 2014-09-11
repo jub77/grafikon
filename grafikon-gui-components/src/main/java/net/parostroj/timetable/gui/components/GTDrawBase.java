@@ -348,7 +348,7 @@ abstract public class GTDrawBase implements GTDraw {
                 continue;
             }
             String name = TransformUtil.transformStation(s, null, null).trim();
-            int y = start.y + positions.get(s);
+            int y = this.getY(s, null);
             // draw name of the station
             Font f = g.getFont();
             Rectangle2D b = null;
