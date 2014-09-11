@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.util.*;
 
 import com.google.common.base.Predicate;
@@ -55,14 +54,16 @@ public class GTDrawClassic extends GTDrawBase {
 
         int completeLength = 0;
         for (RouteSegment segment : route.getSegments()) {
-            if (segment.asLine() != null)
+            if (segment.asLine() != null) {
                 completeLength = completeLength + segment.asLine().getLength();
+            }
         }
 
         int incrementalLength = 0;
         for (RouteSegment segment : route.getSegments()) {
-            if (segment.asLine() != null)
+            if (segment.asLine() != null) {
                 incrementalLength = incrementalLength + segment.asLine().getLength();
+            }
             if (segment.asNode() != null) {
                 stations.add(segment.asNode());
                 positions.put(segment.asNode(), (int)(((double)incrementalLength) / completeLength * size.height));
@@ -76,8 +77,9 @@ public class GTDrawClassic extends GTDrawBase {
         g.setColor(Color.orange);
         for (Node s : stations) {
             // skip over signals
-            if (s.getType() == NodeType.SIGNAL)
+            if (s.getType() == NodeType.SIGNAL) {
                 continue;
+            }
             if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
@@ -94,7 +96,7 @@ public class GTDrawClassic extends GTDrawBase {
                         break;
                 }
             }
-            int y = start.y + positions.get(s);
+            int y = this.getY(s, null);
             g.drawLine(start.x, y, start.x + size.width, y);
         }
     }
@@ -102,17 +104,6 @@ public class GTDrawClassic extends GTDrawBase {
     @Override
     protected void paintTrainsInStation(Node asNode, Graphics2D g, Stroke trainStroke) {
         // nothing to paint
-    }
-
-    @Override
-    protected Line2D createTrainLine(TimeInterval interval, Interval i) {
-        int x1 = this.getX(i.getStart());
-        int x2 = this.getX(i.getEnd());
-        int y1 = start.y + positions.get(interval.getFrom());
-        int y2 = start.y + positions.get(interval.getTo());
-
-        Line2D line2D = new Line2D.Double(x1, y1, x2, y2);
-        return line2D;
     }
 
     @Override

@@ -277,7 +277,23 @@ abstract public class GTDrawBase implements GTDraw {
         }
     }
 
-    abstract protected Line2D createTrainLine(TimeInterval interval, Interval i);
+    protected Line2D createTrainLine(TimeInterval interval, Interval i) {
+        int x1 = this.getX(i.getStart());
+        int x2 = this.getX(i.getEnd());
+        int y1 = this.getY(interval.getFrom(), interval.getPreviousTrainInterval().getTrack());
+        int y2 = this.getY(interval.getTo(), interval.getNextTrainInterval().getTrack());
+
+        Line2D line2D = new Line2D.Double(x1, y1, x2, y2);
+        return line2D;
+    }
+
+    protected Line2D createTrainLineInStation(TimeInterval interval, Interval i) {
+        int y = this.getY(interval.getOwnerAsNode(), interval.getTrack());
+        int x1 = this.getX(i.getStart());
+        int x2 = this.getX(i.getEnd());
+        Line2D line2D = new Line2D.Float(x1, y, x2, y);
+        return line2D;
+    }
 
     protected void paintTrainsOnLine(Line line, Graphics2D g, Stroke trainStroke) {
         g.setStroke(trainStroke);
