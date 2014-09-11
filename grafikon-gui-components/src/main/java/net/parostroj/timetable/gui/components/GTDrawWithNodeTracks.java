@@ -69,18 +69,21 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         int completeLength = 0;
         int trackGaps = 0;
         for (RouteSegment segment : route.getSegments()) {
-            if (segment.asLine() != null)
+            if (segment.asLine() != null) {
                 completeLength = completeLength + segment.asLine().getLength();
-            if (segment.asNode() != null)
+            }
+            if (segment.asNode() != null) {
                 trackGaps = trackGaps + segment.asNode().getTracks().size() - 1;
+            }
         }
 
         double position = 0;
         int height = size.height - trackGaps * trackGap;
         double step = (double)height / (double)completeLength;
         for (RouteSegment segment : route.getSegments()) {
-            if (segment.asLine() != null)
+            if (segment.asLine() != null) {
                 position = position + segment.asLine().getLength() * step;
+            }
             if (segment.asNode() != null) {
                 Node node = segment.asNode();
                 stations.add(node);
@@ -101,8 +104,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         g.setColor(Color.orange);
         for (Node s : stations) {
             // skip over signals ...
-            if (s.getType() == NodeType.SIGNAL)
+            if (s.getType() == NodeType.SIGNAL) {
                 continue;
+            }
             if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
@@ -120,21 +124,10 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
             }
             for (NodeTrack track : s.getTracks()) {
-                int y = start.y + trackPositions.get(track);
+                int y = this.getY(s, track);
                 g.drawLine(start.x, y, start.x + size.width, y);
             }
         }
-    }
-
-    @Override
-    protected Line2D createTrainLine(TimeInterval interval, Interval i) {
-        int x1 = this.getX(i.getStart());
-        int x2 = this.getX(i.getEnd());
-        int y1 = start.y + trackPositions.get(interval.getTrain().getInterval(interval, -1).getTrack());
-        int y2 = start.y + trackPositions.get(interval.getTrain().getInterval(interval, 1).getTrack());
-
-        Line2D line2D = new Line2D.Float(x1, y1, x2, y2);
-        return line2D;
     }
 
     @Override
@@ -177,14 +170,6 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
             }
         }
-    }
-
-    private Line2D createTrainLineInStation(TimeInterval interval, Interval i) {
-        int y = start.y + trackPositions.get(interval.getTrack());
-        int x1 = this.getX(i.getStart());
-        int x2 = this.getX(i.getEnd());
-        Line2D line2D = new Line2D.Float(x1, y, x2, y);
-        return line2D;
     }
 
     @Override
