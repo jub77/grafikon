@@ -3,9 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.*;
 
 public abstract class GTDrawDecorator implements GTDraw {
 
@@ -52,6 +50,11 @@ public abstract class GTDrawDecorator implements GTDraw {
     @Override
     public int getY(Node node, Track track) {
         return draw.getY(node, track);
+    }
+
+    @Override
+    public int getY(TimeInterval interval) {
+        return draw.getY(interval);
     }
 
     @Override

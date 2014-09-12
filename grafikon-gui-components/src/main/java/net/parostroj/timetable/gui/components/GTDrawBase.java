@@ -282,15 +282,15 @@ abstract public class GTDrawBase implements GTDraw {
     protected Line2D createTrainLine(TimeInterval interval, Interval i) {
         int x1 = this.getX(i.getStart());
         int x2 = this.getX(i.getEnd());
-        int y1 = this.getY(interval.getFrom(), interval.getPreviousTrainInterval().getTrack());
-        int y2 = this.getY(interval.getTo(), interval.getNextTrainInterval().getTrack());
+        int y1 = this.getY(interval.getPreviousTrainInterval());
+        int y2 = this.getY(interval.getNextTrainInterval());
 
         Line2D line2D = new Line2D.Double(x1, y1, x2, y2);
         return line2D;
     }
 
     protected Line2D createTrainLineInStation(TimeInterval interval, Interval i) {
-        int y = this.getY(interval.getOwnerAsNode(), interval.getTrack());
+        int y = this.getY(interval);
         int x1 = this.getX(i.getStart());
         int x2 = this.getX(i.getEnd());
         Line2D line2D = new Line2D.Float(x1, y, x2, y);
@@ -535,6 +535,11 @@ abstract public class GTDrawBase implements GTDraw {
     public int getY(Node node, Track track) {
         Integer position = positions.get(node);
         return position != null ? start.y + position : -1;
+    }
+
+    @Override
+    public int getY(TimeInterval interval) {
+        return this.getY(interval.getOwnerAsNode(), interval.getTrack());
     }
 
     protected boolean isTimeVisible(int time1, int time2) {

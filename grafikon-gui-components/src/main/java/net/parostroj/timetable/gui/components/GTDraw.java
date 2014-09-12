@@ -3,9 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.Track;
+import net.parostroj.timetable.model.*;
 
 public interface GTDraw {
 
@@ -26,6 +24,8 @@ public interface GTDraw {
     int getX(int time);
 
     int getY(Node node, Track track);
+
+    int getY(TimeInterval interval);
 
     Rectangle2D getDigitSize(Graphics2D g);
 
