@@ -263,6 +263,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
         javax.swing.JMenu typesMenu = new javax.swing.JMenu();
         classicMenuItem = new javax.swing.JRadioButtonMenuItem();
+        classicWithStationsMenuItem = new javax.swing.JRadioButtonMenuItem();
         withTracksMenuItem = new javax.swing.JRadioButtonMenuItem();
         sizesMenu = new javax.swing.JMenu();
         javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
@@ -304,6 +305,17 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
         });
         typesMenu.add(classicMenuItem);
+
+        typesButtonGroup.add(classicWithStationsMenuItem);
+        classicWithStationsMenuItem.setSelected(true);
+        classicWithStationsMenuItem.setText(ResourceLoader.getString("gt.classic.station.stops")); // NOI18N
+        classicWithStationsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settings.set(Key.TYPE, Type.CLASSIC_STATION_STOPS);
+                recreateDraw();
+            }
+        });
+        typesMenu.add(classicWithStationsMenuItem);
 
         typesButtonGroup.add(withTracksMenuItem);
         withTracksMenuItem.setText(ResourceLoader.getString("gt.withtracks")); // NOI18N
@@ -430,6 +442,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             case WITH_TRACKS:
                 withTracksMenuItem.setSelected(true);
                 break;
+            case CLASSIC_STATION_STOPS:
+                classicWithStationsMenuItem.setSelected(true);
+                break;
         }
 
         String sizeStr = Integer.toString(settings.get(Key.VIEW_SIZE, Integer.class));
@@ -517,14 +532,15 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private javax.swing.JMenu sizesMenu;
     private final JMenuItem routesMenuItem;
     private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
-    private javax.swing.JRadioButtonMenuItem classicMenuItem;
     private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem techTimeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem trainNamesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem toTrainScrollCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem toTrainChangeRouteCheckBoxMenuItem;
+    private javax.swing.JRadioButtonMenuItem classicMenuItem;
     private javax.swing.JRadioButtonMenuItem withTracksMenuItem;
+    private javax.swing.JRadioButtonMenuItem classicWithStationsMenuItem;
 
     private EditRoutesDialog editRoutesDialog;
 }

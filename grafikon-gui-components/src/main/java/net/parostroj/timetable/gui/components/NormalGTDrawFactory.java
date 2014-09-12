@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
-import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TimeInterval;
 
@@ -16,10 +14,16 @@ public class NormalGTDrawFactory extends GTDrawFactory {
     public GTDraw createInstance(GTViewSettings settings, Route route, GTStorage storage) {
         TrainRegionCollector collector = (TrainRegionCollector) storage.getCollector(TimeInterval.class);
         GTDraw result = null;
-        if (settings.get(Key.TYPE) == Type.CLASSIC) {
-            result = new GTDrawClassic(settings, route, collector, storage.getFilter(TimeInterval.class));
-        } else if (settings.get(Key.TYPE) == Type.WITH_TRACKS) {
-            result = new GTDrawWithNodeTracks(settings, route, collector, storage.getFilter(TimeInterval.class));
+        switch ((GTViewSettings.Type) settings.get(GTViewSettings.Key.TYPE)) {
+            case CLASSIC_STATION_STOPS:
+                result = new GTDrawClassicStationStops(settings, route, collector, storage.getFilter(TimeInterval.class));
+                break;
+            case WITH_TRACKS:
+                result = new GTDrawWithNodeTracks(settings, route, collector, storage.getFilter(TimeInterval.class));
+                break;
+            default:
+                result = new GTDrawClassic(settings, route, collector, storage.getFilter(TimeInterval.class));
+                break;
         }
         return result;
     }

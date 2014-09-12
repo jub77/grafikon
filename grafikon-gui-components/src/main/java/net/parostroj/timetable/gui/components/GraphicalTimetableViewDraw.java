@@ -171,8 +171,10 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     private void trainChanged(TrainEvent event) {
         switch (event.getType()) {
             case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
-                if (trainRegionCollector != null)
+                if (trainRegionCollector != null) {
                     trainRegionCollector.modifiedTrain(event.getSource());
+                }
+                draw.changed(GTDraw.Change.TRAIN_INTERVALS_CHANGED, event.getSource());
                 this.repaint();
                 break;
             case ATTRIBUTE:

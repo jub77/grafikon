@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.util.*;
 
 import com.google.common.base.Predicate;
@@ -149,25 +148,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
                 g.setColor(this.getIntervalColor(interval));
 
-                // add shape to collector
-                boolean isCollected = this.isCollectorCollecting(interval.getTrain());
-
-                Interval normalized = interval.getInterval().normalize();
-                if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
-                    Line2D line = this.createTrainLineInStation(interval, normalized);
-                    if (isCollected) {
-                        this.addShapeToCollector(interval, line);
-                    }
-                    g.draw(line);
-                }
-                Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
-                if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
-                    Line2D line = this.createTrainLineInStation(interval, overMidnight);
-                    if (isCollected) {
-                        this.addShapeToCollector(interval, line);
-                    }
-                    g.draw(line);
-                }
+                this.paintTrainInStationWithInterval(g, interval);
             }
         }
     }

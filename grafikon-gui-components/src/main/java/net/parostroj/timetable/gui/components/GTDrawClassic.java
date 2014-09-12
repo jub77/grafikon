@@ -16,8 +16,8 @@ import net.parostroj.timetable.model.*;
 public class GTDrawClassic extends GTDrawBase {
 
     // basic display
-    private static final float TRAIN_STROKE_WIDTH = 2.5f;
-    private static final float STATION_STROKE_WIDTH = 1.6f;
+    protected static final float TRAIN_STROKE_WIDTH = 2.5f;
+    protected static final float STATION_STROKE_WIDTH = 1.6f;
 
     // extended display
     private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 1.3f;

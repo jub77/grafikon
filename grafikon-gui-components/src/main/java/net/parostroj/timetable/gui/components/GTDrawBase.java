@@ -321,7 +321,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setColor(Color.BLACK);
     }
 
-    private void paintTrainOnLineWithInterval(Graphics2D g, boolean paintTrainName, boolean paintMinutes, TimeInterval interval, Interval i) {
+    protected void paintTrainOnLineWithInterval(Graphics2D g, boolean paintTrainName, boolean paintMinutes, TimeInterval interval, Interval i) {
         Line2D line2D = this.createTrainLine(interval, i);
 
         // add shape to collector
@@ -338,6 +338,27 @@ abstract public class GTDrawBase implements GTDraw {
             this.paintMinutesOnLine(g, interval, line2D);
         }
 
+    }
+
+    protected void paintTrainInStationWithInterval(Graphics2D g, TimeInterval interval) {
+        boolean isCollected = this.isCollectorCollecting(interval.getTrain());
+
+        Interval normalized = interval.getInterval().normalize();
+        if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
+            Line2D line = this.createTrainLineInStation(interval, normalized);
+            if (isCollected) {
+                this.addShapeToCollector(interval, line);
+            }
+            g.draw(line);
+        }
+        Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
+        if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
+            Line2D line = this.createTrainLineInStation(interval, overMidnight);
+            if (isCollected) {
+                this.addShapeToCollector(interval, line);
+            }
+            g.draw(line);
+        }
     }
 
     protected void paintStationNames(Graphics2D g, List<Node> stations, Map<Node, Integer> positions) {
@@ -561,6 +582,9 @@ abstract public class GTDrawBase implements GTDraw {
                 break;
             case ALL_TRAIN_TEXTS_CHANGED:
                 trainTexts.clear();
+                break;
+            case TRAIN_INTERVALS_CHANGED:
+                // nothing
                 break;
         }
     }
