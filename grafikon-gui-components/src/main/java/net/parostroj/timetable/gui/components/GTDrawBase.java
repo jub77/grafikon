@@ -418,7 +418,8 @@ abstract public class GTDrawBase implements GTDraw {
         Shape nameShape = null;
 
         int shift = (int)(length - rr.getWidth()) / 2;
-        if (shift >= 0) {
+        // ensure half M size before and after train name
+        if (length - (rr.getWidth() + this.getMSize(g).getWidth()) > 0) {
             layout.draw(g, shift, -5);
             if (this.isCollectorCollecting(train)) {
                 Rectangle rec = rr.getBounds();
