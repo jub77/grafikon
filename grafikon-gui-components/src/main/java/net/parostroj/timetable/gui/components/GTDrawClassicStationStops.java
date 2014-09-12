@@ -37,7 +37,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
-                if (interval.isTechnological() || interval.isBoundary() || !interval.isStop()) {
+                if (!this.isPlacedInterval(interval)) {
                     continue;
                 }
                 g.setStroke(trainStroke);
@@ -48,19 +48,26 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
         }
     }
 
+    private boolean isPlacedInterval(TimeInterval interval) {
+        return !interval.isTechnological() && !interval.isBoundary() && interval.isStop();
+    }
+
     @Override
     public int getY(TimeInterval interval) {
-        Integer location = locationMap.get(interval);
-        if (location == null) {
-            List<TimeIntervalList> im = nodeIntervalLists.get(interval.getOwnerAsNode());
-            if (im == null) {
-                im = new LinkedList<TimeIntervalList>();
-                nodeIntervalLists.put(interval.getOwnerAsNode(), im);
-            }
-            location = this.findLocation(interval, im);
-        }
         int y = this.getY(interval.getOwnerAsNode(), interval.getTrack());
-        y += location * inStationGap;
+        if (this.isPlacedInterval(interval)) {
+            Integer location = locationMap.get(interval);
+            if (location == null) {
+                List<TimeIntervalList> im = nodeIntervalLists.get(interval.getOwnerAsNode());
+                if (im == null) {
+                    im = new LinkedList<TimeIntervalList>();
+                    nodeIntervalLists.put(interval.getOwnerAsNode(), im);
+                }
+                location = this.findLocation(interval, im);
+                locationMap.put(interval, location);
+            }
+            y += location * inStationGap;
+        }
         return y;
     }
 
