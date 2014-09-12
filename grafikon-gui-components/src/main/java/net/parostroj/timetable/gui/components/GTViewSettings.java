@@ -12,7 +12,7 @@ import java.util.Map;
 public class GTViewSettings {
 
     public static enum Type {
-        CLASSIC, WITH_TRACKS;
+        CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
     }
 
     public static enum TrainColors {
