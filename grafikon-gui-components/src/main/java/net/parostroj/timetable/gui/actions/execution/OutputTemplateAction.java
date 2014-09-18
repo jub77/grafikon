@@ -38,11 +38,13 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         private final boolean title;
         private final boolean twoSided;
         private final boolean techTimes;
+        private final Locale locale;
 
-        public Settings(boolean title, boolean twoSided, boolean techTimes) {
+        public Settings(boolean title, boolean twoSided, boolean techTimes, Locale locale) {
             this.title = title;
             this.twoSided = twoSided;
             this.techTimes = techTimes;
+            this.locale = locale;
         }
 
         public boolean isTitle() {
@@ -55,6 +57,10 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
         public boolean isTechTimes() {
             return techTimes;
+        }
+
+        public Locale getLocale() {
+            return locale;
         }
 
         public OutputParams createParams() {
@@ -148,6 +154,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     private void generateOutput(OutputTemplate template) throws OutputException {
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
         OutputFactory factory = OutputFactory.newInstance("groovy");
+        factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
         List<OutputSetting> outputNames = this.createOutputs(template);

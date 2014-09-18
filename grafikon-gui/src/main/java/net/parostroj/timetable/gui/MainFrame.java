@@ -1131,7 +1131,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.setLocationRelativeTo(this);
         ProgramSettings settings = model.getProgramSettings();
         dialog.showDialog(model.getDiagram(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
-                new OutputTemplateAction.Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime()));
+                new OutputTemplateAction.Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), model.getOutputLocale()));
         dialog.dispose();
     }
 
