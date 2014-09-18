@@ -120,6 +120,7 @@ abstract public class GTDrawBase implements GTDraw {
         this.paintStations(g);
         g.setColor(Color.BLACK);
         this.paintTrains(g);
+        this.paintHoursTexts(g);
         if (preferences.getOption(Key.DISABLE_STATION_NAMES) != Boolean.TRUE) {
             this.paintStationNames(g, stations, positions);
         }
@@ -240,21 +241,9 @@ abstract public class GTDrawBase implements GTDraw {
                     }
                 }
 
-                if (((i & 1) != 1) || step >= minimalSpace)
+                if (((i & 1) != 1) || step >= minimalSpace) {
                     // draw line
                     g.drawLine(xLocation, start.y, xLocation, yEnd);
-
-                if ((i & 1) == 0) {
-                    // draw hours
-                    g.setColor(Color.black);
-                    Integer h = i / 2;
-                    TextLayout tl = hoursTexts.get(h);
-                    if (tl == null) {
-                        tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
-                        hoursTexts.put(h, tl);
-                    }
-                    Rectangle2D rr = tl.getBounds();
-                    tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
                 }
             }
 
@@ -276,6 +265,25 @@ abstract public class GTDrawBase implements GTDraw {
                 }
                 time += 600;
             }
+        }
+    }
+
+    protected void paintHoursTexts(Graphics2D g) {
+        int time = 0;
+        for (int h = 0; h <= 24; h++) {
+            if (isTimeVisible(time)) {
+                int xLocation = this.getX(time);
+                // draw hours
+                g.setColor(Color.black);
+                TextLayout tl = hoursTexts.get(h);
+                if (tl == null) {
+                    tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
+                    hoursTexts.put(h, tl);
+                }
+                Rectangle2D rr = tl.getBounds();
+                tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
+            }
+            time += 3600;
         }
     }
 
