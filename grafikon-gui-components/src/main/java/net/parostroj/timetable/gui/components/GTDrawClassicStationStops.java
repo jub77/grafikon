@@ -66,9 +66,20 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
                 location = this.findLocation(interval, im);
                 locationMap.put(interval, location);
             }
-            y += location * inStationGap;
+            y += this.convertLocationToShift(location);
         }
         return y;
+    }
+
+    private int convertLocationToShift(int location) {
+        boolean even = (location & 1) == 0;
+        int shift = 0;
+        if (even) {
+            shift = -location * inStationGap / 2;
+        } else {
+            shift = (location + 1) * inStationGap / 2;
+        }
+        return shift;
     }
 
     private int findLocation(TimeInterval interval, List<TimeIntervalList> im) {
