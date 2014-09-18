@@ -12,9 +12,7 @@ import javax.swing.JFileChooser;
 
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
-import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
@@ -37,6 +35,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private File outputDirectory;
     private JFileChooser chooser;
     private OutputTemplateAction.Settings settings;
+    private final WindowLocationSize editSizeLocation = new WindowLocationSize();
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
@@ -271,7 +270,9 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         dialog.setTitle(template.getName());
+        this.editSizeLocation.apply(dialog);
         dialog.showDialog(this.copyTemplate(template));
+        this.editSizeLocation.read(dialog);
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
         }
