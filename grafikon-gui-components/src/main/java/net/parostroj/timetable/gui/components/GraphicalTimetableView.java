@@ -327,6 +327,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         });
         typesMenu.add(withTracksMenuItem);
 
+        classicMenuItem.setSelected(true);
+
         popupMenu.add(typesMenu);
 
         sizesMenu.setText(ResourceLoader.getString("gt.sizes")); // NOI18N
@@ -523,6 +525,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     protected GTViewSettings getDefaultViewSettings() {
         GTViewSettings config = super.getDefaultViewSettings();
         config.set(Key.VIEW_SIZE, INITIAL_WIDTH);
+        config.set(Key.TYPE, Type.CLASSIC);
         return config;
     }
 
