@@ -12,7 +12,7 @@ import com.google.common.base.Predicate;
 /**
  * Modified classic look with trains in stations.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class GTDrawClassicStationStops extends GTDrawClassic {
 

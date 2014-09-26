@@ -7,7 +7,7 @@ import java.awt.Window;
 /**
  * Stores location and size of the window.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class WindowLocationSize {
 
