@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
 
@@ -67,7 +66,7 @@ abstract public class GTDrawBase implements GTDraw {
     private final GTViewSettings.TrainColors colors;
     private final TrainColorChooser trainColorChooser;
     private final TrainRegionCollector trainRegionCollector;
-    protected GTViewSettings preferences;
+    protected GTDrawSettings preferences;
     protected Map<Node,Integer> positions;
     protected List<Node> stations;
     protected Color background = Color.white;
@@ -82,26 +81,23 @@ abstract public class GTDrawBase implements GTDraw {
     private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
     private final Map<Integer, TextLayout> hoursTexts = new HashMap<Integer, TextLayout>();
 
-    public GTDrawBase(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
+    public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         this.route = route;
         this.intervalFilter = intervalFilter;
-        this.colors = config.get(GTViewSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
-        this.trainColorChooser = config.get(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
-        this.hTrains = config.get(GTViewSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
+        this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
+        this.trainColorChooser = config.get(GTDrawSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
+        this.hTrains = config.get(GTDrawSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
         this.trainRegionCollector = collector;
 
         // start and end time
-        Integer st = config.get(GTViewSettings.Key.START_TIME, Integer.class);
-        Integer et = config.get(GTViewSettings.Key.END_TIME, Integer.class);
-        boolean ignore = config.getOption(GTViewSettings.Key.IGNORE_TIME_LIMITS);
-        startTime = (st != null && !ignore) ? st : 0;
-        endTime = (et != null && !ignore) ? et : TimeInterval.DAY;
+        startTime = config.get(GTDrawSettings.Key.START_TIME, Integer.class);
+        endTime = config.get(GTDrawSettings.Key.END_TIME, Integer.class);
 
         // create preferences
         preferences = config;
 
         // strokes
-        Float zoom = config.get(Key.ZOOM, Float.class);
+        Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         hoursStroke = new BasicStroke(zoom * HOURS_STROKE_WIDTH);
         halfHoursStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_WIDTH);
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
@@ -121,7 +117,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setColor(Color.BLACK);
         this.paintTrains(g);
         this.paintHoursTexts(g);
-        if (preferences.getOption(Key.DISABLE_STATION_NAMES) != Boolean.TRUE) {
+        if (preferences.getOption(GTDrawSettings.Key.DISABLE_STATION_NAMES) != Boolean.TRUE) {
             this.paintStationNames(g, stations, positions);
         }
         this.finishCollecting();
@@ -144,9 +140,9 @@ abstract public class GTDrawBase implements GTDraw {
 
     private void updateStartAndSize(Graphics2D g) {
         // read config
-        Integer gapx = preferences.get(GTViewSettings.Key.STATION_GAP_X, Integer.class);
-        Float bx = preferences.get(GTViewSettings.Key.BORDER_X, Float.class);
-        Float by = preferences.get(GTViewSettings.Key.BORDER_Y, Float.class);
+        Integer gapx = preferences.get(GTDrawSettings.Key.STATION_GAP_X, Integer.class);
+        Float bx = preferences.get(GTDrawSettings.Key.BORDER_X, Float.class);
+        Float by = preferences.get(GTDrawSettings.Key.BORDER_Y, Float.class);
         Rectangle2D mSize = getMSize(g);
         this.borderX = (int) (mSize.getWidth() * bx);
         this.borderY = (int) (mSize.getHeight() * by);
@@ -171,7 +167,7 @@ abstract public class GTDrawBase implements GTDraw {
         this.start = new Point(this.borderX, this.borderY);
         this.start.translate(gapStationX, 0);
         // compute size
-        Dimension configSize = preferences.get(GTViewSettings.Key.SIZE, Dimension.class);
+        Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
         this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
         // time step
         timeStep = (double) size.width / (endTime - startTime);
@@ -234,7 +230,7 @@ abstract public class GTDrawBase implements GTDraw {
                 } else {
                     // half hours
                     g.setColor(Color.orange);
-                    if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+                    if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                         g.setStroke(halfHoursExtStroke);
                     } else {
                         g.setStroke(halfHoursStroke);
@@ -311,8 +307,8 @@ abstract public class GTDrawBase implements GTDraw {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 if (intervalFilter == null || intervalFilter.apply(interval)) {
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
-                            && (preferences.get(GTViewSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
-                    boolean paintMinutes = preferences.get(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
+                            && (preferences.get(GTDrawSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
+                    boolean paintMinutes = preferences.get(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
                     Interval normalized = interval.getInterval().normalize();
                     if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
                         g.setColor(this.getIntervalColor(interval));

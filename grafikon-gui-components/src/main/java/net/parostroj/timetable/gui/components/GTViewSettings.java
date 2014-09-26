@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.parostroj.timetable.model.TimeInterval;
+
 /**
  * Settings for graphical timetable view.
  *
@@ -20,37 +22,43 @@ public class GTViewSettings {
     }
 
     public static enum Key {
-        ARRIVAL_DEPARTURE_DIGITS(Boolean.class),
-        EXTENDED_LINES(Boolean.class),
-        TRAIN_NAMES(Boolean.class),
-        TECHNOLOGICAL_TIME(Boolean.class),
-        BORDER_X(Float.class),
-        BORDER_Y(Float.class),
-        SIZE(Dimension.class),
-        VIEW_SIZE(Integer.class),
-        STATION_GAP_X(Integer.class),
-        TYPE(Type.class),
-        TRAIN_COLORS(TrainColors.class),
-        TRAIN_COLOR_CHOOSER(TrainColorChooser.class),
-        HIGHLIGHTED_TRAINS(HighlightedTrains.class),
-        START_TIME(Integer.class),
-        END_TIME(Integer.class),
-        IGNORE_TIME_LIMITS(Boolean.class),
-        DISABLE_STATION_NAMES(Boolean.class),
-        ZOOM(Float.class),
-        START_TIME_OVERRIDE(Integer.class),
-        END_TIME_OVERRIDE(Integer.class),
-        TO_TRAIN_SCROLL(Boolean.class),
-        TO_TRAIN_CHANGE_ROUTE(Boolean.class);
+        ARRIVAL_DEPARTURE_DIGITS(Boolean.class, GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS),
+        EXTENDED_LINES(Boolean.class, GTDrawSettings.Key.EXTENDED_LINES),
+        TRAIN_NAMES(Boolean.class, GTDrawSettings.Key.TRAIN_NAMES),
+        TECHNOLOGICAL_TIME(Boolean.class, GTDrawSettings.Key.TECHNOLOGICAL_TIME),
+        BORDER_X(Float.class, GTDrawSettings.Key.BORDER_X),
+        BORDER_Y(Float.class, GTDrawSettings.Key.BORDER_Y),
+        SIZE(Dimension.class, GTDrawSettings.Key.SIZE),
+        VIEW_SIZE(Integer.class, null),
+        STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_GAP_X),
+        TYPE(Type.class, null),
+        TRAIN_COLORS(TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
+        TRAIN_COLOR_CHOOSER(TrainColorChooser.class, GTDrawSettings.Key.TRAIN_COLOR_CHOOSER),
+        HIGHLIGHTED_TRAINS(HighlightedTrains.class, GTDrawSettings.Key.HIGHLIGHTED_TRAINS),
+        START_TIME(Integer.class, GTDrawSettings.Key.START_TIME),
+        END_TIME(Integer.class, GTDrawSettings.Key.END_TIME),
+        IGNORE_TIME_LIMITS(Boolean.class, null),
+        DISABLE_STATION_NAMES(Boolean.class, GTDrawSettings.Key.DISABLE_STATION_NAMES),
+        ZOOM(Float.class, GTDrawSettings.Key.ZOOM),
+        START_TIME_OVERRIDE(Integer.class, null),
+        END_TIME_OVERRIDE(Integer.class, null),
+        TO_TRAIN_SCROLL(Boolean.class, null),
+        TO_TRAIN_CHANGE_ROUTE(Boolean.class, null);
 
         private Class<?> valueClass;
+        private GTDrawSettings.Key drawKey;
 
-        private Key(Class<?> valueClass) {
+        private Key(Class<?> valueClass, GTDrawSettings.Key drawKey) {
             this.valueClass = valueClass;
+            this.drawKey = drawKey;
         }
 
         public Class<?> getValueClass() {
             return valueClass;
+        }
+
+        public GTDrawSettings.Key getDrawKey() {
+            return drawKey;
         }
     }
 
@@ -112,6 +120,31 @@ public class GTViewSettings {
 
     public void setOption(Key pref, Boolean value) {
         this.set(pref, value);
+    }
+
+    public GTDrawSettings createGTDrawSettings() {
+        GTDrawSettings ds = new GTDrawSettings();
+        for (GTViewSettings.Key gKey : GTViewSettings.Key.values()) {
+            if (gKey.getDrawKey() != null) {
+                ds.set(gKey.getDrawKey(), this.get(gKey));
+            }
+        }
+        // update start/end time
+        if (this.contains(Key.START_TIME_OVERRIDE)) {
+            ds.set(GTDrawSettings.Key.START_TIME, this.get(Key.START_TIME_OVERRIDE));
+        }
+        if (this.contains(Key.END_TIME_OVERRIDE)) {
+            ds.set(GTDrawSettings.Key.END_TIME, this.get(Key.END_TIME_OVERRIDE));
+        }
+        if (this.getOption(Key.IGNORE_TIME_LIMITS)) {
+            ds.set(GTDrawSettings.Key.START_TIME, 0);
+            ds.set(GTDrawSettings.Key.END_TIME, TimeInterval.DAY);
+        }
+        return ds;
+    }
+
+    public Type getGTDrawType() {
+        return this.get(Key.TYPE, Type.class);
     }
 
     public String getStorageString() {

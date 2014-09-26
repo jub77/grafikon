@@ -6,7 +6,6 @@ import java.awt.geom.Line2D;
 import java.util.*;
 import java.util.List;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -33,13 +32,13 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private final Set<Node> routeNodes;
 
-    public ManagedFreightGTDraw(GTViewSettings config, GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
+    public ManagedFreightGTDraw(GTDrawSettings config, GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
         super(draw);
         this.written = new ArrayList<Rectangle>();
         this.collector = collector;
         this.highlight = highlight;
         this.draw = draw;
-        Float zoom = config.get(Key.ZOOM, Float.class);
+        Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         arrow = (int) (zoom * 5);
         lineExtend = (int) (zoom * 16);
         connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);

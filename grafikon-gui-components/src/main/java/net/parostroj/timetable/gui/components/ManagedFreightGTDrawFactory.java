@@ -15,7 +15,7 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
     }
 
     @Override
-    public GTDraw createInstance(GTViewSettings settings, Route route, GTStorage storage) {
+    public GTDraw createInstance(GTViewSettings.Type type, GTDrawSettings settings, Route route, GTStorage storage) {
         // replace filter ...
         storage.setFilter(TimeInterval.class, new Predicate<TimeInterval>() {
             private final Predicate<Train> trainPredicate = ModelPredicates.managedTrain();
@@ -25,7 +25,7 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
                 return trainPredicate.apply(item.getTrain());
             }
         });
-        GTDraw draw = super.createInstance(settings, route, storage);
+        GTDraw draw = super.createInstance(type, settings, route, storage);
         // decorate
         return new ManagedFreightGTDraw(settings, draw, storage.getCollector(FNConnection.class), highlight);
     }

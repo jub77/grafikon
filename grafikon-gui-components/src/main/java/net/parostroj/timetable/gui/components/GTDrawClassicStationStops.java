@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.*;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TimeIntervalResult.Status;
 
@@ -21,12 +20,12 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     private final Map<TimeInterval, Integer> locationMap;
     private final int inStationGap;
 
-    public GTDrawClassicStationStops(GTViewSettings config, Route route, TrainRegionCollector collector,
+    public GTDrawClassicStationStops(GTDrawSettings config, Route route, TrainRegionCollector collector,
             Predicate<TimeInterval> intervalFilter) {
         super(config, route, collector, intervalFilter);
         nodeIntervalLists = new HashMap<Node, List<TimeIntervalList>>();
         locationMap = new HashMap<TimeInterval, Integer>();
-        Float zoom = config.get(Key.ZOOM, Float.class);
+        Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         inStationGap = (int) (TRAIN_STROKE_WIDTH * 1.75f * zoom);
     }
 

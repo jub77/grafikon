@@ -11,10 +11,10 @@ import net.parostroj.timetable.model.TimeInterval;
 public class NormalGTDrawFactory extends GTDrawFactory {
 
     @Override
-    public GTDraw createInstance(GTViewSettings settings, Route route, GTStorage storage) {
+    public GTDraw createInstance(GTViewSettings.Type type, GTDrawSettings settings, Route route, GTStorage storage) {
         TrainRegionCollector collector = (TrainRegionCollector) storage.getCollector(TimeInterval.class);
         GTDraw result = null;
-        switch ((GTViewSettings.Type) settings.get(GTViewSettings.Key.TYPE)) {
+        switch (type) {
             case CLASSIC_STATION_STOPS:
                 result = new GTDrawClassicStationStops(settings, route, collector, storage.getFilter(TimeInterval.class));
                 break;

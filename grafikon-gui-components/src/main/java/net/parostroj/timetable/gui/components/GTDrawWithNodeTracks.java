@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.google.common.base.Predicate;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -44,9 +43,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     private Map<Track,Integer> trackPositions;
 
-    public GTDrawWithNodeTracks(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
+    public GTDrawWithNodeTracks(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
-        Float zoom = config.get(Key.ZOOM, Float.class);
+        Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
         trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -106,7 +105,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+            if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(stationStrokeStopExt);
@@ -136,7 +135,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
-                if (interval.isTechnological() && preferences.get(GTViewSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
+                if (interval.isTechnological() && preferences.get(GTDrawSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
                     continue;
                 }
                 if (!interval.isBoundary()) {

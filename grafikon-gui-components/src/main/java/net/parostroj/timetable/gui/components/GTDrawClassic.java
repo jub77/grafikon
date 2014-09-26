@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.google.common.base.Predicate;
 
-import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -34,10 +33,10 @@ public class GTDrawClassic extends GTDrawBase {
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
 
-    public GTDrawClassic(GTViewSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
+    public GTDrawClassic(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
 
-        Float zoom = config.get(Key.ZOOM, Float.class);
+        Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
         stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
@@ -80,7 +79,7 @@ public class GTDrawClassic extends GTDrawBase {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            if (preferences.get(GTViewSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+            if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(stationStrokeStopExt);
