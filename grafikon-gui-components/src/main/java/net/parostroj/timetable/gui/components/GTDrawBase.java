@@ -220,29 +220,12 @@ abstract public class GTDrawBase implements GTDraw {
         int time = 0;
 
         // draw hours
-        for (int i = 0; i <= 48; i++) {
-            if (isTimeVisible(time)) {
-                int xLocation = this.getX(time);
-                if ((i & 1) == 0) {
-                    // hours
-                    g.setColor(Color.orange);
-                    g.setStroke(hoursStroke);
-                } else {
-                    // half hours
-                    g.setColor(Color.orange);
-                    if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
-                        g.setStroke(halfHoursExtStroke);
-                    } else {
-                        g.setStroke(halfHoursStroke);
-                    }
-                }
-
-                if (((i & 1) != 1) || step >= minimalSpace) {
-                    // draw line
-                    g.drawLine(xLocation, start.y, xLocation, yEnd);
-                }
+        for (int i = 0; i < 48; i++) {
+            int timeToPaint = time < startTime ? time + TimeInterval.DAY : time;
+            this.paintHourAndHalfHourOnTime(g, yEnd, step, i, timeToPaint);
+            if (timeToPaint == startTime) {
+                this.paintHourAndHalfHourOnTime(g, yEnd, step, i, timeToPaint + TimeInterval.DAY);
             }
-
             // half an hour
             time += 1800;
         }
@@ -253,33 +236,73 @@ abstract public class GTDrawBase implements GTDraw {
         if (tenMinutesStep >= minimalSpace) {
             g.setColor(Color.orange);
             g.setStroke(tenMinutesStroke);
-            for (int i = 0; i <= 24*6; i++) {
-                if ((i % 3 !=0) && this.isTimeVisible(time)) {
-                    int xLocation = this.getX(time);
-                    // draw line
-                    g.drawLine(xLocation, start.y, xLocation, yEnd);
+            for (int i = 0; i <= 24 * 6; i++) {
+                int timeToPaint = time < startTime ? time + TimeInterval.DAY : time;
+                this.paintTenMinutesOnTime(g, yEnd, i, timeToPaint);
+                if (timeToPaint == startTime) {
+                    this.paintTenMinutesOnTime(g, yEnd, i, timeToPaint + TimeInterval.DAY);
                 }
                 time += 600;
             }
         }
     }
 
+    private void paintHourAndHalfHourOnTime(Graphics2D g, int yEnd, double step, int i, int timeToPaint) {
+        if (isTimeVisible(timeToPaint)) {
+            int xLocation = this.getX(timeToPaint);
+            if ((i & 1) == 0) {
+                // hours
+                g.setColor(Color.orange);
+                g.setStroke(hoursStroke);
+            } else {
+                // half hours
+                g.setColor(Color.orange);
+                if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+                    g.setStroke(halfHoursExtStroke);
+                } else {
+                    g.setStroke(halfHoursStroke);
+                }
+            }
+
+            if (((i & 1) != 1) || step >= minimalSpace) {
+                // draw line
+                g.drawLine(xLocation, start.y, xLocation, yEnd);
+            }
+        }
+    }
+
+    private void paintTenMinutesOnTime(Graphics2D g, int yEnd, int i, int timeToPaint) {
+        if ((i % 3 != 0) && this.isTimeVisible(timeToPaint)) {
+            int xLocation = this.getX(timeToPaint);
+            // draw line
+            g.drawLine(xLocation, start.y, xLocation, yEnd);
+        }
+    }
+
     protected void paintHoursTexts(Graphics2D g) {
         int time = 0;
-        for (int h = 0; h <= 24; h++) {
-            if (isTimeVisible(time)) {
-                int xLocation = this.getX(time);
-                // draw hours
-                g.setColor(Color.black);
-                TextLayout tl = hoursTexts.get(h);
-                if (tl == null) {
-                    tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
-                    hoursTexts.put(h, tl);
-                }
-                Rectangle2D rr = tl.getBounds();
-                tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
+        for (int h = 0; h < 24; h++) {
+            int timeToPaint = time < startTime ? time + TimeInterval.DAY : time;
+            this.paintHourTextOnTime(g, h, timeToPaint);
+            if (timeToPaint == startTime) {
+                this.paintHourTextOnTime(g, h, timeToPaint + TimeInterval.DAY);
             }
             time += 3600;
+        }
+    }
+
+    private void paintHourTextOnTime(Graphics2D g, int h, int timeToPaint) {
+        if (isTimeVisible(timeToPaint)) {
+            int xLocation = this.getX(timeToPaint);
+            // draw hours
+            g.setColor(Color.black);
+            TextLayout tl = hoursTexts.get(h);
+            if (tl == null) {
+                tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
+                hoursTexts.put(h, tl);
+            }
+            Rectangle2D rr = tl.getBounds();
+            tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
         }
     }
 
