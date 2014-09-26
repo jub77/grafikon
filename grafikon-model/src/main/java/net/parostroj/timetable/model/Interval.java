@@ -7,29 +7,33 @@ package net.parostroj.timetable.model;
  */
 public interface Interval {
 
-    public abstract int getEnd();
+    int getEnd();
 
-    public abstract int getStart();
+    int getStart();
 
-    public abstract int getNormalizedStart();
+    int getNormalizedStart();
 
-    public abstract int getNormalizedEnd();
+    int getNormalizedEnd();
 
-    public abstract int getLength();
+    int getLength();
 
-    public abstract Interval normalize();
+    Interval normalize();
 
-    public abstract boolean isNormalized();
+    boolean isNormalized();
 
-    public abstract boolean isOverMidnight();
+    boolean isOverMidnight();
 
-    public abstract int compareOpen(Interval o);
+    boolean isOverThreshold(int threshold);
 
-    public abstract int compareOpenNormalized(Interval o);
+    int compareOpen(Interval o);
 
-    public abstract int compareClosed(Interval o);
+    int compareOpenNormalized(Interval o);
 
-    public abstract int compareClosedNormalized(Interval o);
+    int compareClosed(Interval o);
 
-    public abstract Interval getNonNormalizedIntervalOverMidnight();
+    int compareClosedNormalized(Interval o);
+
+    Interval getNonNormalizedIntervalOverMidnight();
+
+    Interval getComplementatyIntervalOverThreshold(int threshold);
 }

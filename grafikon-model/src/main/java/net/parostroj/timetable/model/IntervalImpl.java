@@ -2,17 +2,17 @@ package net.parostroj.timetable.model;
 
 /**
  * This implementation supports only getting of limits.
- * 
+ *
  * @author jub
  */
 public class IntervalImpl implements Interval {
-    
+
     private static final String NOT_SUPPORTED = "Operation not supported.";
 
     protected final int start;
     protected final int end;
-    
-    public IntervalImpl(int start, int end) {
+
+    IntervalImpl(int start, int end) {
         this.start = start;
         this.end = end;
     }
@@ -54,6 +54,11 @@ public class IntervalImpl implements Interval {
 
     @Override
     public boolean isOverMidnight() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public boolean isOverThreshold(int threshold) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
@@ -129,6 +134,11 @@ public class IntervalImpl implements Interval {
 
     @Override
     public Interval getNonNormalizedIntervalOverMidnight() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public Interval getComplementatyIntervalOverThreshold(int threshold) {
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 

@@ -2,7 +2,6 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.utils.TimeUtil;
 
-
 /**
  * Time interval implementation - non normalized.
  *
@@ -12,7 +11,7 @@ final public class IntervalNonNormalizedImpl extends IntervalImpl {
 
     private final Interval normalized;
 
-    public IntervalNonNormalizedImpl(int start, int end) {
+    IntervalNonNormalizedImpl(int start, int end) {
         super(start, end);
         if (TimeUtil.isNormalizedTime(start))
             throw new IllegalArgumentException("Start is normalized.");

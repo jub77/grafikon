@@ -314,7 +314,7 @@ abstract public class GTDrawBase implements GTDraw {
                         g.setColor(this.getIntervalColor(interval));
                         this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, normalized);
                     }
-                    Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
+                    Interval overMidnight = normalized.getComplementatyIntervalOverThreshold(startTime);
                     if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
                         g.setColor(this.getIntervalColor(interval));
                         this.paintTrainOnLineWithInterval(g, paintTrainName, paintMinutes, interval, overMidnight);
@@ -355,7 +355,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
             g.draw(line);
         }
-        Interval overMidnight = normalized.getNonNormalizedIntervalOverMidnight();
+        Interval overMidnight = normalized.getComplementatyIntervalOverThreshold(startTime);
         if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
             Line2D line = this.createTrainLineInStation(interval, overMidnight);
             if (isCollected) {
