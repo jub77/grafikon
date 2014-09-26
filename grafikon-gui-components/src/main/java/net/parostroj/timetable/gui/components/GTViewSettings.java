@@ -125,7 +125,7 @@ public class GTViewSettings {
     public GTDrawSettings createGTDrawSettings() {
         GTDrawSettings ds = new GTDrawSettings();
         for (GTViewSettings.Key gKey : GTViewSettings.Key.values()) {
-            if (gKey.getDrawKey() != null) {
+            if (gKey.getDrawKey() != null && this.contains(gKey)) {
                 ds.set(gKey.getDrawKey(), this.get(gKey));
             }
         }
@@ -138,6 +138,12 @@ public class GTViewSettings {
         }
         if (this.getOption(Key.IGNORE_TIME_LIMITS)) {
             ds.set(GTDrawSettings.Key.START_TIME, 0);
+            ds.set(GTDrawSettings.Key.END_TIME, TimeInterval.DAY);
+        }
+        if (ds.get(GTDrawSettings.Key.START_TIME) == null) {
+            ds.set(GTDrawSettings.Key.START_TIME, 0);
+        }
+        if (ds.get(GTDrawSettings.Key.END_TIME) == null) {
             ds.set(GTDrawSettings.Key.END_TIME, TimeInterval.DAY);
         }
         return ds;
