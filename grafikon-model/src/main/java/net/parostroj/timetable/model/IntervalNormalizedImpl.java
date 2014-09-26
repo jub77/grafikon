@@ -2,7 +2,6 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.utils.TimeUtil;
 
-
 /**
  * Time interval implementation - normalized.
  *
@@ -52,7 +51,25 @@ final public class IntervalNormalizedImpl extends IntervalImpl {
     }
 
     @Override
+    public boolean isOverThreshold(int threshold) {
+        return threshold == 0 ? this.isOverMidnight() : start < threshold || end >= threshold + TimeInterval.DAY;
+    }
+
+    @Override
     public Interval getNonNormalizedIntervalOverMidnight() {
         return overMidnight;
+    }
+
+    @Override
+    public Interval getComplementatyIntervalOverThreshold(int threshold) {
+        if (threshold == 0) {
+            return this.getNonNormalizedIntervalOverMidnight();
+        } else if (this.isOverThreshold(threshold)) {
+            int s = start < threshold ? start + TimeInterval.DAY : start - TimeInterval.DAY;
+            int e = s + this.getLength();
+            return new IntervalImpl(s, e);
+        } else {
+            return null;
+        }
     }
 }
