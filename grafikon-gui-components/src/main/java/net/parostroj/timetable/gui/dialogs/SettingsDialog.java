@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
+import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
@@ -153,8 +154,9 @@ public class SettingsDialog extends javax.swing.JDialog {
     }
 
     private void setTimeRange(Integer from, Integer to) {
-        fromTimeTextField.setText(diagram.getTimeConverter().convertIntToText(from != null ? from : 0));
-        toTimeTextField.setText(diagram.getTimeConverter().convertIntToTextNNFull(to != null ? to : TimeInterval.DAY));
+        TimeConverter converter = diagram.getTimeConverter();
+        fromTimeTextField.setText(converter.convertIntToText(from != null ? TimeUtil.normalizeTime(from) : 0));
+        toTimeTextField.setText(converter.convertIntToText(to != null ? TimeUtil.normalizeTime(to) : 0));
     }
 
     private Tuple<Integer> getTimeRange() {
@@ -162,27 +164,24 @@ public class SettingsDialog extends javax.swing.JDialog {
         int to = diagram.getTimeConverter().convertTextToInt(toTimeTextField.getText());
         Integer fromTime = from == -1 ? 0 : from;
         Integer toTime = to == -1 ? TimeInterval.DAY : to;
-        if (toTime == 0)
-            toTime = TimeInterval.DAY;
-        // check range (a least an hour)
+        // shift end after start
         if (fromTime > toTime) {
-            // swap
-            Integer swap = fromTime;
-            fromTime = toTime;
-            toTime = swap;
+            toTime += TimeInterval.DAY;
         }
-        // check minimal distance
+        // same time - 24hours (has to be cast to int value - autoboxing on two Integers doesn't work)
+        if (fromTime.equals(toTime)) {
+            toTime += TimeInterval.DAY;
+        }
+        // check range (a least an hour)
         if ((toTime - fromTime) < 3600) {
             toTime = fromTime + 3600;
-            if (toTime > TimeInterval.DAY) {
-                toTime = TimeInterval.DAY;
-                fromTime = toTime - 3600;
-            }
         }
-        if (fromTime == 0)
+        if (fromTime == 0) {
             fromTime = null;
-        if (toTime == TimeInterval.DAY || toTime == 0)
+        }
+        if (toTime == TimeInterval.DAY || toTime == 0) {
             toTime = null;
+        }
         return new Tuple<Integer>(fromTime, toTime);
     }
 
