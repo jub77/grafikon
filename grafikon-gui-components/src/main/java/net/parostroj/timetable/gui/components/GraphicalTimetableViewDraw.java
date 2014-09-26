@@ -305,7 +305,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             if (!config.contains(GTViewSettings.Key.SIZE)) {
                 config.set(GTViewSettings.Key.SIZE, this.getSize());
             }
-            draw = drawFactory.createInstance(config, drawnRoute, gtStorage);
+            draw = drawFactory.createInstance(config.getGTDrawType(), config.createGTDrawSettings(), drawnRoute, gtStorage);
         }
         this.repaint();
     }

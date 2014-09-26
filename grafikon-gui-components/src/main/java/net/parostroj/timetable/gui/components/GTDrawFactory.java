@@ -9,5 +9,5 @@ import net.parostroj.timetable.model.Route;
  */
 public abstract class GTDrawFactory {
 
-    public abstract GTDraw createInstance(GTViewSettings settings, Route route, GTStorage storage);
+    public abstract GTDraw createInstance(GTViewSettings.Type type, GTDrawSettings settings, Route route, GTStorage storage);
 }
