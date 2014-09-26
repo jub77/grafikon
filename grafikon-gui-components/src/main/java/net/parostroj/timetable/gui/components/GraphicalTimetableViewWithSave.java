@@ -127,7 +127,11 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                         boolean useCSS = false;
                         try {
                             Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
-                            g2d.stream(out, useCSS);
+                            try {
+                                g2d.stream(out, useCSS);
+                            } finally {
+                                out.close();
+                            }
                         } catch (IOException e) {
                             log.warn("Error saving file: " + dialog.getSaveFile(), e);
                             error = true;
