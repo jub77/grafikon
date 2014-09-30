@@ -10,7 +10,6 @@ import java.util.*;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
-import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
 import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
 import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
@@ -18,6 +17,8 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.RegionCollector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -300,7 +301,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         classicMenuItem.setText(ResourceLoader.getString("gt.classic")); // NOI18N
         classicMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, Type.CLASSIC);
+                settings.set(Key.TYPE, GTDraw.Type.CLASSIC);
                 recreateDraw();
             }
         });
@@ -311,7 +312,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         classicWithStationsMenuItem.setText(ResourceLoader.getString("gt.classic.station.stops")); // NOI18N
         classicWithStationsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, Type.CLASSIC_STATION_STOPS);
+                settings.set(Key.TYPE, GTDraw.Type.CLASSIC_STATION_STOPS);
                 recreateDraw();
             }
         });
@@ -321,7 +322,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         withTracksMenuItem.setText(ResourceLoader.getString("gt.withtracks")); // NOI18N
         withTracksMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, Type.WITH_TRACKS);
+                settings.set(Key.TYPE, GTDraw.Type.WITH_TRACKS);
                 recreateDraw();
             }
         });
@@ -437,7 +438,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     public void setSettings(GTViewSettings settings) {
         super.setSettings(settings);
 
-        switch (settings.get(Key.TYPE, Type.class)) {
+        switch (settings.get(Key.TYPE, GTDraw.Type.class)) {
             case CLASSIC:
                 classicMenuItem.setSelected(true);
                 break;
@@ -525,7 +526,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     protected GTViewSettings getDefaultViewSettings() {
         GTViewSettings config = super.getDefaultViewSettings();
         config.set(Key.VIEW_SIZE, INITIAL_WIDTH);
-        config.set(Key.TYPE, Type.CLASSIC);
+        config.set(Key.TYPE, GTDraw.Type.CLASSIC);
         return config;
     }
 

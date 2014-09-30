@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -10,6 +10,14 @@ public interface GTDraw {
     enum Change {
         REMOVED_TRAIN, TRAIN_TEXT_CHANGED, NODE_TEXT_CHANGED, ALL_TRAIN_TEXTS_CHANGED,
         TRAIN_INTERVALS_CHANGED
+    }
+
+    public enum TrainColors {
+        BY_TYPE, BY_COLOR_CHOOSER;
+    }
+
+    public enum Type {
+        CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
     }
 
     void draw(Graphics2D g);

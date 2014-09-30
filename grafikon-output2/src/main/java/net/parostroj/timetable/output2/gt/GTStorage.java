@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import java.util.HashMap;
 import java.util.Map;

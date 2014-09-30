@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.filters.TrainTypePredicate;
-import net.parostroj.timetable.gui.components.TimeIntervalSelector;
 import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -27,6 +26,7 @@ import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
 import net.parostroj.timetable.utils.*;
 
 /**

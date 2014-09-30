@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import java.awt.Color;
 import net.parostroj.timetable.model.TimeInterval;

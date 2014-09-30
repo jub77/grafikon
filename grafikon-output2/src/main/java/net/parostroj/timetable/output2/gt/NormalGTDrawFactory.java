@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TimeInterval;
@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.TimeInterval;
 public class NormalGTDrawFactory extends GTDrawFactory {
 
     @Override
-    public GTDraw createInstance(GTViewSettings.Type type, GTDrawSettings settings, Route route, GTStorage storage) {
+    public GTDraw createInstance(GTDraw.Type type, GTDrawSettings settings, Route route, GTStorage storage) {
         TrainRegionCollector collector = (TrainRegionCollector) storage.getCollector(TimeInterval.class);
         GTDraw result = null;
         switch (type) {

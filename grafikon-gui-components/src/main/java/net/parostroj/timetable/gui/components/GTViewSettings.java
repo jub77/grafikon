@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.output2.gt.*;
 
 /**
  * Settings for graphical timetable view.
@@ -12,14 +13,6 @@ import net.parostroj.timetable.model.TimeInterval;
  * @author jub
  */
 public class GTViewSettings {
-
-    public static enum Type {
-        CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
-    }
-
-    public static enum TrainColors {
-        BY_TYPE, BY_COLOR_CHOOSER;
-    }
 
     public static enum Key {
         ARRIVAL_DEPARTURE_DIGITS(Boolean.class, GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS),
@@ -31,8 +24,8 @@ public class GTViewSettings {
         SIZE(Dimension.class, GTDrawSettings.Key.SIZE),
         VIEW_SIZE(Integer.class, null),
         STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_GAP_X),
-        TYPE(Type.class, null),
-        TRAIN_COLORS(TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
+        TYPE(GTDraw.Type.class, null),
+        TRAIN_COLORS(GTDraw.TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
         TRAIN_COLOR_CHOOSER(TrainColorChooser.class, GTDrawSettings.Key.TRAIN_COLOR_CHOOSER),
         HIGHLIGHTED_TRAINS(HighlightedTrains.class, GTDrawSettings.Key.HIGHLIGHTED_TRAINS),
         START_TIME(Integer.class, GTDrawSettings.Key.START_TIME),
@@ -149,8 +142,8 @@ public class GTViewSettings {
         return ds;
     }
 
-    public Type getGTDrawType() {
-        return this.get(Key.TYPE, Type.class);
+    public GTDraw.Type getGTDrawType() {
+        return this.get(Key.TYPE, GTDraw.Type.class);
     }
 
     public String getStorageString() {
@@ -170,7 +163,7 @@ public class GTViewSettings {
         GTViewSettings settings = new GTViewSettings();
         if (str != null) {
             String[] split = str.split(",");
-            settings.set(Key.TYPE, Type.valueOf(split[0]));
+            settings.set(Key.TYPE, GTDraw.Type.valueOf(split[0]));
             settings.set(Key.VIEW_SIZE, Integer.parseInt(split[1]));
             settings.setOption(Key.TRAIN_NAMES, Boolean.parseBoolean(split[2]));
             settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.parseBoolean(split[3]));

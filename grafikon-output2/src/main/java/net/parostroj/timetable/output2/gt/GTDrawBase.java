@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
 import java.awt.font.TextLayout;
@@ -63,7 +63,7 @@ abstract public class GTDrawBase implements GTDraw {
     protected Route route;
     protected int stationNamesPosition = 0;
     protected HighlightedTrains hTrains;
-    private final GTViewSettings.TrainColors colors;
+    private final TrainColors colors;
     private final TrainColorChooser trainColorChooser;
     private final TrainRegionCollector trainRegionCollector;
     protected GTDrawSettings preferences;
@@ -84,7 +84,7 @@ abstract public class GTDrawBase implements GTDraw {
     public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         this.route = route;
         this.intervalFilter = intervalFilter;
-        this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, GTViewSettings.TrainColors.class);
+        this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, TrainColors.class);
         this.trainColorChooser = config.get(GTDrawSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
         this.hTrains = config.get(GTDrawSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
         this.trainRegionCollector = collector;

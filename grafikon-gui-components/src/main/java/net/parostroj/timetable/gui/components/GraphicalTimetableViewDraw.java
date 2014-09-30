@@ -10,12 +10,11 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
-import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
-import net.parostroj.timetable.gui.components.GTViewSettings.Type;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.slf4j.Logger;
@@ -142,8 +141,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.BORDER_X, 1.5f)
                 .set(Key.BORDER_Y, 1.5f)
                 .set(Key.STATION_GAP_X, 15)
-                .set(Key.TYPE, Type.CLASSIC)
-                .set(Key.TRAIN_COLORS, TrainColors.BY_TYPE)
+                .set(Key.TYPE, GTDraw.Type.CLASSIC)
+                .set(Key.TRAIN_COLORS, GTDraw.TrainColors.BY_TYPE)
                 .set(Key.TRAIN_NAMES, Boolean.TRUE)
                 .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
                 .set(Key.EXTENDED_LINES, Boolean.FALSE)

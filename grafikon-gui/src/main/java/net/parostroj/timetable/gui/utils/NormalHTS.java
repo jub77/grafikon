@@ -7,10 +7,10 @@ import java.util.Set;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
-import net.parostroj.timetable.gui.components.HighlightedTrains;
-import net.parostroj.timetable.gui.components.TimeIntervalSelector;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.output2.gt.HighlightedTrains;
+import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
 import net.parostroj.timetable.utils.TransformUtil;
 
 /**
