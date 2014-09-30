@@ -11,13 +11,14 @@ import java.util.List;
 import net.parostroj.timetable.gui.AppPreferences;
 import net.parostroj.timetable.gui.StorableGuiData;
 import net.parostroj.timetable.gui.components.*;
-import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.output2.gt.GTDraw.TrainColors;
+import net.parostroj.timetable.output2.gt.*;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;

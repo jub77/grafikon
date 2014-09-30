@@ -25,7 +25,6 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
-import net.parostroj.timetable.gui.components.TrainColorChooser;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiUtils;
@@ -36,6 +35,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.ini4j.Ini;

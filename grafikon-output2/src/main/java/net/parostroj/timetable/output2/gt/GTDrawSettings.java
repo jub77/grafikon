@@ -1,10 +1,8 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
-
-import net.parostroj.timetable.gui.components.GTViewSettings.TrainColors;
 
 /**
  * Settings for GTDraw.
@@ -22,7 +20,7 @@ public class GTDrawSettings {
         BORDER_Y(Float.class),
         SIZE(Dimension.class),
         STATION_GAP_X(Integer.class),
-        TRAIN_COLORS(TrainColors.class),
+        TRAIN_COLORS(GTDraw.TrainColors.class),
         TRAIN_COLOR_CHOOSER(TrainColorChooser.class),
         HIGHLIGHTED_TRAINS(HighlightedTrains.class),
         START_TIME(Integer.class),

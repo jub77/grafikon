@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.components;
+package net.parostroj.timetable.output2.gt;
 
 import net.parostroj.timetable.model.TimeInterval;
 

@@ -18,6 +18,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.FreightNetEvent;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
 
 import org.ini4j.Ini;
