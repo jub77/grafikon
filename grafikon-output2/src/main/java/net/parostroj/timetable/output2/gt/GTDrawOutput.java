@@ -1,34 +1,23 @@
 package net.parostroj.timetable.output2.gt;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-
-import javax.imageio.ImageIO;
 
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
-import net.parostroj.timetable.output2.OutputWithLocale;
-
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 /**
  * GTDraw output.
  *
- * @author cz2b10k5
+ * @author jub
  */
-public class GTDrawOutput extends OutputWithLocale {
+public class GTDrawOutput extends DrawOutput {
 
     private final GTDrawFactory drawFactory;
 
@@ -71,45 +60,18 @@ public class GTDrawOutput extends OutputWithLocale {
         return route;
     }
 
-    private void draw(GTDrawSettings settings, GTDraw.OutputType outputType, OutputStream stream, GTDraw draw) throws OutputException {
-        Dimension saveSize = settings.get(GTDrawSettings.Key.SIZE, Dimension.class);
-        switch (outputType) {
-            case PNG:
-                BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2d = img.createGraphics();
-                g2d.setColor(Color.white);
-                g2d.fillRect(0, 0, saveSize.width, saveSize.height);
-                draw.draw(g2d);
+    private void draw(final GTDrawSettings settings, GTDraw.OutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
+        this.draw(new Image() {
 
-                try {
-                    ImageIO.write(img, "png", stream);
-                } catch (IOException e) {
-                    throw new OutputException(e.getMessage(), e);
-                }
-                break;
-            case SVG:
-                DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+            @Override
+            public Dimension getSize(Graphics2D g) {
+                return settings.get(GTDrawSettings.Key.SIZE, Dimension.class);
+            }
 
-                // Create an instance of org.w3c.dom.Document.
-                String svgNS = "http://www.w3.org/2000/svg";
-                Document document = domImpl.createDocument(svgNS, "svg", null);
-
-                SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
-                SVGGraphics2D g2db = new SVGGraphics2D(context, false);
-
-                g2db.setSVGCanvasSize(saveSize);
-
-                draw.draw(g2db);
-
-                // write to ouput - do not use css style
-                boolean useCSS = false;
-                try {
-                    Writer out = new OutputStreamWriter(stream, "UTF-8");
-                    g2db.stream(out, useCSS);
-                } catch (IOException e) {
-                    throw new OutputException(e.getMessage(), e);
-                }
-                break;
-        }
+            @Override
+            public void draw(Graphics2D g) {
+                draw.draw(g);
+            }
+        }, outputType, stream);
     }
 }

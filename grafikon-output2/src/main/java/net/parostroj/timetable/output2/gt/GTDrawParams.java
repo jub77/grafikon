@@ -6,7 +6,7 @@ import net.parostroj.timetable.output2.gt.GTDraw.Type;
 /**
  * Parameters for GTDrawOutput.
  *
- * @author cz2b10k5
+ * @author jub
  */
 public class GTDrawParams {
 

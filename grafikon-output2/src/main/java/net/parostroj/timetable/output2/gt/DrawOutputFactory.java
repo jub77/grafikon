@@ -14,17 +14,18 @@ import net.parostroj.timetable.output2.OutputFactory;
  *
  * @author jub
  */
-public class GTDrawOutputFactory extends OutputFactory {
+public class DrawOutputFactory extends OutputFactory {
 
-    private static final String TYPE = "gtdraw";
+    private static final String TYPE = "draw";
     private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
         OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();
         OUTPUT_TYPES.put("diagram", GTDrawOutput.class);
+        OUTPUT_TYPES.put("circulations", CirculationDrawOutput.class);
     }
 
-    public GTDrawOutputFactory() {
+    public DrawOutputFactory() {
     }
 
     private Locale getLocale() {
