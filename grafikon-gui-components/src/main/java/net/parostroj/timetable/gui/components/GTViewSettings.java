@@ -116,7 +116,7 @@ public class GTViewSettings {
     }
 
     public GTDrawSettings createGTDrawSettings() {
-        GTDrawSettings ds = new GTDrawSettings();
+        GTDrawSettings ds = GTDrawSettings.create();
         for (GTViewSettings.Key gKey : GTViewSettings.Key.values()) {
             if (gKey.getDrawKey() != null && this.contains(gKey)) {
                 ds.set(gKey.getDrawKey(), this.get(gKey));
