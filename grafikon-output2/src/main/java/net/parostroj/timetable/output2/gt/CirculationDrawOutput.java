@@ -9,6 +9,7 @@ import java.util.Locale;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.output2.DrawParams;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 
@@ -17,7 +18,7 @@ import net.parostroj.timetable.output2.OutputParams;
  *
  * @author jub
  */
-public class CirculationDrawOutput extends DrawOutput {
+public class CirculationDrawOutput extends DrawOutput implements DrawParams {
 
     public CirculationDrawOutput(Locale locale) {
         super(locale);
@@ -34,7 +35,7 @@ public class CirculationDrawOutput extends DrawOutput {
     }
 
     private CirculationDrawParams getParams(OutputParams params) {
-        CirculationDrawParams cdParams = params.getParamValue(CirculationDraw.CD_PARAMS, CirculationDrawParams.class);
+        CirculationDrawParams cdParams = params.getParamValue(CD_PARAMS, CirculationDrawParams.class);
         if (cdParams == null) {
             // create default values
             cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5, GTDraw.OutputType.SVG);
@@ -44,7 +45,7 @@ public class CirculationDrawOutput extends DrawOutput {
 
     @SuppressWarnings("unchecked")
     private Collection<TrainsCycle> getCirculations(OutputParams params, TrainDiagram diagram) throws OutputException {
-        Collection<TrainsCycle> circulations = params.getParamValue(CirculationDraw.CIRCULATIONS_PARAM, Collection.class);
+        Collection<TrainsCycle> circulations = params.getParamValue(CIRCULATIONS_PARAM, Collection.class);
         if (circulations == null) {
             circulations = diagram.getDriverCycles();
         }

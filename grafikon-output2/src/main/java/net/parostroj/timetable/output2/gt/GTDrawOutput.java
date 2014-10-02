@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.DrawParams;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 
@@ -17,7 +18,7 @@ import net.parostroj.timetable.output2.OutputParams;
  *
  * @author jub
  */
-public class GTDrawOutput extends DrawOutput {
+public class GTDrawOutput extends DrawOutput implements DrawParams {
 
     private final GTDrawFactory drawFactory;
 
@@ -36,7 +37,7 @@ public class GTDrawOutput extends DrawOutput {
     }
 
     private GTDrawParams getParams(OutputParams params) {
-        GTDrawParams gtParams = params.getParamValue(GTDraw.GT_PARAMS, GTDrawParams.class);
+        GTDrawParams gtParams = params.getParamValue(GT_PARAMS, GTDrawParams.class);
         if (gtParams == null) {
             // create default values
             gtParams = new GTDrawParams();
@@ -45,7 +46,7 @@ public class GTDrawOutput extends DrawOutput {
     }
 
     private Route getRoute(OutputParams params, TrainDiagram diagram) throws OutputException {
-        Collection<?> routes = params.getParamValue(GTDraw.ROUTES_PARAM, Collection.class);
+        Collection<?> routes = params.getParamValue(ROUTES_PARAM, Collection.class);
         // only one route supported currently
         Route route = null;
         if (routes == null || routes.isEmpty()) {

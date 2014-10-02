@@ -14,10 +14,6 @@ import net.parostroj.timetable.model.*;
  */
 public class CirculationDraw {
 
-    public static final String CIRCULATIONS_PARAM = "circulations";
-    public static final String CD_PARAMS = "cd.params";
-
-
     private static class Layout {
 
         private static final double BORDER = 1d;
