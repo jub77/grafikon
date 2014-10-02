@@ -8,21 +8,27 @@ package net.parostroj.timetable.gui.components;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
+import net.parostroj.timetable.gui.dialogs.SaveImageDialog.Type;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.gt.CirculationDraw;
+import net.parostroj.timetable.output2.gt.CirculationDrawParams;
+import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.utils.Tuple;
 
 /**
  * View with circulations of certain type.
  *
  * @author jub
  */
-public class CirculationView extends javax.swing.JPanel implements SaveImageAction.Image {
+public class CirculationView extends javax.swing.JPanel implements SaveImageAction.DrawOutput {
 
     private CirculationDraw draw;
     private TrainDiagram diagram;
@@ -36,9 +42,18 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         this.stepWidth = 5;
     }
 
+
     @Override
-    public void paintImage(Graphics g) {
-        this.paint(g);
+    public void draw(Dimension size, File outputFile, Type type) throws OutputException {
+        // ignore dimension - it is fixed for the circulation output
+        OutputFactory factory = OutputFactory.newInstance("draw");
+        Output output = factory.createOutput("circulations");
+        Tuple<Integer> limits = this.getLimits();
+        List<TrainsCycle> circulations = this.getCirculations();
+        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth, type == Type.SVG ? GTDraw.OutputType.SVG : GTDraw.OutputType.PNG);
+        output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, outputFile)
+                .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, cdParams)
+                .setParam(DrawParams.CIRCULATIONS_PARAM, circulations));
     }
 
     @Override
@@ -60,21 +75,33 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     }
 
     private void repaintAndUpdateSize() {
-        int newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
         if (diagram != null && type != null) {
-            Integer value = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
-            if (value != null) {
-                newLowerLimit = value.intValue();
-            }
-            value = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
-            if (value != null) {
-                newUpperLimit = value.intValue();
-            }
-            List<Wrapper<TrainsCycle>> wrappers = Wrapper.getWrapperList(diagram.getCycles(type));
-            Collections.sort(wrappers);
-            draw = new CirculationDraw(this.extract(wrappers), newLowerLimit, newUpperLimit, stepWidth);
+            List<TrainsCycle> circulations = getCirculations();
+            Tuple<Integer> newLimits = this.getLimits();
+            draw = new CirculationDraw(circulations, newLimits.first, newLimits.second, stepWidth);
         }
         this.repaint();
+    }
+
+    private Tuple<Integer> getLimits() {
+        int newLowerLimit = 0, newUpperLimit = TimeInterval.DAY;
+        Integer value = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
+        if (value != null) {
+            newLowerLimit = value.intValue();
+        }
+        value = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
+        if (value != null) {
+            newUpperLimit = value.intValue();
+        }
+        return new Tuple<Integer>(newLowerLimit, newUpperLimit);
+    }
+
+
+    private List<TrainsCycle> getCirculations() {
+        List<Wrapper<TrainsCycle>> wrappers = Wrapper.getWrapperList(diagram.getCycles(type));
+        Collections.sort(wrappers);
+        List<TrainsCycle> circulations = this.extract(wrappers);
+        return circulations;
     }
 
     private List<TrainsCycle> extract(List<Wrapper<TrainsCycle>> wrappers) {
