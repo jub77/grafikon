@@ -9,8 +9,7 @@ import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputWithLocale;
+import net.parostroj.timetable.output2.*;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
@@ -23,7 +22,7 @@ import org.w3c.dom.Document;
  *
  * @author jub
  */
-public abstract class DrawOutput extends OutputWithLocale {
+public abstract class DrawOutput extends OutputWithLocale implements DrawParams {
 
     protected static interface Image {
         public void draw(Graphics2D g);

@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.DrawParams;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 
@@ -18,7 +17,7 @@ import net.parostroj.timetable.output2.OutputParams;
  *
  * @author jub
  */
-public class GTDrawOutput extends DrawOutput implements DrawParams {
+public class GTDrawOutput extends DrawOutput {
 
     private final GTDrawFactory drawFactory;
 
