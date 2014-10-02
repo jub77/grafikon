@@ -20,10 +20,6 @@ public interface GTDraw {
         CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
     }
 
-    public enum OutputType {
-        SVG, PNG;
-    }
-
     void draw(Graphics2D g);
 
     void paintStationNames(Graphics2D g);

@@ -1,6 +1,5 @@
 package net.parostroj.timetable.output2.gt;
 
-import net.parostroj.timetable.output2.gt.GTDraw.OutputType;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
 
 /**
@@ -12,13 +11,13 @@ public class GTDrawParams {
 
     private final GTDraw.Type type;
     private final GTDrawSettings settings;
-    private final GTDraw.OutputType outputType;
+    private final FileOutputType outputType;
 
     public GTDrawParams() {
-        this(GTDraw.Type.CLASSIC, GTDrawSettings.create(), GTDraw.OutputType.SVG);
+        this(GTDraw.Type.CLASSIC, GTDrawSettings.create(), FileOutputType.SVG);
     }
 
-    public GTDrawParams(Type type, GTDrawSettings settings, OutputType outputType) {
+    public GTDrawParams(Type type, GTDrawSettings settings, FileOutputType outputType) {
         if (outputType == null || type == null || settings == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
@@ -35,7 +34,7 @@ public class GTDrawParams {
         return type;
     }
 
-    public GTDraw.OutputType getOutputType() {
+    public FileOutputType getOutputType() {
         return outputType;
     }
 }

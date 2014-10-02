@@ -20,7 +20,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.gt.CirculationDraw;
 import net.parostroj.timetable.output2.gt.CirculationDrawParams;
-import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.FileOutputType;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -50,7 +50,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         Output output = factory.createOutput("circulations");
         Tuple<Integer> limits = this.getLimits();
         List<TrainsCycle> circulations = this.getCirculations();
-        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth, type == Type.SVG ? GTDraw.OutputType.SVG : GTDraw.OutputType.PNG);
+        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG);
         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, outputFile)
                 .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, cdParams)
                 .setParam(DrawParams.CIRCULATIONS_PARAM, circulations));

@@ -37,7 +37,7 @@ public class CirculationDrawOutput extends DrawOutput {
         CirculationDrawParams cdParams = params.getParamValue(CD_PARAMS, CirculationDrawParams.class);
         if (cdParams == null) {
             // create default values
-            cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5, GTDraw.OutputType.SVG);
+            cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5, FileOutputType.SVG);
         }
         return cdParams;
     }
@@ -51,7 +51,7 @@ public class CirculationDrawOutput extends DrawOutput {
         return circulations;
     }
 
-    private void draw(GTDraw.OutputType outputType, OutputStream stream, final CirculationDraw draw) throws OutputException {
+    private void draw(FileOutputType outputType, OutputStream stream, final CirculationDraw draw) throws OutputException {
         this.draw(new Image() {
 
             @Override

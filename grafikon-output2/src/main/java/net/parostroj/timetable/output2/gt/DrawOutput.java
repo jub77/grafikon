@@ -33,7 +33,7 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         super(locale);
     }
 
-    protected void draw(Image image, GTDraw.OutputType outputType, OutputStream stream) throws OutputException {
+    protected void draw(Image image, FileOutputType outputType, OutputStream stream) throws OutputException {
         switch (outputType) {
             case PNG:
                 BufferedImage testImg = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
