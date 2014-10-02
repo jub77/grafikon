@@ -1,14 +1,10 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.util.Arrays;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.actions.execution.*;
@@ -17,15 +13,12 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.GTDrawParams;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 /**
  * GT view with save dialog.
@@ -82,7 +75,6 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                 try {
                     Dimension saveSize = dialog.getSaveSize();
                     // get values and provide save
-                    GTDraw drawFile = null;
                     GTViewSettings config = getSettings();
                     config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
                     TrainDiagram diagram = getDiagram();
@@ -94,49 +86,21 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     }
                     config.set(GTViewSettings.Key.SIZE, saveSize);
                     config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
-                    drawFile = drawFactory.createInstance(config.getGTDrawType(), config.createGTDrawSettings(), getRoute(), gtStorage);
 
-                    if (dialog.getImageType() == SaveImageDialog.Type.PNG) {
-                        BufferedImage img = new BufferedImage(saveSize.width, saveSize.height, BufferedImage.TYPE_INT_RGB);
-                        Graphics2D g2d = img.createGraphics();
-                        g2d.setColor(Color.white);
-                        g2d.fillRect(0, 0, saveSize.width, saveSize.height);
-                        drawFile.draw(g2d);
+                    try {
+                        OutputFactory factory = OutputFactory.newInstance("draw");
+                        Output output = factory.createOutput("diagram");
 
-                        try {
-                            ImageIO.write(img, "png", dialog.getSaveFile());
-                        } catch (IOException e) {
-                            log.warn("Error saving file: " + dialog.getSaveFile(), e);
-                            error = true;
-                        }
-                    } else if (dialog.getImageType() == SaveImageDialog.Type.SVG) {
-                        DOMImplementation domImpl =
-                                GenericDOMImplementation.getDOMImplementation();
+                        GTDrawParams gtParams = new GTDrawParams(config.getGTDrawType(),
+                                config.createGTDrawSettings(),
+                                dialog.getImageType() == SaveImageDialog.Type.PNG ? GTDraw.OutputType.PNG : GTDraw.OutputType.SVG);
 
-                        // Create an instance of org.w3c.dom.Document.
-                        String svgNS = "http://www.w3.org/2000/svg";
-                        Document document = domImpl.createDocument(svgNS, "svg", null);
-
-                        SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
-                        SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-
-                        g2d.setSVGCanvasSize(saveSize);
-
-                        drawFile.draw(g2d);
-
-                        // write to ouput - do not use css style
-                        boolean useCSS = false;
-                        try {
-                            Writer out = new OutputStreamWriter(new FileOutputStream(dialog.getSaveFile()), "UTF-8");
-                            try {
-                                g2d.stream(out, useCSS);
-                            } finally {
-                                out.close();
-                            }
-                        } catch (IOException e) {
-                            log.warn("Error saving file: " + dialog.getSaveFile(), e);
-                            error = true;
-                        }
+                        output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, dialog.getSaveFile())
+                                .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.GT_PARAMS, gtParams)
+                                .setParam(DrawParams.ROUTES_PARAM, Arrays.asList(getRoute())));
+                    } catch (OutputException e) {
+                        log.warn("Error saving file: " + dialog.getSaveFile(), e);
+                        error = true;
                     }
                 } finally {
                     log.debug("Image save finished in {}ms", System.currentTimeMillis() - time);
