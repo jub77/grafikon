@@ -14,8 +14,8 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.gt.GTDraw;
 import net.parostroj.timetable.output2.gt.GTDrawParams;
+import net.parostroj.timetable.output2.gt.FileOutputType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +93,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
 
                         GTDrawParams gtParams = new GTDrawParams(config.getGTDrawType(),
                                 config.createGTDrawSettings(),
-                                dialog.getImageType() == SaveImageDialog.Type.PNG ? GTDraw.OutputType.PNG : GTDraw.OutputType.SVG);
+                                dialog.getImageType() == SaveImageDialog.Type.PNG ? FileOutputType.PNG : FileOutputType.SVG);
 
                         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, dialog.getSaveFile())
                                 .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.GT_PARAMS, gtParams)

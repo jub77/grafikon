@@ -60,7 +60,7 @@ public class GTDrawOutput extends DrawOutput {
         return route;
     }
 
-    private void draw(final GTDrawSettings settings, GTDraw.OutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
+    private void draw(final GTDrawSettings settings, FileOutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
         this.draw(new Image() {
 
             @Override
