@@ -7,9 +7,6 @@ import net.parostroj.timetable.model.*;
 
 public interface GTDraw {
 
-    public static final String ROUTES_PARAM = "routes";
-    public static final String GT_PARAMS = "gt.params";
-
     enum Change {
         REMOVED_TRAIN, TRAIN_TEXT_CHANGED, NODE_TEXT_CHANGED, ALL_TRAIN_TEXTS_CHANGED,
         TRAIN_INTERVALS_CHANGED
