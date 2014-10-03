@@ -1,9 +1,8 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
-import java.awt.font.TextLayout;
+import java.awt.font.LineMetrics;
 import java.awt.geom.*;
-import java.nio.CharBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import com.google.common.base.Predicate;
  * @author jub
  */
 abstract public class GTDrawBase implements GTDraw {
-
 
     private static final Logger log = LoggerFactory.getLogger(GTDrawBase.class);
 
@@ -77,9 +75,8 @@ abstract public class GTDrawBase implements GTDraw {
     protected Predicate<TimeInterval> intervalFilter;
 
     // caching
-    private final Map<Node, TextLayout> nodeTexts = new HashMap<Node, TextLayout>();
-    private final Map<Train, TextLayout> trainTexts = new HashMap<Train, TextLayout>();
-    private final Map<Integer, TextLayout> hoursTexts = new HashMap<Integer, TextLayout>();
+    private final Map<String, Rectangle> stringBounds = new HashMap<String, Rectangle>();
+    private final Map<Node, String> nodeStrings = new HashMap<Node, String>();
 
     public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         this.route = route;
@@ -174,8 +171,7 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     private int computeInitialGapX(Graphics2D g, int gapx) {
-        String w = CharBuffer.allocate(10).toString().replace('\0', 'M');
-        return (int) g.getFont().getStringBounds(w, g.getFontRenderContext()).getWidth();
+        return this.getMSize(g).width * gapx;
     }
 
     @Override
@@ -296,13 +292,10 @@ abstract public class GTDrawBase implements GTDraw {
             int xLocation = this.getX(timeToPaint);
             // draw hours
             g.setColor(Color.black);
-            TextLayout tl = hoursTexts.get(h);
-            if (tl == null) {
-                tl = new TextLayout(Integer.toString(h), g.getFont(), g.getFontRenderContext());
-                hoursTexts.put(h, tl);
-            }
-            Rectangle2D rr = tl.getBounds();
-            tl.draw(g, xLocation - (int) (rr.getWidth() / 2) + 1, start.y - 3);
+
+            String hStr = Integer.toString(h);
+            Rectangle rr = this.getStringBounds(hStr, g);
+            g.drawString(hStr, xLocation - rr.width / 2 + 1, start.y - 3);
         }
     }
 
@@ -395,32 +388,39 @@ abstract public class GTDrawBase implements GTDraw {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            String name = TransformUtil.transformStation(s, null, null).trim();
+            String name = null;
             int y = this.getY(s, null);
             // draw name of the station
-            Font f = g.getFont();
-            Rectangle2D b = null;
-            if (!nodeTexts.containsKey(s)) {
-                String transName = name;
-                int nameLength = name.length();
-                while (b == null || b.getWidth() >= gapStationX) {
-                    b = f.getStringBounds(transName, g.getFontRenderContext());
-                    if (b.getWidth() >= gapStationX) {
+            if (!nodeStrings.containsKey(s)) {
+                String origName = TransformUtil.transformStation(s, null, null).trim();
+                String transName = origName;
+                int nameLength = transName.length();
+                boolean found = false;
+                while (!found) {
+                    int w = this.getStringWidth(transName, g);
+                    if (w >= gapStationX) {
                         nameLength -= 1;
-                        transName = name.substring(0, nameLength);
+                        transName = origName.substring(0, nameLength);
                         transName += "...";
+                    } else {
+                        name = transName;
+                        nodeStrings.put(s, name);
+                        found = true;
                     }
                 }
-                nodeTexts.put(s, new TextLayout(transName, g.getFont(), g.getFontRenderContext()));
+            } else {
+                name = nodeStrings.get(s);
             }
-            TextLayout tl = nodeTexts.get(s);
-            Rectangle2D r = tl.getBounds();
-            Rectangle2D r2 = new Rectangle2D.Float(this.borderX + stationNamesPosition, (float) (y + r.getY() - 1 + r.getHeight() / 2),
-                    (float) (r.getWidth() + 2), (float) (r.getHeight() + 2));
+            Rectangle b = this.getStringBounds(name, g);
+            FontInfo fi = this.getFontInfo(g);
+            int sx = this.borderX + stationNamesPosition;
+            int sy = y - fi.strikeThrough;
+            int ow = Math.round(this.getMSize(g).width / 5);
+            Rectangle r2 = new Rectangle(sx - ow, sy + fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
             g.setColor(background);
             g.fill(r2);
             g.setColor(Color.black);
-            tl.draw(g, (float) (r2.getX() + 1), (float) (r2.getY() + 1 - r.getY()));
+            g.drawString(name, sx, sy);
         }
     }
 
@@ -430,28 +430,26 @@ abstract public class GTDrawBase implements GTDraw {
         double lengthY = line.getY2() - line.getY1();
         double lengthX = line.getX2() - line.getX1();
         // get length
-        double length = Math.sqrt(Math.pow(lengthY, 2) + Math.pow(lengthX, 2));
+        int length = (int) Math.round(Math.sqrt(Math.pow(lengthY, 2) + Math.pow(lengthX, 2)));
         AffineTransform newTransform = g.getTransform();
         newTransform.translate(line.getX1(), line.getY1());
         newTransform.rotate(lengthX, lengthY);
         g.setTransform(newTransform);
         // length of the text
         Train train = interval.getTrain();
-        if (!trainTexts.containsKey(train)) {
-            trainTexts.put(train, new TextLayout(train.getName(), g.getFont(), g.getFontRenderContext()));
-        }
-        TextLayout layout = trainTexts.get(train);
-        Rectangle2D rr = layout.getBounds();
+        String trainName = train.getName();
+        Rectangle rr = this.getStringBounds(trainName, g);
         Shape nameShape = null;
 
-        int shift = (int)(length - rr.getWidth()) / 2;
+        int shift = (length - rr.width) / 2;
+        int above = this.getMSize(g).height / 3;
+        FontInfo fi = this.getFontInfo(g);
         // ensure half M size before and after train name
-        if (length - (rr.getWidth() + this.getMSize(g).getWidth()) > 0) {
-            layout.draw(g, shift, -5);
+        if (length - (rr.width + this.getMSize(g).width) > 0) {
+            g.drawString(trainName, shift, -above);
             if (this.isCollectorCollecting(train)) {
-                Rectangle rec = rr.getBounds();
-                rec.translate(shift, -5);
-                nameShape = newTransform.createTransformedShape(rec);
+                rr.translate(shift, -(above - fi.descent + fi.height));
+                nameShape = newTransform.createTransformedShape(rr);
                 try {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
                 } catch (Exception e) {
@@ -466,23 +464,52 @@ abstract public class GTDrawBase implements GTDraw {
         }
     }
 
-    private Rectangle2D digitSize;
-    private Rectangle2D mSize;
+    private Rectangle digitSize;
+    private Rectangle mSize;
+    private FontInfo fontInfo;
 
     @Override
-    public Rectangle2D getDigitSize(Graphics2D g) {
+    public Rectangle getDigitSize(Graphics2D g) {
         if (digitSize == null) {
-            digitSize = g.getFont().getStringBounds(DIGIT_CHAR, g.getFontRenderContext());
+            digitSize = this.getCharSize(DIGIT_CHAR, g);
         }
         return digitSize;
     }
 
     @Override
-    public Rectangle2D getMSize(Graphics2D g) {
+    public Rectangle getMSize(Graphics2D g) {
         if (mSize == null) {
-            mSize = g.getFont().getStringBounds(M_CHAR, g.getFontRenderContext());
+            mSize = this.getCharSize(M_CHAR, g);
         }
         return mSize;
+    }
+
+    protected FontInfo getFontInfo(Graphics2D g) {
+        if (fontInfo == null) {
+            LineMetrics lm = g.getFont().getLineMetrics("0", g.getFontRenderContext());
+            fontInfo = new FontInfo(Math.round(lm.getStrikethroughOffset()),
+                    Math.round(lm.getDescent()),
+                    Math.round(lm.getHeight()));
+        }
+        return fontInfo;
+    }
+
+    private Rectangle getCharSize(String ch, Graphics2D g) {
+        FontMetrics fm = g.getFontMetrics();
+        FontInfo info = this.getFontInfo(g);
+        return new Rectangle(fm.stringWidth(ch), info.height);
+    }
+
+    private int getStringWidth(String str, Graphics2D g) {
+        return g.getFontMetrics().stringWidth(str);
+    }
+
+    protected Rectangle getStringBounds(String str, Graphics2D g) {
+        Rectangle rectangle = this.stringBounds.get(str);
+        if (rectangle == null) {
+            rectangle = new Rectangle(g.getFontMetrics().stringWidth(str), getFontInfo(g).height);
+        }
+        return rectangle;
     }
 
     protected void paintMinutesOnLine(Graphics2D g, TimeInterval interval, Line2D line) {
@@ -603,13 +630,14 @@ abstract public class GTDrawBase implements GTDraw {
     public void changed(Change change, Object object) {
         switch(change) {
             case REMOVED_TRAIN: case TRAIN_TEXT_CHANGED:
-                trainTexts.remove(object);
+                stringBounds.remove(((Train) object).getName());
                 break;
             case NODE_TEXT_CHANGED:
-                nodeTexts.remove(object);
+                stringBounds.remove(((Node) object).getName());
+                nodeStrings.remove(object);
                 break;
             case ALL_TRAIN_TEXTS_CHANGED:
-                trainTexts.clear();
+                stringBounds.clear();
                 break;
             case TRAIN_INTERVALS_CHANGED:
                 // nothing
@@ -618,4 +646,16 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     abstract protected Stroke getTrainStroke();
+
+    private static class FontInfo {
+        int strikeThrough;
+        int descent;
+        int height;
+
+        public FontInfo(int strikeThrough, int descent, int height) {
+            this.strikeThrough = strikeThrough;
+            this.descent = descent;
+            this.height = height;
+        }
+    }
 }
