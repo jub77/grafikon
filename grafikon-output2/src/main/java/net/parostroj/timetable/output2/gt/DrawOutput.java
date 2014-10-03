@@ -1,11 +1,12 @@
 package net.parostroj.timetable.output2.gt;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.RenderingHints.Key;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -36,46 +37,61 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
     protected void draw(Image image, FileOutputType outputType, OutputStream stream) throws OutputException {
         switch (outputType) {
             case PNG:
-                BufferedImage testImg = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-                Dimension pngSize = image.getSize(testImg.createGraphics());
-
-                BufferedImage img = new BufferedImage(pngSize.width, pngSize.height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2d = img.createGraphics();
-                g2d.setColor(Color.white);
-                g2d.fillRect(0, 0, pngSize.width, pngSize.height);
-                image.draw(g2d);
-
-                try {
-                    ImageIO.write(img, "png", stream);
-                } catch (IOException e) {
-                    throw new OutputException(e.getMessage(), e);
-                }
+                this.processPng(image, stream);
                 break;
             case SVG:
-                DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-
-                // Create an instance of org.w3c.dom.Document.
-                String svgNS = "http://www.w3.org/2000/svg";
-                Document document = domImpl.createDocument(svgNS, "svg", null);
-
-                SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
-                SVGGraphics2D g2db = new SVGGraphics2D(context, false);
-
-                Dimension svgSize = image.getSize(g2db);
-
-                g2db.setSVGCanvasSize(svgSize);
-
-                image.draw(g2db);
-
-                // write to ouput - do not use css style
-                boolean useCSS = false;
-                try {
-                    Writer out = new OutputStreamWriter(stream, "UTF-8");
-                    g2db.stream(out, useCSS);
-                } catch (IOException e) {
-                    throw new OutputException(e.getMessage(), e);
-                }
+                this.processSvg(image, stream);
                 break;
+        }
+    }
+
+    private void processSvg(Image image, OutputStream stream) throws OutputException {
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+
+        // Create an instance of org.w3c.dom.Document.
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        SVGGeneratorContext context = SVGGeneratorContext.createDefault(document);
+        context.setGraphicContextDefaults(new SVGGeneratorContext.GraphicContextDefaults());
+        // set default font
+        context.getGraphicContextDefaults().setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        // set antialiasing
+        Map<Key, Object> map = new HashMap<Key, Object>();
+        map.put(RenderingHints.KEY_ANTIALIASING, Boolean.TRUE);
+        map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        context.getGraphicContextDefaults().setRenderingHints(new RenderingHints(map));
+
+        SVGGraphics2D g2d = new SVGGraphics2D(context, false);
+        Dimension size = image.getSize(g2d);
+        g2d.setSVGCanvasSize(size);
+
+        image.draw(g2d);
+
+        // write to ouput - do not use css style
+        boolean useCSS = false;
+        try {
+            Writer out = new OutputStreamWriter(stream, "UTF-8");
+            g2d.stream(out, useCSS);
+        } catch (IOException e) {
+            throw new OutputException(e.getMessage(), e);
+        }
+    }
+
+    private void processPng(Image image, OutputStream stream) throws OutputException {
+        BufferedImage testImg = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        Dimension size = image.getSize(testImg.createGraphics());
+
+        BufferedImage img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, size.width, size.height);
+        image.draw(g2d);
+
+        try {
+            ImageIO.write(img, "png", stream);
+        } catch (IOException e) {
+            throw new OutputException(e.getMessage(), e);
         }
     }
 }
