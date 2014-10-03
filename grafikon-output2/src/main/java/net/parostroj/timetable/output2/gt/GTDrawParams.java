@@ -11,19 +11,17 @@ public class GTDrawParams {
 
     private final GTDraw.Type type;
     private final GTDrawSettings settings;
-    private final FileOutputType outputType;
 
     public GTDrawParams() {
-        this(GTDraw.Type.CLASSIC, GTDrawSettings.create(), FileOutputType.SVG);
+        this(GTDraw.Type.CLASSIC, GTDrawSettings.create());
     }
 
-    public GTDrawParams(Type type, GTDrawSettings settings, FileOutputType outputType) {
-        if (outputType == null || type == null || settings == null) {
+    public GTDrawParams(Type type, GTDrawSettings settings) {
+        if (type == null || settings == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
         this.type = type;
         this.settings = settings;
-        this.outputType = outputType;
     }
 
     public GTDrawSettings getSettings() {
@@ -32,9 +30,5 @@ public class GTDrawParams {
 
     public GTDraw.Type getType() {
         return type;
-    }
-
-    public FileOutputType getOutputType() {
-        return outputType;
     }
 }

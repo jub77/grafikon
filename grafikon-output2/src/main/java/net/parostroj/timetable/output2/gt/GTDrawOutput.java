@@ -28,11 +28,22 @@ public class GTDrawOutput extends DrawOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        Route route = this.getRoute(params, diagram);
-        GTDrawParams gtParams = this.getParams(params);
+        GTDraw draw = this.getDraw(params);
+        if (draw == null) {
+            Route route = this.getRoute(params, diagram);
+            GTDrawParams gtParams = this.getParams(params);
+            draw = drawFactory.createInstance(gtParams.getType(), gtParams.getSettings(), route, new GTStorage());
+        }
+        this.draw(this.getFileOutputType(params), stream, draw);
+    }
 
-        GTDraw draw = drawFactory.createInstance(gtParams.getType(), gtParams.getSettings(), route, new GTStorage());
-        this.draw(gtParams.getSettings(), gtParams.getOutputType(), stream, draw);
+    private GTDraw getDraw(OutputParams params) {
+        Collection<?> draws = params.getParamValue(GT_DRAWS, Collection.class);
+        if (draws != null && !draws.isEmpty()) {
+            return (GTDraw) draws.iterator().next();
+        } else {
+            return null;
+        }
     }
 
     private GTDrawParams getParams(OutputParams params) {
@@ -60,12 +71,12 @@ public class GTDrawOutput extends DrawOutput {
         return route;
     }
 
-    private void draw(final GTDrawSettings settings, FileOutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
+    private void draw(FileOutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
         this.draw(new Image() {
 
             @Override
             public Dimension getSize(Graphics2D g) {
-                return settings.get(GTDrawSettings.Key.SIZE, Dimension.class);
+                return draw.getSize();
             }
 
             @Override
