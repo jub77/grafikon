@@ -1,7 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 import net.parostroj.timetable.model.*;
 
@@ -58,12 +58,12 @@ public abstract class GTDrawDecorator implements GTDraw {
     }
 
     @Override
-    public Rectangle2D getDigitSize(Graphics2D g) {
+    public Rectangle getDigitSize(Graphics2D g) {
         return draw.getDigitSize(g);
     }
 
     @Override
-    public Rectangle2D getMSize(Graphics2D g) {
+    public Rectangle getMSize(Graphics2D g) {
         return draw.getMSize(g);
     }
 }
