@@ -14,8 +14,8 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.gt.GTDrawParams;
 import net.parostroj.timetable.output2.gt.FileOutputType;
+import net.parostroj.timetable.output2.gt.GTDrawParams;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,12 +92,13 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                         Output output = factory.createOutput("diagram");
 
                         GTDrawParams gtParams = new GTDrawParams(config.getGTDrawType(),
-                                config.createGTDrawSettings(),
-                                dialog.getImageType() == SaveImageDialog.Type.PNG ? FileOutputType.PNG : FileOutputType.SVG);
+                                config.createGTDrawSettings());
 
                         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, dialog.getSaveFile())
                                 .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.GT_PARAMS, gtParams)
-                                .setParam(DrawParams.ROUTES_PARAM, Arrays.asList(getRoute())));
+                                .setParam(DrawParams.ROUTES_PARAM, Arrays.asList(getRoute()))
+                                .setParam(DrawParams.OUTPUT_TYPE,
+                                        dialog.getImageType() == SaveImageDialog.Type.PNG ? FileOutputType.PNG : FileOutputType.SVG));
                     } catch (OutputException e) {
                         log.warn("Error saving file: " + dialog.getSaveFile(), e);
                         error = true;

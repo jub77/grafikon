@@ -1,7 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 import net.parostroj.timetable.model.*;
 
@@ -36,7 +36,5 @@ public interface GTDraw {
 
     int getY(TimeInterval interval);
 
-    Rectangle getDigitSize(Graphics2D g);
-
-    Rectangle getMSize(Graphics2D g);
+    Dimension getSize();
 }

@@ -30,14 +30,14 @@ public class CirculationDrawOutput extends DrawOutput {
 
         CirculationDraw draw = new CirculationDraw(circulations, cdParams.getFrom(), cdParams.getTo(), cdParams.getStep());
 
-        this.draw(cdParams.getOutputType(), stream, draw);
+        this.draw(this.getFileOutputType(params), stream, draw);
     }
 
     private CirculationDrawParams getParams(OutputParams params) {
         CirculationDrawParams cdParams = params.getParamValue(CD_PARAMS, CirculationDrawParams.class);
         if (cdParams == null) {
             // create default values
-            cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5, FileOutputType.SVG);
+            cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5);
         }
         return cdParams;
     }

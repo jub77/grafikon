@@ -50,10 +50,11 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         Output output = factory.createOutput("circulations");
         Tuple<Integer> limits = this.getLimits();
         List<TrainsCycle> circulations = this.getCirculations();
-        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG);
+        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth);
         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, outputFile)
                 .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, cdParams)
-                .setParam(DrawParams.CIRCULATIONS_PARAM, circulations));
+                .setParam(DrawParams.CIRCULATIONS_PARAM, circulations)
+                .setParam(DrawParams.OUTPUT_TYPE, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG));
     }
 
     @Override

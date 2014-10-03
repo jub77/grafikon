@@ -34,6 +34,11 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         super(locale);
     }
 
+    protected FileOutputType getFileOutputType(OutputParams params) {
+        FileOutputType type = params.getParamValue(OUTPUT_TYPE, FileOutputType.class);
+        return type != null ? type : FileOutputType.SVG;
+    }
+
     protected void draw(Image image, FileOutputType outputType, OutputStream stream) throws OutputException {
         switch (outputType) {
             case PNG:

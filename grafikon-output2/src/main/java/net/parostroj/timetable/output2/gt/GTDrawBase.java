@@ -469,16 +469,14 @@ abstract public class GTDrawBase implements GTDraw {
     private Rectangle mSize;
     private FontInfo fontInfo;
 
-    @Override
-    public Rectangle getDigitSize(Graphics2D g) {
+    protected Rectangle getDigitSize(Graphics2D g) {
         if (digitSize == null) {
             digitSize = this.getCharSize(DIGIT_CHAR, g);
         }
         return digitSize;
     }
 
-    @Override
-    public Rectangle getMSize(Graphics2D g) {
+    protected Rectangle getMSize(Graphics2D g) {
         if (mSize == null) {
             mSize = this.getCharSize(M_CHAR, g);
         }
@@ -604,11 +602,13 @@ abstract public class GTDrawBase implements GTDraw {
     	return interval.getTrain().getTrainDiagram().getTimeConverter();
     }
 
+    @Override
     public int getX(int time) {
         int x = start != null ? (int)(start.x + (time - startTime) * timeStep) : -1;
         return x;
     }
 
+    @Override
     public int getY(Node node, Track track) {
         Integer position = positions.get(node);
         return position != null ? start.y + position : -1;
@@ -617,6 +617,11 @@ abstract public class GTDrawBase implements GTDraw {
     @Override
     public int getY(TimeInterval interval) {
         return this.getY(interval.getOwnerAsNode(), interval.getTrack());
+    }
+
+    @Override
+    public Dimension getSize() {
+        return preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
     }
 
     protected boolean isTimeVisible(int time1, int time2) {
