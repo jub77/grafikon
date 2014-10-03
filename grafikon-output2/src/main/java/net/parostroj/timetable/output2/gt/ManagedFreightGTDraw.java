@@ -1,7 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
-import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.util.*;
 import java.util.List;
@@ -82,15 +81,15 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         }
         int dir = conn.getFrom().getOwnerAsNode() == firstNode ? -1 : 1;
         Tuple<Point> location = getLocation(conn, dir);
-        TextLayout layout = new TextLayout(this.createText(conn), g.getFont(), g.getFontRenderContext());
-        Rectangle bounds = layout.getBounds().getBounds();
+        String text = this.createText(conn);
+        Rectangle bounds = g.getFont().getStringBounds(text, g.getFontRenderContext()).getBounds();
         int width = bounds.width;
         if (location.first != null) {
-            paintText(conn, g, layout, location.first, width, dir);
+            paintText(conn, text, g, new Rectangle(bounds), location.first, width, dir);
             paintLine(conn, g, location.first, width, true, dir);
         }
         if (location.second != null) {
-            paintText(conn, g, layout, location.second, width, dir);
+            paintText(conn, text, g, new Rectangle(bounds), location.second, width, dir);
             paintLine(conn, g, location.second, width, false, dir);
         }
     }
@@ -106,19 +105,18 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         return collision;
     }
 
-    private void paintText(FNConnection conn, Graphics2D g, TextLayout layout, Point point, int width, int dir) {
-        Rectangle rectangle = layout.getBounds().getBounds();
+    private void paintText(FNConnection conn, String text, Graphics2D g, Rectangle rectangle, Point point, int width, int dir) {
         int dyStart = dir > 0 ? point.y - 2 * arrow : point.y + rectangle.height;
         if (dir < 0) {
             point.y += rectangle.height;
         }
         rectangle.translate(point.x - (width / 2), dyStart);
         while (collisions(rectangle)) {
-            int dy = - (rectangle.height + 2 * arrow) * dir;
+            int dy = - (rectangle.height + arrow - rectangle.height / 5) * dir;
             rectangle.translate(0, dy);
             point.y += dy;
         }
-        layout.draw(g, rectangle.x, rectangle.y + rectangle.height);
+        g.drawString(text, rectangle.x, rectangle.y + rectangle.height);
         written.add(rectangle);
         if (collector != null) {
             collector.addRegion(conn, rectangle);
@@ -127,6 +125,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private void paintLine(FNConnection conn, Graphics2D g, Point point, int width, boolean left, int dir) {
         int half = (width + lineExtend) / 2;
+        int halfArrow = arrow / 2;
         int x1 = point.x - half;
         int y = point.y - (arrow * dir);
         int x2 = point.x + half;
@@ -135,13 +134,13 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         // draw arrow
         Polygon p = new Polygon();
         if (left) {
-            p.addPoint(x2 - arrow, y - arrow);
-            p.addPoint(x2, y);
-            p.addPoint(x2 - arrow, y + arrow);
+            p.addPoint(x2 - arrow + halfArrow, y - arrow);
+            p.addPoint(x2 + halfArrow, y);
+            p.addPoint(x2 - arrow + halfArrow, y + arrow);
         } else {
-            p.addPoint(x1, y - arrow);
-            p.addPoint(x1 + arrow, y);
-            p.addPoint(x1, y + arrow);
+            p.addPoint(x1 - halfArrow, y - arrow);
+            p.addPoint(x1 + arrow - halfArrow, y);
+            p.addPoint(x1 - halfArrow, y + arrow);
         }
         g.fill(p);
 
