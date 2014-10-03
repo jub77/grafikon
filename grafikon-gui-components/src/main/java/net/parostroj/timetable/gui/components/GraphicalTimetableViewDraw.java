@@ -361,7 +361,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
         if (draw != null) {
             draw.draw((Graphics2D) g);
-            mSize = draw.getMSize((Graphics2D) g);
+            draw.getMSize((Graphics2D) g);
         } else {
             // draw information about context menu
             g.drawString(ResourceLoader.getString("gt.contextmenu.info"), 20, 20);
