@@ -454,6 +454,7 @@ abstract public class GTDrawBase implements GTDraw {
                     nameShape = old.createInverse().createTransformedShape(nameShape);
                 } catch (Exception e) {
                     log.error("Error transform name shape.", e);
+                    nameShape = null;
                 }
             }
         }
