@@ -99,4 +99,8 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
         }
         return result;
     }
+
+    public Collection<Pair<Shape, TimeInterval>> getRegionsForTrain(Train train) {
+        return regions.get(train);
+    }
 }
