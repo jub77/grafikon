@@ -295,18 +295,20 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     }
 
     protected void recreateDraw() {
-        Route drawnRoute = this.getRoute();
-        if (drawnRoute == null) {
+        if (this.getRoute() == null) {
             draw = null;
         } else {
             trainRegionCollector.clear();
-            GTViewSettings config = this.getSettings();
-            if (!config.contains(GTViewSettings.Key.SIZE)) {
-                config.set(GTViewSettings.Key.SIZE, this.getSize());
-            }
-            draw = drawFactory.createInstance(config.getGTDrawType(), config.createGTDrawSettings(), drawnRoute, gtStorage);
+            draw = this.createDraw(this.getSettings());
         }
         this.repaint();
+    }
+
+    protected GTDraw createDraw(GTViewSettings config) {
+        if (!config.contains(GTViewSettings.Key.SIZE)) {
+            config.set(GTViewSettings.Key.SIZE, this.getSize());
+        }
+        return drawFactory.createInstance(config.getGTDrawType(), config.createGTDrawSettings(), this.getRoute(), gtStorage);
     }
 
     private void resize() {
