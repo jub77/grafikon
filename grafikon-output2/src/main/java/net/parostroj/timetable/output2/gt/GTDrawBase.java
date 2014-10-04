@@ -1,13 +1,13 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
-import java.awt.font.LineMetrics;
 import java.awt.geom.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.TransformUtil;
 
 import org.slf4j.Logger;
@@ -485,10 +485,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     protected FontInfo getFontInfo(Graphics2D g) {
         if (fontInfo == null) {
-            LineMetrics lm = g.getFont().getLineMetrics("0", g.getFontRenderContext());
-            fontInfo = new FontInfo(Math.round(lm.getStrikethroughOffset()),
-                    Math.round(lm.getDescent()),
-                    Math.round(lm.getHeight()));
+            fontInfo = DrawUtils.createFontInfo(g.getFont(), g);
         }
         return fontInfo;
     }
@@ -652,16 +649,4 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     abstract protected Stroke getTrainStroke();
-
-    private static class FontInfo {
-        int strikeThrough;
-        int descent;
-        int height;
-
-        public FontInfo(int strikeThrough, int descent, int height) {
-            this.strikeThrough = strikeThrough;
-            this.descent = descent;
-            this.height = height;
-        }
-    }
 }
