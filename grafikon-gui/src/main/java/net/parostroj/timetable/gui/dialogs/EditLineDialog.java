@@ -440,7 +440,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         if (unlimitedSpeedCheckBox.isSelected()) {
             speedTextField.setText("");
         } else {
-            speedTextField.setText(Integer.toString(line.getTopSpeed()));
+            speedTextField.setText(line.getTopSpeed() != null ? Integer.toString(line.getTopSpeed()) : "");
         }
     }
 
