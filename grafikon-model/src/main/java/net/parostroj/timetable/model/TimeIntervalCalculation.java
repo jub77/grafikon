@@ -9,7 +9,7 @@ import net.parostroj.timetable.actions.TrainsHelper;
 /**
  * @author jub
  */
-public class TimeIntervalCalculation {
+class TimeIntervalCalculation {
 
     private final List<TimeInterval> list;
     private final TimeInterval interval;
