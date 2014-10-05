@@ -407,10 +407,42 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     }
 
     /**
+     * @return if the current interval is straight from previous one
+     */
+    public boolean isFromStraight() {
+        Track from = null;
+        Track to = null;
+        if (isLineOwner()) {
+            from = this.getPreviousTrainInterval().getTrack();
+            to = this.getToStraightTrack();
+        } else {
+            from = this.getPreviousTrainInterval().getFromStraightTrack();
+            to = this.getTrack();
+        }
+        return from == to;
+    }
+
+    /**
      * @return to node straight track for interval that belongs to line otherwise <code>null</code>
      */
     public NodeTrack getToStraightTrack() {
         return (owner instanceof Line && track != null) ? ((LineTrack) track).getToStraightTrack(direction) : null;
+    }
+
+    /**
+     * @return if the current interval is straight to next one
+     */
+    public boolean isToStraight() {
+        Track from = null;
+        Track to = null;
+        if (isLineOwner()) {
+            from = this.getToStraightTrack();
+            to = this.getNextTrainInterval().getTrack();
+        } else {
+            from = this.getTrack();
+            to = this.getNextTrainInterval().getFromStraightTrack();
+        }
+        return from == to;
     }
 
     /**
