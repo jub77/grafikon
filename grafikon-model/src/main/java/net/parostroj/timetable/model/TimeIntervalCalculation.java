@@ -143,6 +143,7 @@ class TimeIntervalCalculation {
         binding.put("penaltySolver", ps);
         binding.put("train", train);
         binding.put("converter", converter);
+        binding.put("interval", interval);
         binding.put("diagram", train.getTrainDiagram());
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
