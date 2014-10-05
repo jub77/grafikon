@@ -174,44 +174,6 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         return new TimeIntervalResult(status, overlaps);
     }
 
-    public int computeFromSpeed(TimeInterval interval) {
-        if (!interval.isLineOwner())
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        int i = this.indexOf(interval);
-        if (i == -1)
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        return this.computeFromSpeed(interval, i);
-    }
-
-    public int computeToSpeed(TimeInterval interval) {
-        if (!interval.isLineOwner())
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        int i = this.indexOf(interval);
-        if (i == -1)
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        return this.computeToSpeed(interval, i);
-    }
-
-    public int computeFromSpeed(TimeInterval interval, int i) {
-        // previous node is stop - first node or node has not null time
-        if ((i - 1) == 0 || this.get(i - 1).getLength() != 0) {
-            return 0;
-        } else {
-            // check speed of previous line
-            return this.get(i - 2).computeSpeed();
-        }
-    }
-
-    public int computeToSpeed(TimeInterval interval, int i) {
-        // next node is stop - last node or node has not null time
-        if ((i + 1) == (this.size() - 1) || this.get(i + 1).getLength() != 0) {
-            return 0;
-        } else {
-            // check speed of previous line
-            return this.get(i + 2).computeSpeed();
-        }
-    }
-
     public boolean updateInterval(TimeInterval interval) {
         int i = this.indexOf(interval);
         if (i == -1) {
@@ -240,11 +202,12 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
             throw new IllegalArgumentException("Line is not owner of the interval.");
         }
         // compute running time
-        int computedSpeed = interval.computeSpeed();
-        int runnningTime = interval.getOwnerAsLine().computeRunningTime(
-                interval.getTrain(), computedSpeed,
-                this.computeFromSpeed(interval, i),
-                this.computeToSpeed(interval, i), interval.getAddedTime());
+        TimeIntervalCalculation calculation = interval.getCalculation();
+        int computedSpeed = calculation.computeSpeed();
+        int runnningTime = calculation.computeRunningTime(
+                computedSpeed,
+                calculation.computeFromSpeed(i),
+                calculation.computeToSpeed(i), interval.getAddedTime());
         interval.setLength(runnningTime);
         interval.setSpeed(computedSpeed);
         boolean changed = interval.isChanged();

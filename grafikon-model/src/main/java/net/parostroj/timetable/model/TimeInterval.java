@@ -41,6 +41,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Changed - used for indication that the time interval for whatever reason changed. */
     private boolean changed;
 
+    private final TimeIntervalCalculation calculation;
+
     /**
      * creates instance of an time interval.
      *
@@ -64,6 +66,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.setAttributes(new Attributes());
         this.id = id;
         this.addedTime = addedTime;
+        this.calculation = new TimeIntervalCalculation(train, this);
     }
 
     /**
@@ -206,10 +209,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
             this.speedLimit = speed;
             this.setChanged();
         }
-    }
-
-    public Integer computeSpeed() {
-        return isLineOwner() ? getOwnerAsLine().computeSpeed(getTrain(), this, this.getSpeedLimit()) : null;
     }
 
     public Integer getSpeed() {
@@ -569,6 +568,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     public TimeInterval getPreviousTrainInterval() {
         return this.getTrainInterval(-1);
+    }
+
+    public TimeIntervalCalculation getCalculation() {
+        return calculation;
     }
 
     @Override

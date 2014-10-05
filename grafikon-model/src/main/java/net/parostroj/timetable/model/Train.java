@@ -252,6 +252,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return Collections.unmodifiableList(timeIntervalList);
     }
 
+    protected TimeIntervalList getIntervalList() {
+        return timeIntervalList;
+    }
+
     /**
      * @return map with trains cycle items
      */
