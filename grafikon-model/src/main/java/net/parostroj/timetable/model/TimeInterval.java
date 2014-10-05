@@ -403,14 +403,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @return from node track straight for interval that belongs to line otherwise <code>null</code>
      */
     public NodeTrack getFromStraightTrack() {
-        return (owner instanceof Line) ? ((LineTrack) track).getFromStraightTrack(direction) : null;
+        return (owner instanceof Line && track != null) ? ((LineTrack) track).getFromStraightTrack(direction) : null;
     }
 
     /**
      * @return to node straight track for interval that belongs to line otherwise <code>null</code>
      */
     public NodeTrack getToStraightTrack() {
-        return (owner instanceof Line) ? ((LineTrack) track).getToStraightTrack(direction) : null;
+        return (owner instanceof Line && track != null) ? ((LineTrack) track).getToStraightTrack(direction) : null;
     }
 
     /**
