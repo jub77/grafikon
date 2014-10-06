@@ -226,6 +226,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return calculation.computeSpeed();
     }
 
+    public Integer getOwnerLength() {
+        if (isLineOwner()) {
+            return getOwnerAsLine().getLength();
+        } else {
+            return getOwnerAsNode().getAttribute(Node.ATTR_LENGTH, Integer.class);
+        }
+    }
+
     /**
      * @return the addedTime
      */
