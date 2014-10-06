@@ -222,6 +222,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
+    public Integer computeSpeed() {
+        return calculation.computeSpeed();
+    }
+
     /**
      * @return the addedTime
      */
@@ -568,14 +572,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     public TimeInterval getPreviousTrainInterval() {
         return this.getTrainInterval(-1);
-    }
-
-    public int getFromSpeed() {
-        return calculation.computeFromSpeed();
-    }
-
-    public int getToSpeed() {
-        return calculation.computeToSpeed();
     }
 
     protected TimeIntervalCalculation getCalculation() {
