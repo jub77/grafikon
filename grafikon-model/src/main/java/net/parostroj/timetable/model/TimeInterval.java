@@ -425,9 +425,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         Track to = null;
         if (isLineOwner()) {
             from = this.getPreviousTrainInterval().getTrack();
-            to = this.getToStraightTrack();
+            to = this.getFromStraightTrack();
         } else {
-            from = this.getPreviousTrainInterval().getFromStraightTrack();
+            from = this.getPreviousTrainInterval().getToStraightTrack();
             to = this.getTrack();
         }
         return from == to;
