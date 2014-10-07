@@ -54,6 +54,8 @@ import javax.swing.JCheckBox;
  */
 public class EditNodeDialog extends javax.swing.JDialog {
 
+    private static final BigDecimal DEFAULT_NOT_STRAIGHT_SPEED = new BigDecimal(40);
+
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
 
     private static Region NONE_REGION = new Region(null, "-");
@@ -185,7 +187,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (speed != null) {
             speedEditBox.setValueInUnit(new BigDecimal(speed), SpeedUnit.KMPH);
         } else {
-            speedEditBox.setValue(new BigDecimal(40));
+            speedEditBox.setValue(DEFAULT_NOT_STRAIGHT_SPEED);
         }
 
         // get node tracks
@@ -642,7 +644,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private void speedCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
         speedEditBox.setEnabled(selected);
-        speedEditBox.setValueInUnit(new BigDecimal(40), SpeedUnit.KMPH);
+        speedEditBox.setValueInUnit(DEFAULT_NOT_STRAIGHT_SPEED, SpeedUnit.KMPH);
     }
 
     private javax.swing.JTextField abbrTextField;
