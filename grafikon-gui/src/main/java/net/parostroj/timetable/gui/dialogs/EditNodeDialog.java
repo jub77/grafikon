@@ -22,6 +22,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -32,15 +33,18 @@ import org.slf4j.LoggerFactory;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.GroupLayout;
-import javax.swing.JPanel;
 
 import java.awt.FlowLayout;
 
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
 import java.awt.Component;
 import java.awt.BorderLayout;
+
+import javax.swing.JPanel;
+
+import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
+
 import javax.swing.JCheckBox;
 
 /**
@@ -110,17 +114,23 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthEditBox.setUnits(LengthUnit.getScaleDependent());
         lengthCheckBox = new javax.swing.JCheckBox();
         lengthPanel.add(lengthCheckBox, BorderLayout.EAST);
-
-                lengthCheckBox.addItemListener(new java.awt.event.ItemListener() {
-                    public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                        lengthCheckBoxItemStateChanged(evt);
-                    }
-                });
+        lengthCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                lengthCheckBoxItemStateChanged(evt);
+            }
+        });
+        speedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
+        speedCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                speedCheckBoxItemStateChanged(evt);
+            }
+        });
     }
 
-    public void showDialog(Node node, LengthUnit unit) {
+    public void showDialog(Node node, LengthUnit unit, SpeedUnit speedUnit) {
         this.node = node;
         this.lengthEditBox.setUnit(unit);
+        this.speedEditBox.setUnit(speedUnit);
         this.updateValues();
         this.setVisible(true);
     }
@@ -163,10 +173,20 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (length != null) {
             lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
         } else {
-            lengthEditBox.setValue(new BigDecimal(0));
+            lengthEditBox.setValue(BigDecimal.ZERO);
         }
         lengthCheckBox.setSelected(length != null);
         lengthEditBox.setEnabled(length != null);
+
+        // set speed for not straight drive through
+        Integer speed = node.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
+        if (speed != null) {
+            speedEditBox.setValueInUnit(new BigDecimal(speed), SpeedUnit.KMPH);
+        } else {
+            speedEditBox.setValue(new BigDecimal(40));
+        }
+        speedCheckBox.setSelected(speed != null);
+        speedEditBox.setEnabled(speed != null);
 
         // get node tracks
         DefaultListModel listModel = new DefaultListModel();
@@ -208,15 +228,25 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (lengthCheckBox.isSelected()) {
             try {
                 Integer length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
-                Integer oldLength = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
-                if (!length.equals(oldLength))
-                    node.setAttribute(Node.ATTR_LENGTH, length);
+                node.setAttribute(Node.ATTR_LENGTH, length);
             } catch (ArithmeticException e) {
                 log.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
                 log.warn(e.getMessage());
             }
         } else {
             node.removeAttribute(Node.ATTR_LENGTH);
+        }
+        // speed
+        if (speedCheckBox.isSelected()) {
+            try {
+                Integer speed = UnitUtil.convert(speedEditBox.getValueInUnit(SpeedUnit.KMPH));
+                node.getAttributes().set(Node.ATTR_NOT_STRAIGHT_SPEED, speed);
+            } catch (ArithmeticException e) {
+                log.warn("Value overflow: {}", speedEditBox.getValueInUnit(LengthUnit.MM));
+                log.warn(e.getMessage());
+            }
+        } else {
+            node.removeAttribute(Node.ATTR_NOT_STRAIGHT_SPEED);
         }
 
         // remove removed tracks
@@ -349,10 +379,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         jLabel4.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
-        JPanel panel = new JPanel();
-        JPanel panel2 = new JPanel();
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        javax.swing.JPanel panel2 = new javax.swing.JPanel();
 
-        colorsButton = new JButton(ResourceLoader.getString("ne.colors") + "...");
+        colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors") + "...");
         colorsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -366,7 +396,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
             }
         });
 
-        lengthPanel = new JPanel();
+        lengthPanel = new javax.swing.JPanel();
 
         straightCheckBox.setText(ResourceLoader.getString("ne.straight")); // NOI18N
         straightCheckBox.setEnabled(false);
@@ -375,6 +405,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
                 straightCheckBoxItemStateChanged(evt);
             }
         });
+
+        javax.swing.JLabel label = new javax.swing.JLabel();
+        label.setText(ResourceLoader.getString("ne.not.straight.speed")); // NOI18N
+
+        JPanel nsSpeedPanel = new JPanel();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
@@ -387,11 +422,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(lineEndCheckBox)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(straightCheckBox)
-                            .addGap(168))
-                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-                        .addComponent(panel2, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                            .addComponent(straightCheckBox))
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                        .addComponent(panel2, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(newTrackButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -400,30 +434,34 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(deleteTrackButton)
                             .addGap(18)
                             .addComponent(colorsButton)
-                            .addPreferredGap(ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                            .addPreferredGap(ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                             .addComponent(okButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(cancelButton))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(regionComboBox, 0, 326, Short.MAX_VALUE))
+                            .addComponent(regionComboBox, 0, 334, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(nameTextField))
+                            .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel2)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
+                            .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(lengthPanel, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
+                            .addComponent(lengthPanel, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(typeComboBox, 0, 326, Short.MAX_VALUE)))
+                            .addComponent(typeComboBox, 0, 334, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(label, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(nsSpeedPanel, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -437,6 +475,13 @@ public class EditNodeDialog extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(abbrTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(nsSpeedPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addComponent(label)))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jLabel5)
@@ -474,7 +519,14 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(colorsButton)))
                     .addContainerGap())
         );
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4, jLabel5});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4, jLabel5, label});
+        nsSpeedPanel.setLayout(new BorderLayout(0, 0));
+
+        speedEditBox = new ValueWithUnitEditBox();
+        nsSpeedPanel.add(speedEditBox, BorderLayout.CENTER);
+
+        speedCheckBox = new JCheckBox((String) null);
+        nsSpeedPanel.add(speedCheckBox, BorderLayout.EAST);
         lengthPanel.setLayout(new BorderLayout(0, 0));
         lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         lengthPanel.add(lengthEditBox, BorderLayout.CENTER);
@@ -587,6 +639,12 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthEditBox.setEnabled(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
+    private void speedCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {
+        boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
+        speedEditBox.setEnabled(selected);
+        speedEditBox.setValueInUnit(new BigDecimal(40), SpeedUnit.KMPH);
+    }
+
     private javax.swing.JTextField abbrTextField;
     private javax.swing.JCheckBox controlCheckBox;
     private javax.swing.JButton deleteTrackButton;
@@ -603,7 +661,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox typeComboBox;
     private javax.swing.JComboBox regionComboBox;
     private javax.swing.JCheckBox regionStartCheckBox;
-    private JButton colorsButton;
-    private JPanel lengthPanel;
-    private JCheckBox straightCheckBox;
+    private javax.swing.JButton colorsButton;
+    private javax.swing.JPanel lengthPanel;
+    private javax.swing.JCheckBox straightCheckBox;
+    private ValueWithUnitEditBox speedEditBox;
+    private JCheckBox speedCheckBox;
 }
