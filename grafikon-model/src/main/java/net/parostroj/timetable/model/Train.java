@@ -676,6 +676,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (this.getTimeAfter() != 0 && nodeInterval.isLast()) {
             this.updateTechnologicalTimeAfter();
         }
+        // update - from/to straight could change
+        this.recalculateImpl(0);
+
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(nodeInterval)));
     }
 
@@ -693,6 +696,10 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             lineInterval.updateInOwner();
         }
         // we do not need to update technological times
+
+        // update - from/to straight could change
+        this.recalculateImpl(0);
+
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(lineInterval)));
     }
 
@@ -723,6 +730,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             }
             last = interval;
         }
+        this.recalculate();
     }
 
     /**
