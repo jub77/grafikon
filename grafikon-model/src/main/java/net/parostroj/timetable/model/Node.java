@@ -345,6 +345,14 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return TrainsHelper.getTimeIntervals(this);
     }
 
+    public Integer getNotStraightSpeed() {
+        return this.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
+    }
+
+    public Integer getLength() {
+        return this.getAttribute(Node.ATTR_LENGTH, Integer.class);
+    }
+
     void fireTrackAttributeChanged(String attributeName, NodeTrack track, Object oldValue, Object newValue) {
         this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(attributeName, oldValue, newValue), track));
     }
