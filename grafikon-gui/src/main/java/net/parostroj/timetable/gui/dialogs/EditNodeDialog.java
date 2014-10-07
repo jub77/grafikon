@@ -170,23 +170,23 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         // set node length
         Integer length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
+        lengthCheckBox.setSelected(length != null);
+        lengthEditBox.setEnabled(length != null);
         if (length != null) {
             lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
         } else {
             lengthEditBox.setValue(BigDecimal.ZERO);
         }
-        lengthCheckBox.setSelected(length != null);
-        lengthEditBox.setEnabled(length != null);
 
         // set speed for not straight drive through
         Integer speed = node.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
+        speedCheckBox.setSelected(speed != null);
+        speedEditBox.setEnabled(speed != null);
         if (speed != null) {
             speedEditBox.setValueInUnit(new BigDecimal(speed), SpeedUnit.KMPH);
         } else {
             speedEditBox.setValue(new BigDecimal(40));
         }
-        speedCheckBox.setSelected(speed != null);
-        speedEditBox.setEnabled(speed != null);
 
         // get node tracks
         DefaultListModel listModel = new DefaultListModel();
