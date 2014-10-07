@@ -349,6 +349,10 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return this.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
     }
 
+    public Integer getSpeed() {
+        return this.getAttribute(Node.ATTR_SPEED, Integer.class);
+    }
+
     public Integer getLength() {
         return this.getAttribute(Node.ATTR_LENGTH, Integer.class);
     }
