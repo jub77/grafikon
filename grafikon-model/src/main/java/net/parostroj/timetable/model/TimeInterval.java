@@ -95,15 +95,15 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.setAttributes(new Attributes(interval.getAttributes()));
     }
 
-    public void setChanged() {
+    private void setChanged() {
         this.changed = true;
     }
 
-    public void clearChanged() {
+    private void clearChanged() {
         this.changed = false;
     }
 
-    public boolean isChanged() {
+    protected boolean isChanged() {
         return changed;
     }
 
@@ -224,21 +224,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     public Integer computeSpeed() {
         return calculation.computeSpeed();
-    }
-
-    public Integer getOwnerLength() {
-        if (isLineOwner()) {
-            return getOwnerAsLine().getLength();
-        } else {
-            return getOwnerAsNode().getAttribute(Node.ATTR_LENGTH, Integer.class);
-        }
-    }
-
-    public Integer getNotStraightSpeed() {
-        if (this.isLineOwner()) {
-            throw new IllegalStateException("Only available for nodes.");
-        }
-        return this.getOwnerAsNode().getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
     }
 
     /**
