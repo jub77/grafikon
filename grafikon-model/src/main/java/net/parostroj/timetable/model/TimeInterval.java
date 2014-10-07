@@ -234,6 +234,13 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
+    public Integer getNotStraightSpeed() {
+        if (this.isLineOwner()) {
+            throw new IllegalStateException("Only available for nodes.");
+        }
+        return this.getOwnerAsNode().getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
+    }
+
     /**
      * @return the addedTime
      */
