@@ -5,47 +5,32 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.util.*;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.ListModel;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
+import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.NodeTypeWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.model.units.SpeedUnit;
-import net.parostroj.timetable.model.units.UnitUtil;
+import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.GroupLayout;
-
-import java.awt.FlowLayout;
-
-import javax.swing.SwingConstants;
-
-import java.awt.Component;
-import java.awt.BorderLayout;
-
-import javax.swing.JPanel;
-
-import net.parostroj.timetable.gui.components.ValueWithUnitEditBox;
-
-import javax.swing.JCheckBox;
 
 /**
  * Edit dialog for node.
@@ -172,23 +157,11 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         // set node length
         Integer length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
-        lengthCheckBox.setSelected(length != null);
-        lengthEditBox.setEnabled(length != null);
-        if (length != null) {
-            lengthEditBox.setValueInUnit(new BigDecimal(length), LengthUnit.MM);
-        } else {
-            lengthEditBox.setValue(BigDecimal.ZERO);
-        }
+        this.setBoxValue(lengthEditBox, lengthCheckBox, length, LengthUnit.MM, BigDecimal.ZERO);
 
         // set speed for not straight drive through
         Integer speed = node.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
-        speedCheckBox.setSelected(speed != null);
-        speedEditBox.setEnabled(speed != null);
-        if (speed != null) {
-            speedEditBox.setValueInUnit(new BigDecimal(speed), SpeedUnit.KMPH);
-        } else {
-            speedEditBox.setValue(DEFAULT_NOT_STRAIGHT_SPEED);
-        }
+        this.setBoxValue(speedEditBox, speedCheckBox, speed, SpeedUnit.KMPH, DEFAULT_NOT_STRAIGHT_SPEED);
 
         // get node tracks
         DefaultListModel listModel = new DefaultListModel();
@@ -196,6 +169,16 @@ public class EditNodeDialog extends javax.swing.JDialog {
             listModel.addElement(new EditTrack(track));
         }
         trackList.setModel(listModel);
+    }
+
+    private void setBoxValue(ValueWithUnitEditBox box, JCheckBox check, Integer value, Unit unit, BigDecimal defaultValue) {
+        check.setSelected(value != null);
+        box.setEnabled(value != null);
+        if (value != null) {
+            box.setValueInUnit(new BigDecimal(value), unit);
+        } else {
+            box.setValue(defaultValue);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -227,29 +210,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
         node.getAttributes().setBool(Node.ATTR_REGION_START, regionStartCheckBox.isSelected());
 
         // length
-        if (lengthCheckBox.isSelected()) {
-            try {
-                Integer length = UnitUtil.convert(lengthEditBox.getValueInUnit(LengthUnit.MM));
-                node.setAttribute(Node.ATTR_LENGTH, length);
-            } catch (ArithmeticException e) {
-                log.warn("Value overflow: {}", lengthEditBox.getValueInUnit(LengthUnit.MM));
-                log.warn(e.getMessage());
-            }
-        } else {
-            node.removeAttribute(Node.ATTR_LENGTH);
-        }
+        this.getBoxValue(lengthEditBox, lengthCheckBox, LengthUnit.MM, Node.ATTR_LENGTH);
         // speed
-        if (speedCheckBox.isSelected()) {
-            try {
-                Integer speed = UnitUtil.convert(speedEditBox.getValueInUnit(SpeedUnit.KMPH));
-                node.getAttributes().set(Node.ATTR_NOT_STRAIGHT_SPEED, speed);
-            } catch (ArithmeticException e) {
-                log.warn("Value overflow: {}", speedEditBox.getValueInUnit(LengthUnit.MM));
-                log.warn(e.getMessage());
-            }
-        } else {
-            node.removeAttribute(Node.ATTR_NOT_STRAIGHT_SPEED);
-        }
+        this.getBoxValue(speedEditBox, speedCheckBox, SpeedUnit.KMPH, Node.ATTR_NOT_STRAIGHT_SPEED);
 
         // remove removed tracks
         for (EditTrack ret : removed) {
@@ -279,6 +242,20 @@ public class EditNodeDialog extends javax.swing.JDialog {
             region = null;
         }
         node.getAttributes().setRemove(Node.ATTR_REGION, region);
+    }
+
+    private void getBoxValue(ValueWithUnitEditBox box, JCheckBox check, Unit unit, String attribute) {
+        if (check.isSelected()) {
+            try {
+                Integer value = UnitUtil.convert(box.getValueInUnit(unit));
+                node.getAttributes().set(attribute, value);
+            } catch (ArithmeticException e) {
+                log.warn("Value overflow: {}", box.getValueInUnit(unit));
+                log.warn(e.getMessage());
+            }
+        } else {
+            node.removeAttribute(attribute);
+        }
     }
 
     private void initComponents() {
@@ -527,10 +504,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         speedEditBox = new ValueWithUnitEditBox();
         nsSpeedPanel.add(speedEditBox, BorderLayout.CENTER);
 
-        speedCheckBox = new JCheckBox((String) null);
+        speedCheckBox = new JCheckBox();
         nsSpeedPanel.add(speedCheckBox, BorderLayout.EAST);
         lengthPanel.setLayout(new BorderLayout(0, 0));
-        lengthEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
+        lengthEditBox = new ValueWithUnitEditBox();
         lengthPanel.add(lengthEditBox, BorderLayout.CENTER);
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 0));
         panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 0));
@@ -651,7 +628,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox controlCheckBox;
     private javax.swing.JButton deleteTrackButton;
     private final javax.swing.JCheckBox lengthCheckBox;
-    private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthEditBox;
+    private ValueWithUnitEditBox lengthEditBox;
     private javax.swing.JCheckBox lineEndCheckBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newTrackButton;
