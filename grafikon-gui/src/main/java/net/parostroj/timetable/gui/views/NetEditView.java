@@ -29,6 +29,7 @@ import net.parostroj.timetable.gui.views.graph.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.CheckingUtils;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -126,7 +127,9 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             if (netEditModel.getSelectedNode() != null) {
                 Node selectedNode = netEditModel.getSelectedNode();
                 editNodeDialog.setLocationRelativeTo(NetEditView.this);
-                editNodeDialog.showDialog(selectedNode, model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()));
+                editNodeDialog.showDialog(selectedNode,
+                        model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, model.getProgramSettings().getLengthUnit()),
+                        model.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, SpeedUnit.KMPH));
             }
         }
     }
