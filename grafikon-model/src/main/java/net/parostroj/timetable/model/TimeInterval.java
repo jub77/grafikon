@@ -430,11 +430,15 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public boolean isFromStraight() {
         Track from = null;
         Track to = null;
+        TimeInterval previousInterval = this.getPreviousTrainInterval();
+        if (previousInterval == null) {
+            return true;
+        }
         if (isLineOwner()) {
-            from = this.getPreviousTrainInterval().getTrack();
+            from = previousInterval.getTrack();
             to = this.getFromStraightTrack();
         } else {
-            from = this.getPreviousTrainInterval().getToStraightTrack();
+            from = previousInterval.getToStraightTrack();
             to = this.getTrack();
         }
         return from == to;
@@ -453,12 +457,16 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public boolean isToStraight() {
         Track from = null;
         Track to = null;
+        TimeInterval nextInterval = this.getNextTrainInterval();
+        if (nextInterval == null) {
+            return true;
+        }
         if (isLineOwner()) {
             from = this.getToStraightTrack();
-            to = this.getNextTrainInterval().getTrack();
+            to = nextInterval.getTrack();
         } else {
             from = this.getTrack();
-            to = this.getNextTrainInterval().getFromStraightTrack();
+            to = nextInterval.getFromStraightTrack();
         }
         return from == to;
     }
