@@ -23,27 +23,28 @@ class TimeIntervalCalculation {
         if (!interval.isLineOwner()) {
             throw new IllegalStateException("Not allowed for node interval.");
         }
-        return this.computeLineSpeed(interval.getOwnerAsLine(), interval.getTrain(), interval.getSpeedLimit());
+        Line line = interval.getOwnerAsLine();
+        return this.computeLineSpeed(interval, interval.getSpeedLimit(), line.getTopSpeed());
     }
 
-    private int computeLineSpeed(Line line, Train train, Integer prefferedSpeed) {
-        int speed;
+    private int computeLineSpeed(TimeInterval lineInterval, Integer prefferedSpeed, Integer speedLimit) {
         if (prefferedSpeed != null && prefferedSpeed < 1)
             throw new IllegalArgumentException("Speed has to be greater than 0.");
-        speed = train.getTopSpeed();
+        Train train = lineInterval.getTrain();
+        int speed = train.getTopSpeed();
         if (prefferedSpeed != null) {
             speed = Math.min(prefferedSpeed, train.getTopSpeed());
         }
 
         // apply track speed limit
-        if (line.getTopSpeed() != null) {
-            speed = Math.min(speed, line.getTopSpeed());
+        if (speedLimit != null) {
+            speed = Math.min(speed, speedLimit);
         }
 
         // adjust (engine class influence)
         List<EngineClass> engineClasses = null;
-        if (interval != null) {
-            engineClasses = TrainsHelper.getEngineClasses(interval);
+        if (lineInterval != null) {
+            engineClasses = TrainsHelper.getEngineClasses(lineInterval);
             for (EngineClass engineClass : engineClasses) {
                 WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
                 if (row != null) {
@@ -54,7 +55,7 @@ class TimeIntervalCalculation {
 
         // if there is a weight limit, engines and line class defined ...
         Integer weightLimit = train.getAttributes().get(Train.ATTR_WEIGHT_LIMIT, Integer.class);
-        LineClass lineClass = line.getLineClass(interval.getDirection());
+        LineClass lineClass = lineInterval.getLineClass();
         if (!engineClasses.isEmpty() && weightLimit != null && lineClass != null) {
             Integer limitedSpeed = TrainsHelper.getSpeedForWeight(engineClasses, lineClass, weightLimit);
             if (limitedSpeed != null) {
@@ -65,10 +66,7 @@ class TimeIntervalCalculation {
         return speed;
     }
 
-    public int computeFromSpeed() {
-        if (!interval.isLineOwner()) {
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        }
+    private int computeFromSpeed() {
         int i = this.list.indexOf(interval);
         // previous node is stop - first node or node has not null time
         if ((i - 1) == 0 || list.get(i - 1).getLength() != 0) {
@@ -79,10 +77,7 @@ class TimeIntervalCalculation {
         }
     }
 
-    public int computeToSpeed() {
-        if (!interval.isLineOwner()) {
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        }
+    private int computeToSpeed() {
         int i = this.list.indexOf(interval);
         // next node is stop - last node or node has not null time
         if ((i + 1) == (list.size() - 1) || list.get(i + 1).getLength() != 0) {
