@@ -175,18 +175,10 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
     }
 
     public boolean updateInterval(TimeInterval interval) {
-        int i = this.indexOf(interval);
-        if (i == -1) {
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        }
-        return this.updateInterval(interval, i);
+        return (interval.isNodeOwner()) ? this.updateNodeInterval(interval) : this.updateLineInterval(interval);
     }
 
-    public boolean updateInterval(TimeInterval interval, int i) {
-        return (interval.isNodeOwner()) ? this.updateNodeInterval(interval, i) : this.updateLineInterval(interval, i);
-    }
-
-    public boolean updateNodeInterval(TimeInterval interval, int i) {
+    public boolean updateNodeInterval(TimeInterval interval) {
         if (!interval.isNodeOwner()) {
             throw new IllegalArgumentException("Node is not owner of the time interval.");
         }
@@ -197,17 +189,14 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         return changed;
     }
 
-    public boolean updateLineInterval(TimeInterval interval, int i) {
+    public boolean updateLineInterval(TimeInterval interval) {
         if (!interval.isLineOwner()) {
             throw new IllegalArgumentException("Line is not owner of the interval.");
         }
         // compute running time
         TimeIntervalCalculation calculation = interval.getCalculation();
         int computedSpeed = calculation.computeSpeed();
-        int runnningTime = calculation.computeRunningTime(
-                computedSpeed,
-                calculation.computeFromSpeed(i),
-                calculation.computeToSpeed(i), interval.getAddedTime());
+        int runnningTime = calculation.computeRunningTime();
         interval.setLength(runnningTime);
         interval.setSpeed(computedSpeed);
         boolean changed = interval.isChanged();

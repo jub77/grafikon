@@ -20,10 +20,12 @@ class TimeIntervalCalculation {
     }
 
     public Integer computeSpeed() {
-        return interval.isLineOwner() ? this.computeSpeed(interval.getOwnerAsLine(), interval.getTrain(), interval.getSpeedLimit()) : null;
+        return interval.isLineOwner() ?
+                this.computeLineSpeed(interval.getOwnerAsLine(), interval.getTrain(), interval.getSpeedLimit()) :
+                null;
     }
 
-    private int computeSpeed(Line line, Train train, Integer prefferedSpeed) {
+    private int computeLineSpeed(Line line, Train train, Integer prefferedSpeed) {
         int speed;
         if (prefferedSpeed != null && prefferedSpeed < 1)
             throw new IllegalArgumentException("Speed has to be greater than 0.");
@@ -63,24 +65,10 @@ class TimeIntervalCalculation {
     }
 
     public int computeFromSpeed() {
-        if (!interval.isLineOwner())
+        if (!interval.isLineOwner()) {
             throw new IllegalArgumentException("Cannot find speed for node.");
-        int i = list.indexOf(interval);
-        if (i == -1)
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        return this.computeFromSpeed(i);
-    }
-
-    public int computeToSpeed() {
-        if (!interval.isLineOwner())
-            throw new IllegalArgumentException("Cannot find speed for node.");
-        int i = list.indexOf(interval);
-        if (i == -1)
-            throw new IllegalArgumentException("Interval is not part of the list.");
-        return this.computeToSpeed(i);
-    }
-
-    public int computeFromSpeed(int i) {
+        }
+        int i = this.list.indexOf(interval);
         // previous node is stop - first node or node has not null time
         if ((i - 1) == 0 || list.get(i - 1).getLength() != 0) {
             return 0;
@@ -90,7 +78,11 @@ class TimeIntervalCalculation {
         }
     }
 
-    public int computeToSpeed(int i) {
+    public int computeToSpeed() {
+        if (!interval.isLineOwner()) {
+            throw new IllegalArgumentException("Cannot find speed for node.");
+        }
+        int i = this.list.indexOf(interval);
         // next node is stop - last node or node has not null time
         if ((i + 1) == (list.size() - 1) || list.get(i + 1).getLength() != 0) {
             return 0;
@@ -101,16 +93,11 @@ class TimeIntervalCalculation {
     }
 
     /**
-     * computes running time for this track.
+     * computes running time.
      *
-     * @param train train
-     * @param speed speed
-     * @param diagram train diagram
-     * @param fromSpeed from speed
-     * @param toSpeed to speed
      * @return pair running time and speed
      */
-    public int computeRunningTime(int speed, int fromSpeed, int toSpeed, int addedTime) {
+    public int computeRunningTime() {
         final Train train = interval.getTrain();
         TrainDiagram diagram = train.getTrainDiagram();
         Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
@@ -133,13 +120,13 @@ class TimeIntervalCalculation {
 
         TimeConverter converter = train.getTrainDiagram().getTimeConverter();
         Map<String, Object> binding = new HashMap<String, Object>();
-        binding.put("speed", speed);
-        binding.put("fromSpeed", fromSpeed);
-        binding.put("toSpeed", toSpeed);
+        binding.put("speed", this.computeSpeed());
+        binding.put("fromSpeed", this.computeFromSpeed());
+        binding.put("toSpeed", this.computeToSpeed());
         binding.put("timeScale", timeScale);
         binding.put("scale", scale.getRatio());
         binding.put("length", interval.getOwnerAsLine().getLength());
-        binding.put("addedTime", addedTime);
+        binding.put("addedTime", this.interval.getAddedTime());
         binding.put("penaltySolver", ps);
         binding.put("train", train);
         binding.put("converter", converter);

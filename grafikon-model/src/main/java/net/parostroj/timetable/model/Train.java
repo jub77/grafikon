@@ -375,8 +375,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         }
         // test technological times
         if ((timeBefore != null && timeBefore.isOverlapping()) ||
-                (timeAfter != null && timeAfter.isOverlapping()))
+                (timeAfter != null && timeAfter.isOverlapping())) {
             return true;
+        }
         // no conflict found
         return false;
     }
@@ -606,11 +607,13 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             throw new IllegalArgumentException("Stop time cannot be negative.");
         }
         int oldLength = nodeInterval.getLength();
-        if (length == oldLength)
+        if (length == oldLength) {
             return;
+        }
         int index = timeIntervalList.indexOf(nodeInterval);
-        if (index == -1 || index == 0 || index == (timeIntervalList.size() - 1) || !nodeInterval.isNodeOwner())
+        if (index == -1 || index == 0 || index == (timeIntervalList.size() - 1) || !nodeInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Cannot change interval.");
+        }
 
         int changedIndex = index;
 
@@ -637,8 +640,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public void changeSpeedAndAddedTime(TimeInterval lineInterval, Integer speed, int addedTime) {
         int index = timeIntervalList.indexOf(lineInterval);
-        if (index == -1 || !lineInterval.isLineOwner())
+        if (index == -1 || !lineInterval.isLineOwner()) {
             throw new IllegalArgumentException("Cannot change interval.");
+        }
 
         lineInterval.setSpeedLimit(speed);
         lineInterval.setAddedTime(addedTime);
@@ -689,8 +693,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param lineTrack line track to be changed
      */
     public void changeLineTrack(TimeInterval lineInterval, LineTrack lineTrack) {
-        if (!lineInterval.isLineOwner())
+        if (!lineInterval.isLineOwner()) {
             throw new IllegalArgumentException("No line interval.");
+        }
         lineInterval.setTrack(lineTrack);
         if (isAttached()) {
             lineInterval.updateInOwner();
@@ -745,7 +750,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         for (int i = from; i < timeIntervalList.size(); i++) {
             TimeInterval interval = timeIntervalList.get(i);
             interval.move(nextStart);
-            if (timeIntervalList.updateInterval(interval, i) && firstChanged == null) {
+            if (timeIntervalList.updateInterval(interval) && firstChanged == null) {
                 firstChanged = i;
             }
 
@@ -761,8 +766,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @param interval interval
      */
     public void addInterval(TimeInterval interval) {
-        if (isAttached())
+        if (isAttached()) {
             throw new IllegalStateException("Cannot add interval to already attached train.");
+        }
         timeIntervalList.addIntervalLastForTrain(interval);
         this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.ADDED, timeIntervalList.size() - 1));
     }
@@ -792,8 +798,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public List<TimeInterval> getIntervals(TimeInterval from, TimeInterval to) {
         int fromIndex = timeIntervalList.indexOf(from);
         int toIndex = timeIntervalList.indexOf(to);
-        if (fromIndex == -1 || toIndex == -1)
+        if (fromIndex == -1 || toIndex == -1) {
             throw new IllegalArgumentException("Interval not part of the train.");
+        }
         return Collections.unmodifiableList(timeIntervalList.subList(fromIndex, toIndex + 1));
     }
 
@@ -877,15 +884,18 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * attaches the train to the net. It adds time intervals to nodes and lines.
      */
     protected void attach() {
-        if (attached)
+        if (attached) {
             throw new IllegalStateException("Train already attached.");
+        }
         for (TimeInterval interval : timeIntervalList) {
             interval.addToOwner();
         }
-        if (timeBefore != null)
+        if (timeBefore != null) {
             timeBefore.addToOwner();
-        if (timeAfter != null)
+        }
+        if (timeAfter != null) {
             timeAfter.addToOwner();
+        }
         // trim size of time interval list to save space (once attached, it cannot be changed)
         timeIntervalList.trimToSize();
         attached = true;
@@ -896,15 +906,18 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * and lines.
      */
     protected void detach() {
-        if (!attached)
+        if (!attached) {
             throw new IllegalStateException("Train already detached.");
+        }
         for (TimeInterval interval : timeIntervalList) {
             interval.removeFromOwner();
         }
-        if (timeBefore != null)
+        if (timeBefore != null) {
             timeBefore.removeFromOwner();
-        if (timeAfter != null)
+        }
+        if (timeAfter != null) {
             timeAfter.removeFromOwner();
+        }
         attached = false;
     }
 
@@ -948,8 +961,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public boolean isCovered(TrainsCycle cycle, TimeInterval interval) {
         Collection<TrainsCycleItem> list = _cachedCycles.get(interval, cycle.getType());
         for (TrainsCycleItem item : list) {
-            if (item.getCycle() == cycle)
+            if (item.getCycle() == cycle) {
                 return true;
+            }
         }
         return false;
     }
@@ -1018,8 +1032,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public TimeInterval getIntervalById(String id) {
         for (TimeInterval interval : timeIntervalList) {
-            if (interval.getId().equals(id))
+            if (interval.getId().equals(id)) {
                 return interval;
+            }
         }
         return null;
     }
