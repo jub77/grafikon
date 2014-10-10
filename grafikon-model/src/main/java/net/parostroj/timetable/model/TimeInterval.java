@@ -222,10 +222,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         }
     }
 
-    public Integer computeSpeed() {
-        return calculation.computeSpeed();
-    }
-
     /**
      * @return the addedTime
      */
