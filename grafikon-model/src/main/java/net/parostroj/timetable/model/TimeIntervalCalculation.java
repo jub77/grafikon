@@ -19,10 +19,11 @@ class TimeIntervalCalculation {
         this.interval = interval;
     }
 
-    public Integer computeSpeed() {
-        return interval.isLineOwner() ?
-                this.computeLineSpeed(interval.getOwnerAsLine(), interval.getTrain(), interval.getSpeedLimit()) :
-                null;
+    public Integer computeLineSpeed() {
+        if (!interval.isLineOwner()) {
+            throw new IllegalStateException("Not allowed for node interval.");
+        }
+        return this.computeLineSpeed(interval.getOwnerAsLine(), interval.getTrain(), interval.getSpeedLimit());
     }
 
     private int computeLineSpeed(Line line, Train train, Integer prefferedSpeed) {
@@ -74,7 +75,7 @@ class TimeIntervalCalculation {
             return 0;
         } else {
             // check speed of previous line
-            return list.get(i - 2).getCalculation().computeSpeed();
+            return list.get(i - 2).getCalculation().computeLineSpeed();
         }
     }
 
@@ -88,7 +89,7 @@ class TimeIntervalCalculation {
             return 0;
         } else {
             // check speed of previous line
-            return list.get(i + 2).getCalculation().computeSpeed();
+            return list.get(i + 2).getCalculation().computeLineSpeed();
         }
     }
 
@@ -120,7 +121,7 @@ class TimeIntervalCalculation {
 
         TimeConverter converter = train.getTrainDiagram().getTimeConverter();
         Map<String, Object> binding = new HashMap<String, Object>();
-        binding.put("speed", this.computeSpeed());
+        binding.put("speed", this.computeLineSpeed());
         binding.put("fromSpeed", this.computeFromSpeed());
         binding.put("toSpeed", this.computeToSpeed());
         binding.put("timeScale", timeScale);

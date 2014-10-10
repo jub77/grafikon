@@ -195,7 +195,7 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
         }
         // compute running time
         TimeIntervalCalculation calculation = interval.getCalculation();
-        int computedSpeed = calculation.computeSpeed();
+        int computedSpeed = calculation.computeLineSpeed();
         int runnningTime = calculation.computeRunningTime();
         interval.setLength(runnningTime);
         interval.setSpeed(computedSpeed);
