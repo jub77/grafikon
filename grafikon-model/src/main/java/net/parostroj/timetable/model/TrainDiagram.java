@@ -184,6 +184,15 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return getById(id, trains);
     }
 
+    public Train getTrainByNumber(String number) {
+        for (Train train : trains) {
+            if (train.getNumber().equals(number)) {
+                return train;
+            }
+        }
+        return null;
+    }
+
     public Collection<TrainsCycle> getCycles() {
         List<TrainsCycle> result = new ArrayList<TrainsCycle>();
         for (TrainsCycleType type : cycles) {
