@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -170,16 +171,36 @@ public class Net implements ObjectWithId, Visitable {
 
     public Node getNodeById(String id) {
         for (Node node : netDelegate.vertexSet()) {
-            if (node.getId().equals(id))
+            if (node.getId().equals(id)) {
                 return node;
+            }
+        }
+        return null;
+    }
+
+    public Node getNodeByName(String name) {
+        for (Node node : netDelegate.vertexSet()) {
+            if (ObjectsUtil.compareWithNull(node.getName(), name)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public Node getNodeByAbbr(String abbr) {
+        for (Node node : netDelegate.vertexSet()) {
+            if (ObjectsUtil.compareWithNull(node.getAbbr(), abbr)) {
+                return node;
+            }
         }
         return null;
     }
 
     public Line getLineById(String id) {
         for (Line line : netDelegate.edgeSet()) {
-            if (line.getId().equals(id))
+            if (line.getId().equals(id)) {
                 return line;
+            }
         }
         return null;
     }
