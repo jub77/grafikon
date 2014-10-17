@@ -331,9 +331,19 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public NodeTrack findTrackById(String id) {
+    public NodeTrack getTrackById(String id) {
         for (NodeTrack track : getTracks()) {
             if (track.getId().equals(id)) {
+                return track;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NodeTrack getTrackByNumber(String number) {
+        for (NodeTrack track : getTracks()) {
+            if (track.getNumber().equals(number)) {
                 return track;
             }
         }

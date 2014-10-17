@@ -167,12 +167,12 @@ public class LSTrain {
 	            if (routePart instanceof LSTrainRoutePartNode) {
 	                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
 	                Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
-	                NodeTrack nodeTrack = node.findTrackById(nodePart.getTrackId());
+	                NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
 	                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram));
 	            } else {
 	                LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
 	                Line line = diagram.getNet().getLineById(linePart.getLineId());
-	                LineTrack lineTrack = line.findTrackById(linePart.getTrackId());
+	                LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
 	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram));
 	            }
 	        }

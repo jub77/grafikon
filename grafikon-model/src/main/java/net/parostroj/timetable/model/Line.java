@@ -323,9 +323,19 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public LineTrack findTrackById(String id) {
+    public LineTrack getTrackById(String id) {
         for (LineTrack track : getTracks()) {
             if (track.getId().equals(id)) {
+                return track;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public LineTrack getTrackByNumber(String number) {
+        for (LineTrack track : getTracks()) {
+            if (track.getNumber().equals(number)) {
                 return track;
             }
         }
