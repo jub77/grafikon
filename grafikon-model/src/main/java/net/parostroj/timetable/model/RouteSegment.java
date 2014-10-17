@@ -35,7 +35,9 @@ public interface RouteSegment extends ObjectWithId {
     @Override
     public String getId();
 
-    public Track findTrackById(String id);
+    public Track getTrackById(String id);
+
+    public Track getTrackByNumber(String name);
 
     public Iterable<TimeInterval> getTimeIntervals();
 }
