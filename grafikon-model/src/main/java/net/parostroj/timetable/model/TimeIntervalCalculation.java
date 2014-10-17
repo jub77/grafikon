@@ -42,14 +42,11 @@ class TimeIntervalCalculation {
         }
 
         // adjust (engine class influence)
-        List<EngineClass> engineClasses = null;
-        if (lineInterval != null) {
-            engineClasses = TrainsHelper.getEngineClasses(lineInterval);
-            for (EngineClass engineClass : engineClasses) {
-                WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
-                if (row != null) {
-                    speed = Math.min(speed, row.getSpeed());
-                }
+        List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(lineInterval);
+        for (EngineClass engineClass : engineClasses) {
+            WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
+            if (row != null) {
+                speed = Math.min(speed, row.getSpeed());
             }
         }
 
