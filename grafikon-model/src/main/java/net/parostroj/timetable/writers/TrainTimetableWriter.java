@@ -2,6 +2,7 @@ package net.parostroj.timetable.writers;
 
 import java.io.IOException;
 import java.util.Formatter;
+
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TimeInterval;
@@ -28,6 +29,7 @@ public class TrainTimetableWriter {
         for (TimeInterval time : train.getTimeIntervalList()) {
             Node node = time.getOwnerAsNode();
             if (node != null) {
+                @SuppressWarnings("resource")
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", node.getName());
                 if (time.isFirst() || !time.isStop()) {
@@ -40,7 +42,7 @@ public class TrainTimetableWriter {
                 } else {
                     str.append('\n');
                 }
-                f.close();
+                f.flush();
             }
         }
     }
