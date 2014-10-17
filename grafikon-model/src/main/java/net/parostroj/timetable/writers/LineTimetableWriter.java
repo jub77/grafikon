@@ -2,6 +2,7 @@ package net.parostroj.timetable.writers;
 
 import java.io.IOException;
 import java.util.Formatter;
+
 import net.parostroj.timetable.model.*;
 
 /**
@@ -32,13 +33,14 @@ public class LineTimetableWriter {
 
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
+                @SuppressWarnings("resource")
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
                 str.append(c.convertIntToTextFull(interval.getStart(), true));
                 str.append(" ").append(c.convertIntToTextFull(interval.getEnd(), true));
                 str.append(" [direction: ").append(interval.getTo().getAbbr()).append("]");
                 str.append('\n');
-                f.close();
+                f.flush();
             }
         }
     }

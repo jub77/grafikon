@@ -3,6 +3,7 @@ package net.parostroj.timetable.writers;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.List;
+
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.TimeConverter;
@@ -31,11 +32,12 @@ public class NodeTimetableByTracksWriter {
         for (NodeTrack track : tracks) {
             str.append("Track: " + track.getNumber()).append('\n');
             for (TimeInterval interval : track.getTimeIntervalList()) {
+                @SuppressWarnings("resource")
                 Formatter f = new Formatter(str);
                 f.format("%1$-20s", interval.getTrain().getCompleteName());
                 str.append(c.convertIntToText(interval.getStart(), true));
                 str.append(" ").append(c.convertIntToText(interval.getEnd(), true)).append("\n");
-                f.close();
+                f.flush();
             }
         }
     }
