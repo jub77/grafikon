@@ -24,29 +24,47 @@ class TimeIntervalCalculation {
             throw new IllegalStateException("Not allowed for node interval.");
         }
         Line line = interval.getOwnerAsLine();
-        return this.computeLineSpeed(interval, interval.getSpeedLimit(), line.getTopSpeed());
+        return this.computeLineSpeed(interval, min(interval.getSpeedLimit(), line.getTopSpeed()));
     }
 
-    private int computeLineSpeed(TimeInterval lineInterval, Integer prefferedSpeed, Integer speedLimit) {
-        if (prefferedSpeed != null && prefferedSpeed < 1)
+    public Integer computeNodeSpeed(TimeInterval lineInterval, boolean from, Integer defaultNotStraightSpeed) {
+        boolean straight = from ? interval.isFromStraight() : interval.isToStraight();
+        Node node = interval.getOwnerAsNode();
+        Line line = lineInterval.getOwnerAsLine();
+        Integer speed = straight ? node.getSpeed() : node.getNotStraightSpeed();
+        if (speed == null) {
+            speed = straight ? line.getTopSpeed() : defaultNotStraightSpeed;
+        }
+        speed = min(lineInterval.getSpeedLimit(), speed);
+        speed = this.computeLineSpeed(lineInterval, speed);
+        return speed;
+    }
+
+    public Integer min(Integer... s) {
+        Integer result = null;
+        for (Integer i : s) {
+            if (result == null) {
+                result = i;
+            } else if (i != null) {
+                result = Math.min(result, i);
+            }
+        }
+        return result;
+    }
+
+    private int computeLineSpeed(TimeInterval lineInterval, Integer speedLimit) {
+        if (speedLimit != null && speedLimit < 1)
             throw new IllegalArgumentException("Speed has to be greater than 0.");
         Train train = lineInterval.getTrain();
-        int speed = train.getTopSpeed();
-        if (prefferedSpeed != null) {
-            speed = Math.min(prefferedSpeed, train.getTopSpeed());
-        }
-
-        // apply track speed limit
-        if (speedLimit != null) {
-            speed = Math.min(speed, speedLimit);
-        }
+        // apply speed limit
+        int speed = min(train.getTopSpeed(), speedLimit);
 
         // adjust (engine class influence)
         List<EngineClass> engineClasses = TrainsHelper.getEngineClasses(lineInterval);
         for (EngineClass engineClass : engineClasses) {
             WeightTableRow row = engineClass.getWeigthTableRowWithMaxSpeed();
             if (row != null) {
-                speed = Math.min(speed, row.getSpeed());
+                speed = min(speed, row.getSpeed());
             }
         }
 
@@ -54,10 +72,7 @@ class TimeIntervalCalculation {
         Integer weightLimit = train.getAttributes().get(Train.ATTR_WEIGHT_LIMIT, Integer.class);
         LineClass lineClass = lineInterval.getLineClass();
         if (!engineClasses.isEmpty() && weightLimit != null && lineClass != null) {
-            Integer limitedSpeed = TrainsHelper.getSpeedForWeight(engineClasses, lineClass, weightLimit);
-            if (limitedSpeed != null) {
-                speed = Math.min(speed, limitedSpeed);
-            }
+            speed = min(speed, TrainsHelper.getSpeedForWeight(engineClasses, lineClass, weightLimit));
         }
 
         return speed;
@@ -93,42 +108,38 @@ class TimeIntervalCalculation {
     public int computeRunningTime() {
         final Train train = interval.getTrain();
         TrainDiagram diagram = train.getTrainDiagram();
-        Scale scale = diagram.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
-        double timeScale = diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
         PenaltySolver ps = new PenaltySolver() {
 
             @Override
             public int getDecelerationPenalty(int speed) {
-                PenaltyTableRow row = train.getType() != null ? penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
-                return row != null ? row.getDeceleration() : 0;
+                return penaltyTable.getDecPenalty(train, speed);
             }
 
             @Override
             public int getAccelerationPenalty(int speed) {
-                PenaltyTableRow row = train.getType() != null ? penaltyTable.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
-                return row != null ? row.getAcceleration() : 0;
+                return penaltyTable.getAccPenalty(train, speed);
             }
         };
 
-        TimeConverter converter = train.getTrainDiagram().getTimeConverter();
         Map<String, Object> binding = new HashMap<String, Object>();
         binding.put("speed", this.computeLineSpeed());
         binding.put("fromSpeed", this.computeFromSpeed());
         binding.put("toSpeed", this.computeToSpeed());
-        binding.put("timeScale", timeScale);
-        binding.put("scale", scale.getRatio());
+        binding.put("timeScale", diagram.getTimeScale());
+        binding.put("scale", diagram.getScale().getRatio());
         binding.put("length", interval.getOwnerAsLine().getLength());
         binding.put("addedTime", this.interval.getAddedTime());
         binding.put("penaltySolver", ps);
         binding.put("train", train);
-        binding.put("converter", converter);
+        binding.put("converter", train.getTrainDiagram().getTimeConverter());
         binding.put("interval", interval);
         binding.put("diagram", train.getTrainDiagram());
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
-        if (!(result instanceof Number))
+        if (!(result instanceof Number)) {
             throw new IllegalStateException("Unexpected result: " + result);
+        }
 
         return ((Number)result).intValue();
     }

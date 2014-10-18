@@ -808,6 +808,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return timeIntervalList.indexOf(interval);
     }
 
+    public int getAccPenalty(int speed) {
+        return diagram.getPenaltyTable().getAccPenalty(this, speed);
+    }
+
+    public int getDecPenalty(int speed) {
+        return diagram.getPenaltyTable().getDecPenalty(this, speed);
+    }
+
     /**
      * checks if all lines have given attribute.
      *

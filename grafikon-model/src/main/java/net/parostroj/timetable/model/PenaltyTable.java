@@ -157,4 +157,14 @@ public class PenaltyTable implements ObjectWithId {
         else
             return Collections.unmodifiableList(row);
     }
+
+    public int getDecPenalty(Train train, int speed) {
+        PenaltyTableRow row = train.getType() != null ? this.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
+        return row != null ? row.getDeceleration() : 0;
+    }
+
+    public int getAccPenalty(Train train, int speed) {
+        PenaltyTableRow row = train.getType() != null ? this.getRowForSpeedAndCategory(train.getType().getCategory(), speed) : null;
+        return row != null ? row.getAcceleration() : 0;
+    }
 }
