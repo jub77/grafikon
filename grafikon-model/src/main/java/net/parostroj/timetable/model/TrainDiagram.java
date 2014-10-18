@@ -425,6 +425,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.attributes.addListener(attributesListener);
     }
 
+    public double getTimeScale() {
+        return this.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
+    }
+
+    public Scale getScale() {
+        return this.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
+    }
+
     public List<EngineClass> getEngineClasses() {
         return Collections.unmodifiableList(engineClasses);
     }
