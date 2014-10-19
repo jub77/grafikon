@@ -30,6 +30,12 @@ public class LineValidator implements TrainDiagramValidator {
                 train.recalculate();
             }
             return true;
+        } else if (event instanceof LineEvent && event.getType() == GTEventType.TRACK_ATTRIBUTE && event.getAttributeChange().checkName(Track.ATTR_FROM_STRAIGHT, Track.ATTR_TO_STRAIGHT)) {
+            LineEvent le = (LineEvent) event;
+            for (TimeInterval i : le.getTrack().getTimeIntervalList()) {
+                i.getTrain().recalculate();
+            }
+            return true;
         }
         return false;
     }
