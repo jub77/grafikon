@@ -181,6 +181,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
             listModel.addElement(new EditTrack(track));
         }
         trackList.setModel(listModel);
+        if (!listModel.isEmpty()) {
+            trackList.setSelectedIndex(0);
+        }
     }
 
     private void setBoxValue(ValueWithUnitEditBox box, JCheckBox check, Integer value, Unit unit, BigDecimal defaultValue) {
