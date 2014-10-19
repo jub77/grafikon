@@ -1,8 +1,6 @@
 package net.parostroj.timetable.model.validators;
 
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.Region;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 
 /**
@@ -20,9 +18,15 @@ public class NodeValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(GTEvent<?> event) {
-        if (event instanceof NodeEvent && event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(Node.ATTR_REGION_START)) {
-            Node node = (Node) event.getSource();
-            return checkNodeControl(node);
+        if (event instanceof NodeEvent && event.getType() == GTEventType.ATTRIBUTE) {
+            if (event.getAttributeChange().checkName(Node.ATTR_REGION_START)) {
+                Node node = (Node) event.getSource();
+                return checkNodeControl(node);
+            } else if (event.getAttributeChange().checkName(Node.ATTR_LENGTH, Node.ATTR_NOT_STRAIGHT_SPEED, Node.ATTR_SPEED)) {
+                for (TimeInterval i : ((Node) event.getSource()).getTimeIntervals()) {
+                    i.getTrain().recalculate();
+                }
+            }
         } else if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.NODE_ADDED) {
             Node node = (Node) ((TrainDiagramEvent) event).getObject();
             return checkNodeControl(node);

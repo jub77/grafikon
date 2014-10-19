@@ -5,20 +5,20 @@ import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Line track.
- * 
+ *
  * @author jub
  */
 public class LineTrack extends Track implements Visitable {
 
     private NodeTrack fromStraightTrack;
     private NodeTrack toStraightTrack;
-    
+
     // reference to line
     Line line;
 
     /**
      * Constructor.
-     * 
+     *
      * @param id id
      */
     public LineTrack(String id) {
@@ -27,7 +27,7 @@ public class LineTrack extends Track implements Visitable {
 
     /**
      * Constructor with number of the track.
-     * 
+     *
      * @param id id
      * @param number track number
      */
@@ -42,7 +42,7 @@ public class LineTrack extends Track implements Visitable {
     public void setFromStraightTrack(NodeTrack fromStraightTrack) {
         NodeTrack oldTrack = this.fromStraightTrack;
         this.fromStraightTrack = fromStraightTrack;
-        this.fireAttributeChanged("fromStraightTrack", oldTrack, fromStraightTrack);
+        this.fireAttributeChanged(ATTR_FROM_STRAIGHT, oldTrack, fromStraightTrack);
     }
 
     public NodeTrack getToStraightTrack() {
@@ -52,7 +52,7 @@ public class LineTrack extends Track implements Visitable {
     public void setToStraightTrack(NodeTrack toStraightTrack) {
         NodeTrack oldTrack = this.toStraightTrack;
         this.toStraightTrack = toStraightTrack;
-        this.fireAttributeChanged("toStraightTrack", oldTrack, toStraightTrack);
+        this.fireAttributeChanged(ATTR_TO_STRAIGHT, oldTrack, toStraightTrack);
     }
 
     public NodeTrack getFromStraightTrack(TimeIntervalDirection direction) {
