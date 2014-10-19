@@ -18,16 +18,18 @@ import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 public class Main {
 
     private static final Logger netParostrojLogger = Logger.getLogger("net.parostroj");
+    private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%n";
 
     static {
         netParostrojLogger.setLevel(Level.FINE);
         Logger.getLogger("").getHandlers()[0].setLevel(Level.ALL);
+        Logger.getLogger("").getHandlers()[0].setFormatter(new LogFormatter(FORMAT));
 
         // add file output to logging
         try {
             File file = new File(System.getProperty("java.io.tmpdir"), "grafikon.log");
             Handler handler = new FileHandler(file.getCanonicalPath());
-            handler.setFormatter(new SimpleFormatter());
+            handler.setFormatter(new LogFormatter(FORMAT));
             Logger.getLogger("").addHandler(handler);
         } catch (IOException e) {
             netParostrojLogger.log(Level.WARNING, "Cannot initialize logging file.", e);
