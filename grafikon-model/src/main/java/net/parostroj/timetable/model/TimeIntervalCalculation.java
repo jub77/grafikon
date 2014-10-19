@@ -4,12 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.actions.TrainsHelper;
 
 /**
  * @author jub
  */
 class TimeIntervalCalculation {
+
+    private static final Logger log = LoggerFactory.getLogger(TimeIntervalCalculation.class);
 
     private final List<TimeInterval> list;
     private final TimeInterval interval;
@@ -135,6 +140,7 @@ class TimeIntervalCalculation {
         binding.put("converter", train.getTrainDiagram().getTimeConverter());
         binding.put("interval", interval);
         binding.put("diagram", train.getTrainDiagram());
+        binding.put("log", log);
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
         if (!(result instanceof Number)) {
