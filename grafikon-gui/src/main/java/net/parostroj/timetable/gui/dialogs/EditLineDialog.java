@@ -112,14 +112,14 @@ public class EditLineDialog extends javax.swing.JDialog {
         else
             lineClassBackComboBox.setSelectedItem(line.getAttribute(Line.ATTR_CLASS_BACK, LineClass.class));
 
-        this.updateTracks(null);
+        this.updateTracks();
 
         this.pack();
 
         this.setVisible(true);
     }
 
-    private void updateTracks(LineTrack selected) {
+    private void updateTracks() {
         removed = new LinkedList<LineTrack>();
         connections.clear();
         DefaultListModel listModel = new DefaultListModel();
@@ -128,7 +128,9 @@ public class EditLineDialog extends javax.swing.JDialog {
             connections.put(track, new Tuple<NodeTrack>(track.getFromStraightTrack(), track.getToStraightTrack()));
         }
         trackList.setModel(listModel);
-        this.updateSelectedTrack(selected);
+        if (!listModel.isEmpty()) {
+            trackList.setSelectedIndex(0);
+        }
     }
 
     private void updateSelectedTrack(LineTrack selected) {
