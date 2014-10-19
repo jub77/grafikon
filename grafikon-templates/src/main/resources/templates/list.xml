@@ -13,6 +13,10 @@
         <filename>polish.gtm</filename>
     </template>
     <template>
+        <name>- (NS40)</name>
+        <filename>empty_ns40.gtm</filename>
+    </template>
+    <template>
         <name>-</name>
         <filename>empty.gtm</filename>
     </template>
