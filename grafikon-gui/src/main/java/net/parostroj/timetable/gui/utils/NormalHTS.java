@@ -10,8 +10,8 @@ import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.output2.gt.HighlightedTrains;
+import net.parostroj.timetable.output2.gt.SelectorUtils;
 import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
-import net.parostroj.timetable.utils.TransformUtil;
 
 /**
  * Implementation of HighlightedTrains for normal timetable view.
@@ -57,16 +57,9 @@ public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, Appli
 
     @Override
     public void regionsSelected(List<TimeInterval> intervals) {
-        TimeInterval interval = null;
-        if (selectedTimeInterval == null)
-            interval = intervals.isEmpty() ? null : intervals.get(0);
-        else {
-            interval = intervals.isEmpty() ? null : TransformUtil.getNextSelected(intervals, selectedTimeInterval, true);
-        }
+        TimeInterval interval = SelectorUtils.select(intervals, selectedTimeInterval, SelectorUtils.createUniqueTrainIntervalFilter());
         // set selected train
-        Train selected = null;
-        if (interval != null)
-            selected = interval.getTrain();
+        Train selected = interval != null ? interval.getTrain() : null;
         model.setSelectedTrain(selected);
         selectedTimeInterval = interval;
         model.getMediator().sendMessage(new IntervalSelectionMessage(interval));

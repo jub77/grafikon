@@ -26,6 +26,7 @@ import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.SelectorUtils;
 import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
 import net.parostroj.timetable.utils.*;
 
@@ -171,12 +172,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     @Override
     public void regionsSelected(List<TimeInterval> intervals) {
-        TimeInterval interval = null;
-        if (lastSelected == null)
-            interval = intervals.isEmpty() ? null : intervals.get(0);
-        else {
-            interval = intervals.isEmpty() ? null : TransformUtil.getNextSelected(intervals, lastSelected, true);
-        }
+        TimeInterval interval = SelectorUtils.select(intervals, lastSelected, SelectorUtils.createUniqueTrainIntervalFilter());
         if (interval != null) {
             // select in left list
             int index = allTrains.getIndexOfObject(interval.getTrain());
