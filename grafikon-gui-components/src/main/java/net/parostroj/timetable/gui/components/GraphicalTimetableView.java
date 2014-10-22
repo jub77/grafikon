@@ -398,6 +398,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                     return;
                 }
                 // collector/selector
+                boolean selected = false;
                 for (RegionCollector<?> collector : gtStorage.collectors()) {
                     if (evt.getClickCount() % 2 == 0) {
                         // indicates double click
@@ -405,7 +406,11 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                             return;
                         }
                     } else {
-                        collector.selectItems(evt.getX(), evt.getY(), SELECTION_RADIUS);
+                        if (!selected) {
+                            selected = collector.selectItems(evt.getX(), evt.getY(), SELECTION_RADIUS);
+                        } else {
+                            collector.deselectItems();
+                        }
                     }
                 }
             }

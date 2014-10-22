@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.Shape;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class RegionCollector<T> {
@@ -17,18 +18,28 @@ public abstract class RegionCollector<T> {
 
     protected abstract List<T> getItemsForPoint(int x, int y, int radius);
 
-    public void selectItems(int x, int y, int radius) {
+    public void deselectItems() {
         if (this.selector != null) {
-            this.selector.regionsSelected(this.getItemsForPoint(x, y, radius));
+            this.selector.regionsSelected(Collections.<T>emptyList());
+        }
+    }
+
+    public boolean selectItems(int x, int y, int radius) {
+        if (this.selector != null) {
+            List<T> list = this.getItemsForPoint(x, y, radius);
+            this.selector.regionsSelected(list);
+            return !list.isEmpty();
+        } else {
+            return false;
         }
     }
 
     public boolean editSelected() {
-        boolean edited = false;
         if (this.selector != null) {
-            edited = this.selector.editSelected();
+            return this.selector.editSelected();
+        } else {
+            return false;
         }
-        return edited;
     }
 
     abstract public void clear();
