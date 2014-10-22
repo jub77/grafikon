@@ -25,6 +25,8 @@ import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+
 import javax.swing.JTextField;
 
 public class FreightNetPane2 extends JPanel implements StorableGuiData {
@@ -35,18 +37,18 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
         @Override
         public void regionsSelected(List<FNConnection> regions) {
-            this.setSelected(regions.isEmpty() ? null : regions.get(0));
+            this.setSelected(SelectorUtils.select(regions, selected));
         }
 
         @Override
         public boolean editSelected() {
-            boolean edited = false;
             if (selected != null) {
                 EditFNConnetionDialog dialog = new EditFNConnetionDialog(GuiComponentUtils.getWindow(FreightNetPane2.this), true);
                 dialog.edit(FreightNetPane2.this, selected, model.getDiagram());
-                edited = true;
+                return true;
+            } else {
+                return false;
             }
-            return edited;
         }
 
         @Override
@@ -97,7 +99,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 }
                 if (connection.first == null) {
                     connection.first = interval;
-                } else if (connection.second == null) {
+                } else {
                     if (connection.first.getOwnerAsNode() != interval.getOwnerAsNode() ||
                             connection.first == interval) {
                         connection.first = interval;
@@ -113,23 +115,15 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         private TimeInterval lastInterval;
+        private final Predicate<TimeInterval> nodeIntervalFilter = new Predicate<TimeInterval>() {
+            @Override
+            public boolean apply(TimeInterval interval) {
+                return interval.isNodeOwner();
+            }
+        };
 
         private TimeInterval chooseInterval(List<TimeInterval> intervals) {
-            TimeInterval selected = null;
-            TimeInterval first = null;
-            for (TimeInterval interval : intervals) {
-                if (interval.isNodeOwner() && first == null) {
-                    first = interval;
-                }
-                if (interval.isNodeOwner() && selected == null) {
-                    selected = interval;
-                } else if (interval == lastInterval) {
-                    selected = null;
-                }
-            }
-            if (selected == null) {
-                selected = first;
-            }
+            TimeInterval selected = SelectorUtils.select(intervals, lastInterval, nodeIntervalFilter);
             lastInterval = selected;
             return selected;
         }
