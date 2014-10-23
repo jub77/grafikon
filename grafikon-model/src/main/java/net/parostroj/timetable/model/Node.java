@@ -15,7 +15,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes {
+public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -86,7 +86,8 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return id;
     }
 
-    public TrainDiagram getTrainDiagram() {
+    @Override
+    public TrainDiagram getDiagram() {
         return diagram;
     }
 

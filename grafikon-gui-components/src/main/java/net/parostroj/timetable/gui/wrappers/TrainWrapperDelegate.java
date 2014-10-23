@@ -55,9 +55,9 @@ public class TrainWrapperDelegate implements WrapperDelegate {
                 return String.format(format,
                         train.getName(),
                         train.getStartNode().getName(),
-                        train.getTrainDiagram().getTimeConverter().convertIntToText(train.getStartTime()),
+                        train.getDiagram().getTimeConverter().convertIntToText(train.getStartTime()),
                         train.getEndNode().getName(),
-                        train.getTrainDiagram().getTimeConverter().convertIntToText(train.getEndTime()));
+                        train.getDiagram().getTimeConverter().convertIntToText(train.getEndTime()));
             default:
                 return train.getName();
         }

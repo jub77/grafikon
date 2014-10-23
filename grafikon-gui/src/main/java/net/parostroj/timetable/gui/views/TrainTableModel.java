@@ -46,7 +46,7 @@ class TrainTableModel extends AbstractTableModel {
         this.train = train;
         if (train != null) {
             this.lastRow = train.getTimeIntervalList().size() - 1;
-            this.converter = train.getTrainDiagram().getTimeConverter();
+            this.converter = train.getDiagram().getTimeConverter();
         } else {
         	this.converter = null;
         }
@@ -210,7 +210,7 @@ class TrainTableModel extends AbstractTableModel {
             case FREIGHT_TO_STATIONS:
                 if (rowIndex % 2 == 0 && FreightHelper.isFreight(interval)) {
                     StringBuilder result = new StringBuilder();
-                    Map<Train, List<FreightDst>> passedCargoDst = train.getTrainDiagram().getFreightNet().getFreightPassedInNode(interval);
+                    Map<Train, List<FreightDst>> passedCargoDst = train.getDiagram().getFreightNet().getFreightPassedInNode(interval);
                     Region region = interval.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                         List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, entry.getValue());
@@ -218,7 +218,7 @@ class TrainTableModel extends AbstractTableModel {
                         result.append(" > ").append(entry.getKey().getName()).append(')');
                     }
                     if (FreightHelper.isFreightFrom(interval)) {
-                        List<FreightDst> cargoDst = train.getTrainDiagram().getFreightNet().getFreightToNodes(interval);
+                        List<FreightDst> cargoDst = train.getDiagram().getFreightNet().getFreightToNodes(interval);
                         List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, cargoDst);
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');

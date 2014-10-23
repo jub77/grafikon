@@ -54,7 +54,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
     public void showDialog(Line line, LengthUnit lengthUnit) {
         this.line = line;
-        TrainDiagram diagram = line.getTrainDiagram();
+        TrainDiagram diagram = line.getDiagram();
 
         lengthEditBox.setUnit(diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, lengthUnit));
 
@@ -91,7 +91,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class)));
 
         // update line class combo box
-        List<LineClass> classes = line.getTrainDiagram().getNet().getLineClasses();
+        List<LineClass> classes = line.getDiagram().getNet().getLineClasses();
         lineClassComboBox.removeAllItems();
         lineClassComboBox.addItem(noneLineClass);
         for (LineClass clazz : classes) {

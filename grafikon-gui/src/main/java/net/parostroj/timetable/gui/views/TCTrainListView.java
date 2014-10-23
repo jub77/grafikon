@@ -132,7 +132,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 }
             }
             for (Train train : trainsList) {
-                allTrains.addWrapper(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram())));
+                allTrains.addWrapper(Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram())));
             }
         }
     }

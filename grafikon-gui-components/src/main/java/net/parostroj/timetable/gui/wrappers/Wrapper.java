@@ -73,7 +73,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate delegate) {
         if (delegate == null) {
             if (o instanceof Train) {
-                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getTrainDiagram().getTrainsData().getTrainComparator());
+                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getDiagram().getTrainsData().getTrainComparator());
             } else if (o instanceof Route) {
                 delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
             } else if (o instanceof TrainsCycleItem) {

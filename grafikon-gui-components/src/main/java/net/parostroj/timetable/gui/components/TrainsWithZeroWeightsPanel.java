@@ -36,7 +36,7 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
         if (listModel.getSetOfObjects().contains(train))
             return;
         // add to list
-        listModel.addWrapper(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram().getTrainsData().getTrainComparator())));
+        listModel.addWrapper(new Wrapper<Train>(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram().getTrainsData().getTrainComparator())));
     }
 
     public void updateSelectedTrain(Train train) {

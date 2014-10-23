@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes {
+public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -46,6 +46,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         return id;
     }
 
+    @Override
     public TrainDiagram getDiagram() {
         return diagram;
     }

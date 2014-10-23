@@ -86,12 +86,12 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         collectRoutes(line, result);
         if (result.length() != 0)
             result.append(';');
-        LengthUnit lengthUnit = line.getTrainDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, appModel.getProgramSettings().getLengthUnit());
+        LengthUnit lengthUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, appModel.getProgramSettings().getLengthUnit());
         BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
         result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
         Integer topSpeed = line.getTopSpeed();
         if (topSpeed != null) {
-            lengthUnit = line.getTrainDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, LengthUnit.class, appModel.getProgramSettings().getSpeedLengthUnit());
+            lengthUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, LengthUnit.class, appModel.getProgramSettings().getSpeedLengthUnit());
             BigDecimal sValue = lengthUnit.convertFrom(new BigDecimal(topSpeed), LengthUnit.KM);
             result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(lengthUnit.getUnitsOfString())
                     .append("/h");
@@ -100,7 +100,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     }
 
     private void collectRoutes(Line line, StringBuilder builder) {
-        TrainDiagram diagram = line.getTrainDiagram();
+        TrainDiagram diagram = line.getDiagram();
         boolean added = false;
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {

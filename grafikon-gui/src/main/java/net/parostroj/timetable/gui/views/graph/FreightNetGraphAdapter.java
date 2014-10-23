@@ -106,8 +106,8 @@ public class FreightNetGraphAdapter extends JGraphTAdapter<Train, FNConnection> 
             FNConnection c = (FNConnection) mxCell.getValue();
             net.parostroj.timetable.model.Node node = c.getFrom().getOwnerAsNode();
             value = String.format("%s [%s]->[%s]", node.getName(),
-                    node.getTrainDiagram().getTimeConverter().convertIntToText(c.getFrom().getStart()),
-                    node.getTrainDiagram().getTimeConverter().convertIntToText(c.getTo().getEnd()));
+                    node.getDiagram().getTimeConverter().convertIntToText(c.getFrom().getStart()),
+                    node.getDiagram().getTimeConverter().convertIntToText(c.getTo().getEnd()));
         } else if (mxCell.getValue() instanceof Train) {
             TrainWrapperDelegate d = new TrainWrapperDelegate(
                     TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME_TWO_LINES, (TrainComparator) null);

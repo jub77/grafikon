@@ -113,7 +113,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     @Override
     public void visit(NodeEvent event) {
         try {
-        	TimeConverter c = event.getSource().getTrainDiagram().getTimeConverter();
+        	TimeConverter c = event.getSource().getDiagram().getTimeConverter();
             str.append("NodeEvent[");
             str.append(event.getSource().getAbbr());
             str.append(']');
@@ -141,7 +141,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     @Override
     public void visit(LineEvent event) {
         try {
-        	TimeConverter c = event.getSource().getTrainDiagram().getTimeConverter();
+        	TimeConverter c = event.getSource().getDiagram().getTimeConverter();
             str.append("LineEvent[");
             str.append(event.getSource().getFrom().getAbbr());
             str.append('-');

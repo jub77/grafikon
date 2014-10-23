@@ -73,7 +73,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         this.train = train;
         if (train != null)  {
             // model for train types
-            typeComboBox.setModel(new DefaultComboBoxModel(train.getTrainDiagram().getTrainTypes().toArray()));
+            typeComboBox.setModel(new DefaultComboBoxModel(train.getDiagram().getTrainTypes().toArray()));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
@@ -103,7 +103,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
             timeAfterTextField.setText(Integer.toString(train.getTimeAfter() / 60));
 
-            groupsComboBox.updateGroups(train.getTrainDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
+            groupsComboBox.updateGroups(train.getDiagram(), train.getAttributes().get(Train.ATTR_GROUP, Group.class));
 
             Integer weightLimit = train.getAttributes().get(Train.ATTR_WEIGHT_LIMIT, Integer.class);
             weightLimitCheckBox.setSelected(weightLimit != null);

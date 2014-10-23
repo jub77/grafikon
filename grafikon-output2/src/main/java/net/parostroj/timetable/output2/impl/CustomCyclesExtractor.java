@@ -48,7 +48,7 @@ public class CustomCyclesExtractor {
     }
 
     private CustomCycleRow createRow(TrainsCycleItem current, TrainsCycleItem previous) {
-    	TimeConverter c = current.getTrain().getTrainDiagram().getTimeConverter();
+    	TimeConverter c = current.getTrain().getDiagram().getTimeConverter();
         CustomCycleRow row = new CustomCycleRow();
         row.setTrainName(current.getTrain().getName());
         row.setFromTime(c.convertIntToXml(current.getStartTime()));
@@ -59,7 +59,7 @@ public class CustomCyclesExtractor {
         if (previous != null) {
             int time = current.getStartTime() - previous.getEndTime();
             // recalculate to real seconds
-            Double timeScale = current.getTrain().getTrainDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
+            Double timeScale = current.getTrain().getDiagram().getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class);
             time = (int)Math.round((1.0d / timeScale) * time);
             row.setWait(time);
         }

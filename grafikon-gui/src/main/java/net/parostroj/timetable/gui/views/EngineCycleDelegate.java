@@ -46,7 +46,7 @@ public class EngineCycleDelegate extends TCDelegate {
                 if (result.length() != 0) {
                     result.append('\n');
                 }
-                TimeConverter c = item.first.getTrain().getTrainDiagram().getTimeConverter();
+                TimeConverter c = item.first.getTrain().getDiagram().getTimeConverter();
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(), c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
             }
         }

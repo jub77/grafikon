@@ -112,7 +112,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         engineCyclesPane.setModel(new EngineCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                TrainsCycleType type = interval.getTrain().getTrainDiagram().getEngineCycleType();
+                TrainsCycleType type = interval.getTrain().getDiagram().getEngineCycleType();
                 if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
@@ -122,7 +122,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.setModel(new TrainUnitCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                TrainsCycleType type = interval.getTrain().getTrainDiagram().getTrainUnitCycleType();
+                TrainsCycleType type = interval.getTrain().getDiagram().getTrainUnitCycleType();
                 if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
@@ -132,7 +132,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         driverCyclesPane.setModel(new DriverCycleDelegate(model), new TrainColorChooser() {
             @Override
             public Color getIntervalColor(TimeInterval interval) {
-                TrainsCycleType type = interval.getTrain().getTrainDiagram().getDriverCycleType();
+                TrainsCycleType type = interval.getTrain().getDiagram().getDriverCycleType();
                 if (!interval.getTrain().isCovered(type, interval))
                     return Color.black;
                 else
@@ -979,7 +979,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 public void execute(Train train) throws Exception {
                     train.recalculate();
                     // round correctly stops
-                    TimeConverter converter = train.getTrainDiagram().getTimeConverter();
+                    TimeConverter converter = train.getDiagram().getTimeConverter();
                     for (TimeInterval interval : train.getTimeIntervalList()) {
                     	if (interval.isNodeOwner()) {
                     		train.changeStopTime(interval, converter.round(interval.getLength()));

@@ -285,7 +285,7 @@ public class TrainTimetablesExtractor {
                 if (!tTrains.contains(ti.getTrain()))
                     tTrains.add(ti.getTrain());
             }
-            TrainSort s = new TrainSort(new TrainComparator(TrainComparator.Type.ASC, node.getTrainDiagram().getTrainsData().getTrainSortPattern()));
+            TrainSort s = new TrainSort(new TrainComparator(TrainComparator.Type.ASC, node.getDiagram().getTrainsData().getTrainSortPattern()));
             tTrains = s.sort(tTrains);
             List<String> result = new LinkedList<String>();
             for (Train t : tTrains) {

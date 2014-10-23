@@ -60,7 +60,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
         Route route = draw.getRoute();
         Node firstNode = route.getSegments().get(0).asNode();
-        FreightNet net = firstNode.asNode().getTrainDiagram().getFreightNet();
+        FreightNet net = firstNode.asNode().getDiagram().getFreightNet();
 
         if (collector != null) {
             collector.clear();
