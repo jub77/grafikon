@@ -175,18 +175,6 @@ public class OutputAction {
                     this.getFile(null, template.getName(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
                     textTemplate, type, null, null, null);
-            if ("trains".equals(type)) {
-                // for each driver circulation
-                Map<String, Object> parameters = new HashMap<String, Object>();
-                for (TrainsCycle cycle : diagram.getCycles(diagram.getEngineCycleType())) {
-                    parameters.put("driver_cycle", cycle);
-                    this.generateOutput(
-                            output,
-                            this.getFile(null, template.getName() + "_" + cycle.getName(),
-                                    template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                            textTemplate, type, parameters, null, null);
-                }
-            }
         } else {
             for(OutputSettings outputName : outputNames) {
                 this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate, type, outputName.params, outputName.context, outputName.encoding);
