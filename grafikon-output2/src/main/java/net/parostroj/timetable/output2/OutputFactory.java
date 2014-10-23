@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -15,6 +16,19 @@ public abstract class OutputFactory {
 
     private static final ServiceLoader<OutputFactory> loader = ServiceLoader.load(OutputFactory.class);
     private static final Map<String, Class<? extends OutputFactory>> cache = new ConcurrentHashMap<String, Class<? extends OutputFactory>>();
+
+    /**
+     * @return list of output factory types
+     */
+    public static List<String> getTypes() {
+        List<String> result = new ArrayList<String>();
+        synchronized(loader) {
+            for (OutputFactory factory : loader) {
+                result.add(factory.getType());
+            }
+        }
+        return result;
+    }
 
     /**
      * creates factory.
