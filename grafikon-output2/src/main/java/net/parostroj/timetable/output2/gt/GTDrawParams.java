@@ -1,5 +1,10 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.awt.Dimension;
+
+import net.parostroj.timetable.output2.gt.GTDraw.Type;
+import net.parostroj.timetable.output2.gt.GTDrawSettings.Key;
+
 /**
  * Parameters for GTDrawOutput.
  *
@@ -7,18 +12,18 @@ package net.parostroj.timetable.output2.gt;
  */
 public class GTDrawParams {
 
-    private final GTDraw.Type type;
+    private final Type type;
     private final GTDrawSettings settings;
 
     public GTDrawParams() {
-        this(GTDraw.Type.CLASSIC, GTDrawSettings.create());
+        this(Type.CLASSIC, GTDrawSettings.create());
     }
 
-    public GTDrawParams(GTDraw.Type type) {
+    public GTDrawParams(Type type) {
         this(type, GTDrawSettings.create());
     }
 
-    public GTDrawParams(GTDraw.Type type, GTDrawSettings settings) {
+    public GTDrawParams(Type type, GTDrawSettings settings) {
         if (type == null || settings == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
@@ -30,7 +35,23 @@ public class GTDrawParams {
         return settings;
     }
 
-    public GTDraw.Type getType() {
+    public Type getType() {
         return type;
+    }
+
+    public void setSize(int x, int y) {
+        this.settings.set(Key.SIZE, new Dimension(x, y));
+    }
+
+    public void setZoom(float zoom) {
+        this.settings.set(Key.ZOOM, zoom);
+    }
+
+    public void setStart(int time) {
+        this.settings.set(Key.START_TIME, time);
+    }
+
+    public void setEnd(int time) {
+        this.settings.set(Key.END_TIME, time);
     }
 }

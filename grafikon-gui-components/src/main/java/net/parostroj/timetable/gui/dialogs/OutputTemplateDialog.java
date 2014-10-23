@@ -5,9 +5,13 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.util.Collections;
+import java.awt.event.*;
+import java.util.*;
+
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -18,18 +22,6 @@ import net.parostroj.timetable.output2.OutputFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-
 /**
  * Dialog for editing text template.
  *
@@ -38,6 +30,8 @@ import java.awt.event.ActionListener;
 public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
+    private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw"));
+    private static final Set<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableSet(Collections.singleton("groovy"));
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
@@ -57,9 +51,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private void init() {
         textTemplateEditBox.setTemplateLanguages(Collections.singleton(Language.GROOVY));
-        for (String type : OutputFactory.newInstance("groovy").getOutputTypes()) {
-            outputTypeComboBox.addItem(type);
+        for (String output : OUTPUTS) {
+            outputComboBox.addItem(output);
         }
+        outputComboBox.setSelectedItem(OutputTemplate.DEFAULT_OUTPUT);
     }
 
     public OutputTemplate getTemplate() {
@@ -75,6 +70,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
         textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
         extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class) : null);
+        outputComboBox.setSelectedItem(this.template.getOutput());
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, Object.class));
         scriptCheckBox.setSelected(isScript);
         scriptButton.setEnabled(isScript);
@@ -85,15 +81,39 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         textTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox2();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
-        FlowLayout flowLayout = (FlowLayout) buttonPanel.getLayout();
-        flowLayout.setAlignment(FlowLayout.RIGHT);
+        ((FlowLayout) buttonPanel.getLayout()).setAlignment(FlowLayout.RIGHT);
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
-        FlowLayout flowLayout_1 = (FlowLayout) verifyPanel.getLayout();
-        flowLayout_1.setVgap(2);
-        flowLayout_1.setAlignment(FlowLayout.LEFT);
+        FlowLayout flowLayout1 = (FlowLayout) verifyPanel.getLayout();
+        flowLayout1.setVgap(2);
+        flowLayout1.setAlignment(FlowLayout.LEFT);
+        outputComboBox = new javax.swing.JComboBox();
+        outputComboBox.setPrototypeDisplayValue("MMMMMM");
         outputTypeComboBox = new javax.swing.JComboBox();
+        outputTypeComboBox.setPrototypeDisplayValue("MMMMMMMMMMM");
+
+        outputComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    String output = (String) e.getItem();
+                    if (template != null) {
+                        template.setAttribute(OutputTemplate.ATTR_OUTPUT, output);
+                    }
+                    outputTypeComboBox.removeAllItems();
+                    for (String type : OutputFactory.newInstance(output).getOutputTypes()) {
+                        outputTypeComboBox.addItem(type);
+                    }
+                    if (OUTPUTS_WITH_TEMPLATE.contains(output)) {
+                        defaultTemplateCheckbox.setEnabled(true);
+                    } else {
+                        defaultTemplateCheckbox.setSelected(true);
+                        defaultTemplateCheckbox.setEnabled(false);
+                    }
+                }
+            }
+        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -123,6 +143,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         controlPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        verifyPanel.add(outputComboBox);
         verifyPanel.add(outputTypeComboBox);
 
         controlPanel.add(verifyPanel, BorderLayout.WEST);
@@ -145,9 +166,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         extensionTextField = new JTextField();
         verifyPanel.add(extensionTextField);
         extensionTextField.setColumns(10);
-        defaultTemplateCheckbox.addActionListener(new java.awt.event.ActionListener() {
+        defaultTemplateCheckbox.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void itemStateChanged(ItemEvent e) {
                 updateValues(defaultTemplateCheckbox.isSelected());
             }
         });
@@ -155,8 +176,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
 
         JPanel scriptPanel = new JPanel();
-        FlowLayout flowLayout_2 = (FlowLayout) scriptPanel.getLayout();
-        flowLayout_2.setVgap(2);
+        FlowLayout flowLayout2 = (FlowLayout) scriptPanel.getLayout();
+        flowLayout2.setVgap(2);
         controlPanel.add(scriptPanel, BorderLayout.EAST);
 
         scriptButton = new JButton(ResourceLoader.getString("ot.script") + "...");
@@ -202,6 +223,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             TextTemplate textTemplate = this.convertToTemplate();
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
+            this.template.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
             String ext = extensionTextField.getText().trim();
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION, "".equals(ext) ? null : ext);
             this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE, defaultTemplateCheckbox.isSelected());
@@ -240,4 +262,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private JTextField extensionTextField;
     private JCheckBox scriptCheckBox;
     private JButton scriptButton;
+    private JComboBox outputComboBox;
 }
