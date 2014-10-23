@@ -17,7 +17,11 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
         public void add(String name, Map<String, Object> values);
 
+        public void add(String name, Map<String, Object> values, Map<String, Object> params);
+
         public void add(String name, Map<String, Object> values, String encoding);
+
+        public void add(String name, Map<String, Object> values, Map<String,Object> params, String encoding);
     }
 
     private static class OutputSetting {
@@ -25,11 +29,13 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         public String name;
         public Map<String, Object> binding;
         public String encoding;
+        public Map<String, Object> params;
 
-        public OutputSetting(String name, Map<String, Object> binding, String encoding) {
+        public OutputSetting(String name, Map<String, Object> binding, String encoding, Map<String, Object> params) {
             this.name = name;
             this.binding = binding;
             this.encoding = encoding;
+            this.params = params;
         }
     }
 
@@ -137,12 +143,22 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> values) {
-                    out.add(new OutputSetting(name, values, null));
+                    out.add(new OutputSetting(name, values, null, null));
+                }
+
+                @Override
+                public void add(String name, Map<String, Object> values, Map<String, Object> params) {
+                    out.add(new OutputSetting(name, values, null, params));
                 }
 
                 @Override
                 public void add(String name, Map<String, Object> values, String encoding) {
-                    out.add(new OutputSetting(name, values, encoding));
+                    out.add(new OutputSetting(name, values, encoding, null));
+                }
+
+                @Override
+                public void add(String name, Map<String, Object> values, Map<String, Object> params, String encoding) {
+                    out.add(new OutputSetting(name, values, encoding, params));
                 }
             });
             template.getScript().evaluate(binding);
@@ -153,7 +169,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
     private void generateOutput(OutputTemplate template) throws OutputException {
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
-        OutputFactory factory = OutputFactory.newInstance("groovy");
+        OutputFactory factory = OutputFactory.newInstance(template.getOutput());
         factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
@@ -166,23 +182,25 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                     textTemplate, type, null, null, null);
             if ("trains".equals(type)) {
                 // for each driver circulation
+                Map<String, Object> parameters = new HashMap<String, Object>();
                 for (TrainsCycle cycle : diagram.getCycles(diagram.getEngineCycleType())) {
+                    parameters.put("driver_cycle", cycle);
                     this.generateOutput(
                             output,
                             this.getFile(template.getName() + "_" + cycle.getName(),
                                     template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
-                            textTemplate, type, cycle, null, null);
+                            textTemplate, type, parameters, null, null);
                 }
             }
         } else {
             for(OutputSetting outputName : outputNames) {
-                this.generateOutput(output, this.getFile(outputName.name), textTemplate, type, null, outputName.binding, outputName.encoding);
+                this.generateOutput(output, this.getFile(outputName.name), textTemplate, type, outputName.params, outputName.binding, outputName.encoding);
             }
         }
     }
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
-            Object param, Map<String, Object> context, String encoding) throws OutputException {
+            Map<String, Object> parameters, Map<String, Object> context, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
             params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
@@ -195,9 +213,10 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
         if (encoding != null) {
             params.setParam(DefaultOutputParam.OUTPUT_ENCODING, encoding);
         }
-        // nothing - starts, ends, stations, train_unit_cycles, engine_cycles
-        if ("trains".equals(type) && param != null) {
-            params.setParam("driver_cycle", param);
+        if (parameters != null) {
+            for (String key : parameters.keySet()) {
+                params.setParam(key, parameters.get(key));
+            }
         }
         output.write(params);
     }
