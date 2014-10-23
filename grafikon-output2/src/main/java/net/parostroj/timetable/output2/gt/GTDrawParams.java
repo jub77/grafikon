@@ -1,7 +1,5 @@
 package net.parostroj.timetable.output2.gt;
 
-import net.parostroj.timetable.output2.gt.GTDraw.Type;
-
 /**
  * Parameters for GTDrawOutput.
  *
@@ -16,7 +14,11 @@ public class GTDrawParams {
         this(GTDraw.Type.CLASSIC, GTDrawSettings.create());
     }
 
-    public GTDrawParams(Type type, GTDrawSettings settings) {
+    public GTDrawParams(GTDraw.Type type) {
+        this(type, GTDrawSettings.create());
+    }
+
+    public GTDrawParams(GTDraw.Type type, GTDrawSettings settings) {
         if (type == null || settings == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
