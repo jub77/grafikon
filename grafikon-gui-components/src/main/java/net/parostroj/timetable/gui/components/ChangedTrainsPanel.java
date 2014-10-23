@@ -47,7 +47,7 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
         }
         limitTrains(limit);
         // add to list
-        Wrapper<Train> wrapper = Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getTrainDiagram().getTrainsData().getTrainComparator()));
+        Wrapper<Train> wrapper = Wrapper.getWrapper(train, new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME_AND_END_NODES_WITH_TIME, train.getDiagram().getTrainsData().getTrainComparator()));
         listModel.addWrapper(wrapper);
         trainsList.ensureIndexIsVisible(listModel.getSize() - 1);
     }

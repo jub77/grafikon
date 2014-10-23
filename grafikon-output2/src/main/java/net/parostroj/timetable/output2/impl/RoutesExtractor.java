@@ -117,7 +117,7 @@ public class RoutesExtractor {
         if (routes != null && !routes.isEmpty()) {
             List<NetPartRouteInfo> infos = new LinkedList<NetPartRouteInfo>();
             // get ratio ...
-            TrainDiagram diagram = ((Node) routes.iterator().next().getSegments().get(0)).getTrainDiagram();
+            TrainDiagram diagram = ((Node) routes.iterator().next().getSegments().get(0)).getDiagram();
             Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             if (ratio == null)
                 ratio = 1.0;

@@ -156,7 +156,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         regionComboBox.removeAllItems();
         // add current regions
         regionComboBox.addItem(NONE_REGION);
-        for (Region region : node.getTrainDiagram().getNet().getRegions().get()) {
+        for (Region region : node.getDiagram().getNet().getRegions().get()) {
             regionComboBox.addItem(region);
         }
         // select region ...

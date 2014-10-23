@@ -15,7 +15,7 @@ import com.google.common.collect.*;
  *
  * @author jub
  */
-public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes {
+public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes, TrainDiagramPart {
 
     /** Train diagram reference. */
     private final TrainDiagram diagram;
@@ -89,7 +89,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /**
      * @return train diagram
      */
-    public TrainDiagram getTrainDiagram() {
+    @Override
+    public TrainDiagram getDiagram() {
         return diagram;
     }
 

@@ -42,7 +42,7 @@ public class TrainUnitCyclesExtractor {
     }
 
     private TrainUnitCycleRow createRow(TrainsCycleItem item) {
-    	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
+    	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         TrainUnitCycleRow row = new TrainUnitCycleRow();
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));
@@ -51,7 +51,7 @@ public class TrainUnitCyclesExtractor {
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         String comment = (item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment();
         if (comment != null) {
-            comment = item.getTrain().getTrainDiagram().getLocalization().translate(comment, locale);
+            comment = item.getTrain().getDiagram().getLocalization().translate(comment, locale);
         }
         row.setComment(comment);
         this.getCustomCyclesItem(row.getCycle(), item);
@@ -62,12 +62,12 @@ public class TrainUnitCyclesExtractor {
         Train train = tuItem.getTrain();
         int startIndex = train.getTimeIntervalList().indexOf(tuItem.getFromInterval());
         int endIndex = train.getTimeIntervalList().indexOf(tuItem.getToInterval());
-        for (TrainsCycleType type : train.getTrainDiagram().getCycleTypes()) {
+        for (TrainsCycleType type : train.getDiagram().getCycleTypes()) {
             if (!TrainsCycleType.isDefaultType(type)) {
                 List<TrainsCycleItem> items = train.getCycles(type);
                 for (TrainsCycleItem item : items) {
                     String typeName = item.getCycle().getType().getName();
-                    typeName = item.getTrain().getTrainDiagram().getLocalization().translate(typeName, locale);
+                    typeName = item.getTrain().getDiagram().getLocalization().translate(typeName, locale);
                     if (item.getFrom() == tuItem.getFrom() && item.getTo() == tuItem.getTo()) {
                         // the cover the same interval
                         list.add(new TrainUnitCustomCycle(typeName,

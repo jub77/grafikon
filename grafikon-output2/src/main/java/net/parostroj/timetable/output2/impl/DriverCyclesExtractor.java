@@ -62,7 +62,7 @@ public class DriverCyclesExtractor {
     }
 
     private DriverCycleRow createRow(TrainsCycleItem item) {
-    	TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
+    	TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         DriverCycleRow row = new DriverCycleRow();
         row.setTrainName(item.getTrain().getName());
         row.setFromTime(c.convertIntToXml(item.getStartTime()));

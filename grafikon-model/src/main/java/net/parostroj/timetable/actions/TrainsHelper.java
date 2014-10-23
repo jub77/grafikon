@@ -34,7 +34,7 @@ public class TrainsHelper {
             Node node = interval.getOwnerAsNode();
             if (shouldCheckLength(node, interval.getTrain(), interval) && interval.isStop()) {
                 length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
-                length = convertLength(node.getTrainDiagram(), length);
+                length = convertLength(node.getDiagram(), length);
             }
         } else {
             length = convertWeightToLength(interval.getTrain(), getWeight(interval));
@@ -184,7 +184,7 @@ public class TrainsHelper {
         if (weight == null)
             return null;
         // weight in kg
-        TrainDiagram diagram = train.getTrainDiagram();
+        TrainDiagram diagram = train.getDiagram();
         Integer wpa = train.getAttributes().getBool(Train.ATTR_EMPTY) ?
             diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, Integer.class) :
             diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, Integer.class);
@@ -223,7 +223,7 @@ public class TrainsHelper {
      */
     public static Collection<TrainsCycleItem> getEngineCyclesForInterval(TimeInterval interval) {
         Train train = interval.getTrain();
-        return train.getCycleItemsForInterval(train.getTrainDiagram().getEngineCycleType(), interval);
+        return train.getCycleItemsForInterval(train.getDiagram().getEngineCycleType(), interval);
     }
 
     /**
@@ -231,7 +231,7 @@ public class TrainsHelper {
      * @return if the circulation item for engine is helper or not
      */
     public static boolean isHelperEngine(TrainsCycleItem item) {
-        TrainsCycleType engineType = item.getTrain().getTrainDiagram().getEngineCycleType();
+        TrainsCycleType engineType = item.getTrain().getDiagram().getEngineCycleType();
         if (item.getCycle().getType() != engineType) {
             throw new IllegalArgumentException("Engine cycle expected.");
         }

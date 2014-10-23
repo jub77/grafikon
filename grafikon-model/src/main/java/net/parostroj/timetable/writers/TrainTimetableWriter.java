@@ -22,7 +22,7 @@ public class TrainTimetableWriter {
      * @param str appendable
      */
     public void writeTrainTimetable(Train train, Appendable str) throws IOException {
-    	TimeConverter c = train.getTrainDiagram().getTimeConverter();
+    	TimeConverter c = train.getDiagram().getTimeConverter();
 
         str.append("Train: ");
         str.append(train.getCompleteName()).append('\n');

@@ -26,7 +26,7 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate {
     }
 
     public String toStringItem(TrainsCycleItem item) {
-        TimeConverter c = item.getTrain().getTrainDiagram().getTimeConverter();
+        TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         String str = String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
                         item.getFromInterval().getOwnerAsNode().getName(),
                         c.convertIntToText(item.getStartTime()),

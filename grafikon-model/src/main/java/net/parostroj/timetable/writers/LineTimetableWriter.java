@@ -19,7 +19,7 @@ public class LineTimetableWriter {
      * @param str appendable
      */
     public void writeLineTimetable(Line line, Appendable str) throws IOException {
-    	TimeConverter c = line.getTrainDiagram().getTimeConverter();
+    	TimeConverter c = line.getDiagram().getTimeConverter();
 
         // get end nodes ...
         Node ss = line.getFrom();

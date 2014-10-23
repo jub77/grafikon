@@ -596,7 +596,7 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     protected TimeConverter getTimeConverter(TimeInterval interval) {
-    	return interval.getTrain().getTrainDiagram().getTimeConverter();
+    	return interval.getTrain().getDiagram().getTimeConverter();
     }
 
     @Override

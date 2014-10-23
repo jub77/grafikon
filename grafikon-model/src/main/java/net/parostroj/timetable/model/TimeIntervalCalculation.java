@@ -112,7 +112,7 @@ class TimeIntervalCalculation {
      */
     public int computeRunningTime() {
         final Train train = interval.getTrain();
-        TrainDiagram diagram = train.getTrainDiagram();
+        TrainDiagram diagram = train.getDiagram();
         final PenaltyTable penaltyTable = diagram.getPenaltyTable();
         PenaltySolver ps = new PenaltySolver() {
 
@@ -137,9 +137,9 @@ class TimeIntervalCalculation {
         binding.put("addedTime", this.interval.getAddedTime());
         binding.put("penaltySolver", ps);
         binding.put("train", train);
-        binding.put("converter", train.getTrainDiagram().getTimeConverter());
+        binding.put("converter", train.getDiagram().getTimeConverter());
         binding.put("interval", interval);
-        binding.put("diagram", train.getTrainDiagram());
+        binding.put("diagram", train.getDiagram());
         binding.put("log", log);
 
         Object result = diagram.getTrainsData().getRunningTimeScript().evaluate(binding);
