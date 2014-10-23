@@ -15,6 +15,11 @@ public class GTDrawParams {
     private final Type type;
     private final GTDrawSettings settings;
 
+    public GTDrawParams(GTDrawParams params) {
+        this.type = params.type;
+        this.settings = GTDrawSettings.copy(params.settings);
+    }
+
     public GTDrawParams() {
         this(Type.CLASSIC, GTDrawSettings.create());
     }
