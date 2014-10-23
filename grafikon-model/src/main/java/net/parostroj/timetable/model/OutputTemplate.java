@@ -12,6 +12,8 @@ import net.parostroj.timetable.visitors.Visitable;
  */
 public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart {
 
+    public static final String DEFAULT_OUTPUT = "groovy";
+
     private final String id;
     private final TrainDiagram diagram;
 
@@ -85,6 +87,11 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     public Script getScript() {
         return script;
+    }
+
+    public String getOutput() {
+        String output = this.getAttribute(ATTR_OUTPUT, String.class);
+        return output != null ? output : DEFAULT_OUTPUT;
     }
 
     @Override
