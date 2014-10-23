@@ -54,4 +54,16 @@ public class GTDrawParams {
     public void setEnd(int time) {
         this.settings.set(Key.END_TIME, time);
     }
+
+    public void setTechnologicalTime(boolean technologicalTime) {
+        this.settings.setOption(Key.TECHNOLOGICAL_TIME, technologicalTime);
+    }
+
+    public void setArrivalDepartureDigits(boolean arrivalDepartureDigits) {
+        this.settings.setOption(Key.ARRIVAL_DEPARTURE_DIGITS, arrivalDepartureDigits);
+    }
+
+    public void setExtendedLines(boolean extendedLines) {
+        this.settings.setOption(Key.EXTENDED_LINES, extendedLines);
+    }
 }
