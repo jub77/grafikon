@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.parostroj.timetable.model.TimeInterval;
 
@@ -92,5 +93,13 @@ public class GTDrawSettings {
             .set(Key.START_TIME, 0)
             .set(Key.END_TIME, TimeInterval.DAY);
         return settings;
+    }
+
+    public static GTDrawSettings copy(GTDrawSettings settings) {
+        GTDrawSettings copiedSettings = new GTDrawSettings();
+        for (Entry<Key, Object> entry : settings.preferences.entrySet()) {
+            copiedSettings.preferences.put(entry.getKey(), entry.getValue());
+        }
+        return copiedSettings;
     }
 }
