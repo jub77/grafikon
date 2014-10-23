@@ -57,6 +57,10 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         }
     }
 
+    public void setVisibleTemplateLanguageChange(boolean visible) {
+        languageComboBox.setVisible(visible);
+    }
+
     public void enableTemplateLanguageChange(boolean enabled) {
         languageComboBox.setEnabled(enabled);
     }
@@ -120,8 +124,11 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     public void setEnabled(boolean enabled) {
         languageComboBox.setEnabled(enabled);
         scrollPane.setEnabled(enabled);
+        scrollPane.getVerticalScrollBar().setEnabled(enabled);
+        scrollPane.getHorizontalScrollBar().setEnabled(enabled);
         templateTextArea.setEnabled(enabled);
         templateTextArea.setEditable(enabled);
+        templateTextArea.setHighlightCurrentLine(enabled);
         super.setEnabled(enabled);
     }
 
