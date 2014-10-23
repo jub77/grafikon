@@ -11,25 +11,42 @@ public class OutputAction {
 
         public void add(String name, Map<String, Object> context);
 
-        public void add(String name, Map<String, Object> context, Map<String, Object> params);
-
         public void add(String name, Map<String, Object> context, String encoding);
 
-        public void add(String name, Map<String, Object> context, Map<String,Object> params, String encoding);
+        public OutputSettings create();
     }
 
-    private static class OutputSetting {
+    public static class OutputSettings {
 
         public String name;
-        public Map<String, Object> binding;
+        public Map<String, Object> context;
         public String encoding;
         public Map<String, Object> params;
+        public String directory;
 
-        public OutputSetting(String name, Map<String, Object> binding, String encoding, Map<String, Object> params) {
+        public OutputSettings setName(String name) {
             this.name = name;
-            this.binding = binding;
+            return this;
+        }
+
+        public OutputSettings setContext(Map<String, Object> context) {
+            this.context = context;
+            return this;
+        }
+
+        public OutputSettings setEncondig(String encoding) {
             this.encoding = encoding;
+            return this;
+        }
+
+        public OutputSettings setParams(Map<String, Object> params) {
             this.params = params;
+            return this;
+        }
+
+        public OutputSettings setDirectory(String directory) {
+            this.directory = directory;
+            return this;
         }
     }
 
@@ -115,31 +132,28 @@ public class OutputAction {
         return errorTemplate;
     }
 
-    private List<OutputSetting> createOutputs(OutputTemplate template) {
-        List<OutputSetting> result = null;
+    private List<OutputSettings> createOutputs(OutputTemplate template) {
+        List<OutputSettings> result = null;
         if (template.getScript() != null) {
-            final List<OutputSetting> out = new ArrayList<OutputSetting>();
+            final List<OutputSettings> out = new ArrayList<OutputSettings>();
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", diagram);
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
-                    out.add(new OutputSetting(name, context, null, null));
-                }
-
-                @Override
-                public void add(String name, Map<String, Object> context, Map<String, Object> params) {
-                    out.add(new OutputSetting(name, context, null, params));
+                    out.add(new OutputSettings().setName(name).setContext(context));
                 }
 
                 @Override
                 public void add(String name, Map<String, Object> context, String encoding) {
-                    out.add(new OutputSetting(name, context, encoding, null));
+                    out.add(new OutputSettings().setName(name).setContext(context).setEncondig(encoding));
                 }
 
                 @Override
-                public void add(String name, Map<String, Object> context, Map<String, Object> params, String encoding) {
-                    out.add(new OutputSetting(name, context, encoding, params));
+                public OutputSettings create() {
+                    OutputSettings settings = new OutputSettings();
+                    out.add(settings);
+                    return settings;
                 }
             });
             template.getScript().evaluate(binding);
@@ -154,11 +168,11 @@ public class OutputAction {
         factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
-        List<OutputSetting> outputNames = this.createOutputs(template);
+        List<OutputSettings> outputNames = this.createOutputs(template);
         if (outputNames == null) {
             this.generateOutput(
                     output,
-                    this.getFile(template.getName(),
+                    this.getFile(null, template.getName(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
                     textTemplate, type, null, null, null);
             if ("trains".equals(type)) {
@@ -168,14 +182,14 @@ public class OutputAction {
                     parameters.put("driver_cycle", cycle);
                     this.generateOutput(
                             output,
-                            this.getFile(template.getName() + "_" + cycle.getName(),
+                            this.getFile(null, template.getName() + "_" + cycle.getName(),
                                     template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
                             textTemplate, type, parameters, null, null);
                 }
             }
         } else {
-            for(OutputSetting outputName : outputNames) {
-                this.generateOutput(output, this.getFile(outputName.name), textTemplate, type, outputName.params, outputName.binding, outputName.encoding);
+            for(OutputSettings outputName : outputNames) {
+                this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate, type, outputName.params, outputName.context, outputName.encoding);
             }
         }
     }
@@ -202,13 +216,21 @@ public class OutputAction {
         output.write(params);
     }
 
-    private File getFile(String name) {
+    private File getFile(String directory, String name) {
         name = name.replaceAll("[\\\\:/\"?<>|]", "");
-        return new File(outputDirectory, name);
+        File dir = getDir(directory);
+        return new File(dir, name);
     }
 
-    private File getFile(String name, String extension) {
+    private File getFile(String directory, String name, String extension) {
         name = name.replaceAll("[\\\\:/\"?<>|]", "");
-        return new File(outputDirectory, name + "." + (extension == null ? "html" : extension));
+        File dir = getDir(directory);
+        return new File(dir, name + "." + (extension == null ? "html" : extension));
+    }
+
+    private File getDir(String directory) {
+        File dir = (directory == null) ? outputDirectory : new File(outputDirectory, directory);
+        dir.mkdirs();
+        return dir;
     }
 }
