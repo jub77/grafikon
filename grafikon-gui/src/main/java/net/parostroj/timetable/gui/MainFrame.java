@@ -21,7 +21,9 @@ import javax.swing.*;
 import net.parostroj.timetable.actions.scripts.ScriptAction;
 import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.actions.RecalculateAction.TrainAction;
-import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
@@ -35,6 +37,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.output2.OutputAction.Settings;
 import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -1131,7 +1134,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.setLocationRelativeTo(this);
         ProgramSettings settings = model.getProgramSettings();
         dialog.showDialog(model.getDiagram(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
-                new OutputTemplateAction.Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), model.getOutputLocale()));
+                new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), model.getOutputLocale()));
         dialog.dispose();
     }
 

@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.OutputAction.Settings;
 import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
     private JFileChooser chooser;
-    private OutputTemplateAction.Settings settings;
+    private Settings settings;
     private final WindowLocationSize editSizeLocation = new WindowLocationSize();
 
     /** Creates new form TextTemplateListDialog */
@@ -43,7 +44,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, OutputTemplateAction.Settings settings) {
+    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
         this.settings = settings;
