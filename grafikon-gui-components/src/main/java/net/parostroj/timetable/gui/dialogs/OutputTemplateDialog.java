@@ -100,6 +100,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textTemplateEditBox.setColumns(80);
         textTemplateEditBox.setRows(25);
+        textTemplateEditBox.setVisibleTemplateLanguageChange(false);
         getContentPane().add(textTemplateEditBox, java.awt.BorderLayout.CENTER);
 
         controlPanel.setLayout(new java.awt.BorderLayout());
