@@ -7,7 +7,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.OutputAction.Settings;
+import net.parostroj.timetable.output2.OutputWriter.Settings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,11 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
     private String errorMessage;
 
-    private final OutputAction outputAction;
+    private final OutputWriter outputAction;
 
     public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<OutputTemplate> templates) {
         super(context);
-        this.outputAction = new OutputAction(diagram, settings, outputDirectory, templates);
+        this.outputAction = new OutputWriter(diagram, settings, outputDirectory, templates);
     }
 
     @Override

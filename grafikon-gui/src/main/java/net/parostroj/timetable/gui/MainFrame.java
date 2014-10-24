@@ -37,7 +37,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.output2.OutputAction.Settings;
+import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.ResourceLoader;
 

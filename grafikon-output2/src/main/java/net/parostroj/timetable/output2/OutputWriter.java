@@ -5,7 +5,12 @@ import java.util.*;
 
 import net.parostroj.timetable.model.*;
 
-public class OutputAction {
+/**
+ * Instance writes output of templates to disk.
+ *
+ * @author jub
+ */
+public class OutputWriter {
 
     public interface OutputCollector {
 
@@ -108,7 +113,7 @@ public class OutputAction {
     private final File outputDirectory;
     private final Iterable<OutputTemplate> templates;
 
-    public OutputAction(TrainDiagram diagram, Settings settings, File outputDirectory, Iterable<OutputTemplate> templates) {
+    public OutputWriter(TrainDiagram diagram, Settings settings, File outputDirectory, Iterable<OutputTemplate> templates) {
         this.diagram = diagram;
         this.settings = settings;
         this.outputDirectory = outputDirectory;
