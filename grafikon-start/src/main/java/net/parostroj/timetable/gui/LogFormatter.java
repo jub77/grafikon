@@ -37,7 +37,7 @@ public class LogFormatter extends Formatter {
             pw.println();
             record.getThrown().printStackTrace(pw);
             pw.close();
-            throwable = sw.toString();
+            throwable = sw.toString().replaceAll("\\Z[\n\r]*", "");
         }
         return String.format(format, dat, source, record.getLoggerName(), record.getLevel().getName(), message,
                 throwable);
