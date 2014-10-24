@@ -157,7 +157,7 @@ abstract public class GTDrawBase implements GTDraw {
                 }
             }
         }
-        if (max < this.gapStationX) {
+        if (max < this.gapStationX && !preferences.isOption(GTDrawSettings.Key.STATION_GAP_X_FIXED)) {
             this.gapStationX = max;
         }
         // update start

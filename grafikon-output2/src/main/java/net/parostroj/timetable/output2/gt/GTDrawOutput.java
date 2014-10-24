@@ -3,11 +3,8 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
-import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -28,52 +25,53 @@ public class GTDrawOutput extends DrawOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        GTDraw draw = this.getDraw(params);
-        if (draw == null) {
-            Route route = this.getRoute(params, diagram);
-            GTDrawParams gtParams = this.getParams(params);
-            draw = drawFactory.createInstance(gtParams.getType(), gtParams.getSettings(), route, new GTStorage());
+        Collection<GTDraw> draws = this.getDraws(params);
+        if (draws == null) {
+            Collection<GTDrawParams> gtParamList = this.getParams(params, diagram);
+            draws = new ArrayList<GTDraw>(gtParamList.size());
+            for (GTDrawParams gtParams : gtParamList) {
+                draws.add(drawFactory.createInstance(gtParams.getType(), gtParams.getSettings(), gtParams.getRoute(), new GTStorage()));
+            }
         }
-        this.draw(this.getFileOutputType(params), stream, draw);
+        this.draw(this.getFileOutputType(params), stream, draws, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }
 
-    private GTDraw getDraw(OutputParams params) {
+    private Collection<GTDraw> getDraws(OutputParams params) {
         Collection<?> draws = params.getParamValue(GT_DRAWS, Collection.class);
         if (draws != null && !draws.isEmpty()) {
-            return (GTDraw) draws.iterator().next();
+            return this.convert(draws, GTDraw.class);
         } else {
             return null;
         }
     }
 
-    private GTDrawParams getParams(OutputParams params) {
-        GTDrawParams gtParams = params.getParamValue(GT_PARAMS, GTDrawParams.class);
-        if (gtParams == null) {
+    private Collection<GTDrawParams> getParams(OutputParams params, TrainDiagram diagram) throws OutputException {
+        Collection<?> gtParamList = params.getParamValue(GT_PARAMS, Collection.class);
+        if (gtParamList == null || gtParamList.isEmpty()) {
             // create default values
-            gtParams = new GTDrawParams();
-        }
-        return gtParams;
-    }
-
-    private Route getRoute(OutputParams params, TrainDiagram diagram) throws OutputException {
-        Collection<?> routes = params.getParamValue(ROUTES_PARAM, Collection.class);
-        // only one route supported currently
-        Route route = null;
-        if (routes == null || routes.isEmpty()) {
-            List<Route> diagramRoutes = diagram.getRoutes();
-            if (diagramRoutes.isEmpty()) {
+            if (diagram.getRoutes().isEmpty()) {
                 throw new OutputException("Routes missing");
             }
-            route = diagramRoutes.get(0);
+            return Collections.singletonList(new GTDrawParams(diagram.getRoutes().get(0)));
         } else {
-            route = (Route) routes.iterator().next();
+            return this.convert(gtParamList, GTDrawParams.class);
         }
-        return route;
     }
 
-    private void draw(FileOutputType outputType, OutputStream stream, final GTDraw draw) throws OutputException {
-        this.draw(new Image() {
+    private void draw(FileOutputType outputType, OutputStream stream, final Collection<GTDraw> draws, DrawLayout layout) throws OutputException {
+        this.draw(this.createImages(draws), outputType, stream, layout);
+    }
 
+    private Collection<Image> createImages(Collection<GTDraw> draws) {
+        Collection<Image> images = new ArrayList<Image>(draws.size());
+        for (GTDraw draw : draws) {
+            images.add(this.createImage(draw));
+        }
+        return images;
+    }
+
+    private Image createImage(final GTDraw draw) {
+        return new Image() {
             @Override
             public Dimension getSize(Graphics2D g) {
                 return draw.getSize();
@@ -83,6 +81,6 @@ public class GTDrawOutput extends DrawOutput {
             public void draw(Graphics2D g) {
                 draw.draw(g);
             }
-        }, outputType, stream);
+        };
     }
 }

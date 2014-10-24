@@ -9,9 +9,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import net.parostroj.timetable.gui.actions.execution.SaveImageAction;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog.Type;
@@ -50,10 +48,9 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         Output output = factory.createOutput("circulations");
         Tuple<Integer> limits = this.getLimits();
         List<TrainsCycle> circulations = this.getCirculations();
-        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth);
+        CirculationDrawParams cdParams = new CirculationDrawParams(limits.first, limits.second, stepWidth, circulations);
         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, outputFile)
-                .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, cdParams)
-                .setParam(DrawParams.CIRCULATIONS_PARAM, circulations)
+                .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, Arrays.asList(cdParams))
                 .setParam(DrawParams.OUTPUT_TYPE, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG));
     }
 
