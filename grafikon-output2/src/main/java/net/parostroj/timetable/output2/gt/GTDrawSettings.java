@@ -108,4 +108,8 @@ public class GTDrawSettings {
         }
         return copiedSettings;
     }
+
+    public GTDrawSettings copy() {
+        return copy(this);
+    }
 }
