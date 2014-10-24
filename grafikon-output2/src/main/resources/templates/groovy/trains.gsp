@@ -769,7 +769,7 @@
   <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
   <tr><td class="valid"><% if (trains.validity != null) { %>${validity_from} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="cycle"><% if (trains.cycle != null) { %>${cycle}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
-  <tr><td class="cycledesc"><% if (trains.cycle != null) { %>${trains.cycle.description}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycledesc"><% if (trains.cycle != null) { %>${trains.cycle.description != null ? trains.cycle.description : "&nbsp;"}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="space2">&nbsp;</td></tr>
   <tr><td class="publish">${publisher}</td></tr>
 </table><%
