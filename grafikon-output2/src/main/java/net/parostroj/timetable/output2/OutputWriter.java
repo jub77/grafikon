@@ -137,7 +137,7 @@ public class OutputWriter {
         return errorTemplate;
     }
 
-    private List<OutputSettings> createOutputs(OutputTemplate template) {
+    private List<OutputSettings> createOutputs(OutputTemplate template) throws OutputException {
         List<OutputSettings> result = null;
         if (template.getScript() != null) {
             final List<OutputSettings> out = new ArrayList<OutputSettings>();
@@ -161,7 +161,11 @@ public class OutputWriter {
                     return settings;
                 }
             });
-            template.getScript().evaluate(binding);
+            try {
+                template.getScript().evaluateWithException(binding);
+            } catch (GrafikonException e) {
+                throw new OutputException("Error in script: " + e.getMessage(), e);
+            }
             result = out;
         }
         return result;
