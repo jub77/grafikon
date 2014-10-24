@@ -32,7 +32,7 @@ public class GTDrawParams {
     }
 
     public GTDrawParams(Type type, GTDrawSettings settings, Route route) {
-        if (type == null || settings == null || route == null) {
+        if (type == null || settings == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
         this.type = type;
