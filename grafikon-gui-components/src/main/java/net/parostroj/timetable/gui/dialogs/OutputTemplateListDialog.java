@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.OutputAction.Settings;
+import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
