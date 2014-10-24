@@ -18,7 +18,7 @@ import net.parostroj.timetable.gui.utils.CheckThreadViolationRepaintManager;
 public class Main {
 
     private static final Logger netParostrojLogger = Logger.getLogger("net.parostroj");
-    private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%n";
+    private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%6$s%n";
 
     static {
         netParostrojLogger.setLevel(Level.FINE);
