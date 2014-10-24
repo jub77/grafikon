@@ -29,7 +29,8 @@ public class GTDrawSettings {
         START_TIME(Integer.class),
         END_TIME(Integer.class),
         DISABLE_STATION_NAMES(Boolean.class),
-        ZOOM(Float.class);
+        ZOOM(Float.class),
+        STATION_GAP_X_FIXED(Boolean.class);
 
         private final Class<?> valueClass;
 
@@ -72,6 +73,11 @@ public class GTDrawSettings {
             return this.get(pref, Boolean.class);
         else
             throw new IllegalArgumentException("Option has to be boolean.");
+    }
+
+    public boolean isOption(Key pref) {
+        Boolean value = this.getOption(pref);
+        return value != null ? value.booleanValue() : false;
     }
 
     public void setOption(Key pref, Boolean value) {

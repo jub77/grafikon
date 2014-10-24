@@ -3,12 +3,10 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Locale;
+import java.util.*;
 
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 
@@ -25,35 +23,38 @@ public class CirculationDrawOutput extends DrawOutput {
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        Collection<TrainsCycle> circulations = this.getCirculations(params, diagram);
-        CirculationDrawParams cdParams = this.getParams(params);
-
-        CirculationDraw draw = new CirculationDraw(circulations, cdParams.getFrom(), cdParams.getTo(), cdParams.getStep());
-
-        this.draw(this.getFileOutputType(params), stream, draw);
+        Collection<CirculationDrawParams> cdParamList = this.getParams(params, diagram);
+        Collection<CirculationDraw> draws = new ArrayList<CirculationDraw>(cdParamList.size());
+        for (CirculationDrawParams cdParams : cdParamList) {
+            draws.add(new CirculationDraw(cdParams.getCirculations(), cdParams.getFrom(), cdParams.getTo(), cdParams.getStep()));
+        }
+        this.draw(this.getFileOutputType(params), stream, draws, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }
 
-    private CirculationDrawParams getParams(OutputParams params) {
-        CirculationDrawParams cdParams = params.getParamValue(CD_PARAMS, CirculationDrawParams.class);
-        if (cdParams == null) {
+    private Collection<CirculationDrawParams> getParams(OutputParams params, TrainDiagram diagram) {
+        Collection<?> cdParamList = params.getParamValue(CD_PARAMS, Collection.class);
+        if (cdParamList == null || cdParamList.isEmpty()) {
             // create default values
-            cdParams = new CirculationDrawParams(0, TimeInterval.DAY, 5);
+            return Collections.singletonList(new CirculationDrawParams(0, TimeInterval.DAY, 5, diagram.getDriverCycles()));
+        } else {
+            return this.convert(cdParamList, CirculationDrawParams.class);
         }
-        return cdParams;
     }
 
-    @SuppressWarnings("unchecked")
-    private Collection<TrainsCycle> getCirculations(OutputParams params, TrainDiagram diagram) throws OutputException {
-        Collection<TrainsCycle> circulations = params.getParamValue(CIRCULATIONS_PARAM, Collection.class);
-        if (circulations == null) {
-            circulations = diagram.getDriverCycles();
-        }
-        return circulations;
+    private void draw(FileOutputType outputType, OutputStream stream, final Collection<CirculationDraw> draws, DrawLayout layout) throws OutputException {
+        this.draw(this.createImages(draws), outputType, stream, layout);
     }
 
-    private void draw(FileOutputType outputType, OutputStream stream, final CirculationDraw draw) throws OutputException {
-        this.draw(new Image() {
+    private Collection<Image> createImages(Collection<CirculationDraw> draws) {
+        Collection<Image> images = new ArrayList<Image>(draws.size());
+        for (CirculationDraw draw : draws) {
+            images.add(this.createImage(draw));
+        }
+        return images;
+    }
 
+    private Image createImage(final CirculationDraw draw) {
+        return new Image() {
             @Override
             public Dimension getSize(Graphics2D g) {
                 draw.updateValues(g);
@@ -64,6 +65,6 @@ public class CirculationDrawOutput extends DrawOutput {
             public void draw(Graphics2D g) {
                 draw.draw(g);
             }
-        }, outputType, stream);
+        };
     }
 }

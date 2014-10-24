@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.gt;
 
 import java.awt.Dimension;
 
+import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
 import net.parostroj.timetable.output2.gt.GTDrawSettings.Key;
 
@@ -13,27 +14,30 @@ import net.parostroj.timetable.output2.gt.GTDrawSettings.Key;
 public class GTDrawParams {
 
     private final Type type;
+    private final Route route;
     private final GTDrawSettings settings;
 
-    public GTDrawParams(GTDrawParams params) {
+    public GTDrawParams(GTDrawParams params, Route route) {
         this.type = params.type;
+        this.route = route;
         this.settings = GTDrawSettings.copy(params.settings);
     }
 
-    public GTDrawParams() {
-        this(Type.CLASSIC, GTDrawSettings.create());
+    public GTDrawParams(Route route) {
+        this(Type.CLASSIC, GTDrawSettings.create(), route);
     }
 
-    public GTDrawParams(Type type) {
-        this(type, GTDrawSettings.create());
+    public GTDrawParams(Type type, Route route) {
+        this(type, GTDrawSettings.create(), route);
     }
 
-    public GTDrawParams(Type type, GTDrawSettings settings) {
-        if (type == null || settings == null) {
+    public GTDrawParams(Type type, GTDrawSettings settings, Route route) {
+        if (type == null || settings == null || route == null) {
             throw new NullPointerException("Parameters cannot be null");
         }
         this.type = type;
         this.settings = settings;
+        this.route = route;
     }
 
     public GTDrawSettings getSettings() {
@@ -42,6 +46,10 @@ public class GTDrawParams {
 
     public Type getType() {
         return type;
+    }
+
+    public Route getRoute() {
+        return route;
     }
 
     public void setSize(int x, int y) {
@@ -70,5 +78,13 @@ public class GTDrawParams {
 
     public void setExtendedLines(boolean extendedLines) {
         this.settings.setOption(Key.EXTENDED_LINES, extendedLines);
+    }
+
+    public void setStationNamesWidth(int width) {
+        this.settings.set(Key.STATION_GAP_X, width);
+    }
+
+    public void setStationNamesWidthFixed(boolean fixed) {
+        this.settings.setOption(Key.STATION_GAP_X_FIXED, fixed);
     }
 }

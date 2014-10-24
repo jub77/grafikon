@@ -2,11 +2,11 @@ package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
 import java.awt.RenderingHints.Key;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -39,18 +39,18 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         return type != null ? type : FileOutputType.SVG;
     }
 
-    protected void draw(Image image, FileOutputType outputType, OutputStream stream) throws OutputException {
+    protected void draw(Collection<Image> images, FileOutputType outputType, OutputStream stream, DrawLayout layout) throws OutputException {
         switch (outputType) {
             case PNG:
-                this.processPng(image, stream);
+                this.processPng(images, stream, layout);
                 break;
             case SVG:
-                this.processSvg(image, stream);
+                this.processSvg(images, stream, layout);
                 break;
         }
     }
 
-    private void processSvg(Image image, OutputStream stream) throws OutputException {
+    private void processSvg(Collection<Image> images, OutputStream stream, DrawLayout layout) throws OutputException {
         DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 
         // Create an instance of org.w3c.dom.Document.
@@ -68,10 +68,12 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         context.getGraphicContextDefaults().setRenderingHints(new RenderingHints(map));
 
         SVGGraphics2D g2d = new SVGGraphics2D(context, false);
-        Dimension size = image.getSize(g2d);
+
+        List<Dimension> sizes = this.getSizes(images, g2d);
+        Dimension size = this.getTotalSize(sizes, layout);
         g2d.setSVGCanvasSize(size);
 
-        image.draw(g2d);
+        this.drawImages(sizes, images, g2d, layout);
 
         // write to ouput - do not use css style
         boolean useCSS = false;
@@ -83,20 +85,80 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
         }
     }
 
-    private void processPng(Image image, OutputStream stream) throws OutputException {
+    private void processPng(Collection<Image> images, OutputStream stream, DrawLayout layout) throws OutputException {
         BufferedImage testImg = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-        Dimension size = image.getSize(testImg.createGraphics());
+        List<Dimension> sizes = this.getSizes(images, testImg.createGraphics());
+        Dimension size = this.getTotalSize(sizes, layout);
 
         BufferedImage img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.white);
         g2d.fillRect(0, 0, size.width, size.height);
-        image.draw(g2d);
+
+        this.drawImages(sizes, images, g2d, layout);
 
         try {
             ImageIO.write(img, "png", stream);
         } catch (IOException e) {
             throw new OutputException(e.getMessage(), e);
         }
+    }
+
+    private void drawImages(List<Dimension> sizes, Collection<Image> images, Graphics2D g, DrawLayout layout) {
+        int pos = 0;
+        for (Image image : images) {
+            Point location = this.getLocation(sizes, pos, layout);
+            AffineTransform currentTransform = g.getTransform();
+            AffineTransform newTransform = g.getTransform();
+            newTransform.translate(location.getX(), location.getY());
+            g.setTransform(newTransform);
+            image.draw(g);
+            g.setTransform(currentTransform);
+            pos++;
+        }
+    }
+
+    private List<Dimension> getSizes(Iterable<Image> images, Graphics2D g) {
+        List<Dimension> sizes = new ArrayList<Dimension>();
+        for (Image image : images) {
+            sizes.add(image.getSize(g));
+        }
+        return sizes;
+    }
+
+    private Dimension getTotalSize(List<Dimension> sizes, DrawLayout layout) {
+        switch (layout.getOrientation()) {
+            case TOP_DOWN:
+                int width = 0;
+                int height = 0;
+                for (Dimension s : sizes) {
+                    width = Math.max(width, s.width);
+                    height += s.height;
+                }
+                return new Dimension(width, height);
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    private Point getLocation(List<Dimension> sizes, int position, DrawLayout layout) {
+        switch (layout.getOrientation()) {
+            case TOP_DOWN:
+                int y = 0;
+                for (int i = 0; i < position; i++) {
+                    y += sizes.get(i).height;
+                }
+                return new Point(0, y);
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    protected <T> Collection<T> convert(Collection<?> collection, Class<T> clazz) {
+        Collection<T> result = new ArrayList<T>(collection.size());
+        for (Object o : collection) {
+            result.add(clazz.cast(o));
+        }
+        return result;
     }
 }
