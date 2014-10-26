@@ -143,6 +143,7 @@ public class OutputWriter {
             final List<OutputSettings> out = new ArrayList<OutputSettings>();
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", diagram);
+            binding.put("template", template);
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
