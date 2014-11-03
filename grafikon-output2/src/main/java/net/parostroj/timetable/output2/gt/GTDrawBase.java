@@ -54,26 +54,28 @@ abstract public class GTDrawBase implements GTDraw {
     protected final float minimalSpace;
     protected final float fontSize;
 
+    private final TrainColors colors;
+    private final TrainColorChooser trainColorChooser;
+    private final TrainRegionCollector trainRegionCollector;
+
     protected Point start;
     protected Dimension size;
     protected int gapStationX;
     protected int borderX;
     protected int borderY;
-    protected Route route;
     protected int stationNamesPosition = 0;
-    protected HighlightedTrains hTrains;
-    private final TrainColors colors;
-    private final TrainColorChooser trainColorChooser;
-    private final TrainRegionCollector trainRegionCollector;
-    protected GTDrawSettings preferences;
     protected Map<Node,Integer> positions;
     protected List<Node> stations;
-    protected Color background = Color.white;
-    protected int startTime;
-    protected int endTime;
     protected double timeStep;
 
-    protected Predicate<TimeInterval> intervalFilter;
+    protected final Color background;
+    protected final int startTime;
+    protected final int endTime;
+
+    protected final GTDrawSettings preferences;
+    protected final Route route;
+    protected final HighlightedTrains hTrains;
+    protected final Predicate<TimeInterval> intervalFilter;
 
     // caching
     private final Map<String, Rectangle> stringBounds = new HashMap<String, Rectangle>();
@@ -104,6 +106,8 @@ abstract public class GTDrawBase implements GTDraw {
                 BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DASH_2 }, 0f);
         minimalSpace = zoom * MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
+
+        background = config.get(GTDrawSettings.Key.BACKGROUND_COLOR, Color.class);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,7 +35,8 @@ public class GTDrawSettings {
         TITLE(Boolean.class),
         LEGEND(Boolean.class),
         INNER_SIZE(Boolean.class),
-        TITLE_TEXT(String.class);
+        TITLE_TEXT(String.class),
+        BACKGROUND_COLOR(Color.class);
 
         private final Class<?> valueClass;
 
@@ -117,7 +119,8 @@ public class GTDrawSettings {
             .set(Key.ZOOM, 1.0f)
             .set(Key.SIZE, new Dimension(640, 480))
             .set(Key.START_TIME, 0)
-            .set(Key.END_TIME, TimeInterval.DAY);
+            .set(Key.END_TIME, TimeInterval.DAY)
+            .set(Key.BACKGROUND_COLOR, Color.white);
         return settings;
     }
 
