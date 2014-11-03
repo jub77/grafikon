@@ -9,8 +9,16 @@ import java.awt.font.LineMetrics;
  */
 public class DrawUtils {
 
+    public static FontInfo createFontInfo(Graphics2D g) {
+        return createFontInfo(g.getFont(), g);
+    }
+
     public static FontInfo createFontInfo(Font font, Graphics2D g) {
-        LineMetrics lm = font.getLineMetrics("0", g.getFontRenderContext());
+        return createFontInfo(font, g, "0");
+    }
+
+    public static FontInfo createFontInfo(Font font, Graphics2D g, String s) {
+        LineMetrics lm = font.getLineMetrics(s, g.getFontRenderContext());
         FontInfo fontInfo = new FontInfo(Math.round(lm.getStrikethroughOffset()),
                 Math.round(lm.getDescent()),
                 Math.round(lm.getHeight()));
@@ -26,6 +34,11 @@ public class DrawUtils {
             this.strikeThrough = strikeThrough;
             this.descent = descent;
             this.height = height;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d,%d,%d", strikeThrough, descent, height);
         }
     }
 
