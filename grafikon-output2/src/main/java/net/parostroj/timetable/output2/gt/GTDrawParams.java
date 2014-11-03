@@ -87,4 +87,20 @@ public class GTDrawParams {
     public void setStationNamesWidthFixed(boolean fixed) {
         this.settings.setOption(Key.STATION_GAP_X_FIXED, fixed);
     }
+
+    public void setLegend(boolean legend) {
+        this.settings.setOption(Key.LEGEND, legend);
+    }
+
+    public void setTitle(boolean title) {
+        this.settings.setOption(Key.TITLE, title);
+    }
+
+    public void setInnerSize(boolean innerSize) {
+        this.settings.setOption(Key.INNER_SIZE, innerSize);
+    }
+
+    public void setTitleText(String titleText) {
+        this.settings.setRemove(Key.TITLE_TEXT, titleText);
+    }
 }

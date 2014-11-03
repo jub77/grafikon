@@ -30,7 +30,11 @@ public class GTDrawSettings {
         END_TIME(Integer.class),
         DISABLE_STATION_NAMES(Boolean.class),
         ZOOM(Float.class),
-        STATION_GAP_X_FIXED(Boolean.class);
+        STATION_GAP_X_FIXED(Boolean.class),
+        TITLE(Boolean.class),
+        LEGEND(Boolean.class),
+        INNER_SIZE(Boolean.class),
+        TITLE_TEXT(String.class);
 
         private final Class<?> valueClass;
 
@@ -50,9 +54,24 @@ public class GTDrawSettings {
     }
 
     public GTDrawSettings set(Key key, Object value) {
-        if (value != null && !key.getValueClass().isInstance(value))
+        if (value != null && !key.getValueClass().isInstance(value)) {
             throw new IllegalArgumentException(String.format("Wrong class of parameter: %s, should be %s", value.getClass(), key.getValueClass()));
+        }
         preferences.put(key, value);
+        return this;
+    }
+
+    public GTDrawSettings setRemove(Key key, Object value) {
+        if (value == null) {
+            this.remove(key);
+        } else {
+            this.set(key, value);
+        }
+        return this;
+    }
+
+    public GTDrawSettings remove(Key key) {
+        preferences.remove(key);
         return this;
     }
 
@@ -69,10 +88,11 @@ public class GTDrawSettings {
     }
 
     public Boolean getOption(Key pref) {
-        if (Boolean.class.equals(pref.getValueClass()))
+        if (Boolean.class.equals(pref.getValueClass())) {
             return this.get(pref, Boolean.class);
-        else
+        } else {
             throw new IllegalArgumentException("Option has to be boolean.");
+        }
     }
 
     public boolean isOption(Key pref) {
