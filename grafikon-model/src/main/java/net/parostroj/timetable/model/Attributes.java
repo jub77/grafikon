@@ -34,8 +34,9 @@ public class Attributes implements Map<String, Object> {
         this.values = new LinkedHashMap<String, Object>(attributes.values);
         // categories ...
         for (String category : attributes.getCategories()) {
-            if (valuesWithCategory == null)
+            if (valuesWithCategory == null) {
                 valuesWithCategory = new HashMap<String, Map<String,Object>>();
+            }
             valuesWithCategory.put(category, new LinkedHashMap<String, Object>(attributes.getMapForCategory(category)));
         }
     }
@@ -108,10 +109,11 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Object get(String name, String category) {
-        if (this.mapExistsForCategory(category))
+        if (this.mapExistsForCategory(category)) {
             return this.getMapForCategory(category).get(name);
-        else
+        } else {
             return null;
+        }
     }
 
     public Object remove(String name) {
@@ -119,13 +121,14 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Object remove(String name, String category) {
-        if (!this.mapExistsForCategory(category))
+        if (!this.mapExistsForCategory(category)) {
             return null;
-        else {
+        } else {
             Map<String, Object> map = this.getMapForCategory(category);
             Object o = map.remove(name);
-            if (o != null)
+            if (o != null) {
                 this.fireChange(name, o, null, category);
+            }
             return o;
         }
     }
@@ -145,10 +148,11 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Set<String> getCategories() {
-        if (valuesWithCategory == null)
+        if (valuesWithCategory == null) {
             return Collections.emptySet();
-        else
+        } else {
             return valuesWithCategory.keySet();
+        }
     }
 
     public Map<String, Object> getAttributesMap() {
@@ -156,10 +160,11 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Map<String, Object> getAttributesMap(String category) {
-        if (this.mapExistsForCategory(category))
+        if (this.mapExistsForCategory(category)) {
             return Collections.unmodifiableMap(this.getMapForCategory(category));
-        else
+        } else {
             return Collections.emptyMap();
+        }
     }
 
     public void addListener(AttributesListener listener) {
@@ -181,22 +186,26 @@ public class Attributes implements Map<String, Object> {
     }
 
     private Map<String, Object> getMapForCategory(String category) {
-        if (category == null)
+        if (category == null) {
             return values;
-        if (valuesWithCategory == null)
+        }
+        if (valuesWithCategory == null) {
             valuesWithCategory = new HashMap<String, Map<String,Object>>();
-        if (!valuesWithCategory.containsKey(category))
+        }
+        if (!valuesWithCategory.containsKey(category)) {
             valuesWithCategory.put(category, new LinkedHashMap<String, Object>());
+        }
         return valuesWithCategory.get(category);
     }
 
     private boolean mapExistsForCategory(String category) {
-        if (category == null)
+        if (category == null) {
             return values != null;
-        else if (valuesWithCategory != null)
+        } else if (valuesWithCategory != null) {
             return valuesWithCategory.containsKey(category);
-        else
+        } else {
             return false;
+        }
     }
 
     public void merge(Attributes from) {
@@ -220,7 +229,7 @@ public class Attributes implements Map<String, Object> {
         // update modified ...
         for (String name : fromMap.keySet()) {
             if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
-                    || (fromMap.get(name) == null && toMap.get(name) != null)){
+                    || (fromMap.get(name) == null && toMap.get(name) != null)) {
                 this.set(name, fromMap.get(name), category);
             }
         }
