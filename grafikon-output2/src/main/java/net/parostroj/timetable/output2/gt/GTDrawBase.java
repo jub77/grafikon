@@ -42,6 +42,7 @@ abstract public class GTDrawBase implements GTDraw {
     // other
     private static final int MINIMAL_SPACE_WIDTH = 25;
     private static final float FONT_SIZE = 11f;
+    private static final float TITLE_FONT_SIZE_RATIO = 2f;
 
     // strokes
     protected final Stroke hoursStroke;
@@ -109,12 +110,15 @@ abstract public class GTDrawBase implements GTDraw {
     public void draw(Graphics2D g) {
         this.init(g);
 
+        if (preferences.isOption(GTDrawSettings.Key.TITLE)) {
+            this.paintTitle(g);
+        }
         this.paintHours(g);
         this.paintStations(g);
         g.setColor(Color.BLACK);
         this.paintTrains(g);
         this.paintHoursTexts(g);
-        if (preferences.getOption(GTDrawSettings.Key.DISABLE_STATION_NAMES) != Boolean.TRUE) {
+        if (!preferences.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
             this.paintStationNames(g, stations, positions);
         }
         this.finishCollecting();
@@ -150,8 +154,8 @@ abstract public class GTDrawBase implements GTDraw {
             if (seg.isNode()) {
                 Node n = seg.asNode();
                 String name = TransformUtil.transformStation(n, null, null).trim();
-                Rectangle2D b = g.getFont().getStringBounds(name, g.getFontRenderContext());
-                int w = (int) (b.getWidth() + mSize.getWidth());
+                int nameWidth = DrawUtils.getStringWidth(g, name);
+                int w = (int) (nameWidth + mSize.getWidth());
                 if (w > max) {
                     max = w;
                 }
@@ -163,9 +167,12 @@ abstract public class GTDrawBase implements GTDraw {
         // update start
         this.start = new Point(this.borderX, this.borderY);
         this.start.translate(gapStationX, 0);
+        if (preferences.isOption(GTDrawSettings.Key.TITLE)) {
+            this.start.translate(0, (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO));
+        }
         // compute size
         Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
-        this.size = new Dimension(configSize.width - (this.borderX * 2 + this.gapStationX), configSize.height - this.borderY * 2);
+        this.size = new Dimension(configSize.width - (this.borderX + this.start.x), configSize.height - (this.borderY + this.start.y));
         // time step
         timeStep = (double) size.width / (endTime - startTime);
     }
@@ -207,6 +214,28 @@ abstract public class GTDrawBase implements GTDraw {
     @Override
     public void setStationNamesPosition(int position) {
         this.stationNamesPosition = position;
+    }
+
+    protected void paintTitle(Graphics2D g) {
+        Font currentFont = g.getFont();
+        g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
+        int y = (int) (start.y - this.getMSize(g).getHeight());
+        String text = preferences.get(GTDrawSettings.Key.TITLE_TEXT, String.class);
+        if (text == null) {
+            text = this.route.getName();
+            if (text == null) {
+                text = this.route.toString();
+            }
+        }
+        Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
+        int width = configSize.width - 2 * borderX;
+        text = DrawUtils.getStringForWidth(g, text, width);
+        int textWidth = DrawUtils.getStringWidth(g, text);
+        int shiftX = (width - textWidth) / 2;
+        int shiftY = DrawUtils.createFontInfo(g).descent;
+        g.drawString(text, borderX + shiftX, y - shiftY);
+        // restore font
+        g.setFont(currentFont);
     }
 
     protected void paintHours(Graphics2D g) {
@@ -253,7 +282,7 @@ abstract public class GTDrawBase implements GTDraw {
             } else {
                 // half hours
                 g.setColor(Color.orange);
-                if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+                if (preferences.isOption(GTDrawSettings.Key.EXTENDED_LINES)) {
                     g.setStroke(halfHoursExtStroke);
                 } else {
                     g.setStroke(halfHoursStroke);
@@ -323,8 +352,8 @@ abstract public class GTDrawBase implements GTDraw {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 if (intervalFilter == null || intervalFilter.apply(interval)) {
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
-                            && (preferences.get(GTDrawSettings.Key.TRAIN_NAMES) == Boolean.TRUE);
-                    boolean paintMinutes = preferences.get(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS) == Boolean.TRUE;
+                            && (preferences.isOption(GTDrawSettings.Key.TRAIN_NAMES));
+                    boolean paintMinutes = preferences.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
                     Interval normalized = interval.getInterval().normalize();
                     if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
                         g.setColor(this.getIntervalColor(interval));
