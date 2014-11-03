@@ -393,21 +393,8 @@ abstract public class GTDrawBase implements GTDraw {
             // draw name of the station
             if (!nodeStrings.containsKey(s)) {
                 String origName = TransformUtil.transformStation(s, null, null).trim();
-                String transName = origName;
-                int nameLength = transName.length();
-                boolean found = false;
-                while (!found) {
-                    int w = this.getStringWidth(transName, g);
-                    if (w >= gapStationX) {
-                        nameLength -= 1;
-                        transName = origName.substring(0, nameLength);
-                        transName += "...";
-                    } else {
-                        name = transName;
-                        nodeStrings.put(s, name);
-                        found = true;
-                    }
-                }
+                name = DrawUtils.getStringForWidth(g, origName, gapStationX);
+                nodeStrings.put(s, name);
             } else {
                 name = nodeStrings.get(s);
             }
@@ -494,10 +481,6 @@ abstract public class GTDrawBase implements GTDraw {
         FontMetrics fm = g.getFontMetrics();
         FontInfo info = this.getFontInfo(g);
         return new Rectangle(fm.stringWidth(ch), info.height);
-    }
-
-    private int getStringWidth(String str, Graphics2D g) {
-        return g.getFontMetrics().stringWidth(str);
     }
 
     protected Rectangle getStringBounds(String str, Graphics2D g) {

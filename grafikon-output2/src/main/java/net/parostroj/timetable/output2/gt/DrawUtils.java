@@ -29,4 +29,26 @@ public class DrawUtils {
         }
     }
 
+    public static String getStringForWidth(Graphics2D g, String str, int width) {
+        String result = str;
+        String transStr = str;
+        int strLength = transStr.length();
+        boolean found = false;
+        while (!found) {
+            int w = getStringWidth(g, transStr);
+            if (w >= width) {
+                strLength -= 1;
+                transStr = str.substring(0, strLength);
+                transStr += "...";
+            } else {
+                result = transStr;
+                found = true;
+            }
+        }
+        return result;
+    }
+
+    public static int getStringWidth(Graphics2D g, String str) {
+        return g.getFontMetrics().stringWidth(str);
+    }
 }
