@@ -1,9 +1,7 @@
 package net.parostroj.timetable.gui.wrappers;
 
-import java.util.List;
-
 import net.parostroj.timetable.model.Route;
-import net.parostroj.timetable.model.RouteSegment;
+import net.parostroj.timetable.utils.TransformUtil;
 
 /**
  * Delegate for trains.
@@ -39,37 +37,6 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate {
     }
 
     private String toStringRoute(Route route) {
-        StringBuilder builder = new StringBuilder();
-        // name
-        if (route.getName() != null && !"".equals(route.getName())) {
-            builder.append(route.getName()).append(' ');
-        }
-        // net part
-        if (route.isNetPart()) {
-            builder.append("* ");
-        }
-        // nodes
-        builder.append('[');
-        List<RouteSegment> segments = route.getSegments();
-        RouteSegment lastRouteSegment = segments.get(segments.size() - 1);
-        int lastItemSize = lastRouteSegment.toString().length() + 1;
-        boolean first = true;
-        for (RouteSegment segment : route.getSegments()) {
-            if (segment.asNode() != null) {
-                if (!first) {
-                    builder.append(',');
-                } else {
-                    first = false;
-                }
-                if (type == Type.SHORT && (builder.length() + lastItemSize) > ROUTE_LENGTH) {
-                    builder.append("...,");
-                    builder.append(lastRouteSegment);
-                    break;
-                }
-                builder.append(segment);
-            }
-        }
-        builder.append(']');
-        return builder.toString();
+        return TransformUtil.transformRoute(route, TransformUtil.getRouteFormat(route, true), type == Type.SHORT ? ROUTE_LENGTH : 0);
     }
 }

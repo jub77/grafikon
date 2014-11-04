@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.Iterables;
 
+import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -174,24 +175,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     @Override
     public String toString() {
         if (_cachedToString == null) {
-            StringBuilder builder = new StringBuilder();
-            if (name != null && !"".equals(name)) {
-                builder.append(name).append(' ');
-            }
-            builder.append('[');
-            boolean first = true;
-            for (RouteSegment segment : segments) {
-                if (segment.asNode() != null) {
-                    if (!first) {
-                        builder.append(',');
-                    } else {
-                        first = false;
-                    }
-                    builder.append(segment);
-                }
-            }
-            builder.append(']');
-            _cachedToString = builder.toString();
+            _cachedToString = TransformUtil.transformRoute(this);
         }
         return _cachedToString;
     }
