@@ -36,14 +36,14 @@ public class TransformUtil {
         return transformRoute(route, format, SEPARATOR, maxSegmentsLength);
     }
 
-    public static String transformRoute(Route route, String format, String separator, int maxSegmentsLengt) {
+    public static String transformRoute(Route route, String format, String separator, int maxSegmentsLength) {
         String name = ObjectsUtil.trimNonEmpty(route.getName());
-        String segments = getRouteSegments(route, separator, maxSegmentsLengt);
+        String segments = getRouteSegments(route, separator, maxSegmentsLength);
         return String.format(format, name, segments).trim();
     }
 
-    private static String getRouteSegments(Route route, String separator, int maxSegmentsLengt) {
-        if (maxSegmentsLengt <= 0) {
+    private static String getRouteSegments(Route route, String separator, int maxSegmentsLength) {
+        if (maxSegmentsLength <= 0) {
             return Joiner.on(separator).join(route.getSegments());
         } else {
             StringBuilder builder = new StringBuilder();
@@ -58,7 +58,7 @@ public class TransformUtil {
                     } else {
                         first = false;
                     }
-                    if ((builder.length() + lastItem.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLengt) {
+                    if ((builder.length() + lastItem.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) {
                         builder.append(THREE_DOTS);
                         builder.append(separator);
                         builder.append(lastRouteSegment);
