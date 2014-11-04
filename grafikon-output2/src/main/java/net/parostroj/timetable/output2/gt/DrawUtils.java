@@ -4,10 +4,26 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.LineMetrics;
 
+import com.google.common.base.Function;
+
 /**
  * @author jub
  */
 public class DrawUtils {
+
+    private static class ShortenStringFunction implements Function<Integer, String> {
+
+        private final String str;
+
+        public ShortenStringFunction(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public String apply(Integer length) {
+            return str.substring(0, str.length() - length);
+        }
+    }
 
     public static FontInfo createFontInfo(Graphics2D g) {
         return createFontInfo(g.getFont(), g);
@@ -43,16 +59,27 @@ public class DrawUtils {
     }
 
     public static String getStringForWidth(Graphics2D g, String str, int width) {
-        String result = str;
-        String transStr = str;
-        int strLength = transStr.length();
+        return getStringForWidth(g, new ShortenStringFunction(str), width, "...");
+    }
+
+    public static String getStringForWidth(Graphics2D g, Function<Integer, String> strFunc, int width, String suffix) {
+        int shortening = 0;
+        String result = strFunc.apply(shortening);
+        String transStr = result;
+        int strLength = -1;
         boolean found = false;
         while (!found) {
             int w = getStringWidth(g, transStr);
             if (w >= width) {
-                strLength -= 1;
-                transStr = str.substring(0, strLength);
-                transStr += "...";
+                shortening--;
+                transStr = strFunc.apply(shortening);
+                transStr += suffix;
+                if (transStr.length() == strLength) {
+                    result = transStr;
+                    found = true;
+                } else {
+                    strLength = transStr.length();
+                }
             } else {
                 result = transStr;
                 found = true;
