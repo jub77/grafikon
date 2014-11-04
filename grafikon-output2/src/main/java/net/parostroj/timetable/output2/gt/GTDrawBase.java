@@ -157,7 +157,7 @@ abstract public class GTDrawBase implements GTDraw {
         for (RouteSegment seg : getRoute().getSegments()) {
             if (seg.isNode()) {
                 Node n = seg.asNode();
-                String name = TransformUtil.transformStation(n, null, null).trim();
+                String name = TransformUtil.transformStation(n).trim();
                 int nameWidth = DrawUtils.getStringWidth(g, name);
                 int w = (int) (nameWidth + mSize.getWidth());
                 if (w > max) {
@@ -425,7 +425,7 @@ abstract public class GTDrawBase implements GTDraw {
             int y = this.getY(s, null);
             // draw name of the station
             if (!nodeStrings.containsKey(s)) {
-                String origName = TransformUtil.transformStation(s, null, null).trim();
+                String origName = TransformUtil.transformStation(s).trim();
                 name = DrawUtils.getStringForWidth(g, origName, gapStationX);
                 nodeStrings.put(s, name);
             } else {
