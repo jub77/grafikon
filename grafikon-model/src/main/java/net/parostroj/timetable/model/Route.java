@@ -21,7 +21,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     private final String id;
     private boolean netPart;
     private boolean trainRoute;
-    private String _cachedToString;
 
     /**
      * initializes routes.
@@ -96,12 +95,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     }
 
     public void setName(String name) {
-        this.clearCached();
         this.name = name;
-    }
-
-    private void clearCached() {
-        this._cachedToString = null;
     }
 
     public boolean isNetPart() {
@@ -109,7 +103,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     }
 
     public void setNetPart(boolean netPart) {
-        this.clearCached();
         this.netPart = netPart;
     }
 
@@ -118,7 +111,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     }
 
     public void setTrainRoute(boolean trainRoute) {
-        this.clearCached();
         this.trainRoute = trainRoute;
     }
 
@@ -141,7 +133,6 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
      * @param route route to be added
      */
     public void add(Route route) {
-        this.clearCached();
         List<RouteSegment> addSegments = route.getSegments();
         if ((segments.size() > 0) && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
@@ -174,24 +165,29 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
 
     @Override
     public String toString() {
-        if (_cachedToString == null) {
-            _cachedToString = TransformUtil.transformRoute(this);
-        }
-        return _cachedToString;
+        return TransformUtil.transformRoute(this);
     }
 
     /**
      * @return iterable which consists only of lines of this route
      */
-    public Iterable<Line> lines() {
+    public Iterable<Line> getLines() {
         return Iterables.filter(segments, Line.class);
     }
 
     /**
      * @return iterable which consists only of nodes of this route
      */
-    public Iterable<Node> nodes() {
+    public Iterable<Node> getNodes() {
         return Iterables.filter(segments, Node.class);
+    }
+
+    public Node getLast() {
+        return (Node) segments.get(segments.size() - 1);
+    }
+
+    public Node getFirst() {
+        return (Node) segments.get(0);
     }
 
     @Override

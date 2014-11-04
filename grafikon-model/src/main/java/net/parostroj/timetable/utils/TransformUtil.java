@@ -37,28 +37,25 @@ public class TransformUtil {
 
     public static String getRouteSegments(Route route, String separator, int maxSegmentsLength, int removedSegments) {
         StringBuilder builder = new StringBuilder();
-        List<RouteSegment> segments = route.getSegments();
-        RouteSegment lastRouteSegment = segments.get(segments.size() - 1);
-        String lastItem = transformStation((Node) lastRouteSegment);
+        Node lastNode = route.getLast();
+        String lastNodeText = transformStation(lastNode);
         boolean first = true;
         int cnt = 0;
-        for (RouteSegment segment : route.getSegments()) {
-            if (segment.asNode() != null) {
-                cnt++;
-                if (!first) {
-                    builder.append(separator);
-                } else {
-                    first = false;
-                }
-                if ((maxSegmentsLength > 0 && (builder.length() + lastItem.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) ||
-                        (removedSegments > 0 && cnt > removedSegments)) {
-                    builder.append(THREE_DOTS);
-                    builder.append(separator);
-                    builder.append(lastItem);
-                    break;
-                }
-                builder.append(transformStation((Node) segment));
+        for (Node node : route.getNodes()) {
+            cnt++;
+            if (!first) {
+                builder.append(separator);
+            } else {
+                first = false;
             }
+            if ((maxSegmentsLength > 0 && (builder.length() + lastNodeText.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) ||
+                    (removedSegments > 0 && cnt > removedSegments)) {
+                builder.append(THREE_DOTS);
+                builder.append(separator);
+                builder.append(lastNodeText);
+                break;
+            }
+            builder.append(transformStation(node));
         }
         return builder.toString();
     }
