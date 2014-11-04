@@ -5,8 +5,6 @@ import java.util.ListIterator;
 
 import net.parostroj.timetable.model.*;
 
-import com.google.common.base.Joiner;
-
 /**
  * Transformation of texts.
  *
@@ -16,59 +14,53 @@ public class TransformUtil {
 
     public static final String THREE_DOTS = "...";
     public static final String SEPARATOR = ",";
-    public static final String ROUTE_FORMAT = "%s [%s]";
-    public static final String ROUTE_FORMAT_NET_PART = "%s * [%s]";
-    public static final String ROUTE_FORMAT_NO_NAME = "[%2$3]";
-
-    public static String getRouteFormat(Route route, boolean withNetIdentification) {
-        String format = withNetIdentification && route.isNetPart() ? ROUTE_FORMAT_NET_PART : ROUTE_FORMAT;
-        if (ObjectsUtil.isEmpty(route.getName())) {
-            format = ROUTE_FORMAT_NO_NAME;
-        }
-        return format;
-    }
+    public static final String NET_PART = " *";
+    public static final String ROUTE_FORMAT = "%s%s [%s]";
 
     public static String transformRoute(Route route) {
-        return transformRoute(route, getRouteFormat(route, true), 0);
+        return transformRoute(route, ROUTE_FORMAT, 0);
     }
 
-    public static String transformRoute(Route route, String format, int maxSegmentsLength) {
-        return transformRoute(route, format, SEPARATOR, maxSegmentsLength);
+    public static String transformRoute(Route route, String format, int maxLength) {
+        return transformRoute(route, format, SEPARATOR, NET_PART, maxLength, 0);
     }
 
-    public static String transformRoute(Route route, String format, String separator, int maxSegmentsLength) {
+    public static String transformRoute(Route route, String format, String separator, String netPart, int maxLength, int removedSegments) {
         String name = ObjectsUtil.trimNonEmpty(route.getName());
-        String segments = getRouteSegments(route, separator, maxSegmentsLength);
-        return String.format(format, name, segments).trim();
+        if (maxLength > 0) {
+            int baseLength = String.format(format, name, route.isNetPart() ? netPart : "", "").length();
+            maxLength -= baseLength;
+        }
+        String segments = getRouteSegments(route, separator, maxLength, removedSegments);
+        return String.format(format, name, route.isNetPart() ? netPart : "", segments);
     }
 
-    private static String getRouteSegments(Route route, String separator, int maxSegmentsLength) {
-        if (maxSegmentsLength <= 0) {
-            return Joiner.on(separator).join(route.getSegments());
-        } else {
-            StringBuilder builder = new StringBuilder();
-            List<RouteSegment> segments = route.getSegments();
-            RouteSegment lastRouteSegment = segments.get(segments.size() - 1);
-            String lastItem = transformStation((Node) lastRouteSegment);
-            boolean first = true;
-            for (RouteSegment segment : route.getSegments()) {
-                if (segment.asNode() != null) {
-                    if (!first) {
-                        builder.append(separator);
-                    } else {
-                        first = false;
-                    }
-                    if ((builder.length() + lastItem.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) {
-                        builder.append(THREE_DOTS);
-                        builder.append(separator);
-                        builder.append(lastRouteSegment);
-                        break;
-                    }
-                    builder.append(segment);
+    public static String getRouteSegments(Route route, String separator, int maxSegmentsLength, int removedSegments) {
+        StringBuilder builder = new StringBuilder();
+        List<RouteSegment> segments = route.getSegments();
+        RouteSegment lastRouteSegment = segments.get(segments.size() - 1);
+        String lastItem = transformStation((Node) lastRouteSegment);
+        boolean first = true;
+        int cnt = 0;
+        for (RouteSegment segment : route.getSegments()) {
+            if (segment.asNode() != null) {
+                cnt++;
+                if (!first) {
+                    builder.append(separator);
+                } else {
+                    first = false;
                 }
+                if ((maxSegmentsLength > 0 && (builder.length() + lastItem.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) ||
+                        (removedSegments > 0 && cnt > removedSegments)) {
+                    builder.append(THREE_DOTS);
+                    builder.append(separator);
+                    builder.append(lastItem);
+                    break;
+                }
+                builder.append(transformStation((Node) segment));
             }
-            return builder.toString();
         }
+        return builder.toString();
     }
 
     /**
