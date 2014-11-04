@@ -437,8 +437,10 @@ abstract public class GTDrawBase implements GTDraw {
             int sy = y - fi.strikeThrough;
             int ow = Math.round(this.getMSize(g).width / 5);
             Rectangle r2 = new Rectangle(sx - ow, sy + fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
-            g.setColor(background);
-            g.fill(r2);
+            if (background != null) {
+                g.setColor(background);
+                g.fill(r2);
+            }
             g.setColor(Color.black);
             g.drawString(name, sx, sy);
         }
