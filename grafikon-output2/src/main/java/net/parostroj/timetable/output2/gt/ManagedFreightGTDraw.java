@@ -44,7 +44,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         connectionStroke = new BasicStroke(zoom * CONNECTION_STROKE_WIDTH);
 
         routeNodes = new HashSet<Node>();
-        for (Node node : draw.getRoute().nodes()) {
+        for (Node node : draw.getRoute().getNodes()) {
             routeNodes.add(node);
         }
     }
@@ -66,7 +66,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
             collector.clear();
         }
         g.setColor(Color.magenta);
-        for (Node node : route.nodes()) {
+        for (Node node : route.getNodes()) {
             for (FNConnection conn : net.getConnections(node)) {
                 drawConnection(g, firstNode, conn);
             }
