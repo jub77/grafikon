@@ -71,7 +71,7 @@ public class DrawUtils {
         while (!found) {
             int w = getStringWidth(g, transStr);
             if (w >= width) {
-                shortening--;
+                shortening++;
                 transStr = strFunc.apply(shortening);
                 transStr += suffix;
                 if (transStr.length() == strLength) {
