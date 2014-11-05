@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.io.OutputStream;
 import java.util.*;
 
-import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -35,7 +34,7 @@ public class CirculationDrawOutput extends DrawOutput {
         Collection<?> cdParamList = params.getParamValue(CD_PARAMS, Collection.class);
         if (cdParamList == null || cdParamList.isEmpty()) {
             // create default values
-            return Collections.singletonList(new CirculationDrawParams(0, TimeInterval.DAY, 5, diagram.getDriverCycles()));
+            return Collections.singletonList(new CirculationDrawParams(diagram.getDriverCycles()));
         } else {
             return this.convert(cdParamList, CirculationDrawParams.class);
         }

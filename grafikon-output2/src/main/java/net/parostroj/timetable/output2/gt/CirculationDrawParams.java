@@ -11,24 +11,23 @@ import net.parostroj.timetable.model.TrainsCycle;
 public class CirculationDrawParams {
 
     private final Collection<TrainsCycle> circulations;
-    private final int from;
-    private final int to;
-    private final int step;
+    private int from;
+    private int to;
+    private int step;
 
 
     public CirculationDrawParams(Collection<TrainsCycle> circulations) {
-        this(4, circulations);
-    }
-
-    public CirculationDrawParams(int step, Collection<TrainsCycle> circulations) {
-        this(0, TimeInterval.DAY, step, circulations);
-    }
-
-    public CirculationDrawParams(int from, int to, int step, Collection<TrainsCycle> circulations) {
-        this.from = from;
-        this.to = to;
-        this.step = step;
         this.circulations = circulations;
+        this.from = 0;
+        this.to = TimeInterval.DAY;
+        this.step = 5;
+    }
+
+    public CirculationDrawParams(Collection<TrainsCycle> circulations, CirculationDrawParams params) {
+        this(circulations);
+        this.from = params.from;
+        this.to = params.to;
+        this.step = params.step;
     }
 
     public int getFrom() {
@@ -41,6 +40,21 @@ public class CirculationDrawParams {
 
     public int getStep() {
         return step;
+    }
+
+    public CirculationDrawParams setFrom(int from) {
+        this.from = from;
+        return this;
+    }
+
+    public CirculationDrawParams setTo(int to) {
+        this.to = to;
+        return this;
+    }
+
+    public CirculationDrawParams setStep(int step) {
+        this.step = step;
+        return this;
     }
 
     public Collection<TrainsCycle> getCirculations() {
