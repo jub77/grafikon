@@ -215,13 +215,13 @@ public class OutputWriter {
     }
 
     private File getFile(String directory, String name) {
-        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        name = name.replaceAll("[\\\\:/\"?<>|*]", "");
         File dir = getDir(directory);
         return new File(dir, name);
     }
 
     private File getFile(String directory, String name, String extension) {
-        name = name.replaceAll("[\\\\:/\"?<>|]", "");
+        name = name.replaceAll("[\\\\:/\"?<>|*]", "");
         File dir = getDir(directory);
         return new File(dir, name + "." + (extension == null ? "html" : extension));
     }
