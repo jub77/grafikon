@@ -22,7 +22,7 @@ public class TransformUtil {
     }
 
     public static String transformRoute(Route route, String format, int maxLength) {
-        return transformRoute(route, format, SEPARATOR, NET_PART, maxLength, 0);
+        return transformRoute(route, format, SEPARATOR, "", maxLength, 0);
     }
 
     public static String transformRoute(Route route, String format, String separator, String netPart, int maxLength, int removedSegments) {
