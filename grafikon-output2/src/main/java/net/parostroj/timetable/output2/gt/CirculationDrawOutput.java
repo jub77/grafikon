@@ -26,7 +26,7 @@ public class CirculationDrawOutput extends DrawOutput {
         Collection<CirculationDrawParams> cdParamList = this.getParams(params, diagram);
         Collection<CirculationDraw> draws = new ArrayList<CirculationDraw>(cdParamList.size());
         for (CirculationDrawParams cdParams : cdParamList) {
-            draws.add(new CirculationDraw(cdParams.getCirculations(), cdParams.getFrom(), cdParams.getTo(), cdParams.getStep()));
+            draws.add(new CirculationDraw(cdParams));
         }
         this.draw(this.getFileOutputType(params), stream, draws, new DrawLayout(DrawLayout.Orientation.TOP_DOWN));
     }
