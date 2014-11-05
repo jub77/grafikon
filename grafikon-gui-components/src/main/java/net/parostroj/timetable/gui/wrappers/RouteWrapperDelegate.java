@@ -37,6 +37,6 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate {
     }
 
     private String toStringRoute(Route route) {
-        return TransformUtil.transformRoute(route, TransformUtil.ROUTE_FORMAT, type == Type.SHORT ? ROUTE_LENGTH : 0);
+        return TransformUtil.transformRoute(route, TransformUtil.ROUTE_FORMAT, TransformUtil.SEPARATOR, "", type == Type.SHORT ? ROUTE_LENGTH : 0, 0);
     }
 }
