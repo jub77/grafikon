@@ -223,17 +223,19 @@ abstract public class GTDrawBase implements GTDraw {
     protected void paintTitle(Graphics2D g) {
         Font currentFont = g.getFont();
         g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
-        int y = (int) (start.y - this.getMSize(g).getHeight());
-        String text = preferences.get(GTDrawSettings.Key.TITLE_TEXT, String.class);
-        if (text == null) {
-            text = this.route.getName();
-            if (text == null) {
-                text = this.route.toString();
-            }
-        }
         Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
         int width = configSize.width - 2 * borderX;
-        text = DrawUtils.getStringForWidth(g, text, width);
+        int y = (int) (start.y - this.getMSize(g).getHeight());
+
+        Object titleObject = preferences.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
+        String text = null;
+        if (titleObject == null) {
+            text = new RouteStringSupplier(route).get(g, width);
+        } else if (titleObject instanceof LimitedStringSupplier) {
+            text = ((LimitedStringSupplier) titleObject).get(g, width);
+        } else if (titleObject instanceof String) {
+            text = DrawUtils.getStringForWidth(g, (String) titleObject, width);
+        }
         int textWidth = DrawUtils.getStringWidth(g, text);
         int shiftX = (width - textWidth) / 2;
         int shiftY = DrawUtils.createFontInfo(g).descent;
