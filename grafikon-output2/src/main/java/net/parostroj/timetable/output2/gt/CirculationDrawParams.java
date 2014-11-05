@@ -14,7 +14,7 @@ public class CirculationDrawParams {
     private int from;
     private int to;
     private int step;
-
+    private String title;
 
     public CirculationDrawParams(Collection<TrainsCycle> circulations) {
         this.circulations = circulations;
@@ -42,6 +42,10 @@ public class CirculationDrawParams {
         return step;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public CirculationDrawParams setFrom(int from) {
         this.from = from;
         return this;
@@ -54,6 +58,11 @@ public class CirculationDrawParams {
 
     public CirculationDrawParams setStep(int step) {
         this.step = step;
+        return this;
+    }
+
+    public CirculationDrawParams setTitle(String title) {
+        this.title = title;
         return this;
     }
 
