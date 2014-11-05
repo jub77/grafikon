@@ -37,27 +37,61 @@ public class TransformUtil {
 
     public static String getRouteSegments(Route route, String separator, int maxSegmentsLength, int removedSegments) {
         StringBuilder builder = new StringBuilder();
-        Node lastNode = route.getLast();
-        String lastNodeText = transformStation(lastNode);
-        boolean first = true;
-        int cnt = 0;
-        for (Node node : route.getNodes()) {
-            cnt++;
-            if (!first) {
-                builder.append(separator);
-            } else {
-                first = false;
+        String lastNodeText = transformStation(route.getLast());
+        int len = route.getNodesCount();
+        if (removedSegments > 0 && len > 2) {
+            int cnt = len;
+            for (Node node : route.getNodes()) {
+                cnt--;
+                if (removedSegments > 0 && cnt <= removedSegments) {
+                    if (builder.length() == 0) {
+                        addText(builder, separator, transformStation(route.getFirst()));
+                    }
+                    addText(builder, separator, THREE_DOTS);
+                    addText(builder, separator, lastNodeText);
+                    break;
+                }
+                addText(builder, separator, transformStation(node));
             }
-            if ((maxSegmentsLength > 0 && (builder.length() + lastNodeText.length() + separator.length() + THREE_DOTS.length()) > maxSegmentsLength) ||
-                    (removedSegments > 0 && cnt > removedSegments)) {
-                builder.append(THREE_DOTS);
-                builder.append(separator);
-                builder.append(lastNodeText);
-                break;
+        } else if (maxSegmentsLength > 0 && len > 2) {
+            String previousNodeText = null;
+            Node lastNode = route.getLast();
+            for (Node node : route.getNodes()) {
+                int previousLength = previousNodeText != null ? previousNodeText.length() : 0;
+                if (maxSegmentsLength > 0
+                        && (builder.length() + previousLength + lastNodeText.length() +
+                                3 * separator.length() + THREE_DOTS.length()) > maxSegmentsLength
+                        && !(node == lastNode && (builder.length() + 2 * separator.length() +
+                                previousLength + lastNodeText.length() <= maxSegmentsLength))) {
+                    if (builder.length() == 0) {
+                        addText(builder, separator, transformStation(route.getFirst()));
+                    }
+                    if (len > 2) {
+                        addText(builder, separator, THREE_DOTS);
+                    }
+                    addText(builder, separator, lastNodeText);
+                    previousNodeText = null;
+                    break;
+                }
+                addText(builder, separator, previousNodeText);
+                previousNodeText = transformStation(node);
             }
-            builder.append(transformStation(node));
+            addText(builder, separator, previousNodeText);
+        } else {
+            for (Node node : route.getNodes()) {
+                addText(builder, separator, transformStation(node));
+            }
         }
         return builder.toString();
+    }
+
+    private static void addText(StringBuilder builder, String separator, String str) {
+        if (str != null) {
+            if (builder.length() != 0) {
+                builder.append(separator);
+            }
+            builder.append(str);
+        }
     }
 
     /**
