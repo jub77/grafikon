@@ -92,12 +92,12 @@ public class CirculationDraw {
     private final Layout layout;
     private boolean update;
 
-    public CirculationDraw(Collection<TrainsCycle> circulations, int fromTime, int toTime, int stepWidth) {
-        this.circulations = circulations;
+    public CirculationDraw(CirculationDrawParams params) {
+        this.circulations = params.getCirculations();
         this.layout = new Layout();
-        this.layout.fromTime = fromTime;
-        this.layout.toTime = toTime;
-        this.layout.stepWidth = stepWidth;
+        this.layout.fromTime = params.getFrom();
+        this.layout.toTime = params.getTo();
+        this.layout.stepWidth = params.getStep();
         this.layout.rows = circulations.size();
         this.update = true;
     }

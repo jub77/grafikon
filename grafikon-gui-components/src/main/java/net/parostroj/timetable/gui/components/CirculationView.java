@@ -76,7 +76,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         if (diagram != null && type != null) {
             List<TrainsCycle> circulations = getCirculations();
             Tuple<Integer> newLimits = this.getLimits();
-            draw = new CirculationDraw(circulations, newLimits.first, newLimits.second, stepWidth);
+            draw = new CirculationDraw(new CirculationDrawParams(newLimits.first, newLimits.second, stepWidth, circulations));
         }
         this.repaint();
     }
