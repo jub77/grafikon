@@ -175,11 +175,19 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
         return Iterables.filter(segments, Line.class);
     }
 
+    public int getLinesCount() {
+        return segments.size() / 2;
+    }
+
     /**
      * @return iterable which consists only of nodes of this route
      */
     public Iterable<Node> getNodes() {
         return Iterables.filter(segments, Node.class);
+    }
+
+    public int getNodesCount() {
+        return segments.size() / 2 + 1;
     }
 
     public Node getLast() {
