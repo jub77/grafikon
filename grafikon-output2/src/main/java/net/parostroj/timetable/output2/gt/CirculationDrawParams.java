@@ -20,7 +20,7 @@ public class CirculationDrawParams {
         this.circulations = circulations;
         this.from = 0;
         this.to = TimeInterval.DAY;
-        this.step = 5;
+        this.step = 4;
     }
 
     public CirculationDrawParams(Collection<TrainsCycle> circulations, CirculationDrawParams params) {
