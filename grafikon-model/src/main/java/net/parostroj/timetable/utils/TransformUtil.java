@@ -40,49 +40,59 @@ public class TransformUtil {
         String lastNodeText = transformStation(route.getLast());
         int len = route.getNodesCount();
         if (removedSegments > 0 && len > 2) {
-            int cnt = len;
-            for (Node node : route.getNodes()) {
-                cnt--;
-                if (removedSegments > 0 && cnt <= removedSegments) {
-                    if (builder.length() == 0) {
-                        addText(builder, separator, transformStation(route.getFirst()));
-                    }
-                    addText(builder, separator, THREE_DOTS);
-                    addText(builder, separator, lastNodeText);
-                    break;
-                }
-                addText(builder, separator, transformStation(node));
-            }
+            getRouteSegmentsRemoved(route, separator, removedSegments, builder, lastNodeText, len);
         } else if (maxSegmentsLength > 0 && len > 2) {
-            String previousNodeText = null;
-            Node lastNode = route.getLast();
-            for (Node node : route.getNodes()) {
-                int previousLength = previousNodeText != null ? previousNodeText.length() : 0;
-                if (maxSegmentsLength > 0
-                        && (builder.length() + previousLength + lastNodeText.length() +
-                                3 * separator.length() + THREE_DOTS.length()) > maxSegmentsLength
-                        && !(node == lastNode && (builder.length() + 2 * separator.length() +
-                                previousLength + lastNodeText.length() <= maxSegmentsLength))) {
-                    if (builder.length() == 0) {
-                        addText(builder, separator, transformStation(route.getFirst()));
-                    }
-                    if (len > 2) {
-                        addText(builder, separator, THREE_DOTS);
-                    }
-                    addText(builder, separator, lastNodeText);
-                    previousNodeText = null;
-                    break;
-                }
-                addText(builder, separator, previousNodeText);
-                previousNodeText = transformStation(node);
-            }
-            addText(builder, separator, previousNodeText);
+            getRouteSegmentsMax(route, separator, maxSegmentsLength, builder, lastNodeText, len);
         } else {
             for (Node node : route.getNodes()) {
                 addText(builder, separator, transformStation(node));
             }
         }
         return builder.toString();
+    }
+
+    private static void getRouteSegmentsMax(Route route, String separator, int maxSegmentsLength, StringBuilder builder,
+            String lastNodeText, int len) {
+        String previousNodeText = null;
+        Node lastNode = route.getLast();
+        int lastLength = lastNodeText.length() + separator.length();
+        int threeDotsLength = THREE_DOTS.length() + separator.length();
+        for (Node node : route.getNodes()) {
+            int previousLength = previousNodeText != null ? previousNodeText.length() + separator.length() : 0;
+            if (maxSegmentsLength > 0
+                    && (builder.length() + previousLength + lastLength + threeDotsLength) > maxSegmentsLength
+                    && !(node == lastNode && (builder.length() + previousLength + lastLength <= maxSegmentsLength))) {
+                if (builder.length() == 0) {
+                    addText(builder, separator, transformStation(route.getFirst()));
+                }
+                if (len > 2) {
+                    addText(builder, separator, THREE_DOTS);
+                }
+                addText(builder, separator, lastNodeText);
+                previousNodeText = null;
+                break;
+            }
+            addText(builder, separator, previousNodeText);
+            previousNodeText = transformStation(node);
+        }
+        addText(builder, separator, previousNodeText);
+    }
+
+    private static void getRouteSegmentsRemoved(Route route, String separator, int removedSegments, StringBuilder builder,
+            String lastNodeText, int len) {
+        int cnt = len;
+        for (Node node : route.getNodes()) {
+            cnt--;
+            if (removedSegments > 0 && cnt <= removedSegments) {
+                if (builder.length() == 0) {
+                    addText(builder, separator, transformStation(route.getFirst()));
+                }
+                addText(builder, separator, THREE_DOTS);
+                addText(builder, separator, lastNodeText);
+                break;
+            }
+            addText(builder, separator, transformStation(node));
+        }
     }
 
     private static void addText(StringBuilder builder, String separator, String str) {
