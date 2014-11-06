@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 
 /**
  * View with circulations of certain type.
@@ -16,13 +17,14 @@ public class CirculationDraw {
 
     private static class Layout {
 
-        private static final double BORDER = 1d;
+        private static final double BORDER = 0.8d;
         private static final double TITLE = 1.2d;
-        private static final double ROW = 2.5d;
+        private static final double ROW = 2.2d;
         private static final int DESCRIPTION = 15;
-        private static final double SMALL_FONT = 0.8d;
+        private static final float SMALL_FONT = 0.8f;
+        private static final float TITLE_FONT = 2.0f;
         private static final int START_WIDTH = 7;
-        private static final double STEP_RATIO = 2.0d;
+        private static final double STEP_RATIO = 1.0d;
 
         public boolean init;
         public int title;
@@ -36,33 +38,35 @@ public class CirculationDraw {
         public Dimension size = new Dimension(0, 0);
         public Dimension letter;
         public Dimension letterSmall;
+        public FontInfo infoT;
         public int titleGap;
         public int rowGap;
         public int rowGapSmall;
         public int textOffset;
         public int textOffsetSmall;
         public int stepWidth;
+        public int startY;
         public Font smallFont;
+        public Font titleFont;
+        public String titleText;
 
         public int getRow(int rowIndex) {
-            return border + rowIndex * this.row + this.title;
+            return startY + rowIndex * this.row + this.title;
         }
 
         public void updateValues(Graphics2D g) {
             if (!this.init) {
-                TextLayout tl1 = new TextLayout("M", g.getFont(), g.getFontRenderContext());
-                TextLayout tl2 = new TextLayout("Čy", g.getFont(), g.getFontRenderContext());
+                smallFont = g.getFont().deriveFont(g.getFont().getSize() * SMALL_FONT);
+                titleFont = g.getFont().deriveFont(Font.BOLD, g.getFont().getSize() * TITLE_FONT);
 
-                smallFont = g.getFont().deriveFont(g.getFont().getSize() * (float)SMALL_FONT);
-                TextLayout stl = new TextLayout("Čy", smallFont, g.getFontRenderContext());
+                FontInfo infoN = DrawUtils.createFontInfo(g);
+                FontInfo infoS = DrawUtils.createFontInfo(smallFont, g);
+                infoT = DrawUtils.createFontInfo(titleFont, g);
 
-                Rectangle2D b1 = tl1.getBounds();
-                Rectangle2D b2 = tl2.getBounds();
-                Rectangle2D bs = stl.getBounds();
-                this.textOffset = (int) (b2.getHeight() + b2.getY());
-                this.textOffsetSmall = (int) (bs.getHeight() + bs.getY());
-                this.letter = new Dimension((int) b1.getWidth(), (int) b2.getHeight());
-                this.letterSmall = new Dimension((int) bs.getWidth(), (int) bs.getHeight());
+                this.textOffset = infoN.descent;
+                this.textOffsetSmall = infoS.descent;
+                this.letter = new Dimension(DrawUtils.getStringWidth(g, "M"), infoN.height);
+                this.letterSmall = new Dimension(DrawUtils.getStringWidth(g, smallFont, "M"), infoS.height);
                 this.init = true;
             }
             this.border = (int) (this.letter.height * BORDER);
@@ -78,6 +82,11 @@ public class CirculationDraw {
                 size = new Dimension(0, 0);
             } else {
                 int height = 2 * border + rows * row + title;
+                startY = border;
+                if (titleText != null) {
+                    height += infoT.height;
+                    startY += infoT.height;
+                }
                 int width = 2 * border + description + (int) ((toTime - fromTime) * step);
                 size = new Dimension(width, height);
             }
@@ -100,16 +109,21 @@ public class CirculationDraw {
         this.layout.stepWidth = params.getStep();
         this.layout.rows = circulations.size();
         this.update = true;
+        this.layout.titleText = params.getTitle();
     }
 
     public void draw(Graphics2D g) {
         this.updateValues(g);
         if (layout.rows > 0) {
+            if (layout.titleText != null) {
+                paintTitle(g);
+            }
             paintCirculations(g);
         }
     }
 
     public boolean updateValues(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (this.update) {
             this.layout.updateValues(g);
             this.update = false;
@@ -127,6 +141,19 @@ public class CirculationDraw {
         return layout.rows;
     }
 
+    private void paintTitle(Graphics2D g) {
+        Font backup = g.getFont();
+        g.setFont(layout.titleFont);
+
+        String text = DrawUtils.getStringForWidth(g, layout.titleText, layout.size.width - 2 * layout.border);
+        int width = DrawUtils.getStringWidth(g, text);
+        int offsetX = (layout.size.width - width) / 2;
+
+        g.drawString(text, offsetX, layout.startY - (layout.infoT.descent * 2));
+
+        g.setFont(backup);
+    }
+
     private void paintCirculations(Graphics2D g) {
         paintTimeTimeline(g);
         int row = 0;
@@ -137,10 +164,9 @@ public class CirculationDraw {
 
     private void paintTimeTimeline(Graphics2D g) {
         int startX = layout.border + layout.description;
-        int startY = layout.border;
         int end = layout.size.width - layout.border;
         int oldX = startX;
-        int height = layout.size.height - 2 * layout.border;
+        int height = layout.row * layout.rows + layout.title;
         int seconds = 0;
         boolean odd = true;
         for (int h = 0; h <= 24; h++) {
@@ -150,14 +176,14 @@ public class CirculationDraw {
                 if (x > end) {
                     x = end;
                 }
-                g.fillRect(oldX, startY, x - oldX + 1, height);
+                g.fillRect(oldX, layout.startY, x - oldX + 1, height);
                 oldX = x;
             }
             odd = !odd;
             seconds += 3600;
         }
         seconds = 0;
-        int titleTextPos = layout.border + layout.title - layout.titleGap - layout.textOffset;
+        int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
         for (int i = 0; i <= 24; i++) {
             g.setColor(Color.BLACK);
             seconds = i * 3600;
@@ -167,9 +193,9 @@ public class CirculationDraw {
                 TextLayout tl = new TextLayout(hStr, g.getFont(), g.getFontRenderContext());
                 Rectangle2D bounds = tl.getBounds();
                 int pos = startX + (int) ((seconds - layout.fromTime) * layout.step);
-                g.drawString(hStr, pos - (int)bounds.getWidth() / 2, titleTextPos);
+                g.drawString(hStr, pos - (int) bounds.getWidth() / 2, titleTextPos);
                 g.setColor(COLOR_LINE);
-                g.drawLine(pos, layout.border + layout.title, pos, layout.size.height - layout.border);
+                g.drawLine(pos, layout.startY + layout.title, pos, layout.size.height - layout.border);
             }
         }
 

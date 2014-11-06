@@ -91,4 +91,8 @@ public class DrawUtils {
     public static int getStringWidth(Graphics2D g, String str) {
         return g.getFontMetrics().stringWidth(str);
     }
+
+    public static int getStringWidth(Graphics2D g, Font font, String str) {
+        return g.getFontMetrics(font).stringWidth(str);
+    }
 }
