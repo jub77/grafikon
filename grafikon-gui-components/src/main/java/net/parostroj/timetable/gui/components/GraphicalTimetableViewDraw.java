@@ -3,7 +3,6 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Rectangle2D;
 
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
@@ -36,7 +35,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     protected final TrainRegionCollector trainRegionCollector;
     protected Route route;
     protected TrainDiagram diagram;
-    private Rectangle2D mSize;
 
     protected final GTStorage gtStorage = new GTStorage();
 
@@ -455,8 +453,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         if (trainRegionCollector.containsTrain(train)) {
             Rectangle region = trainRegionCollector.getRegionForTrain(train);
             if (region != null) {
-                region.setLocation((int) (region.x - mSize.getWidth()), 0);
-                region.setSize((int) (region.width + mSize.getWidth() * 2), 0);
+                region.setLocation(region.x - 10, 0);
+                region.setSize(region.width + 10 * 2, 0);
                 this.scrollRectToVisible(region);
             }
         }
