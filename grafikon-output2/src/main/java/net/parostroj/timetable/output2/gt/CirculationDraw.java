@@ -25,6 +25,7 @@ public class CirculationDraw {
         private static final float TITLE_FONT = 2.0f;
         private static final int START_WIDTH = 7;
         private static final double STEP_RATIO = 1.0d;
+        private static final float FONT_SIZE = 11f;
 
         public boolean init;
         public int title;
@@ -49,6 +50,7 @@ public class CirculationDraw {
         public Font smallFont;
         public Font titleFont;
         public String titleText;
+        public float zoom;
 
         public int getRow(int rowIndex) {
             return startY + rowIndex * this.row + this.title;
@@ -107,6 +109,7 @@ public class CirculationDraw {
         this.layout.fromTime = params.getFrom();
         this.layout.toTime = params.getTo();
         this.layout.stepWidth = params.getStep();
+        this.layout.zoom = params.getZoom();
         this.layout.rows = circulations.size();
         this.update = true;
         this.layout.titleText = params.getTitle();
@@ -124,6 +127,7 @@ public class CirculationDraw {
 
     public boolean updateValues(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setFont(g.getFont().deriveFont(layout.zoom * Layout.FONT_SIZE));
         if (this.update) {
             this.layout.updateValues(g);
             this.update = false;
