@@ -20,10 +20,9 @@ public class CirculationDraw {
         private static final double BORDER = 0.8d;
         private static final double TITLE = 1.2d;
         private static final double ROW = 2.2d;
-        private static final int DESCRIPTION = 15;
+        private static final int DESCRIPTION = 12;
         private static final float SMALL_FONT = 0.8f;
         private static final float TITLE_FONT = 2.0f;
-        private static final int START_WIDTH = 7;
         private static final double STEP_RATIO = 1.0d;
         private static final float FONT_SIZE = 11f;
 
@@ -74,7 +73,7 @@ public class CirculationDraw {
             this.border = (int) (this.letter.height * BORDER);
             this.row = (int) (this.letter.height * ROW);
             this.description = this.letter.width * (DESCRIPTION + 1);
-            this.step = this.letter.width * ((stepWidth * STEP_RATIO + START_WIDTH) / 3600d);
+            this.step = this.letter.width * stepWidth * STEP_RATIO / 3600d;
             this.title = (int) (this.letter.height * TITLE);
             this.titleGap = (this.title - this.letter.height) / 2;
             this.rowGap = (this.row - this.letter.height) / 2;
@@ -128,13 +127,13 @@ public class CirculationDraw {
     public boolean updateValues(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setFont(g.getFont().deriveFont(layout.zoom * Layout.FONT_SIZE));
+        boolean updated = false;
         if (this.update) {
             this.layout.updateValues(g);
             this.update = false;
-            return true;
-        } else {
-            return false;
+            updated = true;
         }
+        return updated;
     }
 
     public Dimension getSize() {

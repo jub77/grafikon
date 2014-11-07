@@ -32,12 +32,14 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     private TrainDiagram diagram;
     private TrainsCycleType type;
     private int stepWidth;
+    private float zoom;
 
     /** Creates new form CirculationView */
     public CirculationView() {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(null);
         this.stepWidth = 5;
+        this.zoom = 1f;
     }
 
 
@@ -49,7 +51,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         Tuple<Integer> limits = this.getLimits();
         List<TrainsCycle> circulations = this.getCirculations();
         CirculationDrawParams cdParams = new CirculationDrawParams(circulations).setFrom(limits.first)
-                .setTo(limits.second).setStep(stepWidth);
+                .setTo(limits.second).setStep(stepWidth).setZoom(zoom);
         output.write(output.getAvailableParams().setParam(DefaultOutputParam.OUTPUT_FILE, outputFile)
                 .setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, Arrays.asList(cdParams))
                 .setParam(DrawParams.OUTPUT_TYPE, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG));
@@ -78,7 +80,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
             List<TrainsCycle> circulations = getCirculations();
             Tuple<Integer> newLimits = this.getLimits();
             draw = new CirculationDraw(new CirculationDrawParams(circulations).setFrom(newLimits.first)
-                    .setTo(newLimits.second).setStep(stepWidth));
+                    .setTo(newLimits.second).setStep(stepWidth).setZoom(zoom));
         }
         this.repaint();
     }
@@ -145,6 +147,11 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
 
     public void setStepWidth(int size) {
         this.stepWidth = size;
+        this.repaintAndUpdateSize();
+    }
+
+    public void setZoom(float zoom) {
+        this.zoom = zoom;
         this.repaintAndUpdateSize();
     }
 }

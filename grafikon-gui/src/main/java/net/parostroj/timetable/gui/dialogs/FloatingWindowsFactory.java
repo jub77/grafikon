@@ -359,14 +359,16 @@ public class FloatingWindowsFactory {
             @Override
             public Ini.Section saveToPreferences(Ini prefs) {
                 Ini.Section section = super.saveToPreferences(prefs);
-                section.put("size", panel.geSizeSlider());
+                section.put("size", panel.getSizeSlider());
+                section.put("zoom", panel.getZoomSlider());
                 return section;
             }
 
             @Override
             public Ini.Section loadFromPreferences(Ini prefs) {
                 Ini.Section section = super.loadFromPreferences(prefs);
-                panel.setSizeSlider(section.get("size", Integer.class, panel.geSizeSlider()));
+                panel.setSizeSlider(section.get("size", Integer.class, panel.getSizeSlider()));
+                panel.setZoomSlider(section.get("zoom", Integer.class, panel.getZoomSlider()));
                 return section;
             }
         };
