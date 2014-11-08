@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
@@ -107,7 +108,7 @@ public class CirculationDraw {
         this.layout = new Layout();
         this.layout.fromTime = params.getFrom();
         this.layout.toTime = params.getTo();
-        this.layout.stepWidth = params.getStep();
+        this.layout.stepWidth = params.getWidthInChars();
         this.layout.zoom = params.getZoom();
         this.layout.rows = circulations.size();
         this.update = true;
@@ -115,6 +116,9 @@ public class CirculationDraw {
     }
 
     public void draw(Graphics2D g) {
+        AffineTransform t = g.getTransform();
+        t.scale(layout.zoom, layout.zoom);
+        g.setTransform(t);
         this.updateValues(g);
         if (layout.rows > 0) {
             if (layout.titleText != null) {
@@ -126,7 +130,7 @@ public class CirculationDraw {
 
     public boolean updateValues(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setFont(g.getFont().deriveFont(layout.zoom * Layout.FONT_SIZE));
+        g.setFont(g.getFont().deriveFont(Layout.FONT_SIZE));
         boolean updated = false;
         if (this.update) {
             this.layout.updateValues(g);
@@ -137,7 +141,8 @@ public class CirculationDraw {
     }
 
     public Dimension getSize() {
-        return layout.size;
+        return new Dimension((int) (layout.size.width * layout.zoom),
+                (int) (layout.size.height * layout.zoom));
     }
 
     public int getRows() {
