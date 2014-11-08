@@ -42,9 +42,9 @@ public class DrawUtils {
     }
 
     public static class FontInfo {
-        int strikeThrough;
-        int descent;
-        int height;
+        public int strikeThrough;
+        public int descent;
+        public int height;
 
         public FontInfo(int strikeThrough, int descent, int height) {
             this.strikeThrough = strikeThrough;

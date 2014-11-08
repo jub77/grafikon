@@ -13,7 +13,7 @@ public class CirculationDrawParams {
     private final Collection<TrainsCycle> circulations;
     private int from;
     private int to;
-    private int step;
+    private int widthInChars;
     private String title;
     private float zoom;
 
@@ -21,7 +21,7 @@ public class CirculationDrawParams {
         this.circulations = circulations;
         this.from = 0;
         this.to = TimeInterval.DAY;
-        this.step = 4;
+        this.widthInChars = 4;
         this.zoom = 1f;
     }
 
@@ -29,7 +29,7 @@ public class CirculationDrawParams {
         this(circulations);
         this.from = params.from;
         this.to = params.to;
-        this.step = params.step;
+        this.widthInChars = params.widthInChars;
         this.zoom = params.zoom;
     }
 
@@ -41,8 +41,8 @@ public class CirculationDrawParams {
         return to;
     }
 
-    public int getStep() {
-        return step;
+    public int getWidthInChars() {
+        return widthInChars;
     }
 
     public String getTitle() {
@@ -63,8 +63,8 @@ public class CirculationDrawParams {
         return this;
     }
 
-    public CirculationDrawParams setStep(int step) {
-        this.step = step;
+    public CirculationDrawParams setWidthInChars(int widthInChars) {
+        this.widthInChars = widthInChars;
         return this;
     }
 
