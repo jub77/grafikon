@@ -21,7 +21,7 @@ public class DrawUtils {
 
         @Override
         public String apply(Integer length) {
-            return str.substring(0, str.length() - length);
+            return length > str.length() ? "" : str.substring(0, str.length() - length);
         }
     }
 
