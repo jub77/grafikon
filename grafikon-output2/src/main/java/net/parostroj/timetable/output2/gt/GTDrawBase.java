@@ -418,9 +418,9 @@ abstract public class GTDrawBase implements GTDraw {
             }
             g.draw(line);
         }
-        Interval overMidnight = normalized.getComplementatyIntervalOverThreshold(startTime);
-        if (overMidnight != null && this.isTimeVisible(overMidnight.getStart(), overMidnight.getEnd())) {
-            Line2D line = this.createTrainLineInStation(interval, overMidnight);
+        Interval overThreshold = normalized.getComplementatyIntervalOverThreshold(startTime);
+        if (overThreshold != null && this.isTimeVisible(overThreshold.getStart(), overThreshold.getEnd())) {
+            Line2D line = this.createTrainLineInStation(interval, overThreshold);
             if (isCollected) {
                 this.addShapeToCollector(interval, line);
             }
