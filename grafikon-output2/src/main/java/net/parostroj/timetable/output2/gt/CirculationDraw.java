@@ -226,14 +226,44 @@ public class CirculationDraw {
         Font backup = g.getFont();
         g.setFont(layout.smallFont);
         for (TrainsCycleItem item : circulation) {
-            int x = layout.border + layout.description + (int) (layout.step * (item.getStartTime() - layout.fromTime));
-            int width = (int) ((item.getEndTime() - item.getStartTime()) * layout.step);
-            g.setColor(Color.RED);
-            g.fillRect(x, y, width, height);
-            g.setColor(Color.BLACK);
-            g.drawRect(x, y, width, height);
-            g.drawString(item.getTrain().getName(), x, partY);
+            Interval interval = IntervalFactory.createInterval(item.getStartTime(), item.getEndTime());
+            Interval normalized = interval.normalize();
+            if (isVisible(normalized.getStart()) || isVisible(normalized.getEnd())) {
+                drawItem(g, partY, y, height, item, normalized.getStart(), normalized.getEnd());
+            }
+            Interval overlap = normalized.getComplementatyIntervalOverThreshold(layout.fromTime);
+            if (overlap != null && (isVisible(overlap.getStart()) || isVisible(overlap.getEnd()))) {
+                drawItem(g, partY, y, height, item, overlap.getStart(), overlap.getEnd());
+            }
         }
         g.setFont(backup);
+    }
+
+    private void drawItem(Graphics2D g, int partY, int y, int height, TrainsCycleItem item, int sTime, int eTime) {
+        sTime = Math.max(sTime, layout.fromTime);
+        eTime = Math.min(eTime, layout.toTime);
+        int x = this.getX(sTime);
+        int width = (int) ((eTime - sTime) * layout.step);
+        g.setColor(Color.RED);
+        g.fillRect(x, y, width, height);
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y, width, height);
+        int w = DrawUtils.getStringWidth(g, item.getTrain().getName());
+        if (x + w <= this.getX(layout.toTime)) {
+            g.drawString(item.getTrain().getName(), x, partY);
+        }
+    }
+
+    private boolean isVisible(int time) {
+        return layout.fromTime <= time && time <= layout.toTime;
+    }
+
+    private int getStartX() {
+        return layout.border + layout.description;
+    }
+
+    private int getX(int time) {
+        int x = (int) (this.getStartX() + (time - layout.fromTime) * layout.step);
+        return x;
     }
 }
