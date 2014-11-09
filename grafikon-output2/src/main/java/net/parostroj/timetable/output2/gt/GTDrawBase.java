@@ -104,7 +104,8 @@ abstract public class GTDrawBase implements GTDraw {
         underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DASH_2 }, 0f);
-        minimalSpace = zoom * MINIMAL_SPACE_WIDTH;
+        // zoom does not apply to minimal space
+        minimalSpace = MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
 
         background = config.get(GTDrawSettings.Key.BACKGROUND_COLOR, Color.class);
