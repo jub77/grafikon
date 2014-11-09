@@ -1,9 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.*;
@@ -171,40 +169,21 @@ public class CirculationDraw {
     }
 
     private void paintTimeTimeline(Graphics2D g) {
-        int startX = layout.border + layout.description;
-        int end = layout.size.width - layout.border;
-        int oldX = startX;
         int height = layout.row * layout.rows + layout.title;
-        int seconds = 0;
         boolean odd = true;
-        for (int h = 0; h <= 24; h++) {
-            int x = startX + (int) ((seconds - layout.fromTime) * layout.step);
+        int seconds = layout.fromTime - (layout.fromTime % 3600);
+        int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
+        while (seconds <= layout.toTime) {
             g.setColor(odd ? COLOR_1 : COLOR_2);
-            if (x > startX) {
-                if (x > end) {
-                    x = end;
-                }
-                g.fillRect(oldX, layout.startY, x - oldX + 1, height);
-                oldX = x;
+            int x1 = this.getX(Math.max(layout.fromTime, seconds));
+            int x2 = this.getX(Math.min(layout.toTime, seconds + 3600));
+            g.fillRect(x1, layout.startY, x2 - x1 + 1, height);
+            if (seconds >= layout.fromTime) {
+                String hStr = Integer.toString(seconds / 3600 % 24);
+                drawHourTextWithLine(g, seconds, titleTextPos, hStr);
             }
             odd = !odd;
             seconds += 3600;
-        }
-        seconds = 0;
-        int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
-        for (int i = 0; i <= 24; i++) {
-            g.setColor(Color.BLACK);
-            seconds = i * 3600;
-            if (seconds >= layout.fromTime && seconds <= layout.toTime) {
-                String hStr = Integer.toString(i);
-                g.setColor(Color.BLACK);
-                TextLayout tl = new TextLayout(hStr, g.getFont(), g.getFontRenderContext());
-                Rectangle2D bounds = tl.getBounds();
-                int pos = startX + (int) ((seconds - layout.fromTime) * layout.step);
-                g.drawString(hStr, pos - (int) bounds.getWidth() / 2, titleTextPos);
-                g.setColor(COLOR_LINE);
-                g.drawLine(pos, layout.startY + layout.title, pos, layout.size.height - layout.border);
-            }
         }
 
         // row delimiters
@@ -212,6 +191,16 @@ public class CirculationDraw {
         for (int i = 0; i <= layout.rows; i++) {
             int p = layout.getRow(i);
             g.drawLine(layout.border, p, layout.size.width - layout.border, p);
+        }
+    }
+
+    private void drawHourTextWithLine(Graphics2D g, int seconds, int titleTextPos, String hStr) {
+        if (seconds >= layout.fromTime && seconds <= layout.toTime) {
+            int pos = this.getX(seconds);
+            g.setColor(Color.BLACK);
+            g.drawString(hStr, pos - DrawUtils.getStringWidth(g, hStr) / 2, titleTextPos);
+            g.setColor(COLOR_LINE);
+            g.drawLine(pos, layout.startY + layout.title, pos, layout.size.height - layout.border);
         }
     }
 
