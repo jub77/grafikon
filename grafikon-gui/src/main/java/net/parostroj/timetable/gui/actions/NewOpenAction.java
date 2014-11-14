@@ -107,6 +107,7 @@ public class NewOpenAction extends AbstractAction {
                 try {
                     try {
                         model.setOpenedFile(selectedFile);
+                        log.debug("Loading: {}", selectedFile);
                         FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                         diagram = ls.load(selectedFile);
                     } catch (LSException e) {
