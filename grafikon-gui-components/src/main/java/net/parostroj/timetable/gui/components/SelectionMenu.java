@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.*;
@@ -48,7 +49,12 @@ public class SelectionMenu<T> extends JMenu {
 
     public void setSelectedItem(T value, boolean eventFireLock) {
         this.fireLock = eventFireLock;
-        this.items.get(value).setSelected(true);
+        ButtonModel model = this.items.get(value);
+        if (model != null) {
+            model.setSelected(true);
+        } else {
+            this.buttonGroup.clearSelection();
+        }
         this.fireLock = false;
     }
 
@@ -63,6 +69,15 @@ public class SelectionMenu<T> extends JMenu {
         this.add(item);
         this.items.put(value, item.getModel());
         this.buttonGroup.add(item);
+    }
+
+    public void removeAllItems() {
+        Enumeration<AbstractButton> elements = buttonGroup.getElements();
+        while (elements.hasMoreElements()) {
+            AbstractButton element = elements.nextElement();
+            this.remove(element);
+            this.items.inverse().remove(element.getModel());
+        }
     }
 
     public void addListener(Listener<T> l) {
