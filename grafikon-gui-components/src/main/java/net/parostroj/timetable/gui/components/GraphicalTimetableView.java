@@ -208,25 +208,18 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     private void addSizesToMenu() {
-        ButtonGroup group = new ButtonGroup();
         for (int i = 1; i <= WIDTH_STEPS; i++) {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(Integer.toString(i));
-            item.setActionCommand(Integer.toString(i));
-            int currentSize = settings.get(Key.VIEW_SIZE, Integer.class);
-            if (i == currentSize)
-                item.setSelected(true);
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int size = Integer.parseInt(e.getActionCommand());
-                    settings.set(Key.VIEW_SIZE, size);
-                    setGTWidth(settings);
-                    recreateDraw();
-                }
-            });
-            group.add(item);
-            sizesMenu.add(item);
+            sizesMenu.addItem(Integer.toString(i), i);
         }
+        sizesMenu.setSelectedItem(settings.get(Key.VIEW_SIZE, Integer.class));
+        sizesMenu.addListener(new SelectionMenu.Listener<Integer>() {
+            @Override
+            public void selected(Integer size) {
+                settings.set(Key.VIEW_SIZE, size);
+                setGTWidth(settings);
+                recreateDraw();
+            }
+        });
     }
 
     private void addOrientationToMenu(boolean add) {
@@ -280,7 +273,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         javax.swing.JMenuItem routesEditMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
         typesMenu = new SelectionMenu<GTDraw.Type>();
-        sizesMenu = new javax.swing.JMenu();
+        sizesMenu = new SelectionMenu<Integer>();
         orientationMenu = new SelectionMenu<GTOrientation>();
         preferencesMenu = new ChoicesMenu<Key>();
         routesGroup = new javax.swing.ButtonGroup();
@@ -414,16 +407,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         typesMenu.setSelectedItem(settings.getGTDrawType(), true);
 
-        String sizeStr = Integer.toString(settings.get(Key.VIEW_SIZE, Integer.class));
-        for (Object elem : sizesMenu.getMenuComponents()) {
-            if (elem instanceof JRadioButtonMenuItem) {
-                JRadioButtonMenuItem item = (JRadioButtonMenuItem)elem;
-                if (item.getActionCommand().equals(sizeStr)) {
-                    item.setSelected(true);
-                    break;
-                }
-            }
-        }
+        Integer size = settings.get(Key.VIEW_SIZE, Integer.class);
+        sizesMenu.setSelectedItem(size, true);
 
         this.setPreferencesValue(Key.TRAIN_NAMES, settings);
         this.setPreferencesValue(Key.ARRIVAL_DEPARTURE_DIGITS, settings);
@@ -529,7 +514,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     protected javax.swing.JPopupMenu popupMenu;
     private javax.swing.ButtonGroup routesGroup;
     private javax.swing.JMenu routesMenu;
-    private javax.swing.JMenu sizesMenu;
+    private SelectionMenu<Integer> sizesMenu;
     private SelectionMenu<Type> typesMenu;
     private SelectionMenu<GTOrientation> orientationMenu;
     private ChoicesMenu<Key> preferencesMenu;
