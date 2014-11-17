@@ -60,7 +60,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     protected Point start;
     protected Dimension size;
-    protected int gapStationX;
+    protected int stationNameWidth;
     protected int borderX;
     protected int borderY;
     protected int stationNamesPosition = 0;
@@ -72,10 +72,12 @@ abstract public class GTDrawBase implements GTDraw {
     protected final int startTime;
     protected final int endTime;
 
-    protected final GTDrawSettings preferences;
+    protected final GTDrawSettings config;
     protected final Route route;
     protected final HighlightedTrains hTrains;
     protected final Predicate<TimeInterval> intervalFilter;
+    protected final GTDrawOrientationDelegate orientationDelegate;
+    protected final GTOrientation orientation;
 
     // caching
     private final Map<String, Rectangle> stringBounds = new HashMap<String, Rectangle>();
@@ -93,8 +95,7 @@ abstract public class GTDrawBase implements GTDraw {
         startTime = config.get(GTDrawSettings.Key.START_TIME, Integer.class);
         endTime = config.get(GTDrawSettings.Key.END_TIME, Integer.class);
 
-        // create preferences
-        preferences = config;
+        this.config = config;
 
         // strokes
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
@@ -109,13 +110,16 @@ abstract public class GTDrawBase implements GTDraw {
         fontSize = zoom * FONT_SIZE;
 
         background = config.get(GTDrawSettings.Key.BACKGROUND_COLOR, Color.class);
+
+        orientation = config.get(GTDrawSettings.Key.ORIENTATION, GTOrientation.class);
+        orientationDelegate = GTDrawOrientationFactory.create(orientation);
     }
 
     @Override
     public void draw(Graphics2D g) {
         this.init(g);
 
-        if (preferences.isOption(GTDrawSettings.Key.TITLE)) {
+        if (config.isOption(GTDrawSettings.Key.TITLE)) {
             this.paintTitle(g);
         }
         this.paintHours(g);
@@ -123,7 +127,7 @@ abstract public class GTDrawBase implements GTDraw {
         g.setColor(Color.BLACK);
         this.paintTrains(g);
         this.paintHoursTexts(g);
-        if (!preferences.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
+        if (!config.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
             this.paintStationNames(g, stations, positions);
         }
         this.finishCollecting();
@@ -146,44 +150,55 @@ abstract public class GTDrawBase implements GTDraw {
 
     private void updateStartAndSize(Graphics2D g) {
         // read config
-        Integer gapx = preferences.get(GTDrawSettings.Key.STATION_GAP_X, Integer.class);
-        Float bx = preferences.get(GTDrawSettings.Key.BORDER_X, Float.class);
-        Float by = preferences.get(GTDrawSettings.Key.BORDER_Y, Float.class);
-        Rectangle2D mSize = getMSize(g);
+        Integer snWidth = config.get(GTDrawSettings.Key.STATION_NAME_WIDTH, Integer.class);
+        Float bx = config.get(GTDrawSettings.Key.BORDER_X, Float.class);
+        Float by = config.get(GTDrawSettings.Key.BORDER_Y, Float.class);
+        Rectangle mSize = getMSize(g);
         this.borderX = (int) (mSize.getWidth() * bx);
         this.borderY = (int) (mSize.getHeight() * by);
-        this.gapStationX = this.computeInitialGapX(g, gapx); // initial size ...
+        this.stationNameWidth = this.computeInitialStationNameWidth(g, snWidth); // initial size ...
         // correct gap by station names
-        int max = 0;
-        for (RouteSegment seg : getRoute().getSegments()) {
-            if (seg.isNode()) {
-                Node n = seg.asNode();
-                String name = TransformUtil.transformStation(n).trim();
-                int nameWidth = DrawUtils.getStringWidth(g, name);
-                int w = (int) (nameWidth + mSize.getWidth());
-                if (w > max) {
-                    max = w;
+        boolean snWidthFixed = config.isOption(GTDrawSettings.Key.STATION_NAME_WIDTH_FIXED);
+        if (!snWidthFixed) {
+            int max = 0;
+            for (RouteSegment seg : getRoute().getSegments()) {
+                if (seg.isNode()) {
+                    Node n = seg.asNode();
+                    String name = TransformUtil.transformStation(n).trim();
+                    int nameWidth = DrawUtils.getStringWidth(g, name);
+                    int w = (int) (nameWidth + mSize.getWidth());
+                    if (w > max) {
+                        max = w;
+                    }
                 }
             }
-        }
-        if (max < this.gapStationX && !preferences.isOption(GTDrawSettings.Key.STATION_GAP_X_FIXED)) {
-            this.gapStationX = max;
+            if (max < this.stationNameWidth) {
+                this.stationNameWidth = max;
+            }
         }
         // update start
         this.start = new Point(this.borderX, this.borderY);
-        this.start.translate(gapStationX, 0);
-        if (preferences.isOption(GTDrawSettings.Key.TITLE)) {
+        switch (orientation) {
+            case LEFT_RIGHT:
+                this.start.translate(stationNameWidth, 0);
+                break;
+            case TOP_DOWN:
+                // hours width
+                this.start.translate(mSize.width * 2, 0);
+                break;
+        }
+        if (config.isOption(GTDrawSettings.Key.TITLE)) {
             this.start.translate(0, (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO));
         }
         // compute size
-        Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
+        Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         this.size = new Dimension(configSize.width - (this.borderX + this.start.x), configSize.height - (this.borderY + this.start.y));
         // time step
-        timeStep = (double) size.width / (endTime - startTime);
+        timeStep = (double) orientationDelegate.getHoursSize(size) / (endTime - startTime);
     }
 
-    private int computeInitialGapX(Graphics2D g, int gapx) {
-        return this.getMSize(g).width * gapx;
+    private int computeInitialStationNameWidth(Graphics2D g, int snWidth) {
+        return this.getMSize(g).width * snWidth;
     }
 
     @Override
@@ -224,11 +239,11 @@ abstract public class GTDrawBase implements GTDraw {
     protected void paintTitle(Graphics2D g) {
         Font currentFont = g.getFont();
         g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
-        Dimension configSize = preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
+        Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         int width = configSize.width - 2 * borderX;
         int y = (int) (start.y - this.getMSize(g).getHeight());
 
-        Object titleObject = preferences.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
+        Object titleObject = config.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
         String text = null;
         if (titleObject == null) {
             text = new RouteStringSupplier(route).get(g, width);
@@ -246,7 +261,7 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     protected void paintHours(Graphics2D g) {
-        int yEnd = start.y + size.height;
+        int yEnd = orientationDelegate.getStationsStart(start) + orientationDelegate.getStationsSize(size);
         // half hour step
         double step = 1800 * timeStep;
         int time = 0;
@@ -289,7 +304,7 @@ abstract public class GTDrawBase implements GTDraw {
             } else {
                 // half hours
                 g.setColor(Color.orange);
-                if (preferences.isOption(GTDrawSettings.Key.EXTENDED_LINES)) {
+                if (config.isOption(GTDrawSettings.Key.EXTENDED_LINES)) {
                     g.setStroke(halfHoursExtStroke);
                 } else {
                     g.setStroke(halfHoursStroke);
@@ -298,7 +313,7 @@ abstract public class GTDrawBase implements GTDraw {
 
             if (((i & 1) != 1) || step >= minimalSpace) {
                 // draw line
-                g.drawLine(xLocation, start.y, xLocation, yEnd);
+                orientationDelegate.drawLine(g, xLocation, orientationDelegate.getStationsStart(start), xLocation, yEnd);
             }
         }
     }
@@ -307,7 +322,7 @@ abstract public class GTDrawBase implements GTDraw {
         if ((i % 3 != 0) && this.isTimeVisible(timeToPaint)) {
             int xLocation = this.getX(timeToPaint);
             // draw line
-            g.drawLine(xLocation, start.y, xLocation, yEnd);
+            orientationDelegate.drawLine(g, xLocation, orientationDelegate.getStationsStart(start), xLocation, yEnd);
         }
     }
 
@@ -331,7 +346,15 @@ abstract public class GTDrawBase implements GTDraw {
 
             String hStr = Integer.toString(h);
             Rectangle rr = this.getStringBounds(hStr, g);
-            g.drawString(hStr, xLocation - rr.width / 2 + 1, start.y - 3);
+            switch (orientation) {
+                case LEFT_RIGHT:
+                    g.drawString(hStr, xLocation - rr.width / 2 + 1, start.y - 3);
+                    break;
+                case TOP_DOWN:
+                    FontInfo fi = this.getFontInfo(g);
+                    g.drawString(hStr, borderX + (getMSize(g).width * 2 - rr.width) / 2, xLocation - fi.strikeThrough);
+                    break;
+            }
         }
     }
 
@@ -353,7 +376,7 @@ abstract public class GTDrawBase implements GTDraw {
             x2 = x;
         }
 
-        Line2D line2D = new Line2D.Double(x1, y1, x2, y2);
+        Line2D line2D = orientationDelegate.createLine(x1, y1, x2, y2);
         return line2D;
     }
 
@@ -361,7 +384,7 @@ abstract public class GTDrawBase implements GTDraw {
         int y = this.getY(interval);
         int x1 = this.getX(this.isTimeVisible(i.getStart()) ? i.getStart() : startTime);
         int x2 = this.getX(this.isTimeVisible(i.getEnd()) ? i.getEnd() : endTime);
-        Line2D line2D = new Line2D.Float(x1, y, x2, y);
+        Line2D line2D = orientationDelegate.createLine(x1, y, x2, y);
         return line2D;
     }
 
@@ -371,8 +394,8 @@ abstract public class GTDrawBase implements GTDraw {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 if (intervalFilter == null || intervalFilter.apply(interval)) {
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
-                            && (preferences.isOption(GTDrawSettings.Key.TRAIN_NAMES));
-                    boolean paintMinutes = preferences.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
+                            && (config.isOption(GTDrawSettings.Key.TRAIN_NAMES));
+                    boolean paintMinutes = config.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
                     Interval normalized = interval.getInterval().normalize();
                     if (this.isTimeVisible(normalized.getStart(), normalized.getEnd())) {
                         g.setColor(this.getIntervalColor(interval));
@@ -441,7 +464,7 @@ abstract public class GTDrawBase implements GTDraw {
             // draw name of the station
             if (!nodeStrings.containsKey(s)) {
                 String origName = TransformUtil.transformStation(s).trim();
-                name = DrawUtils.getStringForWidth(g, origName, gapStationX);
+                name = DrawUtils.getStringForWidth(g, origName, stationNameWidth);
                 nodeStrings.put(s, name);
             } else {
                 name = nodeStrings.get(s);
@@ -634,14 +657,14 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public int getX(int time) {
-        int x = start != null ? (int)(start.x + (time - startTime) * timeStep) : -1;
+        int x = start != null ? (int)(orientationDelegate.getHoursStart(start) + (time - startTime) * timeStep) : -1;
         return x;
     }
 
     @Override
     public int getY(Node node, Track track) {
         Integer position = positions.get(node);
-        return position != null ? start.y + position : -1;
+        return position != null ? orientationDelegate.getStationsStart(start) + position : -1;
     }
 
     @Override
@@ -651,7 +674,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public Dimension getSize() {
-        return preferences.get(GTDrawSettings.Key.SIZE, Dimension.class);
+        return config.get(GTDrawSettings.Key.SIZE, Dimension.class);
     }
 
     protected boolean isTimeVisible(int time1, int time2) {

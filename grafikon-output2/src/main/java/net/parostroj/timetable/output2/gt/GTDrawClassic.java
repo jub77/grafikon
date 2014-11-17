@@ -65,7 +65,8 @@ public class GTDrawClassic extends GTDrawBase {
             }
             if (segment.asNode() != null) {
                 stations.add(segment.asNode());
-                positions.put(segment.asNode(), (int)(((double)incrementalLength) / completeLength * size.height));
+                positions.put(segment.asNode(), (int)(((double)incrementalLength) / completeLength *
+                        orientationDelegate.getStationsSize(size)));
             }
         }
     }
@@ -79,7 +80,7 @@ public class GTDrawClassic extends GTDrawBase {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+            if (config.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(stationStrokeStopExt);
@@ -96,7 +97,9 @@ public class GTDrawClassic extends GTDrawBase {
                 }
             }
             int y = this.getY(s, null);
-            g.drawLine(start.x, y, start.x + size.width, y);
+            int sx = orientationDelegate.getHoursStart(start);
+            int dx = orientationDelegate.getHoursSize(size);
+            orientationDelegate.drawLine(g, sx, y, sx + dx, y);
         }
     }
 

@@ -26,8 +26,8 @@ import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.RegionSelector;
 import net.parostroj.timetable.output2.gt.SelectorUtils;
-import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
 import net.parostroj.timetable.utils.*;
 
 /**
@@ -36,7 +36,7 @@ import net.parostroj.timetable.utils.*;
  *
  * @author jub
  */
-public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, TimeIntervalSelector {
+public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Listener, RegionSelector<TimeInterval> {
 
     private static final Logger log = LoggerFactory.getLogger(TCTrainListView.class);
     private static final int BUTTON_MARGIN = 1;

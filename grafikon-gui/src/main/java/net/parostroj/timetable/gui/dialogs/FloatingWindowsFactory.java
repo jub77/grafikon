@@ -304,14 +304,6 @@ public class FloatingWindowsFactory {
                 return section;
             }
         };
-        mediator.addColleague(new ApplicationModelColleague(model) {
-            @Override
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    scrollPane.setTrainDiagram(event.getModel().getDiagram());
-                }
-            }
-        });
         return dialog;
     }
 

@@ -35,12 +35,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     private TCDelegate delegate;
 
-    private class HighligterAndSelector implements HighlightedTrains, TimeIntervalSelector, TrainColorChooser, TCDelegate.Listener {
+    private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColorChooser, TCDelegate.Listener {
 
         private final TrainColorChooser chooserDelegate;
-        private final TimeIntervalSelector selectorDelegate;
+        private final RegionSelector<TimeInterval> selectorDelegate;
 
-        public HighligterAndSelector(TrainColorChooser chooser, TimeIntervalSelector selector) {
+        public HighligterAndSelector(TrainColorChooser chooser, RegionSelector<TimeInterval> selector) {
             this.chooserDelegate = chooser;
             this.selectorDelegate = selector;
         }

@@ -23,7 +23,7 @@ public class GTDrawSettings {
         BORDER_X(Float.class),
         BORDER_Y(Float.class),
         SIZE(Dimension.class),
-        STATION_GAP_X(Integer.class),
+        STATION_NAME_WIDTH(Integer.class),
         TRAIN_COLORS(GTDraw.TrainColors.class),
         TRAIN_COLOR_CHOOSER(TrainColorChooser.class),
         HIGHLIGHTED_TRAINS(HighlightedTrains.class),
@@ -31,12 +31,13 @@ public class GTDrawSettings {
         END_TIME(Integer.class),
         DISABLE_STATION_NAMES(Boolean.class),
         ZOOM(Float.class),
-        STATION_GAP_X_FIXED(Boolean.class),
+        STATION_NAME_WIDTH_FIXED(Boolean.class),
         TITLE(Boolean.class),
         LEGEND(Boolean.class),
         INNER_SIZE(Boolean.class),
         TITLE_TEXT(String.class),
-        BACKGROUND_COLOR(Color.class);
+        BACKGROUND_COLOR(Color.class),
+        ORIENTATION(GTOrientation.class);
 
         private final Class<?> valueClass;
 
@@ -110,7 +111,7 @@ public class GTDrawSettings {
         GTDrawSettings settings = new GTDrawSettings()
             .set(Key.BORDER_X, 1.5f)
             .set(Key.BORDER_Y, 1.5f)
-            .set(Key.STATION_GAP_X, 15)
+            .set(Key.STATION_NAME_WIDTH, 15)
             .set(Key.TRAIN_COLORS, GTDraw.TrainColors.BY_TYPE)
             .set(Key.TRAIN_NAMES, Boolean.TRUE)
             .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
@@ -120,7 +121,8 @@ public class GTDrawSettings {
             .set(Key.SIZE, new Dimension(640, 480))
             .set(Key.START_TIME, 0)
             .set(Key.END_TIME, TimeInterval.DAY)
-            .set(Key.BACKGROUND_COLOR, Color.white);
+            .set(Key.BACKGROUND_COLOR, Color.white)
+            .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT);
         return settings;
     }
 

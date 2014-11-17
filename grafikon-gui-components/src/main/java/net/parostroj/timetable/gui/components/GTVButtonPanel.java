@@ -194,10 +194,15 @@ public class GTVButtonPanel extends JPanel {
         });
         panel.add(buttonMinus);
 
-        view.setRsListener(new GraphicalTimetableView.RSListener() {
+        view.addListener(new AbstractGTViewListener() {
             @Override
             public void routeSelected(Route route) {
                 comboBoxModel.setSelectedObject(route);
+            }
+
+            @Override
+            public void diagramChanged(TrainDiagram diagram) {
+                setTrainDiagram(diagram);
             }
         });
     }
@@ -222,7 +227,7 @@ public class GTVButtonPanel extends JPanel {
         comboBox.setModel(comboBoxModel);
     }
 
-    public void setTrainDiagram(TrainDiagram td) {
+    protected void setTrainDiagram(TrainDiagram td) {
         this.td = td;
         fill();
         if (td != null) {

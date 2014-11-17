@@ -81,11 +81,11 @@ public class GTDrawParams {
     }
 
     public void setStationNamesWidth(int width) {
-        this.settings.set(Key.STATION_GAP_X, width);
+        this.settings.set(Key.STATION_NAME_WIDTH, width);
     }
 
     public void setStationNamesWidthFixed(boolean fixed) {
-        this.settings.setOption(Key.STATION_GAP_X_FIXED, fixed);
+        this.settings.setOption(Key.STATION_NAME_WIDTH_FIXED, fixed);
     }
 
     public void setLegend(boolean legend) {
