@@ -73,7 +73,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
     }
 
-    private final class HighlightSelection implements HighlightedTrains, TimeIntervalSelector {
+    private final class HighlightSelection implements HighlightedTrains, RegionSelector<TimeInterval> {
 
         @Override
         public boolean isHighlighedInterval(TimeInterval interval) {
@@ -269,7 +269,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         model.addListener(new ApplicationModelListener() {
             public void modelChanged(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    scrollPane.setTrainDiagram(event.getModel().getDiagram());
                     graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());
                 }
             }

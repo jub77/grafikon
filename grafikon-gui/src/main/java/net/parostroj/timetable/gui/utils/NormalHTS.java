@@ -9,16 +9,14 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.GraphicalTimetableView;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.output2.gt.HighlightedTrains;
-import net.parostroj.timetable.output2.gt.SelectorUtils;
-import net.parostroj.timetable.output2.gt.TimeIntervalSelector;
+import net.parostroj.timetable.output2.gt.*;
 
 /**
  * Implementation of HighlightedTrains for normal timetable view.
  *
  * @author jub
  */
-public class NormalHTS implements HighlightedTrains, TimeIntervalSelector, ApplicationModelListener {
+public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval>, ApplicationModelListener {
 
     private Set<Train> set = Collections.emptySet();
     private final Color selectionColor;

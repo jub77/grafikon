@@ -23,7 +23,7 @@ public class GTViewSettings {
         BORDER_Y(Float.class, GTDrawSettings.Key.BORDER_Y),
         SIZE(Dimension.class, GTDrawSettings.Key.SIZE),
         VIEW_SIZE(Integer.class, null),
-        STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_GAP_X),
+        STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_NAME_WIDTH),
         TYPE(GTDraw.Type.class, null),
         TRAIN_COLORS(GTDraw.TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
         TRAIN_COLOR_CHOOSER(TrainColorChooser.class, GTDrawSettings.Key.TRAIN_COLOR_CHOOSER),
@@ -36,7 +36,9 @@ public class GTViewSettings {
         START_TIME_OVERRIDE(Integer.class, null),
         END_TIME_OVERRIDE(Integer.class, null),
         TO_TRAIN_SCROLL(Boolean.class, null),
-        TO_TRAIN_CHANGE_ROUTE(Boolean.class, null);
+        TO_TRAIN_CHANGE_ROUTE(Boolean.class, null),
+        ORIENTATION(GTOrientation.class, GTDrawSettings.Key.ORIENTATION),
+        ORIENTATION_MENU(Boolean.class, null);
 
         private Class<?> valueClass;
         private GTDrawSettings.Key drawKey;
@@ -111,6 +113,10 @@ public class GTViewSettings {
             throw new IllegalArgumentException("Option has to be boolean.");
     }
 
+    public boolean isOption(Key pref) {
+        return Boolean.TRUE.equals(this.getOption(pref));
+    }
+
     public void setOption(Key pref, Boolean value) {
         this.set(pref, value);
     }
@@ -147,7 +153,7 @@ public class GTViewSettings {
     }
 
     public String getStorageString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
                 getOption(Key.TRAIN_NAMES).toString(),
                 getOption(Key.ARRIVAL_DEPARTURE_DIGITS).toString(),
                 getOption(Key.EXTENDED_LINES).toString(),
@@ -155,7 +161,8 @@ public class GTViewSettings {
                 getOption(Key.IGNORE_TIME_LIMITS).toString(),
                 get(Key.ZOOM).toString(),
                 getOption(Key.TO_TRAIN_SCROLL).toString(),
-                getOption(Key.TO_TRAIN_CHANGE_ROUTE).toString()
+                getOption(Key.TO_TRAIN_CHANGE_ROUTE).toString(),
+                get(Key.ORIENTATION)
             );
     }
 
@@ -178,6 +185,9 @@ public class GTViewSettings {
             if (split.length > 8) {
                 settings.setOption(Key.TO_TRAIN_SCROLL, Boolean.parseBoolean(split[8]));
                 settings.setOption(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.parseBoolean(split[9]));
+            }
+            if (split.length > 10) {
+                settings.set(Key.ORIENTATION, GTOrientation.valueOf(split[10]));
             }
         }
         return settings;

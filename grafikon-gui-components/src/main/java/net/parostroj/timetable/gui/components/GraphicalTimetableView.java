@@ -18,11 +18,11 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
 import net.parostroj.timetable.output2.gt.GTDraw;
+import net.parostroj.timetable.output2.gt.GTOrientation;
 import net.parostroj.timetable.output2.gt.RegionCollector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Graphical timetable view - with interaction.
@@ -46,8 +46,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
 
-    public static interface RSListener {
+    public static interface GTViewListener {
         public void routeSelected(Route route);
+        public void diagramChanged(TrainDiagram diagram);
+        public void settingsChanged(GTViewSettings settings);
     }
 
     private interface ToolTipHelper {
@@ -70,7 +72,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
     }
 
-    private RSListener rsListener;
+    private List<GTViewListener> listeners;
 
     private TextTemplate toolTipTemplateLine;
     private TextTemplate toolTipTemplateNode;
@@ -81,6 +83,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     public GraphicalTimetableView() {
         this.initComponents();
+
+        this.listeners = new ArrayList<GTViewListener>();
 
         this.addSizesToMenu();
         // binding for tool tips
@@ -226,6 +230,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
     }
 
+    private void addOrientationToMenu(boolean add) {
+        orientationMenu.setVisible(add);
+    }
+
     protected void setGTWidth(GTViewSettings config) {
         Integer start = null;
         Integer end = null;
@@ -234,15 +242,24 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             start = config.get(Key.START_TIME, Integer.class);
             end = config.get(Key.END_TIME, Integer.class);
         }
-        if (start == null)
+        if (start == null) {
             start = 0;
-        if (end == null)
+        }
+        if (end == null) {
             end = TimeInterval.DAY;
+        }
         double ratio = (double)(end - start) / TimeInterval.DAY;
         int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
         newWidth = (int) (newWidth * ratio);
         int newHeight = newWidth / WIDTH_TO_HEIGHT_RATIO;
-        preferredSize = new Dimension(newWidth, newHeight);
+        switch (config.get(Key.ORIENTATION, GTOrientation.class)) {
+            case LEFT_RIGHT:
+                preferredSize = new Dimension(newWidth, newHeight);
+                break;
+            case TOP_DOWN:
+                preferredSize = new Dimension(newHeight, newWidth);
+                break;
+        }
         this.revalidate();
     }
 
@@ -250,11 +267,12 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     public void setTrainDiagram(TrainDiagram diagram) {
         super.setTrainDiagram(diagram);
         if (diagram == null) {
-
+            // do nothing
         } else {
             this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
         }
+        this.fireDiagramChanged(diagram);
     }
 
     private void initComponents() {
@@ -267,6 +285,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         classicWithStationsMenuItem = new javax.swing.JRadioButtonMenuItem();
         withTracksMenuItem = new javax.swing.JRadioButtonMenuItem();
         sizesMenu = new javax.swing.JMenu();
+        orientationMenu = new SelectionMenu<GTOrientation>();
         javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
         addigitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         extendedLinesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -334,6 +353,20 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         sizesMenu.setText(ResourceLoader.getString("gt.sizes")); // NOI18N
         popupMenu.add(sizesMenu);
+
+        orientationMenu.setText(ResourceLoader.getString("gt.orientation")); // NOI18N
+        orientationMenu.addItem(ResourceLoader.getString("gt.orientation.left.right"), GTOrientation.LEFT_RIGHT); // NOI18N
+        orientationMenu.addItem(ResourceLoader.getString("gt.orientation.top.down"), GTOrientation.TOP_DOWN); // NOI18N
+        orientationMenu.setSelectedItem(GTOrientation.LEFT_RIGHT);
+        orientationMenu.addListener(new SelectionMenu.Listener<GTOrientation>() {
+            @Override
+            public void selected(GTOrientation value) {
+                settings.set(Key.ORIENTATION, value);
+                setSettings(settings);
+            }
+        });
+        popupMenu.add(orientationMenu);
+        orientationMenu.setVisible(false);
 
         preferencesMenu.setText(ResourceLoader.getString("gt.preferences")); // NOI18N
 
@@ -472,6 +505,30 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         ignoreTimeLimitsCheckBoxMenuItem.setSelected(settings.getOption(Key.IGNORE_TIME_LIMITS));
         toTrainScrollCheckBoxMenuItem.setSelected(settings.getOption(Key.TO_TRAIN_SCROLL));
         toTrainChangeRouteCheckBoxMenuItem.setSelected(settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE));
+
+        orientationMenu.setSelectedItem(settings.get(Key.ORIENTATION, GTOrientation.class), true);
+
+        this.addOrientationToMenu(settings.isOption(Key.ORIENTATION_MENU));
+
+        this.fireSettingChanged(settings);
+    }
+
+    private void fireSettingChanged(GTViewSettings settings) {
+        for (GTViewListener l : listeners) {
+            l.settingsChanged(settings);
+        }
+    }
+
+    private void fireRouteSelected(Route route) {
+        for (GTViewListener listener : this.listeners) {
+            listener.routeSelected(route);
+        }
+    }
+
+    private void fireDiagramChanged(TrainDiagram diagram) {
+        for (GTViewListener listener : listeners) {
+            listener.diagramChanged(diagram);
+        }
     }
 
     @Override
@@ -480,25 +537,30 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         if (getParent() instanceof JViewport) {
             JViewport viewport = (JViewport) getParent();
             Dimension eSize = viewport.getExtentSize();
-            pSize.height = eSize.height;
-            if (eSize.width > pSize.width)
-                pSize.width = eSize.width;
+            GTOrientation orientation = settings.get(Key.ORIENTATION, GTOrientation.class);
+            switch (orientation) {
+                case LEFT_RIGHT:
+                    pSize.height = eSize.height;
+                    if (eSize.width > pSize.width) {
+                        pSize.width = eSize.width;
+                    }
+                    break;
+                case TOP_DOWN:
+                    pSize.width = eSize.width;
+                    if (eSize.height > pSize.height) {
+                        pSize.height = eSize.height;
+                    }
+                    break;
+            }
         }
         return pSize;
     }
 
     /**
-     * @return the rsListener
+     * @param listener the rsListener to set
      */
-    public RSListener getRsListener() {
-        return rsListener;
-    }
-
-    /**
-     * @param rsListener the rsListener to set
-     */
-    public void setRsListener(RSListener rsListener) {
-        this.rsListener = rsListener;
+    public void addListener(GTViewListener listener) {
+        this.listeners.add(listener);
     }
 
     @Override
@@ -508,9 +570,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
         super.setRoute(route);
         this.activateRouteMenuItem(route);
-        if (rsListener != null) {
-            rsListener.routeSelected(route);
-        }
+        this.fireRouteSelected(route);
     }
 
     @Override
@@ -539,7 +599,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private javax.swing.ButtonGroup routesGroup;
     private javax.swing.JMenu routesMenu;
     private javax.swing.JMenu sizesMenu;
-    private final JMenuItem routesMenuItem;
+    private SelectionMenu<GTOrientation> orientationMenu;
+    private final javax.swing.JMenuItem routesMenuItem;
     private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;

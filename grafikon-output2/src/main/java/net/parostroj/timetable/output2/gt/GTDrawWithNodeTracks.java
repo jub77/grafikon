@@ -76,7 +76,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         }
 
         double position = 0;
-        int height = size.height - trackGaps * trackGap;
+        int height = orientationDelegate.getStationsSize(size) - trackGaps * trackGap;
         double step = (double)height / (double)completeLength;
         for (RouteSegment segment : route.getSegments()) {
             if (segment.asLine() != null) {
@@ -105,7 +105,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
             if (s.getType() == NodeType.SIGNAL) {
                 continue;
             }
-            if (preferences.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
+            if (config.get(GTDrawSettings.Key.EXTENDED_LINES) == Boolean.TRUE) {
                 switch (s.getType()) {
                     case STOP:
                         g.setStroke(stationStrokeStopExt);
@@ -123,7 +123,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
             }
             for (NodeTrack track : s.getTracks()) {
                 int y = this.getY(s, track);
-                g.drawLine(start.x, y, start.x + size.width, y);
+                int sx = orientationDelegate.getHoursStart(start);
+                int dx = orientationDelegate.getHoursSize(size);
+                orientationDelegate.drawLine(g, sx, y, sx + dx, y);
             }
         }
     }
@@ -135,7 +137,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
-                if (interval.isTechnological() && preferences.get(GTDrawSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
+                if (interval.isTechnological() && config.get(GTDrawSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
                     continue;
                 }
                 if (!interval.isBoundary()) {
@@ -160,7 +162,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         } else {
             position = positions.get(node);
         }
-        return position != null ? start.y + position : -1;
+        return position != null ? orientationDelegate.getStationsStart(start) + position : -1;
     }
 
     @Override

@@ -52,13 +52,6 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         graphicalTimetableView.setSettings(
                 graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
         graphicalTimetableView.setTrainSelector(hts);
-        model.addListener(new ApplicationModelListener() {
-            public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-                    scrollPane.setTrainDiagram(event.getModel().getDiagram());
-                }
-            }
-        });
     }
 
     @Override

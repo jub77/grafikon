@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
@@ -148,7 +147,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.IGNORE_TIME_LIMITS, Boolean.FALSE)
                 .set(Key.ZOOM, 1.0f)
                 .set(Key.TO_TRAIN_SCROLL, Boolean.FALSE)
-                .set(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.FALSE);
+                .set(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.FALSE)
+                .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT);
         return config;
     }
 
@@ -231,7 +231,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         }
     }
 
-    public void setTrainSelector(TimeIntervalSelector trainSelector) {
+    public void setTrainSelector(RegionSelector<TimeInterval> trainSelector) {
         RegionCollector<TimeInterval> collector = this.getRegionCollector(TimeInterval.class);
         if (collector != null) {
             collector.setSelector(trainSelector);
@@ -374,20 +374,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     public void setDisableStationNames(Boolean disable) {
         settings.setOption(Key.DISABLE_STATION_NAMES, disable);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        Dimension preferred = settings.get(Key.SIZE, Dimension.class);
-        Dimension pSize = preferred != null ? new Dimension(preferred) : new Dimension(640, 480);
-        if (getParent() instanceof JViewport) {
-            JViewport viewport = (JViewport) getParent();
-            Dimension eSize = viewport.getExtentSize();
-            pSize.height = eSize.height;
-            if (eSize.width > pSize.width)
-                pSize.width = eSize.width;
-        }
-        return pSize;
     }
 
     @Override
