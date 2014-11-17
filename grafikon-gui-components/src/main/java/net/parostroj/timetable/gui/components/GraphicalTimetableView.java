@@ -282,14 +282,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         typesMenu = new SelectionMenu<GTDraw.Type>();
         sizesMenu = new javax.swing.JMenu();
         orientationMenu = new SelectionMenu<GTOrientation>();
-        javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
-        addigitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        extendedLinesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        trainNamesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        techTimeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        ignoreTimeLimitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        toTrainScrollCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        toTrainChangeRouteCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        preferencesMenu = new ChoicesMenu<Key>();
         routesGroup = new javax.swing.ButtonGroup();
 
         routesMenu.setText(ResourceLoader.getString("gt.routes")); // NOI18N
@@ -343,40 +336,25 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         preferencesMenu.setText(ResourceLoader.getString("gt.preferences")); // NOI18N
 
-        java.awt.event.ActionListener modifyPrefsActionListener = new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modifyPreferencesCheckBox(evt);
+        preferencesMenu.addItem(ResourceLoader.getString("gt.addigits"), Key.ARRIVAL_DEPARTURE_DIGITS); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.extendedlines"), Key.EXTENDED_LINES); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.trainnames"), Key.TRAIN_NAMES); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.technological.time"), Key.TECHNOLOGICAL_TIME); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.ignore.time.limits"), Key.IGNORE_TIME_LIMITS); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.scroll"), Key.TO_TRAIN_SCROLL); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.change.route"), Key.TO_TRAIN_CHANGE_ROUTE); // NOI18N
+
+        preferencesMenu.addListener(new ChoicesMenu.Listener<Key>() {
+            @Override
+            public void changed(Key value, boolean selected) {
+                settings.setOption(value, selected);
+                if (value == Key.IGNORE_TIME_LIMITS) {
+                    setTimeRange();
+                }
+                // recreate draw
+                recreateDraw();
             }
-        };
-
-        addigitsCheckBoxMenuItem.setText(ResourceLoader.getString("gt.addigits")); // NOI18N
-        addigitsCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(addigitsCheckBoxMenuItem);
-
-        extendedLinesCheckBoxMenuItem.setText(ResourceLoader.getString("gt.extendedlines")); // NOI18N
-        extendedLinesCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(extendedLinesCheckBoxMenuItem);
-
-        trainNamesCheckBoxMenuItem.setSelected(true);
-        trainNamesCheckBoxMenuItem.setText(ResourceLoader.getString("gt.trainnames")); // NOI18N
-        trainNamesCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(trainNamesCheckBoxMenuItem);
-
-        techTimeCheckBoxMenuItem.setText(ResourceLoader.getString("gt.technological.time")); // NOI18N
-        techTimeCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(techTimeCheckBoxMenuItem);
-
-        ignoreTimeLimitsCheckBoxMenuItem.setText(ResourceLoader.getString("gt.ignore.time.limits")); // NOI18N
-        ignoreTimeLimitsCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(ignoreTimeLimitsCheckBoxMenuItem);
-
-        toTrainScrollCheckBoxMenuItem.setText(ResourceLoader.getString("gt.to.train.scroll")); // NOI18N
-        toTrainScrollCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(toTrainScrollCheckBoxMenuItem);
-
-        toTrainChangeRouteCheckBoxMenuItem.setText(ResourceLoader.getString("gt.to.train.change.route")); // NOI18N
-        toTrainChangeRouteCheckBoxMenuItem.addActionListener(modifyPrefsActionListener);
-        preferencesMenu.add(toTrainChangeRouteCheckBoxMenuItem);
+        });
 
         popupMenu.add(preferencesMenu);
 
@@ -430,21 +408,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         return editRoutesDialog;
     }
 
-    private void modifyPreferencesCheckBox(java.awt.event.ActionEvent event) {
-        settings.set(Key.ARRIVAL_DEPARTURE_DIGITS, addigitsCheckBoxMenuItem.isSelected());
-        settings.set(Key.EXTENDED_LINES, extendedLinesCheckBoxMenuItem.isSelected());
-        settings.set(Key.TECHNOLOGICAL_TIME, techTimeCheckBoxMenuItem.isSelected());
-        settings.set(Key.IGNORE_TIME_LIMITS, ignoreTimeLimitsCheckBoxMenuItem.isSelected());
-        settings.set(Key.TO_TRAIN_SCROLL, toTrainScrollCheckBoxMenuItem.isSelected());
-        settings.set(Key.TO_TRAIN_CHANGE_ROUTE, toTrainChangeRouteCheckBoxMenuItem.isSelected());
-        settings.set(Key.TRAIN_NAMES, trainNamesCheckBoxMenuItem.isSelected());
-        if (event.getSource() == ignoreTimeLimitsCheckBoxMenuItem) {
-            this.setTimeRange();
-        }
-        // recreate draw
-        this.recreateDraw();
-    }
-
     @Override
     public void setSettings(GTViewSettings settings) {
         super.setSettings(settings);
@@ -461,19 +424,24 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 }
             }
         }
-        trainNamesCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TRAIN_NAMES));
-        addigitsCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.ARRIVAL_DEPARTURE_DIGITS));
-        techTimeCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.TECHNOLOGICAL_TIME));
-        extendedLinesCheckBoxMenuItem.setSelected(settings.getOption(GTViewSettings.Key.EXTENDED_LINES));
-        ignoreTimeLimitsCheckBoxMenuItem.setSelected(settings.getOption(Key.IGNORE_TIME_LIMITS));
-        toTrainScrollCheckBoxMenuItem.setSelected(settings.getOption(Key.TO_TRAIN_SCROLL));
-        toTrainChangeRouteCheckBoxMenuItem.setSelected(settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE));
+
+        this.setPreferencesValue(Key.TRAIN_NAMES, settings);
+        this.setPreferencesValue(Key.ARRIVAL_DEPARTURE_DIGITS, settings);
+        this.setPreferencesValue(Key.TECHNOLOGICAL_TIME, settings);
+        this.setPreferencesValue(Key.EXTENDED_LINES, settings);
+        this.setPreferencesValue(Key.IGNORE_TIME_LIMITS, settings);
+        this.setPreferencesValue(Key.TO_TRAIN_SCROLL, settings);
+        this.setPreferencesValue(Key.TO_TRAIN_CHANGE_ROUTE, settings);
 
         orientationMenu.setSelectedItem(settings.get(Key.ORIENTATION, GTOrientation.class), true);
 
         this.addOrientationToMenu(settings.isOption(Key.ORIENTATION_MENU));
 
         this.fireSettingChanged(settings);
+    }
+
+    private void setPreferencesValue(Key key, GTViewSettings settings) {
+        preferencesMenu.setItemState(key, settings.getOption(key), true);
     }
 
     private void fireSettingChanged(GTViewSettings settings) {
@@ -564,14 +532,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private javax.swing.JMenu sizesMenu;
     private SelectionMenu<Type> typesMenu;
     private SelectionMenu<GTOrientation> orientationMenu;
+    private ChoicesMenu<Key> preferencesMenu;
     private final javax.swing.JMenuItem routesMenuItem;
-    private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem extendedLinesCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem ignoreTimeLimitsCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem techTimeCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem trainNamesCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem toTrainScrollCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem toTrainChangeRouteCheckBoxMenuItem;
 
     private EditRoutesDialog editRoutesDialog;
 }
