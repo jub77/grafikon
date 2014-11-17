@@ -44,7 +44,7 @@ public class ChoicesMenu<T> extends JMenu {
 
     public void setItemState(T value, boolean selected, boolean eventFireLock) {
         this.fireLock = eventFireLock;
-        this.items.get(value).setSelected(true);
+        this.items.get(value).setSelected(selected);
         this.fireLock = false;
     }
 
@@ -53,7 +53,7 @@ public class ChoicesMenu<T> extends JMenu {
     }
 
     public void addItem(String text, T value) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(text);
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(text);
         item.addItemListener(itemListener);
         this.add(item);
         this.items.put(value, item.getModel());
