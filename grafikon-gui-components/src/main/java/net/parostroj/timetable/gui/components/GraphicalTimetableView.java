@@ -17,9 +17,8 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.output2.gt.GTDraw;
-import net.parostroj.timetable.output2.gt.GTOrientation;
-import net.parostroj.timetable.output2.gt.RegionCollector;
+import net.parostroj.timetable.output2.gt.*;
+import net.parostroj.timetable.output2.gt.GTDraw.Type;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,10 +279,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         routesMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem routesEditMenuItem = new javax.swing.JMenuItem();
         javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
-        javax.swing.JMenu typesMenu = new javax.swing.JMenu();
-        classicMenuItem = new javax.swing.JRadioButtonMenuItem();
-        classicWithStationsMenuItem = new javax.swing.JRadioButtonMenuItem();
-        withTracksMenuItem = new javax.swing.JRadioButtonMenuItem();
+        typesMenu = new SelectionMenu<GTDraw.Type>();
         sizesMenu = new javax.swing.JMenu();
         orientationMenu = new SelectionMenu<GTOrientation>();
         javax.swing.JMenu preferencesMenu = new javax.swing.JMenu();
@@ -294,7 +290,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         ignoreTimeLimitsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         toTrainScrollCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         toTrainChangeRouteCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        javax.swing.ButtonGroup typesButtonGroup = new javax.swing.ButtonGroup();
         routesGroup = new javax.swing.ButtonGroup();
 
         routesMenu.setText(ResourceLoader.getString("gt.routes")); // NOI18N
@@ -315,39 +310,17 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
         typesMenu.setText(ResourceLoader.getString("gt.type")); // NOI18N
 
-        typesButtonGroup.add(classicMenuItem);
-        classicMenuItem.setSelected(true);
-        classicMenuItem.setText(ResourceLoader.getString("gt.classic")); // NOI18N
-        classicMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, GTDraw.Type.CLASSIC);
+        typesMenu.addItem(ResourceLoader.getString("gt.classic"), GTDraw.Type.CLASSIC); // NOI18N
+        typesMenu.addItem(ResourceLoader.getString("gt.classic.station.stops"), GTDraw.Type.CLASSIC_STATION_STOPS); // NOI18N
+        typesMenu.addItem(ResourceLoader.getString("gt.withtracks"), GTDraw.Type.WITH_TRACKS); // NOI18N
+        typesMenu.setSelectedItem(GTDraw.Type.CLASSIC);
+        typesMenu.addListener(new SelectionMenu.Listener<GTDraw.Type>() {
+            @Override
+            public void selected(Type value) {
+                settings.set(Key.TYPE, value);
                 recreateDraw();
             }
         });
-        typesMenu.add(classicMenuItem);
-
-        typesButtonGroup.add(classicWithStationsMenuItem);
-        classicWithStationsMenuItem.setSelected(true);
-        classicWithStationsMenuItem.setText(ResourceLoader.getString("gt.classic.station.stops")); // NOI18N
-        classicWithStationsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, GTDraw.Type.CLASSIC_STATION_STOPS);
-                recreateDraw();
-            }
-        });
-        typesMenu.add(classicWithStationsMenuItem);
-
-        typesButtonGroup.add(withTracksMenuItem);
-        withTracksMenuItem.setText(ResourceLoader.getString("gt.withtracks")); // NOI18N
-        withTracksMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                settings.set(Key.TYPE, GTDraw.Type.WITH_TRACKS);
-                recreateDraw();
-            }
-        });
-        typesMenu.add(withTracksMenuItem);
-
-        classicMenuItem.setSelected(true);
 
         popupMenu.add(typesMenu);
 
@@ -476,17 +449,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     public void setSettings(GTViewSettings settings) {
         super.setSettings(settings);
 
-        switch (settings.get(Key.TYPE, GTDraw.Type.class)) {
-            case CLASSIC:
-                classicMenuItem.setSelected(true);
-                break;
-            case WITH_TRACKS:
-                withTracksMenuItem.setSelected(true);
-                break;
-            case CLASSIC_STATION_STOPS:
-                classicWithStationsMenuItem.setSelected(true);
-                break;
-        }
+        typesMenu.setSelectedItem(settings.getGTDrawType(), true);
 
         String sizeStr = Integer.toString(settings.get(Key.VIEW_SIZE, Integer.class));
         for (Object elem : sizesMenu.getMenuComponents()) {
@@ -599,6 +562,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private javax.swing.ButtonGroup routesGroup;
     private javax.swing.JMenu routesMenu;
     private javax.swing.JMenu sizesMenu;
+    private SelectionMenu<Type> typesMenu;
     private SelectionMenu<GTOrientation> orientationMenu;
     private final javax.swing.JMenuItem routesMenuItem;
     private javax.swing.JCheckBoxMenuItem addigitsCheckBoxMenuItem;
@@ -608,9 +572,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private javax.swing.JCheckBoxMenuItem trainNamesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem toTrainScrollCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem toTrainChangeRouteCheckBoxMenuItem;
-    private javax.swing.JRadioButtonMenuItem classicMenuItem;
-    private javax.swing.JRadioButtonMenuItem withTracksMenuItem;
-    private javax.swing.JRadioButtonMenuItem classicWithStationsMenuItem;
 
     private EditRoutesDialog editRoutesDialog;
 }
