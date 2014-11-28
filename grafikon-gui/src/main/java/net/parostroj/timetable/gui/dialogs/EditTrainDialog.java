@@ -82,6 +82,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             noTransitiveRegionStartCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_NO_TRANSITIVE_REGION_START));
             showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
             emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
+            optionalCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_OPTIONAL));
 
             numberTextField.setText(train.getNumber());
 
@@ -403,6 +404,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         dieselCheckBox.setText(ResourceLoader.getString("create.train.diesel")); // NOI18N
         dieselCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         dieselCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
         emptyCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_emptyCheckBox = new GridBagConstraints();
         gbc_emptyCheckBox.weightx = 1.0;
@@ -416,6 +418,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         emptyCheckBox.setText(ResourceLoader.getString("create.train.empty")); // NOI18N
         emptyCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         emptyCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
         electricCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_electricCheckBox = new GridBagConstraints();
         gbc_electricCheckBox.anchor = GridBagConstraints.WEST;
@@ -427,6 +430,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         electricCheckBox.setText(ResourceLoader.getString("create.train.electric")); // NOI18N
         electricCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         electricCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
         showLengthCheckBox = new javax.swing.JCheckBox();
         GridBagConstraints gbc_showLengthCheckBox = new GridBagConstraints();
         gbc_showLengthCheckBox.insets = new Insets(0, 0, 5, 0);
@@ -448,7 +452,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_managedFreightCheckBox.weightx = 1.0;
         gbc_managedFreightCheckBox.anchor = GridBagConstraints.NORTHWEST;
         gbc_managedFreightCheckBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_managedFreightCheckBox.insets = new Insets(0, 0, 0, 5);
+        gbc_managedFreightCheckBox.insets = new Insets(0, 0, 5, 5);
         gbc_managedFreightCheckBox.gridx = 0;
         gbc_managedFreightCheckBox.gridy = 2;
         optionsPanel.add(managedFreightCheckBox, gbc_managedFreightCheckBox);
@@ -463,6 +467,18 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_checkBox.gridx = 1;
         gbc_checkBox.gridy = 2;
         optionsPanel.add(noTransitiveRegionStartCheckBox, gbc_checkBox);
+
+        optionalCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.optional.train")); //NOI18N
+        gbc_checkBox = new GridBagConstraints();
+        optionalCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        optionalCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gbc_checkBox.weightx = 1.0;
+        gbc_checkBox.anchor = GridBagConstraints.WEST;
+        gbc_checkBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_checkBox.gridx = 0;
+        gbc_checkBox.gridy = 3;
+        optionsPanel.add(optionalCheckBox, gbc_checkBox);
+
         getContentPane().setLayout(layout);
 
         pack();
@@ -480,6 +496,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         train.setAttribute(Train.ATTR_ELECTRIC, electricCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_EMPTY, emptyCheckBox.isSelected());
+        train.getAttributes().setBool(Train.ATTR_OPTIONAL, optionalCheckBox.isSelected());
         if (!numberTextField.getText().equals(train.getNumber())) {
             train.setNumber(numberTextField.getText());
         }
@@ -571,6 +588,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox dieselCheckBox;
     private javax.swing.JCheckBox electricCheckBox;
     private javax.swing.JCheckBox emptyCheckBox;
+    private javax.swing.JCheckBox optionalCheckBox;
     private javax.swing.JCheckBox noTransitiveRegionStartCheckBox;
     private javax.swing.JButton fromNodeButton;
     private javax.swing.JButton insertButton;
