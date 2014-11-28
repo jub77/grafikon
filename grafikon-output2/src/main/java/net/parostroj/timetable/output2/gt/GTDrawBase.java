@@ -2,9 +2,8 @@ package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
@@ -36,8 +35,7 @@ abstract public class GTDrawBase implements GTDraw {
 
     // extended display
     private static final float HALF_HOURS_STROKE_EXT_WIDTH = 1.1f;
-    private static final float HHSE_DASH_1 = 15f;
-    private static final float HHSE_DASH_2 = 7f;
+    private static final float[] HALF_HOURS_STROKE_EXT_DASH = { 15f, 7f };
 
     // other
     private static final int MINIMAL_SPACE_WIDTH = 25;
@@ -104,7 +102,7 @@ abstract public class GTDrawBase implements GTDraw {
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
         underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * HHSE_DASH_1, zoom * HHSE_DASH_2 }, 0f);
+                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(HALF_HOURS_STROKE_EXT_DASH, zoom), 0f);
         // zoom does not apply to minimal space
         minimalSpace = MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
@@ -113,6 +111,23 @@ abstract public class GTDrawBase implements GTDraw {
 
         orientation = config.get(GTDrawSettings.Key.ORIENTATION, GTOrientation.class);
         orientationDelegate = GTDrawOrientationFactory.create(orientation);
+    }
+
+    protected float[] zoomDashes(float[] dashes, float zoom) {
+        float[] newDashes = Arrays.copyOf(dashes, dashes.length);
+        for (int i = 0; i < newDashes.length; i++) {
+            newDashes[i] = newDashes[i] * zoom;
+        }
+        return newDashes;
+    }
+
+    protected Stroke createTrainStroke(float width, float[] dashes, Float zoom) {
+        if (dashes == null) {
+            return new BasicStroke(zoom * width);
+        } else {
+            return new BasicStroke(zoom * width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1.0f, zoomDashes(dashes, zoom), 0f);
+        }
     }
 
     @Override
@@ -214,17 +229,16 @@ abstract public class GTDrawBase implements GTDraw {
     protected abstract void paintStations(Graphics2D g);
 
     protected void paintTrains(Graphics2D g) {
-        Stroke trainStroke = this.getTrainStroke();
         for (RouteSegment part : route.getSegments()) {
             if (part.asNode() != null) {
-                this.paintTrainsInStation(part.asNode(), g, trainStroke);
+                this.paintTrainsInStation(part.asNode(), g);
             } else if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g, trainStroke);
+                this.paintTrainsOnLine(part.asLine(), g);
             }
         }
     }
 
-    protected abstract void paintTrainsInStation(Node asNode, Graphics2D g, Stroke trainStroke);
+    protected abstract void paintTrainsInStation(Node asNode, Graphics2D g);
 
     @Override
     public Route getRoute() {
@@ -388,11 +402,11 @@ abstract public class GTDrawBase implements GTDraw {
         return line2D;
     }
 
-    protected void paintTrainsOnLine(Line line, Graphics2D g, Stroke trainStroke) {
-        g.setStroke(trainStroke);
+    protected void paintTrainsOnLine(Line line, Graphics2D g) {
         for (LineTrack track : line.getTracks()) {
             for (TimeInterval interval : track.getTimeIntervalList()) {
                 if (intervalFilter == null || intervalFilter.apply(interval)) {
+                    g.setStroke(this.getTrainStroke(interval.getTrain()));
                     boolean paintTrainName = (interval.getFrom().getType() != NodeType.SIGNAL)
                             && (config.isOption(GTDrawSettings.Key.TRAIN_NAMES));
                     boolean paintMinutes = config.isOption(GTDrawSettings.Key.ARRIVAL_DEPARTURE_DIGITS);
@@ -706,5 +720,24 @@ abstract public class GTDrawBase implements GTDraw {
 
     abstract protected Stroke getTrainStroke();
 
-    abstract protected Stroke getTrainStroke(Train train);
+    abstract protected Stroke getTrainStroke(LineType type);
+
+    protected Stroke getTrainStroke(Train train) {
+        boolean extended = config.isOption(GTDrawSettings.Key.EXTENDED_LINES);
+        if (!extended) {
+            return getTrainStroke();
+        } else {
+            LineType lineType = LineType.SOLID;
+            if (train.isOptional()) {
+                lineType = LineType.DASH;
+            } else {
+                TrainType type = train.getType();
+                if (type != null) {
+                    lineType = LineType.valueOf(type.getAttributes().get(TrainType.ATTR_LINE_TYPE, Integer.class));
+                }
+            }
+
+            return getTrainStroke(lineType);
+        }
+    }
 }
