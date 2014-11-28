@@ -19,6 +19,7 @@ import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
 import net.parostroj.timetable.utils.Conversions;
@@ -30,6 +31,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentListener;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * Dialog for editation of the train types of the train diagram.
@@ -44,6 +46,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
     private WrapperListModel<TrainType> typesModel;
+    private final WrapperDelegate lineTypeWrapperDelegate;
 
     /** Creates new form TrainTypesDialog */
     public TrainTypesDialog(java.awt.Frame parent, boolean modal) {
@@ -52,6 +55,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         this.setComponentsEnabled(false);
         nameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
         cNameTemplateEditBox.setLanguages(Arrays.asList(TextTemplate.Language.values()));
+        this.lineTypeWrapperDelegate = new LineTypeWrapperDelegate();
+        for (LineType type : LineType.values()) {
+            lineTypeComboBox.addItem(Wrapper.getWrapper(type, lineTypeWrapperDelegate));
+        }
+
+        pack();
+        setMinimumSize(getSize());
     }
 
     public void showDialog(TrainDiagram diagram) {
@@ -91,7 +101,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         this.updateValuesForTrainType(null);
     }
 
-    public void setComponentsEnabled(boolean enabled) {
+    private void setComponentsEnabled(boolean enabled) {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
@@ -112,6 +122,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         completeNameTemplateCheckBox = new javax.swing.JCheckBox();
         cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JScrollPane jScrollPane = new javax.swing.JScrollPane();
+        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         trainTypesList = new javax.swing.JList();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
@@ -211,6 +222,18 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
 
+        lineTypeComboBox = new javax.swing.JComboBox();
+
+        lineWidthTextField = new javax.swing.JTextField();
+        lineWidthTextField.setColumns(4);
+        lineWidthTextField.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
+        javax.swing.JLabel lineTypeLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.type") + ":"); // NOI18N
+
+        javax.swing.JLabel lineWidthLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.width") + ":"); // NOI18N
+
+        javax.swing.JLabel percentLabel = new javax.swing.JLabel("%");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -221,12 +244,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                             .addComponent(platformNeededCheckBox)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(showWeightInfoCheckBox))
-                        .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                        .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                         .addComponent(completeNameTemplateCheckBox)
                         .addComponent(nameTemplateCheckBox)
-                        .addComponent(descTextField, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                        .addComponent(descTextField, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPane, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                            .addComponent(jScrollPane)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                 .addComponent(updateButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -236,12 +259,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                                 .addComponent(deleteButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                                .addComponent(brakeComboBox, 0, 128, Short.MAX_VALUE))
+                                .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 116, Short.MAX_VALUE)
+                                .addComponent(brakeComboBox, GroupLayout.PREFERRED_SIZE, 116, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
@@ -250,7 +273,17 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                                     .addComponent(editColorButton))
                                 .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addComponent(jLabel2)
-                        .addComponent(nameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+                        .addComponent(nameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(lineTypeLabel)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(lineTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.UNRELATED)
+                            .addComponent(lineWidthLabel)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(lineWidthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(percentLabel)))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -276,6 +309,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                         .addComponent(platformNeededCheckBox)
                         .addComponent(showWeightInfoCheckBox))
                     .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(lineTypeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lineWidthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lineTypeLabel)
+                        .addComponent(lineWidthLabel)
+                        .addComponent(percentLabel))
+                    .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(nameTemplateCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(nameTemplateEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -285,7 +325,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                     .addComponent(cNameTemplateEditBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(jScrollPane, GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                        .addComponent(jScrollPane)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(newButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -299,9 +339,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                     .addContainerGap())
         );
         getContentPane().setLayout(layout);
-
-        pack();
-        setMinimumSize(getSize());
     }
 
     private void editColorButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -346,6 +383,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 selected.getTrainCompleteNameTemplate());
             platformNeededCheckBox.setSelected(selected.isPlatform());
             showWeightInfoCheckBox.setSelected(selected.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO));
+            // line information
+            Integer lineTypeInt = selected.getAttributes().get(TrainType.ATTR_LINE_TYPE, Integer.class);
+            LineType lineType = LineType.valueOf(lineTypeInt);
+            lineTypeComboBox.setSelectedIndex(lineType.ordinal());
+            Double widthLineD = selected.getAttributes().get(TrainType.ATTR_LINE_WIDTH, Double.class);
+            int widthLinePercent = widthLineD != null ? (int) (100 * widthLineD) : 100;
+            lineWidthTextField.setText(Integer.toString(widthLinePercent));
         } else {
             abbrTextField.setText("");
             descTextField.setText("");
@@ -360,6 +404,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             cNameTemplateEditBox.setEnabled(false);
             platformNeededCheckBox.setSelected(false);
             showWeightInfoCheckBox.setSelected(false);
+            lineTypeComboBox.setSelectedIndex(0);
+            lineWidthTextField.setText("100");
         }
     }
 
@@ -434,6 +480,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 if (type.getTrainCompleteNameTemplate() != null)
                     type.setTrainCompleteNameTemplate(null);
             }
+            type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
+            type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractLineWidth());
             typesModel.refreshIndex(trainTypesList.getSelectedIndex());
         }
     }
@@ -485,10 +533,35 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             return;
         }
         type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
+        type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
+        type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractLineWidth());
+
         int index = typesModel.getSize();
         typesModel.addWrapper(Wrapper.getWrapper(type), index);
         trainTypesList.setSelectedIndex(index);
         trainTypesList.ensureIndexIsVisible(index);
+    }
+
+    private Integer extractLineType() {
+        Wrapper<?> selectedType = (Wrapper<?>) lineTypeComboBox.getSelectedItem();
+        LineType type = (LineType) selectedType.getElement();
+        // solid is default value -> null
+        return type == LineType.SOLID ? null : type.getValue();
+    }
+
+    private Double extractLineWidth() {
+        String widthText = lineWidthTextField.getText();
+        Double width = null;
+        try {
+            int percentWidth = Integer.parseInt(widthText);
+            // 100 is default value -> null
+            if (percentWidth != 100) {
+                width = percentWidth / 100d;
+            }
+        } catch (NumberFormatException e) {
+            log.warn("Cannot parse value {} to int", widthText);
+        }
+        return width;
     }
 
     private boolean existsTrainWithType(TrainType type, List<Train> trains) {
@@ -520,4 +593,19 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JButton upButton;
     private javax.swing.JButton updateButton;
     private javax.swing.JCheckBox showWeightInfoCheckBox;
+    private javax.swing.JTextField lineWidthTextField;
+    private javax.swing.JComboBox lineTypeComboBox;
+
+    private static class LineTypeWrapperDelegate implements WrapperDelegate {
+        @Override
+        public String toString(Object element) {
+            String key = ((LineType) element).getKey();
+            return ResourceLoader.getString("edit.traintypes.line.type." + key);
+        }
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            return 0;
+        }
+    }
 }
