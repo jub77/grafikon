@@ -9,7 +9,7 @@ public interface GTDraw {
 
     enum Change {
         REMOVED_TRAIN, TRAIN_TEXT_CHANGED, NODE_TEXT_CHANGED, ALL_TRAIN_TEXTS_CHANGED,
-        TRAIN_INTERVALS_CHANGED
+        TRAIN_INTERVALS_CHANGED, TRAIN_LINE_CHANGED
     }
 
     public enum TrainColors {

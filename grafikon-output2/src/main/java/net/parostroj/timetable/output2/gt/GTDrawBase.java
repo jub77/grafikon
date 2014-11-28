@@ -712,7 +712,7 @@ abstract public class GTDrawBase implements GTDraw {
             case ALL_TRAIN_TEXTS_CHANGED:
                 stringBounds.clear();
                 break;
-            case TRAIN_INTERVALS_CHANGED:
+            case TRAIN_INTERVALS_CHANGED: case TRAIN_LINE_CHANGED:
                 // nothing
                 break;
         }
