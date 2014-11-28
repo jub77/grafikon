@@ -15,4 +15,6 @@ public interface TrainTypeAttributes {
     public static final String ATTR_TRAIN_NAME_TEMPLATE = "trainNameTemplate";
     public static final String ATTR_TRAIN_COMPLETE_NAME_TEMPLATE = "trainCompleteNameTemplate";
     public static final String ATTR_CATEGORY = "category";
+    public static final String ATTR_LINE_TYPE = "line.type";
+    public static final String ATTR_LINE_WIDTH = "line.width";
 }

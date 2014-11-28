@@ -1079,6 +1079,22 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return attached;
     }
 
+    public boolean isElectric() {
+        return this.getAttributes().getBool(ATTR_ELECTRIC);
+    }
+
+    public boolean isDiesel() {
+        return this.getAttributes().getBool(ATTR_DIESEL);
+    }
+
+    public boolean isOptional() {
+        return this.getAttributes().getBool(ATTR_OPTIONAL);
+    }
+
+    public boolean isEmpty() {
+        return this.getAttributes().getBool(ATTR_EMPTY);
+    }
+
     /**
      * @return binding for template
      */
