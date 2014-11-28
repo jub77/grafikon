@@ -112,4 +112,9 @@ public class GTDrawClassic extends GTDrawBase {
     protected Stroke getTrainStroke() {
         return trainStroke;
     }
+
+    @Override
+    protected Stroke getTrainStroke(Train train) {
+        return getTrainStroke();
+    }
 }
