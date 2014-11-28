@@ -705,4 +705,6 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     abstract protected Stroke getTrainStroke();
+
+    abstract protected Stroke getTrainStroke(Train train);
 }
