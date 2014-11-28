@@ -543,6 +543,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         Double width = null;
         try {
             int percentWidth = Integer.parseInt(widthText);
+            // limit 10 - 1000%
+            if (percentWidth < 10) {
+                percentWidth = 10;
+            } else if (percentWidth > 1000) {
+                percentWidth = 1000;
+            }
             // 100 is default value -> null
             if (percentWidth != 100) {
                 width = percentWidth / 100d;
