@@ -17,11 +17,6 @@
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
-            <artifactId>grafikon-output2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-net</artifactId>
             <version>${project.version}</version>
         </dependency>
