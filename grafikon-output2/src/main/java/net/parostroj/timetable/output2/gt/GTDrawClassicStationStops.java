@@ -1,7 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
@@ -30,7 +29,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     }
 
     @Override
-    protected void paintTrainsInStation(Node station, Graphics2D g, Stroke trainStroke) {
+    protected void paintTrainsInStation(Node station, Graphics2D g) {
         for (NodeTrack nodeTrack : station.getTracks()) {
             for (TimeInterval interval : nodeTrack.getTimeIntervalList()) {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
@@ -39,7 +38,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
                 if (!this.isPlacedInterval(interval)) {
                     continue;
                 }
-                g.setStroke(trainStroke);
+                g.setStroke(getTrainStroke(interval.getTrain()));
                 g.setColor(this.getIntervalColor(interval));
 
                 this.paintTrainInStationWithInterval(g, interval);

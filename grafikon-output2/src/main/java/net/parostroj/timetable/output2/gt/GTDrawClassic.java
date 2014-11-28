@@ -21,11 +21,11 @@ public class GTDrawClassic extends GTDrawBase {
     // extended display
     private static final float STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH = 1.3f;
     private static final float STATION_STROKE_STOP_EXT_WIDTH = 1.3f;
-    private static final float SSSE_DASH_1 = 3f;
-    private static final float SSSE_DASH_2 = 3f;
     private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.3f;
-    private static final float SSSWFE_DASH_1 = 13f;
-    private static final float SSSWFE_DASH_2 = 5f;
+    private static final float[] STATION_STROKE_STOP_EXT_DASH = { 3f, 3f };
+    private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 13f, 5f };
+    private static final float[] TRAIN_STROKE_DASH = { 10f, 4f };
+    private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 3f, 1f, 3f };
 
     private final Stroke trainStroke;
     private final Stroke stationStroke;
@@ -33,17 +33,25 @@ public class GTDrawClassic extends GTDrawBase {
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
 
+    private final Map<LineType, Stroke> trainStrokes;
+
     public GTDrawClassic(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
 
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
-        trainStroke = new BasicStroke(zoom * TRAIN_STROKE_WIDTH);
+        trainStroke = createTrainStroke(TRAIN_STROKE_WIDTH, null, zoom);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
         stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
         stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSE_DASH_1, zoom * SSSE_DASH_2 }, 0f);
+                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom), 0f);
         stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, new float[] { zoom * SSSWFE_DASH_1, zoom * SSSWFE_DASH_2 }, 0f);
+                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH, zoom), 0f);
+
+        Map<LineType, Stroke> lStrokes = new EnumMap<LineType, Stroke>(LineType.class);
+        lStrokes.put(LineType.SOLID, trainStroke);
+        lStrokes.put(LineType.DASH, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH, zoom));
+        lStrokes.put(LineType.DASH_AND_DOT, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH_AND_DOT, zoom));
+        trainStrokes = Collections.unmodifiableMap(lStrokes);
     }
 
     @Override
@@ -104,7 +112,7 @@ public class GTDrawClassic extends GTDrawBase {
     }
 
     @Override
-    protected void paintTrainsInStation(Node asNode, Graphics2D g, Stroke trainStroke) {
+    protected void paintTrainsInStation(Node asNode, Graphics2D g) {
         // nothing to paint
     }
 
@@ -114,7 +122,7 @@ public class GTDrawClassic extends GTDrawBase {
     }
 
     @Override
-    protected Stroke getTrainStroke(Train train) {
-        return getTrainStroke();
+    protected Stroke getTrainStroke(LineType type) {
+        return trainStrokes.get(type);
     }
 }
