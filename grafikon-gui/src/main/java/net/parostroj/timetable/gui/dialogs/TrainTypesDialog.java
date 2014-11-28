@@ -441,44 +441,33 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 this.showErrorDialog("dialog.error.missingvalues");
                 return;
             }
-            if (!abbr.equals(type.getAbbr()))
-                type.setAbbr(abbr);
-            if (!desc.equals(type.getDesc()))
-                type.setDesc(desc);
-            if (platformNeededCheckBox.isSelected() != type.isPlatform()) {
-                type.setPlatform(platformNeededCheckBox.isSelected());
-            }
+            type.setAbbr(abbr);
+            type.setDesc(desc);
+            type.setPlatform(platformNeededCheckBox.isSelected());
             type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
             Color c = Conversions.convertTextToColor(colorLabel.getText());
-            if (!c.equals(type.getColor()))
-                type.setColor(c);
+            type.setColor(c);
             TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>) brakeComboBox.getSelectedItem()).getElement();
             type.setCategory(category != NONE_CATEGORY ? category : null);
             if (nameTemplateCheckBox.isSelected()) {
                 try {
-                    if (type.getTrainNameTemplate() == null ||
-                            !nameTemplateEditBox.getTemplate().equals(type.getTrainNameTemplate()))
-                        type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
+                    type.setTrainNameTemplate(nameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     GuiComponentUtils.showWarning(e.getMessage(), this);
                     log.warn(e.getMessage(), e);
                 }
             } else {
-                if (type.getTrainNameTemplate() != null)
-                    type.setTrainNameTemplate(null);
+                type.setTrainNameTemplate(null);
             }
             if (completeNameTemplateCheckBox.isSelected()) {
                 try {
-                    if (type.getTrainCompleteNameTemplate() == null ||
-                            !cNameTemplateEditBox.getTemplate().equals(type.getTrainCompleteNameTemplate()))
-                        type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
+                    type.setTrainCompleteNameTemplate(cNameTemplateEditBox.getTemplate());
                 } catch (GrafikonException e) {
                     GuiComponentUtils.showWarning(e.getMessage(), this);
                     log.warn(e.getMessage(), e);
                 }
             } else {
-                if (type.getTrainCompleteNameTemplate() != null)
-                    type.setTrainCompleteNameTemplate(null);
+                type.setTrainCompleteNameTemplate(null);
             }
             type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
             type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractLineWidth());
