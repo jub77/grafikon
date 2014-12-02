@@ -28,7 +28,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentListener;
 import javax.swing.ScrollPaneConstants;
@@ -232,7 +232,15 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         javax.swing.JLabel lineWidthLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.width") + ":"); // NOI18N
 
-        javax.swing.JLabel percentLabel = new javax.swing.JLabel("%");
+        javax.swing.JLabel percentWidthLabel = new javax.swing.JLabel("%");
+
+        javax.swing.JLabel lineLengthLabel = new javax.swing.JLabel(ResourceLoader.getString("edit.traintypes.line.length") + ":"); // NOI18N
+
+        lineLengthTextField = new javax.swing.JTextField();
+        lineLengthTextField.setColumns(4);
+        lineLengthTextField.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
+        javax.swing.JLabel percentLengthLabel = new javax.swing.JLabel("%");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
@@ -244,10 +252,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                             .addComponent(platformNeededCheckBox)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(showWeightInfoCheckBox))
-                        .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                        .addComponent(cNameTemplateEditBox, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addComponent(completeNameTemplateCheckBox)
                         .addComponent(nameTemplateCheckBox)
-                        .addComponent(descTextField, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                        .addComponent(descTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jScrollPane)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -259,12 +267,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                                 .addComponent(deleteButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
+                                .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                .addComponent(abbrTextField, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 116, Short.MAX_VALUE)
-                                .addComponent(brakeComboBox, GroupLayout.PREFERRED_SIZE, 116, Short.MAX_VALUE))
+                                .addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 124, Short.MAX_VALUE)
+                                .addComponent(brakeComboBox, GroupLayout.PREFERRED_SIZE, 124, Short.MAX_VALUE))
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
@@ -273,7 +281,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                                     .addComponent(editColorButton))
                                 .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addComponent(jLabel2)
-                        .addComponent(nameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                        .addComponent(nameTemplateEditBox, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(lineTypeLabel)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -283,7 +291,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(lineWidthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(percentLabel)))
+                            .addComponent(percentWidthLabel)
+                            .addPreferredGap(ComponentPlacement.UNRELATED)
+                            .addComponent(lineLengthLabel)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(lineLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(percentLengthLabel)))
                     .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -314,7 +328,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                         .addComponent(lineWidthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(lineTypeLabel)
                         .addComponent(lineWidthLabel)
-                        .addComponent(percentLabel))
+                        .addComponent(percentWidthLabel)
+                        .addComponent(lineLengthLabel)
+                        .addComponent(lineLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(percentLengthLabel))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(nameTemplateCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED)
@@ -387,9 +404,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             Integer lineTypeInt = selected.getAttributes().get(TrainType.ATTR_LINE_TYPE, Integer.class);
             LineType lineType = LineType.valueOf(lineTypeInt);
             lineTypeComboBox.setSelectedIndex(lineType.ordinal());
-            Double widthLineD = selected.getAttributes().get(TrainType.ATTR_LINE_WIDTH, Double.class);
-            int widthLinePercent = widthLineD != null ? (int) (100 * widthLineD) : 100;
-            lineWidthTextField.setText(Integer.toString(widthLinePercent));
+            lineWidthTextField.setText(Integer.toString(this.convertDoubleValueToPercent(selected, TrainType.ATTR_LINE_WIDTH)));
+            lineLengthTextField.setText(Integer.toString(this.convertDoubleValueToPercent(selected, TrainType.ATTR_LINE_LENGTH)));
         } else {
             abbrTextField.setText("");
             descTextField.setText("");
@@ -407,6 +423,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             lineTypeComboBox.setSelectedIndex(0);
             lineWidthTextField.setText("100");
         }
+    }
+
+    private int convertDoubleValueToPercent(TrainType selected, String attribute) {
+        Double ratio = selected.getAttributes().get(attribute, Double.class);
+        int percentage = ratio != null ? (int) (100 * ratio) : 100;
+        return percentage;
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -470,7 +492,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 type.setTrainCompleteNameTemplate(null);
             }
             type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
-            type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractLineWidth());
+            type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractRatioFromPercentage(lineWidthTextField));
+            type.getAttributes().setRemove(TrainType.ATTR_LINE_LENGTH, extractRatioFromPercentage(lineLengthTextField));
             typesModel.refreshIndex(trainTypesList.getSelectedIndex());
         }
     }
@@ -523,7 +546,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         }
         type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
         type.getAttributes().setRemove(TrainType.ATTR_LINE_TYPE, extractLineType());
-        type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractLineWidth());
+        type.getAttributes().setRemove(TrainType.ATTR_LINE_WIDTH, extractRatioFromPercentage(lineWidthTextField));
+        type.getAttributes().setRemove(TrainType.ATTR_LINE_LENGTH, extractRatioFromPercentage(lineLengthTextField));
 
         int index = typesModel.getSize();
         typesModel.addWrapper(Wrapper.getWrapper(type), index);
@@ -538,8 +562,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         return type == LineType.SOLID ? null : type.getValue();
     }
 
-    private Double extractLineWidth() {
-        String widthText = lineWidthTextField.getText();
+    private Double extractRatioFromPercentage(JTextField field) {
+        String widthText = field.getText();
         Double width = null;
         try {
             int percentWidth = Integer.parseInt(widthText);
@@ -590,6 +614,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox showWeightInfoCheckBox;
     private javax.swing.JTextField lineWidthTextField;
     private javax.swing.JComboBox lineTypeComboBox;
+    private javax.swing.JTextField lineLengthTextField;
 
     private static class LineTypeWrapperDelegate implements WrapperDelegate {
         @Override

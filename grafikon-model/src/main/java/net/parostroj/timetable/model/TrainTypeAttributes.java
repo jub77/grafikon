@@ -17,4 +17,5 @@ public interface TrainTypeAttributes {
     public static final String ATTR_CATEGORY = "category";
     public static final String ATTR_LINE_TYPE = "line.type";
     public static final String ATTR_LINE_WIDTH = "line.width";
+    public static final String ATTR_LINE_LENGTH = "line.length";
 }
