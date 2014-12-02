@@ -26,6 +26,7 @@ public class GTDrawClassic extends GTDrawBase {
     private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 13f, 5f };
     private static final float[] TRAIN_STROKE_DASH = { 10f, 4f };
     private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 3f, 1f, 3f };
+    private static final float[] TRAIN_STROKE_DOT = { 1f, 3f };
 
     private final Stroke trainStroke;
     private final Stroke stationStroke;
@@ -51,6 +52,7 @@ public class GTDrawClassic extends GTDrawBase {
         lStrokes.put(LineType.SOLID, trainStroke);
         lStrokes.put(LineType.DASH, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH, zoom));
         lStrokes.put(LineType.DASH_AND_DOT, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH_AND_DOT, zoom));
+        lStrokes.put(LineType.DOT, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DOT, zoom));
         trainStrokes = Collections.unmodifiableMap(lStrokes);
     }
 
@@ -123,6 +125,10 @@ public class GTDrawClassic extends GTDrawBase {
 
     @Override
     protected Stroke getTrainStroke(LineType type) {
-        return trainStrokes.get(type);
+        Stroke stroke = trainStrokes.get(type);
+        if (stroke == null) {
+            stroke = trainStroke;
+        }
+        return stroke;
     }
 }
