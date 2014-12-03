@@ -148,7 +148,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.ZOOM, 1.0f)
                 .set(Key.TO_TRAIN_SCROLL, Boolean.FALSE)
                 .set(Key.TO_TRAIN_CHANGE_ROUTE, Boolean.FALSE)
-                .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT);
+                .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT)
+                .set(Key.ORIENTATION_MENU, Boolean.TRUE);
         return config;
     }
 
