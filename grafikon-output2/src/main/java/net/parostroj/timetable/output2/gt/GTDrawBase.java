@@ -61,7 +61,6 @@ abstract public class GTDrawBase implements GTDraw {
     protected int stationNameWidth;
     protected int borderX;
     protected int borderY;
-    protected int stationNamesPosition = 0;
     protected Map<Node,Integer> positions;
     protected List<Node> stations;
     protected double timeStep;
@@ -226,11 +225,6 @@ abstract public class GTDrawBase implements GTDraw {
     @Override
     public Route getRoute() {
         return route;
-    }
-
-    @Override
-    public void setStationNamesPosition(int position) {
-        this.stationNamesPosition = position;
     }
 
     protected void paintTitle(Graphics2D g) {
@@ -468,7 +462,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
             Rectangle b = this.getStringBounds(name, g);
             FontInfo fi = this.getFontInfo(g);
-            int sx = this.borderX + stationNamesPosition;
+            int sx = this.borderX;
             int sy = y - fi.strikeThrough;
             int ow = Math.round(this.getMSize(g).width / 5);
             Rectangle r2 = new Rectangle(sx - ow, sy + fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);

@@ -26,8 +26,6 @@ public interface GTDraw {
 
     Route getRoute();
 
-    void setStationNamesPosition(int position);
-
     void changed(Change change, Object object);
 
     int getX(int time);
