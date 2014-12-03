@@ -19,11 +19,30 @@ public class TrainStrokeCache {
     private final Map<LineType, Stroke> strokesByLineType;
     private final float baseWidth;
     private final float zoom;
+    private final float baseDashLenght;
 
+    /**
+     * Creates cache with line type lines based on dashes defined by {@link #add(LineType, float[])}
+     * method.
+     */
     public TrainStrokeCache(float baseWidth, float zoom) {
         this.baseWidth = baseWidth;
         this.zoom = zoom;
         this.dashMap = new EnumMap<LineType, float[]>(LineType.class);
+        this.strokes = new HashMap<TrainType, Stroke>();
+        this.strokesByLineType = new EnumMap<LineType, Stroke>(LineType.class);
+        this.baseDashLenght = 0f;
+    }
+
+    /**
+     * Creates cache with line type lines based on {@link #baseDashLenght} and computation based
+     * on that value.
+     */
+    public TrainStrokeCache(float baseWidth, float zoom, float baseDashLength) {
+        this.baseWidth = baseWidth;
+        this.zoom = zoom;
+        this.baseDashLenght = baseDashLength;
+        this.dashMap = null;
         this.strokes = new HashMap<TrainType, Stroke>();
         this.strokesByLineType = new EnumMap<LineType, Stroke>(LineType.class);
     }
@@ -39,7 +58,7 @@ public class TrainStrokeCache {
     public Stroke getStroke(LineType lineType) {
         Stroke stroke = strokesByLineType.get(lineType);
         if (stroke == null) {
-            stroke = createTrainStroke(lineType, 1.0f, 1.0f);
+            stroke = this.createTrainStroke(lineType, 1.0f, 1.0f);
             strokesByLineType.put(lineType, stroke);
         }
         return stroke;
@@ -66,13 +85,42 @@ public class TrainStrokeCache {
     }
 
     private Stroke createTrainStroke(LineType type, float wRatio, float lRatio) {
-        float lWidth = zoom * this.baseWidth * wRatio;
-        float[] dashes = dashMap.get(type);
-        if (dashes == null) {
-            return new BasicStroke(lWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f);
+        float width = zoom * this.baseWidth * wRatio;
+        float[] dashes = null;
+        if (dashMap != null) {
+            // based on dashMap
+            dashes = dashMap.get(type);
+            if (dashes != null) {
+                dashes = DrawUtils.zoomDashes(dashes, zoom, lRatio);
+            }
         } else {
-            return new BasicStroke(lWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER,
-                    10.0f, DrawUtils.zoomDashes(dashes, zoom, lRatio), 0f);
+            // based on computation
+            dashes = this.computeDashes(type, width, lRatio);
         }
+        if (dashes == null) {
+            return new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f);
+        } else {
+            return new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER,
+                    10.0f, dashes, 0f);
+        }
+    }
+
+    private float[] computeDashes(LineType type, float width, float lRatio) {
+        float[] dashes = null;
+        switch (type) {
+            case SOLID:
+                // no dashes
+                break;
+            case DASH:
+                dashes = new float[] { baseDashLenght * zoom * lRatio, 3f * width };
+                break;
+            case DASH_AND_DOT:
+                dashes = new float[] { baseDashLenght * zoom * lRatio, 2.5f * width , 0f, 2.5f * width};
+                break;
+            case DOT:
+                dashes = new float[] { 0f, 2.5f * width };
+                break;
+        }
+        return dashes;
     }
 }
