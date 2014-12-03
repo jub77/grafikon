@@ -17,8 +17,6 @@ public class TransformedGTDraw extends GTDrawDecorator {
     private static final Logger log = LoggerFactory.getLogger(TransformedGTDraw.class);
 
     private Rectangle clipping;
-    private boolean moveStationName;
-
     public TransformedGTDraw(GTDraw draw) {
         super(draw);
     }
@@ -44,19 +42,10 @@ public class TransformedGTDraw extends GTDrawDecorator {
             AffineTransform transform = g.getTransform();
             transform.translate(-clipping.x, -clipping.y);
             g.setTransform(transform);
-            if (moveStationName) {
-                draw.setStationNamesPosition(clipping.x);
-            } else {
-                draw.setStationNamesPosition(0);
-            }
         }
     }
 
     public void setClipping(Rectangle rectangle) {
         clipping = rectangle;
-    }
-
-    public void setMoveStationNames(boolean move) {
-        moveStationName = move;
     }
 }
