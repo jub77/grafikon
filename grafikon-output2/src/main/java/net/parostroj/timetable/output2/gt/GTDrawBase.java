@@ -61,6 +61,7 @@ abstract public class GTDrawBase implements GTDraw {
     protected int stationNameWidth;
     protected int borderX;
     protected int borderY;
+    protected int titleHeight;
     protected Map<Node,Integer> positions;
     protected List<Node> stations;
     protected double timeStep;
@@ -186,7 +187,9 @@ abstract public class GTDrawBase implements GTDraw {
                 break;
         }
         if (config.isOption(GTDrawSettings.Key.TITLE)) {
-            this.start.translate(0, (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO));
+            // height of the font plus one border more
+            titleHeight = (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO) + this.borderX;
+            this.start.translate(0, titleHeight);
         }
         // compute size
         Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
@@ -231,9 +234,10 @@ abstract public class GTDrawBase implements GTDraw {
     protected void paintTitle(Graphics2D g) {
         Font currentFont = g.getFont();
         g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
+        FontInfo fi = DrawUtils.createFontInfo(g);
         Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         int width = configSize.width - 2 * borderX;
-        int y = (int) (start.y - this.getMSize(g).getHeight());
+        int y = this.borderY + fi.height;
 
         Object titleObject = config.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
         String text = null;
@@ -246,8 +250,8 @@ abstract public class GTDrawBase implements GTDraw {
         }
         int textWidth = DrawUtils.getStringWidth(g, text);
         int shiftX = (width - textWidth) / 2;
-        int shiftY = DrawUtils.createFontInfo(g).descent;
-        g.drawString(text, borderX + shiftX, y - shiftY);
+        int shiftY = fi.descent;
+        g.drawString(text, this.borderX + shiftX, y - shiftY);
         // restore font
         g.setFont(currentFont);
     }
@@ -475,7 +479,7 @@ abstract public class GTDrawBase implements GTDraw {
                     break;
                 case TOP_DOWN:
                     int tx = y + fi.strikeThrough;
-                    int ty = this.borderY;
+                    int ty = this.borderY + titleHeight;
                     AffineTransform oldTransform = g.getTransform();
                     AffineTransform newTransform = g.getTransform();
                     newTransform.translate(tx, ty);
