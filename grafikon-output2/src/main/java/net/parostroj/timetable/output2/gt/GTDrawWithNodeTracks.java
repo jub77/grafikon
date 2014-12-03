@@ -26,9 +26,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.0f;
     private static final float[] STATION_STROKE_STOP_EXT_DASH = { 3f, 3f };
     private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 16f, 5f };
-    private static final float[] TRAIN_STROKE_DASH = { 10f, 3f };
-    private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 2f, TRAIN_STROKE_WIDTH, 2f };
-    private static final float[] TRAIN_STROKE_DOT = { TRAIN_STROKE_WIDTH, 2f };
+    private static final float[] TRAIN_STROKE_DASH = { 10f, 2 * TRAIN_STROKE_WIDTH };
+    private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 2 * TRAIN_STROKE_WIDTH, 0f, 2 * TRAIN_STROKE_WIDTH };
+    private static final float[] TRAIN_STROKE_DOT = { 0f, 2 * TRAIN_STROKE_WIDTH };
 
     private static final int TRACK_GAP_WIDTH = 5;
 
@@ -53,9 +53,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
         techTimeStroke = new BasicStroke(zoom * TECH_TIME_STROKE_WIDTH);
         stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
         stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom, 1.0f), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, DrawUtils.zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH, zoom, 1.0f), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, DrawUtils.zoomDashes(STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH, zoom, 1.0f), 0f);
         trackGap = (int) (zoom * TRACK_GAP_WIDTH);
 
         trainStrokeCache.add(LineType.DASH, TRAIN_STROKE_DASH);

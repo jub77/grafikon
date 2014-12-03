@@ -65,22 +65,14 @@ public class TrainStrokeCache {
         strokesByLineType.clear();
     }
 
-    protected Stroke createTrainStroke(LineType type, float wRatio, float lRatio) {
+    private Stroke createTrainStroke(LineType type, float wRatio, float lRatio) {
         float lWidth = zoom * this.baseWidth * wRatio;
         float[] dashes = dashMap.get(type);
         if (dashes == null) {
-            return new BasicStroke(lWidth);
+            return new BasicStroke(lWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f);
         } else {
-            return new BasicStroke(lWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1.0f, zoomDashes(dashes, zoom, lRatio), 0f);
+            return new BasicStroke(lWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER,
+                    10.0f, DrawUtils.zoomDashes(dashes, zoom, lRatio), 0f);
         }
-    }
-
-    public static float[] zoomDashes(float[] dashes, float zoom, float lRatio) {
-        float[] newDashes = Arrays.copyOf(dashes, dashes.length);
-        for (int i = 0; i < newDashes.length; i++) {
-            newDashes[i] = newDashes[i] * zoom * lRatio;
-        }
-        return newDashes;
     }
 }
