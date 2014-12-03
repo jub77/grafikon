@@ -117,8 +117,9 @@ public class GTViewSettings {
         return Boolean.TRUE.equals(this.getOption(pref));
     }
 
-    public void setOption(Key pref, Boolean value) {
+    public GTViewSettings setOption(Key pref, Boolean value) {
         this.set(pref, value);
+        return this;
     }
 
     public GTDrawSettings createGTDrawSettings() {
