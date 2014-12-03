@@ -152,7 +152,7 @@ abstract public class GTDrawBase implements GTDraw {
         Float by = config.get(GTDrawSettings.Key.BORDER_Y, Float.class);
         Rectangle mSize = getMSize(g);
         this.borderX = (int) (mSize.getWidth() * bx);
-        this.borderY = (int) (mSize.getHeight() * by);
+        this.borderY = (int) (mSize.getWidth() * by);
         this.stationNameWidth = this.computeInitialStationNameWidth(g, snWidth); // initial size ...
         // correct gap by station names
         boolean snWidthFixed = config.isOption(GTDrawSettings.Key.STATION_NAME_WIDTH_FIXED);
@@ -177,11 +177,12 @@ abstract public class GTDrawBase implements GTDraw {
         this.start = new Point(this.borderX, this.borderY);
         switch (orientation) {
             case LEFT_RIGHT:
-                this.start.translate(stationNameWidth, 0);
+                FontInfo fi = this.getFontInfo(g);
+                this.start.translate(stationNameWidth, fi.height - fi.descent);
                 break;
             case TOP_DOWN:
                 // hours width
-                this.start.translate(mSize.width * 2, 0);
+                this.start.translate(mSize.width * 2, stationNameWidth);
                 break;
         }
         if (config.isOption(GTDrawSettings.Key.TITLE)) {
@@ -462,17 +463,38 @@ abstract public class GTDrawBase implements GTDraw {
             }
             Rectangle b = this.getStringBounds(name, g);
             FontInfo fi = this.getFontInfo(g);
-            int sx = this.borderX;
-            int sy = y - fi.strikeThrough;
             int ow = Math.round(this.getMSize(g).width / 5);
-            Rectangle r2 = new Rectangle(sx - ow, sy + fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
-            if (background != null) {
-                g.setColor(background);
-                g.fill(r2);
+            Rectangle r2 = new Rectangle(-ow, fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
+
+            switch (orientation) {
+                case LEFT_RIGHT:
+                    int sx = this.borderX;
+                    int sy = y - fi.strikeThrough;
+                    r2.translate(sx, sy);
+                    this.paintRectangleWithStationName(g, name, r2, sx, sy);
+                    break;
+                case TOP_DOWN:
+                    int tx = y + fi.strikeThrough;
+                    int ty = this.borderY;
+                    AffineTransform oldTransform = g.getTransform();
+                    AffineTransform newTransform = g.getTransform();
+                    newTransform.translate(tx, ty);
+                    newTransform.rotate(Math.PI / 2);
+                    g.setTransform(newTransform);
+                    this.paintRectangleWithStationName(g, name, r2, 0, 0);
+                    g.setTransform(oldTransform);
+                    break;
             }
-            g.setColor(Color.black);
-            g.drawString(name, sx, sy);
         }
+    }
+
+    private void paintRectangleWithStationName(Graphics2D g, String name, Rectangle r2, int x, int y) {
+        if (background != null) {
+            g.setColor(background);
+            g.fill(r2);
+        }
+        g.setColor(Color.black);
+        g.drawString(name, x, y);
     }
 
     protected void paintTrainNameOnLine(Graphics2D g, TimeInterval interval, Line2D line) {

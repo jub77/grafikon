@@ -26,7 +26,7 @@ public class GTLayeredPane extends JLayeredPane {
         			new Insets(0, 0, 0, 0);
 
         this.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-        this.add(new GTStationNamesOverlay(view, borderInsets.top), new Integer(400));
+        this.add(new GTStationNamesOverlay(view, borderInsets.top, borderInsets.left), new Integer(400));
         view.addListener(new AbstractGTViewListener() {
             @Override
             public void settingsChanged(GTViewSettings settings) {

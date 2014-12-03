@@ -55,7 +55,7 @@ public class DrawUtils {
 
         @Override
         public String toString() {
-            return String.format("%d,%d,%d", strikeThrough, descent, height);
+            return String.format("strike=%d, descent=%d, height=%d", strikeThrough, descent, height);
         }
     }
 
