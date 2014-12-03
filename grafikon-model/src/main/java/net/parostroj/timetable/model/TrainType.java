@@ -294,4 +294,16 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     public void setAttribute(String key, Object value) {
         attributes.set(key, value);
     }
+
+    public double getLineWidth() {
+        return attributes.get(ATTR_LINE_WIDTH, Double.class, 1.0d);
+    }
+
+    public double getLineLength() {
+        return attributes.get(ATTR_LINE_LENGTH, Double.class, 1.0d);
+    }
+
+    public LineType getLineType() {
+        return LineType.valueOf(attributes.get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
+    }
 }
