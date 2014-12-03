@@ -103,4 +103,8 @@ public class GTDrawParams {
     public void setTitleText(String titleText) {
         this.settings.setRemove(Key.TITLE_TEXT, titleText);
     }
+
+    public void setVerticalOrientation(boolean vertical) {
+        this.settings.set(Key.ORIENTATION, vertical ? GTOrientation.TOP_DOWN : GTOrientation.LEFT_RIGHT);
+    }
 }
