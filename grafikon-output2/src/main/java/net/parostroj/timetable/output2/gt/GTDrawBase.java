@@ -102,7 +102,7 @@ abstract public class GTDrawBase implements GTDraw {
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
         underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(HALF_HOURS_STROKE_EXT_DASH, zoom), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(HALF_HOURS_STROKE_EXT_DASH, zoom, 1.0f), 0f);
         // zoom does not apply to minimal space
         minimalSpace = MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
@@ -111,23 +111,6 @@ abstract public class GTDrawBase implements GTDraw {
 
         orientation = config.get(GTDrawSettings.Key.ORIENTATION, GTOrientation.class);
         orientationDelegate = GTDrawOrientationFactory.create(orientation);
-    }
-
-    protected float[] zoomDashes(float[] dashes, float zoom) {
-        float[] newDashes = Arrays.copyOf(dashes, dashes.length);
-        for (int i = 0; i < newDashes.length; i++) {
-            newDashes[i] = newDashes[i] * zoom;
-        }
-        return newDashes;
-    }
-
-    protected Stroke createTrainStroke(float width, float[] dashes, Float zoom) {
-        if (dashes == null) {
-            return new BasicStroke(zoom * width);
-        } else {
-            return new BasicStroke(zoom * width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1.0f, zoomDashes(dashes, zoom), 0f);
-        }
     }
 
     @Override
@@ -715,29 +698,25 @@ abstract public class GTDrawBase implements GTDraw {
             case TRAIN_INTERVALS_CHANGED: case TRAIN_LINE_CHANGED:
                 // nothing
                 break;
+            case TRAIN_TYPE_CHANGED:
+                getTrainStrokeCache().clear();
         }
     }
 
-    abstract protected Stroke getTrainStroke();
-
-    abstract protected Stroke getTrainStroke(LineType type);
+    abstract protected TrainStrokeCache getTrainStrokeCache();
 
     protected Stroke getTrainStroke(Train train) {
         boolean extended = config.isOption(GTDrawSettings.Key.EXTENDED_LINES);
+        Stroke stroke = null;
         if (!extended) {
-            return getTrainStroke();
+            stroke = getTrainStrokeCache().getStroke();
         } else {
-            LineType lineType = LineType.SOLID;
             if (train.isOptional()) {
-                lineType = LineType.DASH;
+                stroke = getTrainStrokeCache().getStroke(LineType.DASH);
             } else {
-                TrainType type = train.getType();
-                if (type != null) {
-                    lineType = LineType.valueOf(type.getAttributes().get(TrainType.ATTR_LINE_TYPE, Integer.class));
-                }
+                stroke = getTrainStrokeCache().getStroke(train.getType());
             }
-
-            return getTrainStroke(lineType);
         }
+        return stroke;
     }
 }

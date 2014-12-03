@@ -26,21 +26,19 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     private static final float STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH = 1.0f;
     private static final float[] STATION_STROKE_STOP_EXT_DASH = { 3f, 3f };
     private static final float[] STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH = { 16f, 5f };
-    private static final float[] TRAIN_STROKE_DASH = { 10f, 4f };
-    private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 3f, 1f, 3f };
-    private static final float[] TRAIN_STROKE_DOT = { 1f, 3f };
+    private static final float[] TRAIN_STROKE_DASH = { 10f, 3f };
+    private static final float[] TRAIN_STROKE_DASH_AND_DOT = { 10f, 2f, TRAIN_STROKE_WIDTH, 2f };
+    private static final float[] TRAIN_STROKE_DOT = { TRAIN_STROKE_WIDTH, 2f };
 
     private static final int TRACK_GAP_WIDTH = 5;
 
-    private final Stroke trainStroke;
+    private final TrainStrokeCache trainStrokeCache;
     private final Stroke trainSsStroke;
     private final Stroke stationStroke;
     private final Stroke techTimeStroke;
     private final Stroke stationStrokeRouteSplitExt;
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
-
-    private final Map<LineType, Stroke> trainStrokes;
 
     private final int trackGap;
 
@@ -49,23 +47,20 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     public GTDrawWithNodeTracks(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
         super(config ,route, collector, intervalFilter);
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
-        trainStroke = createTrainStroke(TRAIN_STROKE_WIDTH, null, zoom);
+        trainStrokeCache = new TrainStrokeCache(TRAIN_STROKE_WIDTH, zoom);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);
         trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         techTimeStroke = new BasicStroke(zoom * TECH_TIME_STROKE_WIDTH);
         stationStrokeRouteSplitExt = new BasicStroke(zoom * STATION_STROKE_ROUTE_SPLIT_EXT_WIDTH);
         stationStrokeStopExt = new BasicStroke(zoom * STATION_STROKE_STOP_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(STATION_STROKE_STOP_EXT_DASH, zoom, 1.0f), 0f);
         stationStrokeStopWithFreightExt = new BasicStroke(zoom * STATION_STROKE_STOP_WITH_FREIGHT_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, zoomDashes(STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH, zoom), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(STATION_STROKE_STOP_WITH_FREIGHT_EXT_DASH, zoom, 1.0f), 0f);
         trackGap = (int) (zoom * TRACK_GAP_WIDTH);
 
-        Map<LineType, Stroke> lStrokes = new EnumMap<LineType, Stroke>(LineType.class);
-        lStrokes.put(LineType.SOLID, trainStroke);
-        lStrokes.put(LineType.DASH, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH, zoom));
-        lStrokes.put(LineType.DASH_AND_DOT, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DASH_AND_DOT, zoom));
-        lStrokes.put(LineType.DOT, createTrainStroke(TRAIN_STROKE_WIDTH, TRAIN_STROKE_DOT, zoom));
-        trainStrokes = Collections.unmodifiableMap(lStrokes);
+        trainStrokeCache.add(LineType.DASH, TRAIN_STROKE_DASH);
+        trainStrokeCache.add(LineType.DOT, TRAIN_STROKE_DOT);
+        trainStrokeCache.add(LineType.DASH_AND_DOT, TRAIN_STROKE_DASH_AND_DOT);
     }
 
     @Override
@@ -176,16 +171,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
     }
 
     @Override
-    protected Stroke getTrainStroke() {
-        return trainStroke;
-    }
-
-    @Override
-    protected Stroke getTrainStroke(LineType type) {
-        Stroke stroke = trainStrokes.get(type);
-        if (stroke == null) {
-            stroke = trainStroke;
-        }
-        return stroke;
+    protected TrainStrokeCache getTrainStrokeCache() {
+        return trainStrokeCache;
     }
 }

@@ -212,7 +212,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     private void nodeChanged(NodeEvent event) {
         switch (event.getType()) {
             case ATTRIBUTE:
-                if (event.getAttributeChange().getName().equals("name")) {
+                if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
                     draw.changed(GTDraw.Change.NODE_TEXT_CHANGED, event.getSource());
                 }
                 break;
@@ -226,9 +226,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             case ATTRIBUTE:
                 if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
                     // repaint
+                    draw.changed(GTDraw.Change.TRAIN_TYPE_CHANGED, event.getSource());
                     this.repaint();
-                } else if (event.getAttributeChange().checkName(TrainType.ATTR_LINE_TYPE, TrainType.ATTR_LINE_WIDTH)) {
+                } else if (event.getAttributeChange().checkName(TrainType.ATTR_LINE_TYPE,
+                        TrainType.ATTR_LINE_WIDTH, TrainType.ATTR_LINE_LENGTH)) {
                     // repaint
+                    draw.changed(GTDraw.Change.TRAIN_TYPE_CHANGED, event.getSource());
                     this.repaint();
                 }
                 break;
