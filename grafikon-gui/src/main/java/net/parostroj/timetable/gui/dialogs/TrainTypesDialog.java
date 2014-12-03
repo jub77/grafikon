@@ -422,6 +422,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             showWeightInfoCheckBox.setSelected(false);
             lineTypeComboBox.setSelectedIndex(0);
             lineWidthTextField.setText("100");
+            lineLengthTextField.setText("100");
         }
     }
 
