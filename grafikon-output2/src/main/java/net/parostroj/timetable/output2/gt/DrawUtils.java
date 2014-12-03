@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.gt;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.LineMetrics;
+import java.util.Arrays;
 
 import com.google.common.base.Function;
 
@@ -94,5 +95,13 @@ public class DrawUtils {
 
     public static int getStringWidth(Graphics2D g, Font font, String str) {
         return g.getFontMetrics(font).stringWidth(str);
+    }
+
+    public static float[] zoomDashes(float[] dashes, float zoom, float lRatio) {
+        float[] newDashes = Arrays.copyOf(dashes, dashes.length);
+        for (int i = 0; i < newDashes.length; i++) {
+            newDashes[i] = newDashes[i] * zoom * lRatio;
+        }
+        return newDashes;
     }
 }

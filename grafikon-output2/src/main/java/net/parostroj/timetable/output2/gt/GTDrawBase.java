@@ -102,7 +102,7 @@ abstract public class GTDrawBase implements GTDraw {
         tenMinutesStroke = new BasicStroke(zoom * TEN_MINUTES_STROKE_WIDTH);
         underlineStroke = new BasicStroke(zoom * UNDERLINE_STROKE_WIDTH);
         halfHoursExtStroke = new BasicStroke(zoom * HALF_HOURS_STROKE_EXT_WIDTH, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, TrainStrokeCache.zoomDashes(HALF_HOURS_STROKE_EXT_DASH, zoom, 1.0f), 0f);
+                BasicStroke.JOIN_MITER, 1.0f, DrawUtils.zoomDashes(HALF_HOURS_STROKE_EXT_DASH, zoom, 1.0f), 0f);
         // zoom does not apply to minimal space
         minimalSpace = MINIMAL_SPACE_WIDTH;
         fontSize = zoom * FONT_SIZE;
