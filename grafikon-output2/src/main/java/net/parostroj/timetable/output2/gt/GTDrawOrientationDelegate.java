@@ -1,8 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -27,4 +25,6 @@ public interface GTDrawOrientationDelegate {
     public Tuple<Point2D> getDigitPoints(Line2D line, Rectangle2D dSize);
 
     public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth);
+
+    public void drawHours(Graphics2D g, String hStr, int hoursLocation, Rectangle bounds, Point start, FontInfo fi, int mWidth);
 }
