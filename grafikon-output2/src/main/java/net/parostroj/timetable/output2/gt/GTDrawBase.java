@@ -339,21 +339,15 @@ abstract public class GTDrawBase implements GTDraw {
 
     private void paintHourTextOnTime(Graphics2D g, int h, int timeToPaint) {
         if (isTimeVisible(timeToPaint)) {
-            int xLocation = this.getX(timeToPaint);
+            int hoursLocation = this.getX(timeToPaint);
             // draw hours
             g.setColor(Color.black);
 
             String hStr = Integer.toString(h);
             Rectangle rr = this.getStringBounds(hStr, g);
-            switch (orientation) {
-                case LEFT_RIGHT:
-                    g.drawString(hStr, xLocation - rr.width / 2 + 1, start.y - 3);
-                    break;
-                case TOP_DOWN:
-                    FontInfo fi = this.getFontInfo(g);
-                    g.drawString(hStr, borderX + (getMSize(g).width * 2 - rr.width) / 2, xLocation - fi.strikeThrough);
-                    break;
-            }
+            FontInfo fi = this.getFontInfo(g);
+            int mWidth = getMSize(g).width;
+            orientationDelegate.drawHours(g, hStr, hoursLocation, rr, start, fi, mWidth);
         }
     }
 

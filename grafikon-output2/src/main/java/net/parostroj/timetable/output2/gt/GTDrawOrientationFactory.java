@@ -1,8 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -64,6 +62,12 @@ public class GTDrawOrientationFactory {
                     public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth) {
                         start.translate(stationNames, fi.height - fi.descent);
                     }
+
+                    @Override
+                    public void drawHours(Graphics2D g, String hStr, int hoursLocation, Rectangle bounds, Point start,
+                            FontInfo fi, int mWidth) {
+                        g.drawString(hStr, hoursLocation - bounds.width / 2 + mWidth / 5, start.y - mWidth / 3);
+                    }
                 };
             case TOP_DOWN:
                 return new GTDrawOrientationDelegate() {
@@ -118,6 +122,12 @@ public class GTDrawOrientationFactory {
                     public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth) {
                         // hours width
                         start.translate(mWidth * 2, stationNames);
+                    }
+
+                    @Override
+                    public void drawHours(Graphics2D g, String hStr, int hoursLocation, Rectangle bounds, Point start,
+                            FontInfo fi, int mWidth) {
+                        g.drawString(hStr, start.x - bounds.width - mWidth / 3, hoursLocation - fi.strikeThrough);
                     }
                 };
             default:
