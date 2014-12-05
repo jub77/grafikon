@@ -134,7 +134,7 @@ public class GTDrawOrientationFactory {
                     @Override
                     public void drawHours(Graphics2D g, String hStr, int hoursLocation, Rectangle bounds, Point start,
                             FontInfo fi, int mWidth) {
-                        g.drawString(hStr, start.x - bounds.width - mWidth / 3, hoursLocation - fi.strikeThrough);
+                        g.drawString(hStr, start.x - bounds.width - mWidth / 2, hoursLocation - fi.strikeThrough);
                     }
 
                     @Override
