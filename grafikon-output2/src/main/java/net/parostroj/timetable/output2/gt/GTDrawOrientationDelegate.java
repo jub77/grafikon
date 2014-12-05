@@ -27,4 +27,6 @@ public interface GTDrawOrientationDelegate {
     public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth);
 
     public void drawHours(Graphics2D g, String hStr, int hoursLocation, Rectangle bounds, Point start, FontInfo fi, int mWidth);
+
+    public void drawStationName(Graphics2D g, String name, Rectangle backRectangle, int stationLocation, FontInfo fi, int borderX, int borderY, Color background, int titleHeight);
 }
