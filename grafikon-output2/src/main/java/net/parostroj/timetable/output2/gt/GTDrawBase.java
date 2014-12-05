@@ -189,16 +189,8 @@ abstract public class GTDrawBase implements GTDraw {
         }
         // update start
         this.start = new Point(this.borderX, this.borderY);
-        switch (orientation) {
-            case LEFT_RIGHT:
-                FontInfo fi = this.getFontInfo(g);
-                this.start.translate(stationNameWidth, fi.height - fi.descent);
-                break;
-            case TOP_DOWN:
-                // hours width
-                this.start.translate(mSize.width * 2, stationNameWidth);
-                break;
-        }
+        FontInfo fi = this.getFontInfo(g);
+        orientationDelegate.adaptStart(this.start, stationNameWidth, fi, mSize.width);
         if (config.isOption(GTDrawSettings.Key.TITLE)) {
             // height of the font plus one border more
             titleHeight = (int) (mSize.getHeight() * TITLE_FONT_SIZE_RATIO) + this.borderX;

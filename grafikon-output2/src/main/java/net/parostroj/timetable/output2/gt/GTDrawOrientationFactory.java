@@ -7,6 +7,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.Tuple;
 
 public class GTDrawOrientationFactory {
@@ -58,6 +59,11 @@ public class GTDrawOrientationFactory {
                         }
                         return new Tuple<Point2D>(startP, endP);
                     }
+
+                    @Override
+                    public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth) {
+                        start.translate(stationNames, fi.height - fi.descent);
+                    }
                 };
             case TOP_DOWN:
                 return new GTDrawOrientationDelegate() {
@@ -106,6 +112,12 @@ public class GTDrawOrientationFactory {
                             endP.setLocation(endP.getX(), endP.getY() - 3);
                         }
                         return new Tuple<Point2D>(startP, endP);
+                    }
+
+                    @Override
+                    public void adaptStart(Point start, int stationNames, FontInfo fi, int mWidth) {
+                        // hours width
+                        start.translate(mWidth * 2, stationNames);
                     }
                 };
             default:
