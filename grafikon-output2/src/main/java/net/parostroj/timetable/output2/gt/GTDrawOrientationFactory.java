@@ -4,6 +4,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+import net.parostroj.timetable.utils.Tuple;
 
 public class GTDrawOrientationFactory {
 
@@ -40,6 +44,20 @@ public class GTDrawOrientationFactory {
                     public int getStationsStart(Point p) {
                         return p.y;
                     }
+
+                    @Override
+                    public Tuple<Point2D> getDigitPoints(Line2D line, Rectangle2D dSize) {
+                        Point2D startP = line.getP1();
+                        Point2D endP = line.getP2();
+                        if (line.getY1() < line.getY2()) {
+                            startP.setLocation(startP.getX() + dSize.getWidth(), startP.getY() + dSize.getHeight() - 2);
+                            endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() - 2);
+                        } else {
+                            startP.setLocation(startP.getX() + dSize.getWidth(), startP.getY() - 2);
+                            endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() + dSize.getHeight() - 2);
+                        }
+                        return new Tuple<Point2D>(startP, endP);
+                    }
                 };
             case TOP_DOWN:
                 return new GTDrawOrientationDelegate() {
@@ -73,6 +91,21 @@ public class GTDrawOrientationFactory {
                     @Override
                     public int getStationsStart(Point p) {
                         return p.x;
+                    }
+
+                    @Override
+                    public Tuple<Point2D> getDigitPoints(Line2D line, Rectangle2D dSize) {
+                        boolean direction = line.getY1() < line.getY2();
+                        Point2D startP = direction ? line.getP1() : line.getP2();
+                        Point2D endP = direction ? line.getP2() : line.getP1();
+                        if (direction) {
+                            startP.setLocation(startP.getX(), startP.getY() + dSize.getHeight());
+                            endP.setLocation(endP.getX() - dSize.getWidth(), endP.getY() - 3);
+                        } else {
+                            startP.setLocation(startP.getX() - dSize.getWidth(), startP.getY() + dSize.getHeight());
+                            endP.setLocation(endP.getX(), endP.getY() - 3);
+                        }
+                        return new Tuple<Point2D>(startP, endP);
                     }
                 };
             default:

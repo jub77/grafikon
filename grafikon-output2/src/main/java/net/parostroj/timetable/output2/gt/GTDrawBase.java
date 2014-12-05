@@ -8,6 +8,7 @@ import java.util.List;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.TransformUtil;
+import net.parostroj.timetable.utils.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -606,17 +607,10 @@ abstract public class GTDrawBase implements GTDraw {
             }
         }
 
-        boolean downDirection = line.getY1() < line.getY2();
-        Point2D startP = line.getP1();
-        Point2D endP = line.getP2();
-        Rectangle2D dSize = this.getDigitSize(g);
-        if (downDirection) {
-            startP.setLocation(startP.getX() + dSize.getWidth(), startP.getY() + dSize.getHeight() - 2);
-            endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() - 2);
-        } else {
-            startP.setLocation(startP.getX() + dSize.getWidth(), startP.getY() - 2);
-            endP.setLocation(endP.getX() - 1.5 * dSize.getWidth(), endP.getY() + dSize.getHeight() - 2);
-        }
+        Rectangle dSize = this.getDigitSize(g);
+        Tuple<Point2D> points = orientationDelegate.getDigitPoints(line, dSize);
+        Point2D startP = points.first;
+        Point2D endP = points.second;
         g.setColor(Color.BLACK);
         TimeConverter c = this.getTimeConverter(interval);
         if (interval.getFrom().getType() != NodeType.SIGNAL) {
