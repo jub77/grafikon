@@ -622,20 +622,22 @@ abstract public class GTDrawBase implements GTDraw {
         if (interval.getFrom().getType() != NodeType.SIGNAL) {
             int xp = (int) startP.getX();
             int yp = (int) startP.getY();
-            int lastDigit = c.getLastDigitOfMinutes(interval.getStart());
-            g.drawString(Integer.toString(lastDigit), xp, yp);
-            if (c.isHalfMinute(interval.getStart())) {
-            	drawUnderscore(g, xp, yp, dSize.getWidth());
-            }
+            int time = interval.getStart();
+            drawDigit(g, dSize, c, xp, yp, time);
         }
         if (interval.getTo().getType() != NodeType.SIGNAL && endTimeCheck) {
             int xp = (int) endP.getX();
             int yp = (int) endP.getY();
-            int lastDigit = c.getLastDigitOfMinutes(interval.getEnd());
-            g.drawString(Integer.toString(lastDigit), xp, yp);
-            if (c.isHalfMinute(interval.getEnd())) {
-            	drawUnderscore(g, xp, yp, dSize.getWidth());
-            }
+            int time = interval.getEnd();
+            drawDigit(g, dSize, c, xp, yp, time);
+        }
+    }
+
+    private void drawDigit(Graphics2D g, Rectangle2D dSize, TimeConverter c, int xp, int yp, int time) {
+        int lastDigit = c.getLastDigitOfMinutes(time);
+        g.drawString(Integer.toString(lastDigit), xp, yp);
+        if (c.isHalfMinute(time)) {
+        	drawUnderscore(g, xp, yp, dSize.getWidth());
         }
     }
 
