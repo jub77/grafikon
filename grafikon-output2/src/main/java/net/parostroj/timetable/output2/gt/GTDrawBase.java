@@ -115,38 +115,50 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public void draw(Graphics2D g) {
-        this.init(g);
+        boolean initialized = this.init(g);
 
-        if (config.isOption(GTDrawSettings.Key.TITLE)) {
-            this.paintTitle(g);
+        if (initialized) {
+            if (config.isOption(GTDrawSettings.Key.TITLE)) {
+                this.paintTitle(g);
+            }
+            this.paintHours(g);
+            this.paintStations(g);
+            g.setColor(Color.BLACK);
+            this.paintTrains(g);
+            this.paintHoursTexts(g);
+            if (!config.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
+                this.paintStationNames(g, stations, positions);
+            }
+            this.finishCollecting();
         }
-        this.paintHours(g);
-        this.paintStations(g);
-        g.setColor(Color.BLACK);
-        this.paintTrains(g);
-        this.paintHoursTexts(g);
-        if (!config.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
-            this.paintStationNames(g, stations, positions);
-        }
-        this.finishCollecting();
     }
 
-    protected void init(Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    protected boolean init(Graphics2D g) {
+        boolean init = this.shouldInit(g);
+        if (init) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // set font size
-        g.setFont(g.getFont().deriveFont(fontSize));
+            // set font size
+            g.setFont(g.getFont().deriveFont(fontSize));
 
-        if (this.start == null) {
-            this.updateStartAndSize(g);
+            if (this.start == null) {
+                this.updateStartAndSize(g);
+            }
+
+            if (positions == null) {
+                this.computePositions();
+            }
         }
+        return init;
+    }
 
-        if (positions == null) {
-            this.computePositions();
-        }
+    private boolean shouldInit(Graphics2D g) {
+        Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
+        return configSize.height > 0 && configSize.width > 0;
     }
 
     private void updateStartAndSize(Graphics2D g) {
+        Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         // read config
         Integer snWidth = config.get(GTDrawSettings.Key.STATION_NAME_WIDTH, Integer.class);
         Float bx = config.get(GTDrawSettings.Key.BORDER_X, Float.class);
@@ -192,7 +204,6 @@ abstract public class GTDrawBase implements GTDraw {
             this.start.translate(0, titleHeight);
         }
         // compute size
-        Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
         this.size = new Dimension(configSize.width - (this.borderX + this.start.x), configSize.height - (this.borderY + this.start.y));
         // time step
         timeStep = (double) orientationDelegate.getHoursSize(size) / (endTime - startTime);
@@ -204,10 +215,9 @@ abstract public class GTDrawBase implements GTDraw {
 
     @Override
     public void paintStationNames(Graphics2D g) {
-        if (positions == null) {
-            this.computePositions();
+        if (positions != null) {
+            this.paintStationNames(g, stations, positions);
         }
-        this.paintStationNames(g, stations, positions);
     }
 
     protected abstract void computePositions();
