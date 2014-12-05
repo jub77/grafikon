@@ -466,36 +466,8 @@ abstract public class GTDrawBase implements GTDraw {
             FontInfo fi = this.getFontInfo(g);
             int ow = Math.round(this.getMSize(g).width / 5);
             Rectangle r2 = new Rectangle(-ow, fi.descent - fi.height - ow, b.width + 2 * ow, fi.height + 2 * ow);
-
-            switch (orientation) {
-                case LEFT_RIGHT:
-                    int sx = this.borderX;
-                    int sy = y - fi.strikeThrough;
-                    r2.translate(sx, sy);
-                    this.paintRectangleWithStationName(g, name, r2, sx, sy);
-                    break;
-                case TOP_DOWN:
-                    int tx = y + fi.strikeThrough;
-                    int ty = this.borderY + titleHeight;
-                    AffineTransform oldTransform = g.getTransform();
-                    AffineTransform newTransform = g.getTransform();
-                    newTransform.translate(tx, ty);
-                    newTransform.rotate(Math.PI / 2);
-                    g.setTransform(newTransform);
-                    this.paintRectangleWithStationName(g, name, r2, 0, 0);
-                    g.setTransform(oldTransform);
-                    break;
-            }
+            orientationDelegate.drawStationName(g, name, r2, y, fi, borderX, borderY, background, titleHeight);
         }
-    }
-
-    private void paintRectangleWithStationName(Graphics2D g, String name, Rectangle r2, int x, int y) {
-        if (background != null) {
-            g.setColor(background);
-            g.fill(r2);
-        }
-        g.setColor(Color.black);
-        g.drawString(name, x, y);
     }
 
     protected void paintTrainNameOnLine(Graphics2D g, TimeInterval interval, Line2D line) {

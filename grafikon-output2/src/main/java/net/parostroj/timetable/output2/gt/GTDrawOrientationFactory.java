@@ -1,9 +1,7 @@
 package net.parostroj.timetable.output2.gt;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.Tuple;
@@ -68,6 +66,15 @@ public class GTDrawOrientationFactory {
                             FontInfo fi, int mWidth) {
                         g.drawString(hStr, hoursLocation - bounds.width / 2 + mWidth / 5, start.y - mWidth / 3);
                     }
+
+                    @Override
+                    public void drawStationName(Graphics2D g, String name, Rectangle backRectangle, int stationLocation,
+                            FontInfo fi, int borderX, int borderY, Color background, int titleHeight) {
+                        int sx = borderX;
+                        int sy = stationLocation - fi.strikeThrough;
+                        backRectangle.translate(sx, sy);
+                        paintRectangleWithStationName(g, name, backRectangle, sx, sy, background);
+                    }
                 };
             case TOP_DOWN:
                 return new GTDrawOrientationDelegate() {
@@ -129,10 +136,33 @@ public class GTDrawOrientationFactory {
                             FontInfo fi, int mWidth) {
                         g.drawString(hStr, start.x - bounds.width - mWidth / 3, hoursLocation - fi.strikeThrough);
                     }
+
+                    @Override
+                    public void drawStationName(Graphics2D g, String name, Rectangle backRectangle,
+                            int stationLocation, FontInfo fi, int borderX, int borderY, Color background, int titleHeight) {
+                        int tx = stationLocation + fi.strikeThrough;
+                        int ty = borderY + titleHeight;
+                        AffineTransform oldTransform = g.getTransform();
+                        AffineTransform newTransform = g.getTransform();
+                        newTransform.translate(tx, ty);
+                        newTransform.rotate(Math.PI / 2);
+                        g.setTransform(newTransform);
+                        paintRectangleWithStationName(g, name, backRectangle, 0, 0, background);
+                        g.setTransform(oldTransform);
+                    }
                 };
             default:
                 throw new IllegalArgumentException("Not allowed orientation");
         }
+    }
+
+    private static void paintRectangleWithStationName(Graphics2D g, String name, Rectangle r2, int x, int y, Color background) {
+        if (background != null) {
+            g.setColor(background);
+            g.fill(r2);
+        }
+        g.setColor(Color.black);
+        g.drawString(name, x, y);
     }
 
     private GTDrawOrientationFactory() {
