@@ -18,9 +18,10 @@ import org.jgrapht.graph.ListenableUndirectedGraph;
  *
  * @author jub
  */
-public class Net implements ObjectWithId, Visitable {
+public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     private final String id;
+    private final TrainDiagram diagram;
     private final List<LineClass> lineClasses;
     private final ItemList<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
@@ -31,7 +32,7 @@ public class Net implements ObjectWithId, Visitable {
     /**
      * Constructor.
      */
-    public Net(String id) {
+    public Net(String id, TrainDiagram diagram) {
         netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         lineClasses = new LinkedList<LineClass>();
         regions = new ItemList<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_MOVED) {
@@ -57,11 +58,17 @@ public class Net implements ObjectWithId, Visitable {
         });
         listener = new GTListenerNetImpl(this);
         this.id = id;
+        this.diagram = diagram;
     }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     public Tuple<Node> getNodes(Line track) {

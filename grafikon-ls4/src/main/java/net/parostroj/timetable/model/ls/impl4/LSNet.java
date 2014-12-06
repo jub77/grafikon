@@ -96,8 +96,8 @@ public class LSNet {
         this.regions = regions;
     }
 
-    public Net createNet() {
-        Net net = new Net(getId());
+    public Net createNet(TrainDiagram diagram) {
+        Net net = new Net(getId(), diagram);
         return net;
     }
 }

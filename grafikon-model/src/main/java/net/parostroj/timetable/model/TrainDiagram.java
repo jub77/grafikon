@@ -73,7 +73,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.groups = new LinkedList<Group>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
-        this.net = new Net(IdGenerator.getInstance().getId());
+        this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new LinkedList<TrainType>();
         this.setAttributes(new Attributes());
         this.setTrainsData(data);
