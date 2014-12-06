@@ -9,6 +9,7 @@ public class GTStorage {
 
     private final Map<Class<?>, RegionCollector<?>> collectors = new HashMap<Class<?>, RegionCollector<?>>();
     private final Map<Class<?>, Predicate<?>> filters = new HashMap<Class<?>, Predicate<?>>();
+    private final Map<String, Object> parameters = new HashMap<String, Object>();
 
     public <T> void setCollector(Class<T> clazz, RegionCollector<T> collector) {
         collectors.put(clazz, collector);
@@ -46,5 +47,17 @@ public class GTStorage {
 
     public Iterable<Predicate<?>> filters() {
         return filters.values();
+    }
+
+    public void setParameter(String key, Object value) {
+        this.parameters.put(key, value);
+    }
+
+    public <T> T getParameter(String key, Class<T> clazz) {
+        return clazz.cast(this.parameters.get(key));
+    }
+
+    public void removeParameter(String key) {
+        this.parameters.remove(key);
     }
 }
