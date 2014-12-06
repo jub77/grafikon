@@ -160,9 +160,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
 
     private void initComponents() {
         splitPane = new javax.swing.JSplitPane();
-        panel = new javax.swing.JPanel();
+        javax.swing.JPanel panel = new javax.swing.JPanel();
         trainListView = new net.parostroj.timetable.gui.views.TCTrainListView();
-        innerPanel = new javax.swing.JPanel();
+        javax.swing.JPanel innerPanel = new javax.swing.JPanel();
         detailsView = new net.parostroj.timetable.gui.views.TCDetailsView2();
         listView = new net.parostroj.timetable.gui.views.TCListView();
 
@@ -191,9 +191,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     }
 
     private net.parostroj.timetable.gui.views.TCDetailsView2 detailsView;
-    private javax.swing.JPanel innerPanel;
     private net.parostroj.timetable.gui.views.TCListView listView;
-    private javax.swing.JPanel panel;
     private javax.swing.JSplitPane splitPane;
     private net.parostroj.timetable.gui.views.TCTrainListView trainListView;
 
