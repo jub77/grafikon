@@ -155,7 +155,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSRoute lsRoute) {
-        Route route = new Route(this.createId());
+        Route route = new Route(this.createId(), diagram);
         for (int id : lsRoute.getIds()) {
             RouteSegment segment = (RouteSegment) ids.get(id);
             route.getSegments().add(segment);

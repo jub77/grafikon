@@ -78,7 +78,7 @@ public class LSRoute {
     }
 
     public Route createRoute(Net net) throws LSException {
-        Route route = new Route(id);
+        Route route = new Route(id, net.getDiagram());
         route.setName(name);
         route.setNetPart(netPart);
         // create segments

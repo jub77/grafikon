@@ -172,7 +172,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSRoute lsRoute) {
-        Route route = new Route(lsRoute.getUuid(), lsRoute.getName());
+        Route route = new Route(lsRoute.getUuid(), diagram, lsRoute.getName());
         route.setNetPart(lsRoute.isNetPart());
         for (int id : lsRoute.getIds()) {
             RouteSegment segment = (RouteSegment) ids.get(id);
