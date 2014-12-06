@@ -13,76 +13,48 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
+public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, TrainDiagramPart {
 
-    /** Route parts. */
-    private final List<RouteSegment> segments;
-    private String name;
+    private final TrainDiagram diagram;
     private final String id;
+    /** Route parts. */
+    private List<RouteSegment> segments;
+    private String name;
     private boolean netPart;
     private boolean trainRoute;
 
     /**
-     * initializes routes.
-     */
-    private void init() {
-    }
-
-    /**
      * Constructor.
-     *
-     * @param id id
      */
-    public Route(String id) {
-        init();
-        segments = new LinkedList<RouteSegment>();
+    public Route(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
+        segments = new LinkedList<RouteSegment>();
     }
 
     /**
      * Constructor with name.
-     *
-     * @param id id
-     * @param name name
      */
-    public Route(String id, String name) {
-        this(id);
+    public Route(String id, TrainDiagram diagram, String name) {
+        this(id, diagram);
         this.name = name;
     }
 
     /**
      * Copy constructor.
-     *
-     * @param id id
-     * @param route route to be copied
      */
     public Route(String id, Route route) {
-        init();
-        this.id = id;
-        this.name = route.name;
+        this(id, route.diagram, route.name);
         segments = new LinkedList<RouteSegment>(route.segments);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param id id
-     * @param segments route parts
-     */
-    public Route(String id, RouteSegment... segments) {
-        this.id = id;
+    public Route(String id, TrainDiagram diagram, RouteSegment... segments) {
+        this(id, diagram);
         this.segments = new LinkedList<RouteSegment>(Arrays.asList(segments));
     }
 
-    /**
-     * Constructor.
-     *
-     * @param id id
-     * @param name name
-     * @param segments route parts
-     */
-    public Route(String id, String name, RouteSegment... segments) {
-        this(id, segments);
+    public Route(String id, TrainDiagram diagram, String name, RouteSegment... segments) {
+        this(id, diagram, segments);
         this.name = name;
     }
 
@@ -117,6 +89,11 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment> {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     /**

@@ -9,7 +9,7 @@ import net.parostroj.timetable.utils.Tuple;
 /**
  * Builder for creating routes. It uses Dijkstra algorithm for finding
  * shortest path in the graph.
- * 
+ *
  * @author jub
  */
 public class RouteBuilder {
@@ -21,7 +21,7 @@ public class RouteBuilder {
 
     /**
      * creates route through all nodes in the list.
-     * 
+     *
      * @param id id
      * @param net net
      * @param nodes list of nodes
@@ -32,7 +32,7 @@ public class RouteBuilder {
             throw new IllegalArgumentException("Not enough nodes.");
         ListIterator<Node> i = nodes.listIterator();
         Node last = i.next();
-        Route route = new Route(id);
+        Route route = new Route(id, net.getDiagram());
         while (i.hasNext()) {
             Node current = i.next();
             Route part = this.createRouteInternal(id, net, last, current);
@@ -44,10 +44,10 @@ public class RouteBuilder {
         }
         return route;
     }
-    
+
     /**
      * creates route through all nodes in the list
-     * 
+     *
      * @param id id
      * @param net net
      * @param nodes nodes
@@ -60,7 +60,7 @@ public class RouteBuilder {
 
     /**
      * creates route from point A to point B.
-     * 
+     *
      * @param id id
      * @param net net
      * @param from point A
@@ -73,7 +73,7 @@ public class RouteBuilder {
         if (lines == null || lines.isEmpty())
             return null;
         // create route
-        Route route = new Route(id);
+        Route route = new Route(id, net.getDiagram());
         // last route point
         Node lastNode = from;
         for (Line line : lines) {
