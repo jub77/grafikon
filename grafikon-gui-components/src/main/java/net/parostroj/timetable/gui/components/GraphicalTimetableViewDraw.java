@@ -260,6 +260,18 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         return gtStorage.getCollector(clazz);
     }
 
+    public void setParameter(String key, Object value) {
+        gtStorage.setParameter(key, value);
+    }
+
+    public <T> T getParameter(String key, Class<T> clazz) {
+        return gtStorage.getParameter(key, clazz);
+    }
+
+    public void removeParameter(String key) {
+        gtStorage.removeParameter(key);
+    }
+
     public void setDrawFactory(GTDrawFactory drawFactory) {
         this.drawFactory = drawFactory;
     }
