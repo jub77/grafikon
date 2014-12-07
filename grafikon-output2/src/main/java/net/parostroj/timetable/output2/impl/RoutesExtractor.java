@@ -11,8 +11,10 @@ import net.parostroj.timetable.model.*;
 public class RoutesExtractor {
 
     private final Map<Line, Route> routeMap;
+    private final TrainDiagram diagram;
 
     public RoutesExtractor(TrainDiagram diagram) {
+        this.diagram = diagram;
         routeMap = new HashMap<Line, Route>();
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {
@@ -76,7 +78,7 @@ public class RoutesExtractor {
      */
     public List<NetPartRouteInfo> getRouteInfosForTrains(Collection<Train> trains) {
         List<Route> routes = this.getRoutesForTrains(trains);
-        return convert(routes);
+        return convert(routes, diagram);
     }
 
     /**
@@ -87,7 +89,7 @@ public class RoutesExtractor {
      */
     public List<NetPartRouteInfo> getRouteInfosForLines(Collection<Line> lines) {
         List<Route> routes = this.getRoutesForLines(lines);
-        return convert(routes);
+        return convert(routes, diagram);
     }
 
     /**
@@ -111,13 +113,13 @@ public class RoutesExtractor {
      * converts list of routes to infos.
      *
      * @param routes collection of routes.
+     * @param diagram train diagram
      * @return list of infos
      */
-    public static List<NetPartRouteInfo> convert(Collection<Route> routes) {
+    public static List<NetPartRouteInfo> convert(Collection<Route> routes, TrainDiagram diagram) {
         if (routes != null && !routes.isEmpty()) {
             List<NetPartRouteInfo> infos = new LinkedList<NetPartRouteInfo>();
             // get ratio ...
-            TrainDiagram diagram = ((Node) routes.iterator().next().getSegments().get(0)).getDiagram();
             Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             if (ratio == null)
                 ratio = 1.0;
