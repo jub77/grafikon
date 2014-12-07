@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.List;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -195,5 +196,26 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         if (fontInfo == null) {
             fontInfo = DrawUtils.createFontInfo(g.getFont(), g);
         }
+    }
+
+    @Override
+    public Refresh processEvent(GTEvent<?> event) {
+        Refresh refresh = super.processEvent(event);
+        GTDrawEventVisitor visitor = new GTDrawEventVisitor() {
+            @Override
+            public void visit(FreightNetEvent event) {
+                setRefresh(Refresh.REPAINT);
+            }
+
+            @Override
+            public void visit(TrainEvent event) {
+                if (event.getType() == GTEventType.ATTRIBUTE &&
+                        event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                    setRefresh(Refresh.REPAINT);
+                }
+            }
+        };
+        event.accept(visitor);
+        return refresh.update(visitor.getRefresh());
     }
 }

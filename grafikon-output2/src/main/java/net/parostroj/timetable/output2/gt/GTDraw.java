@@ -4,13 +4,9 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.GTEvent;
 
 public interface GTDraw {
-
-    enum Change {
-        REMOVED_TRAIN, TRAIN_TEXT_CHANGED, NODE_TEXT_CHANGED, ALL_TRAIN_TEXTS_CHANGED,
-        TRAIN_INTERVALS_CHANGED, TRAIN_LINE_CHANGED, TRAIN_TYPE_CHANGED
-    }
 
     public enum TrainColors {
         BY_TYPE, BY_COLOR_CHOOSER;
@@ -20,13 +16,19 @@ public interface GTDraw {
         CLASSIC, WITH_TRACKS, CLASSIC_STATION_STOPS;
     }
 
+    public enum Refresh {
+        NONE, REPAINT, RECREATE;
+
+        public Refresh update(Refresh refresh) {
+            return (this.ordinal() > refresh.ordinal()) ? this : refresh;
+        }
+    }
+
     void draw(Graphics2D g);
 
     void paintStationNames(Graphics2D g);
 
     Route getRoute();
-
-    void changed(Change change, Object object);
 
     int getX(int time);
 
@@ -35,4 +37,6 @@ public interface GTDraw {
     int getY(TimeInterval interval);
 
     Dimension getSize();
+
+    Refresh processEvent(GTEvent<?> event);
 }

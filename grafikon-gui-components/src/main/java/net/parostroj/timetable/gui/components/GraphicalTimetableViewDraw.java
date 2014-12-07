@@ -13,6 +13,7 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.*;
+import net.parostroj.timetable.output2.gt.GTDraw.Refresh;
 import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.slf4j.Logger;
@@ -82,14 +83,11 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                             if (trainRegionCollector != null) {
                                 trainRegionCollector.newTrain((Train)event.getObject());
                             }
-                            repaint();
                             break;
                         case TRAIN_REMOVED:
                             if (trainRegionCollector != null) {
                                 trainRegionCollector.deleteTrain((Train)event.getObject());
                             }
-                            draw.changed(GTDraw.Change.REMOVED_TRAIN, event.getObject());
-                            repaint();
                             break;
                         case ATTRIBUTE:
                             String name = event.getAttributeChange().getName();
@@ -105,24 +103,28 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
                 @Override
                 public void visit(TrainEvent event) {
-                    trainChanged(event);
+                    switch (event.getType()) {
+                        case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
+                            if (trainRegionCollector != null) {
+                                trainRegionCollector.modifiedTrain(event.getSource());
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
+            }) {
                 @Override
-                public void visit(LineEvent event) {
-                    lineChanged(event);
+                public void changed(GTEvent<?> event) {
+                    super.changed(event);
+                    Refresh refresh = draw.processEvent(event);
+                    if (refresh == Refresh.REPAINT) {
+                        repaint();
+                    } else if (refresh == Refresh.RECREATE) {
+                        recreateDraw();
+                    }
                 }
-
-                @Override
-                public void visit(TrainTypeEvent event) {
-                    trainTypeChanged(event);
-                }
-
-                @Override
-                public void visit(NodeEvent event) {
-                    nodeChanged(event);
-                }
-            });
+            };
             this.diagram.addAllEventListener(this.currentListener);
             this.setTimeRange();
             if (diagram.getRoutes().size() > 0) {
@@ -163,81 +165,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         }
         if (event.getType() == GTEventType.ROUTE_ADDED && this.getRoute() == null) {
             this.setRoute((Route)event.getObject());
-        }
-    }
-
-    private void trainChanged(TrainEvent event) {
-        switch (event.getType()) {
-            case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
-                if (trainRegionCollector != null) {
-                    trainRegionCollector.modifiedTrain(event.getSource());
-                }
-                draw.changed(GTDraw.Change.TRAIN_INTERVALS_CHANGED, event.getSource());
-                this.repaint();
-                break;
-            case ATTRIBUTE:
-                if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                    draw.changed(GTDraw.Change.TRAIN_TEXT_CHANGED, event.getSource());
-                    this.repaint();
-                } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL)) {
-                    draw.changed(GTDraw.Change.TRAIN_LINE_CHANGED, event.getSource());
-                    this.repaint();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void lineChanged(LineEvent event) {
-        switch (event.getType()) {
-            case TRACK_ATTRIBUTE:
-                if (this.getRoute() != null && this.getRoute().contains(event.getSource())) {
-                    // redraw all
-                    recreateDraw();
-                }
-                break;
-            case ATTRIBUTE:
-                if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
-                    if (this.getRoute() != null && this.getRoute().contains(event.getSource())) {
-                        // redraw all
-                        recreateDraw();
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void nodeChanged(NodeEvent event) {
-        switch (event.getType()) {
-            case ATTRIBUTE:
-                if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
-                    draw.changed(GTDraw.Change.NODE_TEXT_CHANGED, event.getSource());
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void trainTypeChanged(TrainTypeEvent event) {
-        switch (event.getType()) {
-            case ATTRIBUTE:
-                if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
-                    // repaint
-                    draw.changed(GTDraw.Change.TRAIN_TYPE_CHANGED, event.getSource());
-                    this.repaint();
-                } else if (event.getAttributeChange().checkName(TrainType.ATTR_LINE_TYPE,
-                        TrainType.ATTR_LINE_WIDTH, TrainType.ATTR_LINE_LENGTH)) {
-                    // repaint
-                    draw.changed(GTDraw.Change.TRAIN_TYPE_CHANGED, event.getSource());
-                    this.repaint();
-                }
-                break;
-            default:
-                break;
         }
     }
 

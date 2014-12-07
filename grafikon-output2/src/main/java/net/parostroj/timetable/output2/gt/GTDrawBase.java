@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.List;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.utils.Tuple;
@@ -667,24 +668,98 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     @Override
-    public void changed(Change change, Object object) {
-        switch(change) {
-            case REMOVED_TRAIN: case TRAIN_TEXT_CHANGED:
-                stringBounds.remove(((Train) object).getName());
-                break;
-            case NODE_TEXT_CHANGED:
-                stringBounds.remove(((Node) object).getName());
-                nodeStrings.remove(object);
-                break;
-            case ALL_TRAIN_TEXTS_CHANGED:
-                stringBounds.clear();
-                break;
-            case TRAIN_INTERVALS_CHANGED: case TRAIN_LINE_CHANGED:
-                // nothing
-                break;
-            case TRAIN_TYPE_CHANGED:
-                getTrainStrokeCache().clear();
-        }
+    public Refresh processEvent(GTEvent<?> event) {
+        GTDrawEventVisitor visitor = new GTDrawEventVisitor() {
+            @Override
+            public void visit(TrainDiagramEvent event) {
+                switch (event.getType()) {
+                    case TRAIN_REMOVED:
+                        stringBounds.remove(((Train) event.getObject()).getName());
+                        setRefresh(Refresh.REPAINT);
+                        break;
+                    case TRAIN_ADDED:
+                        setRefresh(Refresh.REPAINT);
+                        break;
+                    default:
+                        // nothing
+                        break;
+                }
+            }
+
+            @Override
+            public void visit(TrainEvent event) {
+                switch (event.getType()) {
+                    case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
+                        setRefresh(Refresh.REPAINT);
+                        break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                            stringBounds.remove((event.getSource()).getName());
+                            setRefresh(Refresh.REPAINT);
+                        } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL)) {
+                            setRefresh(Refresh.REPAINT);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void visit(NodeEvent event) {
+                switch (event.getType()) {
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
+                            stringBounds.remove((event.getSource()).getName());
+                            nodeStrings.remove(event.getSource());
+                            setRefresh(Refresh.REPAINT);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void visit(LineEvent event) {
+                switch (event.getType()) {
+                    case TRACK_ATTRIBUTE:
+                        if (route != null && route.contains(event.getSource())) {
+                            setRefresh(Refresh.RECREATE);
+                        }
+                        break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
+                            if (route != null && route.contains(event.getSource())) {
+                                setRefresh(Refresh.RECREATE);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void visit(TrainTypeEvent event) {
+                switch (event.getType()) {
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
+                            getTrainStrokeCache().clear();
+                            setRefresh(Refresh.REPAINT);
+                        } else if (event.getAttributeChange().checkName(TrainType.ATTR_LINE_TYPE,
+                                TrainType.ATTR_LINE_WIDTH, TrainType.ATTR_LINE_LENGTH)) {
+                            getTrainStrokeCache().clear();
+                            setRefresh(Refresh.REPAINT);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        event.accept(visitor);
+        return visitor.getRefresh();
     }
 
     abstract protected TrainStrokeCache getTrainStrokeCache();
