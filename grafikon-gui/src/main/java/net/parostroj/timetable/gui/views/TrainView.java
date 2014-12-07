@@ -5,6 +5,7 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.util.*;
@@ -14,6 +15,7 @@ import javax.swing.table.TableColumnModel;
 
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
 import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
@@ -118,7 +120,10 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                     }
                     Rectangle rect = trainTable.getCellRect(row, 0, true);
                     trainTable.scrollRectToVisible(rect);
-                    trainTable.requestFocus();
+                    Component topLevelComponent = GuiComponentUtils.getTopLevelComponent(TrainView.this);
+                    if (topLevelComponent.hasFocus()) {
+                        trainTable.requestFocus();
+                    }
                 }
             }
         }, IntervalSelectionMessage.class);
