@@ -54,7 +54,7 @@ public class TrainTimetablesExtractor {
         timetables.setTexts(texts);
 
         // routes
-        timetables.setRoutes(RoutesExtractor.convert(routes));
+        timetables.setRoutes(RoutesExtractor.convert(routes, diagram));
 
         // route length unit
         String unit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class);
