@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,5 +36,10 @@ class GTListenerSupport<T extends GTListener, E extends GTEvent<?>> {
         for (T listener : listeners) {
             sender.fireEvent(listener, event);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Listener support: %d listeners", listeners.size());
     }
 }
