@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TimeIntervalResult.Status;
+import net.parostroj.timetable.model.events.*;
 
 import com.google.common.base.Predicate;
 
@@ -104,15 +105,26 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     }
 
     @Override
-    public void changed(Change change, Object object) {
-        super.changed(change, object);
-        switch (change) {
-            case REMOVED_TRAIN: case TRAIN_INTERVALS_CHANGED:
-                nodeIntervalLists.clear();
-                locationMap.clear();
-                break;
-            default:
-                break;
-        }
+    public Refresh processEvent(GTEvent<?> event) {
+        Refresh refresh = super.processEvent(event);
+        GTDrawEventVisitor visitor = new GTDrawEventVisitor() {
+            @Override
+            public void visit(TrainDiagramEvent event) {
+                if (event.getType() == GTEventType.TRAIN_REMOVED) {
+                    nodeIntervalLists.clear();
+                    locationMap.clear();
+                }
+            }
+
+            @Override
+            public void visit(TrainEvent event) {
+                if (event.getType() == GTEventType.TIME_INTERVAL_LIST || event.getType() == GTEventType.TECHNOLOGICAL) {
+                    nodeIntervalLists.clear();
+                    locationMap.clear();
+                }
+            }
+        };
+        event.accept(visitor);
+        return refresh.update(visitor.getRefresh());
     }
 }

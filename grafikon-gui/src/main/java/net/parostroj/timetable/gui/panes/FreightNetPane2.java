@@ -282,7 +282,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                         selector.getSelected() == event.getConnection()) {
                     selector.setSelected(null);
                 }
-                graphicalTimetableView.repaint();
             }
         }, FreightNetEvent.class);
         model.getMediator().addColleague(new Colleague() {
@@ -293,7 +292,6 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                         event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
                     TrainRegionCollector collector = (TrainRegionCollector) graphicalTimetableView.getRegionCollector(TimeInterval.class);
                     collector.modifiedTrain(event.getSource());
-                    graphicalTimetableView.repaint();
                 }
             }
         }, TrainEvent.class);
