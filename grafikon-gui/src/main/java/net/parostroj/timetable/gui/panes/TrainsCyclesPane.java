@@ -77,6 +77,11 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
+        public List<TimeInterval> getSelected() {
+            return selectorDelegate.getSelected();
+        }
+
+        @Override
         public Color getIntervalColor(TimeInterval interval) {
             if (last != null && interval.getTrain().isCovered(last, interval)) {
                 return Color.RED;

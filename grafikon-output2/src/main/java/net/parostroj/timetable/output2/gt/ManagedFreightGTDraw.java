@@ -16,7 +16,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private static final float CONNECTION_STROKE_WIDTH = 1.5f;
 
     public interface Highlight {
-        FNConnection getSelected();
+
+        FNConnection getSelectedConnection();
 
         Color getColor();
     }
@@ -76,7 +77,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private void drawConnection(Graphics2D g, Node firstNode, FNConnection conn) {
         if (highlight != null) {
-            if (conn == highlight.getSelected()) {
+            if (conn == highlight.getSelectedConnection()) {
                 g.setColor(highlight.getColor());
             } else {
                 g.setColor(CONNECTION_COLOR);

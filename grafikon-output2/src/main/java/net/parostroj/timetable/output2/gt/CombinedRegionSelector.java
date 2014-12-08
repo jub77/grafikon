@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,18 @@ public class CombinedRegionSelector<T> implements RegionSelector<T> {
         for (RegionSelector<T> selector : selectors) {
             selector.regionsSelected(regions);
         }
+    }
+
+    @Override
+    public List<T> getSelected() {
+        List<T> result = new ArrayList<T>();
+        for (RegionSelector<T> selector : selectors) {
+            List<T> selected = selector.getSelected();
+            if (selected != null) {
+                result.addAll(selected);
+            }
+        }
+        return result;
     }
 
     @Override

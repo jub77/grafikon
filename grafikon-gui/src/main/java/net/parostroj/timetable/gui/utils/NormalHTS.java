@@ -70,6 +70,12 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     }
 
     @Override
+    public List<TimeInterval> getSelected() {
+        Train train = model.getSelectedTrain();
+        return train == null ? Collections.<TimeInterval>emptyList() : train.getTimeIntervalList();
+    }
+
+    @Override
     public boolean editSelected() {
         model.fireEvent(new ApplicationModelEvent(ApplicationModelEventType.EDIT_SELECTED_TRAIN, model));
         return true;

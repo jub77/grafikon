@@ -1,5 +1,8 @@
 package net.parostroj.timetable.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tuple<V> {
 
     public V first;
@@ -11,6 +14,17 @@ public class Tuple<V> {
     public Tuple(V first, V second) {
         this.first = first;
         this.second = second;
+    }
+
+    public List<V> toList() {
+        List<V> result = new ArrayList<V>(2);
+        if (first != null) {
+            result.add(first);
+        }
+        if (second != null) {
+            result.add(second);
+        }
+        return result;
     }
 
     @Override
