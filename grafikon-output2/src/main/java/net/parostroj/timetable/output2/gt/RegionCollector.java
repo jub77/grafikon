@@ -1,8 +1,11 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.Collections;
 import java.util.List;
+
+import net.parostroj.timetable.model.events.GTEvent;
 
 public abstract class RegionCollector<T> {
 
@@ -16,22 +19,34 @@ public abstract class RegionCollector<T> {
         this.selector = selector;
     }
 
-    protected abstract List<T> getItemsForPoint(int x, int y, int radius);
+    public abstract List<T> getItemsForPoint(int x, int y, int radius);
+
+    public abstract Rectangle getRectangleForItems(List<T> items);
 
     public void deselectItems() {
         if (this.selector != null) {
-            this.selector.regionsSelected(Collections.<T>emptyList());
+            this.selectImpl(Collections.<T>emptyList());
         }
     }
 
     public boolean selectItems(int x, int y, int radius) {
         if (this.selector != null) {
             List<T> list = this.getItemsForPoint(x, y, radius);
-            this.selector.regionsSelected(list);
+            this.selectImpl(list);
             return !list.isEmpty();
         } else {
             return false;
         }
+    }
+
+    public void selectItems(List<T> items) {
+        if (this.selector != null) {
+            selectImpl(items);
+        }
+    }
+
+    private void selectImpl(List<T> list) {
+        this.selector.regionsSelected(list);
     }
 
     public boolean editSelected() {
@@ -45,4 +60,6 @@ public abstract class RegionCollector<T> {
     abstract public void clear();
 
     abstract public void addRegion(T region, Shape shape);
+
+    abstract public void processEvent(GTEvent<?> event);
 }

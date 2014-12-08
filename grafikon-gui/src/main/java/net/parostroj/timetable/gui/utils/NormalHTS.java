@@ -23,6 +23,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     private TimeInterval selectedTimeInterval;
     private final ApplicationModel model;
     private final GraphicalTimetableView view;
+    private boolean selection;
 
     public NormalHTS(final ApplicationModel model, Color selectionColor,
             final GraphicalTimetableView view) {
@@ -30,10 +31,9 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
 
             @Override
             public void modelChanged(ApplicationModelEvent event) {
-                if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
+                if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
                     final Train selectedTrain = model.getSelectedTrain();
-                    set = selectedTrain == null ? Collections.<Train>emptySet() : Collections.singleton(selectedTrain);
-                    view.selectTrain(selectedTrain);
+                    view.selectItems(selectedTrain == null ? Collections.<TimeInterval>emptyList() : selectedTrain.getTimeIntervalList(), TimeInterval.class);
                 }
             }
         });
@@ -55,12 +55,18 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
 
     @Override
     public void regionsSelected(List<TimeInterval> intervals) {
-        TimeInterval interval = SelectorUtils.select(intervals, selectedTimeInterval, SelectorUtils.createUniqueTrainIntervalFilter());
-        // set selected train
-        Train selected = interval != null ? interval.getTrain() : null;
-        model.setSelectedTrain(selected);
-        selectedTimeInterval = interval;
-        model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
+        selection = true;
+        try {
+            TimeInterval interval = SelectorUtils.select(intervals, selectedTimeInterval, SelectorUtils.createUniqueTrainIntervalFilter());
+            // set selected train
+            Train selected = interval != null ? interval.getTrain() : null;
+            set = selected == null ? Collections.<Train>emptySet() : Collections.singleton(selected);
+            model.setSelectedTrain(selected);
+            selectedTimeInterval = interval;
+            model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
+        } finally {
+            selection = false;
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,10 @@ public class GTStorage {
         return collectors.values();
     }
 
+    public Collection<Class<?>> getCollectorClasses() {
+        return collectors.keySet();
+    }
+
     public <T> void setFilter(Class<?> clazz, Predicate<T> filter) {
         filters.put(clazz, filter);
     }
@@ -47,6 +52,10 @@ public class GTStorage {
 
     public Iterable<Predicate<?>> filters() {
         return filters.values();
+    }
+
+    public Collection<Class<?>> getFilterClasses() {
+        return filters.keySet();
     }
 
     public void setParameter(String key, Object value) {

@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.List;
 
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
@@ -32,7 +33,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     protected GTDrawFactory drawFactory;
     private GTDraw draw;
-    protected final TrainRegionCollector trainRegionCollector;
     protected Route route;
     protected TrainDiagram diagram;
 
@@ -55,8 +55,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             }
         });
 
-        trainRegionCollector = new TrainRegionCollector();
-        gtStorage.setCollector(TimeInterval.class, trainRegionCollector);
+        addRegionCollector(TimeInterval.class, new TrainRegionCollector());
     }
 
     private AllEventListener currentListener;
@@ -79,17 +78,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                         case ROUTE_ADDED: case ROUTE_REMOVED:
                             routesChanged(event);
                             break;
-                        case TRAIN_ADDED:
-                            if (trainRegionCollector != null) {
-                                trainRegionCollector.newTrain((Train)event.getObject());
-                            }
-                            break;
-                        case TRAIN_REMOVED:
-                            if (trainRegionCollector != null) {
-                                trainRegionCollector.deleteTrain((Train)event.getObject());
-                            }
-                            break;
                         case ATTRIBUTE:
+                            // TODO couple timerange and recreate -> move to gtdraw
                             String name = event.getAttributeChange().getName();
                             if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name)) {
                                 setTimeRange();
@@ -100,23 +90,13 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                             break;
                     }
                 }
-
-                @Override
-                public void visit(TrainEvent event) {
-                    switch (event.getType()) {
-                        case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
-                            if (trainRegionCollector != null) {
-                                trainRegionCollector.modifiedTrain(event.getSource());
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
             }) {
                 @Override
                 public void changed(GTEvent<?> event) {
                     super.changed(event);
+                    for (RegionCollector<?> collector : gtStorage.collectors()) {
+                        collector.processEvent(event);
+                    }
                     Refresh refresh = draw.processEvent(event);
                     if (refresh == Refresh.REPAINT) {
                         repaint();
@@ -168,10 +148,10 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         }
     }
 
-    public void setTrainSelector(RegionSelector<TimeInterval> trainSelector) {
-        RegionCollector<TimeInterval> collector = this.getRegionCollector(TimeInterval.class);
+    public <T> void setRegionSelector(RegionSelector<T> selector, Class<T> clazz) {
+        RegionCollector<T> collector = this.getRegionCollector(clazz);
         if (collector != null) {
-            collector.setSelector(trainSelector);
+            collector.setSelector(selector);
         }
     }
 
@@ -242,10 +222,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     }
 
     protected void recreateDraw() {
+        for (RegionCollector<?> collector : gtStorage.collectors()) {
+            collector.clear();
+        }
         if (this.getRoute() == null) {
             draw = null;
         } else {
-            trainRegionCollector.clear();
             draw = this.createDraw(this.getSettings());
         }
         this.repaint();
@@ -260,8 +242,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     private void resize() {
         recreateDraw();
-        trainRegionCollector.clear();
-        this.repaint();
     }
 
     public Route getRoute() {
@@ -362,34 +342,40 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         return false;
     }
 
-    public void selectTrain(final Train selectedTrain) {
-        if (selectedTrain != null) {
-            if (!trainRegionCollector.containsTrain(selectedTrain) &&
-                    settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE)) {
-                Route newRoute = selectedTrain.getBestRouteMatch();
-                if (newRoute != null) {
-                    this.setRoute(newRoute);
+    public <T> void checkAndScroll(final List<T> items, final Class<T> clazz) {
+        // only for trains with TimeIntervals handled by TrainRegionCollector...
+        if (clazz.equals(TimeInterval.class) && !items.isEmpty()) {
+            RegionCollector<T> collector = gtStorage.getCollector(clazz);
+            if (collector instanceof TrainRegionCollector) {
+                TrainRegionCollector trainRegionCollector = (TrainRegionCollector) collector;
+                Train selectedTrain = ((TimeInterval) items.get(0)).getTrain();
+                if (selectedTrain != null) {
+                    if (!trainRegionCollector.containsTrain(selectedTrain) &&
+                            settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE)) {
+                        Route newRoute = selectedTrain.getBestRouteMatch();
+                        if (newRoute != null) {
+                            this.setRoute(newRoute);
+                        }
+                    }
+                    if (settings.getOption(Key.TO_TRAIN_SCROLL)) {
+                        GuiComponentUtils.runLaterInEDT(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollToItem(items, clazz);
+                            }
+
+                        });
+                    }
                 }
             }
-            if (settings.getOption(Key.TO_TRAIN_SCROLL)) {
-                GuiComponentUtils.runLaterInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollToTrain(selectedTrain);
-                    }
-
-                });
-            }
         }
-        this.repaint();
     }
 
-    private void scrollToTrain(Train train) {
-        if (trainRegionCollector.containsTrain(train)) {
-            Rectangle region = trainRegionCollector.getRegionForTrain(train);
+    public <T> void scrollToItem(List<T> items, Class<T> clazz) {
+        RegionCollector<T> collector = gtStorage.getCollector(clazz);
+        if (collector != null) {
+            Rectangle region = collector.getRectangleForItems(items);
             if (region != null) {
-                region.setLocation(region.x - 10, 0);
-                region.setSize(region.width + 10 * 2, 0);
                 this.scrollRectToVisible(region);
             }
         }
