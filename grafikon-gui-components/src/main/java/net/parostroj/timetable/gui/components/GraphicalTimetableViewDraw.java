@@ -78,14 +78,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                         case ROUTE_ADDED: case ROUTE_REMOVED:
                             routesChanged(event);
                             break;
-                        case ATTRIBUTE:
-                            // TODO couple timerange and recreate -> move to gtdraw
-                            String name = event.getAttributeChange().getName();
-                            if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name)) {
-                                setTimeRange();
-                                recreateDraw();
-                            }
-                            break;
                         default:
                             break;
                     }
@@ -98,10 +90,20 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                         collector.processEvent(event);
                     }
                     Refresh refresh = draw.processEvent(event);
-                    if (refresh == Refresh.REPAINT) {
-                        repaint();
-                    } else if (refresh == Refresh.RECREATE) {
-                        recreateDraw();
+                    switch (refresh) {
+                        case REPAINT:
+                            repaint();
+                            break;
+                        case RECREATE:
+                            recreateDraw();
+                            break;
+                        case RECREATE_WITH_TIME:
+                            setTimeRange();
+                            recreateDraw();
+                            break;
+                        default:
+                            // nothing
+                            break;
                     }
                 }
             };

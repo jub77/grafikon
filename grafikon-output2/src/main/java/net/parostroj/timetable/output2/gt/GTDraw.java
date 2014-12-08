@@ -17,7 +17,7 @@ public interface GTDraw {
     }
 
     public enum Refresh {
-        NONE, REPAINT, RECREATE;
+        NONE, REPAINT, RECREATE, RECREATE_WITH_TIME;
 
         public Refresh update(Refresh refresh) {
             return (this.ordinal() > refresh.ordinal()) ? this : refresh;

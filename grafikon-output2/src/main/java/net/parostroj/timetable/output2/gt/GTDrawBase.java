@@ -680,6 +680,12 @@ abstract public class GTDrawBase implements GTDraw {
                     case TRAIN_ADDED:
                         setRefresh(Refresh.REPAINT);
                         break;
+                    case ATTRIBUTE:
+                        String name = event.getAttributeChange().getName();
+                        if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name)) {
+                            setRefresh(Refresh.RECREATE_WITH_TIME);
+                        }
+                        break;
                     default:
                         // nothing
                         break;
