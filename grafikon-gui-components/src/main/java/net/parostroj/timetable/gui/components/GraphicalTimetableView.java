@@ -125,9 +125,11 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        if (trainRegionCollector == null)
+        RegionCollector<TimeInterval> collector = getRegionCollector(TimeInterval.class);
+        if (collector == null) {
             return null;
-        List<TimeInterval> intervals = trainRegionCollector.getItemsForPoint(event.getX(), event.getY(), SELECTION_RADIUS);
+        }
+        List<TimeInterval> intervals = collector.getItemsForPoint(event.getX(), event.getY(), SELECTION_RADIUS);
 
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty())
@@ -353,7 +355,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                     if (evt.getClickCount() % 2 == 0) {
                         // indicates double click
                         if (collector.editSelected()) {
-                            return;
+                            break;
                         }
                     } else {
                         if (!selected) {
@@ -363,9 +365,21 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                         }
                     }
                 }
+                repaint();
             }
         });
         setLayout(null);
+    }
+
+    public <T> void selectItems(List<T> items, Class<T> clazz) {
+        for (Class<?> cls : gtStorage.getCollectorClasses()) {
+            if (clazz != cls) {
+                gtStorage.getCollector(cls).deselectItems();
+            }
+        }
+        gtStorage.getCollector(clazz).selectItems(items);
+        repaint();
+        checkAndScroll(items, clazz);
     }
 
     private EditRoutesDialog getRouteDialog() {

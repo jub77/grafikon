@@ -7,6 +7,7 @@ import java.util.List;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -48,6 +49,16 @@ public class SelectorUtils {
                 } else {
                     return false;
                 }
+            }
+        };
+    }
+
+    public static Function<TimeInterval, Train> createToTrainFunction() {
+        return new Function<TimeInterval, Train>() {
+
+            @Override
+            public Train apply(TimeInterval interval) {
+                return interval.getTrain();
             }
         };
     }

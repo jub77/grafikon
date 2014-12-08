@@ -15,9 +15,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.FreightNetEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -157,7 +155,12 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().set(GTViewSettings.Key.ORIENTATION_MENU, false));
         selector = new ConnectionSelector();
         graphicalTimetableView.setDrawFactory(new ManagedFreightGTDrawFactory(selector));
-        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>();
+        RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>() {
+            @Override
+            public void processEvent(GTEvent<?> event) {
+                // TODO impl
+            }
+        };
         collector.setSelector(selector);
         graphicalTimetableView.addRegionCollector(FNConnection.class, collector);
         scrollPane = new GTLayeredPane2(graphicalTimetableView);
@@ -266,7 +269,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         HighlightSelection hts = new HighlightSelection();
         graphicalTimetableView.setSettings(
                 graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
-        graphicalTimetableView.setTrainSelector(hts);
+        graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         model.addListener(new ApplicationModelListener() {
             public void modelChanged(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
@@ -284,16 +287,5 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 }
             }
         }, FreightNetEvent.class);
-        model.getMediator().addColleague(new Colleague() {
-            @Override
-            public void receiveMessage(Object message) {
-                TrainEvent event = (TrainEvent) message;
-                if (event.getType() == GTEventType.ATTRIBUTE &&
-                        event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
-                    TrainRegionCollector collector = (TrainRegionCollector) graphicalTimetableView.getRegionCollector(TimeInterval.class);
-                    collector.modifiedTrain(event.getSource());
-                }
-            }
-        }, TrainEvent.class);
     }
 }

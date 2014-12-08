@@ -97,8 +97,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
 
     public void setModel(final ApplicationModel model) {
         this.model = model;
-        this.train = model.getSelectedTrain();
-        this.updateView();
+        this.updateView(model.getSelectedTrain());
         this.model.addListener(this);
         ((TrainTableModel) trainTable.getModel()).setModel(model);
         model.getMediator().addColleague(new Colleague() {
@@ -111,6 +110,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
                         interval = train.getFirstInterval();
                     } else if (train.getTimeIntervalAfter() == interval) {
                         interval = train.getLastInterval();
+                    }
+                    if (train != TrainView.this.train) {
+                        updateView(train);
                     }
                     int row = interval.getTrain().getTimeIntervalList().indexOf(interval);
                     int column = TrainTableColumn.getIndex(trainTable.getColumnModel(), interval.isNodeOwner() ? TrainTableColumn.STOP : TrainTableColumn.SPEED_LIMIT);
@@ -130,8 +132,9 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainEvent(TrainEvent event) {
-                if (event.getSource() == model.getSelectedTrain()) {
-                    updateView();
+                Train selectedTrain = model.getSelectedTrain();
+                if (event.getSource() == selectedTrain) {
+                    updateView(selectedTrain);
                 }
             }
         }, GTEvent.class);
@@ -141,12 +144,11 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     @Override
     public void modelChanged(ApplicationModelEvent event) {
         if (event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED || event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
-            this.train = model.getSelectedTrain();
-            this.updateView();
+            this.updateView(model.getSelectedTrain());
         }
     }
 
-    private void updateView() {
+    private void updateView(Train train) {
         if (train == null) {
             trainTextField.setText(null);
             speedTextField.setText(null);

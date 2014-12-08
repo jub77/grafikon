@@ -281,7 +281,7 @@ public class FloatingWindowsFactory {
         final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
         gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
-        gtView.setTrainSelector(hts);
+        gtView.setRegionSelector(hts, TimeInterval.class);
 
         FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {
 

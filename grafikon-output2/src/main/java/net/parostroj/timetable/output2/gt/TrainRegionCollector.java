@@ -7,8 +7,13 @@ import java.util.*;
 
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.TrainEvent;
 import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -53,15 +58,15 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
         return (!collected || modifiedTrains.contains(train));
     }
 
-    public void deleteTrain(Train train) {
+    private void deleteTrain(Train train) {
         regions.removeAll(train);
     }
 
-    public void newTrain(Train train) {
+    private void newTrain(Train train) {
         modifiedTrains.add(train);
     }
 
-    public void modifiedTrain(Train train) {
+    private void modifiedTrain(Train train) {
         regions.removeAll(train);
         modifiedTrains.add(train);
     }
@@ -83,17 +88,23 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
         return regions.containsKey(train);
     }
 
-    public Rectangle getRegionForTrain(Train train) {
-        Collection<Pair<Shape, TimeInterval>> shapes = regions.get(train);
+    @Override
+    public Rectangle getRectangleForItems(List<TimeInterval> items) {
+        Iterable<TimeInterval> unique = Iterables.filter(items, SelectorUtils.createUniqueTrainIntervalFilter());
+        Iterable<Train> trains = Iterables.transform(unique, SelectorUtils.createToTrainFunction());
+
         Rectangle result = null;
-        if (shapes != null) {
-            for (Pair<Shape, TimeInterval> pair : shapes) {
-                Shape shape = pair.first;
-                Rectangle bounds = shape.getBounds();
-                if (result == null) {
-                    result = bounds;
-                } else {
-                    result = result.union(bounds);
+        for (Train train : trains) {
+            Collection<Pair<Shape, TimeInterval>> shapes = regions.get(train);
+            if (shapes != null) {
+                for (Pair<Shape, TimeInterval> pair : shapes) {
+                    Shape shape = pair.first;
+                    Rectangle bounds = shape.getBounds();
+                    if (result == null) {
+                        result = bounds;
+                    } else {
+                        result = result.union(bounds);
+                    }
                 }
             }
         }
@@ -102,5 +113,41 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
 
     public Collection<Pair<Shape, TimeInterval>> getRegionsForTrain(Train train) {
         return regions.get(train);
+    }
+
+    @Override
+    public void processEvent(GTEvent<?> event) {
+        AbstractEventVisitor visitor = new AbstractEventVisitor() {
+            @Override
+            public void visit(TrainDiagramEvent event) {
+                switch (event.getType()) {
+                    case TRAIN_ADDED:
+                        newTrain((Train) event.getObject());
+                        break;
+                    case TRAIN_REMOVED:
+                        deleteTrain((Train) event.getObject());
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void visit(TrainEvent event) {
+                switch (event.getType()) {
+                    case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
+                        modifiedTrain(event.getSource());
+                        break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                            modifiedTrain(event.getSource());
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        event.accept(visitor);
     }
 }

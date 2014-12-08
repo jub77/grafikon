@@ -116,7 +116,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         graphicalTimetableView.setSettings(settings);
         delegate.addListener(hts);
         delegate.addListener(this);
-        graphicalTimetableView.setTrainSelector(hts);
+        graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         trainListView.setModel(delegate);
         listView.setModel(delegate);
         detailsView.setModel(delegate);
