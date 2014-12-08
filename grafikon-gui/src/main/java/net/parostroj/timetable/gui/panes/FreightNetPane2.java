@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.panes;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -13,11 +14,11 @@ import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.dialogs.EditFNConnetionDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -50,8 +51,13 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         @Override
-        public FNConnection getSelected() {
+        public FNConnection getSelectedConnection() {
             return selected;
+        }
+
+        @Override
+        public List<FNConnection> getSelected() {
+            return selected == null ? Collections.<FNConnection>emptyList() : Collections.singletonList(selected);
         }
 
         @Override
@@ -112,6 +118,11 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             updateInfo();
         }
 
+        @Override
+        public List<TimeInterval> getSelected() {
+            return connection.toList();
+        }
+
         private TimeInterval lastInterval;
         private final Predicate<TimeInterval> nodeIntervalFilter = new Predicate<TimeInterval>() {
             @Override
@@ -158,7 +169,16 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>() {
             @Override
             public void processEvent(GTEvent<?> event) {
-                // TODO impl
+                AbstractEventVisitor visitor = new AbstractEventVisitor() {
+                    @Override
+                    public void visit(FreightNetEvent event) {
+                        if (event.getType() == GTEventType.FREIGHT_NET_CONNECTION_REMOVED &&
+                                getSelector().getSelected().contains(event.getConnection())) {
+                            getSelector().regionsSelected(Collections.<FNConnection>emptyList());
+                        }
+                    }
+                };
+                event.accept(visitor);
             }
         };
         collector.setSelector(selector);
@@ -189,7 +209,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FNConnection toBeDeleted = selector.getSelected();
+                FNConnection toBeDeleted = selector.getSelectedConnection();
                 selector.setSelected(null);
                 model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
             }
@@ -245,7 +265,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
 
     private void updateInfo() {
         StringBuilder builder = new StringBuilder();
-        FNConnection conn = selector.getSelected();
+        FNConnection conn = selector.getSelectedConnection();
         TimeInterval from = conn != null ? conn.getFrom() : connection.first;
         TimeInterval to = conn != null ? conn.getTo() : connection.second;
         if (from != null) {
@@ -277,15 +297,5 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
                 }
             }
         });
-        model.getMediator().addColleague(new Colleague() {
-            @Override
-            public void receiveMessage(Object message) {
-                FreightNetEvent event = (FreightNetEvent) message;
-                if (event.getType() == GTEventType.FREIGHT_NET_CONNECTION_REMOVED &&
-                        selector.getSelected() == event.getConnection()) {
-                    selector.setSelected(null);
-                }
-            }
-        }, FreightNetEvent.class);
     }
 }
