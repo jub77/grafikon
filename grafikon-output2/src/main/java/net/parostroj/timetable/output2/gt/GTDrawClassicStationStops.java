@@ -21,8 +21,8 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     private final int inStationGap;
 
     public GTDrawClassicStationStops(GTDrawSettings config, Route route, TrainRegionCollector collector,
-            Predicate<TimeInterval> intervalFilter) {
-        super(config, route, collector, intervalFilter);
+            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+        super(config, route, collector, intervalFilter, chooser, highlightedTrains);
         nodeIntervalLists = new HashMap<Node, List<TimeIntervalList>>();
         locationMap = new HashMap<TimeInterval, Integer>();
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);

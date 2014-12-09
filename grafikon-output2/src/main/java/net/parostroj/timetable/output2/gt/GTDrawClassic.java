@@ -31,8 +31,9 @@ public class GTDrawClassic extends GTDrawBase {
     private final Stroke stationStrokeStopExt;
     private final Stroke stationStrokeStopWithFreightExt;
 
-    public GTDrawClassic(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
-        super(config ,route, collector, intervalFilter);
+    public GTDrawClassic(GTDrawSettings config, Route route, TrainRegionCollector collector,
+            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+        super(config ,route, collector, intervalFilter, chooser, highlightedTrains);
 
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStrokeCache = new TrainStrokeCache(TRAIN_STROKE_WIDTH, zoom, 10f);

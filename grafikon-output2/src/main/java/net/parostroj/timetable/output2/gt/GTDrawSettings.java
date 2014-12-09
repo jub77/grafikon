@@ -25,8 +25,6 @@ public class GTDrawSettings {
         SIZE(Dimension.class),
         STATION_NAME_WIDTH(Integer.class),
         TRAIN_COLORS(GTDraw.TrainColors.class),
-        TRAIN_COLOR_CHOOSER(TrainColorChooser.class),
-        HIGHLIGHTED_TRAINS(HighlightedTrains.class),
         START_TIME(Integer.class),
         END_TIME(Integer.class),
         DISABLE_STATION_NAMES(Boolean.class),

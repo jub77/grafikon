@@ -14,6 +14,7 @@ import net.parostroj.timetable.gui.components.GTViewSettings;
 import net.parostroj.timetable.gui.utils.NormalHTS;
 import net.parostroj.timetable.gui.views.TrainListView.TreeType;
 import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.output2.gt.GTDraw;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -50,8 +51,7 @@ public class TrainsPane extends javax.swing.JPanel implements StorableGuiData {
         trainListView.setModel(model);
         trainView.setModel(model);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, graphicalTimetableView);
-        graphicalTimetableView.setSettings(
-                graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
+        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
     }
 

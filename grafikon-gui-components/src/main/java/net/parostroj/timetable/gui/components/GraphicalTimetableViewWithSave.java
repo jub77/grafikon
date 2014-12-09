@@ -77,7 +77,6 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     GTViewSettings config = getSettings();
                     config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
                     config.set(GTViewSettings.Key.SIZE, saveSize);
-                    config.remove(GTViewSettings.Key.HIGHLIGHTED_TRAINS);
                     GTDraw draw = createDraw(config);
 
                     try {

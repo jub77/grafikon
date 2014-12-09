@@ -288,8 +288,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     public void setModel(ApplicationModel model) {
         this.model = model;
         HighlightSelection hts = new HighlightSelection();
-        graphicalTimetableView.setSettings(
-                graphicalTimetableView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
+        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         model.addListener(new ApplicationModelListener() {
             public void modelChanged(ApplicationModelEvent event) {
