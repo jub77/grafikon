@@ -2,16 +2,12 @@ package net.parostroj.timetable.output2.gt;
 
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.gt.ManagedFreightGTDraw.Highlight;
 
 import com.google.common.base.Predicate;
 
 public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
 
-    private final Highlight highlight;
-
-    public ManagedFreightGTDrawFactory(Highlight highlight) {
-        this.highlight = highlight;
+    public ManagedFreightGTDrawFactory() {
     }
 
     @Override
@@ -27,7 +23,7 @@ public class ManagedFreightGTDrawFactory extends NormalGTDrawFactory {
         });
         GTDraw draw = super.createInstance(type, settings, route, storage);
         // decorate
-        return new ManagedFreightGTDraw(settings, draw, storage.getCollector(FNConnection.class), highlight);
+        return new ManagedFreightGTDraw(settings, draw, storage.getCollector(FNConnection.class), storage);
     }
 
 }

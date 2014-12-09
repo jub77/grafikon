@@ -15,6 +15,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private static final Color CONNECTION_COLOR = Color.RED;
     private static final float CONNECTION_STROKE_WIDTH = 1.5f;
 
+    public static final String HIGHLIGHT = "mf.highlight";
+
     public interface Highlight {
 
         FNConnection getSelectedConnection();
@@ -34,11 +36,11 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     private final Set<Node> routeNodes;
 
-    public ManagedFreightGTDraw(GTDrawSettings config, GTDraw draw, RegionCollector<FNConnection> collector, Highlight highlight) {
+    public ManagedFreightGTDraw(GTDrawSettings config, GTDraw draw, RegionCollector<FNConnection> collector, GTStorage storage) {
         super(draw);
         this.written = new ArrayList<Rectangle>();
         this.collector = collector;
-        this.highlight = highlight;
+        this.highlight = storage.getParameter(HIGHLIGHT, Highlight.class);
         this.draw = draw;
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         arrow = (int) (zoom * 5);
