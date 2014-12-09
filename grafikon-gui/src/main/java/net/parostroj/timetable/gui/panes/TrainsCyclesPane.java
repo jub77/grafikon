@@ -116,9 +116,9 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         HighligterAndSelector hts = new HighligterAndSelector(chooser, trainListView);
         GTViewSettings settings = graphicalTimetableView.getSettings();
         settings.set(GTViewSettings.Key.TRAIN_COLORS, TrainColors.BY_COLOR_CHOOSER);
-        settings.set(GTViewSettings.Key.TRAIN_COLOR_CHOOSER, hts);
-        settings.set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setSettings(settings);
+        graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
+        graphicalTimetableView.setParameter(GTDraw.TRAIN_COLOR_CHOOSER, hts);
         delegate.addListener(hts);
         delegate.addListener(this);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);

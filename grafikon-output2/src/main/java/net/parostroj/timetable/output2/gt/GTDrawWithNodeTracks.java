@@ -41,8 +41,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
 
     private Map<Track,Integer> trackPositions;
 
-    public GTDrawWithNodeTracks(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
-        super(config ,route, collector, intervalFilter);
+    public GTDrawWithNodeTracks(GTDrawSettings config, Route route, TrainRegionCollector collector,
+            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
+        super(config ,route, collector, intervalFilter, chooser, highlightedTrains);
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         trainStrokeCache = new TrainStrokeCache(TRAIN_STROKE_WIDTH, zoom, 10f);
         stationStroke = new BasicStroke(zoom * STATION_STROKE_WIDTH);

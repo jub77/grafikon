@@ -83,12 +83,13 @@ abstract public class GTDrawBase implements GTDraw {
     private final Map<String, Rectangle> stringBounds = new HashMap<String, Rectangle>();
     private final Map<Node, String> nodeStrings = new HashMap<Node, String>();
 
-    public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector, Predicate<TimeInterval> intervalFilter) {
+    public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
+            Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
         this.route = route;
         this.intervalFilter = intervalFilter;
         this.colors = config.get(GTDrawSettings.Key.TRAIN_COLORS, TrainColors.class);
-        this.trainColorChooser = config.get(GTDrawSettings.Key.TRAIN_COLOR_CHOOSER, TrainColorChooser.class);
-        this.hTrains = config.get(GTDrawSettings.Key.HIGHLIGHTED_TRAINS, HighlightedTrains.class);
+        this.trainColorChooser = chooser;
+        this.hTrains = highlightedTrains;
         this.trainRegionCollector = collector;
 
         // start and end time

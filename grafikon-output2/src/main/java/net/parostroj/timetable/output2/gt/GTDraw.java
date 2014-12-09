@@ -8,6 +8,9 @@ import net.parostroj.timetable.model.events.GTEvent;
 
 public interface GTDraw {
 
+    public String TRAIN_COLOR_CHOOSER = "gt.chooser";
+    public String HIGHLIGHTED_TRAINS = "gt.highlight";
+
     public enum TrainColors {
         BY_TYPE, BY_COLOR_CHOOSER;
     }

@@ -16,6 +16,7 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.output2.gt.GTDraw;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -280,7 +281,7 @@ public class FloatingWindowsFactory {
         final GraphicalTimetableView gtView = new GraphicalTimetableView();
         final GTLayeredPane2 scrollPane = new GTLayeredPane2(gtView);
         NormalHTS hts = new NormalHTS(model, Color.GREEN, gtView);
-        gtView.setSettings(gtView.getSettings().set(GTViewSettings.Key.HIGHLIGHTED_TRAINS, hts));
+        gtView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         gtView.setRegionSelector(hts, TimeInterval.class);
 
         FloatingFrame dialog = new FloatingFrame(frame, scrollPane, "dialog.gtview.title", "gt.view") {

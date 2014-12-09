@@ -26,8 +26,6 @@ public class GTViewSettings {
         STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_NAME_WIDTH),
         TYPE(GTDraw.Type.class, null),
         TRAIN_COLORS(GTDraw.TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
-        TRAIN_COLOR_CHOOSER(TrainColorChooser.class, GTDrawSettings.Key.TRAIN_COLOR_CHOOSER),
-        HIGHLIGHTED_TRAINS(HighlightedTrains.class, GTDrawSettings.Key.HIGHLIGHTED_TRAINS),
         START_TIME(Integer.class, GTDrawSettings.Key.START_TIME),
         END_TIME(Integer.class, GTDrawSettings.Key.END_TIME),
         IGNORE_TIME_LIMITS(Boolean.class, null),
