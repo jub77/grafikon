@@ -53,6 +53,23 @@ public class SelectorUtils {
         };
     }
 
+    public static Predicate<Train> createUniqueTrainFilter() {
+        return new Predicate<Train>() {
+
+            private final List<Train> collected = new LinkedList<Train>();
+
+            @Override
+            public boolean apply(Train input) {
+                if (!collected.contains(input)) {
+                    collected.add(input);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+    }
+
     public static Function<TimeInterval, Train> createToTrainFunction() {
         return new Function<TimeInterval, Train>() {
 
