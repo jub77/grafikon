@@ -236,10 +236,13 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     }
 
     protected GTDraw createDraw(GTViewSettings config) {
-        if (!config.contains(GTViewSettings.Key.SIZE)) {
-            config.set(GTViewSettings.Key.SIZE, this.getSize());
-        }
-        return drawFactory.createInstance(config.getGTDrawType(), config.createGTDrawSettings(), this.getRoute(), gtStorage);
+        return this.createDraw(config, null);
+    }
+
+    protected GTDraw createDraw(GTViewSettings config, Dimension size) {
+        GTDrawSettings drawSettings = config.createGTDrawSettings();
+        drawSettings.set(GTDrawSettings.Key.SIZE, size == null ? this.getSize() : size);
+        return drawFactory.createInstance(config.getGTDrawType(), drawSettings, this.getRoute(), gtStorage);
     }
 
     private void resize() {

@@ -76,8 +76,7 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
                     // get values and provide save
                     GTViewSettings config = getSettings();
                     config.setOption(Key.DISABLE_STATION_NAMES, Boolean.FALSE);
-                    config.set(GTViewSettings.Key.SIZE, saveSize);
-                    GTDraw draw = createDraw(config);
+                    GTDraw draw = createDraw(config, saveSize);
 
                     try {
                         OutputFactory factory = OutputFactory.newInstance("draw");
