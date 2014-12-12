@@ -5,6 +5,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
 
+import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
@@ -15,6 +16,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.output2.gt.GTDraw.Refresh;
+import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
 import org.slf4j.Logger;
@@ -29,6 +31,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableViewDraw.class);
 
+    protected final static int WIDTH_STEPS = 10;
+
+    private final static int MIN_WIDTH = 1000;
+    private final static int MAX_WIDTH = 10000;
+    private final static int WIDTH_TO_HEIGHT_RATIO = 5;
+
     protected GTViewSettings settings;
 
     protected GTDrawFactory drawFactory;
@@ -37,6 +45,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     protected TrainDiagram diagram;
 
     protected final GTStorage gtStorage = new GTStorage();
+
+    private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
     /** Creates new form TrainGraphicalTimetableView */
     public GraphicalTimetableViewDraw() {
@@ -98,7 +108,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                             recreateDraw();
                             break;
                         case RECREATE_WITH_TIME:
-                            setTimeRange();
                             recreateDraw();
                             break;
                         default:
@@ -108,7 +117,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 }
             };
             this.diagram.addAllEventListener(this.currentListener);
-            this.setTimeRange();
             if (diagram.getRoutes().size() > 0) {
                 this.setRoute(diagram.getRoutes().get(0));
             } else {
@@ -123,6 +131,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 .set(Key.BORDER_Y, 1.5f)
                 .set(Key.STATION_GAP_X, 15)
                 .set(Key.TYPE, GTDraw.Type.CLASSIC)
+                .set(Key.VIEW_SIZE, 4)
                 .set(Key.TRAIN_COLORS, GTDraw.TrainColors.BY_TYPE)
                 .set(Key.TRAIN_NAMES, Boolean.TRUE)
                 .set(Key.ARRIVAL_DEPARTURE_DIGITS, Boolean.FALSE)
@@ -205,21 +214,53 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         this.recreateDraw();
     }
 
-    protected void setTimeRange() {
-        if (diagram == null) {
-            settings.remove(Key.START_TIME);
-            settings.remove(Key.END_TIME);
-        } else {
+    protected Tuple<Integer> computeTimeRange(GTViewSettings settings) {
+        if (diagram != null) {
             Integer from = diagram.getAttribute(TrainDiagram.ATTR_FROM_TIME, Integer.class);
             Integer to = diagram.getAttribute(TrainDiagram.ATTR_TO_TIME, Integer.class);
-            settings.setRemove(Key.START_TIME, from);
-            settings.setRemove(Key.END_TIME, to);
-            if (settings.contains(Key.START_TIME_OVERRIDE)) {
-                settings.setRemove(Key.START_TIME, settings.get(Key.START_TIME_OVERRIDE));
+            if (settings.isOption(Key.IGNORE_TIME_LIMITS)) {
+                from = 0;
+                to = TimeInterval.DAY;
             }
-            if (settings.contains(Key.END_TIME_OVERRIDE)) {
-                settings.setRemove(Key.END_TIME, settings.get(Key.END_TIME_OVERRIDE));
-            }
+            return new Tuple<Integer>(from, to);
+        } else {
+            return new Tuple<Integer>();
+        }
+    }
+
+    protected boolean updatePreferredSize(GTViewSettings config, Tuple<Integer> range) {
+        Integer start = null;
+        Integer end = null;
+        int size = config.get(Key.VIEW_SIZE, Integer.class);
+        if (!config.getOption(Key.IGNORE_TIME_LIMITS)) {
+            start = range.first != null ? range.first : null;
+            end = range.second != null ? range.second : null;
+        }
+        if (start == null) {
+            start = 0;
+        }
+        if (end == null) {
+            end = TimeInterval.DAY;
+        }
+        double ratio = (double)(end - start) / TimeInterval.DAY;
+        int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
+        newWidth = (int) (newWidth * ratio);
+        int newHeight = newWidth / WIDTH_TO_HEIGHT_RATIO;
+        Dimension newSize = null;
+        switch (config.get(Key.ORIENTATION, GTOrientation.class)) {
+            case LEFT_RIGHT:
+                newSize = new Dimension(newWidth, newHeight);
+                break;
+            case TOP_DOWN:
+                newSize = new Dimension(newHeight, newWidth);
+                break;
+        }
+        if (!newSize.equals(preferredSize)) {
+            preferredSize = newSize;
+            this.revalidate();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -241,7 +282,19 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     protected GTDraw createDraw(GTViewSettings config, Dimension size) {
         GTDrawSettings drawSettings = config.createGTDrawSettings();
-        drawSettings.set(GTDrawSettings.Key.SIZE, size == null ? this.getSize() : size);
+        Tuple<Integer> range = this.computeTimeRange(config);
+        if (size == null) {
+            drawSettings.set(GTDrawSettings.Key.SIZE, this.getSize());
+            this.updatePreferredSize(config, range);
+        } else {
+            drawSettings.set(GTDrawSettings.Key.SIZE, size);
+        }
+        if (range.first != null) {
+            drawSettings.set(GTDrawSettings.Key.START_TIME, range.first);
+        }
+        if (range.second != null) {
+            drawSettings.set(GTDrawSettings.Key.END_TIME, range.second);
+        }
         return drawFactory.createInstance(config.getGTDrawType(), drawSettings, this.getRoute(), gtStorage);
     }
 
@@ -280,7 +333,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
         this.settings = settings;
 
-        this.setTimeRange();
         this.recreateDraw();
     }
 
@@ -308,6 +360,31 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     public void setDisableStationNames(Boolean disable) {
         settings.setOption(Key.DISABLE_STATION_NAMES, disable);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension pSize = new Dimension(preferredSize);
+        if (getParent() instanceof JViewport) {
+            JViewport viewport = (JViewport) getParent();
+            Dimension eSize = viewport.getExtentSize();
+            GTOrientation orientation = settings.get(Key.ORIENTATION, GTOrientation.class);
+            switch (orientation) {
+                case LEFT_RIGHT:
+                    pSize.height = eSize.height;
+                    if (eSize.width > pSize.width) {
+                        pSize.width = eSize.width;
+                    }
+                    break;
+                case TOP_DOWN:
+                    pSize.width = eSize.width;
+                    if (eSize.height > pSize.height) {
+                        pSize.height = eSize.height;
+                    }
+                    break;
+            }
+        }
+        return pSize;
     }
 
     @Override

@@ -24,13 +24,9 @@ public class GTViewSettings {
         STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_NAME_WIDTH),
         TYPE(GTDraw.Type.class, null),
         TRAIN_COLORS(GTDraw.TrainColors.class, GTDrawSettings.Key.TRAIN_COLORS),
-        START_TIME(Integer.class, GTDrawSettings.Key.START_TIME),
-        END_TIME(Integer.class, GTDrawSettings.Key.END_TIME),
         IGNORE_TIME_LIMITS(Boolean.class, null),
         DISABLE_STATION_NAMES(Boolean.class, GTDrawSettings.Key.DISABLE_STATION_NAMES),
         ZOOM(Float.class, GTDrawSettings.Key.ZOOM),
-        START_TIME_OVERRIDE(Integer.class, null),
-        END_TIME_OVERRIDE(Integer.class, null),
         TO_TRAIN_SCROLL(Boolean.class, null),
         TO_TRAIN_CHANGE_ROUTE(Boolean.class, null),
         ORIENTATION(GTOrientation.class, GTDrawSettings.Key.ORIENTATION),
@@ -124,13 +120,6 @@ public class GTViewSettings {
             if (gKey.getDrawKey() != null && this.contains(gKey)) {
                 ds.set(gKey.getDrawKey(), this.get(gKey));
             }
-        }
-        // update start/end time
-        if (this.contains(Key.START_TIME_OVERRIDE)) {
-            ds.set(GTDrawSettings.Key.START_TIME, this.get(Key.START_TIME_OVERRIDE));
-        }
-        if (this.contains(Key.END_TIME_OVERRIDE)) {
-            ds.set(GTDrawSettings.Key.END_TIME, this.get(Key.END_TIME_OVERRIDE));
         }
         if (this.getOption(Key.IGNORE_TIME_LIMITS)) {
             ds.set(GTDrawSettings.Key.START_TIME, 0);

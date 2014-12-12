@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,13 +31,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     private static final Logger log = LoggerFactory.getLogger(GraphicalTimetableView.class);
 
-    private final static int INITIAL_WIDTH = 4;
     private final static int SELECTION_RADIUS = 5;
-    private final static int WIDTH_STEPS = 10;
     private final static int ROUTE_COUNT = 20;
-    private final static int MIN_WIDTH = 1000;
-    private final static int MAX_WIDTH = 10000;
-    private final static int WIDTH_TO_HEIGHT_RATIO = 5;
 
     static {
         ToolTipManager.sharedInstance().setReshowDelay(0);
@@ -63,8 +57,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     private TextTemplate toolTipTemplateNode;
     private TimeInterval lastToolTipInterval;
     private final Map<String, Object> toolTipformattingMap = new HashMap<String, Object>();
-
-    private Dimension preferredSize = new Dimension(MIN_WIDTH, MIN_WIDTH / WIDTH_TO_HEIGHT_RATIO);
 
     public GraphicalTimetableView() {
         this.initComponents();
@@ -119,8 +111,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 dialog.setVisible(true);
             }
         });
-        // set size
-        this.setGTWidth(settings);
     }
 
     @Override
@@ -185,7 +175,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             @Override
             public void selected(Integer size) {
                 settings.set(Key.VIEW_SIZE, size);
-                setGTWidth(settings);
                 recreateDraw();
             }
         });
@@ -193,35 +182,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
     private void addOrientationToMenu(boolean add) {
         orientationMenu.setVisible(add);
-    }
-
-    protected void setGTWidth(GTViewSettings config) {
-        Integer start = null;
-        Integer end = null;
-        int size = config.get(Key.VIEW_SIZE, Integer.class);
-        if (!config.getOption(Key.IGNORE_TIME_LIMITS)) {
-            start = config.get(Key.START_TIME, Integer.class);
-            end = config.get(Key.END_TIME, Integer.class);
-        }
-        if (start == null) {
-            start = 0;
-        }
-        if (end == null) {
-            end = TimeInterval.DAY;
-        }
-        double ratio = (double)(end - start) / TimeInterval.DAY;
-        int newWidth = MIN_WIDTH + (size - 1) * ((MAX_WIDTH - MIN_WIDTH) / (WIDTH_STEPS - 1));
-        newWidth = (int) (newWidth * ratio);
-        int newHeight = newWidth / WIDTH_TO_HEIGHT_RATIO;
-        switch (config.get(Key.ORIENTATION, GTOrientation.class)) {
-            case LEFT_RIGHT:
-                preferredSize = new Dimension(newWidth, newHeight);
-                break;
-            case TOP_DOWN:
-                preferredSize = new Dimension(newHeight, newWidth);
-                break;
-        }
-        this.revalidate();
     }
 
     @Override
@@ -309,9 +269,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             @Override
             public void changed(Key value, boolean selected) {
                 settings.setOption(value, selected);
-                if (value == Key.IGNORE_TIME_LIMITS) {
-                    setTimeRange();
-                }
                 // recreate draw
                 recreateDraw();
             }
@@ -434,31 +391,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        Dimension pSize = new Dimension(preferredSize);
-        if (getParent() instanceof JViewport) {
-            JViewport viewport = (JViewport) getParent();
-            Dimension eSize = viewport.getExtentSize();
-            GTOrientation orientation = settings.get(Key.ORIENTATION, GTOrientation.class);
-            switch (orientation) {
-                case LEFT_RIGHT:
-                    pSize.height = eSize.height;
-                    if (eSize.width > pSize.width) {
-                        pSize.width = eSize.width;
-                    }
-                    break;
-                case TOP_DOWN:
-                    pSize.width = eSize.width;
-                    if (eSize.height > pSize.height) {
-                        pSize.height = eSize.height;
-                    }
-                    break;
-            }
-        }
-        return pSize;
-    }
-
     /**
      * @param listener the rsListener to set
      */
@@ -482,20 +414,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         this.createMenuForRoutes(diagram.getRoutes());
 
         super.routesChanged(event);
-    }
-
-    @Override
-    protected void setTimeRange() {
-        super.setTimeRange();
-        this.setGTWidth(settings);
-    }
-
-    @Override
-    protected GTViewSettings getDefaultViewSettings() {
-        GTViewSettings config = super.getDefaultViewSettings();
-        config.set(Key.VIEW_SIZE, INITIAL_WIDTH);
-        config.set(Key.TYPE, GTDraw.Type.CLASSIC);
-        return config;
     }
 
     protected javax.swing.JPopupMenu popupMenu;
