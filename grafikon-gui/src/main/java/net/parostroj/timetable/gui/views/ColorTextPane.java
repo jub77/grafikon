@@ -6,27 +6,20 @@ import javax.swing.text.*;
 
 /**
  * Colored text pane.
- * 
+ *
  * @author jub
  */
 public class ColorTextPane extends JTextPane {
-    
-    public ColorTextPane() {
-        super();
-    }
 
-    public void append(Color c, String s) { // better implementation--uses
-        // StyleContext
+    public void append(Color c, String s) {
         setEditable(true);
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
-                StyleConstants.Foreground, c);
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
-        int len = getDocument().getLength(); // same value as
-        // getText().length();
-        setCaretPosition(len); // place caret at the end (with no selection)
+        int len = getDocument().getLength();
+        setCaretPosition(len);
         setCharacterAttributes(aset, false);
-        replaceSelection(s); // there is no selection, so inserts at caret
+        replaceSelection(s);
         setCaretPosition(0);
         setEditable(false);
     }
