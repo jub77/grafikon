@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ public class GTViewSettings {
         TECHNOLOGICAL_TIME(Boolean.class, GTDrawSettings.Key.TECHNOLOGICAL_TIME),
         BORDER_X(Float.class, GTDrawSettings.Key.BORDER_X),
         BORDER_Y(Float.class, GTDrawSettings.Key.BORDER_Y),
-        SIZE(Dimension.class, GTDrawSettings.Key.SIZE),
         VIEW_SIZE(Integer.class, null),
         STATION_GAP_X(Integer.class, GTDrawSettings.Key.STATION_NAME_WIDTH),
         TYPE(GTDraw.Type.class, null),
