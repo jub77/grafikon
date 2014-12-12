@@ -966,6 +966,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         setMinimumSize(new java.awt.Dimension(800, 600));
         setSize(getMinimumSize());
+
+        trainUnitCyclesPane.setKey("cycles.trainunit");
+        driverCyclesPane.setKey("cycles.driver");
+        engineCyclesPane.setKey("cycles.engine");
     }
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
