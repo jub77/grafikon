@@ -236,6 +236,11 @@ abstract public class GTDrawBase implements GTDraw {
         return route;
     }
 
+    @Override
+    public GTDrawSettings getSettings() {
+        return this.config;
+    }
+
     protected void paintTitle(Graphics2D g) {
         Font currentFont = g.getFont();
         g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
@@ -666,6 +671,12 @@ abstract public class GTDrawBase implements GTDraw {
 
     protected boolean isTimeVisible(int time) {
         return startTime <= time && time <= endTime;
+    }
+
+    @Override
+    public String toString() {
+        Dimension gtdSize = this.getSize();
+        return String.format("GTDraw[%d,%d]", gtdSize.width, gtdSize.height);
     }
 
     @Override

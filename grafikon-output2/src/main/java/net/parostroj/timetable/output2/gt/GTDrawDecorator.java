@@ -57,4 +57,9 @@ public abstract class GTDrawDecorator implements GTDraw {
     public Refresh processEvent(GTEvent<?> event) {
         return draw.processEvent(event);
     }
+
+    @Override
+    public GTDrawSettings getSettings() {
+        return draw.getSettings();
+    }
 }
