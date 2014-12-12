@@ -42,4 +42,6 @@ public interface GTDraw {
     Dimension getSize();
 
     Refresh processEvent(GTEvent<?> event);
+
+    GTDrawSettings getSettings();
 }
