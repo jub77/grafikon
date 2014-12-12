@@ -16,7 +16,6 @@ import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.output2.gt.GTDraw.TrainColors;
 import net.parostroj.timetable.output2.gt.*;
 
@@ -34,6 +33,7 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
     private static final Logger log = LoggerFactory.getLogger(TrainsCyclesPane.class);
 
     private TCDelegate delegate;
+    private String key;
 
     private class HighligterAndSelector implements HighlightedTrains, RegionSelector<TimeInterval>, TrainColorChooser, TCDelegate.Listener {
 
@@ -127,17 +127,12 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         detailsView.setModel(delegate);
     }
 
-    private String getKey() {
-        String prefix = "custom";
-        TrainsCycleType type = delegate.getType();
-        if (type != null && TrainsCycleType.DRIVER_CYCLE.equals(type.getName())) {
-            prefix = "driver";
-        } else if (type != null && TrainsCycleType.ENGINE_CYCLE.equals(type.getName())) {
-            prefix = "engine";
-        } else if (type != null && TrainsCycleType.TRAIN_UNIT_CYCLE.equals(type.getName())) {
-            prefix = "trainunit";
-        }
-        return String.format("cycles.%s", prefix);
+    public void setKey(String key) {
+        this.key= key;
+    }
+
+    public String getKey() {
+        return this.key;
     }
 
     @Override

@@ -58,6 +58,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         trainsCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
+        trainsCyclesPane.setKey("cycles.custom");
 
         setLayout(new java.awt.BorderLayout());
 
