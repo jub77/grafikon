@@ -75,6 +75,9 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
     private AllEventListener currentListener;
 
+    private Integer startTime;
+    private Integer endTime;
+
     public void setTrainDiagram(TrainDiagram diagram) {
         if (currentListener != null && this.diagram != null) {
             this.diagram.removeAllEventListener(this.currentListener);
@@ -212,6 +215,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         this.recreateDraw();
     }
 
+    public void setTimeLimitsOverride(Integer start, Integer end) {
+        this.startTime = start;
+        this.endTime = end;
+        this.recreateDraw();
+    }
+
     /**
      * refreshes gt draw and repaints view.
      */
@@ -226,6 +235,13 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             if (settings.isOption(Key.IGNORE_TIME_LIMITS)) {
                 from = 0;
                 to = TimeInterval.DAY;
+            } else {
+                if (this.startTime != null) {
+                    from = this.startTime;
+                }
+                if (this.endTime != null) {
+                    to = this.endTime;
+                }
             }
             return new Tuple<Integer>(from, to);
         } else {
