@@ -61,7 +61,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
 
             @Override
             public void componentResized(ComponentEvent e) {
-                resize();
+                if (draw != null) {
+                    Dimension size = draw.getSize();
+                    if (!size.equals(getSize())) {
+                        recreateDraw();
+                    }
+                }
             }
         });
 
@@ -265,30 +270,26 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     }
 
     protected void recreateDraw() {
+        Tuple<Integer> range = this.computeTimeRange(settings);
+        this.updatePreferredSize(settings, range);
         for (RegionCollector<?> collector : gtStorage.collectors()) {
             collector.clear();
         }
-        if (this.getRoute() == null) {
-            draw = null;
-        } else {
-            draw = this.createDraw(this.getSettings());
-        }
+        draw = null;
         this.repaint();
     }
 
     protected GTDraw createDraw(GTViewSettings config) {
-        return this.createDraw(config, null);
+        return this.createDraw(config, getSize());
     }
 
     protected GTDraw createDraw(GTViewSettings config, Dimension size) {
+        if (this.getRoute() == null) {
+            return null;
+        }
         GTDrawSettings drawSettings = config.createGTDrawSettings();
         Tuple<Integer> range = this.computeTimeRange(config);
-        if (size == null) {
-            drawSettings.set(GTDrawSettings.Key.SIZE, this.getSize());
-            this.updatePreferredSize(config, range);
-        } else {
-            drawSettings.set(GTDrawSettings.Key.SIZE, size);
-        }
+        drawSettings.set(GTDrawSettings.Key.SIZE, size);
         if (range.first != null) {
             drawSettings.set(GTDrawSettings.Key.START_TIME, range.first);
         }
@@ -296,10 +297,6 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             drawSettings.set(GTDrawSettings.Key.END_TIME, range.second);
         }
         return drawFactory.createInstance(config.getGTDrawType(), drawSettings, this.getRoute(), gtStorage);
-    }
-
-    private void resize() {
-        recreateDraw();
     }
 
     public Route getRoute() {
@@ -344,6 +341,11 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     public void paint(Graphics g) {
         long time = System.currentTimeMillis();
         super.paint(g);
+
+        // create draw if none exists
+        if (draw == null) {
+            draw = this.createDraw(this.settings);
+        }
 
         if (draw != null) {
             draw.draw((Graphics2D) g);
