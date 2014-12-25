@@ -41,7 +41,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Changed - used for indication that the time interval for whatever reason changed. */
     private boolean changed;
 
-    private final TimeIntervalCalculation calculation;
+    private TimeIntervalCalculation calculation;
 
     /**
      * creates instance of an time interval.
@@ -57,7 +57,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param addedTime added time
      */
     public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Integer speed, TimeIntervalDirection direction, Track track, int addedTime) {
-        this.train = train;
+        this.setTrain(train);
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
         this.speedLimit = speed;
@@ -66,7 +66,6 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.setAttributes(new Attributes());
         this.id = id;
         this.addedTime = addedTime;
-        this.calculation = new TimeIntervalCalculation(train, this);
     }
 
     /**
@@ -160,6 +159,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      */
     public void setTrain(Train train) {
         this.train = train;
+        this.calculation = new TimeIntervalCalculation(train, this);
     }
 
     /**
