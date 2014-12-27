@@ -136,7 +136,7 @@ public class LSAttributesItem {
             return result;
         } else {
             LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
-            return convertSimpleValue(diagram, value.getValue(), value.getType() == null ? type : value.getType());
+            return value == null ? null : convertSimpleValue(diagram, value.getValue(), value.getType() == null ? type : value.getType());
         }
     }
 
