@@ -77,8 +77,8 @@ public class SettingsDialog extends javax.swing.JDialog {
                 unitComboBox.addItem(unit);
             }
         }
-        speedUnitComboBox.addItem(LengthUnit.KM);
-        speedUnitComboBox.addItem(LengthUnit.MILE);
+        speedUnitComboBox.addItem(SpeedUnit.KMPH);
+        speedUnitComboBox.addItem(SpeedUnit.MPH);
 
         for (Scale scale : Scale.getPredefined()) {
             scaleComboBox.addItem(scale);
@@ -147,7 +147,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             this.setTimeRange(fromTime, toTime);
 
             LengthUnit lUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class);
-            LengthUnit sUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, LengthUnit.class);
+            SpeedUnit sUnit = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class);
             unitComboBox.setSelectedItem(lUnit != null ? lUnit : NO_UNIT);
             speedUnitComboBox.setSelectedItem(sUnit != null ? sUnit : NO_UNIT);
         }
@@ -498,7 +498,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         unitsPanel.add(new javax.swing.JLabel(ResourceLoader.getString("modelinfo.speed.unit")));
         speedUnitComboBox = new JComboBox();
         unitsPanel.add(speedUnitComboBox);
-        unitsPanel.add(new javax.swing.JLabel("/h"));
 
 
         scriptEditBox.setColumns(80);
