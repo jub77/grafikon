@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui;
 
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 
 /**
  * Settings of the program.
@@ -14,7 +15,7 @@ public class ProgramSettings {
     private boolean twoSidedPrint;
     private boolean stShowTechTime;
     private LengthUnit lengthUnit;
-    private LengthUnit speedLengthUnit;
+    private SpeedUnit speedLengthUnit;
 
     public String getUserName() {
         return userName;
@@ -59,11 +60,11 @@ public class ProgramSettings {
         this.lengthUnit = lengthUnit;
     }
 
-    public LengthUnit getSpeedLengthUnit() {
+    public SpeedUnit getSpeedUnit() {
         return speedLengthUnit;
     }
 
-    public void setSpeedLengthUnit(LengthUnit speedLengthUnit) {
+    public void setSpeedUnit(SpeedUnit speedLengthUnit) {
         this.speedLengthUnit = speedLengthUnit;
     }
 

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
 
 import org.jgrapht.ListenableGraph;
@@ -91,10 +92,9 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
         Integer topSpeed = line.getTopSpeed();
         if (topSpeed != null) {
-            lengthUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, LengthUnit.class, appModel.getProgramSettings().getSpeedLengthUnit());
-            BigDecimal sValue = lengthUnit.convertFrom(new BigDecimal(topSpeed), LengthUnit.KM);
-            result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(lengthUnit.getUnitsOfString())
-                    .append("/h");
+            SpeedUnit speedUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, appModel.getProgramSettings().getSpeedUnit());
+            BigDecimal sValue = speedUnit.convertFrom(new BigDecimal(topSpeed), SpeedUnit.KMPH);
+            result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(speedUnit.getUnitsOfString());
         }
         return result.toString();
     }

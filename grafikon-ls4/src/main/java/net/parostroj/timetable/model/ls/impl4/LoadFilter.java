@@ -51,7 +51,7 @@ public class LoadFilter {
                 }
             }
         }
-        if (version.compareTo(new ModelVersion(4, 8)) <= 0) {
+        if (version.compareTo(new ModelVersion(4, 13)) <= 0) {
             Object object = diagram.getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT);
             if (object instanceof LengthUnit) {
                 if (object == LengthUnit.KM) {
