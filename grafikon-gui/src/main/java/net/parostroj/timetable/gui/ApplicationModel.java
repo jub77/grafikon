@@ -14,6 +14,7 @@ import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.Reference;
 
 /**
@@ -213,7 +214,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         section.put("two.sided.print", programSettings.isTwoSidedPrint());
         section.put("st.show.tech.time", programSettings.isStShowTechTime());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
-        section.put("unit.speed", programSettings.getSpeedLengthUnit() != null ? programSettings.getSpeedLengthUnit().getKey() : null);
+        section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
         section.remove("last.opened");
         for (File file : this.lastOpenedFiles) {
             section.add("last.opened", file.getAbsolutePath());
@@ -230,9 +231,9 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         programSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, false));
         programSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
-        LengthUnit speedLengthUnit = LengthUnit.getByKey(section.get("unit.speed", "km"));
+        SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
-        programSettings.setSpeedLengthUnit(speedLengthUnit != null ? speedLengthUnit : LengthUnit.KM);
+        programSettings.setSpeedUnit(speedUnit != null ? speedUnit : SpeedUnit.KMPH);
         List<String> filenames = section.getAll("last.opened");
         if (filenames != null) {
             Collections.reverse(filenames);

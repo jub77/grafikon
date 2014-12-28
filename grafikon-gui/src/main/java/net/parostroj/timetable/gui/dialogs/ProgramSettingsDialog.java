@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import net.parostroj.timetable.gui.ProgramSettings;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import java.awt.FlowLayout;
@@ -36,8 +37,8 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
                 unitComboBox.addItem(unit);
             }
         }
-        speedUnitComboBox.addItem(LengthUnit.KM);
-        speedUnitComboBox.addItem(LengthUnit.MILE);
+        speedUnitComboBox.addItem(SpeedUnit.KMPH);
+        speedUnitComboBox.addItem(SpeedUnit.MPH);
 
         pack();
     }
@@ -96,7 +97,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         unitsPanel.add(speedUnitLabel);
         speedUnitComboBox = new javax.swing.JComboBox();
         unitsPanel.add(speedUnitComboBox);
-        unitsPanel.add(new javax.swing.JLabel("/h"));
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
 
@@ -140,7 +140,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
     private void updateValues() {
         this.nameTextField.setText(settings.getUserNameOrSystemUser());
         this.unitComboBox.setSelectedItem(settings.getLengthUnit());
-        this.speedUnitComboBox.setSelectedItem(settings.getSpeedLengthUnit());
+        this.speedUnitComboBox.setSelectedItem(settings.getSpeedUnit());
     }
 
     private boolean writeBackValues() {
@@ -150,7 +150,7 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         else
             settings.setUserName(name);
         settings.setLengthUnit((LengthUnit) unitComboBox.getSelectedItem());
-        settings.setSpeedLengthUnit((LengthUnit) speedUnitComboBox.getSelectedItem());
+        settings.setSpeedUnit((SpeedUnit) speedUnitComboBox.getSelectedItem());
         return true;
     }
 
