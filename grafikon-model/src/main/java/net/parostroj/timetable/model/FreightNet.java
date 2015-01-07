@@ -111,13 +111,15 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Collection<FNConnection> connections = this.get(train, fromMap);
         List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
         for (FNConnection conn : connections) {
-            if (!FreightHelper.isFreight(conn.getFrom())) {
+            TimeInterval fromInterval = conn.getFrom();
+            if (!FreightHelper.isManaged(fromInterval.getTrain()) || !fromInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
         connections = this.get(train, toMap);
         for (FNConnection conn : connections) {
-            if (!FreightHelper.isFreight(conn.getTo())) {
+            TimeInterval toInterval = conn.getTo();
+            if (!FreightHelper.isManaged(toInterval.getTrain()) || !toInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
@@ -215,12 +217,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
-        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreight(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
-            FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
-            if (!filter.accepted(newDst, 0)) {
-                break;
+        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
+            if (FreightHelper.isFreight(i)) {
+                FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
+                if (!filter.accepted(newDst, 0)) {
+                    break;
+                }
+                result.add(newDst);
             }
-            result.add(newDst);
             for (FNConnection conn : nextConns) {
                 if (i == conn.getFrom() && !used.contains(conn)) {
                     used.add(conn);
