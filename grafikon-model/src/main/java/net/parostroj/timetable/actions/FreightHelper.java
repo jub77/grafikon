@@ -16,27 +16,30 @@ import com.google.common.collect.Iterables;
 public class FreightHelper {
 
     public static boolean isFreightFrom(TimeInterval interval) {
-        return isFreightCommon(interval) && (interval.isFirst() || interval.getLength() > 0);
+        return isFreightCommon(interval) && (interval.isFirst() || interval.isInnerStop());
     }
 
     public static boolean isFreightTo(TimeInterval interval) {
-        return isFreightCommon(interval) && (interval.isLast() || interval.getLength() > 0);
+        return isFreightCommon(interval) && (interval.isLast() || interval.isInnerStop());
     }
 
     public static boolean isFreight(TimeInterval interval) {
-        return isFreightCommon(interval) && (interval.isFirst() || interval.isLast() || interval.getLength() > 0);
+        return isFreightCommon(interval) && interval.isStop();
+    }
+
+    public static boolean isConnection(TimeInterval interval, FreightNet net) {
+        return !net.getTrainsFrom(interval).isEmpty();
     }
 
     private static boolean isFreightCommon(TimeInterval interval) {
-        return interval.isNodeOwner() && isManaged(interval.getTrain())
-                && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+        return isManaged(interval.getTrain()) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightFrom(Iterable<TimeInterval> i) {
         return Iterables.filter(i, new Predicate<TimeInterval>() {
             @Override
-            public boolean apply(TimeInterval instance) {
-                return isFreightFrom(instance);
+            public boolean apply(TimeInterval interval) {
+                return isFreightFrom(interval);
             }
         });
     }
@@ -44,8 +47,8 @@ public class FreightHelper {
     public static Iterable<TimeInterval> getNodeIntervalsFreightTo(Iterable<TimeInterval> i) {
         return Iterables.filter(i, new Predicate<TimeInterval>() {
             @Override
-            public boolean apply(TimeInterval instance) {
-                return isFreightTo(instance);
+            public boolean apply(TimeInterval interval) {
+                return isFreightTo(interval);
             }
         });
     }
@@ -54,11 +57,26 @@ public class FreightHelper {
         return Iterables.filter(i, new Predicate<TimeInterval>() {
             boolean after = false;
             @Override
-            public boolean apply(TimeInterval instance) {
+            public boolean apply(TimeInterval interval) {
                 if (after) {
-                    return FreightHelper.isFreightTo(instance);
+                    return FreightHelper.isFreightTo(interval);
                 } else {
-                    after = instance == from;
+                    after = interval == from;
+                    return false;
+                }
+            }
+        });
+    }
+
+    public static Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from, final FreightNet net) {
+        return Iterables.filter(i, new Predicate<TimeInterval>() {
+            boolean after = false;
+            @Override
+            public boolean apply(TimeInterval interval) {
+                if (after) {
+                    return FreightHelper.isFreightTo(interval) || FreightHelper.isConnection(interval, net);
+                } else {
+                    after = interval == from;
                     return false;
                 }
             }

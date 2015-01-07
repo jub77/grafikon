@@ -102,6 +102,8 @@ public class StationTimetablesExtractor {
                 }
                 row.setFreightTo(fl);
             }
+        }
+        if (FreightHelper.isConnection(interval, diagram.getFreightNet())) {
             Map<Train, List<FreightDst>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<FreightToTrain>();
