@@ -88,9 +88,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         FlowLayout flowLayout1 = (FlowLayout) verifyPanel.getLayout();
         flowLayout1.setVgap(2);
         flowLayout1.setAlignment(FlowLayout.LEFT);
-        outputComboBox = new javax.swing.JComboBox();
+        outputComboBox = new javax.swing.JComboBox<String>();
         outputComboBox.setPrototypeDisplayValue("MMMMMM");
-        outputTypeComboBox = new javax.swing.JComboBox();
+        outputTypeComboBox = new javax.swing.JComboBox<String>();
         outputTypeComboBox.setPrototypeDisplayValue("MMMMMMMMMMM");
 
         outputComboBox.addItemListener(new ItemListener() {
@@ -255,12 +255,12 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton okButton;
-    private javax.swing.JComboBox outputTypeComboBox;
+    private javax.swing.JComboBox<String> outputTypeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
     private JCheckBox defaultTemplateCheckbox;
     private JTextField extensionTextField;
     private JCheckBox scriptCheckBox;
     private JButton scriptButton;
-    private JComboBox outputComboBox;
+    private JComboBox<String> outputComboBox;
 }

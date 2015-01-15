@@ -82,8 +82,7 @@ public class LSFileFactory {
     }
 
     public synchronized FileLoadSave createForLoad(File file) throws LSException {
-        try {
-            ZipFile zipFile = new ZipFile(file);
+        try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry entry = zipFile.getEntry(METADATA);
             Properties metadata = new Properties();
             if (entry != null) {

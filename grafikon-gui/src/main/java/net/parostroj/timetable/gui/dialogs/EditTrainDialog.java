@@ -73,7 +73,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         this.train = train;
         if (train != null)  {
             // model for train types
-            typeComboBox.setModel(new DefaultComboBoxModel(train.getDiagram().getTrainTypes().toArray()));
+            typeComboBox.setModel(new DefaultComboBoxModel<TrainType>(train.getDiagram().getTrainTypes().toArray(new TrainType[0])));
             typeComboBox.addItem(CreateTrainView.NO_TYPE);
             typeComboBox.setSelectedItem(train.getType() != null ? train.getType() : CreateTrainView.NO_TYPE);
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
@@ -97,8 +97,9 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
             stationsComboBox.removeAllItems();
             for (TimeInterval i : train.getTimeIntervalList()) {
-                if (i.isNodeOwner())
-                    stationsComboBox.addItem(i.getOwner());
+                if (i.isNodeOwner()) {
+                    stationsComboBox.addItem(i.getOwnerAsNode());
+                }
             }
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
@@ -122,7 +123,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox();
+        typeComboBox = new javax.swing.JComboBox<TrainType>();
         numberTextField = new javax.swing.JTextField();
         javax.swing.JLabel numberLabel = new javax.swing.JLabel();
         descriptionTextField = new javax.swing.JTextField();
@@ -367,7 +368,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
                 toNodeButtonActionPerformed(evt);
             }
         });
-        stationsComboBox = new javax.swing.JComboBox();
+        stationsComboBox = new javax.swing.JComboBox<Node>();
         GridBagConstraints gbc_stationsComboBox = new GridBagConstraints();
         gbc_stationsComboBox.weightx = 1.0;
         gbc_stationsComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -596,11 +597,11 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private net.parostroj.timetable.gui.components.TextTemplateEditBox routeEditBox;
     private javax.swing.JCheckBox showLengthCheckBox;
     private javax.swing.JTextField speedTextField;
-    private javax.swing.JComboBox stationsComboBox;
+    private javax.swing.JComboBox<Node> stationsComboBox;
     private javax.swing.JTextField timeAfterTextField;
     private javax.swing.JTextField timeBeforeTextField;
     private javax.swing.JButton toNodeButton;
-    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JComboBox<TrainType> typeComboBox;
     private javax.swing.JTextField weightTextField;
     private GroupsComboBox groupsComboBox;
     private JCheckBox weightLimitCheckBox;

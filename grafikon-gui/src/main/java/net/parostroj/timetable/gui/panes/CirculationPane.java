@@ -52,7 +52,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void initComponents() {
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
-        typesComboBox = new javax.swing.JComboBox(new CPModel());
+        typesComboBox = new javax.swing.JComboBox<Wrapper<TrainsCycleType>>(new CPModel());
         newNameTextField = new javax.swing.JTextField();
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -64,7 +64,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
         controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        typesComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmm");
+        typesComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmm"));
         typesComboBox.addItemListener(new java.awt.event.ItemListener() {
             @Override
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -267,7 +267,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private javax.swing.JButton editButton;
     private javax.swing.JTextField newNameTextField;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainsCyclesPane;
-    private javax.swing.JComboBox typesComboBox;
+    private javax.swing.JComboBox<Wrapper<TrainsCycleType>> typesComboBox;
 
     @Override
     public Ini.Section saveToPreferences(Ini prefs) {
@@ -279,7 +279,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         return trainsCyclesPane.loadFromPreferences(prefs);
     }
 
-    private class CPModel extends DefaultComboBoxModel {
+    private class CPModel extends DefaultComboBoxModel<Wrapper<TrainsCycleType>> {
         public void refreshSelected() {
             int index = getIndexOf(getSelectedItem());
             fireContentsChanged(this, index, index);

@@ -47,7 +47,7 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         descTextField = new javax.swing.JTextField();
-        engineClassComboBox = new javax.swing.JComboBox();
+        engineClassComboBox = new javax.swing.JComboBox<EngineClass>();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         attributesPanel = new net.parostroj.timetable.gui.components.AttributesPanel();
         javax.swing.JButton okButton = new javax.swing.JButton();
@@ -163,6 +163,6 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
 
     private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;
     private javax.swing.JTextField descTextField;
-    private javax.swing.JComboBox engineClassComboBox;
+    private javax.swing.JComboBox<EngineClass> engineClassComboBox;
     private javax.swing.JTextField nameTextField;
 }

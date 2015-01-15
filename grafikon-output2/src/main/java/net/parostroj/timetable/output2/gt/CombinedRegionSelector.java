@@ -8,6 +8,7 @@ public class CombinedRegionSelector<T> implements RegionSelector<T> {
 
     private final List<RegionSelector<T>> selectors;
 
+    @SafeVarargs
     public CombinedRegionSelector(RegionSelector<T>... selectors) {
         this.selectors = Arrays.asList(selectors);
     }

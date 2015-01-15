@@ -34,7 +34,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
-    private class TrainTypeCategoriesListModel extends AbstractListModel {
+    private class TrainTypeCategoriesListModel extends AbstractListModel<TrainTypeCategory> {
 
         @Override
         public int getSize() {
@@ -46,7 +46,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public TrainTypeCategory getElementAt(int index) {
             return getCategories().get(index);
         }
 
@@ -57,7 +57,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         }
 
         public void removeTrainTypeCategory(int index) {
-            TrainTypeCategory category = (TrainTypeCategory) getElementAt(index);
+            TrainTypeCategory category = getElementAt(index);
             diagram.getPenaltyTable().removeTrainTypeCategory(category);
             this.fireIntervalRemoved(this, index, index);
         }
@@ -80,7 +80,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private class PenaltyTableModel extends AbstractTableModel {
 
         private TrainTypeCategory getCurrentTrainTypeCategory() {
-            TrainTypeCategory category = (TrainTypeCategory) trainTypeCategoriesList.getSelectedValue();
+            TrainTypeCategory category = trainTypeCategoriesList.getSelectedValue();
             return category;
         }
 
@@ -237,7 +237,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        trainTypeCategoriesList = new javax.swing.JList();
+        trainTypeCategoriesList = new javax.swing.JList<TrainTypeCategory>();
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
@@ -379,7 +379,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!trainTypeCategoriesList.isSelectionEmpty()) {
             int selected = trainTypeCategoriesList.getSelectedIndex();
-            if (!this.deleteAllowed((TrainTypeCategory)listModel.getElementAt(selected))) {
+            if (!this.deleteAllowed(listModel.getElementAt(selected))) {
                 GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
                 return;
             }
@@ -456,7 +456,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;
     private javax.swing.JTextField speedTextField;
-    private javax.swing.JList trainTypeCategoriesList;
+    private javax.swing.JList<TrainTypeCategory> trainTypeCategoriesList;
     private javax.swing.JButton upButton;
     private javax.swing.JTable weightTable;
 }

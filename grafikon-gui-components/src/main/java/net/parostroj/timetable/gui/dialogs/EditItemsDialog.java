@@ -76,7 +76,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        itemList = new javax.swing.JList();
+        itemList = new javax.swing.JList<Wrapper<T>>();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(6);
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
@@ -218,7 +218,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
 
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JList itemList;
+    private javax.swing.JList<Wrapper<T>> itemList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton upButton;

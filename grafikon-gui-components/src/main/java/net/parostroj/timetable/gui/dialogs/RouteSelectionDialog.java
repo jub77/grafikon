@@ -20,7 +20,7 @@ public class RouteSelectionDialog extends JDialog {
     }
 
     private RSListener listener;
-    private final JList list;
+    private final JList<Wrapper<Route>> list;
     private WrapperListModel<Route> listModel;
 
     public RouteSelectionDialog(java.awt.Window owner, boolean modal) {
@@ -49,7 +49,7 @@ public class RouteSelectionDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane();
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
-        list = new JList();
+        list = new JList<Wrapper<Route>>();
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setVisibleRowCount(20);
         scrollPane.setViewportView(list);
@@ -84,7 +84,7 @@ public class RouteSelectionDialog extends JDialog {
         this.setVisible(false);
     }
 
-    protected JList getList() {
+    protected JList<Wrapper<Route>> getList() {
         return list;
     }
 }

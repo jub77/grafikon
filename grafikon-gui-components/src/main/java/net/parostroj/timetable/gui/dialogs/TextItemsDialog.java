@@ -85,11 +85,11 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private void initComponents() {
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane listScrollPane = new javax.swing.JScrollPane();
-        itemList = new javax.swing.JList();
+        itemList = new javax.swing.JList<Wrapper<TextItem>>();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel handlePanel = new javax.swing.JPanel();
         nameTextField = new javax.swing.JTextField();
-        typeComboBox = new javax.swing.JComboBox();
+        typeComboBox = new javax.swing.JComboBox<TextItem.Type>();
         createButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 0);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
@@ -107,7 +107,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         textPanel.setLayout(new java.awt.BorderLayout(5, 0));
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        itemList.setPrototypeCellValue("mmmmmmmmmmmmmmmmm");
+        itemList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmm"));
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 itemListValueChanged(evt);
@@ -239,8 +239,8 @@ public class TextItemsDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JList itemList;
+    private javax.swing.JList<Wrapper<TextItem>> itemList;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JComboBox<TextItem.Type> typeComboBox;
     private javax.swing.JButton upButton;
 }

@@ -38,7 +38,7 @@ public class FloatingWindowsFactory {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    JList list = (JList)e.getSource();
+                    JList<?> list = (JList<?>) e.getSource();
                     Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
                     if (wrapper != null) {
                         if (wrapper.getElement() != model.getSelectedTrain()) {
@@ -109,7 +109,7 @@ public class FloatingWindowsFactory {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    JList list = (JList)e.getSource();
+                    JList<?> list = (JList<?>) e.getSource();
                     Wrapper<?> wrapper = (Wrapper<?>)list.getSelectedValue();
                     if (wrapper != null) {
                         if (wrapper.getElement() != model.getSelectedTrain()) {
@@ -375,7 +375,7 @@ public class FloatingWindowsFactory {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    JList list = (JList)e.getSource();
+                    JList<?> list = (JList<?>) e.getSource();
                     Wrapper<?> wrapper = (Wrapper<?>) list.getSelectedValue();
                     if (wrapper != null) {
                         if (wrapper.getElement() != model.getSelectedTrain()) {

@@ -108,7 +108,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         xTextField.setValue(Integer.valueOf(DEFAULT_WIDTH));
         yTextField.setValue(Integer.valueOf(DEFAULT_HEIGHT));
 
-        typeComboBox.setModel(new DefaultComboBoxModel(Type.values()));
+        typeComboBox.setModel(new DefaultComboBoxModel<Type>(Type.values()));
 
         // preload file chooser
         getFileChooser();
@@ -168,7 +168,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
         xTextField = new javax.swing.JFormattedTextField();
         yTextField = new javax.swing.JFormattedTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox();
+        typeComboBox = new javax.swing.JComboBox<Type>();
 
         setTitle(ResourceLoader.getString("save.gt.title")); // NOI18N
         setResizable(false);
@@ -280,7 +280,7 @@ public class SaveImageDialog extends javax.swing.JDialog {
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton saveButton;
-    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JComboBox<Type> typeComboBox;
     private javax.swing.JFormattedTextField xTextField;
     private javax.swing.JFormattedTextField yTextField;
 }
