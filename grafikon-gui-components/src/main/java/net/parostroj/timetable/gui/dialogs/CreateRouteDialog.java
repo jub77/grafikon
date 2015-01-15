@@ -25,8 +25,8 @@ public class CreateRouteDialog extends JDialog {
     private ThroughNodesDialog tnDialog;
     private List<Node> throughNodes;
     private List<Node> availableNodes;
-    private JComboBox fromComboBox;
-    private JComboBox toComboBox;
+    private JComboBox<Wrapper<Node>> fromComboBox;
+    private JComboBox<Wrapper<Node>> toComboBox;
     private boolean selected;
 
     /**
@@ -44,7 +44,7 @@ public class CreateRouteDialog extends JDialog {
         gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
         contentPanel.setLayout(gbl_contentPanel);
         {
-            fromComboBox = new JComboBox();
+            fromComboBox = new JComboBox<Wrapper<Node>>();
             GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
             gbc_fromComboBox.gridwidth = 2;
             gbc_fromComboBox.insets = new Insets(0, 0, 5, 0);
@@ -54,7 +54,7 @@ public class CreateRouteDialog extends JDialog {
             contentPanel.add(fromComboBox, gbc_fromComboBox);
         }
         {
-            toComboBox = new JComboBox();
+            toComboBox = new JComboBox<Wrapper<Node>>();
             GridBagConstraints gbc_toComboBox = new GridBagConstraints();
             gbc_toComboBox.gridwidth = 2;
             gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
@@ -132,7 +132,7 @@ public class CreateRouteDialog extends JDialog {
         availableNodes = sort.sort(diagram.getNet().getNodes());
         fromComboBox.removeAllItems();
         toComboBox.removeAllItems();
-        for (Wrapper<?> w : Wrapper.getWrapperList(availableNodes)) {
+        for (Wrapper<Node> w : Wrapper.getWrapperList(availableNodes)) {
             fromComboBox.addItem(w);
             toComboBox.addItem(w);
         }

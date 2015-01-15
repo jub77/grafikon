@@ -38,11 +38,11 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     public TCListView() {
         setLayout(new BorderLayout(0, 0));
         cycles = new WrapperListModel<TrainsCycle>(true);
-        cyclesList = new javax.swing.JList(cycles);
+        cyclesList = new javax.swing.JList<Wrapper<TrainsCycle>>(cycles);
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         add(scrollPane, BorderLayout.CENTER);
 
-        cyclesList.setPrototypeCellValue("mmmmmmmmm");
+        cyclesList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmm"));
         cyclesList.setVisibleRowCount(3);
         scrollPane.setViewportView(cyclesList);
         cyclesList.addListSelectionListener(this);
@@ -216,6 +216,6 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
     private final javax.swing.JButton editButton;
-    private final javax.swing.JList cyclesList;
+    private final javax.swing.JList<Wrapper<TrainsCycle>> cyclesList;
     private final javax.swing.JTextField newNameTextField;
 }

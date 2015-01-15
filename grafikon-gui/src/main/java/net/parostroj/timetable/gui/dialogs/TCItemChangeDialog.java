@@ -20,8 +20,8 @@ import java.awt.event.ActionEvent;
  */
 public class TCItemChangeDialog extends JDialog {
 
-    private final javax.swing.JComboBox fromComboBox;
-    private final javax.swing.JComboBox toComboBox;
+    private final javax.swing.JComboBox<Wrapper<TimeInterval>> fromComboBox;
+    private final javax.swing.JComboBox<Wrapper<TimeInterval>> toComboBox;
     private boolean ok;
     private final JTextField commentTextField;
 
@@ -62,8 +62,8 @@ public class TCItemChangeDialog extends JDialog {
         gbc_fromLabel.anchor = GridBagConstraints.WEST;
         panel.add(fromLabel, gbc_fromLabel);
 
-        fromComboBox = new javax.swing.JComboBox();
-        fromComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmm");
+        fromComboBox = new javax.swing.JComboBox<Wrapper<TimeInterval>>();
+        fromComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
 
         GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
         gbc_fromComboBox.anchor = GridBagConstraints.WEST;
@@ -75,8 +75,8 @@ public class TCItemChangeDialog extends JDialog {
         gbc_toLabel.insets = new Insets(0, 0, 5, 5);
         gbc_toLabel.anchor = GridBagConstraints.WEST;
         panel.add(toLabel, gbc_toLabel);
-        toComboBox = new javax.swing.JComboBox();
-        toComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmm");
+        toComboBox = new javax.swing.JComboBox<Wrapper<TimeInterval>>();
+        toComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmm"));
         GridBagConstraints gbc_toComboBox = new GridBagConstraints();
         gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
         gbc_toComboBox.anchor = GridBagConstraints.WEST;

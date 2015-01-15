@@ -1,6 +1,6 @@
 /*
  * LoadSave.java
- * 
+ *
  * Created on 12.10.2007, 10:20:14
  */
 package net.parostroj.timetable.model.save;
@@ -24,7 +24,7 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 
 /**
  * Helper class for loading/saving model and other parts.
- * 
+ *
  * @author jub
  */
 public class LoadSave implements FileLoadSave {
@@ -39,10 +39,10 @@ public class LoadSave implements FileLoadSave {
     static {
         VERSIONS = Collections.unmodifiableList(Arrays.asList(new ModelVersion(1, 0), new ModelVersion(2, 0), new ModelVersion(2, 1), new ModelVersion(2, 2)));
     }
-    
-    private List<TrainDiagramFilter> loadFilters;
-    private List<TrainDiagramFilter> saveFilters;
-    
+
+    private final List<TrainDiagramFilter> loadFilters;
+    private final List<TrainDiagramFilter> saveFilters;
+
     public LoadSave() {
         loadFilters = new LinkedList<TrainDiagramFilter>();
         loadFilters.add(new TrainsNamesLoadFilter());
@@ -51,11 +51,10 @@ public class LoadSave implements FileLoadSave {
         loadFilters.add(new RouteFilter());
         saveFilters = new LinkedList<TrainDiagramFilter>();
     }
-    
+
     @Override
     public TrainDiagram load(File file) throws LSException {
-        try {
-            ZipFile zip = new ZipFile(file);
+        try (ZipFile zip = new ZipFile(file)) {
             TrainDiagram diagram = null;
 
             // load metadata
@@ -141,13 +140,13 @@ public class LoadSave implements FileLoadSave {
             }
         }
     }
-    
+
     private Properties createMetadata() {
         Properties metadata = new Properties();
         metadata.setProperty(METADATA_KEY_MODEL_VERSION, LSSerializer.getLatestVersion().getVersion());
         return metadata;
     }
-    
+
     private TrainDiagram loadTrainDiagram(ModelVersion modelVersion, Properties metadata, Reader reader, LSTrainTypeList types) throws LSException, IOException {
         LSSerializer serializer = LSSerializer.getLSSerializer(modelVersion);
         TrainDiagram diagram = serializer.load(reader, types);
@@ -157,7 +156,7 @@ public class LoadSave implements FileLoadSave {
         (new AfterLoadCheck()).check(diagram);
         return diagram;
     }
-    
+
     private void saveTrainDiagram(Writer writer, TrainDiagram diagram, LSTrainTypeList trainTypeList) throws LSException, IOException {
         LSSerializer serializer = LSSerializer.getLatestLSSerializer();
         ModelVersion version = LSSerializer.getLatestVersion();

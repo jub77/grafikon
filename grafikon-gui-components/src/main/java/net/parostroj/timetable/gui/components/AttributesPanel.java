@@ -132,7 +132,7 @@ public class AttributesPanel extends javax.swing.JPanel {
             }
         });
 
-        typeComboBox = new JComboBox();
+        typeComboBox = new JComboBox<Type>();
         for (Type t : Type.values()) {
             typeComboBox.addItem(t);
         }
@@ -204,5 +204,5 @@ public class AttributesPanel extends javax.swing.JPanel {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
-    private JComboBox typeComboBox;
+    private JComboBox<Type> typeComboBox;
 }

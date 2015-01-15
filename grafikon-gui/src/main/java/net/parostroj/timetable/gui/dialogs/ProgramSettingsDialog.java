@@ -91,11 +91,11 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
 
         unitLabel.setText(ResourceLoader.getString("modelinfo.unit")); // NOI18N
         unitsPanel.add(unitLabel);
-        unitComboBox = new javax.swing.JComboBox();
+        unitComboBox = new javax.swing.JComboBox<LengthUnit>();
         unitsPanel.add(unitComboBox);
         JLabel speedUnitLabel = new JLabel(ResourceLoader.getString("modelinfo.speed.unit")); //$NON-NLS-1$
         unitsPanel.add(speedUnitLabel);
-        speedUnitComboBox = new javax.swing.JComboBox();
+        speedUnitComboBox = new javax.swing.JComboBox<SpeedUnit>();
         unitsPanel.add(speedUnitComboBox);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.CENTER);
@@ -155,6 +155,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
     }
 
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JComboBox unitComboBox;
-    private javax.swing.JComboBox speedUnitComboBox;
+    private javax.swing.JComboBox<LengthUnit> unitComboBox;
+    private javax.swing.JComboBox<SpeedUnit> speedUnitComboBox;
 }

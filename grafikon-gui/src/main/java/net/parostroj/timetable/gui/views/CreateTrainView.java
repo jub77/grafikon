@@ -59,8 +59,8 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     public void updateView(Group selectedGroup) {
         this.createTrainCommand = null;
-        DefaultComboBoxModel fromModel = new DefaultComboBoxModel();
-        DefaultComboBoxModel toModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel<Node> fromModel = new DefaultComboBoxModel<Node>();
+        DefaultComboBoxModel<Node> toModel = new DefaultComboBoxModel<Node>();
 
         Collection<Node> v = diagram.getNet().getNodes();
         NodeSort sort = new NodeSort(NodeSort.Type.ASC);
@@ -77,7 +77,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         toComboBox.setModel(toModel);
 
         // model for train types
-        typeComboBox.setModel(new DefaultComboBoxModel(diagram.getTrainTypes().toArray()));
+        typeComboBox.setModel(new DefaultComboBoxModel<TrainType>(diagram.getTrainTypes().toArray(new TrainType[0])));
         typeComboBox.addItem(NO_TYPE);
 
         // reset through nodes
@@ -90,9 +90,9 @@ public class CreateTrainView extends javax.swing.JPanel {
 
     private void initComponents() {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        fromComboBox = new javax.swing.JComboBox();
+        fromComboBox = new javax.swing.JComboBox<Node>();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        toComboBox = new javax.swing.JComboBox();
+        toComboBox = new javax.swing.JComboBox<Node>();
         speedTextField = new javax.swing.JTextField();
         speedTextField.setColumns(10);
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
@@ -104,7 +104,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
-        typeComboBox = new javax.swing.JComboBox();
+        typeComboBox = new javax.swing.JComboBox<TrainType>();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         startTimeTextField = new javax.swing.JTextField();
         startTimeTextField.setColumns(10);
@@ -371,7 +371,7 @@ public class CreateTrainView extends javax.swing.JPanel {
     private javax.swing.JCheckBox dieselCheckBox;
     private javax.swing.JCheckBox electricCheckBox;
     private javax.swing.JCheckBox managedFreightCheckBox;
-    private javax.swing.JComboBox fromComboBox;
+    private javax.swing.JComboBox<Node> fromComboBox;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField speedTextField;
@@ -379,7 +379,7 @@ public class CreateTrainView extends javax.swing.JPanel {
     private javax.swing.JTextField stopTextField;
     private javax.swing.JButton throughButton;
     private javax.swing.JTextField throughTextField;
-    private javax.swing.JComboBox toComboBox;
-    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JComboBox<Node> toComboBox;
+    private javax.swing.JComboBox<TrainType> typeComboBox;
     private GroupsComboBox groupComboBox;
 }

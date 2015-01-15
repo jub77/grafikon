@@ -162,7 +162,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
             }});
         GridBagLayout gbl_buttonPanel = new GridBagLayout();
         buttonPanel.setLayout(gbl_buttonPanel);
-        typeComboBox = new javax.swing.JComboBox();
+        typeComboBox = new javax.swing.JComboBox<Object>();
 
         typeComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmmmm");
         typeComboBox.addItemListener(new java.awt.event.ItemListener() {
@@ -271,7 +271,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
     private javax.swing.JButton saveButton;
     private LimitedSlider sizeSlider;
-    private javax.swing.JComboBox typeComboBox;
+    private javax.swing.JComboBox<Object> typeComboBox;
     private LimitedSlider zoomSlider;
     private Component horizontalGlue;
 
