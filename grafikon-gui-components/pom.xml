@@ -13,27 +13,22 @@
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-model</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-net</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-output2</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
-            <version>2.5.6</version>
         </dependency>
         <dependency>
             <groupId>org.swinglabs</groupId>
             <artifactId>jxlayer</artifactId>
-            <version>3.0.4</version>
         </dependency>
     </dependencies>
 </project>
