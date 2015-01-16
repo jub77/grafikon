@@ -85,7 +85,6 @@
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-start</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -13,12 +13,10 @@
         <dependency>
             <groupId>net.parostroj</groupId>
             <artifactId>grafikon-model</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.18.3</version>
         </dependency>
     </dependencies>
 </project>
