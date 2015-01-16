@@ -12,21 +12,21 @@
 
     <properties>
         <batik.version>1.7</batik.version>
-        <groovy.version>2.2.1</groovy.version>
-        <jgraph.version>2.0.0.1</jgraph.version>
+        <groovy.version>2.3.9</groovy.version>
+        <jgraph.version>2.3.0.5</jgraph.version>
         <jgrapht.version>0.9.0</jgrapht.version>
-        <mvel2.version>2.1.9.Final</mvel2.version>
-        <jersey.version>1.18</jersey.version>
-        <slf4j.version>1.7.6</slf4j.version>
+        <mvel2.version>2.2.2.Final</mvel2.version>
+        <jersey.version>1.18.3</jersey.version>
+        <slf4j.version>1.7.10</slf4j.version>
         <commons.io.version>1.3.1</commons.io.version>
         <fop.version>1.1</fop.version>
         <avalon.version>4.2.0</avalon.version>
-        <rsyntaxtextarea.version>2.5.0</rsyntaxtextarea.version>
+        <rsyntaxtextarea.version>2.5.6</rsyntaxtextarea.version>
         <jxlayer.version>3.0.4</jxlayer.version>
-        <jodatime.version>2.3</jodatime.version>
+        <jodatime.version>2.6</jodatime.version>
         <xmlgraphics.version>1.5</xmlgraphics.version>
         <ini4j.version>0.5.2</ini4j.version>
-        <guava.version>16.0.1</guava.version>
+        <guava.version>18.0</guava.version>
         <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
     </properties>
 
