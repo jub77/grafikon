@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scripts>
+    <script>
+        <id>copy_engines_to_engineers_select</id>
+        <name>Copy engine to engineers circulations (selection)</name>
+        <language>GROOVY</language>
+        <location>copy_engines_to_engineers_select.groovy</location>
+    </script>
+    <script>
+        <id>check_duplicate_train_numbers</id>
+        <name>Check duplicate train numbers</name>
+        <language>GROOVY</language>
+        <location>check_duplicate_train_numbers.groovy</location>
+    </script>
+</scripts>

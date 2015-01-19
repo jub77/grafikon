@@ -1,0 +1,100 @@
+/*
+ * LSEngineCycle.java
+ *
+ * Created on 12.9.2007, 13:00:29
+ */
+package net.parostroj.timetable.model.save.version02;
+
+import java.util.UUID;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+
+/**
+ * Storage object for engine cycle.
+ *
+ * @author jub
+ */
+public class LSTrainsCycle {
+
+    private String name;
+
+    private String uuid;
+
+    private String description;
+
+    private String comment;
+
+    private LSTrainsCycleItem[] items;
+
+    private String type;
+
+    public LSTrainsCycle(TrainsCycle trainsCycle, LSTransformationData data, String type) {
+        this.name = trainsCycle.getName();
+        this.description = trainsCycle.getDescription();
+        this.comment = trainsCycle.getAttribute("comment", String.class);
+
+        items = new LSTrainsCycleItem[trainsCycle.getItems().size()];
+        int i = 0;
+        for (TrainsCycleItem item : trainsCycle) {
+            items[i++] = new LSTrainsCycleItem(item, data);
+        }
+        this.type = type;
+        this.uuid = trainsCycle.getId();
+    }
+
+    public LSTrainsCycle() {}
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public LSTrainsCycleItem[] getItems() {
+        return items;
+    }
+
+    public void setItems(LSTrainsCycleItem[] items) {
+        this.items = items;
+    }
+
+    public String getUuid() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void visit(LSVisitor visitor) {
+        visitor.visit(this);
+    }
+}

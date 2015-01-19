@@ -1,0 +1,20 @@
+<fop version="1.0">
+
+    <!-- Base URL for resolving relative URLs -->
+    <base>./</base>
+
+    <!-- Font Base URL for resolving relative font URLs -->
+    <font-base>./</font-base>
+    <renderers>
+        <renderer mime="application/pdf">
+            <fonts>
+                <font embed-url="templates/pdf/DejaVuSans.ttf" kerning="yes" embedding-mode="full">
+                    <font-triplet name="Sans" style="normal" weight="normal"/>
+                </font>
+                <font embed-url="templates/pdf/DejaVuSans-Bold.ttf" kerning="yes" embedding-mode="full">
+                    <font-triplet name="Sans" style="normal" weight="bold"/>
+                </font>
+            </fonts>
+        </renderer>
+    </renderers>
+</fop>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template_list>
+    <template>
+        <name>Česká</name>
+        <filename>czech.gtm</filename>
+    </template>
+    <template>
+        <name>Slovenská</name>
+        <filename>slovak.gtm</filename>
+    </template>
+    <template>
+        <name>Polski</name>
+        <filename>polish.gtm</filename>
+    </template>
+    <template>
+        <name>- (NS40)</name>
+        <filename>empty_ns40.gtm</filename>
+    </template>
+    <template>
+        <name>-</name>
+        <filename>empty.gtm</filename>
+    </template>
+</template_list>

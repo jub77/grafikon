@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scripts>
+    <script>
+        <id>recalculate</id>
+        <name>Recalculate</name>
+        <language>GROOVY</language>
+        <location>recalculate.groovy</location>
+    </script>
+    <script>
+        <id>remove_weights</id>
+        <name>Remove weights</name>
+        <language>GROOVY</language>
+        <location>remove_weights.groovy</location>
+    </script>
+    <script>
+        <id>hide_length</id>
+        <name>Do not show length</name>
+        <language>GROOVY</language>
+        <location>hide_length.groovy</location>
+    </script>
+    <script>
+        <id>show_length</id>
+        <name>Show length</name>
+        <language>GROOVY</language>
+        <location>show_length.groovy</location>
+    </script>
+    <script>
+        <id>remove_interval_speed</id>
+        <name>Remove interval speed</name>
+        <language>GROOVY</language>
+        <location>remove_interval_speed.groovy</location>
+    </script>
+    <script>
+        <id>copy_engines_to_engineers</id>
+        <name>Copy engine to engineers circulations</name>
+        <language>GROOVY</language>
+        <location>copy_engines_to_engineers.groovy</location>
+    </script>
+    <script>
+        <id>add_managed_freight</id>
+        <name>Add trains to managed freight</name>
+        <language>GROOVY</language>
+        <location>add_managed_freight.groovy</location>
+    </script>
+</scripts>
