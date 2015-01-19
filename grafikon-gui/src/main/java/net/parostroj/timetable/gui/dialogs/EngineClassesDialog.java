@@ -200,7 +200,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        engineClassesList = new javax.swing.JList();
+        engineClassesList = new javax.swing.JList<Wrapper<EngineClass>>();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(8);
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
@@ -460,7 +460,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteRowButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JList engineClassesList;
+    private javax.swing.JList<Wrapper<EngineClass>> engineClassesList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;

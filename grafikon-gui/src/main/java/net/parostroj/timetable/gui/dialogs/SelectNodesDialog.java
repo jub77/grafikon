@@ -41,7 +41,7 @@ public class SelectNodesDialog extends javax.swing.JDialog {
     private void initComponents() {
         nodesPanel = new javax.swing.JPanel();
         nodesPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        nodesComboBox = new javax.swing.JComboBox();
+        nodesComboBox = new javax.swing.JComboBox<Node>();
         javax.swing.JPanel buttonsPanel = new javax.swing.JPanel();
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
@@ -79,6 +79,6 @@ public class SelectNodesDialog extends javax.swing.JDialog {
         pack();
     }
 
-    private javax.swing.JComboBox nodesComboBox;
+    private javax.swing.JComboBox<Node> nodesComboBox;
     private javax.swing.JPanel nodesPanel;
 }

@@ -115,7 +115,7 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
 
     private void initComponents() {
         templateTextField = new javax.swing.JTextField();
-        languageComboBox = new javax.swing.JComboBox();
+        languageComboBox = new javax.swing.JComboBox<Language>();
 
         setLayout(new java.awt.BorderLayout());
         add(templateTextField, java.awt.BorderLayout.CENTER);
@@ -123,6 +123,6 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
         add(languageComboBox, java.awt.BorderLayout.LINE_END);
     }
 
-    private javax.swing.JComboBox languageComboBox;
+    private javax.swing.JComboBox<Language> languageComboBox;
     private javax.swing.JTextField templateTextField;
 }

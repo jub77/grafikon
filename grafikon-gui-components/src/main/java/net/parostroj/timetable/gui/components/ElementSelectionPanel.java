@@ -61,17 +61,17 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        leftList = new javax.swing.JList();
+        leftList = new javax.swing.JList<Wrapper<T>>();
         moveRightButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, 2);
         moveLeftButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, 2);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
-        rightList = new javax.swing.JList();
+        rightList = new javax.swing.JList<Wrapper<T>>();
 
         scrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         leftList.setModel(leftListModel);
-        leftList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
+        leftList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmm"));
         scrollPane1.setViewportView(leftList);
 
         moveRightButton.addActionListener(new java.awt.event.ActionListener() {
@@ -90,7 +90,7 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         rightList.setModel(rightListModel);
-        rightList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
+        rightList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmm"));
         scrollPane2.setViewportView(rightList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -146,8 +146,8 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         }
     }
 
-    private javax.swing.JList leftList;
+    private javax.swing.JList<Wrapper<T>> leftList;
     private javax.swing.JButton moveLeftButton;
     private javax.swing.JButton moveRightButton;
-    private javax.swing.JList rightList;
+    private javax.swing.JList<Wrapper<T>> rightList;
 }

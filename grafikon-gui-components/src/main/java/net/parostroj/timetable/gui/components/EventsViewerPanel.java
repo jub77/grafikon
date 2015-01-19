@@ -28,7 +28,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     private boolean writeToLog = false;
     private final Timer timer;
 
-    class EventListModel extends AbstractListModel {
+    class EventListModel extends AbstractListModel<Object> {
 
         private final List<Triplet<Object, String, String>> eventList = new ArrayList<Triplet<Object, String, String>>();
         private int limit = 0;
@@ -124,7 +124,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     private void initComponents() {
         splitPane = new javax.swing.JSplitPane();
         scrollPane1 = new javax.swing.JScrollPane();
-        eventsList = new javax.swing.JList();
+        eventsList = new javax.swing.JList<Object>();
         scrollPane2 = new javax.swing.JScrollPane();
         eventTextArea = new javax.swing.JTextArea();
         buttonsPanel = new javax.swing.JPanel();
@@ -237,7 +237,7 @@ public class EventsViewerPanel extends javax.swing.JPanel {
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton clearButton;
     private javax.swing.JTextArea eventTextArea;
-    private javax.swing.JList eventsList;
+    private javax.swing.JList<Object> eventsList;
     private javax.swing.JButton limitButton;
     private javax.swing.JFormattedTextField limitTextField;
     private javax.swing.JScrollPane scrollPane1;

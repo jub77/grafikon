@@ -30,7 +30,7 @@ import net.parostroj.timetable.model.imports.ImportMatch;
  */
 public class ImportDialog extends javax.swing.JDialog {
 
-    private static final ListModel EMPTY_LIST_MODEL = new DefaultListModel();
+    private static final ListModel<Wrapper<ObjectWithId>> EMPTY_LIST_MODEL = new DefaultListModel<>();
 
     private TrainDiagram diagram;
     private TrainDiagram libraryDiagram;
@@ -90,24 +90,24 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-        componentsList = new javax.swing.JList();
+        componentsList = new javax.swing.JList<Wrapper<ObjectWithId>>();
         removeButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, 2);
         addButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, 2);
         javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
-        selectedComponentsList = new javax.swing.JList();
+        selectedComponentsList = new javax.swing.JList<Wrapper<ObjectWithId>>();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        componentComboBox = new javax.swing.JComboBox();
+        componentComboBox = new javax.swing.JComboBox<Wrapper<ImportComponent>>();
         componentComboBox.setMaximumRowCount(ImportComponent.values().length);
         javax.swing.JLabel matchLabel = new javax.swing.JLabel();
-        matchComboBox = new javax.swing.JComboBox();
+        matchComboBox = new javax.swing.JComboBox<Wrapper<ImportMatch>>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        componentsList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        componentsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
         componentsList.setVisibleRowCount(20);
         jScrollPane1.setViewportView(componentsList);
 
@@ -126,7 +126,7 @@ public class ImportDialog extends javax.swing.JDialog {
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        selectedComponentsList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        selectedComponentsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
         selectedComponentsList.setVisibleRowCount(20);
         jScrollPane2.setViewportView(selectedComponentsList);
 
@@ -266,7 +266,7 @@ public class ImportDialog extends javax.swing.JDialog {
         right = fillList(comps, selectedComponentsList, sel);
     }
 
-    private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList list, Set<ObjectWithId> set) {
+    private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList<Wrapper<ObjectWithId>> list, Set<ObjectWithId> set) {
         WrapperDelegate delegate = null;
         if (comps == ImportComponent.TRAINS_CYCLES) {
             delegate = new TrainsCycleWrapperDelegate(true);
@@ -299,10 +299,10 @@ public class ImportDialog extends javax.swing.JDialog {
 
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox componentComboBox;
-    private javax.swing.JList componentsList;
-    private javax.swing.JComboBox matchComboBox;
+    private javax.swing.JComboBox<Wrapper<ImportComponent>> componentComboBox;
+    private javax.swing.JList<Wrapper<ObjectWithId>> componentsList;
+    private javax.swing.JComboBox<Wrapper<ImportMatch>> matchComboBox;
     private javax.swing.JButton okButton;
     private javax.swing.JButton removeButton;
-    private javax.swing.JList selectedComponentsList;
+    private javax.swing.JList<Wrapper<ObjectWithId>> selectedComponentsList;
 }

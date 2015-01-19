@@ -15,10 +15,10 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class GroupsComboBox extends JComboBox {
+public class GroupsComboBox extends JComboBox<Wrapper<Group>> {
 
-    private final Wrapper<String> all = new Wrapper<String>("<" + ResourceLoader.getString("groups.all") + ">");
-    private final Wrapper<String> none = new Wrapper<String>("<" + ResourceLoader.getString("groups.none") + ">");
+    private final Wrapper<Group> all = Wrapper.getPrototypeWrapper("<" + ResourceLoader.getString("groups.all") + ">");
+    private final Wrapper<Group> none = Wrapper.getPrototypeWrapper("<" + ResourceLoader.getString("groups.none") + ">");
     private final boolean allOption;
 
     /**
@@ -52,8 +52,9 @@ public class GroupsComboBox extends JComboBox {
         // clear
         removeAllItems();
         // add no and all
-        if (allOption)
+        if (allOption) {
             addItem(all);
+        }
         addItem(none);
         List<Group> groups = new ArrayList<Group>(diagram.getGroups());
         this.sortGroups(groups);

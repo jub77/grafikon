@@ -114,7 +114,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         abbrTextField = new javax.swing.JTextField();
-        brakeComboBox = new javax.swing.JComboBox();
+        brakeComboBox = new javax.swing.JComboBox<Wrapper<TrainTypeCategory>>();
         editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
         descTextField = new javax.swing.JTextField();
         nameTemplateCheckBox = new javax.swing.JCheckBox();
@@ -123,7 +123,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JScrollPane jScrollPane = new javax.swing.JScrollPane();
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        trainTypesList = new javax.swing.JList();
+        trainTypesList = new javax.swing.JList<Wrapper<TrainType>>();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
@@ -222,7 +222,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
 
-        lineTypeComboBox = new javax.swing.JComboBox();
+        lineTypeComboBox = new javax.swing.JComboBox<Wrapper<LineType>>();
 
         lineWidthTextField = new javax.swing.JTextField();
         lineWidthTextField.setColumns(4);
@@ -597,7 +597,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     }
 
     private javax.swing.JTextField abbrTextField;
-    private javax.swing.JComboBox brakeComboBox;
+    private javax.swing.JComboBox<Wrapper<TrainTypeCategory>> brakeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox cNameTemplateEditBox;
     private javax.swing.JLabel colorLabel;
     private javax.swing.JCheckBox completeNameTemplateCheckBox;
@@ -609,12 +609,12 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox nameTemplateCheckBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JButton newButton;
-    private javax.swing.JList trainTypesList;
+    private javax.swing.JList<Wrapper<TrainType>> trainTypesList;
     private javax.swing.JButton upButton;
     private javax.swing.JButton updateButton;
     private javax.swing.JCheckBox showWeightInfoCheckBox;
     private javax.swing.JTextField lineWidthTextField;
-    private javax.swing.JComboBox lineTypeComboBox;
+    private javax.swing.JComboBox<Wrapper<LineType>> lineTypeComboBox;
     private javax.swing.JTextField lineLengthTextField;
 
     private static class LineTypeWrapperDelegate implements WrapperDelegate {

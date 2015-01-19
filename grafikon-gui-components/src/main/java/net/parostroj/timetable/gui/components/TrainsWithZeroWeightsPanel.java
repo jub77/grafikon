@@ -27,7 +27,7 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
     }
 
     private Train getSelectedTrain() {
-        Wrapper<?> selectedValue = (Wrapper<?>) trainsList.getSelectedValue();
+        Wrapper<?> selectedValue = trainsList.getSelectedValue();
         return selectedValue != null ? (Train) selectedValue.getElement() : null;
     }
 
@@ -107,7 +107,7 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
 
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
-        trainsList = new javax.swing.JList();
+        trainsList = new javax.swing.JList<Wrapper<Train>>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -119,5 +119,5 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
     }
 
     private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JList trainsList;
+    private javax.swing.JList<Wrapper<Train>> trainsList;
 }

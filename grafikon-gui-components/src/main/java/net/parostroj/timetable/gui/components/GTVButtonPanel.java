@@ -28,7 +28,7 @@ import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 public class GTVButtonPanel extends JPanel {
 
     private final GraphicalTimetableView view;
-    private JComboBox comboBox;
+    private JComboBox<Wrapper<Route>> comboBox;
     private WrapperListModel<Route> comboBoxModel;
     private JPanel panel;
     private TrainDiagram td;
@@ -136,7 +136,7 @@ public class GTVButtonPanel extends JPanel {
         panel.add(zoomOut);
 
         comboBoxModel = new WrapperListModel<Route>(true);
-        comboBox = new JComboBox();
+        comboBox = new JComboBox<Wrapper<Route>>();
         comboBox.setModel(comboBoxModel);
         comboBox.addActionListener(new ActionListener() {
             @Override

@@ -14,7 +14,7 @@ import javax.swing.ComboBoxModel;
  *
  * @author jub
  */
-public class WrapperListModel<T> extends AbstractListModel implements ComboBoxModel {
+public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implements ComboBoxModel<Wrapper<T>> {
 
     public interface ObjectListener<T> {
         void added(T object, int index);
@@ -257,7 +257,7 @@ public class WrapperListModel<T> extends AbstractListModel implements ComboBoxMo
     }
 
     @Override
-    public Object getElementAt(int index) {
+    public Wrapper<T> getElementAt(int index) {
         return list.get(index);
     }
 

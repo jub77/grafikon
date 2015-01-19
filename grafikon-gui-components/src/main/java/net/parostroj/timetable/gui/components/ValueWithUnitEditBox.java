@@ -127,7 +127,7 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
     private void initComponents() {
         valueTextField = new javax.swing.JFormattedTextField();
         valueTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        unitComboBox = new javax.swing.JComboBox();
+        unitComboBox = new javax.swing.JComboBox<Unit>();
 
         setLayout(new java.awt.BorderLayout());
         add(valueTextField, java.awt.BorderLayout.CENTER);
@@ -157,6 +157,6 @@ public class ValueWithUnitEditBox extends javax.swing.JPanel {
         }
     }
 
-    private javax.swing.JComboBox unitComboBox;
+    private javax.swing.JComboBox<Unit> unitComboBox;
     private javax.swing.JFormattedTextField valueTextField;
 }
