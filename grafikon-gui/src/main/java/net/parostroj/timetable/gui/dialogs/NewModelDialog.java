@@ -77,14 +77,14 @@ public class NewModelDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        scaleComboBox = new javax.swing.JComboBox();
+        scaleComboBox = new javax.swing.JComboBox<Scale>();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        ratioComboBox = new javax.swing.JComboBox();
+        ratioComboBox = new javax.swing.JComboBox<String>();
         javax.swing.JPanel panel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        templatesComboBox = new javax.swing.JComboBox();
+        templatesComboBox = new javax.swing.JComboBox<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("newmodel")); // NOI18N
@@ -185,7 +185,7 @@ public class NewModelDialog extends javax.swing.JDialog {
 
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton okButton;
-    private javax.swing.JComboBox ratioComboBox;
-    private javax.swing.JComboBox scaleComboBox;
-    private javax.swing.JComboBox templatesComboBox;
+    private javax.swing.JComboBox<String> ratioComboBox;
+    private javax.swing.JComboBox<Scale> scaleComboBox;
+    private javax.swing.JComboBox<String> templatesComboBox;
 }

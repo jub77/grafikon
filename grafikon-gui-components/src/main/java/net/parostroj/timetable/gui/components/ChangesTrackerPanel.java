@@ -97,7 +97,7 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         }
     }
 
-    private static class ChangesTrackerListModel extends DefaultListModel {
+    private static class ChangesTrackerListModel extends DefaultListModel<Object> {
         public void fireUpdated(int index) {
             if (index != -1)
                 this.fireContentsChanged(this, index, index);
@@ -158,11 +158,11 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         switch (event.getType()) {
             case CHANGE_ADDED:
                 if (event.getSet() == current)
-                    ((DefaultListModel)changesList.getModel()).addElement(new ChangeWrapper(event.getChange()));
+                    ((ChangesTrackerListModel)changesList.getModel()).addElement(new ChangeWrapper(event.getChange()));
                 break;
             case CHANGE_REMOVED:
                 if (event.getSet() == current)
-                    ((DefaultListModel)changesList.getModel()).removeElement(new ChangeWrapper(event.getChange()));
+                    ((ChangesTrackerListModel)changesList.getModel()).removeElement(new ChangeWrapper(event.getChange()));
                 break;
             case CHANGE_MODIFIED:
                 ChangeWrapper w = (ChangeWrapper)changesList.getSelectedValue();
@@ -188,9 +188,9 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         splitPane2 = new javax.swing.JSplitPane();
         splitPane = new javax.swing.JSplitPane();
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
-        versionsList = new javax.swing.JList();
+        versionsList = new javax.swing.JList<Object>();
         javax.swing.JScrollPane scrollPane3 = new javax.swing.JScrollPane();
-        changesList = new javax.swing.JList();
+        changesList = new javax.swing.JList<Object>();
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
         detailsTextArea = new javax.swing.JTextArea();
 
@@ -294,9 +294,9 @@ public class ChangesTrackerPanel extends javax.swing.JPanel implements ChangesTr
         splitPane2.setDividerLocation(divider);
     }
 
-    private javax.swing.JList changesList;
+    private javax.swing.JList<Object> changesList;
     private javax.swing.JTextArea detailsTextArea;
     private javax.swing.JSplitPane splitPane;
     private javax.swing.JSplitPane splitPane2;
-    private javax.swing.JList versionsList;
+    private javax.swing.JList<Object> versionsList;
 }

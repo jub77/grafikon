@@ -111,7 +111,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        imagesList = new javax.swing.JList();
+        imagesList = new javax.swing.JList<Wrapper<TimetableImage>>();
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         renameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -249,7 +249,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
     }
 
     private javax.swing.JButton deleteButton;
-    private javax.swing.JList imagesList;
+    private javax.swing.JList<Wrapper<TimetableImage>> imagesList;
     private javax.swing.JButton newButton;
     private javax.swing.JButton renameButton;
 }

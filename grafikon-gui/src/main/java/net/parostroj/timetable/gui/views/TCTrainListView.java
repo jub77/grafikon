@@ -215,9 +215,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         overlappingCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         filterbuttonGroup = new javax.swing.ButtonGroup();
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        allTrainsList = new javax.swing.JList();
+        allTrainsList = new javax.swing.JList<Wrapper<Train>>();
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
-        cTrainsList = new javax.swing.JList();
+        cTrainsList = new javax.swing.JList<Wrapper<TrainsCycleItem>>();
         addButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, BUTTON_MARGIN);
         removeButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, BUTTON_MARGIN);
         javax.swing.JScrollPane errorsScrollPane = new javax.swing.JScrollPane();
@@ -286,7 +286,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         allTrainsList.setComponentPopupMenu(filterMenu);
-        allTrainsList.setPrototypeCellValue("mmmmmmmmmmmmm");
+        allTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         allTrainsList.setVisibleRowCount(5);
         allTrainsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
@@ -298,7 +298,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        cTrainsList.setPrototypeCellValue("mmmmmmmmmmmmm");
+        cTrainsList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmm"));
         cTrainsList.setVisibleRowCount(5);
         cTrainsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
@@ -557,10 +557,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private Set<TrainType> selectedTypes = new HashSet<TrainType>();
 
     private javax.swing.JButton addButton;
-    private javax.swing.JList allTrainsList;
+    private javax.swing.JList<Wrapper<Train>> allTrainsList;
     private javax.swing.JButton changeButton;
     private net.parostroj.timetable.gui.views.ColorTextPane coverageTextPane;
-    private javax.swing.JList cTrainsList;
+    private javax.swing.JList<Wrapper<TrainsCycleItem>> cTrainsList;
     private javax.swing.JPopupMenu filterMenu;
     private javax.swing.ButtonGroup filterbuttonGroup;
     private javax.swing.JTextArea infoTextArea;

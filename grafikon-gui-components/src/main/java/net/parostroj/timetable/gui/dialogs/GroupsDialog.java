@@ -37,7 +37,7 @@ public class GroupsDialog extends JDialog {
     private final JTextField groupNameTextField;
     private final JButton newButton;
     private final JButton deleteButton;
-    private final JList list;
+    private final JList<Wrapper<Group>> list;
 
     private TrainDiagram diagram;
     private final WrapperListModel<Group> groupsModel;
@@ -91,7 +91,7 @@ public class GroupsDialog extends JDialog {
         panel.add(scrollPane);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        list = new JList();
+        list = new JList<Wrapper<Group>>();
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {

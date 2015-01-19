@@ -54,7 +54,7 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
 
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
-        trainsList = new javax.swing.JList();
+        trainsList = new javax.swing.JList<Wrapper<Train>>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -117,7 +117,7 @@ public class ChangedTrainsPanel extends javax.swing.JPanel {
 
 
     private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JList trainsList;
+    private javax.swing.JList<Wrapper<Train>> trainsList;
     private javax.swing.JFormattedTextField limitTextField;
 
 }

@@ -134,7 +134,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
     private void initComponents() {
         javax.swing.JPanel panel = new javax.swing.JPanel();
-        languageComboBox = new javax.swing.JComboBox();
+        languageComboBox = new javax.swing.JComboBox<Language>();
         scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         templateTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
 
@@ -166,7 +166,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         }
     }
 
-    private javax.swing.JComboBox languageComboBox;
+    private javax.swing.JComboBox<Language> languageComboBox;
     private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea templateTextArea;
 }

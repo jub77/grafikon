@@ -87,6 +87,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
     }
 
+    @SafeVarargs
     public static <T> List<Wrapper<T>> getWrapperList(T... objList) {
         return getWrapperList(Arrays.asList(objList), null);
     }
@@ -118,5 +119,24 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             result.add(unwrap(w));
         }
         return result;
+    }
+
+    private static class PrototypeWrapper<T> extends Wrapper<T> {
+
+        private final String prototypeValue;
+
+        public PrototypeWrapper(String prototypeValue) {
+            super(null);
+            this.prototypeValue = prototypeValue;
+        }
+
+        @Override
+        public String toString() {
+            return prototypeValue;
+        }
+    }
+
+    public static <V> Wrapper<V> getPrototypeWrapper(String prototypeValue) {
+        return new PrototypeWrapper<V>(prototypeValue);
     }
 }

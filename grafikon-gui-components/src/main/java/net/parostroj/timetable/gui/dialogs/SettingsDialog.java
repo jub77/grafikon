@@ -193,16 +193,16 @@ public class SettingsDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        scaleComboBox = new javax.swing.JComboBox();
+        scaleComboBox = new javax.swing.JComboBox<Scale>();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        ratioComboBox = new javax.swing.JComboBox();
-        roundingComboBox = new javax.swing.JComboBox();
+        ratioComboBox = new javax.swing.JComboBox<String>();
+        roundingComboBox = new javax.swing.JComboBox<String>();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
-        sortComboBox = new javax.swing.JComboBox();
+        sortComboBox = new javax.swing.JComboBox<String>();
         javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
         changesTrackingCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel11 = new javax.swing.JLabel();
@@ -222,7 +222,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel10 = new javax.swing.JLabel();
         lengthPerAxleEditBox = new net.parostroj.timetable.gui.components.ValueWithUnitEditBox();
         javax.swing.JLabel jLabel15 = new javax.swing.JLabel();
-        lengthUnitComboBox = new javax.swing.JComboBox();
+        lengthUnitComboBox = new javax.swing.JComboBox<LengthUnit>();
         javax.swing.JPanel timeRangePanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel16 = new javax.swing.JLabel();
         fromTimeTextField = new javax.swing.JTextField();
@@ -493,10 +493,10 @@ public class SettingsDialog extends javax.swing.JDialog {
         getContentPane().add(unitsPanel, gridBagConstraints_5);
 
         unitsPanel.add(new javax.swing.JLabel(ResourceLoader.getString("modelinfo.unit")));
-        unitComboBox = new JComboBox();
+        unitComboBox = new JComboBox<Object>();
         unitsPanel.add(unitComboBox);
         unitsPanel.add(new javax.swing.JLabel(ResourceLoader.getString("modelinfo.speed.unit")));
-        speedUnitComboBox = new JComboBox();
+        speedUnitComboBox = new JComboBox<Object>();
         unitsPanel.add(speedUnitComboBox);
 
 
@@ -707,19 +707,19 @@ public class SettingsDialog extends javax.swing.JDialog {
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox emptyWeightEditBox;
     private javax.swing.JTextField fromTimeTextField;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox lengthPerAxleEditBox;
-    private javax.swing.JComboBox lengthUnitComboBox;
+    private javax.swing.JComboBox<LengthUnit> lengthUnitComboBox;
     private net.parostroj.timetable.gui.components.ValueWithUnitEditBox loadedWeightEditBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox nameTemplateEditBox;
     private javax.swing.JButton okButton;
-    private javax.swing.JComboBox ratioComboBox;
-    private javax.swing.JComboBox roundingComboBox;
+    private javax.swing.JComboBox<String> ratioComboBox;
+    private javax.swing.JComboBox<String> roundingComboBox;
     private javax.swing.JTextField rlRatioTextField;
     private javax.swing.JTextField rlUnitTextField;
-    private javax.swing.JComboBox scaleComboBox;
+    private javax.swing.JComboBox<Scale> scaleComboBox;
     private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
-    private javax.swing.JComboBox sortComboBox;
+    private javax.swing.JComboBox<String> sortComboBox;
     private javax.swing.JTextField stationTransferTextField;
     private javax.swing.JTextField toTimeTextField;
-    private javax.swing.JComboBox unitComboBox;
-    private javax.swing.JComboBox speedUnitComboBox;
+    private javax.swing.JComboBox<Object> unitComboBox;
+    private javax.swing.JComboBox<Object> speedUnitComboBox;
 }

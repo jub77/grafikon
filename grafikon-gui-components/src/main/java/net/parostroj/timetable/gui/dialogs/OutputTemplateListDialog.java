@@ -103,7 +103,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         outputAllButton = new javax.swing.JButton();
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        templateList = new javax.swing.JList();
+        templateList = new javax.swing.JList<Wrapper<OutputTemplate>>();
         javax.swing.JPanel locationPanel = new javax.swing.JPanel();
         javax.swing.JPanel locationPanel1 = new javax.swing.JPanel();
         locationTextField = new javax.swing.JTextField();
@@ -345,6 +345,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private javax.swing.JButton newButton;
     private javax.swing.JButton outputAllButton;
     private javax.swing.JButton outputButton;
-    private javax.swing.JList templateList;
+    private javax.swing.JList<Wrapper<OutputTemplate>> templateList;
     private javax.swing.JButton upButton;
 }

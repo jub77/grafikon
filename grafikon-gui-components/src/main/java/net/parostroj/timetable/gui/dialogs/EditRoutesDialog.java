@@ -99,7 +99,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         scrollPanel.setLayout(new BorderLayout(0, 0));
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         scrollPanel.add(scrollPane, BorderLayout.CENTER);
-        routesList = new javax.swing.JList();
+        routesList = new javax.swing.JList<Wrapper<Route>>();
 
         scrollPane.setMinimumSize(new java.awt.Dimension(0, 0));
         scrollPane.setPreferredSize(new java.awt.Dimension(300, 150));
@@ -141,7 +141,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         rightPanel.add(jLabel2, gbc_jLabel2);
 
         jLabel2.setText(ResourceLoader.getString("to.node"));
-        fromComboBox = new javax.swing.JComboBox();
+        fromComboBox = new javax.swing.JComboBox<Node>();
         GridBagConstraints gbc_fromComboBox = new GridBagConstraints();
         gbc_fromComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_fromComboBox.anchor = GridBagConstraints.WEST;
@@ -207,7 +207,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         throughTextField.setColumns(20);
 
         throughTextField.setEditable(false);
-        toComboBox = new javax.swing.JComboBox();
+        toComboBox = new javax.swing.JComboBox<Node>();
         GridBagConstraints gbc_toComboBox = new GridBagConstraints();
         gbc_toComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_toComboBox.insets = new Insets(0, 0, 5, 0);
@@ -301,12 +301,12 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     }
 
     private javax.swing.JButton deleteButton;
-    private javax.swing.JComboBox fromComboBox;
+    private javax.swing.JComboBox<Node> fromComboBox;
     private javax.swing.JCheckBox netPartCheckBox;
     private javax.swing.JButton newButton;
     private javax.swing.JTextField routeNameTextField;
-    private javax.swing.JList routesList;
+    private javax.swing.JList<Wrapper<Route>> routesList;
     private javax.swing.JButton throughButton;
     private javax.swing.JTextField throughTextField;
-    private javax.swing.JComboBox toComboBox;
+    private javax.swing.JComboBox<Node> toComboBox;
 }

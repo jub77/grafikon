@@ -22,8 +22,8 @@ import net.parostroj.timetable.utils.IdGenerator;
 public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
 
     private final JTextField nameTextField;
-    private final JComboBox keyTextField;
-    private final JComboBox templateComboBox;
+    private final JComboBox<String> keyTextField;
+    private final JComboBox<Wrapper<TrainTypeCategory>> templateComboBox;
 
     private TrainTypeCategory newCategory;
     private TrainTypeCategory templateCategory;
@@ -76,7 +76,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         gbc_templateLabel.gridy = 0;
         panel.add(templateLabel, gbc_templateLabel);
 
-        templateComboBox = new JComboBox();
+        templateComboBox = new JComboBox<Wrapper<TrainTypeCategory>>();
         GridBagConstraints gbc_templateComboBox = new GridBagConstraints();
         gbc_templateComboBox.insets = new Insets(0, 0, 5, 0);
         gbc_templateComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -109,7 +109,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         gbc_keyLabel.gridy = 2;
         panel.add(keyLabel, gbc_keyLabel);
 
-        keyTextField = new JComboBox();
+        keyTextField = new JComboBox<String>();
         keyTextField.addItem("passenger");
         keyTextField.addItem("freight");
         keyTextField.setEditable(true);

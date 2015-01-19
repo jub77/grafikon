@@ -2,12 +2,12 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
 
-import javax.swing.DefaultListModel;
-
 import net.parostroj.timetable.actions.NodeSort;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Node;
 
 /**
@@ -18,6 +18,7 @@ import net.parostroj.timetable.model.Node;
 public class ThroughNodesDialog extends javax.swing.JDialog {
 
     private List<Node> nodes;
+    private WrapperListModel<Node> nodeModel;
 
     /** Creates new form ThroughNodesDialog */
     public ThroughNodesDialog(java.awt.Frame parent, boolean modal) {
@@ -42,11 +43,11 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
         }
 
         // update list
-        DefaultListModel m = new DefaultListModel();
+        nodeModel = new WrapperListModel<Node>(false);
         for (Node n : nodes) {
-            m.addElement(n);
+            nodeModel.addWrapper(Wrapper.getWrapper(n));
         }
-        nodeList.setModel(m);
+        nodeList.setModel(nodeModel);
 
         this.pack();
     }
@@ -60,14 +61,14 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         scrollPane = new javax.swing.JScrollPane();
-        nodeList = new javax.swing.JList();
+        nodeList = new javax.swing.JList<Wrapper<Node>>();
         addButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         removeButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         cancelButton = new javax.swing.JButton();
-        nodeComboBox = new javax.swing.JComboBox();
+        nodeComboBox = new javax.swing.JComboBox<Node>();
         okButton = new javax.swing.JButton();
 
-        nodeList.setPrototypeCellValue("mmmmmmmmmmmmmmmmmmmm");
+        nodeList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmm"));
         scrollPane.setViewportView(nodeList);
 
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -88,8 +89,6 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
-
-        nodeComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmm");
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -138,7 +137,7 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (nodeComboBox.getSelectedItem() != null) {
-            ((DefaultListModel)nodeList.getModel()).addElement(nodeComboBox.getSelectedItem());
+            nodeModel.addWrapper(Wrapper.getWrapper((Node) nodeComboBox.getSelectedItem()));
             nodeList.setSelectedIndex(nodeList.getModel().getSize() - 1);
         }
     }
@@ -146,7 +145,7 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!nodeList.isSelectionEmpty()) {
             int index = nodeList.getSelectedIndex();
-            ((DefaultListModel)nodeList.getModel()).remove(index);
+            nodeModel.removeIndex(index);
             if (index >= nodeList.getModel().getSize())
                 index--;
             nodeList.setSelectedIndex(index);
@@ -159,18 +158,18 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // copy list of nodes back to nodes
-        Enumeration<?> e = ((DefaultListModel)nodeList.getModel()).elements();
+        List<Wrapper<Node>> wrappers = nodeModel.getListOfWrappers();
         nodes = new ArrayList<Node>();
-        while (e.hasMoreElements()) {
-            nodes.add((Node)e.nextElement());
+        for (Wrapper<Node> w : wrappers) {
+            nodes.add(w.getElement());
         }
         this.setVisible(false);
     }
 
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox nodeComboBox;
-    private javax.swing.JList nodeList;
+    private javax.swing.JComboBox<Node> nodeComboBox;
+    private javax.swing.JList<Wrapper<Node>> nodeList;
     private javax.swing.JButton okButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
