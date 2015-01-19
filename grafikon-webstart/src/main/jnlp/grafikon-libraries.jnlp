@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/1.1" href="grafikon-libraries.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/${project.version}" href="grafikon-libraries.jnlp">
     <information>
-        <title>Grafikon 1.1 libraries</title>
+        <title>Grafikon ${project.version} libraries</title>
         <vendor>jub</vendor>
-        <homepage href="http://jub.parostroj.net/wiki/Grafikon"/>
+        <homepage href="http://code.google.com/p/grafikon"/>
     </information>
     <security>
         <all-permissions/>
