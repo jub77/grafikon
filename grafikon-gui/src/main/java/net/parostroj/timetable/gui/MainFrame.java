@@ -685,8 +685,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(trainTimetableListByDcSelectMenuItem);
 
         trainTimetableListByRoutesMenuItem.setAction(outputAction);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
-        trainTimetableListByRoutesMenuItem.setText(bundle.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
+        trainTimetableListByRoutesMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
         trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
         actionMenu.add(trainTimetableListByRoutesMenuItem);
 
@@ -788,7 +787,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(outputTypeMenu);
 
         genTitlePageTTCheckBoxMenuItem.setSelected(true);
-        genTitlePageTTCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        genTitlePageTTCheckBoxMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
         genTitlePageTTCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -798,7 +797,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
         actionMenu.add(genTitlePageTTCheckBoxMenuItem);
 
-        twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(bundle.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
+        twoSidesPrintCheckBoxMenuItem = new JCheckBoxMenuItem(ResourceLoader.getString("menu.action.traintimetables.two.sides.print")); //$NON-NLS-1$
         twoSidesPrintCheckBoxMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -809,7 +808,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(twoSidesPrintCheckBoxMenuItem);
 
         stShowTechTimeCheckBoxMenuItem.setSelected(false);
-        stShowTechTimeCheckBoxMenuItem.setText(bundle.getString("menu.action.traintimetables.show.tech.time")); // NOI18N
+        stShowTechTimeCheckBoxMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.show.tech.time")); // NOI18N
         stShowTechTimeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
