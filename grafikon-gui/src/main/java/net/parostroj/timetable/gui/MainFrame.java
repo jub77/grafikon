@@ -351,20 +351,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem fileNewMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator3 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem fileOpenMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem fileSaveMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem fileSaveAsMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator1 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem fileImportMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator separator5 = new javax.swing.JSeparator();
         languageMenu = new javax.swing.JMenu();
         systemLanguageRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         lookAndFeelMenu = new javax.swing.JMenu();
         javax.swing.JRadioButtonMenuItem systemLAFRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        javax.swing.JSeparator separator2 = new javax.swing.JSeparator();
-        javax.swing.JSeparator separator4 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu diagramMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem settingsMenuItem = new javax.swing.JMenuItem();
@@ -380,28 +370,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem penaltyTableMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem localizationMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem trainTimetableListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem nodeTimetableListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem ecListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem tucListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem dcListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem spListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator jSeparator1 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem trainTimetableListByDcMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem trainTimetableListByTimeFilteredMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem epListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem ccListMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator jSeparator2 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem trainTimetableListByDcSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem trainTimetableListByRoutesMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem nodeTimetableListSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem ecListSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem tucListSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem dcListSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem ccListSelectMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator jSeparator4 = new javax.swing.JSeparator();
-        javax.swing.JMenuItem allHtmlMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JSeparator jSeparator3 = new javax.swing.JSeparator();
         oLanguageMenu = new javax.swing.JMenu();
         oSystemLRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
@@ -414,10 +382,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem ouputTemplatesMenuItem = new javax.swing.JMenuItem();
         viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem recalculateMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem recalculateStopsMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem removeWeightsMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem executeScriptMenuItem = new javax.swing.JMenuItem();
         scriptsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem columnsMenuItem = new javax.swing.JMenuItem();
@@ -448,40 +412,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        fileNewMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this));
-        fileNewMenuItem.setText(ResourceLoader.getString("menu.file.new")); // NOI18N
-        fileNewMenuItem.setActionCommand("new");
-        fileMenu.add(fileNewMenuItem);
-        fileMenu.add(separator3);
+        this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this), "new", false, null); // NOI18N
 
-        fileOpenMenuItem.setAction(new net.parostroj.timetable.gui.actions.NewOpenAction(model, this));
-        fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        fileOpenMenuItem.setText(ResourceLoader.getString("menu.file.open")); // NOI18N
-        fileOpenMenuItem.setActionCommand("open");
-        fileMenu.add(fileOpenMenuItem);
+        fileMenu.add(new javax.swing.JSeparator());
 
-        fileSaveMenuItem.setAction(new SaveAction(model));
-        fileSaveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        fileSaveMenuItem.setText(ResourceLoader.getString("menu.file.save")); // NOI18N
-        fileSaveMenuItem.setActionCommand("save");
-        fileMenu.add(fileSaveMenuItem);
+        this.addMenuItem(fileMenu, "menu.file.open", new NewOpenAction(model, this), "open", false, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.save", new SaveAction(model), "save", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.saveas", new SaveAction(model), "save_as", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
 
-        fileSaveAsMenuItem.setAction(new SaveAction(model));
-        fileSaveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        fileSaveAsMenuItem.setText(ResourceLoader.getString("menu.file.saveas")); // NOI18N
-        fileSaveAsMenuItem.setActionCommand("save_as");
-        fileMenu.add(fileSaveAsMenuItem);
-        fileMenu.add(separator1);
+        fileMenu.add(new javax.swing.JSeparator());
 
-        fileImportMenuItem.setAction(new ImportAction(model, this, false));
-        fileImportMenuItem.setText(ResourceLoader.getString("menu.file.exportimport")); // NOI18N
-        fileMenu.add(fileImportMenuItem);
+        this.addMenuItem(fileMenu, "menu.file.exportimport", new ImportAction(model, this, false), null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true), null); // NOI18N
 
-        javax.swing.JMenuItem fileImportGroupMenuItem = new javax.swing.JMenuItem();
-        fileImportGroupMenuItem.setAction(new ImportAction(model, this, true));
-        fileImportGroupMenuItem.setText(ResourceLoader.getString("menu.file.exportimport.trains")); // NOI18N
-        fileMenu.add(fileImportGroupMenuItem);
-        fileMenu.add(separator5);
+        fileMenu.add(new javax.swing.JSeparator());
 
         languageMenu.setText(ResourceLoader.getString("menu.language")); // NOI18N
 
@@ -507,8 +451,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lookAndFeelMenu.add(systemLAFRadioButtonMenuItem);
 
         fileMenu.add(lookAndFeelMenu);
-        fileMenu.add(separator2);
-        fileMenu.add(separator4);
+        fileMenu.add(new javax.swing.JSeparator());
+        fileMenu.add(new javax.swing.JSeparator());
 
         exitMenuItem.setAction(new ExitAction(model, this));
         exitMenuItem.setText(ResourceLoader.getString("menu.file.exit")); // NOI18N
@@ -623,103 +567,37 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         menuBar.add(diagramMenu);
 
-        actionMenu.setAction(outputAction);
         actionMenu.setText(ResourceLoader.getString("menu.outputs")); // NOI18N
-        actionMenu.setActionCommand("stations_select");
 
-        trainTimetableListMenuItem.setAction(outputAction);
-        trainTimetableListMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslist")); // NOI18N
-        trainTimetableListMenuItem.setActionCommand("trains");
-        actionMenu.add(trainTimetableListMenuItem);
+        this.addMenuItem(actionMenu, "menu.action.traintimetableslist", outputAction, "trains"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.nodetimetableslist", outputAction, "stations"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.eclist", outputAction, "engine_cycles"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.tuclist", outputAction, "train_unit_cycles"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.acion.dclist", outputAction, "driver_cycles"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.acion.splist", outputAction, "starts"); // NOI18N
 
-        nodeTimetableListMenuItem.setAction(outputAction);
-        nodeTimetableListMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist")); // NOI18N
-        nodeTimetableListMenuItem.setActionCommand("stations");
-        actionMenu.add(nodeTimetableListMenuItem);
+        actionMenu.add(new javax.swing.JSeparator());
 
-        ecListMenuItem.setAction(outputAction);
-        ecListMenuItem.setText(ResourceLoader.getString("menu.action.eclist")); // NOI18N
-        ecListMenuItem.setActionCommand("engine_cycles");
-        actionMenu.add(ecListMenuItem);
+        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbydc", outputAction, "trains_by_driver_cycles"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbytimefiltered", outputAction, "trains_select_station"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.acion.eplist", outputAction, "ends"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.acion.cclist", outputAction, "custom_cycles"); // NOI18N
 
-        tucListMenuItem.setAction(outputAction);
-        tucListMenuItem.setText(ResourceLoader.getString("menu.action.tuclist")); // NOI18N
-        tucListMenuItem.setActionCommand("train_unit_cycles");
-        actionMenu.add(tucListMenuItem);
+        actionMenu.add(new javax.swing.JSeparator());
 
-        dcListMenuItem.setAction(outputAction);
-        dcListMenuItem.setText(ResourceLoader.getString("menu.acion.dclist")); // NOI18N
-        dcListMenuItem.setActionCommand("driver_cycles");
-        actionMenu.add(dcListMenuItem);
+        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbydc.select", outputAction, "trains_select_driver_cycles"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbyroutes.select", outputAction, "trains_select_routes"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.nodetimetableslist.select", outputAction, "stations_select"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.eclist.select", outputAction, "engine_cycles_select"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.tuclist.select", outputAction, "train_unit_cycles_select"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.acion.dclist.select", outputAction, "driver_cycles_select"); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.cclist.select", outputAction, "custom_cycles_select"); // NOI18N
 
-        spListMenuItem.setAction(outputAction);
-        spListMenuItem.setText(ResourceLoader.getString("menu.acion.splist")); // NOI18N
-        spListMenuItem.setActionCommand("starts");
-        actionMenu.add(spListMenuItem);
-        actionMenu.add(jSeparator1);
+        actionMenu.add(new javax.swing.JSeparator());
 
-        trainTimetableListByDcMenuItem.setAction(outputAction);
-        trainTimetableListByDcMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc")); // NOI18N
-        trainTimetableListByDcMenuItem.setActionCommand("trains_by_driver_cycles");
-        actionMenu.add(trainTimetableListByDcMenuItem);
+        this.addMenuItem(actionMenu, "menu.action.all.html", outputAction, "all"); // NOI18N
 
-        trainTimetableListByTimeFilteredMenuItem.setAction(outputAction);
-        trainTimetableListByTimeFilteredMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbytimefiltered")); // NOI18N
-        trainTimetableListByTimeFilteredMenuItem.setActionCommand("trains_select_station");
-        actionMenu.add(trainTimetableListByTimeFilteredMenuItem);
-
-        epListMenuItem.setAction(outputAction);
-        epListMenuItem.setText(ResourceLoader.getString("menu.acion.eplist")); // NOI18N
-        epListMenuItem.setActionCommand("ends");
-        actionMenu.add(epListMenuItem);
-
-        ccListMenuItem.setAction(outputAction);
-        ccListMenuItem.setText(ResourceLoader.getString("menu.acion.cclist")); // NOI18N
-        ccListMenuItem.setActionCommand("custom_cycles");
-        actionMenu.add(ccListMenuItem);
-        actionMenu.add(jSeparator2);
-
-        trainTimetableListByDcSelectMenuItem.setAction(outputAction);
-        trainTimetableListByDcSelectMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbydc.select")); // NOI18N
-        trainTimetableListByDcSelectMenuItem.setActionCommand("trains_select_driver_cycles");
-        actionMenu.add(trainTimetableListByDcSelectMenuItem);
-
-        trainTimetableListByRoutesMenuItem.setAction(outputAction);
-        trainTimetableListByRoutesMenuItem.setText(ResourceLoader.getString("menu.action.traintimetableslistbyroutes.select")); // NOI18N
-        trainTimetableListByRoutesMenuItem.setActionCommand("trains_select_routes");
-        actionMenu.add(trainTimetableListByRoutesMenuItem);
-
-        nodeTimetableListSelectMenuItem.setAction(outputAction);
-        nodeTimetableListSelectMenuItem.setText(ResourceLoader.getString("menu.action.nodetimetableslist.select")); // NOI18N
-        nodeTimetableListSelectMenuItem.setActionCommand("stations_select");
-        actionMenu.add(nodeTimetableListSelectMenuItem);
-
-        ecListSelectMenuItem.setAction(outputAction);
-        ecListSelectMenuItem.setText(ResourceLoader.getString("menu.action.eclist.select")); // NOI18N
-        ecListSelectMenuItem.setActionCommand("engine_cycles_select");
-        actionMenu.add(ecListSelectMenuItem);
-
-        tucListSelectMenuItem.setAction(outputAction);
-        tucListSelectMenuItem.setText(ResourceLoader.getString("menu.action.tuclist.select")); // NOI18N
-        tucListSelectMenuItem.setActionCommand("train_unit_cycles_select");
-        actionMenu.add(tucListSelectMenuItem);
-
-        dcListSelectMenuItem.setAction(outputAction);
-        dcListSelectMenuItem.setText(ResourceLoader.getString("menu.acion.dclist.select")); // NOI18N
-        dcListSelectMenuItem.setActionCommand("driver_cycles_select");
-        actionMenu.add(dcListSelectMenuItem);
-
-        ccListSelectMenuItem.setAction(outputAction);
-        ccListSelectMenuItem.setText(ResourceLoader.getString("menu.action.cclist.select")); // NOI18N
-        ccListSelectMenuItem.setActionCommand("custom_cycles_select");
-        actionMenu.add(ccListSelectMenuItem);
-        actionMenu.add(jSeparator4);
-
-        allHtmlMenuItem.setAction(outputAction);
-        allHtmlMenuItem.setText(ResourceLoader.getString("menu.action.all.html")); // NOI18N
-        allHtmlMenuItem.setActionCommand("all");
-        actionMenu.add(allHtmlMenuItem);
-        actionMenu.add(jSeparator3);
+        actionMenu.add(new javax.swing.JSeparator());
 
         oLanguageMenu.setText(ResourceLoader.getString("menu.language.output")); // NOI18N
 
@@ -835,22 +713,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         specialMenu.setText(ResourceLoader.getString("menu.special")); // NOI18N
 
-        recalculateMenuItem.setAction(new RecalculateAction(model));
-        recalculateMenuItem.setText(ResourceLoader.getString("menu.special.recalculate")); // NOI18N
-        specialMenu.add(recalculateMenuItem);
-
-        recalculateStopsMenuItem.setAction(new RecalculateStopsAction(model));
-        recalculateStopsMenuItem.setText(ResourceLoader.getString("menu.special.recalculate.stops")); // NOI18N
-        specialMenu.add(recalculateStopsMenuItem);
-
-        removeWeightsMenuItem.setAction(new RemoveWeightsAction(model));
-        removeWeightsMenuItem.setText(ResourceLoader.getString("menu.special.remove.weights")); // NOI18N
-        specialMenu.add(removeWeightsMenuItem);
-
-        executeScriptMenuItem.setAction(executeScriptAction);
-        executeScriptMenuItem.setText(ResourceLoader.getString("menu.special.execute.script")); // NOI18N
-        executeScriptMenuItem.setActionCommand("");
-        specialMenu.add(executeScriptMenuItem);
+        this.addMenuItem(specialMenu, "menu.special.recalculate", new RecalculateAction(model), null); // NOI18N
+        this.addMenuItem(specialMenu, "menu.special.recalculate.stops", new RecalculateStopsAction(model), null); // NOI18N
+        this.addMenuItem(specialMenu, "menu.special.remove.weights", new RemoveWeightsAction(model), null); // NOI18N
+        this.addMenuItem(specialMenu, "menu.special.execute.script", executeScriptAction, ""); // NOI18N
 
         scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
         specialMenu.add(scriptsMenu);
@@ -924,44 +790,18 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // enabled list
         enabled.add(tabbedPane);
-        enabled.add(fileSaveMenuItem);
-        enabled.add(fileSaveAsMenuItem);
-        enabled.add(trainTimetableListMenuItem);
-        enabled.add(trainTimetableListByDcMenuItem);
-        enabled.add(recalculateMenuItem);
-        enabled.add(recalculateStopsMenuItem);
-        enabled.add(nodeTimetableListMenuItem);
-        enabled.add(ecListMenuItem);
-        enabled.add(dcListMenuItem);
-        enabled.add(ccListMenuItem);
-        enabled.add(tucListMenuItem);
         enabled.add(settingsMenuItem);
         enabled.add(groupsMenuItem);
-        enabled.add(allHtmlMenuItem);
         enabled.add(imagesMenuItem);
         enabled.add(textItemsMenuItem);
         enabled.add(infoMenuItem);
-        enabled.add(spListMenuItem);
-        enabled.add(epListMenuItem);
         enabled.add(trainTypesMenuItem);
         enabled.add(lineClassesMenuItem);
         enabled.add(weightTablesMenuItem);
         enabled.add(penaltyTableMenuItem);
         enabled.add(localizationMenuItem);
         enabled.add(regionsMenuItem);
-        enabled.add(trainTimetableListByTimeFilteredMenuItem);
-        enabled.add(fileImportMenuItem);
-        enabled.add(fileImportGroupMenuItem);
-        enabled.add(dcListSelectMenuItem);
-        enabled.add(ccListSelectMenuItem);
-        enabled.add(trainTimetableListByDcSelectMenuItem);
-        enabled.add(nodeTimetableListSelectMenuItem);
-        enabled.add(ecListSelectMenuItem);
-        enabled.add(tucListSelectMenuItem);
         enabled.add(editRoutesMenuItem);
-        enabled.add(trainTimetableListByRoutesMenuItem);
-        enabled.add(removeWeightsMenuItem);
-        enabled.add(executeScriptMenuItem);
         enabled.add(scriptsMenu);
         enabled.add(ouputTemplatesMenuItem);
 
@@ -971,6 +811,24 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.setKey("cycles.trainunit");
         driverCyclesPane.setKey("cycles.driver");
         engineCyclesPane.setKey("cycles.engine");
+    }
+
+    private void addMenuItem(JMenu menu, String textKey, Action action, String actionCommand) {
+        this.addMenuItem(menu, textKey, action, actionCommand, true, null);
+    }
+
+    private void addMenuItem(JMenu menu, String textKey, Action action, String actionCommand, boolean enableHandled, KeyStroke keyStroke) {
+        JMenuItem item = new JMenuItem();
+        item.setAction(action);
+        item.setText(ResourceLoader.getString(textKey)); // NOI18N
+        if (keyStroke != null) {
+            item.setAccelerator(keyStroke);
+        }
+        item.setActionCommand(actionCommand);
+        menu.add(item);
+        if (enableHandled) {
+            enabled.add(item);
+        }
     }
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
