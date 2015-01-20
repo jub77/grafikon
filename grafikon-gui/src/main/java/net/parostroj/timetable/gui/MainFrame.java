@@ -40,6 +40,7 @@ import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.output2.gt.TrainColorChooser;
 import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.VersionInfo;
 
 import org.ini4j.Ini;
 import org.slf4j.Logger;
@@ -63,20 +64,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private Map<File, JMenuItem> lastOpened;
     private final List<Component> enabled = new ArrayList<Component>();
+    private final VersionInfo versionInfo;
 
     public MainFrame(SplashScreenInfo info) {
+        versionInfo = new VersionInfo();
         String version = getVersion(false);
         info.setText("Starting Grafikon ...\n" + version);
         this.initializeFrame();
     }
 
     private String getVersion(boolean complete) {
-        ResourceBundle bundle = ResourceBundle.getBundle("grafikon_version");
-        String version = bundle.getString(complete ? "grafikon.version" : "grafikon.version.show");
-        return version;
+        return complete ? versionInfo.getFullVersion() : versionInfo.getVersion();
     }
 
     public MainFrame() {
+        versionInfo = new VersionInfo();
         this.initializeFrame();
     }
 
