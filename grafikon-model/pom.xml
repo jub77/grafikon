@@ -10,6 +10,17 @@
     <packaging>jar</packaging>
     <name>grafikon-model</name>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/settings</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.jgrapht</groupId>
