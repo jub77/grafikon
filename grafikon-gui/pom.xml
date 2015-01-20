@@ -14,10 +14,6 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <resource>
-                <directory>src/main/settings</directory>
-                <filtering>true</filtering>
-            </resource>
         </resources>
     </build>
     <dependencies>
