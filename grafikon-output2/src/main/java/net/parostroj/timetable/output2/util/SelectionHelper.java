@@ -8,8 +8,6 @@ import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.RoutesExtractor;
 
-import com.google.common.base.Predicate;
-
 /**
  * Helper class for selection.
  *
@@ -103,13 +101,7 @@ public class SelectionHelper {
             return getList((List<?>) param.getValue(), Node.class);
         }
         NodeSort s = new NodeSort(NodeSort.Type.ASC);
-        return s.sort(diagram.getNet().getNodes(), new Predicate<Node>() {
-
-            @Override
-            public boolean apply(Node node) {
-                return node.getType().isStation() || node.getType().isStop();
-            }
-        });
+        return s.sort(diagram.getNet().getNodes(), node -> node.getType().isStation() || node.getType().isStop());
     }
 
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {
