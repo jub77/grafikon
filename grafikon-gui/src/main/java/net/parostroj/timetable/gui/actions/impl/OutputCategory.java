@@ -50,8 +50,9 @@ public enum OutputCategory {
 
     public static OutputCategory fromString(String string) {
         for (OutputCategory category : values()) {
-            if (category.getOutputCategory().equals(string))
+            if (category.getOutputCategory().equals(string)) {
                 return category;
+            }
         }
         return null;
     }

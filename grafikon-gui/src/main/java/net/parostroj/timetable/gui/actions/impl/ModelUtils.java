@@ -41,13 +41,10 @@ public class ModelUtils {
         if (set != null && tracker.isTrackingEnabled()) {
             try {
                 // do the update in event dispatch thread (because of events)
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        tracker.updateCurrentChangeSet(set.getVersion(),
-                                model.getProgramSettings().getUserNameOrSystemUser(),
-                                Calendar.getInstance());
-                    }
+                SwingUtilities.invokeAndWait(() -> {
+                    tracker.updateCurrentChangeSet(set.getVersion(),
+                            model.getProgramSettings().getUserNameOrSystemUser(),
+                            Calendar.getInstance());
                 });
             } catch (Exception e) {
                 log.warn("Error updating values for current diagram change set.", e);
@@ -58,17 +55,18 @@ public class ModelUtils {
     }
 
     public static int checkModelChangedContinue(ApplicationModel model, Component parent) {
-        if (!model.isModelChanged())
+        if (!model.isModelChanged()) {
             return JOptionPane.NO_OPTION;
-        else {
+        } else {
             int result = JOptionPane.showConfirmDialog(parent, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
                 JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
                 int retVal = xmlFileChooser.showSaveDialog(parent);
-                if (retVal == JFileChooser.APPROVE_OPTION)
+                if (retVal == JFileChooser.APPROVE_OPTION) {
                     model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                else
+                } else {
                     result = JOptionPane.CANCEL_OPTION;
+                }
             }
             return result;
         }
@@ -90,9 +88,11 @@ public class ModelUtils {
                 return diagram.getTrains();
             case ROUTE:
                 List<Route> routes = new LinkedList<Route>();
-                for (Route r : diagram.getRoutes())
-                    if (r.isNetPart())
+                for (Route r : diagram.getRoutes()) {
+                    if (r.isNetPart()) {
                         routes.add(r);
+                    }
+                }
                 return routes;
             case CUSTOM_CYCLE:
                 List<TrainsCycle> cycles = new LinkedList<TrainsCycle>();

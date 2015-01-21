@@ -45,10 +45,11 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
                 context.setAttribute("diagram", ls.load(selectedFile));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
-                if (e.getCause() instanceof FileNotFoundException)
+                if (e.getCause() instanceof FileNotFoundException) {
                     errorMessage = ResourceLoader.getString("dialog.error.filenotfound");
-                else
+                } else {
                     errorMessage = ResourceLoader.getString("dialog.error.loading");
+                }
             } catch (Exception e) {
                 log.warn("Error loading model.", e);
                 errorMessage = ResourceLoader.getString("dialog.error.loading");
