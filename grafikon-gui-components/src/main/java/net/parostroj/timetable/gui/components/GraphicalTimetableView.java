@@ -361,9 +361,6 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
     }
 
-    /**
-     * @param listener the rsListener to set
-     */
     public void addListener(GTViewListener listener) {
         this.listeners.add(listener);
     }
