@@ -101,13 +101,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                 RouteSelectionDialog dialog = new RouteSelectionDialog((Window) GraphicalTimetableView.this.getTopLevelAncestor(), true);
                 dialog.setLocationRelativeTo(GraphicalTimetableView.this.getParent());
                 dialog.setListValues(diagram.getRoutes(), getRoute());
-                dialog.setListener(new RouteSelectionDialog.RSListener() {
-                    @Override
-                    public void routeSelected(Route route) {
-                        // set selected route
-                        setRoute(route);
-                    }
-                });
+                dialog.setListener(route -> setRoute(route));
                 dialog.setVisible(true);
             }
         });
@@ -122,8 +116,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         List<TimeInterval> intervals = collector.getItemsForPoint(event.getX(), event.getY(), SELECTION_RADIUS);
 
         if (lastToolTipInterval == null) {
-            if (!intervals.isEmpty())
+            if (!intervals.isEmpty()) {
                 lastToolTipInterval = intervals.get(0);
+            }
         } else {
             lastToolTipInterval = null;
         }
@@ -146,12 +141,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         routesMenu.removeAll();
         // sort routes
         routes = new ArrayList<Route>(routes);
-        Collections.sort(routes, new Comparator<Route>() {
-            @Override
-            public int compare(Route o1, Route o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
+        Collections.sort(routes, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         int i = 0;
         for (Route lRoute : routes) {
             if (i++ >= ROUTE_COUNT) {
@@ -171,12 +161,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             sizesMenu.addItem(Integer.toString(i), i);
         }
         sizesMenu.setSelectedItem(settings.get(Key.VIEW_SIZE, Integer.class));
-        sizesMenu.addListener(new SelectionMenu.Listener<Integer>() {
-            @Override
-            public void selected(Integer size) {
-                settings.set(Key.VIEW_SIZE, size);
-                recreateDraw();
-            }
+        sizesMenu.addListener(size -> {
+            settings.set(Key.VIEW_SIZE, size);
+            recreateDraw();
         });
     }
 
@@ -210,14 +197,12 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         popupMenu.add(routesMenu);
 
         routesEditMenuItem.setText(ResourceLoader.getString("gt.routes.edit")); // NOI18N
-        routesEditMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (diagram == null) {
-                    return;
-                }
-                getRouteDialog().setLocationRelativeTo(GraphicalTimetableView.this.getParent());
-                getRouteDialog().showDialog(diagram);
+        routesEditMenuItem.addActionListener(evt -> {
+            if (diagram == null) {
+                return;
             }
+            getRouteDialog().setLocationRelativeTo(GraphicalTimetableView.this.getParent());
+            getRouteDialog().showDialog(diagram);
         });
         popupMenu.add(routesEditMenuItem);
         popupMenu.add(jSeparator1);
@@ -228,12 +213,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         typesMenu.addItem(ResourceLoader.getString("gt.classic.station.stops"), GTDraw.Type.CLASSIC_STATION_STOPS); // NOI18N
         typesMenu.addItem(ResourceLoader.getString("gt.withtracks"), GTDraw.Type.WITH_TRACKS); // NOI18N
         typesMenu.setSelectedItem(GTDraw.Type.CLASSIC);
-        typesMenu.addListener(new SelectionMenu.Listener<GTDraw.Type>() {
-            @Override
-            public void selected(Type value) {
-                settings.set(Key.TYPE, value);
-                recreateDraw();
-            }
+        typesMenu.addListener(value -> {
+            settings.set(Key.TYPE, value);
+            recreateDraw();
         });
 
         popupMenu.add(typesMenu);
@@ -245,12 +227,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         orientationMenu.addItem(ResourceLoader.getString("gt.orientation.left.right"), GTOrientation.LEFT_RIGHT); // NOI18N
         orientationMenu.addItem(ResourceLoader.getString("gt.orientation.top.down"), GTOrientation.TOP_DOWN); // NOI18N
         orientationMenu.setSelectedItem(GTOrientation.LEFT_RIGHT);
-        orientationMenu.addListener(new SelectionMenu.Listener<GTOrientation>() {
-            @Override
-            public void selected(GTOrientation value) {
-                settings.set(Key.ORIENTATION, value);
-                setSettings(settings);
-            }
+        orientationMenu.addListener(value -> {
+            settings.set(Key.ORIENTATION, value);
+            setSettings(settings);
         });
         popupMenu.add(orientationMenu);
         orientationMenu.setVisible(false);
@@ -265,36 +244,26 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.scroll"), Key.TO_TRAIN_SCROLL); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.change.route"), Key.TO_TRAIN_CHANGE_ROUTE); // NOI18N
 
-        preferencesMenu.addListener(new ChoicesMenu.Listener<Key>() {
-            @Override
-            public void changed(Key value, boolean selected) {
-                settings.setOption(value, selected);
-                // recreate draw
-                recreateDraw();
-            }
+        preferencesMenu.addListener((value, selected) -> {
+            settings.setOption(value, selected);
+            // recreate draw
+            recreateDraw();
         });
 
         popupMenu.add(preferencesMenu);
 
-        routesMenu.addListener(new SelectionMenu.Listener<Route>() {
-            @Override
-            public void selected(Route route) {
-                setRoute(route);
-            }
-        });
+        routesMenu.addListener(route -> setRoute(route));
 
         javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom"));
-        zoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // select zoom
-                GTViewZoomDialog dialog = new GTViewZoomDialog((Window) getTopLevelAncestor(), true);
-                dialog.setLocationRelativeTo(getParent());
-                Float oldZoom = settings.get(Key.ZOOM, Float.class);
-                Float newZoom = dialog.showDialog(oldZoom);
-                if (newZoom != null && newZoom.floatValue() != oldZoom.floatValue()) {
-                    settings.set(Key.ZOOM, newZoom);
-                    recreateDraw();
-                }
+        zoomMenuItem.addActionListener(e -> {
+            // select zoom
+            GTViewZoomDialog dialog = new GTViewZoomDialog((Window) getTopLevelAncestor(), true);
+            dialog.setLocationRelativeTo(getParent());
+            Float oldZoom = settings.get(Key.ZOOM, Float.class);
+            Float newZoom = dialog.showDialog(oldZoom);
+            if (newZoom != null && newZoom.floatValue() != oldZoom.floatValue()) {
+                settings.set(Key.ZOOM, newZoom);
+                recreateDraw();
             }
         });
         popupMenu.add(zoomMenuItem);
@@ -340,8 +309,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     private EditRoutesDialog getRouteDialog() {
-        if (editRoutesDialog == null)
+        if (editRoutesDialog == null) {
             editRoutesDialog = new EditRoutesDialog((Window)this.getTopLevelAncestor(), true);
+        }
         return editRoutesDialog;
     }
 
