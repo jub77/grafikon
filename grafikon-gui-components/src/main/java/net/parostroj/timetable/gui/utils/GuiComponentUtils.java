@@ -96,10 +96,11 @@ public class GuiComponentUtils {
     }
 
     public static void runInEDT(Runnable runnable, boolean now) {
-        if (now)
+        if (now) {
             runNowInEDT(runnable);
-        else
+        } else {
             runLaterInEDT(runnable);
+        }
     }
 
     public static void runLaterInEDT(Runnable runnable) {
@@ -107,9 +108,9 @@ public class GuiComponentUtils {
     }
 
     public static void runNowInEDT(Runnable runnable) {
-        if (SwingUtilities.isEventDispatchThread())
+        if (SwingUtilities.isEventDispatchThread()) {
             runnable.run();
-        else {
+        } else {
             try {
                 SwingUtilities.invokeAndWait(runnable);
             } catch (Exception e) {

@@ -205,20 +205,16 @@ public class ImportAction extends AbstractAction {
             }
 
             private void processChunk(final Collection<ObjectWithId> objects, final Process<ObjectWithId> action) {
-                GuiComponentUtils.runLaterInEDT(new Runnable() {
-
-                    @Override
-                    public void run() {
+                GuiComponentUtils.runLaterInEDT(() -> {
+                    try {
+                        for (ObjectWithId o : objects) {
+                            action.apply(o);
+                        }
+                    } finally {
                         try {
-                            for (ObjectWithId o : objects) {
-                                action.apply(o);
-                            }
-                        } finally {
-                            try {
-                                barrier.await();
-                            } catch (Exception e) {
-                                log.error("Import action - await interrupted.", e);
-                            }
+                            barrier.await();
+                        } catch (Exception e) {
+                            log.error("Import action - await interrupted.", e);
                         }
                     }
                 });

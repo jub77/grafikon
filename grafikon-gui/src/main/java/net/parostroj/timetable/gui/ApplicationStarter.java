@@ -4,8 +4,11 @@ import java.awt.Image;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.net.URL;
+
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +58,9 @@ public class ApplicationStarter<T extends JFrame> {
 
     public void start() throws ApplicationStarterException {
             log.trace("Start starter.");
-            if (SplashScreen.getSplashScreen() == null)
+            if (SplashScreen.getSplashScreen() == null) {
                 startFrame();
-            else {
+            } else {
                 startOriginal();
             }
             log.trace("End starter.");
@@ -84,19 +87,13 @@ public class ApplicationStarter<T extends JFrame> {
         SplashScreen splash = SplashScreen.getSplashScreen();
         SplashScreenInfoOrig info = new SplashScreenInfoOrig(splash, x, y);
         final T frm = this.getApplicationInstance(info);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                frm.setVisible(true);
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (action != null)
-                            action.action(frm);
-                    }
-                });
-            }
+        GuiComponentUtils.runLaterInEDT(() -> {
+            frm.setVisible(true);
+            GuiComponentUtils.runLaterInEDT(() -> {
+                if (action != null) {
+                    action.action(frm);
+                }
+            });
         });
     }
 
@@ -106,21 +103,15 @@ public class ApplicationStarter<T extends JFrame> {
         spl.setVisible(true);
         log.trace("Splash initialized.");
         final T frm = this.getApplicationInstance(spl);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                spl.setVisible(false);
-                spl.dispose();
-                frm.setVisible(true);
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (action != null)
-                            action.action(frm);
-                    }
-                });
-            }
+        GuiComponentUtils.runLaterInEDT(() -> {
+            spl.setVisible(false);
+            spl.dispose();
+            frm.setVisible(true);
+            GuiComponentUtils.runLaterInEDT(() -> {
+                if (action != null) {
+                    action.action(frm);
+                }
+            });
         });
     }
 }
