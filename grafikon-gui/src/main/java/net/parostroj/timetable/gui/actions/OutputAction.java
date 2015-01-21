@@ -56,17 +56,21 @@ public class OutputAction extends AbstractAction {
         outputType = OutputType.fromActionCommand(e.getActionCommand());
         selection = null;
 
-        if (!makeSelection())
+        if (!makeSelection()) {
             return;
-        if (!selectTemplate())
+        }
+        if (!selectTemplate()) {
             return;
-        if (!selectOutput())
+        }
+        if (!selectOutput()) {
             return;
+        }
         try {
-            if (outputType.isOutputFile())
+            if (outputType.isOutputFile()) {
                 this.singleOutput();
-            else
+            } else {
                 this.multipleOutputs();
+            }
         } catch (Exception ex) {
             log.warn(ex.getMessage(), ex);
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
@@ -120,8 +124,9 @@ public class OutputAction extends AbstractAction {
             ElementSelectionDialog<Object> selDialog = new ElementSelectionDialog<Object>(getFrame(), true);
             selDialog.setLocationRelativeTo(parent);
             selection = selDialog.selectElements(ModelUtils.selectAllElements(model.getDiagram(), outputType.getSelectionElement()));
-            if (selection == null)
+            if (selection == null) {
                 return false;
+            }
         } else if (outputType == OutputType.TRAINS_SELECT_STATION) {
             SelectNodesDialog dialog = new SelectNodesDialog(getFrame(), true);
             dialog.setNodes(model.getDiagram().getNet().getNodes());
@@ -129,8 +134,9 @@ public class OutputAction extends AbstractAction {
             dialog.setVisible(true);
             selection = dialog.getSelectedNode();
 
-            if (selection == null)
+            if (selection == null) {
                 return false;
+            }
         } else if (outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
             selection = model.getDiagram().getDriverCycles();
         }
@@ -223,10 +229,11 @@ public class OutputAction extends AbstractAction {
         String name = file.getName();
         File parentFile = file.getParentFile();
         name = name.replaceAll("[\\\\:/\"?<>|]", "");
-        if (parentFile == null)
+        if (parentFile == null) {
             file = new File(name);
-        else
+        } else {
             file = new File(parentFile, name);
+        }
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());

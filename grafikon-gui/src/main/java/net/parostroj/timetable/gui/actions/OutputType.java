@@ -70,8 +70,9 @@ public enum OutputType {
 
     public static OutputType fromActionCommand(String actionCommand) {
         for (OutputType type : values()) {
-            if (type.getActionCommand().equals(actionCommand))
+            if (type.getActionCommand().equals(actionCommand)) {
                 return type;
+            }
         }
         return null;
     }

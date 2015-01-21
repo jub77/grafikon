@@ -59,8 +59,9 @@ public class RecalculateAction extends AbstractAction {
             @Override
             protected void action() {
                 int size = diagram.getTrains().size();
-                if (size == 0)
+                if (size == 0) {
                     return;
+                }
                 setWaitMessage(message);
                 setWaitProgress(0);
                 getActionContext().setShowProgress(true);

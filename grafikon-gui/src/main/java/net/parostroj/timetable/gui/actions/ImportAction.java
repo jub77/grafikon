@@ -52,12 +52,14 @@ public class ImportAction extends AbstractAction {
         public boolean apply(ObjectWithId item) {
             if (item instanceof Train) {
                 Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
-                if (group == null)
+                if (group == null) {
                     return foundGroup == null;
-                else
+                } else {
                     return group.equals(foundGroup);
-            } else
+                }
+            } else {
                 return true;
+            }
         }
     }
 
@@ -133,8 +135,9 @@ public class ImportAction extends AbstractAction {
             @Override
             protected void backgroundAction() {
                 boolean cancelled = (Boolean) context.getAttribute("cancelled");
-                if (cancelled)
+                if (cancelled) {
                     return;
+                }
                 setWaitMessage(ResourceLoader.getString("wait.message.import"));
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis();
@@ -148,8 +151,9 @@ public class ImportAction extends AbstractAction {
                                 importDialog.getLibraryDiagram(), importDialog.getImportMatch()));
                     }
                     size = list.size();
-                    if (size == 0)
+                    if (size == 0) {
                         return;
+                    }
                     if (trainImport && groupDialog.isRemoveExistingTrains()) {
                         // remove existing trains in group
                         Process<ObjectWithId> deleteProcess = new Process<ObjectWithId>() {
@@ -229,8 +233,9 @@ public class ImportAction extends AbstractAction {
             protected void eventDispatchActionAfter() {
                 boolean cancelled = (Boolean) context.getAttribute("cancelled");
                 importDialog.clear();
-                if (cancelled)
+                if (cancelled) {
                     return;
+                }
                 List<ImportError> errors = new LinkedList<ImportError>();
                 for (ImportComponent comp : components) {
                     Import i = imports.get(comp);
