@@ -44,7 +44,7 @@ class PdfStartPositionsOutput extends PdfOutput {
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             m.marshal(sp, os);
-            os.close();
+            os.flush();
 
             byte[] bytes = os.toByteArray();
             System.out.println(new String(bytes, "utf-8"));

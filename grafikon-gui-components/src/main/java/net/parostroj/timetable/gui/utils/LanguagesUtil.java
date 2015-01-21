@@ -21,13 +21,8 @@ public class LanguagesUtil {
 
     public static Properties getLanguages() {
         Properties langProps = new Properties();
-        InputStream stream = LanguagesUtil.class.getResourceAsStream("/languages.properties");
-        try {
-            try {
-                langProps.load(stream);
-            } finally {
-                stream.close();
-            }
+        try (InputStream stream = LanguagesUtil.class.getResourceAsStream("/languages.properties")) {
+            langProps.load(stream);
         } catch (IOException e) {
             log.error("Error loading languages.", e);
         }

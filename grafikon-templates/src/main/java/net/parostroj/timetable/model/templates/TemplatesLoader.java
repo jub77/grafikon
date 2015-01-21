@@ -31,15 +31,10 @@ public class TemplatesLoader {
     public static synchronized List<Template> getTemplates() {
         if (templateList == null) {
             // load template list
-            try {
+            try (InputStream is = TemplatesLoader.class.getResourceAsStream(TEMPLATE_LIST_FILE)) {
                 JAXBContext context = JAXBContext.newInstance(TemplateList.class);
                 Unmarshaller u = context.createUnmarshaller();
-                InputStream is = TemplatesLoader.class.getResourceAsStream(TEMPLATE_LIST_FILE);
-                try {
-                    templateList = (TemplateList) u.unmarshal(is);
-                } finally {
-                    is.close();
-                }
+                templateList = (TemplateList) u.unmarshal(is);
                 log.debug("Loaded list of templates.");
             } catch (JAXBException e) {
                 log.error("Cannot load list of templates.", e);
@@ -58,20 +53,12 @@ public class TemplatesLoader {
         for (Template template : getTemplates()) {
             if (template.getName().equals(name)) {
                 // create file with template location
-                InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename());
                 TrainDiagram diagram = null;
-                try {
-                    ZipInputStream is = new ZipInputStream(iStream);
+                try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename()); ZipInputStream is = new ZipInputStream(iStream)) {
                     FileLoadSave ls = this.getLoadSave(template);
                     diagram = ls.load(is);
                 } catch (IOException e) {
                     throw new LSException("Error getting model version.", e);
-                } finally {
-                    try {
-                        iStream.close();
-                    } catch (IOException e) {
-                        throw new LSException("Cannot load template.", e);
-                    }
                 }
                 return diagram;
             }
@@ -81,12 +68,9 @@ public class TemplatesLoader {
     }
 
     private FileLoadSave getLoadSave(Template template) throws IOException, LSException {
-        InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename());
-        try {
+        try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename())) {
             FileLoadSave ls = LSFileFactory.getInstance().createForLoad(new ZipInputStream(iStream));
             return ls;
-        } finally {
-            iStream.close();
         }
     }
 }

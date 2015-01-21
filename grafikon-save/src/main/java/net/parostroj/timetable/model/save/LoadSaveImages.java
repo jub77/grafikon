@@ -17,13 +17,13 @@ import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Class for loading/saving images from/to gtm.
- * 
+ *
  * @author jub
  */
 public class LoadSaveImages {
     /**
      * saves images for timetable.
-     * 
+     *
      * @param diagram train diagram
      * @param os zip output stream
      * @throws java.io.IOException
@@ -35,23 +35,20 @@ public class LoadSaveImages {
             if (image.getImageFile() == null)
                 // skip images without image file
                 continue;
-            FileChannel ic = null;
             File imageFile = image.getImageFile();
             entry.setSize(imageFile.length());
             os.putNextEntry(entry);
             WritableByteChannel oc = Channels.newChannel(os);
-            try {
-                ic = new FileInputStream(imageFile).getChannel();
+            try (FileInputStream is = new FileInputStream(imageFile)) {
+                FileChannel ic = is.getChannel();
                 ic.transferTo(0, ic.size(), oc);
-            } finally {
-                ic.close();
             }
         }
     }
-    
+
     /**
      * loads images for timetable.
-     * 
+     *
      * @param diagram train diagram
      * @param zipFile zip file
      * @throws java.io.IOException
@@ -63,12 +60,9 @@ public class LoadSaveImages {
                 File tempFile = File.createTempFile("gt_", ".temp");
                 InputStream is = zipFile.getInputStream(entry);
                 ReadableByteChannel ic = Channels.newChannel(is);
-                FileChannel oc = null;
-                try {
-                    oc = new FileOutputStream(tempFile).getChannel();
+                try (FileOutputStream os = new FileOutputStream(tempFile)) {
+                    FileChannel oc = os.getChannel();
                     oc.transferFrom(ic, 0, entry.getSize());
-                } finally {
-                    oc.close();
                 }
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();

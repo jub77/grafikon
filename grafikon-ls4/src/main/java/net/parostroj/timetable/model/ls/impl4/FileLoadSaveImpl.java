@@ -66,18 +66,18 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
     @Override
     public TrainDiagram load(File file) throws LSException {
-        try {
-            return this.load(new ZipInputStream(new FileInputStream(file)));
-        } catch (FileNotFoundException ex) {
+        try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
+            return this.load(inputStream);
+        } catch (IOException ex) {
             throw new LSException(ex);
         }
     }
 
     @Override
     public void save(TrainDiagram diagram, File file) throws LSException {
-        try {
-            this.save(diagram, new ZipOutputStream(new FileOutputStream(file)));
-        } catch (FileNotFoundException ex) {
+        try (ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(file))) {
+            this.save(diagram, outputStream);
+        } catch (IOException ex) {
             throw new LSException(ex);
         }
     }
@@ -163,13 +163,6 @@ public class FileLoadSaveImpl implements FileLoadSave {
             return trainDiagram;
         } catch (IOException e) {
             throw new LSException(e);
-        } finally {
-            try {
-                if (zipInput != null)
-                    zipInput.close();
-            } catch (IOException e) {
-                throw new LSException(e);
-            }
         }
     }
 
@@ -243,13 +236,6 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
         } catch (IOException ex) {
             throw new LSException(ex);
-        } finally {
-            try {
-                if (zipOutput != null)
-                    zipOutput.close();
-            } catch (IOException ex) {
-                throw new LSException(ex);
-            }
         }
     }
 

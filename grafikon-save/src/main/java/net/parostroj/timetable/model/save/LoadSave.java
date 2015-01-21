@@ -109,10 +109,7 @@ public class LoadSave implements FileLoadSave {
 
     @Override
     public void save(TrainDiagram diagram, File file) throws LSException {
-        ZipOutputStream zipOutput = null;
-        try {
-            zipOutput = new ZipOutputStream(new FileOutputStream(file));
-
+        try (ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(file))) {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
             this.createMetadata().store(zipOutput, null);
@@ -132,12 +129,6 @@ public class LoadSave implements FileLoadSave {
             lsImages.saveTimetableImages(diagram, zipOutput);
         } catch (IOException ex) {
             throw new LSException(ex);
-        } finally {
-            try {
-                zipOutput.close();
-            } catch (IOException ex) {
-                throw new LSException(ex);
-            }
         }
     }
 

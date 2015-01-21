@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
@@ -32,12 +33,14 @@ public class LogFormatter extends Formatter {
         String message = formatMessage(record);
         String throwable = "";
         if (record.getThrown() != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            pw.println();
-            record.getThrown().printStackTrace(pw);
-            pw.close();
-            throwable = sw.toString().replaceAll("\\Z[\n\r]*", "");
+            try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
+                pw.println();
+                record.getThrown().printStackTrace(pw);
+                pw.flush();
+                throwable = sw.toString().replaceAll("\\Z[\n\r]*", "");
+            } catch (IOException e) {
+                // ignore exception - writing to string shouldn't produce exception
+            }
         }
         return String.format(format, dat, source, record.getLoggerName(), record.getLevel().getName(), message,
                 throwable);
