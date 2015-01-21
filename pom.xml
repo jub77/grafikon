@@ -349,7 +349,7 @@
         <module>grafikon-net</module>
         <module>grafikon-gui</module>
         <module>grafikon-start</module>
-        <module>grafikon-webstart</module>
         <module>grafikon-assembly</module>
+        <module>grafikon-webstart</module>
     </modules>
 </project>
