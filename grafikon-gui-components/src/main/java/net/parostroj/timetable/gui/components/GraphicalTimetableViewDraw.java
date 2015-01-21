@@ -460,13 +460,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                         }
                     }
                     if (settings.getOption(Key.TO_TRAIN_SCROLL)) {
-                        GuiComponentUtils.runLaterInEDT(new Runnable() {
-                            @Override
-                            public void run() {
-                                scrollToItem(items, clazz);
-                            }
-
-                        });
+                        GuiComponentUtils.runLaterInEDT(() -> scrollToItem(items, clazz));
                     }
                 }
             }

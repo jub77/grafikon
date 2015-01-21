@@ -17,13 +17,7 @@ public abstract class EventDispatchAfterModelAction extends CheckedModelAction {
     @Override
     final protected void action() {
         this.backgroundAction();
-        GuiComponentUtils.runNowInEDT(new Runnable() {
-
-            @Override
-            public void run() {
-                eventDispatchActionAfter();
-            }
-        });
+        GuiComponentUtils.runNowInEDT(() -> eventDispatchActionAfter());
     }
 
     protected void backgroundAction() {}

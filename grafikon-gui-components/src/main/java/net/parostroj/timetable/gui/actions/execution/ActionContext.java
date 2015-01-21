@@ -110,12 +110,6 @@ public class ActionContext {
     }
 
     private void fireEventInEDT(final String name, final Object oldValue, final Object newValue) {
-        GuiComponentUtils.runLaterInEDT(new Runnable() {
-
-            @Override
-            public void run() {
-                support.firePropertyChange(name, oldValue, newValue);
-            }
-        });
+        GuiComponentUtils.runLaterInEDT(() -> support.firePropertyChange(name, oldValue, newValue));
     }
 }

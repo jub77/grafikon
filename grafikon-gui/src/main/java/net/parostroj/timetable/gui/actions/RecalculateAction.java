@@ -93,23 +93,19 @@ public class RecalculateAction extends AbstractAction {
             }
 
             private void processChunk(final Collection<Train> trains) {
-                GuiComponentUtils.runLaterInEDT(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            for (Train train : trains)
-                                try {
-                                    trainAction.execute(train);
-                                } catch (Exception e) {
-                                    log.error("Modification of train failed.", e);
-                                }
-                        } finally {
+                GuiComponentUtils.runLaterInEDT(() -> {
+                    try {
+                        for (Train train : trains)
                             try {
-                                barrier.await();
+                                trainAction.execute(train);
                             } catch (Exception e) {
-                                log.error("Recalculate action - await interrupted.", e);
+                                log.error("Modification of train failed.", e);
                             }
+                    } finally {
+                        try {
+                            barrier.await();
+                        } catch (Exception e) {
+                            log.error("Recalculate action - await interrupted.", e);
                         }
                     }
                 });
