@@ -185,7 +185,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         });
         listMenu.add(listGroupsFlatMenuItem);
 
-        groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.groups")); // NOI18N
+        groupsMenu = new javax.swing.JMenu(ResourceLoader.getString("trainlist.groups")); // NOI18N
         treePopupMenu.add(groupsMenu);
 
         groupL = new ItemListener() {
@@ -352,7 +352,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
         this.model = model;
         javax.swing.JMenuItem groupsMenuItem = new javax.swing.JMenuItem();
         groupsMenuItem.setAction(new EditGroupsAction(model));
-        groupsMenuItem.setText(ResourceLoader.getString("menu.groups") + "...");
+        groupsMenuItem.setText(ResourceLoader.getString("menu.groups"));
         treePopupMenu.add(groupsMenuItem);
         this.model.getMediator().addColleague(new ApplicationGTEventColleague() {
             @Override

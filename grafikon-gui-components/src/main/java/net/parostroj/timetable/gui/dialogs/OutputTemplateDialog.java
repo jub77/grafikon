@@ -180,7 +180,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         flowLayout2.setVgap(2);
         controlPanel.add(scriptPanel, BorderLayout.EAST);
 
-        scriptButton = new JButton(ResourceLoader.getString("ot.script") + "...");
+        scriptButton = new JButton(ResourceLoader.getString("ot.script"));
         scriptButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ScriptDialog dialog = new ScriptDialog(OutputTemplateDialog.this, true);

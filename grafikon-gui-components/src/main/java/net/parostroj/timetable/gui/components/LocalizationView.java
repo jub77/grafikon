@@ -66,7 +66,7 @@ public class LocalizationView extends JPanel {
         });
         panel.add(removeNoExistingButton);
 
-        JButton languagesButton = new JButton(ResourceLoader.getString("localization.languages") + "...");
+        JButton languagesButton = new JButton(ResourceLoader.getString("localization.languages"));
         languagesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

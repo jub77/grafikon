@@ -55,7 +55,7 @@ public class TemplateSelectDialog extends javax.swing.JDialog {
         templateTextField.setEditable(false);
         selectPanel.add(templateTextField);
 
-        selectButton.setText(ResourceLoader.getString("button.select") + "..."); // NOI18N
+        selectButton.setText(ResourceLoader.getString("button.select")); // NOI18N
         selectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectButtonActionPerformed(evt);

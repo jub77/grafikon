@@ -211,7 +211,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         locationPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 5));
         locationPanel2.setLayout(new java.awt.BorderLayout());
 
-        locationButton.setText(ResourceLoader.getString("button.select") + "..."); // NOI18N
+        locationButton.setText(ResourceLoader.getString("button.select")); // NOI18N
         locationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 locationButtonActionPerformed(evt);
