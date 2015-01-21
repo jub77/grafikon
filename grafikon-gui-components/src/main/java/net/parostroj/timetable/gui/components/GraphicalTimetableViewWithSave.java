@@ -2,7 +2,6 @@ package net.parostroj.timetable.gui.components;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -37,21 +36,16 @@ public class GraphicalTimetableViewWithSave extends GraphicalTimetableView {
         popupMenu.add(new JSeparator());
         popupMenu.add(saveMenuItem);
         // action
-        saveMenuItem.addActionListener(new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveMenuItemActionPerformed(e);
-            }
-        });
+        saveMenuItem.addActionListener(e -> saveMenuItemActionPerformed(e));
     }
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         if (this.getRoute() == null) {
             return;
         }
-        if (dialog == null)
+        if (dialog == null) {
             dialog = new SaveImageDialog((Frame)this.getTopLevelAncestor(), true);
+        }
         dialog.setLocationRelativeTo(this.getParent());
         dialog.setSaveSize(this.getSize());
         dialog.setVisible(true);

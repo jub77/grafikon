@@ -159,10 +159,11 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
     protected void routesChanged(TrainDiagramEvent event) {
         // check current route
         if (event.getType() == GTEventType.ROUTE_REMOVED && event.getObject().equals(this.getRoute())) {
-            if (!diagram.getRoutes().isEmpty())
+            if (!diagram.getRoutes().isEmpty()) {
                 this.setRoute(diagram.getRoutes().get(0));
-            else
+            } else {
                 this.setRoute(null);
+            }
         }
         if (event.getType() == GTEventType.ROUTE_ADDED && this.getRoute() == null) {
             this.setRoute((Route)event.getObject());
