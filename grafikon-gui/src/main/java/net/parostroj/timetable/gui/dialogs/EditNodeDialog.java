@@ -382,7 +382,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         javax.swing.JPanel panel = new javax.swing.JPanel();
         javax.swing.JPanel panel2 = new javax.swing.JPanel();
 
-        colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors") + "...");
+        colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors"));
         colorsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

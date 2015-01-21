@@ -91,7 +91,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             log.error("Error creating template for time interval.", e);
         }
         // routes menu
-        routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes") + "...");
+        routesMenuItem = new JMenuItem(ResourceLoader.getString("gt.routes.select"));
         routesMenu.add(routesMenuItem);
         routesMenuItem.addActionListener(new ActionListener() {
 
@@ -283,7 +283,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             }
         });
 
-        javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom") + "...");
+        javax.swing.JMenuItem zoomMenuItem = new javax.swing.JMenuItem(ResourceLoader.getString("gt.zoom"));
         zoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // select zoom
