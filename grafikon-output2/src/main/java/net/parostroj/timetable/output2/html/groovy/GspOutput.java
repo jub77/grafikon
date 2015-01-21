@@ -28,10 +28,11 @@ public abstract class GspOutput extends OutputWithLocale {
         if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {
             return (InputStream)params.getParam(DefaultOutputParam.TEMPLATE_STREAM).getValue();
         } else {
-            if (classLoader != null)
+            if (classLoader != null) {
                 return classLoader.getResourceAsStream(defaultTemplate);
-            else
+            } else {
                 return ClassLoader.getSystemResourceAsStream(defaultTemplate);
+            }
         }
     }
 
@@ -41,8 +42,9 @@ public abstract class GspOutput extends OutputWithLocale {
         // load template if needed otherwise use cached
         if (templateInStream || _cachedTemplates.get(defaultTemplate) == null) {
             template = loadTemplate(params, defaultTemplate, classLoader);
-            if (!templateInStream)
+            if (!templateInStream) {
                 _cachedTemplates.put(defaultTemplate, template);
+            }
         } else {
             template = _cachedTemplates.get(defaultTemplate);
         }
@@ -51,14 +53,10 @@ public abstract class GspOutput extends OutputWithLocale {
 
     protected Template loadTemplate(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
         SimpleTemplateEngine ste = new SimpleTemplateEngine();
-        InputStream is = getTemplateStream(params, defaultTemplate, classLoader);
-        Template template = null;
-        try {
-            template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
-        } finally {
-            is.close();
+        try (InputStream is = getTemplateStream(params, defaultTemplate, classLoader)) {
+            Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
+            return template;
         }
-        return template;
     }
 
     protected void writeOutput(OutputStream stream, Template template, Map<String, Object> binding, String encoding) throws OutputException {
