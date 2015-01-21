@@ -89,8 +89,9 @@ public class NewOpenAction extends AbstractAction {
                 if (preselectedFile == null) {
                     xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
                     retVal = xmlFileChooser.showOpenDialog(parent);
-                    if (retVal == JFileChooser.APPROVE_OPTION)
+                    if (retVal == JFileChooser.APPROVE_OPTION) {
                         selectedFile = xmlFileChooser.getSelectedFile();
+                    }
                 } else {
                     selectedFile = preselectedFile;
                     retVal = JFileChooser.APPROVE_OPTION;
@@ -99,8 +100,9 @@ public class NewOpenAction extends AbstractAction {
 
             @Override
             protected void backgroundAction() {
-                if (retVal != JFileChooser.APPROVE_OPTION)
+                if (retVal != JFileChooser.APPROVE_OPTION) {
                     return;
+                }
                 setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis();
@@ -135,8 +137,9 @@ public class NewOpenAction extends AbstractAction {
 
             @Override
             protected void eventDispatchActionAfter() {
-                if (retVal != JFileChooser.APPROVE_OPTION)
+                if (retVal != JFileChooser.APPROVE_OPTION) {
                     return;
+                }
                 if (diagram != null) {
                     model.setDiagram(diagram);
                 } else {

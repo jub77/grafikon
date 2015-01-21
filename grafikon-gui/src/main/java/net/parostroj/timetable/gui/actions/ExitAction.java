@@ -55,8 +55,9 @@ public class ExitAction extends AbstractAction {
 
             @Override
             protected void backgroundAction() {
-                if (result == JOptionPane.CANCEL_OPTION)
+                if (result == JOptionPane.CANCEL_OPTION) {
                     return;
+                }
                 setWaitMessage("");
                 setWaitDialogVisible(true);
                 try {
@@ -78,8 +79,9 @@ public class ExitAction extends AbstractAction {
 
             @Override
             protected void eventDispatchActionAfter() {
-                if (result == JOptionPane.CANCEL_OPTION)
+                if (result == JOptionPane.CANCEL_OPTION) {
                     return;
+                }
                 if (errorMessage != null) {
                     GuiComponentUtils.showError(errorMessage, parent);
                     return;
@@ -90,8 +92,9 @@ public class ExitAction extends AbstractAction {
                 log.debug("Exit finished in {}ms", System.currentTimeMillis() - time);
 
                 // close application by force (possible problems with web start)
-                if (exit)
+                if (exit) {
                     System.exit(0);
+                }
             }
         };
         return action;

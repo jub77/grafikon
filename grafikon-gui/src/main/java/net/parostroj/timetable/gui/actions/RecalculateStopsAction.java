@@ -38,8 +38,9 @@ public class RecalculateStopsAction extends AbstractAction {
         String ratioStr = (String) JOptionPane.showInputDialog(top, ResourceLoader.getString("recalculate.stops.ratio"),
                 null, JOptionPane.QUESTION_MESSAGE, null, null, "0.5");
 
-        if (ratioStr == null)
+        if (ratioStr == null) {
             return;
+        }
 
         // convert do double
         double cRatio = 1.0d;
