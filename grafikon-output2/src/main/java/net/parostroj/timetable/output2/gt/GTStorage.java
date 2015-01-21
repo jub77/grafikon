@@ -37,7 +37,7 @@ public class GTStorage {
         return collectors.keySet();
     }
 
-    public <T> void setFilter(Class<?> clazz, Predicate<T> filter) {
+    public <T> void setFilter(Class<T> clazz, Predicate<T> filter) {
         filters.put(clazz, filter);
     }
 
