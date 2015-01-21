@@ -37,46 +37,30 @@ public class SelectorUtils {
     }
 
     public static Predicate<TimeInterval> createUniqueTrainIntervalFilter() {
-        return new Predicate<TimeInterval>() {
-
-            private final List<Train> collected = new LinkedList<Train>();
-
-            @Override
-            public boolean apply(TimeInterval interval) {
-                if (!collected.contains(interval.getTrain())) {
-                    collected.add(interval.getTrain());
-                    return true;
-                } else {
-                    return false;
-                }
+        final List<Train> collected = new LinkedList<Train>();
+        return interval -> {
+            if (!collected.contains(interval.getTrain())) {
+                collected.add(interval.getTrain());
+                return true;
+            } else {
+                return false;
             }
         };
     }
 
     public static Predicate<Train> createUniqueTrainFilter() {
-        return new Predicate<Train>() {
-
-            private final List<Train> collected = new LinkedList<Train>();
-
-            @Override
-            public boolean apply(Train input) {
-                if (!collected.contains(input)) {
-                    collected.add(input);
-                    return true;
-                } else {
-                    return false;
-                }
+        final List<Train> collected = new LinkedList<Train>();
+        return input -> {
+            if (!collected.contains(input)) {
+                collected.add(input);
+                return true;
+            } else {
+                return false;
             }
         };
     }
 
     public static Function<TimeInterval, Train> createToTrainFunction() {
-        return new Function<TimeInterval, Train>() {
-
-            @Override
-            public Train apply(TimeInterval interval) {
-                return interval.getTrain();
-            }
-        };
+        return interval -> interval.getTrain();
     }
 }

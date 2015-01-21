@@ -3,9 +3,9 @@ package net.parostroj.timetable.actions;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.ReferenceHolder;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -36,49 +36,33 @@ public class FreightHelper {
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightFrom(Iterable<TimeInterval> i) {
-        return Iterables.filter(i, new Predicate<TimeInterval>() {
-            @Override
-            public boolean apply(TimeInterval interval) {
-                return isFreightFrom(interval);
-            }
-        });
+        return Iterables.filter(i, interval -> isFreightFrom(interval));
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsFreightTo(Iterable<TimeInterval> i) {
-        return Iterables.filter(i, new Predicate<TimeInterval>() {
-            @Override
-            public boolean apply(TimeInterval interval) {
-                return isFreightTo(interval);
-            }
-        });
+        return Iterables.filter(i, interval -> isFreightTo(interval));
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreight(Iterable<TimeInterval> i, final TimeInterval from) {
-        return Iterables.filter(i, new Predicate<TimeInterval>() {
-            boolean after = false;
-            @Override
-            public boolean apply(TimeInterval interval) {
-                if (after) {
-                    return FreightHelper.isFreightTo(interval);
-                } else {
-                    after = interval == from;
-                    return false;
-                }
+        final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
+        return Iterables.filter(i, interval -> {
+            if (after.get()) {
+                return FreightHelper.isFreightTo(interval);
+            } else {
+                after.set(interval == from);
+                return false;
             }
         });
     }
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from, final FreightNet net) {
-        return Iterables.filter(i, new Predicate<TimeInterval>() {
-            boolean after = false;
-            @Override
-            public boolean apply(TimeInterval interval) {
-                if (after) {
-                    return FreightHelper.isFreightTo(interval) || FreightHelper.isConnection(interval, net);
-                } else {
-                    after = interval == from;
-                    return false;
-                }
+        final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
+        return Iterables.filter(i, interval -> {
+            if (after.get()) {
+                return FreightHelper.isFreightTo(interval) || FreightHelper.isConnection(interval, net);
+            } else {
+                after.set(interval == from);
+                return false;
             }
         });
     }
@@ -154,11 +138,6 @@ public class FreightHelper {
     }
 
     public static Function<FreightColor, String> colorToString(final Locale loc) {
-        return new Function<FreightColor, String>() {
-            @Override
-            public String apply(FreightColor color) {
-                return color.getName(loc);
-            }
-        };
+        return color -> color.getName(loc);
     }
 }

@@ -124,12 +124,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         private TimeInterval lastInterval;
-        private final Predicate<TimeInterval> nodeIntervalFilter = new Predicate<TimeInterval>() {
-            @Override
-            public boolean apply(TimeInterval interval) {
-                return interval.isNodeOwner();
-            }
-        };
+        private final Predicate<TimeInterval> nodeIntervalFilter = interval -> interval.isNodeOwner();
 
         private TimeInterval chooseInterval(List<TimeInterval> intervals) {
             TimeInterval selected = SelectorUtils.select(intervals, lastInterval, nodeIntervalFilter);
