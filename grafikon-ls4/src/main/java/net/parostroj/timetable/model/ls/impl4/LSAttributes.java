@@ -35,14 +35,16 @@ public class LSAttributes {
     public LSAttributes(Attributes attributes) {
         this.attributes = new LinkedList<LSAttributesItem>();
         this.addAttributes(attributes.getAttributesMap(), null);
-        for (String category : attributes.getCategories())
+        for (String category : attributes.getCategories()) {
             this.addAttributes(attributes.getAttributesMap(category), category);
+        }
     }
 
     private void addAttributes(Map<String, Object> map, String category) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() != null)
+            if (entry.getValue() != null) {
                 this.attributes.add(new LSAttributesItem(entry.getKey(), entry.getValue(), category));
+            }
         }
     }
 
@@ -64,10 +66,11 @@ public class LSAttributes {
         if (this.attributes != null) {
             for (LSAttributesItem lItem : this.attributes) {
                 Object value = lItem.convertValue(diagram);
-                if (value != null)
+                if (value != null) {
                     lAttributes.set(lItem.getKey(), value, lItem.getCategory());
-                else
+                } else {
                     log.warn("Null value for attribute: {}, value: {}", lItem.getKey(), lItem.getValues());
+                }
             }
         }
         return lAttributes;

@@ -162,7 +162,7 @@ public class LSTrain {
         train.setType(diagram.getTrainTypeById(type));
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
-        if (this.route != null)
+        if (this.route != null) {
 	        for (Object routePart : this.route) {
 	            if (routePart instanceof LSTrainRoutePartNode) {
 	                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
@@ -176,6 +176,7 @@ public class LSTrain {
 	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram));
 	            }
 	        }
+        }
         builder.finish();
         // set technological time
         train.setTimeBefore(this.timeBefore);

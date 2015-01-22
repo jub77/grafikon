@@ -6,7 +6,7 @@ import net.parostroj.timetable.model.TimeInterval;
 
 /**
  * Route part for node.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"intervalId", "nodeId", "trackId", "stop", "attributes"})
@@ -65,10 +65,11 @@ public class LSTrainRoutePartNode {
     }
 
     public LSAttributes getAttributes() {
-        if (attributes == null)
+        if (attributes == null) {
             return new LSAttributes();
-        else
+        } else {
             return attributes;
+        }
     }
 
     public void setAttributes(LSAttributes attributes) {

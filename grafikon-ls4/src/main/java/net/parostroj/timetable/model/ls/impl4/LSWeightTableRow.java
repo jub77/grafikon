@@ -55,14 +55,16 @@ public class LSWeightTableRow {
 
     public WeightTableRow createWeightTableRow(Net net, EngineClass engineClass) {
         WeightTableRow row = engineClass.createWeightTableRow(speed);
-        if (weights != null)
+        if (weights != null) {
             for (LSWeightLimit limit : weights) {
                 LineClass lineClass = net.getLineClassById(limit.getLineClass());
-                if (lineClass == null)
+                if (lineClass == null) {
                     log.warn("Non-existent line class: {}", limit.getLineClass());
-                else
+                } else {
                     row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());
+                }
             }
+        }
         return row;
     }
 }

@@ -27,8 +27,9 @@ public class LSTrainRoutePartLine {
         lineId = interval.getOwner().getId();
         trackId = interval.getTrack().getId();
         speed = interval.getSpeedLimit();
-        if (interval.getAddedTime() != 0)
+        if (interval.getAddedTime() != 0) {
             addedTime = interval.getAddedTime();
+        }
         this.attributes = new LSAttributes(interval.getAttributes());
     }
 
@@ -77,10 +78,11 @@ public class LSTrainRoutePartLine {
     }
 
     public LSAttributes getAttributes() {
-        if (attributes == null)
+        if (attributes == null) {
             return new LSAttributes();
-        else
+        } else {
             return attributes;
+        }
     }
 
     public void setAttributes(LSAttributes attributes) {

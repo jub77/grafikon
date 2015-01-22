@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.SortPatternGroup;
 
 /**
  * Storage for sort pattern.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"pattern", "rules"})
@@ -47,12 +47,13 @@ public class LSSortPattern {
     public void setRules(List<LSSortPatternGroup> rules) {
         this.rules = rules;
     }
-    
+
     public SortPattern createSortPattern() {
         SortPattern sPattern = new SortPattern(pattern);
         // no rules, no pattern
-        if (this.rules == null)
+        if (this.rules == null) {
             return null;
+        }
         for (LSSortPatternGroup g : this.rules) {
             sPattern.getGroups().add(new SortPatternGroup(g.getGroup(), SortPatternGroup.Type.fromId(g.getType())));
         }

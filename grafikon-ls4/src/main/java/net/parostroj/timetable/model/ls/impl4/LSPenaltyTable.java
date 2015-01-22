@@ -52,7 +52,7 @@ public class LSPenaltyTable {
 
     public PenaltyTable createPenaltyTable() {
         PenaltyTable table = new PenaltyTable(id);
-        if (this.categories != null)
+        if (this.categories != null) {
             for (LSTrainTypeCategory lsCategory : this.categories) {
                 TrainTypeCategory category = lsCategory.createTrainTypeCategory();
                 table.addTrainTypeCategory(category);
@@ -61,6 +61,7 @@ public class LSPenaltyTable {
                         table.addRowForCategory(category, lsRow.createPenaltyTableRow());
                     }
             }
+        }
         return table;
     }
 }
