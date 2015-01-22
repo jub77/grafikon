@@ -19,8 +19,9 @@ public class LSParameter {
 
     public LSParameter(Parameter param) {
         this.value = param.getValue();
-        if (param.isTranslated())
+        if (param.isTranslated()) {
             this.trans = Boolean.TRUE;
+        }
     }
 
     @XmlAttribute

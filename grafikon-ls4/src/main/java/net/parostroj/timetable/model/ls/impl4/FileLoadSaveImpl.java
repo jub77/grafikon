@@ -100,8 +100,9 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private ModelVersion checkVersion(Properties props) throws LSException {
         ModelVersion current = METADATA_MODEL_VERSION;
         ModelVersion loaded = new ModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
-        if (current.compareTo(loaded) < 0)
+        if (current.compareTo(loaded) < 0) {
             throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
+        }
         return loaded;
     }
 
@@ -125,8 +126,9 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     builder = new TrainDiagramBuilder(lstd);
                 }
                 // test diagram
-                if (builder == null)
+                if (builder == null) {
                     throw new LSException("Train diagram builder has to be first entry: " + entry.getName());
+                }
                 if (entry.getName().equals(DATA_PENALTY_TABLE)) {
                     builder.setPenaltyTable(lss.load(zipInput, LSPenaltyTable.class));
                 } else if (entry.getName().equals(DATA_NET)) {
@@ -152,10 +154,11 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 } else if (entry.getName().startsWith(LOCALIZATION)) {
                     builder.setLocalization(lss.load(zipInput, LSLocalization.class));
                 } else if (entry.getName().startsWith(DATA_IMAGES)) {
-                    if (entry.getName().endsWith(".xml"))
+                    if (entry.getName().endsWith(".xml")) {
                         builder.addImage(lss.load(zipInput, LSImage.class));
-                    else
+                    } else {
                         builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput, entry));
+                    }
                 }
             }
             TrainDiagram trainDiagram = builder.getTrainDiagram();

@@ -23,16 +23,18 @@ public class LoadFilter {
             // fix weight info
             for (Train train : diagram.getTrains()) {
                 Integer weight = TrainsHelper.getWeightFromInfoAttribute(train);
-                if (weight != null)
+                if (weight != null) {
                     train.setAttribute(Train.ATTR_WEIGHT, weight);
+                }
                 // remove weight.info attribute
                 train.removeAttribute("weight.info");
             }
             // fix route info
             for (Train train : diagram.getTrains()) {
                 String routeInfo = train.getAttribute("route.info", String.class);
-                if (routeInfo != null)
+                if (routeInfo != null) {
                     routeInfo = routeInfo.trim();
+                }
                 if (routeInfo != null && !"".equals(routeInfo)) {
                     try {
                         train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));

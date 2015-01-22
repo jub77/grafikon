@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.WeightTableRow;
 
 /**
  * Storage for engine class.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "engine_class")
@@ -60,13 +60,14 @@ public class LSEngineClass {
     public void setRows(List<LSWeightTableRow> rows) {
         this.rows = rows;
     }
-    
+
     public EngineClass createEngineClass(Net net) {
         EngineClass ec = new EngineClass(id, name);
-        if (this.rows != null)
+        if (this.rows != null) {
             for (LSWeightTableRow lsRow : this.rows) {
                 ec.addWeightTableRow(lsRow.createWeightTableRow(net, ec));
             }
+        }
         return ec;
     }
 }

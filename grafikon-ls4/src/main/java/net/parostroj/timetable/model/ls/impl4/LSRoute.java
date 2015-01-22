@@ -95,7 +95,7 @@ public class LSRoute {
         route.setTrainRoute(trainRoute);
         // create segments
         boolean node = true;
-        if (this.segments != null)
+        if (this.segments != null) {
             for (String segment : this.segments) {
                 RouteSegment routeSegment = null;
                 if (node) {
@@ -111,6 +111,7 @@ public class LSRoute {
                 route.getSegments().add(routeSegment);
                 node = !node;
             }
+        }
         return route;
     }
 }

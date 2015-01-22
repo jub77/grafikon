@@ -83,8 +83,9 @@ public class LSTrainDiagram {
 
     @XmlElement(name = "cycle_type")
     public Set<LSTrainsCycleType> getCycleTypes() {
-        if (cycleTypes == null)
+        if (cycleTypes == null) {
             cycleTypes = new HashSet<LSTrainsCycleType>();
+        }
         return cycleTypes;
     }
 
@@ -94,8 +95,9 @@ public class LSTrainDiagram {
 
     @XmlElement(name = "group")
     public List<LSGroup> getGroups() {
-        if (groups == null)
+        if (groups == null) {
             groups = new LinkedList<LSGroup>();
+        }
         return groups;
     }
 

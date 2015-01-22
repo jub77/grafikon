@@ -117,10 +117,11 @@ public class LSNode {
         node.setAttributes(attributes.createAttributes(diagram));
         node.setLocation(new Location(x, y));
         // tracks
-        if (this.tracks != null)
+        if (this.tracks != null) {
             for (LSNodeTrack track : this.tracks) {
                 node.addTrack(track.createNodeTrack(diagram));
             }
+        }
         return node;
     }
 }
