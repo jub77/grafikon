@@ -67,7 +67,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
         String version = getVersion(false);
-        info.setText("Starting Grafikon ...\n" + version);
+        info.setText("Starting Grafikon...\n" + version);
         this.initializeFrame();
     }
 
@@ -139,36 +139,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         circulationPane.setModel(model);
         freightNetPane2.setModel(model);
 
-        // add languages to menu
-        LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
-        List<LanguageMenuBuilder.LanguageMenuItem> languages = languageMenuBuilder.createLanguageMenuItems();
-        ActionListener langListener = e -> languageRadioButtonMenuItemActionPerformed(e);
-        for (LanguageMenuBuilder.LanguageMenuItem item : languages) {
-            languageMenu.add(item);
-            item.addActionListener(langListener);
-            languageButtonGroup.add(item);
-        }
-        List<LanguageMenuBuilder.LanguageMenuItem> oLanguages = languageMenuBuilder.createLanguageMenuItems();
-        ActionListener oLangListener = e -> outputLanguageRadioButtonMenuItemActionPerformed(e);
-        for (LanguageMenuBuilder.LanguageMenuItem item : oLanguages) {
-            oLanguageMenu.add(item);
-            item.addActionListener(oLangListener);
-            outputLbuttonGroup.add(item);
-        }
-
-        // look and feel
-        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
-            item.setActionCommand(laf.getClassName());
-            lookAndFeelbuttonGroup.add(item);
-            lookAndFeelMenu.add(item);
-        }
-
         model.addListener(this);
         model.addListener(statusBar);
-
-        floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
-        floatingDialogsList.addToMenuItem(viewsMenu);
 
         netPane.setModel(model);
 
@@ -289,8 +261,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
         String version = getVersion(false);
-        if (version != null)
+        if (version != null) {
             title += " (" + version + ")";
+        }
         if (model != null && model.getDiagram() != null) {
             if (model.getOpenedFile() == null) {
                 title += " - " + ResourceLoader.getString("title.new");
@@ -327,17 +300,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         statusBar = new net.parostroj.timetable.gui.StatusBar();
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        languageMenu = new javax.swing.JMenu();
-        lookAndFeelMenu = new javax.swing.JMenu();
+        javax.swing.JMenu languageMenu = new javax.swing.JMenu();
+        javax.swing.JMenu lookAndFeelMenu = new javax.swing.JMenu();
         javax.swing.JMenu diagramMenu = new javax.swing.JMenu();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
-        oLanguageMenu = new javax.swing.JMenu();
+        javax.swing.JMenu oLanguageMenu = new javax.swing.JMenu();
         javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
-        viewsMenu = new javax.swing.JMenu();
+        javax.swing.JMenu viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         scriptsMenu = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
+
+        floatingDialogsList = FloatingWindowsFactory.createDialogs(this, model.getMediator(), model);
+        floatingDialogsList.addToMenuItem(viewsMenu);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(this.getTitleString(false));
@@ -523,6 +499,31 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         trainUnitCyclesPane.setKey("cycles.trainunit");
         driverCyclesPane.setKey("cycles.driver");
         engineCyclesPane.setKey("cycles.engine");
+
+        // add languages to menu
+        LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
+        List<LanguageMenuBuilder.LanguageMenuItem> languages = languageMenuBuilder.createLanguageMenuItems();
+        ActionListener langListener = e -> languageRadioButtonMenuItemActionPerformed(e);
+        for (LanguageMenuBuilder.LanguageMenuItem item : languages) {
+            languageMenu.add(item);
+            item.addActionListener(langListener);
+            languageButtonGroup.add(item);
+        }
+        List<LanguageMenuBuilder.LanguageMenuItem> oLanguages = languageMenuBuilder.createLanguageMenuItems();
+        ActionListener oLangListener = e -> outputLanguageRadioButtonMenuItemActionPerformed(e);
+        for (LanguageMenuBuilder.LanguageMenuItem item : oLanguages) {
+            oLanguageMenu.add(item);
+            item.addActionListener(oLangListener);
+            outputLbuttonGroup.add(item);
+        }
+
+        // look and feel
+        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
+            item.setActionCommand(laf.getClassName());
+            lookAndFeelbuttonGroup.add(item);
+            lookAndFeelMenu.add(item);
+        }
     }
 
     private JCheckBoxMenuItem addCheckMenuItem(JMenu menu, String textKey, ActionListener action, String actionCommand, boolean selected) {
@@ -903,28 +904,24 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.requestFocus();
     }
 
+    private net.parostroj.timetable.gui.panes.TrainsPane trainsPane;
+    private net.parostroj.timetable.gui.panes.NetPane netPane;
     private net.parostroj.timetable.gui.panes.CirculationPane circulationPane;
     private net.parostroj.timetable.gui.panes.FreightNetPane2 freightNetPane2;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane driverCyclesPane;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
+    private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu scriptsMenu;
     private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem stShowTechTimeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem twoSidesPrintCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
-    private javax.swing.JMenu languageMenu;
-    private javax.swing.JMenu lookAndFeelMenu;
     private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
-    private net.parostroj.timetable.gui.panes.NetPane netPane;
-    private javax.swing.JMenu oLanguageMenu;
-    private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
     private javax.swing.ButtonGroup outputLbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
-    private javax.swing.JMenu scriptsMenu;
-    private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
-    private net.parostroj.timetable.gui.StatusBar statusBar;
+    private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem systemLanguageRadioButtonMenuItem;
-    private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
-    private net.parostroj.timetable.gui.panes.TrainsPane trainsPane;
-    private javax.swing.JMenu viewsMenu;
+    private net.parostroj.timetable.gui.StatusBar statusBar;
 }
