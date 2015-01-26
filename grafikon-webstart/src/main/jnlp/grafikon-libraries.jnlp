@@ -46,6 +46,8 @@
         <jar href="xmlgraphics-commons-${xmlgraphics.version}.jar" download="eager"/>
         <jar href="ini4j-${ini4j.version}.jar" download="eager"/>
         <jar href="guava-${guava.version}.jar" download="eager"/>
+        <jar href="beanfabrics-core-${beanfabrics.version}.jar" download="eager"/>
+        <jar href="beanfabrics-swing-${beanfabrics.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>
