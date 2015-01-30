@@ -5,21 +5,23 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionListener;
 
-import net.parostroj.timetable.actions.TrainBuilder;
-import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.ResourceLoader;
-
-import javax.swing.JCheckBox;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.GroupLayout;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import net.parostroj.timetable.gui.pm.CopyTrainPM;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.ResourceLoader;
+
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.Path;
+import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnCheckBox;
+import org.beanfabrics.swing.BnTextField;
 
 /**
  * Dialog for copying trains.
@@ -28,65 +30,41 @@ import java.awt.event.ActionEvent;
  */
 public class CopyTrainDialog extends javax.swing.JDialog {
 
-    private final Train train;
-    private boolean reversed;
-    private final TrainDiagram diagram;
+    private final ModelProvider provider = new ModelProvider(CopyTrainPM.class);
 
-    public CopyTrainDialog(Frame parent, boolean modal, TrainDiagram diagram, Train train) {
-        super(parent, modal);
+    public CopyTrainDialog(Window parent, boolean modal, TrainDiagram diagram, Train train) {
+        super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initComponents();
-        this.train = train;
-        this.diagram = diagram;
-        this.reversed = false;
-        if (train != null) {
-            nameTextField.setText(train.getNumber());
-            timeTextField.setText(train.getDiagram().getTimeConverter().convertIntToText(train.getStartTime()));
-            setTitle(String.format(ResourceLoader.getString("copy.train.title"), train.getName()));
-        }
+        CopyTrainPM model = new CopyTrainPM();
+        provider.setPresentationModel(model);
+        model.readFromDiagram(diagram, train);
         pack();
     }
 
     private void initComponents() {
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        nameTextField = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        timeTextField = new javax.swing.JTextField();
-        javax.swing.JButton okButton = new javax.swing.JButton();
+        ActionListener closeListener = evt -> setVisible(false);
+
+        BnTextField nameTextField = new BnTextField();
+        BnTextField timeTextField = new BnTextField();
+        BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jLabel1.setText(ResourceLoader.getString("copy.train.name")); // NOI18N
+        javax.swing.JLabel jLabel1 = new javax.swing.JLabel(ResourceLoader.getString("copy.train.name")); // NOI18N
+        javax.swing.JLabel jLabel2 = new javax.swing.JLabel(ResourceLoader.getString("copy.train.time")); // NOI18N
 
         nameTextField.setColumns(20);
-
-        jLabel2.setText(ResourceLoader.getString("copy.train.time")); // NOI18N
-
         timeTextField.setColumns(20);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okAction();
-            }
-        });
+        okButton.addActionListener(closeListener);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(closeListener);
 
-        JCheckBox checkBox = new JCheckBox(ResourceLoader.getString("copy.train.reversed")); // NOI18N
-        checkBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reversed = ((JCheckBox) e.getSource()).isSelected();
-            }
-        });
+        BnCheckBox reversedCheckBox = new BnCheckBox();
+        reversedCheckBox.setText(ResourceLoader.getString("copy.train.reversed")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
@@ -98,7 +76,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
                         .addComponent(jLabel2))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(checkBox)
+                        .addComponent(reversedCheckBox)
                         .addComponent(timeTextField)
                         .addComponent(nameTextField))
                     .addContainerGap())
@@ -121,7 +99,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
                         .addComponent(jLabel2)
                         .addComponent(timeTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(checkBox)
+                    .addComponent(reversedCheckBox)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(cancelButton)
@@ -130,28 +108,16 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         );
         getContentPane().setLayout(layout);
 
+        nameTextField.setModelProvider(provider);
+        nameTextField.setPath(new Path("number"));
+        timeTextField.setModelProvider(provider);
+        timeTextField.setPath(new Path("time"));
+        reversedCheckBox.setModelProvider(provider);
+        reversedCheckBox.setPath(new Path("reversed"));
+        okButton.setModelProvider(provider);
+        okButton.setPath(new Path("ok"));
+
         pack();
         this.setResizable(false);
     }
-
-    private void okAction() {
-        // create copy of the train
-        int time = train.getDiagram().getTimeConverter().convertTextToInt(timeTextField.getText());
-        if (time == -1)
-            // select midnight if the time is not correct
-            time = 0;
-        TrainBuilder builder = new TrainBuilder();
-        Train newTrain = reversed ?
-                builder.createReverseTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train) :
-                builder.createTrain(IdGenerator.getInstance().getId(), nameTextField.getText(), time, train);
-
-        // add train to diagram
-        diagram.addTrain(newTrain);
-
-        // set visible to false
-        this.setVisible(false);
-    }
-
-    private javax.swing.JTextField nameTextField;
-    private javax.swing.JTextField timeTextField;
 }
