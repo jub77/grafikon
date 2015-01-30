@@ -94,16 +94,18 @@ public class EditImagesDialog extends javax.swing.JDialog {
         listModel = new WrapperListModel<TimetableImage>();
         imagesList.setModel(listModel);
         if (this.diagram != null) {
-            for (TimetableImage item : this.diagram.getImages())
+            for (TimetableImage item : this.diagram.getImages()) {
                 listModel.addWrapper(new Wrapper<TimetableImage>(item));
+            }
         }
     }
 
     private boolean checkExistence(String filename, TimetableImage ignore) {
         for (TimetableImage image : diagram.getImages()) {
             if (image != ignore) {
-                if (image.getFilename().equals(filename))
+                if (image.getFilename().equals(filename)) {
                     return true;
+                }
             }
         }
         return false;
@@ -112,6 +114,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         imagesList = new javax.swing.JList<Wrapper<TimetableImage>>();
+        imagesList.setVisibleRowCount(12);
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         renameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
@@ -136,7 +139,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
             layout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                         .addComponent(renameButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -149,7 +152,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(newButton)
                             .addPreferredGap(ComponentPlacement.RELATED)
@@ -244,8 +247,9 @@ public class EditImagesDialog extends javax.swing.JDialog {
         diagram.removeImage(selected);
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
-        if (!selected.getImageFile().delete())
+        if (!selected.getImageFile().delete()) {
             log.debug("Cannot remove temporary file: {}", selected.getImageFile().getPath());
+        }
     }
 
     private javax.swing.JButton deleteButton;
