@@ -35,7 +35,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
     }
 
     public void showDialog(TrainDiagram diagram) {
-        ((InfoPM) this.provider.getPresentationModel()).readFromDiagram(diagram);
+        ((InfoPM) this.provider.getPresentationModel()).init(diagram);
         this.setVisible(true);
     }
 

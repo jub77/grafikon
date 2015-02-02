@@ -56,7 +56,7 @@ public class NewModelPM extends AbstractPM {
     public void init() {
     }
 
-    public Callable<TrainDiagram> getTrainDiagramTask() {
+    public Callable<TrainDiagram> getResult() {
         Callable<TrainDiagram> result = this.createTask;
         this.createTask = null;
         return result;

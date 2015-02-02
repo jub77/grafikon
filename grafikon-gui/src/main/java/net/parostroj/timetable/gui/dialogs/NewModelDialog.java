@@ -38,7 +38,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         NewModelPM model = (NewModelPM) this.provider.getPresentationModel();
         model.init();
         this.setVisible(true);
-        return model.getTrainDiagramTask();
+        return model.getResult();
     }
 
     private void initComponents() {

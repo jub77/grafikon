@@ -24,7 +24,7 @@ public class CopyTrainPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public void readFromDiagram(TrainDiagram diagram, Train train) {
+    public void init(TrainDiagram diagram, Train train) {
         this.trainRef = new WeakReference<Train>(train);
 
         time.setConverter(diagram.getTimeConverter());
@@ -33,7 +33,7 @@ public class CopyTrainPM extends AbstractPM {
         reversed.setBoolean(false);
     }
 
-    public void writeToDiagram() {
+    private void writeResult() {
         // create copy of the train
         Train train = this.trainRef.get();
         if (train != null) {
@@ -55,7 +55,7 @@ public class CopyTrainPM extends AbstractPM {
 
     @Operation(path = "ok")
     public boolean ok() {
-        writeToDiagram();
+        writeResult();
         return true;
     }
 }
