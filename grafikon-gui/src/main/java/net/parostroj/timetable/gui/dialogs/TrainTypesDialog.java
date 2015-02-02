@@ -46,7 +46,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private TrainDiagram diagram;
     private WrapperListModel<TrainType> typesModel;
-    private final WrapperDelegate lineTypeWrapperDelegate;
+    private final WrapperDelegate<LineType> lineTypeWrapperDelegate;
 
     /** Creates new form TrainTypesDialog */
     public TrainTypesDialog(java.awt.Frame parent, boolean modal) {
@@ -617,15 +617,15 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<Wrapper<LineType>> lineTypeComboBox;
     private javax.swing.JTextField lineLengthTextField;
 
-    private static class LineTypeWrapperDelegate implements WrapperDelegate {
+    private static class LineTypeWrapperDelegate implements WrapperDelegate<LineType> {
         @Override
-        public String toString(Object element) {
-            String key = ((LineType) element).getKey();
+        public String toString(LineType element) {
+            String key = element.getKey();
             return ResourceLoader.getString("edit.traintypes.line.type." + key);
         }
 
         @Override
-        public int compare(Object o1, Object o2) {
+        public int compare(LineType o1, LineType o2) {
             return 0;
         }
     }

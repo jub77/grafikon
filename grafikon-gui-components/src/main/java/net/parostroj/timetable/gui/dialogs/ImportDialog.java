@@ -267,7 +267,7 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList<Wrapper<ObjectWithId>> list, Set<ObjectWithId> set) {
-        WrapperDelegate delegate = null;
+        WrapperDelegate<Object> delegate = null;
         if (comps == ImportComponent.TRAINS_CYCLES) {
             delegate = new TrainsCycleWrapperDelegate(true);
         }

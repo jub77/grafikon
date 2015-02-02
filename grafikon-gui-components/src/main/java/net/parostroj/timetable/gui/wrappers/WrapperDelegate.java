@@ -5,9 +5,7 @@ package net.parostroj.timetable.gui.wrappers;
  *
  * @author jub
  */
-public interface WrapperDelegate {
+public interface WrapperDelegate<T> extends WrapperConversion<T> {
 
-    public String toString(Object element);
-
-    public int compare(Object o1, Object o2);
+    public int compare(T o1, T o2);
 }
