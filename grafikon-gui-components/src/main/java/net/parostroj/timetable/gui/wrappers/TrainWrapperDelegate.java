@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class TrainWrapperDelegate implements WrapperDelegate {
+public class TrainWrapperDelegate implements WrapperDelegate<Object> {
 
     public enum Type {
         NAME, NAME_AND_END_NODES, NAME_AND_END_NODES_WITH_TIME, NAME_AND_END_NODES_WITH_TIME_TWO_LINES;

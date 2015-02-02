@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.imports.ImportComponent;
  *
  * @author jub
  */
-public class ImportComponentWrapperDelegate implements WrapperDelegate {
+public class ImportComponentWrapperDelegate implements WrapperDelegate<Object> {
 
     @Override
     public String toString(Object element) {

@@ -7,7 +7,7 @@ import java.text.Collator;
  *
  * @author jub
  */
-public class BasicWrapperDelegate implements WrapperDelegate {
+public class BasicWrapperDelegate implements WrapperDelegate<Object> {
 
     private static final Collator collator = Collator.getInstance();
 

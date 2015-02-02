@@ -14,14 +14,14 @@ import net.parostroj.timetable.model.imports.ImportMatch;
 public class Wrapper<T> implements Comparable<Wrapper<T>> {
 
     private T wrappedElement;
-    private final WrapperDelegate delegate;
+    private final WrapperDelegate<? super T> delegate;
 
     public Wrapper(T element) {
         this.wrappedElement = element;
         this.delegate = new ElementWrapperDelegate();
     }
 
-    public Wrapper(T element, WrapperDelegate delegate) {
+    public Wrapper(T element, WrapperDelegate<? super T> delegate) {
         this.wrappedElement = element;
         this.delegate = delegate;
     }
@@ -70,7 +70,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return getWrapper(o, null);
     }
 
-    public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate delegate) {
+    public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate<? super T> delegate) {
         if (delegate == null) {
             if (o instanceof Train) {
                 delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getDiagram().getTrainsData().getTrainComparator());
@@ -96,7 +96,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return getWrapperList(objList, null);
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList, WrapperDelegate delegate) {
+    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList, WrapperDelegate<? super T> delegate) {
         List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
         Class<?> clazz = null;
         for (T o : objList) {
