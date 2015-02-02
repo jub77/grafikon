@@ -23,6 +23,10 @@
             <artifactId>grafikon-output2</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.parostroj</groupId>
+            <artifactId>grafikon-templates</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
         </dependency>
