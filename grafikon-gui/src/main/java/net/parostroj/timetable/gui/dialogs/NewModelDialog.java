@@ -5,14 +5,19 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.List;
-import javax.swing.JOptionPane;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.templates.Template;
-import net.parostroj.timetable.model.templates.TemplatesLoader;
+import java.awt.event.ActionListener;
+import java.util.concurrent.Callable;
+
+import javax.swing.JButton;
+
+import net.parostroj.timetable.gui.pm.NewModelPM;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.Path;
+import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnComboBox;
 
 /**
  * Dialog for creation new GT.
@@ -21,70 +26,37 @@ import org.slf4j.LoggerFactory;
  */
 public class NewModelDialog extends javax.swing.JDialog {
 
-    private static final Logger log = LoggerFactory.getLogger(NewModelDialog.class);
+    private final ModelProvider provider = new ModelProvider(NewModelPM.class);
 
-    public static class NewModelValues {
-
-        public String template;
-        public double timeScale;
-        public Scale scale;
-
-        public NewModelValues(String template, double timeScale, Scale scale) {
-            super();
-            this.template = template;
-            this.timeScale = timeScale;
-            this.scale = scale;
-        }
-    }
-
-    private NewModelValues values;
-
-    /** Creates new form SettingsDialog */
     public NewModelDialog(java.awt.Window parent, boolean modal) {
-        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
+        super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
+        provider.setPresentationModel(new NewModelPM());
         initComponents();
-        for (Scale scale : Scale.getPredefined()) {
-            scaleComboBox.addItem(scale);
-        }
-
-        // set some values for speed
-        for (double d = 1.0; d <= 10.0 ;) {
-            ratioComboBox.addItem(Double.toString(d));
-            d += 0.5;
-        }
-
-        ratioComboBox.setSelectedItem("5.0");
-
-        // create combo box with templates
-        List<Template> list = TemplatesLoader.getTemplates();
-        for (Template template : list) {
-            templatesComboBox.addItem(template.getName());
-        }
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        if (b)
-            values = null;
-        super.setVisible(b);
-    }
-
-    public NewModelValues getNewModelValues() {
-        return values;
+    public Callable<TrainDiagram> showDialog() {
+        NewModelPM model = (NewModelPM) this.provider.getPresentationModel();
+        model.init();
+        this.setVisible(true);
+        return model.getTrainDiagramTask();
     }
 
     private void initComponents() {
+        ActionListener closeAction = e -> setVisible(false);
+
         java.awt.GridBagConstraints gridBagConstraints;
 
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        scaleComboBox = new javax.swing.JComboBox<Scale>();
+        BnComboBox scaleComboBox = new BnComboBox();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        ratioComboBox = new javax.swing.JComboBox<String>();
+        BnComboBox ratioComboBox = new BnComboBox();
         javax.swing.JPanel panel1 = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        BnButton okButton = new BnButton();
+        okButton.addActionListener(closeAction);
+        JButton cancelButton = new JButton();
+        cancelButton.addActionListener(closeAction);
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        templatesComboBox = new javax.swing.JComboBox<String>();
+        BnComboBox templatesComboBox = new BnComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("newmodel")); // NOI18N
@@ -121,19 +93,9 @@ public class NewModelDialog extends javax.swing.JDialog {
         getContentPane().add(ratioComboBox, gridBagConstraints);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
         panel1.add(okButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
         panel1.add(cancelButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -160,32 +122,16 @@ public class NewModelDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 2, 10, 10);
         getContentPane().add(templatesComboBox, gridBagConstraints);
 
+        // binding
+        scaleComboBox.setModelProvider(provider);
+        scaleComboBox.setPath(new Path("scale"));
+        ratioComboBox.setModelProvider(provider);
+        ratioComboBox.setPath(new Path("timeScale"));
+        templatesComboBox.setModelProvider(provider);
+        templatesComboBox.setPath(new Path("template"));
+        okButton.setModelProvider(provider);
+        okButton.setPath(new Path("ok"));
+
         pack();
     }
-
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // set scale
-        Scale s = (Scale)scaleComboBox.getSelectedItem();
-        // set ratio
-        double sp = 1.0;
-        try {
-            sp = Double.parseDouble((String)ratioComboBox.getSelectedItem());
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this.getParent(), ex.getMessage(),
-                    ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-            log.warn("Cannot convert ratio value.", ex);
-            return;
-        }
-
-        // load template
-        String templateName = (String)templatesComboBox.getSelectedItem();
-        values = new NewModelValues(templateName, sp, s);
-        this.setVisible(false);
-    }
-
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton okButton;
-    private javax.swing.JComboBox<String> ratioComboBox;
-    private javax.swing.JComboBox<Scale> scaleComboBox;
-    private javax.swing.JComboBox<String> templatesComboBox;
 }
