@@ -37,7 +37,7 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         initComponents();
         CopyTrainPM model = new CopyTrainPM();
         provider.setPresentationModel(model);
-        model.readFromDiagram(diagram, train);
+        model.init(diagram, train);
         pack();
     }
 

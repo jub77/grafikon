@@ -30,7 +30,7 @@ public class InfoPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public void readFromDiagram(TrainDiagram diagram) {
+    public void init(TrainDiagram diagram) {
         this.diagramRef = new WeakReference<>(diagram);
         String numbers = diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class);
         String nodes = diagram.getAttributes().get(TrainDiagram.ATTR_ROUTE_NODES, String.class);
@@ -43,7 +43,7 @@ public class InfoPM extends AbstractPM {
         this.checkRouteInfo();
     }
 
-    public void writeToDiagram() {
+    private void writeResult() {
         TrainDiagram diagram = diagramRef.get();
         if (diagram != null) {
             // save values
@@ -72,7 +72,7 @@ public class InfoPM extends AbstractPM {
 
     @Operation(path = "ok")
     public boolean ok() {
-        writeToDiagram();
+        writeResult();
         return true;
     }
 }
