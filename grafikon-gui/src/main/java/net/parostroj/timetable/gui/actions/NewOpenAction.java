@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -17,13 +18,11 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog;
-import net.parostroj.timetable.gui.dialogs.NewModelDialog.NewModelValues;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.model.templates.TemplatesLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -177,24 +176,22 @@ public class NewOpenAction extends AbstractAction {
                 // create new model
                 NewModelDialog newModelDialog = new NewModelDialog((Window) parent, true);
                 newModelDialog.setLocationRelativeTo(parent);
-                newModelDialog.setVisible(true);
+                Callable<TrainDiagram> diagramCreator = newModelDialog.showDialog();
                 newModelDialog.dispose();
-                NewModelValues values = newModelDialog.getNewModelValues();
-                if (values != null) {
-                    context.setAttribute("values", values);
-                }
+                context.setAttribute("diagramCreator", diagramCreator);
             }
         };
         ModelAction createAction = new EventDispatchAfterModelAction(context) {
 
-            private NewModelDialog.NewModelValues values;
+            private Callable<TrainDiagram> diagramCreator;
             private TrainDiagram diagram;
             private Exception error;
 
+            @SuppressWarnings("unchecked")
             @Override
             protected boolean check() {
-                values = (NewModelValues) context.getAttribute("values");
-                return values != null;
+                diagramCreator = (Callable<TrainDiagram>) context.getAttribute("diagramCreator");
+                return diagramCreator != null;
             }
 
             @Override
@@ -204,14 +201,11 @@ public class NewOpenAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     try {
-                        diagram = (new TemplatesLoader()).getTemplate(values.template);
-                    } catch (LSException ex) {
+                        diagram = diagramCreator.call();
+                    } catch (Exception ex) {
                         error = ex;
                         return;
                     }
-                    // update scale and time scale
-                    diagram.setAttribute(TrainDiagram.ATTR_SCALE, values.scale);
-                    diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, values.timeScale);
                 } finally {
                     log.debug("Template loaded in {}ms", System.currentTimeMillis() - time);
                     setWaitDialogVisible(false);
