@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui;
+package net.parostroj.timetable.gui.data;
 
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;

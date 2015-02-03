@@ -9,6 +9,7 @@ import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
+import net.parostroj.timetable.gui.data.ProgramSettings;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
