@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.data;
 
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Settings of the program.
@@ -22,14 +23,15 @@ public class ProgramSettings {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.userName = ObjectsUtil.checkAndTrim(userName);
     }
 
     public String getUserNameOrSystemUser() {
-        if (userName != null)
+        if (userName != null) {
             return userName;
-        else
+        } else {
             return getSystemUser();
+        }
     }
 
     public String getSystemUser() {
