@@ -15,9 +15,6 @@ public class ProgramSettingsPM extends AbstractPM {
     final TextPM user = new TextPM();
     final EnumeratedValuesPM<SpeedUnit> speed;
     final EnumeratedValuesPM<LengthUnit> length;
-    final BooleanPM doubleSidedPrint = new BooleanPM();
-    final BooleanPM generateTitlePage = new BooleanPM();
-    final BooleanPM showTechTimes = new BooleanPM();
 
     final OperationPM ok = new OperationPM();
 
@@ -33,9 +30,6 @@ public class ProgramSettingsPM extends AbstractPM {
         settingsRef = new WeakReference<ProgramSettings>(settings);
         speed.setValue(settings.getSpeedUnit());
         length.setValue(settings.getLengthUnit());
-        doubleSidedPrint.setBoolean(settings.isTwoSidedPrint());
-        generateTitlePage.setBoolean(settings.isGenerateTitlePageTT());
-        showTechTimes.setBoolean(settings.isStShowTechTime());
         user.setText(settings.getUserName());
     }
 
@@ -45,9 +39,6 @@ public class ProgramSettingsPM extends AbstractPM {
             settings.setUserName(user.getText());
             settings.setSpeedUnit(speed.getValue());
             settings.setLengthUnit(length.getValue());
-            settings.setTwoSidedPrint(doubleSidedPrint.getBoolean());
-            settings.setGenerateTitlePageTT(generateTitlePage.getBoolean());
-            settings.setStShowTechTime(showTechTimes.getBoolean());
         }
     }
 
