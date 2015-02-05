@@ -13,8 +13,8 @@ import org.beanfabrics.support.Operation;
 public class ProgramSettingsPM extends AbstractPM {
 
     final TextPM user = new TextPM();
-    final EnumeratedValuesPM<SpeedUnit> speed;
-    final EnumeratedValuesPM<LengthUnit> length;
+    final IEnumeratedValuesPM<SpeedUnit> speed;
+    final IEnumeratedValuesPM<LengthUnit> length;
 
     final OperationPM ok = new OperationPM();
 
