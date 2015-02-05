@@ -27,11 +27,20 @@ public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedVal
         }
     }
 
+    @Override
+    public void add(AbstractButton b) {
+        throw new UnsupportedOperationException();
+    }
+
     public void add(AbstractButton b, T value) {
         super.add(b);
         map.put(b.getModel(), value);
-        if (b.isSelected() && pModel != null) {
-            pModel.setValue(value);
+        if (pModel != null) {
+            if (b.isSelected()) {
+                pModel.setValue(value);
+            } else if (value.equals(pModel.getValue())) {
+                b.setSelected(true);
+            }
         }
     }
 
@@ -68,6 +77,10 @@ public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedVal
         this.pModel = pModel;
         if (this.pModel != null) {
             this.pModel.addPropertyChangeListener("text", this.listener);
+            T value = pModel.getValue();
+            if (value != null) {
+                this.setSelectedValue(value);
+            }
         }
     }
 
