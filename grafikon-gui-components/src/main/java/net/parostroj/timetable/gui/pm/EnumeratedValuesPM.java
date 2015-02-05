@@ -38,16 +38,16 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         return this.options.getKey(this.getText());
     }
 
-    public static <T> WrapperConversion<T> createConversion(Collection<? extends T> values, Collection<String> textValues) {
+    public static <V> WrapperConversion<V> createConversion(Collection<? extends V> values, Collection<String> textValues) {
         Iterator<String> si = textValues.iterator();
-        Iterator<? extends T> vi = values.iterator();
-        final Map<T, String> conversionMap = new HashMap<T, String>();
+        Iterator<? extends V> vi = values.iterator();
+        final Map<V, String> conversionMap = new HashMap<V, String>();
         while (vi.hasNext() && si.hasNext()) {
             conversionMap.put(vi.next(), si.next());
         }
         if (vi.hasNext() || si.hasNext()) {
             throw new IllegalArgumentException("Uneven number of arguments in collections");
         }
-        return i -> conversionMap.get(i);
+        return (V i) -> conversionMap.get(i);
     }
 }

@@ -9,17 +9,17 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 
-import net.parostroj.timetable.gui.pm.ValuePM;
+import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
 
 import org.beanfabrics.*;
 import org.beanfabrics.event.WeakPropertyChangeListener;
 
-public class BnButtonGroup<T> extends ButtonGroup implements View<ValuePM<T>>, ModelSubscriber {
+public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedValuesPM<T>>, ModelSubscriber {
 
     private final Link link = new Link(this);
     private final BGListener listener = new BGListener();
     private final Map<ButtonModel, T> map = new HashMap<ButtonModel, T>();
-    private ValuePM<T> pModel;
+    private IEnumeratedValuesPM<T> pModel;
 
     private class BGListener implements WeakPropertyChangeListener, Serializable {
         public void propertyChange(PropertyChangeEvent evt) {
@@ -56,18 +56,18 @@ public class BnButtonGroup<T> extends ButtonGroup implements View<ValuePM<T>>, M
     }
 
     @Override
-    public ValuePM<T> getPresentationModel() {
+    public IEnumeratedValuesPM<T> getPresentationModel() {
         return this.pModel;
     }
 
     @Override
-    public void setPresentationModel(ValuePM<T> pModel) {
+    public void setPresentationModel(IEnumeratedValuesPM<T> pModel) {
         if (this.pModel != null) {
             this.pModel.removePropertyChangeListener(this.listener);
         }
         this.pModel = pModel;
         if (this.pModel != null) {
-            this.pModel.addPropertyChangeListener("value", this.listener);
+            this.pModel.addPropertyChangeListener("text", this.listener);
         }
     }
 
