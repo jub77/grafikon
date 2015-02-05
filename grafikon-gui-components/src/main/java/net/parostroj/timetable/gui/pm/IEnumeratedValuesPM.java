@@ -11,5 +11,4 @@ public interface IEnumeratedValuesPM<E> extends ITextPM {
     E getValue();
 
     WrapperConversion<? super E> getConversion();
-
 }
