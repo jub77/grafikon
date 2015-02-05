@@ -23,9 +23,9 @@ public class NewModelPM extends AbstractPM {
     private static final double SELECTION_MAX_TIME_SCALE = 10.0;
     private static final double TIME_SCALE_STEP = 0.5;
 
-    final EnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<Scale>(Scale.getPredefined(), i -> i.getName());
+    final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<Scale>(Scale.getPredefined(), i -> i.getName());
     final BigDecimalPM timeScale = new BigDecimalPM();
-    final EnumeratedValuesPM<Template> template;
+    final IEnumeratedValuesPM<Template> template;
 
     final OperationPM ok = new OperationPM();
 
