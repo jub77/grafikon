@@ -41,6 +41,9 @@ import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.VersionInfo;
 
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.Path;
+import org.beanfabrics.swing.BnCheckBoxMenuItem;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
     private static final String FRAME_TITLE = "Grafikon";
+
+    private final ModelProvider provider = new ModelProvider();
 
     private ApplicationModel model;
     private FloatingWindowsList floatingDialogsList;
@@ -86,6 +91,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
      */
     private void initializeFrame() {
         model = new ApplicationModel();
+        provider.setPresentationModel(model);
         lastOpened = new HashMap<File, JMenuItem>();
 
         // set local before anything else
@@ -444,9 +450,15 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(outputTypeMenu);
 
-        genTitlePageTTCheckBoxMenuItem = this.addCheckMenuItem(actionMenu, "menu.action.traintimetables.generate.titlepage", evt -> model.getProgramSettings().setGenerateTitlePageTT(((JCheckBoxMenuItem) evt.getSource()).isSelected()), null, true); // NOI18N
-        twoSidesPrintCheckBoxMenuItem = this.addCheckMenuItem(actionMenu, "menu.action.traintimetables.two.sides.print", evt -> model.getProgramSettings().setTwoSidedPrint(((JCheckBoxMenuItem) evt.getSource()).isSelected()), null, false); // NOI18N
-        stShowTechTimeCheckBoxMenuItem = this.addCheckMenuItem(actionMenu, "menu.action.traintimetables.show.tech.time", evt -> model.getProgramSettings().setStShowTechTime(((JCheckBoxMenuItem) evt.getSource()).isSelected()), null, false); // NOI18N
+        BnCheckBoxMenuItem genTitlePageMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.generateTitlePage"));
+        genTitlePageMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
+        actionMenu.add(genTitlePageMenuItem);
+        BnCheckBoxMenuItem twoSidesPrintMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.doubleSidedPrint"));
+        twoSidesPrintMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.two.sides.print")); // NOI18N
+        actionMenu.add(twoSidesPrintMenuItem);
+        BnCheckBoxMenuItem stShowTechTimeMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.showTechTimes"));
+        stShowTechTimeMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.show.tech.time")); // NOI18N
+        actionMenu.add(stShowTechTimeMenuItem);
 
         actionMenu.add(new javax.swing.JSeparator());
 
@@ -881,10 +893,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         circulationPane.loadFromPreferences(prefs);
         freightNetPane2.loadFromPreferences(prefs);
 
-        genTitlePageTTCheckBoxMenuItem.setSelected(model.getProgramSettings().isGenerateTitlePageTT());
-        twoSidesPrintCheckBoxMenuItem.setSelected(model.getProgramSettings().isTwoSidedPrint());
-        stShowTechTimeCheckBoxMenuItem.setSelected(model.getProgramSettings().isStShowTechTime());
-
         return section;
     }
 
@@ -914,9 +922,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu scriptsMenu;
-    private javax.swing.JCheckBoxMenuItem genTitlePageTTCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem stShowTechTimeCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem twoSidesPrintCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.ButtonGroup lookAndFeelbuttonGroup;

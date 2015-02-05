@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui;
 import java.io.File;
 import java.util.*;
 
+import org.beanfabrics.model.AbstractPM;
+import org.beanfabrics.model.PMManager;
 import org.ini4j.Ini;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
@@ -10,6 +12,7 @@ import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.gui.pm.OutputSettingsPM;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
@@ -23,7 +26,7 @@ import net.parostroj.timetable.utils.Reference;
  *
  * @author jub
  */
-public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram> {
+public class ApplicationModel extends AbstractPM implements StorableGuiData, Reference<TrainDiagram> {
 
     private static final int LAST_OPENED_COUNT = 5;
 
@@ -42,6 +45,8 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
 
+    final OutputSettingsPM outputSettings = new OutputSettingsPM();
+
     /**
      * Default constructor.
      */
@@ -56,6 +61,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
         lastOpenedFiles = new LinkedList<File>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
+        PMManager.setup(this);
     }
 
     /**
@@ -244,6 +250,7 @@ public class ApplicationModel implements StorableGuiData, Reference<TrainDiagram
                 }
             }
         }
+        outputSettings.init(programSettings);
         return section;
     }
 
