@@ -450,15 +450,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(outputTypeMenu);
 
-        BnCheckBoxMenuItem genTitlePageMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.generateTitlePage"));
-        genTitlePageMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.generate.titlepage")); // NOI18N
-        actionMenu.add(genTitlePageMenuItem);
-        BnCheckBoxMenuItem twoSidesPrintMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.doubleSidedPrint"));
-        twoSidesPrintMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.two.sides.print")); // NOI18N
-        actionMenu.add(twoSidesPrintMenuItem);
-        BnCheckBoxMenuItem stShowTechTimeMenuItem = new BnCheckBoxMenuItem(provider, new Path("outputSettings.showTechTimes"));
-        stShowTechTimeMenuItem.setText(ResourceLoader.getString("menu.action.traintimetables.show.tech.time")); // NOI18N
-        actionMenu.add(stShowTechTimeMenuItem);
+        addBnCheckMenuItem(actionMenu, "outputSettings.generateTitlePage", "menu.action.traintimetables.generate.titlepage");
+        addBnCheckMenuItem(actionMenu, "outputSettings.doubleSidedPrint", "menu.action.traintimetables.two.sides.print");
+        addBnCheckMenuItem(actionMenu, "outputSettings.showTechTimes", "menu.action.traintimetables.show.tech.time");
 
         actionMenu.add(new javax.swing.JSeparator());
 
@@ -537,6 +531,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             lookAndFeelbuttonGroup.add(item);
             lookAndFeelMenu.add(item);
         }
+    }
+
+    private BnCheckBoxMenuItem addBnCheckMenuItem(javax.swing.JMenu actionMenu, String pathStr, String key) {
+        BnCheckBoxMenuItem menuItem = new BnCheckBoxMenuItem(provider, new Path(pathStr));
+        menuItem.setText(ResourceLoader.getString(key)); // NOI18N
+        actionMenu.add(menuItem);
+        return menuItem;
     }
 
     private JCheckBoxMenuItem addCheckMenuItem(JMenu menu, String textKey, ActionListener action, String actionCommand, boolean selected) {
