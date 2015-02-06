@@ -12,9 +12,6 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 public class ProgramSettings {
 
     private String userName;
-    private boolean generateTitlePageTT;
-    private boolean twoSidedPrint;
-    private boolean stShowTechTime;
     private LengthUnit lengthUnit;
     private SpeedUnit speedLengthUnit;
 
@@ -38,22 +35,6 @@ public class ProgramSettings {
         return System.getProperty("user.name");
     }
 
-    public boolean isGenerateTitlePageTT() {
-        return generateTitlePageTT;
-    }
-
-    public void setGenerateTitlePageTT(boolean generateTitlePageTT) {
-        this.generateTitlePageTT = generateTitlePageTT;
-    }
-
-    public boolean isTwoSidedPrint() {
-        return twoSidedPrint;
-    }
-
-    public void setTwoSidedPrint(boolean twoSidedPrint) {
-        this.twoSidedPrint = twoSidedPrint;
-    }
-
     public LengthUnit getLengthUnit() {
         return lengthUnit;
     }
@@ -68,13 +49,5 @@ public class ProgramSettings {
 
     public void setSpeedUnit(SpeedUnit speedLengthUnit) {
         this.speedLengthUnit = speedLengthUnit;
-    }
-
-    public boolean isStShowTechTime() {
-        return stShowTechTime;
-    }
-
-    public void setStShowTechTime(boolean stShowTechTime) {
-        this.stShowTechTime = stShowTechTime;
     }
 }
