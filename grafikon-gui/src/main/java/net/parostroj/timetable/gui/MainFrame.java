@@ -26,6 +26,7 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
+import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -38,6 +39,7 @@ import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
+import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
 import net.parostroj.timetable.utils.VersionInfo;
 
@@ -62,7 +64,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private ApplicationModel model;
     private FloatingWindowsList floatingDialogsList;
-    private Locale locale;
     private OutputAction outputAction;
     private ExecuteScriptAction executeScriptAction;
 
@@ -101,8 +102,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             loadedLocale = section.get("locale.program");
             String templateLocale = section.get("locale.output");
             if (loadedLocale != null) {
-                locale = ModelUtils.parseLocale(loadedLocale);
+                Locale locale = ModelUtils.parseLocale(loadedLocale);
+                model.setLocale(locale);
                 Locale.setDefault(locale);
+            } else {
+                model.setLocale(null);
             }
             if (templateLocale != null) {
                 model.getOutputSettings().setLocale(ModelUtils.parseLocale(templateLocale));
@@ -161,9 +165,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         } catch (IOException e) {
             log.error("Error loading preferences.", e);
         }
-
-        this.setSelectedLocale();
-        this.setSelectedTemplateLocale();
 
         // preload file dialogs
         FileChooserFactory fcf = FileChooserFactory.getInstance();
@@ -292,8 +293,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void initComponents() {
-        languageButtonGroup = new javax.swing.ButtonGroup();
-        outputLbuttonGroup = new javax.swing.ButtonGroup();
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
         lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
         javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
@@ -358,9 +357,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(new javax.swing.JSeparator());
 
         languageMenu.setText(ResourceLoader.getString("menu.language")); // NOI18N
-
-        systemLanguageRadioButtonMenuItem = this.addRadioMenuItem(languageMenu, "menu.language.system", evt -> languageRadioButtonMenuItemActionPerformed(evt), null, true); // NOI18N
-        languageButtonGroup.add(systemLanguageRadioButtonMenuItem);
 
         fileMenu.add(languageMenu);
 
@@ -428,9 +424,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(new javax.swing.JSeparator());
 
         oLanguageMenu.setText(ResourceLoader.getString("menu.language.output")); // NOI18N
-
-        oSystemLRadioButtonMenuItem = this.addRadioMenuItem(oLanguageMenu, "menu.language.program", evt -> outputLanguageRadioButtonMenuItemActionPerformed(evt), null, true); // NOI18N
-        outputLbuttonGroup.add(oSystemLRadioButtonMenuItem);
 
         actionMenu.add(oLanguageMenu);
 
@@ -508,21 +501,26 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         engineCyclesPane.setKey("cycles.engine");
 
         // add languages to menu
-        LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder();
-        List<LanguageMenuBuilder.LanguageMenuItem> languages = languageMenuBuilder.createLanguageMenuItems();
-        ActionListener langListener = e -> languageRadioButtonMenuItemActionPerformed(e);
-        for (LanguageMenuBuilder.LanguageMenuItem item : languages) {
-            languageMenu.add(item);
-            item.addActionListener(langListener);
-            languageButtonGroup.add(item);
+        LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder(model.getLanguageLoader());
+
+        List<Pair<JRadioButtonMenuItem, Locale>> lItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader.getString("menu.language.system"));
+        BnButtonGroup<Locale> lBGroup = new BnButtonGroup<Locale>();
+        for (Pair<JRadioButtonMenuItem, Locale> item : lItems) {
+            languageMenu.add(item.first);
+            lBGroup.add(item.first, item.second);
         }
-        List<LanguageMenuBuilder.LanguageMenuItem> oLanguages = languageMenuBuilder.createLanguageMenuItems();
-        ActionListener oLangListener = e -> outputLanguageRadioButtonMenuItemActionPerformed(e);
-        for (LanguageMenuBuilder.LanguageMenuItem item : oLanguages) {
-            oLanguageMenu.add(item);
-            item.addActionListener(oLangListener);
-            outputLbuttonGroup.add(item);
+        lBGroup.setModelProvider(provider);
+        lBGroup.setPath(new Path("locale"));
+
+        List<Pair<JRadioButtonMenuItem, Locale>> oItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader.getString("menu.language.system"));
+        BnButtonGroup<Locale> oBGroup = new BnButtonGroup<Locale>();
+        for (Pair<JRadioButtonMenuItem, Locale> item : oItems) {
+            oLanguageMenu.add(item.first);
+            oBGroup.add(item.first, item.second);
         }
+        oBGroup.setModelProvider(provider);
+        oBGroup.setPath(new Path("outputSettingsPM.locale"));
+        oBGroup.setSelectedValue(model.getOutputSettings().getLocale());
 
         // look and feel
         for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
@@ -632,22 +630,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         infoDialog.dispose();
     }
 
-    private void languageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        if (systemLanguageRadioButtonMenuItem.isSelected()) {
-            locale = null;
-        } else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-            locale = ((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage();
-        }
-    }
-
-    private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        if (oSystemLRadioButtonMenuItem.isSelected()) {
-            model.getOutputSettings().setLocale(null);
-        } else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-            model.getOutputSettings().setLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
-        }
-    }
-
     private void trainTypesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         TrainTypesDialog trainTypesDialog = new TrainTypesDialog(this, true);
         trainTypesDialog.setLocationRelativeTo(this);
@@ -696,7 +678,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void localizationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        LocalizationDialog dialog = new LocalizationDialog(this, true);
+        LocalizationDialog dialog = new LocalizationDialog(this, true, model.getLanguageLoader());
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
@@ -762,42 +744,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.dispose();
     }
 
-    private void setSelectedLocale() {
-        if (locale == null) {
-            systemLanguageRadioButtonMenuItem.setSelected(true);
-        } else {
-            for (Enumeration<AbstractButton> en = languageButtonGroup.getElements(); en.hasMoreElements();) {
-                AbstractButton e = en.nextElement();
-                if (e instanceof LanguageMenuBuilder.LanguageMenuItem) {
-                    LanguageMenuBuilder.LanguageMenuItem item = (LanguageMenuBuilder.LanguageMenuItem) e;
-                    if (locale.equals(item.getLanguage())) {
-                        item.setSelected(true);
-                        return;
-                    }
-                }
-            }
-            systemLanguageRadioButtonMenuItem.setSelected(true);
-        }
-    }
-
-    private void setSelectedTemplateLocale() {
-        if (model.getOutputSettings().getLocale() == null) {
-            oSystemLRadioButtonMenuItem.setSelected(true);
-        } else {
-            for (Enumeration<AbstractButton> en = outputLbuttonGroup.getElements(); en.hasMoreElements();) {
-                AbstractButton e = en.nextElement();
-                if (e instanceof LanguageMenuBuilder.LanguageMenuItem) {
-                    LanguageMenuBuilder.LanguageMenuItem item = (LanguageMenuBuilder.LanguageMenuItem) e;
-                    if (model.getOutputSettings().getLocale().equals(item.getLanguage())) {
-                        item.setSelected(true);
-                        return;
-                    }
-                }
-            }
-            oSystemLRadioButtonMenuItem.setSelected(true);
-        }
-    }
-
     public void cleanUpBeforeApplicationEnd() {
         try {
             // save preferences
@@ -828,7 +774,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         FileChooserFactory.getInstance().saveToPreferences(prefs);
 
         // save locales
-
+        Locale locale = model.getLocale();
         section.put("locale.program", locale != null ? locale.toString() : null);
         section.put("locale.output", model.getOutputSettings().getLocale() != null ? model.getOutputSettings().getLocale().toString() : null);
 
@@ -924,11 +870,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu scriptsMenu;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
-    private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
-    private javax.swing.ButtonGroup outputLbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
-    private javax.swing.JRadioButtonMenuItem oSystemLRadioButtonMenuItem;
-    private javax.swing.JRadioButtonMenuItem systemLanguageRadioButtonMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
 }

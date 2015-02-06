@@ -13,7 +13,10 @@ import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
+import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.OutputSettingsPM;
+import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
@@ -45,13 +48,16 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private LinkedList<File> lastOpenedFiles;
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
+    private final LanguageLoader languageLoader;
 
-    final OutputSettingsPM outputSettingsPM = new OutputSettingsPM();
+    final OutputSettingsPM outputSettingsPM;
+    final IEnumeratedValuesPM<Locale> locale;
 
     /**
      * Default constructor.
      */
     public ApplicationModel() {
+        languageLoader = new LanguageLoader();
         listeners = new HashSet<ApplicationModelListener>();
         mediator = new Mediator();
         collegue = new TrainDiagramCollegue();
@@ -63,6 +69,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         lastOpenedFiles = new LinkedList<File>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
+        outputSettingsPM = new OutputSettingsPM(languageLoader.getLocaleMap("system"));
+        final Map<Locale, String> localeMap = languageLoader.getLocaleMap("system");
+        locale = new EnumeratedValuesPM<Locale>(localeMap.keySet(), i -> localeMap.get(i));
         PMManager.setup(this);
     }
 
@@ -282,6 +291,14 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         this.programSettings = programSettings;
     }
 
+    public void setLocale(Locale locale) {
+        this.locale.setValue(locale);
+    }
+
+    public Locale getLocale() {
+        return this.locale.getValue();
+    }
+
     public LinkedList<File> getLastOpenedFiles() {
         return lastOpenedFiles;
     }
@@ -326,5 +343,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public ScriptsLoader getGuiScriptsLoader() {
         return guiPsLoader;
+    }
+
+    public LanguageLoader getLanguageLoader() {
+        return languageLoader;
     }
 }

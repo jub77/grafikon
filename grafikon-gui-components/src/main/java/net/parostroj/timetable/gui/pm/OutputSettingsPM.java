@@ -1,5 +1,8 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.Locale;
+import java.util.Map;
+
 import net.parostroj.timetable.gui.data.OutputSettings;
 
 import org.beanfabrics.model.AbstractPM;
@@ -12,10 +15,12 @@ public class OutputSettingsPM extends AbstractPM {
     final BooleanPM doubleSidedPrint = new BooleanPM();
     final BooleanPM generateTitlePage = new BooleanPM();
     final BooleanPM showTechTimes = new BooleanPM();
+    final EnumeratedValuesPM<Locale> locale;
 
     private OutputSettings settings;
 
-    public OutputSettingsPM() {
+    public OutputSettingsPM(final Map<Locale, String> localeMap) {
+        locale = new EnumeratedValuesPM<Locale>(localeMap.keySet(), i -> localeMap.get(i));
         PMManager.setup(this);
     }
 
@@ -30,7 +35,6 @@ public class OutputSettingsPM extends AbstractPM {
     @OnChange(path = "doubleSidedPrint")
     public void changedDoubleSided() {
         if (this.settings != null) {
-            System.out.println("Double - changed");
             this.settings.setTwoSidedPrint(doubleSidedPrint.getBoolean());
         }
     }
@@ -38,7 +42,6 @@ public class OutputSettingsPM extends AbstractPM {
     @OnChange(path = "generateTitlePage")
     public void changedGenerateTitlePage() {
         if (this.settings != null) {
-            System.out.println("Generate - changed");
             this.settings.setGenerateTitlePageTT(generateTitlePage.getBoolean());
         }
     }
@@ -46,8 +49,14 @@ public class OutputSettingsPM extends AbstractPM {
     @OnChange(path = "showTechTimes")
     public void changedShowTechTimes() {
         if (this.settings != null) {
-            System.out.println("Show tech - changed");
             this.settings.setStShowTechTime(showTechTimes.getBoolean());
+        }
+    }
+
+    @OnChange(path = "locale")
+    public void changedLocale() {
+        if (this.settings != null) {
+            this.settings.setLocale(locale.getValue());
         }
     }
 }

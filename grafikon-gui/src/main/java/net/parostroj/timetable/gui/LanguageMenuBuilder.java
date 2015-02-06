@@ -4,7 +4,7 @@ import java.util.*;
 
 import javax.swing.JRadioButtonMenuItem;
 
-import net.parostroj.timetable.gui.utils.LanguagesUtil;
+import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -14,40 +14,29 @@ import net.parostroj.timetable.utils.Pair;
  */
 public class LanguageMenuBuilder {
 
-    public static class LanguageMenuItem extends JRadioButtonMenuItem {
+    private final LanguageLoader languageLoader;
 
-        private Locale language;
-
-        public LanguageMenuItem(String text, Locale language) {
-            super(text);
-            this.language = language;
-        }
-
-        public Locale getLanguage() {
-            return language;
-        }
-
-        public void setLanguage(Locale language) {
-            this.language = language;
-        }
+    public LanguageMenuBuilder(LanguageLoader languageLoader) {
+        this.languageLoader = languageLoader;
     }
 
-    public List<LanguageMenuItem> createLanguageMenuItems() {
-        List<LanguageMenuItem> languages = new LinkedList<LanguageMenuItem>();
+    public List<Pair<JRadioButtonMenuItem, Locale>> createLanguageMenuItems(String systemLanguage) {
+        List<Pair<JRadioButtonMenuItem, Locale>> languages = new ArrayList<Pair<JRadioButtonMenuItem, Locale>>();
 
         // load languages
-        List<Pair<String, Locale>> locales = LanguagesUtil.getLocales();
+        List<Pair<String, Locale>> locales = languageLoader.getLocalesAndTexts(systemLanguage);
         for (Pair<String, Locale> locale : locales) {
-            languages.add(new LanguageMenuItem(locale.first, locale.second));
+            languages.add(new Pair<JRadioButtonMenuItem, Locale>(new JRadioButtonMenuItem(locale.first), locale.second));
         }
         return this.sort(languages);
     }
 
-    private List<LanguageMenuItem> sort(List<LanguageMenuItem> items) {
-        Collections.sort(items, new Comparator<LanguageMenuItem>() {
+    private List<Pair<JRadioButtonMenuItem, Locale>> sort(List<Pair<JRadioButtonMenuItem, Locale>> items) {
+        Collections.sort(items, new Comparator<Pair<JRadioButtonMenuItem, Locale>>() {
             @Override
-            public int compare(LanguageMenuItem o1, LanguageMenuItem o2) {
-                return o1.getLanguage().toString().compareTo(o2.getLanguage().toString());
+            public int compare(Pair<JRadioButtonMenuItem, Locale> o1, Pair<JRadioButtonMenuItem, Locale> o2) {
+                return o1.second == null ? (o2.second == null ? 0 : -1) : (o2.second == null ? 1 : o1.second.toString()
+                        .compareTo(o2.second.toString()));
             }
         });
         return items;

@@ -7,7 +7,7 @@ import java.util.*;
 
 import javax.swing.JCheckBox;
 
-import net.parostroj.timetable.gui.utils.LanguagesUtil;
+import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.utils.Pair;
 
@@ -24,10 +24,10 @@ public class LanguagesDialog extends javax.swing.JDialog {
     private Set<Locale> currentLocales;
     private javax.swing.JPanel localesPanel;
 
-    public LanguagesDialog(Window parent) {
+    public LanguagesDialog(Window parent, LanguageLoader languageLoader) {
         super(parent, ModalityType.APPLICATION_MODAL);
         initComponents();
-        List<Pair<String, Locale>> locales = LanguagesUtil.getLocales();
+        List<Pair<String, Locale>> locales = languageLoader.getLocalesAndTexts();
         localesPanel.setLayout(new GridLayout(locales.size() / COLUMNS, COLUMNS));
         localeMap = new HashMap<Locale, JCheckBox>();
         for (Pair<String, Locale> locale : locales) {
