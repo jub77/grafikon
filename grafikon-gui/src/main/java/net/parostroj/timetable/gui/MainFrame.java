@@ -105,7 +105,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 Locale.setDefault(locale);
             }
             if (templateLocale != null) {
-                model.setOutputLocale(ModelUtils.parseLocale(templateLocale));
+                model.getOutputSettings().setLocale(ModelUtils.parseLocale(templateLocale));
             }
         } catch (IOException e) {
             log.warn("Cannot load preferences.", e);
@@ -642,9 +642,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void outputLanguageRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         if (oSystemLRadioButtonMenuItem.isSelected()) {
-            model.setOutputLocale(null);
+            model.getOutputSettings().setLocale(null);
         } else if (evt.getSource() instanceof LanguageMenuBuilder.LanguageMenuItem) {
-            model.setOutputLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
+            model.getOutputSettings().setLocale(((LanguageMenuBuilder.LanguageMenuItem)evt.getSource()).getLanguage());
         }
     }
 
@@ -758,7 +758,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.setLocationRelativeTo(this);
         OutputSettings settings = model.getOutputSettings();
         dialog.showDialog(model.getDiagram(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
-                new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), model.getOutputLocale()));
+                new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), settings.getLocale()));
         dialog.dispose();
     }
 
@@ -781,14 +781,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void setSelectedTemplateLocale() {
-        if (model.getOutputLocale() == null) {
+        if (model.getOutputSettings().getLocale() == null) {
             oSystemLRadioButtonMenuItem.setSelected(true);
         } else {
             for (Enumeration<AbstractButton> en = outputLbuttonGroup.getElements(); en.hasMoreElements();) {
                 AbstractButton e = en.nextElement();
                 if (e instanceof LanguageMenuBuilder.LanguageMenuItem) {
                     LanguageMenuBuilder.LanguageMenuItem item = (LanguageMenuBuilder.LanguageMenuItem) e;
-                    if (model.getOutputLocale().equals(item.getLanguage())) {
+                    if (model.getOutputSettings().getLocale().equals(item.getLanguage())) {
                         item.setSelected(true);
                         return;
                     }
@@ -830,7 +830,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // save locales
 
         section.put("locale.program", locale != null ? locale.toString() : null);
-        section.put("locale.output", model.getOutputLocale() != null ? model.getOutputLocale().toString() : null);
+        section.put("locale.output", model.getOutputSettings().getLocale() != null ? model.getOutputSettings().getLocale().toString() : null);
 
         // save output type
         section.put("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
