@@ -294,7 +294,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void initComponents() {
         outputTypeButtonGroup = new javax.swing.ButtonGroup();
-        lookAndFeelbuttonGroup = new javax.swing.ButtonGroup();
         javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
         engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
@@ -361,9 +360,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fileMenu.add(languageMenu);
 
         lookAndFeelMenu.setText(ResourceLoader.getString("menu.lookandfeel")); // NOI18N
-
-        JRadioButtonMenuItem lafRItem = this.addRadioMenuItem(lookAndFeelMenu, "menu.lookandfeel.system", null, "system", true); // NOI18N
-        lookAndFeelbuttonGroup.add(lafRItem);
 
         fileMenu.add(lookAndFeelMenu);
         fileMenu.add(new javax.swing.JSeparator());
@@ -523,12 +519,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         oBGroup.setSelectedValue(model.getOutputSettings().getLocale());
 
         // look and feel
-        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(laf.getName());
-            item.setActionCommand(laf.getClassName());
-            lookAndFeelbuttonGroup.add(item);
+        BnButtonGroup<String> lafBGroup = new BnButtonGroup<String>();
+        for (String key : model.lookAndFeel.getValues()) {
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(model.lookAndFeel.getConversion().toString(key));
+            lafBGroup.add(item, key);
             lookAndFeelMenu.add(item);
         }
+        lafBGroup.setModelProvider(provider);
+        lafBGroup.setPath(new Path("lookAndFeel"));
     }
 
     private BnCheckBoxMenuItem addBnCheckMenuItem(javax.swing.JMenu actionMenu, String pathStr, String key) {
@@ -782,7 +780,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         section.put("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
 
         // save look and feel
-        section.put("look.and.feel", lookAndFeelbuttonGroup.getSelection().getActionCommand());
+        section.put("look.and.feel", model.lookAndFeel.getValue());
 
         trainsPane.saveToPreferences(prefs);
         floatingDialogsList.saveToPreferences(prefs);
@@ -821,13 +819,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // load look and feel
         String laf = section.get("look.and.feel", "system");
-        for (Enumeration<AbstractButton> e = lookAndFeelbuttonGroup.getElements(); e.hasMoreElements();) {
-            AbstractButton button = e.nextElement();
-            if (button.getActionCommand().equals(laf)) {
-                button.setSelected(true);
-                break;
-            }
-        }
+        model.lookAndFeel.setValue(laf);
 
         showGTViewMenuItem.setSelected(AppPreferences.getSection(prefs, "trains").get("show.gtview", Boolean.class, true));
 
@@ -870,7 +862,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu scriptsMenu;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
-    private javax.swing.ButtonGroup lookAndFeelbuttonGroup;
     private javax.swing.ButtonGroup outputTypeButtonGroup;
     private net.parostroj.timetable.gui.StatusBar statusBar;
 }
