@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.parostroj.timetable.gui.utils.LanguagesUtil;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Localization;
 import net.parostroj.timetable.model.Localization.Translation;
@@ -18,12 +17,15 @@ import net.parostroj.timetable.utils.Pair;
 public class LocalizationViewModel extends AbstractTableModel {
 
     private final Localization localization;
+    private final Map<Locale, String> localeMap;
 
     private List<Pair<String, Locale>> columns;
     private List<String> keys;
 
-    public LocalizationViewModel(Localization localization) {
+
+    public LocalizationViewModel(Localization localization, Map<Locale, String> localeMap) {
         this.localization = localization;
+        this.localeMap = localeMap;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class LocalizationViewModel extends AbstractTableModel {
 
     private List<Pair<String, Locale>> getColumnsImpl() {
         if (columns == null) {
-            Map<Locale, String> map = LanguagesUtil.getLocaleMap();
+            Map<Locale, String> map = localeMap;
             columns = new ArrayList<Pair<String, Locale>>(localization.getLocales().size());
             for (Locale l : localization.getLocales()) {
                 columns.add(new Pair<String, Locale>(map.get(l), l));

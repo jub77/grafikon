@@ -9,6 +9,7 @@ import java.util.*;
 import javax.swing.*;
 
 import net.parostroj.timetable.gui.dialogs.LanguagesDialog;
+import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 
@@ -20,9 +21,12 @@ import net.parostroj.timetable.model.*;
 public class LocalizationView extends JPanel {
 
     private final JTable table;
+    private final LanguageLoader languageLoader;
     private TrainDiagram diagram;
 
-    public LocalizationView() {
+    public LocalizationView(LanguageLoader languageLoader) {
+        this.languageLoader = languageLoader;
+
         setLayout(new BorderLayout(0, 0));
 
         JScrollPane scrollPane = new JScrollPane();
@@ -70,7 +74,7 @@ public class LocalizationView extends JPanel {
         languagesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LanguagesDialog dialog = new LanguagesDialog(null);
+                LanguagesDialog dialog = new LanguagesDialog(null, languageLoader);
                 Set<Locale> newSelection = dialog.showDialog(LocalizationView.this, diagram.getLocalization().getLocales());
                 if (newSelection != null) {
                     // add
@@ -125,6 +129,6 @@ public class LocalizationView extends JPanel {
     }
 
     private void initModel() {
-        table.setModel(new LocalizationViewModel(diagram.getLocalization()));
+        table.setModel(new LocalizationViewModel(diagram.getLocalization(), languageLoader.getLocaleMap()));
     }
 }

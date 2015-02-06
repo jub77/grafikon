@@ -53,11 +53,8 @@ public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedVal
     }
 
     public void setSelectedValue(T value) {
-        if (value == null) {
-            throw new NullPointerException("Selected value cannot be null");
-        }
         for (Map.Entry<ButtonModel, T> entry : map.entrySet()) {
-            if (entry.getValue().equals(value)) {
+            if (value == entry.getValue() || (value != null && value.equals(entry.getValue()))) {
                 this.setSelected(entry.getKey(), true);
                 break;
             }
@@ -78,9 +75,7 @@ public class BnButtonGroup<T> extends ButtonGroup implements View<IEnumeratedVal
         if (this.pModel != null) {
             this.pModel.addPropertyChangeListener("text", this.listener);
             T value = pModel.getValue();
-            if (value != null) {
-                this.setSelectedValue(value);
-            }
+            this.setSelectedValue(value);
         }
     }
 
