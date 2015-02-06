@@ -3,6 +3,8 @@ package net.parostroj.timetable.gui;
 import java.io.File;
 import java.util.*;
 
+import javax.swing.UIManager;
+
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.PMManager;
 import org.ini4j.Ini;
@@ -24,6 +26,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.Reference;
+import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * Application model.
@@ -52,6 +55,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     final OutputSettingsPM outputSettingsPM;
     final IEnumeratedValuesPM<Locale> locale;
+    final IEnumeratedValuesPM<String> lookAndFeel;
 
     /**
      * Default constructor.
@@ -72,7 +76,18 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         outputSettingsPM = new OutputSettingsPM(languageLoader.getLocaleMap("system"));
         final Map<Locale, String> localeMap = languageLoader.getLocaleMap("system");
         locale = new EnumeratedValuesPM<Locale>(localeMap.keySet(), i -> localeMap.get(i));
+        final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
+        lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap.keySet(), i -> lookAndFeelMap.get(i));
         PMManager.setup(this);
+    }
+
+    private Map<String, String> getLookAndFeelMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("system", ResourceLoader.getString("menu.lookandfeel.system"));
+        for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+            map.put(laf.getClassName(), laf.getName());
+        }
+        return map;
     }
 
     /**
