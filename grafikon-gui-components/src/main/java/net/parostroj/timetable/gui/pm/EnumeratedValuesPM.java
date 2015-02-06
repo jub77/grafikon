@@ -38,6 +38,11 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         return this.options.getKey(this.getText());
     }
 
+    @Override
+    public Collection<E> getValues() {
+        return this.options.keySet();
+    }
+
     public static <V> WrapperConversion<V> createConversion(Collection<? extends V> values, Collection<String> textValues) {
         Iterator<String> si = textValues.iterator();
         Iterator<? extends V> vi = values.iterator();
