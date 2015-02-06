@@ -26,7 +26,7 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
-import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiUtils;
@@ -450,9 +450,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(outputTypeMenu);
 
-        addBnCheckMenuItem(actionMenu, "outputSettings.generateTitlePage", "menu.action.traintimetables.generate.titlepage");
-        addBnCheckMenuItem(actionMenu, "outputSettings.doubleSidedPrint", "menu.action.traintimetables.two.sides.print");
-        addBnCheckMenuItem(actionMenu, "outputSettings.showTechTimes", "menu.action.traintimetables.show.tech.time");
+        addBnCheckMenuItem(actionMenu, "outputSettingsPM.generateTitlePage", "menu.action.traintimetables.generate.titlepage");
+        addBnCheckMenuItem(actionMenu, "outputSettingsPM.doubleSidedPrint", "menu.action.traintimetables.two.sides.print");
+        addBnCheckMenuItem(actionMenu, "outputSettingsPM.showTechTimes", "menu.action.traintimetables.show.tech.time");
 
         actionMenu.add(new javax.swing.JSeparator());
 
@@ -756,7 +756,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // output templates list dialog
         OutputTemplateListDialog dialog = new OutputTemplateListDialog(this, true);
         dialog.setLocationRelativeTo(this);
-        ProgramSettings settings = model.getProgramSettings();
+        OutputSettings settings = model.getOutputSettings();
         dialog.showDialog(model.getDiagram(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
                 new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), model.getOutputLocale()));
         dialog.dispose();

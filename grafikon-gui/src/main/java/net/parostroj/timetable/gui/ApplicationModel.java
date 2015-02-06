@@ -11,6 +11,7 @@ import net.parostroj.timetable.actions.scripts.ScriptsLoader;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
+import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
 import net.parostroj.timetable.gui.pm.OutputSettingsPM;
 import net.parostroj.timetable.mediator.Mediator;
@@ -41,11 +42,12 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final Map<String, File> outputTemplates;
     private Locale outputLocale;
     private ProgramSettings programSettings;
+    private final OutputSettings outputSettings;
     private LinkedList<File> lastOpenedFiles;
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
 
-    final OutputSettingsPM outputSettings = new OutputSettingsPM();
+    final OutputSettingsPM outputSettingsPM = new OutputSettingsPM();
 
     /**
      * Default constructor.
@@ -58,6 +60,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         mediator.addColleague(new ApplicationModelColleague(this));
         outputTemplates = new HashMap<String, File>();
         programSettings = new ProgramSettings();
+        outputSettings = new OutputSettings();
         lastOpenedFiles = new LinkedList<File>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
@@ -217,9 +220,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         section.put("output.templates", getSerializedOutputTemplates());
         section.put("user.name", programSettings.getUserName());
-        section.put("generate.tt.title.page", programSettings.isGenerateTitlePageTT());
-        section.put("two.sided.print", programSettings.isTwoSidedPrint());
-        section.put("st.show.tech.time", programSettings.isStShowTechTime());
+        section.put("generate.tt.title.page", outputSettings.isGenerateTitlePageTT());
+        section.put("two.sided.print", outputSettings.isTwoSidedPrint());
+        section.put("st.show.tech.time", outputSettings.isStShowTechTime());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
         section.remove("last.opened");
@@ -234,9 +237,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
-        programSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, false));
-        programSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, false));
-        programSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
+        outputSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, false));
+        outputSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, false));
+        outputSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
@@ -250,7 +253,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
                 }
             }
         }
-        outputSettings.init(programSettings);
+        outputSettingsPM.init(outputSettings);
         return section;
     }
 
@@ -278,6 +281,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public ProgramSettings getProgramSettings() {
         return programSettings;
+    }
+
+    public OutputSettings getOutputSettings() {
+        return outputSettings;
     }
 
     public void setProgramSettings(ProgramSettings programSettings) {

@@ -1,6 +1,6 @@
 package net.parostroj.timetable.gui.pm;
 
-import net.parostroj.timetable.gui.data.ProgramSettings;
+import net.parostroj.timetable.gui.data.OutputSettings;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.BooleanPM;
@@ -13,13 +13,13 @@ public class OutputSettingsPM extends AbstractPM {
     final BooleanPM generateTitlePage = new BooleanPM();
     final BooleanPM showTechTimes = new BooleanPM();
 
-    private ProgramSettings settings;
+    private OutputSettings settings;
 
     public OutputSettingsPM() {
         PMManager.setup(this);
     }
 
-    public OutputSettingsPM init(ProgramSettings settings) {
+    public OutputSettingsPM init(OutputSettings settings) {
         this.doubleSidedPrint.setBoolean(settings.isTwoSidedPrint());
         this.generateTitlePage.setBoolean(settings.isGenerateTitlePageTT());
         this.showTechTimes.setBoolean(settings.isStShowTechTime());
