@@ -50,4 +50,8 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         }
         return (V i) -> conversionMap.get(i);
     }
+
+    public static <V> WrapperConversion<V> createConversion(Map<? extends V, String> map) {
+        return (V i) -> map.get(i);
+    }
 }
