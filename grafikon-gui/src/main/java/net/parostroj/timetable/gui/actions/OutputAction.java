@@ -168,7 +168,7 @@ public class OutputAction extends AbstractAction {
             // save all
             String suffix = model.getOutputCategory().getSuffix();
             OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
-            of.setParameter("locale", model.getOutputLocale());
+            of.setParameter("locale", model.getOutputSettings().getLocale());
             // stations
             Output output = of.createOutput("stations");
             File oFile = new File(outputFile, ResourceLoader.getString("out.nodes") + "." + suffix);
@@ -219,7 +219,7 @@ public class OutputAction extends AbstractAction {
 
     private Output createOutput(OutputType type) throws OutputException {
         OutputFactory of = OutputFactory.newInstance(model.getOutputCategory().getOutputFactoryType());
-        of.setParameter("locale", model.getOutputLocale());
+        of.setParameter("locale", model.getOutputSettings().getLocale());
         Output output = of.createOutput(type.getOutputType());
         return output;
     }

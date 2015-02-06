@@ -40,7 +40,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final TrainDiagramCollegue collegue;
     private OutputCategory outputCategory;
     private final Map<String, File> outputTemplates;
-    private Locale outputLocale;
     private ProgramSettings programSettings;
     private final OutputSettings outputSettings;
     private LinkedList<File> lastOpenedFiles;
@@ -205,14 +204,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public Map<String, File> getOutputTemplates() {
         return outputTemplates;
-    }
-
-    public Locale getOutputLocale() {
-        return outputLocale;
-    }
-
-    public void setOutputLocale(Locale outputLocale) {
-        this.outputLocale = outputLocale;
     }
 
     @Override
