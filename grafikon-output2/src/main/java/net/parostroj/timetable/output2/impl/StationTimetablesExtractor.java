@@ -120,14 +120,14 @@ public class StationTimetablesExtractor {
                 }
                 row.setFreightToTrain(fttl);
             }
-            List<FNConnection> trainsFrom = diagram.getFreightNet().getTrainsTo(interval);
-            if (!trainsFrom.isEmpty()) {
-                ArrayList<String> nt = new ArrayList<String>(trainsFrom.size());
-                for (FNConnection conn : trainsFrom) {
-                    nt.add(conn.getFrom().getTrain().getName());
-                }
-                row.setFreightFromTrain(nt);
+        }
+        List<FNConnection> trainsFrom = diagram.getFreightNet().getTrainsTo(interval);
+        if (!trainsFrom.isEmpty()) {
+            ArrayList<String> nt = new ArrayList<String>(trainsFrom.size());
+            for (FNConnection conn : trainsFrom) {
+                nt.add(conn.getFrom().getTrain().getName());
             }
+            row.setFreightFromTrain(nt);
         }
         String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
         if (comment != null) {
