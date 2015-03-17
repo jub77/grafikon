@@ -112,7 +112,7 @@
     if (row.comment != null)
       note_parts << row.comment
     if (row.freightTo != null) {
-      note_parts << "<i>${row.freightTo.collect{i -> i}.join(', ')}</i>"
+      note_parts << "<i>${row.freightTo.collect{i -> i}.join(', ')}</i> &rArr;"
     }
     if (row.freightToTrain != null) {
       note_parts << "<i>${row.freightToTrain.collect{i -> '(&rarr; ' + i.train + ': ' + (i.freightTo.collect{j -> j}.join(', ')) + ')'}.join(', ')}</i>"
