@@ -40,10 +40,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <grafikon.version>dev</grafikon.version>
+                <grafikon.version>dev-${project.version}</grafikon.version>
                 <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}</grafikon.version.build>
-                <grafikon.version.show>${grafikon.version.build}</grafikon.version.show>
-                <changeSet>build</changeSet>
             </properties>
         </profile>
         <profile>
@@ -54,10 +52,8 @@
                 </property>
             </activation>
             <properties>
-                <grafikon.changeset>current</grafikon.changeset>
                 <grafikon.version>${project.version}</grafikon.version>
-                <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}-${grafikon.changeset}</grafikon.version.build>
-                <grafikon.version.show>${grafikon.version}-${maven.build.timestamp}</grafikon.version.show>
+                <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}</grafikon.version.build>
             </properties>
         </profile>
     </profiles>
