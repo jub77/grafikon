@@ -11,13 +11,14 @@
     <name>grafikon-webstart</name>
 
     <build>
-        <finalName>grafikon-${project.version}</finalName>
+        <finalName>grafikon-${grafikon.version.build}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.5.3</version>
                 <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <encoding>UTF-8</encoding>
                     <descriptors>
                         <descriptor>src/main/assembly/webstart.xml</descriptor>
@@ -52,7 +53,7 @@
                     <storepass>grafikon</storepass>
                     <processMainArtifact>false</processMainArtifact>
                     <processAttachedArtifacts>true</processAttachedArtifacts>
-                    <archiveDirectory>${project.build.directory}/${project.build.finalName}-webstart</archiveDirectory>
+                    <archiveDirectory>${project.build.directory}/${project.build.finalName}</archiveDirectory>
                     <arguments>
                         <argument>-digestalg</argument><argument>SHA1</argument>
                         <argument>-sigalg</argument><argument>SHA1withDSA</argument>
