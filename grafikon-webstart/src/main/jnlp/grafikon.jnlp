@@ -19,7 +19,7 @@
     </security>
     <update check="timeout" policy="always"/>
     <resources>
-        <j2se version="1.8+"/>
+        <j2se version="1.6+"/>
         <jar href="grafikon.jar" main="true" download="eager"/>
         <extension href="grafikon-libraries.jnlp"/>
     </resources>
