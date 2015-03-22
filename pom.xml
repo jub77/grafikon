@@ -86,10 +86,11 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
                             <Implementation-Build>${grafikon.version.build}</Implementation-Build>
-                            <Built-Date>${maven.build.timestamp}</Built-Date>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
                             <Permissions>all-permissions</Permissions>
                         </manifestEntries>
                     </archive>
