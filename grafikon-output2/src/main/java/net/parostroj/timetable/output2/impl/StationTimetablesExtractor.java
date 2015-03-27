@@ -34,6 +34,7 @@ public class StationTimetablesExtractor {
 
         for (Node node : nodes) {
             StationTimetable timetable = new StationTimetable(node.getName());
+            timetable.setType(node.getType());
 
             // process rows ...
             for (TimeInterval interval : this.collectIntervals(node)) {
@@ -75,6 +76,7 @@ public class StationTimetablesExtractor {
         String fromTime = (from == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getStart());
         String toTime = (to == null && !interval.isTechnological()) ? null : converter.convertIntToXml(interval.getEnd());
         StationTimetableRow row = new StationTimetableRow(interval.getTrain().getName(), fromNodeName, fromTime, toNodeName, toTime, endNodeName, interval.getTrack().getNumber());
+        row.setStop(interval.getLength());
         this.addOtherData(interval, row);
         return row;
     }

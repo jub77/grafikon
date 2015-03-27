@@ -2,18 +2,22 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.NodeType;
 
 /**
  * Station timetable.
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "rows"})
+@XmlType(propOrder = {"name", "type", "rows"})
 public class StationTimetable {
 
     private String name;
+    private NodeType type;
     private List<StationTimetableRow> rows;
 
     public StationTimetable() {
@@ -29,6 +33,14 @@ public class StationTimetable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public NodeType getType() {
+        return type;
+    }
+
+    public void setType(NodeType type) {
+        this.type = type;
     }
 
     @XmlElement(name = "row")

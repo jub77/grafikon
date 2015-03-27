@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "track", "technologicalTime", "occupied", "comment",
+@XmlType(propOrder = {"trainName", "from", "arrival", "to", "departure", "end", "stop", "track", "technologicalTime", "occupied", "comment",
     "engine", "trainUnit", "cycle", "length", "freightTo", "freightFromTrain", "freightToTrain"})
 public class StationTimetableRow {
 
@@ -19,6 +19,7 @@ public class StationTimetableRow {
     private String to;
     private String departure;
     private String end;
+    private Integer stop;
     private String track;
     private boolean technologicalTime;
     private boolean occupied;
@@ -75,6 +76,14 @@ public class StationTimetableRow {
 
     public void setEnd(String end) {
         this.end = end;
+    }
+
+    public Integer getStop() {
+        return stop;
+    }
+
+    public void setStop(Integer stop) {
+        this.stop = stop;
     }
 
     public String getDeparture() {
