@@ -84,24 +84,26 @@ public class FreightHelper {
                 continue;
             }
             Region nRegion = dst.getRegion();
-            if (nRegion != null && nRegion != region && train != dst.getTrain() &&
-                    dst.getNode().getType() != NodeType.STATION_HIDDEN) {
-                if (!used.contains(nRegion)) {
-                    result.add(new FreightDst(nRegion, null));
-                    used.add(nRegion);
-                }
+            boolean regionMatch = nRegion != null && nRegion != region;
+            boolean otherTrain = train != dst.getTrain();
+            if (regionMatch && otherTrain && dst.getNode().getType() != NodeType.STATION_HIDDEN) {
+                addRegion(result, used, nRegion);
             } else {
                 visited.add(dst);
                 result.add(dst);
             }
             if (isStartRegion(dst.getNode()) && nRegion != null) {
-                if (!used.contains(nRegion)) {
-                    result.add(new FreightDst(nRegion, null));
-                    used.add(nRegion);
-                }
+                addRegion(result, used, nRegion);
             }
         }
         return result;
+    }
+
+    private static void addRegion(List<FreightDst> result, Set<Region> used, Region nRegion) {
+        if (!used.contains(nRegion)) {
+            result.add(new FreightDst(nRegion, null));
+            used.add(nRegion);
+        }
     }
 
     public static String freightDstListToString(Collection<FreightDst> list) {
