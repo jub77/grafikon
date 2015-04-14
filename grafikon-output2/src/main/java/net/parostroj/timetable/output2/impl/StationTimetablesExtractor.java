@@ -2,8 +2,8 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 
-import net.parostroj.timetable.actions.FreightHelper;
-import net.parostroj.timetable.actions.TrainsHelper;
+import static net.parostroj.timetable.actions.FreightHelper.*;
+import static net.parostroj.timetable.actions.TrainsHelper.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.utils.*;
@@ -95,8 +95,8 @@ public class StationTimetablesExtractor {
                 this.addCycles(interval, type, row.getCycle());
             }
         }
-        if (FreightHelper.isFreight(interval)) {
-            List<FreightDst> freightDests = FreightHelper.convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+        if (isFreight(interval)) {
+            List<FreightDst> freightDests = convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
             if (!freightDests.isEmpty()) {
                 ArrayList<String> fl = new ArrayList<String>(freightDests.size());
                 for (FreightDst dst : freightDests) {
@@ -105,14 +105,14 @@ public class StationTimetablesExtractor {
                 row.setFreightTo(fl);
             }
         }
-        if (FreightHelper.isConnection(interval, diagram.getFreightNet())) {
+        if (isConnection(interval, diagram.getFreightNet())) {
             Map<Train, List<FreightDst>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<FreightToTrain>();
                 for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
-                    List<FreightDst> mList = FreightHelper.convertFreightDst(interval, entry.getValue());
+                    List<FreightDst> mList = convertFreightDst(interval, entry.getValue());
                     List<String> fl = new ArrayList<String>();
                     for (FreightDst dst : mList) {
                         fl.add(dst.toString(locale));
@@ -188,7 +188,7 @@ public class StationTimetablesExtractor {
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
             }
             if (cycleFromTo != null) {
-                if (type.getName().equals(TrainsCycleType.ENGINE_CYCLE) && TrainsHelper.isHelperEngine(item)) {
+                if (type.getName().equals(TrainsCycleType.ENGINE_CYCLE) && isHelperEngine(item)) {
                     cycleFromTo.setHelper(true);
                 }
                 cycles.add(cycleFromTo);
@@ -201,7 +201,7 @@ public class StationTimetablesExtractor {
         Train train = interval.getTrain();
         TrainType trainType = train.getType();
         if (train.getInterval(interval, 1) != null && interval.isStop() && trainType != null && trainType.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO)) {
-            Pair<Node, Integer> length = TrainsHelper.getNextLength(interval.getOwnerAsNode(), train, TrainsHelper.NextType.LAST_STATION);
+            Pair<Node, Integer> length = getNextLength(interval.getOwnerAsNode(), train, NextType.LAST_STATION);
             // if length was calculated
             if (length != null && length.second != null) {
                 // update length with station lengths
