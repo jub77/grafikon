@@ -64,6 +64,10 @@ public class FreightDst {
     }
 
     public String toString(Locale locale) {
+        return this.toString(locale, true);
+    }
+
+    public String toString(Locale locale, boolean abbreviation) {
         StringBuilder freighStr = new StringBuilder();
         if (node != null) {
             StringBuilder colorsStr = null;
@@ -75,7 +79,7 @@ public class FreightDst {
                 o.finish();
             }
             if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {
-                freighStr.append(node.getAbbr());
+                freighStr.append(abbreviation ? node.getAbbr() : node.getName());
             }
             if (colorsStr != null) {
                 freighStr.append(colorsStr.toString());
