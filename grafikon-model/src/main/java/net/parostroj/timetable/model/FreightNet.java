@@ -5,7 +5,8 @@ import java.util.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import net.parostroj.timetable.actions.FreightHelper;
+import static net.parostroj.timetable.actions.FreightHelper.*;
+
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -112,14 +113,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
         for (FNConnection conn : connections) {
             TimeInterval fromInterval = conn.getFrom();
-            if (!FreightHelper.isManaged(fromInterval.getTrain()) || !fromInterval.isStop()) {
+            if (!isManaged(fromInterval.getTrain()) || !fromInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
         connections = this.get(train, toMap);
         for (FNConnection conn : connections) {
             TimeInterval toInterval = conn.getTo();
-            if (!FreightHelper.isManaged(toInterval.getTrain()) || !toInterval.isStop()) {
+            if (!isManaged(toInterval.getTrain()) || !toInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
@@ -217,8 +218,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
-        for (TimeInterval i : FreightHelper.getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
-            if (FreightHelper.isFreight(i)) {
+        for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
+            if (isFreight(i)) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
                 if (!filter.accepted(newDst, 0)) {
                     break;
@@ -246,16 +247,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private Collection<Node> getRegionTransferNodes(TimeInterval fromInterval) {
         Train train = fromInterval.getTrain();
-        if (FreightHelper.isFreightTo(train.getLastInterval()) &&
-                !FreightHelper.isStartRegion(train.getFirstInterval()) &&
-                FreightHelper.isStartRegion(train.getLastInterval()) &&
-                !FreightHelper.isNoTransitiveRegionStart(train.getLastInterval())) {
+        if (isFreightTo(train.getLastInterval()) && !isStartRegion(train.getFirstInterval()) &&
+                isStartRegion(train.getLastInterval()) && !isNoTransitiveRegionStart(train.getLastInterval())) {
             Set<Node> result = new HashSet<Node>();
             Node tNode = train.getEndNode();
             for (NodeTrack track : tNode.getTracks()) {
                 for (TimeInterval interval : track.getTimeIntervalList()) {
                     Train tTrain = interval.getTrain();
-                    if (tNode == tTrain.getStartNode() && FreightHelper.isRegionTransferTrain(tTrain)) {
+                    if (tNode == tTrain.getStartNode() && isRegionTransferTrain(tTrain)) {
                         result.add(tTrain.getLastInterval().getOwnerAsNode());
                     }
                 }
