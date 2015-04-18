@@ -12,25 +12,25 @@ import net.parostroj.timetable.model.save.version01.LSSerializerImpl1;
 import net.parostroj.timetable.model.save.version02.LSSerializerImpl2;
 
 public abstract class LSSerializer {
-    
-    private static final ModelVersion LATEST = new ModelVersion("2.2");
+
+    private static final ModelVersion LATEST = ModelVersion.parseModelVersion("2.2");
 
     /**
      * Private constructor.
      */
     protected LSSerializer() {
     }
-    
+
     /**
      * @return latest version of the model to be saved
      */
     public static ModelVersion getLatestVersion() {
         return LATEST;
     }
-    
+
     /**
      * returns serializer for specified version.
-     * 
+     *
      * @param version version
      * @return serializer
      * @throws net.parostroj.timetable.model.save.LSException
@@ -44,10 +44,10 @@ public abstract class LSSerializer {
         }
         return null;
     }
-    
+
     /**
      * returns serializer for current version.
-     * 
+     *
      * @return serializer
      * @throws net.parostroj.timetable.model.save.LSException
      */
@@ -57,7 +57,7 @@ public abstract class LSSerializer {
 
     /**
      * loads train diagram from reader.
-     * 
+     *
      * @param reader reader
      * @param trainTypeList list
      * @return train diagram
@@ -67,7 +67,7 @@ public abstract class LSSerializer {
 
     /**
      * writes train diagram into the writer.
-     * 
+     *
      * @param writer the writer
      * @param diagram train diagram to be saved
      * @param trainTypeList list
@@ -77,7 +77,7 @@ public abstract class LSSerializer {
 
     /**
      * writes train diagram into the output stream.
-     * 
+     *
      * @param out output stream
      * @param diagram train diagram
      * @param trainTypeList list

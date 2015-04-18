@@ -2,27 +2,31 @@ package net.parostroj.timetable.model.ls;
 
 /**
  * Model version.
- * 
+ *
  * @author jub
  */
 public class ModelVersion implements Comparable<ModelVersion> {
-    private final String version;
-    
-    private final int majorVersion;
-    
-    private final int minorVersion;
 
-    public ModelVersion(String version) {
-        this.version = version;
+    private final int majorVersion;
+    private final int minorVersion;
+    private final int patchVersion;
+
+    public static ModelVersion parseModelVersion(String version) {
         String parts[] = version.split("\\.");
-        majorVersion = Integer.parseInt(parts[0]);
-        minorVersion = Integer.parseInt(parts[1]);
+        int majorVersion = Integer.parseInt(parts[0]);
+        int minorVersion = Integer.parseInt(parts[1]);
+        int patchVersion = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
+        return new ModelVersion(majorVersion, minorVersion, patchVersion);
     }
-    
+
     public ModelVersion(int majorVersion, int minorVersion) {
+        this(majorVersion, minorVersion, 0);
+    }
+
+    public ModelVersion(int majorVersion, int minorVersion, int patchVersion) {
         this.majorVersion = majorVersion;
         this.minorVersion = minorVersion;
-        version = String.format("%d.%d", majorVersion, minorVersion);
+        this.patchVersion = patchVersion;
     }
 
     public int getMajorVersion() {
@@ -33,53 +37,76 @@ public class ModelVersion implements Comparable<ModelVersion> {
         return minorVersion;
     }
 
+    public int getPatchVersion() {
+        return patchVersion;
+    }
+
     public String getVersion() {
-        return version;
+        return String.format("%d.%d.%d", majorVersion, minorVersion, patchVersion);
     }
 
     @Override
     public String toString() {
-        return version;
+        return this.getVersion();
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + majorVersion;
+        result = prime * result + minorVersion;
+        result = prime * result + patchVersion;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ModelVersion other = (ModelVersion) obj;
-        if (this.majorVersion != other.majorVersion) {
+        ModelVersion other = (ModelVersion) obj;
+        if (majorVersion != other.majorVersion) {
             return false;
         }
-        if (this.minorVersion != other.minorVersion) {
+        if (minorVersion != other.minorVersion) {
+            return false;
+        }
+        if (patchVersion != other.patchVersion) {
             return false;
         }
         return true;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + this.majorVersion;
-        hash = 47 * hash + this.minorVersion;
-        return hash;
-    }
-
-    @Override
     public int compareTo(ModelVersion o) {
         if (this.majorVersion == o.majorVersion) {
-            if (this.minorVersion == o.minorVersion)
-                return 0;
-            else if (this.minorVersion < o.minorVersion)
+            if (this.minorVersion == o.minorVersion) {
+                if (this.patchVersion == o.patchVersion) {
+                    return 0;
+                } else if (this.patchVersion < o.patchVersion) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            else if (this.minorVersion < o.minorVersion) {
                 return -1;
-            else
+            } else {
                 return 1;
-        } else if (this.majorVersion < o.majorVersion)
+            }
+        } else if (this.majorVersion < o.majorVersion) {
             return -1;
-        else
+        } else {
             return 1;
+        }
     }
 }

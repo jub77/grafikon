@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,16 +104,16 @@ public class LSFileFactory {
     }
 
     public synchronized FileLoadSave createForLoad(String modelVersion) throws LSException {
-        return this.createFLSInstanceForLoad(new ModelVersion(modelVersion));
+        return this.createFLSInstanceForLoad(ModelVersion.parseModelVersion(modelVersion));
     }
 
     private FileLoadSave createFLSInstanceForLoad(Properties metadata) throws LSException {
         // set model version
         ModelVersion modelVersion = null;
         if (metadata.getProperty(METADATA_KEY_MODEL_VERSION) == null) {
-            modelVersion = new ModelVersion("1.0");
+            modelVersion = ModelVersion.parseModelVersion("1.0");
         } else {
-            modelVersion = new ModelVersion(metadata.getProperty(METADATA_KEY_MODEL_VERSION));
+            modelVersion = ModelVersion.parseModelVersion(metadata.getProperty(METADATA_KEY_MODEL_VERSION));
         }
 
         return this.createFLSInstanceForLoad(modelVersion);

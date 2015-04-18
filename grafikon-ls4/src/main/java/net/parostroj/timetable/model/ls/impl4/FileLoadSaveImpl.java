@@ -55,7 +55,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 new ModelVersion(4, 11),
                 new ModelVersion(4, 12),
                 new ModelVersion(4, 13),
-                new ModelVersion(4, 14));
+                new ModelVersion(4, 14),
+                new ModelVersion(4, 15, 0));
         VERSIONS = Collections.unmodifiableList(versions);
         METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }
@@ -99,7 +100,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
 
     private ModelVersion checkVersion(Properties props) throws LSException {
         ModelVersion current = METADATA_MODEL_VERSION;
-        ModelVersion loaded = new ModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
+        ModelVersion loaded = ModelVersion.parseModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
         if (current.compareTo(loaded) < 0) {
             throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
         }

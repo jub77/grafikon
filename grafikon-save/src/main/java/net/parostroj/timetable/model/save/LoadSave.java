@@ -68,9 +68,9 @@ public class LoadSave implements FileLoadSave {
             // set model version
             ModelVersion modelVersion = null;
             if (metadata.getProperty(METADATA_KEY_MODEL_VERSION) == null) {
-                modelVersion = new ModelVersion("1.0");
+                modelVersion = ModelVersion.parseModelVersion("1.0");
             } else {
-                modelVersion = new ModelVersion(metadata.getProperty(METADATA_KEY_MODEL_VERSION));
+                modelVersion = ModelVersion.parseModelVersion(metadata.getProperty(METADATA_KEY_MODEL_VERSION));
             }
 
             ModelVersion latest = LSSerializer.getLatestVersion();

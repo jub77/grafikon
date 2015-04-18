@@ -74,8 +74,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
     }
 
     private ModelVersion checkVersion(Properties props) throws LSException {
-        ModelVersion current = new ModelVersion(METADATA_MODEL_VERSION);
-        ModelVersion loaded = new ModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
+        ModelVersion current = ModelVersion.parseModelVersion(METADATA_MODEL_VERSION);
+        ModelVersion loaded = ModelVersion.parseModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
         if (current.compareTo(loaded) < 0) {
             throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
         }
