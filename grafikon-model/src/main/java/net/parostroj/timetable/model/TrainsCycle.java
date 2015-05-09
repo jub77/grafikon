@@ -83,6 +83,38 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
+    public TrainsCycle getPrevious() {
+        TrainsCycle previous = getAttributes().get(ATTR_PREVIOUS, TrainsCycle.class);
+        return previous == null ? this : previous;
+    }
+
+    public TrainsCycle getNext() {
+        TrainsCycle next = getAttributes().get(ATTR_NEXT, TrainsCycle.class);
+        return next == null ? this : next;
+    }
+
+    public void removeFromSequence() {
+        if (isPartOfSequence()) {
+            this.getPrevious().connectNextInSequence(this.getNext());
+        }
+    }
+
+    public void connectNextInSequence(TrainsCycle next) {
+        Attributes attrs = getAttributes();
+        if (next == this) {
+            attrs.remove(ATTR_NEXT);
+            attrs.remove(ATTR_PREVIOUS);
+        } else {
+            attrs.set(ATTR_NEXT, next);
+            next.getAttributes().set(ATTR_PREVIOUS, this);
+        }
+    }
+
+    public boolean isPartOfSequence() {
+        // connection is circular, so only one direction test is needed
+        return getPrevious() != this;
+    }
+
     @Override
     public String toString() {
         return name;
