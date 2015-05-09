@@ -95,18 +95,26 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     public void removeFromSequence() {
         if (isPartOfSequence()) {
-            this.getPrevious().connectNextInSequence(this.getNext());
+            connectTwo(getPrevious(), this.getNext());
         }
     }
 
     public void connectNextInSequence(TrainsCycle next) {
-        Attributes attrs = getAttributes();
-        if (next == this) {
-            attrs.remove(ATTR_NEXT);
-            attrs.remove(ATTR_PREVIOUS);
+        if (next.isPartOfSequence()) {
+            throw new IllegalArgumentException("Already in sequence: " + next);
+        }
+        TrainsCycle oldNext = this.getNext();
+        connectTwo(this, next);
+        connectTwo(next, oldNext);
+    }
+
+    private void connectTwo(TrainsCycle first, TrainsCycle second) {
+        if (first == second) {
+            first.removeAttribute(ATTR_NEXT);
+            first.removeAttribute(ATTR_PREVIOUS);
         } else {
-            attrs.set(ATTR_NEXT, next);
-            next.getAttributes().set(ATTR_PREVIOUS, this);
+            first.setAttribute(ATTR_NEXT, second);
+            second.setAttribute(ATTR_PREVIOUS, first);
         }
     }
 
