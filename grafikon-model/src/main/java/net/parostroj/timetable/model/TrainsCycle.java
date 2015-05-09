@@ -99,13 +99,25 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
-    public void connectNextInSequence(TrainsCycle next) {
+    public void connectToSequenceAsNext(TrainsCycle next) {
         if (next.isPartOfSequence()) {
             throw new IllegalArgumentException("Already in sequence: " + next);
         }
         TrainsCycle oldNext = this.getNext();
         connectTwo(this, next);
         connectTwo(next, oldNext);
+    }
+
+    public void moveForwardInSequence() {
+        TrainsCycle next = getNext();
+        TrainsCycle afterNext = next.getNext();
+        if (next != this && afterNext != this) {
+            // more than 2 circulations
+            TrainsCycle previous = getPrevious();
+            connectTwo(previous, next);
+            connectTwo(next, this);
+            connectTwo(this, afterNext);
+        }
     }
 
     private void connectTwo(TrainsCycle first, TrainsCycle second) {
