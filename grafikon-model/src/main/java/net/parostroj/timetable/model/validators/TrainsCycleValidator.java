@@ -24,12 +24,8 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
             }
             if (circulation.isPartOfSequence()) {
                 // synchronize the same engine class for all circulations in sequence
-                TrainsCycle current = circulation;
                 EngineClass engineClass = circulation.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
-                while (current.getNext() != circulation) {
-                    current.getAttributes().setRemove(TrainsCycle.ATTR_ENGINE_CLASS, engineClass);
-                    current = current.getNext();
-                }
+                circulation.applyToSequence(tc -> tc.getAttributes().setRemove(TrainsCycle.ATTR_ENGINE_CLASS, engineClass));
             }
             return true;
         }

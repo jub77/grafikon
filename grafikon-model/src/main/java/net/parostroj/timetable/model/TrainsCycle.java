@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -69,6 +70,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     public String getDescription() {
         return description;
+    }
+
+    public String getDisplayDescription() {
+        if (type == null || !type.isEngineType()) {
+            return getDescription();
+        } else {
+            return TransformUtil.getEngineCycleDescription(this);
+        }
     }
 
     public void setDescription(String description) {

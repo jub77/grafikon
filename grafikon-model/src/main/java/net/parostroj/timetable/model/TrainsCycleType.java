@@ -167,6 +167,18 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return isDefaultType(this);
     }
 
+    public boolean isEngineType() {
+        return ENGINE_CYCLE.equals(this.getName());
+    }
+
+    public boolean isTrainUnitType() {
+        return TRAIN_UNIT_CYCLE.equals(this.getName());
+    }
+
+    public boolean isDriverType() {
+        return DRIVER_CYCLE.equals(this.getName());
+    }
+
     @Override
     public String toString() {
         return name;
