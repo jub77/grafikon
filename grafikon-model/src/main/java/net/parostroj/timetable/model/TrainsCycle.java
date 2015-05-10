@@ -223,6 +223,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
+    public TrainsCycleItem getFirstItem() {
+        return items.isEmpty() ? null : items.get(0);
+    }
+
+    public TrainsCycleItem getLastItem() {
+        return items.isEmpty() ? null : items.get(items.size() - 1);
+    }
+
     public TrainsCycleItem getNextItem(TrainsCycleItem item) {
         int ind = items.indexOf(item);
         if (ind == -1) {

@@ -123,6 +123,14 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         }
     }
 
+    public Node getFromNode() {
+        return this.getFromInterval().getOwnerAsNode();
+    }
+
+    public Node getToNode() {
+        return this.getToInterval().getOwnerAsNode();
+    }
+
     public int getStartTime() {
         return this.getFromInterval().getEnd();
     }
