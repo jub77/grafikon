@@ -18,9 +18,10 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainsCycleAttributes {
+public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainsCycleAttributes, TrainDiagramPart {
 
     private final String id;
+    private final TrainDiagram diagram;
     private String name;
     private String description;
     private TrainsCycleType type;
@@ -33,12 +34,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
      * creates instance
      *
      * @param id id
+     * @param diagram diagram
      * @param name name of the cycle
      * @param description description
      * @param type type
      */
-    public TrainsCycle(String id, String name, String description, TrainsCycleType type) {
+    public TrainsCycle(String id, TrainDiagram diagram, String name, String description, TrainsCycleType type) {
         this.id = id;
+        this.diagram = diagram;
         this.name = name;
         this.description = description;
         this.setAttributes(new Attributes());
@@ -56,6 +59,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     public String getDescription() {

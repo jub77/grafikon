@@ -48,7 +48,8 @@ public class TrainsCycleImport extends Import {
             log.debug(message);
             return null;
         }
-        TrainsCycle cycle = new TrainsCycle(this.getId(importedCycle), importedCycle.getName(), importedCycle.getDescription(), cycleType);
+        TrainsCycle cycle = new TrainsCycle(this.getId(importedCycle), this.getDiagram(),
+                importedCycle.getName(), importedCycle.getDescription(), cycleType);
         cycle.setAttributes(this.importAttributes(importedCycle.getAttributes()));
 
         // import cycles

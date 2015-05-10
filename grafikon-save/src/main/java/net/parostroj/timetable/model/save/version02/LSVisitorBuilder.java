@@ -190,7 +190,7 @@ public class LSVisitorBuilder implements LSVisitor {
                 type = t;
             }
         }
-        TrainsCycle cycle = new TrainsCycle(lsCycle.getUuid(), lsCycle.getName(), lsCycle.getDescription(), type);
+        TrainsCycle cycle = new TrainsCycle(lsCycle.getUuid(), diagram, lsCycle.getName(), lsCycle.getDescription(), type);
         cycle.setAttribute("comment", lsCycle.getComment());
         if (lsCycle.getItems() != null) {
             for (LSTrainsCycleItem item : lsCycle.getItems()) {
