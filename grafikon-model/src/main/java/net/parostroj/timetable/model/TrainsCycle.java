@@ -6,6 +6,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -104,6 +105,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public void removeFromSequence() {
         if (isPartOfSequence()) {
             connectTwo(getPrevious(), this.getNext());
+            this.removeAttribute(ATTR_NEXT);
+            this.removeAttribute(ATTR_PREVIOUS);
         }
     }
 
@@ -128,6 +131,10 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
+    public void moveBackwardInSequence() {
+        this.getPrevious().moveForwardInSequence();
+    }
+
     private void connectTwo(TrainsCycle first, TrainsCycle second) {
         if (first == second) {
             first.removeAttribute(ATTR_NEXT);
@@ -141,6 +148,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public boolean isPartOfSequence() {
         // connection is circular, so only one direction test is needed
         return getPrevious() != this;
+    }
+
+    public void applyToSequence(Consumer<TrainsCycle> action) {
+        TrainsCycle current = this;
+        do {
+            action.accept(current);
+            current = current.getNext();
+        } while (current != this);
     }
 
     @Override
