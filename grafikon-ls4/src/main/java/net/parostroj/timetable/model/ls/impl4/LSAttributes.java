@@ -1,8 +1,6 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,19 +30,28 @@ public class LSAttributes {
     public LSAttributes() {
     }
 
-    public LSAttributes(Attributes attributes) {
+    public LSAttributes(Attributes attributes, String... ignore) {
         this.attributes = new LinkedList<LSAttributesItem>();
-        this.addAttributes(attributes.getAttributesMap(), null);
+        Set<String> ignoreMap = this.getMap(ignore);
+        this.addAttributes(attributes.getAttributesMap(), null, ignoreMap);
         for (String category : attributes.getCategories()) {
-            this.addAttributes(attributes.getAttributesMap(category), category);
+            this.addAttributes(attributes.getAttributesMap(category), category, ignoreMap);
         }
     }
 
-    private void addAttributes(Map<String, Object> map, String category) {
+    private void addAttributes(Map<String, Object> map, String category, Set<String> ignoreMap) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() != null) {
+            if (entry.getValue() != null && !ignoreMap.contains(entry.getKey())) {
                 this.attributes.add(new LSAttributesItem(entry.getKey(), entry.getValue(), category));
             }
+        }
+    }
+
+    private Set<String> getMap(String[] ignore) {
+        if (ignore.length == 0) {
+            return Collections.<String>emptySet();
+        } else {
+            return new HashSet<String>(Arrays.asList(ignore));
         }
     }
 

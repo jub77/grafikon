@@ -18,13 +18,14 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  * @author jub
  */
 @XmlRootElement(name = "trains_cycle")
-@XmlType(propOrder = {"id", "name", "description", "type", "attributes", "items"})
+@XmlType(propOrder = {"id", "name", "description", "type", "next", "attributes", "items"})
 public class LSTrainsCycle {
 
     private String id;
     private String name;
     private String description;
     private String type;
+    private String next;
     private LSAttributes attributes;
     private List<LSTrainsCycleItem> items;
 
@@ -36,7 +37,10 @@ public class LSTrainsCycle {
         this.name = cycle.getName();
         this.description = cycle.getDescription();
         this.type = cycle.getType().getId();
-        this.attributes = new LSAttributes(cycle.getAttributes());
+        this.attributes = new LSAttributes(cycle.getAttributes(), TrainsCycle.ATTR_NEXT, TrainsCycle.ATTR_PREVIOUS);
+        if (cycle.isPartOfSequence()) {
+            next = cycle.getNext().getId();
+        }
         this.items = new LinkedList<LSTrainsCycleItem>();
         for (TrainsCycleItem item : cycle) {
             items.add(new LSTrainsCycleItem(item));
@@ -81,6 +85,14 @@ public class LSTrainsCycle {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
     }
 
     @XmlElementWrapper

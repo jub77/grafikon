@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
@@ -15,13 +17,11 @@ import net.parostroj.timetable.model.ls.LSException;
 public class TrainDiagramBuilder {
 
     private TrainDiagram diagram;
-    private boolean trackChanges;
-
-    public TrainDiagramBuilder(TrainDiagram diagram) {
-        this.diagram = diagram;
-    }
+    private final boolean trackChanges;
+    private final Map<String, String> circulationSequenceMap;
 
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
+        circulationSequenceMap = new HashMap<String, String>();
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
         this.diagram = new TrainDiagram(lsDiagram.getId(), data);
@@ -170,6 +170,10 @@ public class TrainDiagramBuilder {
             diagram.removeCycle(foundCycle);
         }
         diagram.addCycle(cycle);
+        // map of sequences
+        if (lsTrainsCycle.getNext() != null) {
+            circulationSequenceMap.put(lsTrainsCycle.getId(), lsTrainsCycle.getNext());
+        }
     }
 
     public void addImage(LSImage lsImage) {
@@ -186,7 +190,21 @@ public class TrainDiagramBuilder {
         }
     }
 
+    private void finishCirculationSequences() {
+        for (Map.Entry<String, String> entry : circulationSequenceMap.entrySet()) {
+            TrainsCycle from = diagram.getCycleById(entry.getKey());
+            TrainsCycle to = diagram.getCycleById(entry.getValue());
+            // check if the connection is not already created (circular connection)
+            if (to != from.getNext()) {
+                from.connectToSequenceAsNext(to);
+            }
+        }
+    }
+
     public TrainDiagram getTrainDiagram() {
+        if (diagram == null) {
+            throw new IllegalStateException("Diagram already created");
+        }
         // after load check
         (new AfterLoadCheck()).check(diagram);
         // tracking of changes has to be enabled at the end, otherwise
@@ -196,6 +214,7 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
+        this.finishCirculationSequences();
         TrainDiagram retValue = diagram;
         diagram = null;
         return retValue;
