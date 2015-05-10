@@ -5,6 +5,8 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Window;
+
 import net.parostroj.timetable.gui.views.TCDelegate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -20,9 +22,8 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
     private TCDelegate delegate;
     private static final EngineClass noneEngineClass = new EngineClass(null, ResourceLoader.getString("ec.details.engineclass.none"));
 
-    /** Creates new form TCDetailsViewDialog */
-    public TCDetailsViewDialogEngineClass(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public TCDetailsViewDialogEngineClass(Window window, boolean modal) {
+        super(window, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
         attributesPanel.setCategory(Attributes.USER_CATEGORY);
     }

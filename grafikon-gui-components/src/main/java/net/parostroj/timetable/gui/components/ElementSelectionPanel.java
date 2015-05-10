@@ -27,11 +27,22 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
     private final WrapperListModel<T> leftListModel;
     private final WrapperListModel<T> rightListModel;
 
-    /** Creates new form ElementSelectionPanel */
     public ElementSelectionPanel() {
-        leftListModel = new WrapperListModel<T>();
-        rightListModel = new WrapperListModel<T>();
+        this(true, true);
+    }
+
+    public ElementSelectionPanel(boolean leftSorted, boolean rightSorted) {
+        leftListModel = new WrapperListModel<T>(leftSorted);
+        rightListModel = new WrapperListModel<T>(rightSorted);
         initComponents();
+    }
+
+    public WrapperListModel<T> getNotSelected() {
+        return leftListModel;
+    }
+
+    public WrapperListModel<T> getSelected() {
+        return rightListModel;
     }
 
     public void setListForSelection(List<Wrapper<T>> list) {

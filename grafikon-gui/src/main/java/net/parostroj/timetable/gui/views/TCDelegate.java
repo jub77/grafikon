@@ -17,6 +17,8 @@ import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Delegate for actions over trains cycles.
@@ -44,8 +46,11 @@ public abstract class TCDelegate implements ApplicationModelListener {
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
                 // if selected and type == item moved
-                if (event.getSource() == selected && (event.getType() == GTEventType.CYCLE_ITEM_MOVED
-                        || event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS))) {
+                boolean checkedAttribute = event.getType() == GTEventType.ATTRIBUTE
+                        && event.getAttributeChange().checkName(TrainsCycle.ATTR_NEXT, TrainsCycle.ATTR_PREVIOUS,
+                                TrainsCycle.ATTR_ENGINE_CLASS);
+                boolean changed = event.getType() == GTEventType.CYCLE_ITEM_MOVED || checkedAttribute;
+                if (event.getSource() == selected && changed) {
                     // deselect
                     setSelectedCycle(selected);
                 }
@@ -109,13 +114,74 @@ public abstract class TCDelegate implements ApplicationModelListener {
         return train.getCycles(getType());
     }
 
-    public abstract String getTrainCycleErrors(TrainsCycle cycle);
+    public String getTrainCycleErrors(TrainsCycle cycle) {
+        StringBuilder result = new StringBuilder();
+        checkConflicts(cycle, result);
+        checkStartEnd(cycle, result);
+        addListIfSequence(cycle, result);
+        return result.toString();
+    }
+
+    private void addListIfSequence(TrainsCycle cycle, StringBuilder result) {
+        if (cycle.isPartOfSequence()) {
+            addNewLineIfNotEmpty(result);
+            cycle.applyToSequence(tc -> {
+                if (tc != cycle) {
+                    result.append(" > ");
+                }
+                result.append(tc.getName());
+            });
+        }
+    }
+
+    private void checkConflicts(TrainsCycle cycle, StringBuilder result) {
+        List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
+        for (Tuple<TrainsCycleItem> item : conflicts) {
+            if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
+                addNewLineIfNotEmpty(result);
+                result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),
+                        item.first.getTrain().getName(),
+                        item.first.getToInterval().getOwnerAsNode().getName(),
+                        item.second.getTrain().getName(),
+                        item.second.getFromInterval().getOwnerAsNode().getName()));
+            } else if (item.first.getEndTime() >= item.second.getStartTime()) {
+                addNewLineIfNotEmpty(result);
+                TimeConverter c = item.first.getTrain().getDiagram().getTimeConverter();
+                result.append(String.format(ResourceLoader.getString("ec.problem.time"),
+                        item.first.getTrain().getName(),
+                        c.convertIntToText(item.first.getEndTime()),
+                        item.second.getTrain().getName(),
+                        c.convertIntToText(item.second.getStartTime())));
+            }
+        }
+    }
+
+    private void checkStartEnd(TrainsCycle cycle, StringBuilder result) {
+        if (!cycle.isEmpty()) {
+            boolean startMatch = cycle.getFirstItem().getFromNode() == cycle.getPrevious().getLastItem().getToNode();
+            boolean endMatch = cycle.getLastItem().getToNode() == cycle.getNext().getFirstItem().getFromNode();
+            if (!startMatch || !endMatch) {
+                addNewLineIfNotEmpty(result);
+                result.append(ResourceLoader.getString("ec.problem.startend"));
+            }
+        }
+    }
+
+    private void addNewLineIfNotEmpty(StringBuilder result) {
+        if (result.length() != 0) {
+            result.append('\n');
+        }
+    }
 
     public abstract void showEditDialog(JComponent component);
 
-    public abstract String getCycleDescription();
+    public String getCycleDescription() {
+        return getSelectedCycle().getDisplayDescription();
+    }
 
-    public abstract boolean isOverlappingEnabled();
+    public boolean isOverlappingEnabled() {
+        return true;
+    }
 
     @Override
     public void modelChanged(ApplicationModelEvent event) {

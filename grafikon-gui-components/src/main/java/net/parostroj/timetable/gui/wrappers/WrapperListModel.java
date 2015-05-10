@@ -29,8 +29,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     private ObjectListener<T> listener;
 
     public WrapperListModel() {
-        this.list = new ArrayList<Wrapper<T>>();
-        this.sorted = true;
+        this(true);
     }
 
     public WrapperListModel(boolean sorted) {
@@ -256,6 +255,10 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
         return list.size();
     }
 
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
     @Override
     public Wrapper<T> getElementAt(int index) {
         return list.get(index);
@@ -288,5 +291,10 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
         } else {
             setSelectedItem(null);
         }
+    }
+
+    @Override
+    public String toString() {
+        return list.toString();
     }
 }

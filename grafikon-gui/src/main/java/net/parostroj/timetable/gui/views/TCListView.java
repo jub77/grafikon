@@ -6,7 +6,7 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +14,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
+import net.parostroj.timetable.gui.dialogs.CirculationSequenceDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -74,6 +76,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         gbc_createButton.gridx = 1;
         gbc_createButton.gridy = 0;
         panel.add(createButton, gbc_createButton);
+
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         GridBagConstraints gbc_editButton = new GridBagConstraints();
         gbc_editButton.fill = GridBagConstraints.BOTH;
@@ -81,34 +84,43 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         gbc_editButton.gridx = 2;
         gbc_editButton.gridy = 0;
         panel.add(editButton, gbc_editButton);
+
+        sequenceButton = GuiComponentUtils.createButton(GuiIcon.VIEW_SORT, 2);
+        GridBagConstraints gbcSeqB = new GridBagConstraints();
+        gbcSeqB.fill = GridBagConstraints.BOTH;
+        gbcSeqB.insets = new Insets(3, 0, 0, 5);
+        gbcSeqB.gridx = 3;
+        gbcSeqB.gridy = 0;
+        panel.add(sequenceButton, gbcSeqB);
+
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         GridBagConstraints gbc_deleteButton = new GridBagConstraints();
         gbc_deleteButton.insets = new Insets(3, 0, 0, 0);
         gbc_deleteButton.fill = GridBagConstraints.BOTH;
-        gbc_deleteButton.gridx = 3;
+        gbc_deleteButton.gridx = 4;
         gbc_deleteButton.gridy = 0;
         panel.add(deleteButton, gbc_deleteButton);
 
         deleteButton.setEnabled(false);
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                deleteButtonActionPerformed(e);
-            }
-        });
+        deleteButton.addActionListener(e -> deleteButtonActionPerformed(e));
 
         createButton.setEnabled(false);
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createButtonActionPerformed(e);
+        createButton.addActionListener(e -> createButtonActionPerformed(e));
+
+        editButton.setEnabled(false);
+        editButton.addActionListener(e -> {
+            if (delegate.getSelectedCycle() != null) {
+                delegate.showEditDialog(editButton);
             }
         });
 
-        editButton.setEnabled(false);
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (delegate.getSelectedCycle() != null)
-                    delegate.showEditDialog(editButton);
-            }
+        sequenceButton.setEnabled(false);
+        sequenceButton.addActionListener(e -> {
+            CirculationSequenceDialog dialog = new CirculationSequenceDialog(GuiComponentUtils
+                    .getWindow(TCListView.this), ModalityType.APPLICATION_MODAL);
+            dialog.setLocationRelativeTo(TCListView.this);
+            dialog.showDialog(delegate.getSelectedCycle());
+            dialog.dispose();
         });
     }
 
@@ -167,13 +179,16 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
             return;
         // set selected engine
         int[] selectedIndices = cyclesList.getSelectedIndices();
-        if (selectedIndices.length == 1) {
+        boolean oneSelected = selectedIndices.length == 1;
+        boolean atLeastOneSelected = selectedIndices.length > 0;
+        if (oneSelected) {
             delegate.setSelectedCycle(cycles.getIndex(selectedIndices[0]).getElement());
         } else {
             delegate.setSelectedCycle(null);
         }
-        deleteButton.setEnabled(selectedIndices.length > 0);
-        editButton.setEnabled(selectedIndices.length == 1);
+        deleteButton.setEnabled(atLeastOneSelected);
+        editButton.setEnabled(oneSelected);
+        sequenceButton.setEnabled(oneSelected);
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -197,9 +212,11 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get name from text field (ignore shorter than one character
         if (newNameTextField.getText().length() > 0 && delegate.getType() != null) {
-            TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), newNameTextField.getText(), null,
+            TrainDiagram trainDiagram = delegate.getTrainDiagram();
+            TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), trainDiagram,
+                    newNameTextField.getText(), null,
                     delegate.getType());
-            delegate.getTrainDiagram().addCycle(cycle);
+            trainDiagram.addCycle(cycle);
 
             // clear field
             newNameTextField.setText("");
@@ -216,6 +233,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
     private final javax.swing.JButton createButton;
     private final javax.swing.JButton deleteButton;
     private final javax.swing.JButton editButton;
+    private final javax.swing.JButton sequenceButton;
     private final javax.swing.JList<Wrapper<TrainsCycle>> cyclesList;
     private final javax.swing.JTextField newNameTextField;
 }

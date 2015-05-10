@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -69,21 +70,11 @@ public class DriverCycleDelegate extends TCDelegate {
     @Override
     public void showEditDialog(JComponent component) {
         if (editDialog == null) {
-            editDialog = new TCDetailsViewDialog((java.awt.Window) component.getTopLevelAncestor(), true);
+            editDialog = new TCDetailsViewDialog(GuiComponentUtils.getWindow(component), true);
         }
         editDialog.setLocationRelativeTo(component);
         editDialog.updateValues(this);
         editDialog.setVisible(true);
-    }
-
-    @Override
-    public String getCycleDescription() {
-        return getSelectedCycle().getDescription();
-    }
-
-    @Override
-    public boolean isOverlappingEnabled() {
-        return true;
     }
 
     @Override
