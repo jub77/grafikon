@@ -22,19 +22,18 @@ public class EngineCyclesExtractor {
     private final List<TrainsCycle> cycles;
     private final AttributesExtractor attributesExtractor = new AttributesExtractor();
 
+    private int counter;
+
     public EngineCyclesExtractor(List<TrainsCycle> cycles) {
         this.cycles = cycles;
     }
 
     public List<EngineCycle> getEngineCycles() {
+        counter = 0;
         List<EngineCycle> outputCycles = new LinkedList<EngineCycle>();
         BiMap<TrainsCycle, EngineCycle> map = HashBiMap.create();
-        int i = 0;
         for (TrainsCycle cycle : cycles) {
-            EngineCycle engineCirculation = createCycle(cycle);
-            engineCirculation.setId(Integer.toString(i++));
-            outputCycles.add(engineCirculation);
-            map.put(cycle, engineCirculation);
+            outputCycles.add(this.getCycle(cycle, map));
         }
         // process sequence
         for (EngineCycle outputCycle : outputCycles) {
@@ -43,7 +42,8 @@ public class EngineCyclesExtractor {
                 outputCycle.setNextInSequence(new ArrayList<EngineCycle>());
                 cycle.applyToSequence(next -> {
                     if (next != cycle) {
-                        outputCycle.getNextInSequence().add(map.get(next));
+                        EngineCycle nextEngineCycle = this.getCycle(next, map);
+                        outputCycle.getNextInSequence().add(nextEngineCycle);
                     }
                 });
             }
@@ -51,8 +51,22 @@ public class EngineCyclesExtractor {
         return outputCycles;
     }
 
-    private EngineCycle createCycle(TrainsCycle cycle) {
+    private String getNextId() {
+        return Integer.toString(counter++);
+    }
+
+    private EngineCycle getCycle(TrainsCycle cycle, BiMap<TrainsCycle, EngineCycle> map) {
+        EngineCycle engineCycle = map.get(cycle);
+        if (engineCycle == null) {
+            engineCycle = this.createCycle(cycle, map);
+        }
+        return engineCycle;
+    }
+
+    private EngineCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, EngineCycle> map) {
         EngineCycle outputCycle = new EngineCycle();
+        outputCycle.setId(this.getNextId());
+        map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(TransformUtil.getEngineCycleDescription(cycle));
         outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
