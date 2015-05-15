@@ -2,21 +2,32 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+
+import javax.xml.bind.annotation.*;
 
 /**
  * Engine cycle.
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "description", "attributes", "rows"})
+@XmlType(propOrder = {"id", "name", "description", "attributes", "rows", "nextInSequence"})
 public class EngineCycle {
 
+    private String id;
     private String name;
     private String description;
     private List<Attribute> attributes;
     private List<EngineCycleRow> rows;
+    private List<EngineCycle> nextInSequence;
+
+    @XmlID
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getDescription() {
         return description;
@@ -52,5 +63,15 @@ public class EngineCycle {
 
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
+    }
+
+    @XmlElement(name = "next")
+    @XmlIDREF
+    public List<EngineCycle> getNextInSequence() {
+        return nextInSequence;
+    }
+
+    public void setNextInSequence(List<EngineCycle> nextInSequence) {
+        this.nextInSequence = nextInSequence;
     }
 }

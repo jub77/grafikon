@@ -1,8 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.TimeConverter;
@@ -27,8 +28,25 @@ public class EngineCyclesExtractor {
 
     public List<EngineCycle> getEngineCycles() {
         List<EngineCycle> outputCycles = new LinkedList<EngineCycle>();
+        BiMap<TrainsCycle, EngineCycle> map = HashBiMap.create();
+        int i = 0;
         for (TrainsCycle cycle : cycles) {
-            outputCycles.add(createCycle(cycle));
+            EngineCycle engineCirculation = createCycle(cycle);
+            engineCirculation.setId(Integer.toString(i++));
+            outputCycles.add(engineCirculation);
+            map.put(cycle, engineCirculation);
+        }
+        // process sequence
+        for (EngineCycle outputCycle : outputCycles) {
+            TrainsCycle cycle = map.inverse().get(outputCycle);
+            if (cycle.isPartOfSequence()) {
+                outputCycle.setNextInSequence(new ArrayList<EngineCycle>());
+                cycle.applyToSequence(next -> {
+                    if (next != cycle) {
+                        outputCycle.getNextInSequence().add(map.get(next));
+                    }
+                });
+            }
         }
         return outputCycles;
     }
