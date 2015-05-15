@@ -1,8 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import net.parostroj.timetable.model.*;
 
@@ -17,21 +18,52 @@ public class TrainUnitCyclesExtractor {
     private final Locale locale;
     private final AttributesExtractor ae = new AttributesExtractor();
 
+    private int counter;
+
     public TrainUnitCyclesExtractor(List<TrainsCycle> cycles, Locale locale) {
         this.cycles = cycles;
         this.locale = locale;
     }
 
     public List<TrainUnitCycle> getTrainUnitCycles() {
+        counter = 0;
         List<TrainUnitCycle> outputCycles = new LinkedList<TrainUnitCycle>();
+        BiMap<TrainsCycle, TrainUnitCycle> map = HashBiMap.create();
         for (TrainsCycle cycle : cycles) {
-            outputCycles.add(createCycle(cycle));
+            outputCycles.add(this.getCycle(cycle, map));
+        }
+        // process sequence
+        for (TrainUnitCycle outputCycle : outputCycles) {
+            TrainsCycle cycle = map.inverse().get(outputCycle);
+            if (cycle.isPartOfSequence()) {
+                outputCycle.setNextInSequence(new ArrayList<TrainUnitCycle>());
+                cycle.applyToSequence(next -> {
+                    if (next != cycle) {
+                        TrainUnitCycle nextTrainUnitCycle = this.getCycle(next, map);
+                        outputCycle.getNextInSequence().add(nextTrainUnitCycle);
+                    }
+                });
+            }
         }
         return outputCycles;
     }
 
-    private TrainUnitCycle createCycle(TrainsCycle cycle) {
+    private String getNextId() {
+        return Integer.toString(counter++);
+    }
+
+    private TrainUnitCycle getCycle(TrainsCycle cycle, BiMap<TrainsCycle, TrainUnitCycle> map) {
+        TrainUnitCycle trainUnitCycle = map.get(cycle);
+        if (trainUnitCycle == null) {
+            trainUnitCycle = this.createCycle(cycle, map);
+        }
+        return trainUnitCycle;
+    }
+
+    private TrainUnitCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, TrainUnitCycle> map) {
         TrainUnitCycle outputCycle = new TrainUnitCycle();
+        outputCycle.setId(this.getNextId());
+        map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
         for (TrainsCycleItem item : cycle.getItems()) {
