@@ -191,12 +191,20 @@ public class TrainDiagramBuilder {
     }
 
     private void finishCirculationSequences() {
-        for (Map.Entry<String, String> entry : circulationSequenceMap.entrySet()) {
-            TrainsCycle from = diagram.getCycleById(entry.getKey());
-            TrainsCycle to = diagram.getCycleById(entry.getValue());
-            // check if the connection is not already created (circular connection)
-            if (to != from.getNext()) {
+        while (!circulationSequenceMap.isEmpty()) {
+            addCirculationToSequence(circulationSequenceMap.values().iterator().next());
+        }
+    }
+
+    private void addCirculationToSequence(String fromId) {
+        String toId = circulationSequenceMap.remove(fromId);
+        if (toId != null) {
+            TrainsCycle from = diagram.getCycleById(fromId);
+            TrainsCycle to = diagram.getCycleById(toId);
+            // do not add if already part of sequence (circular - last one)
+            if (!to.isPartOfSequence()) {
                 from.connectToSequenceAsNext(to);
+                addCirculationToSequence(toId);
             }
         }
     }
