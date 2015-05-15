@@ -2,6 +2,9 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import net.parostroj.timetable.model.*;
 
 /**
@@ -16,6 +19,8 @@ public class CustomCyclesExtractor {
     private final Locale locale;
     private final TrainDiagram diagram;
 
+    private int counter;
+
     public CustomCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, Locale locale) {
         this.diagram = diagram;
         this.cycles = cycles;
@@ -23,15 +28,44 @@ public class CustomCyclesExtractor {
     }
 
     public List<CustomCycle> getCycles() {
+        counter = 0;
         List<CustomCycle> outputCycles = new LinkedList<CustomCycle>();
+        BiMap<TrainsCycle, CustomCycle> map = HashBiMap.create();
         for (TrainsCycle cycle : cycles) {
-            outputCycles.add(createCycle(cycle));
+            outputCycles.add(this.getCycle(cycle, map));
+        }
+        // process sequence
+        for (CustomCycle outputCycle : outputCycles) {
+            TrainsCycle cycle = map.inverse().get(outputCycle);
+            if (cycle.isPartOfSequence()) {
+                outputCycle.setNextInSequence(new ArrayList<CustomCycle>());
+                cycle.applyToSequence(next -> {
+                    if (next != cycle) {
+                        CustomCycle nextCustomCycle = this.getCycle(next, map);
+                        outputCycle.getNextInSequence().add(nextCustomCycle);
+                    }
+                });
+            }
         }
         return outputCycles;
     }
 
-    private CustomCycle createCycle(TrainsCycle cycle) {
+    private String getNextId() {
+        return Integer.toString(counter++);
+    }
+
+    private CustomCycle getCycle(TrainsCycle cycle, BiMap<TrainsCycle, CustomCycle> map) {
+        CustomCycle customCycle = map.get(cycle);
+        if (customCycle == null) {
+            customCycle = this.createCycle(cycle, map);
+        }
+        return customCycle;
+    }
+
+    private CustomCycle createCycle(TrainsCycle cycle, BiMap<TrainsCycle, CustomCycle> map) {
         CustomCycle outputCycle = new CustomCycle();
+        outputCycle.setId(this.getNextId());
+        map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
         outputCycle.setType(diagram.getLocalization().translate(cycle.getType().getName(), locale));
