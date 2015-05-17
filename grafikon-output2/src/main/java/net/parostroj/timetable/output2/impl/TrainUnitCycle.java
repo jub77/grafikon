@@ -21,6 +21,7 @@ public class TrainUnitCycle {
     private List<TrainUnitCycle> nextInSequence;
 
     @XmlID
+    @XmlAttribute
     public String getId() {
         return id;
     }

@@ -22,6 +22,7 @@ public class CustomCycle {
     private List<CustomCycle> nextInSequence;
 
     @XmlID
+    @XmlAttribute
     public String getId() {
         return id;
     }

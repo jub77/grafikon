@@ -21,6 +21,7 @@ public class EngineCycle {
     private List<EngineCycle> nextInSequence;
 
     @XmlID
+    @XmlAttribute
     public String getId() {
         return id;
     }
