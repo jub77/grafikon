@@ -18,7 +18,7 @@ public class EngineCycle {
     private String description;
     private List<Attribute> attributes;
     private List<EngineCycleRow> rows;
-    private List<EngineCycle> nextInSequence;
+    private EngineCycle nextInSequence;
 
     @XmlID
     @XmlAttribute
@@ -68,11 +68,11 @@ public class EngineCycle {
 
     @XmlElement(name = "next")
     @XmlIDREF
-    public List<EngineCycle> getNextInSequence() {
+    public EngineCycle getNextInSequence() {
         return nextInSequence;
     }
 
-    public void setNextInSequence(List<EngineCycle> nextInSequence) {
+    public void setNextInSequence(EngineCycle nextInSequence) {
         this.nextInSequence = nextInSequence;
     }
 }

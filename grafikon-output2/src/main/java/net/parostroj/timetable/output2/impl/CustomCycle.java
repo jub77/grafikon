@@ -19,7 +19,7 @@ public class CustomCycle {
     private String type;
     private List<Attribute> attributes;
     private List<CustomCycleRow> rows;
-    private List<CustomCycle> nextInSequence;
+    private CustomCycle nextInSequence;
 
     @XmlID
     @XmlAttribute
@@ -77,11 +77,11 @@ public class CustomCycle {
 
     @XmlElement(name = "next")
     @XmlIDREF
-    public List<CustomCycle> getNextInSequence() {
+    public CustomCycle getNextInSequence() {
         return nextInSequence;
     }
 
-    public void setNextInSequence(List<CustomCycle> nextInSequence) {
+    public void setNextInSequence(CustomCycle nextInSequence) {
         this.nextInSequence = nextInSequence;
     }
 }

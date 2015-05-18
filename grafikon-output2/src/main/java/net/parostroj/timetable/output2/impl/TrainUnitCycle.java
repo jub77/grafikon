@@ -18,7 +18,7 @@ public class TrainUnitCycle {
     private String description;
     private List<Attribute> attributes;
     private List<TrainUnitCycleRow> rows;
-    private List<TrainUnitCycle> nextInSequence;
+    private TrainUnitCycle nextInSequence;
 
     @XmlID
     @XmlAttribute
@@ -68,11 +68,11 @@ public class TrainUnitCycle {
 
     @XmlElement(name = "next")
     @XmlIDREF
-    public List<TrainUnitCycle> getNextInSequence() {
+    public TrainUnitCycle getNextInSequence() {
         return nextInSequence;
     }
 
-    public void setNextInSequence(List<TrainUnitCycle> nextInSequence) {
+    public void setNextInSequence(TrainUnitCycle nextInSequence) {
         this.nextInSequence = nextInSequence;
     }
 }

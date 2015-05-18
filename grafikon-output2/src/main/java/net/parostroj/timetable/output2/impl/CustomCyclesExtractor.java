@@ -38,13 +38,7 @@ public class CustomCyclesExtractor {
         for (CustomCycle outputCycle : outputCycles) {
             TrainsCycle cycle = map.inverse().get(outputCycle);
             if (cycle.isPartOfSequence()) {
-                outputCycle.setNextInSequence(new ArrayList<CustomCycle>());
-                cycle.applyToSequence(next -> {
-                    if (next != cycle) {
-                        CustomCycle nextCustomCycle = this.getCycle(next, map);
-                        outputCycle.getNextInSequence().add(nextCustomCycle);
-                    }
-                });
+                outputCycle.setNextInSequence(this.getCycle(cycle, map));
             }
         }
         return outputCycles;

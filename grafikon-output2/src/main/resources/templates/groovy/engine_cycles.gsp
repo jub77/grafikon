@@ -1,13 +1,17 @@
-<html>
+<%
+    // definition of constants
+    WIDTH = 46
+    HEIGHT = 85
+%><html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>${title}</title>
   <style type="text/css" media="all">
-    table.cycles {width: 150mm; border-color: black; border-style: solid; border-width: 0mm;}
-    tr.cycles {height: 85mm;}
+    table.cycles {border-color: black; border-style: solid; border-width: 0mm;}
+    tr.cycles {height: ${HEIGHT}mm;}
     .break {page-break-before: always; font-size: 1mm;}
     td.cycle {border-color: black; border-style: solid; border-width: 0.4mm; vertical-align: top;}
-    td.cycle table {font-family: arial, sans-serif; font-size: 3mm; width: 50mm; border-color: black; border-style: solid; border-width: 0mm;}
+    td.cycle table {font-family: arial, sans-serif; font-size: 3mm; width: ${WIDTH}mm; border-color: black; border-style: solid; border-width: 0mm;}
     tr.title {height: 3mm;}
     tr.title td {font-size: 2mm;}
     tr.info {height: 6mm;}
@@ -28,6 +32,9 @@
   </style>
 </head>
 <%
+    ROW_COUNT = 3
+    COLUMN_COUNT = 4
+
     separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
     END = "${separator}0"
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
@@ -61,7 +68,35 @@
         if (c != null) {
           %>
     <td class="cycle">
+      <% print_cycle(c) %>
+    </td><%
+        } else {
+          %>
+    <td class="cycle">
       <table align="center" cellspacing=0>
+        <tr><td>&nbsp;</td></tr>
+      </table>
+    </td><%
+        }
+        countInRow++;
+        if (countInRow == COLUMN_COUNT)
+          break;
+      }
+    %>
+  </tr>
+</table>
+<%
+    if (!iterator.hasNext())
+      break;
+    count++;
+    if (count % ROW_COUNT == 0) {
+      %><div class="break">&nbsp;</div>
+<%
+    }
+  }
+
+def print_cycle(c) {
+%><table align="center" cellspacing=0>
         <tr class="title">
           <td colspan="3">${cycle}:</td>
         </tr>
@@ -81,38 +116,12 @@
         </tr><%
                   }
               %>
-        <tr class="row${row.helper == true ? " emph" : ""}">
+        <tr class="row${row.helper ? " emph" : ""}">
           <td class="trow">&nbsp;${row.trainName}</td>
           <td class="drow">${convertTime(row.fromTime)}</td>
           <td class="ftrow">${row.fromAbbr} - ${row.toAbbr}</td>
         </tr><% } %>
-      </table>
-    </td><%
-        } else {
-          %>
-    <td class="cycle">
-      <table align="center" cellspacing=0>
-        <tr><td>&nbsp;</td></tr>
-      </table>
-    </td><%
-        }
-
-        countInRow++;
-        if (countInRow == 3)
-          break;
-      }
-    %>
-  </tr>
-</table>
-<%
-    if (!iterator.hasNext())
-      break;
-    count++;
-    if (count % 3 == 0) {
-      %><div class="break">&nbsp;</div>
-<%
-    }
-  }
-%>
+      </table><% 
+} %>
 </body>
 </html>
