@@ -26,6 +26,14 @@
             <version>1.1</version>
             <exclusions>
                 <exclusion>
+                    <artifactId>avalon-framework-api</artifactId>
+                    <groupId>org.apache.avalon.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>avalon-framework-impl</artifactId>
+                    <groupId>org.apache.avalon.framework</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>batik-svg-dom</artifactId>
                     <groupId>org.apache.xmlgraphics</groupId>
                 </exclusion>
@@ -90,6 +98,16 @@
                     <groupId>xml-apis</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>avalon-framework</groupId>
+            <artifactId>avalon-framework-api</artifactId>
+            <version>4.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>avalon-framework</groupId>
+            <artifactId>avalon-framework-impl</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
