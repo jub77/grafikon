@@ -1,3 +1,4 @@
 language: java
+install: mvn -am -pl grafikon-assembly install -DskipTests=true
 jdk:
   - oraclejdk8
