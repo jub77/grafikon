@@ -145,6 +145,8 @@ public class TransformVisitor implements EventVisitor {
                 Train t = event.getNewCycleItem() != null ? event.getNewCycleItem().getTrain() : event.getOldCycleItem().getTrain();
                 change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
                 break;
+            case CYCLE_SEQUENCE:
+                change.addDescription(new DiagramChangeDescription(desc));
             default:
                 break;
         }

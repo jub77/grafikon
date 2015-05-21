@@ -114,6 +114,7 @@ class EventToChangeConvert {
         map.put(GTEventType.CYCLE_ITEM_MOVED, "item_moved");
         map.put(GTEventType.CYCLE_ITEM_REMOVED, "item_removed");
         map.put(GTEventType.CYCLE_ITEM_UPDATED, "item_updated");
+        map.put(GTEventType.CYCLE_SEQUENCE, "sequence_changed");
         map.put(GTEventType.ENGINE_CLASS_ADDED, null); // nothing
         map.put(GTEventType.ENGINE_CLASS_MOVED, null); // nothing
         map.put(GTEventType.ENGINE_CLASS_REMOVED, null); // nothing

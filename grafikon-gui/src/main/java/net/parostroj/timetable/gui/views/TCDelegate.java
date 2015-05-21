@@ -45,14 +45,16 @@ public abstract class TCDelegate implements ApplicationModelListener {
         this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
             public void processTrainsCycleEvent(TrainsCycleEvent event) {
-                // if selected and type == item moved
-                boolean checkedAttribute = event.getType() == GTEventType.ATTRIBUTE
-                        && event.getAttributeChange().checkName(TrainsCycle.ATTR_NEXT, TrainsCycle.ATTR_PREVIOUS,
-                                TrainsCycle.ATTR_ENGINE_CLASS);
-                boolean changed = event.getType() == GTEventType.CYCLE_ITEM_MOVED || checkedAttribute;
-                if (event.getSource() == selected && changed) {
-                    // deselect
-                    setSelectedCycle(selected);
+                if (event.getSource() == selected) {
+                    boolean sequenceChanged = event.getType() == GTEventType.CYCLE_SEQUENCE;
+                    boolean engineClassChanged = event.getType() == GTEventType.ATTRIBUTE
+                            && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS);
+                    boolean itemMoved = event.getType() == GTEventType.CYCLE_ITEM_MOVED;
+
+                    boolean changed = itemMoved || engineClassChanged || sequenceChanged;
+                    if (changed) {
+                        setSelectedCycle(selected);
+                    }
                 }
             }
             @Override

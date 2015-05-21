@@ -6,6 +6,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import net.parostroj.timetable.model.events.*;
@@ -113,9 +114,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     public void removeFromSequence() {
         if (isPartOfSequence()) {
-            connectTwo(getPrevious(), this.getNext());
+            // remember other from sequence
+            TrainsCycle other = this.getNext();
+            connectTwo(this.getPrevious(), this.getNext());
             this.removeAttribute(ATTR_NEXT);
             this.removeAttribute(ATTR_PREVIOUS);
+            // fire event
+            other.applyToSequence(getSendChangedSequence());
+            getSendChangedSequence().accept(this);
         }
     }
 
@@ -126,6 +132,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         TrainsCycle oldNext = this.getNext();
         connectTwo(this, next);
         connectTwo(next, oldNext);
+        // fire event
+        this.applyToSequence(getSendChangedSequence());
     }
 
     public void moveForwardInSequence() {
@@ -138,6 +146,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             connectTwo(next, this);
             connectTwo(this, afterNext);
         }
+        // fire event
+        this.applyToSequence(getSendChangedSequence());
     }
 
     public void moveBackwardInSequence() {
@@ -165,6 +175,22 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             action.accept(current);
             current = current.getNext();
         } while (current != this);
+    }
+
+    public <T> T aggregateSequence(final T value, BiFunction<T, TrainsCycle, T> function) {
+        TrainsCycle current = this;
+        T result = value;
+        do {
+            function.apply(result, current);
+            current = current.getNext();
+        } while (current != this);
+        return result;
+    }
+
+    private static Consumer<TrainsCycle> getSendChangedSequence() {
+        return tc -> {
+            tc.fireEvent(new TrainsCycleEvent(tc, GTEventType.CYCLE_SEQUENCE));
+        };
     }
 
     @Override
