@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.*;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "type", "attributes", "rows", "nextInSequence"})
+@XmlType(propOrder = {"id", "name", "description", "type", "attributes", "rows", "next"})
 public class CustomCycle {
 
     private String id;
@@ -19,7 +19,7 @@ public class CustomCycle {
     private String type;
     private List<Attribute> attributes;
     private List<CustomCycleRow> rows;
-    private CustomCycle nextInSequence;
+    private CustomCycle next;
 
     @XmlID
     @XmlAttribute
@@ -75,13 +75,12 @@ public class CustomCycle {
         this.attributes = attributes;
     }
 
-    @XmlElement(name = "next")
     @XmlIDREF
-    public CustomCycle getNextInSequence() {
-        return nextInSequence;
+    public CustomCycle getNext() {
+        return next;
     }
 
-    public void setNextInSequence(CustomCycle nextInSequence) {
-        this.nextInSequence = nextInSequence;
+    public void setNext(CustomCycle next) {
+        this.next = next;
     }
 }

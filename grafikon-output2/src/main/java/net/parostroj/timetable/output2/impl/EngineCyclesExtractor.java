@@ -39,7 +39,7 @@ public class EngineCyclesExtractor {
         for (EngineCycle outputCycle : outputCycles) {
             TrainsCycle cycle = map.inverse().get(outputCycle);
             if (cycle.isPartOfSequence()) {
-                outputCycle.setNextInSequence(this.getCycle(cycle, map));
+                outputCycle.setNext(this.getCycle(cycle.getNext(), map));
             }
         }
         return outputCycles;
