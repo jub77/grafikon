@@ -37,7 +37,7 @@ public class LSTrainsCycle {
         this.name = cycle.getName();
         this.description = cycle.getDescription();
         this.type = cycle.getType().getId();
-        this.attributes = new LSAttributes(cycle.getAttributes(), TrainsCycle.ATTR_NEXT, TrainsCycle.ATTR_PREVIOUS);
+        this.attributes = new LSAttributes(cycle.getAttributes());
         if (cycle.isPartOfSequence()) {
             next = cycle.getNext().getId();
         }

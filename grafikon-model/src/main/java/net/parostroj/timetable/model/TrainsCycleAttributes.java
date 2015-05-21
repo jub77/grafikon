@@ -11,7 +11,4 @@ public interface TrainsCycleAttributes {
     public static final String ATTR_NAME = "name";
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_TYPE = "type";
-
-    public static final String ATTR_PREVIOUS = "previous";
-    public static final String ATTR_NEXT = "next";
 }

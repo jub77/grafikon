@@ -32,6 +32,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private final List<TrainsCycleItem> items;
     private final GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
     private AttributesListener attributesListener;
+    private TrainsCycle next;
+    private TrainsCycle previous;
 
     /**
      * creates instance
@@ -103,12 +105,10 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     }
 
     public TrainsCycle getPrevious() {
-        TrainsCycle previous = getAttributes().get(ATTR_PREVIOUS, TrainsCycle.class);
         return previous == null ? this : previous;
     }
 
     public TrainsCycle getNext() {
-        TrainsCycle next = getAttributes().get(ATTR_NEXT, TrainsCycle.class);
         return next == null ? this : next;
     }
 
@@ -117,8 +117,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             // remember other from sequence
             TrainsCycle other = this.getNext();
             connectTwo(this.getPrevious(), this.getNext());
-            this.removeAttribute(ATTR_NEXT);
-            this.removeAttribute(ATTR_PREVIOUS);
+            this.next = null;
+            this.previous = null;
             // fire event
             other.applyToSequence(getSendChangedSequence());
             getSendChangedSequence().accept(this);
@@ -156,11 +156,11 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     private void connectTwo(TrainsCycle first, TrainsCycle second) {
         if (first == second) {
-            first.removeAttribute(ATTR_NEXT);
-            first.removeAttribute(ATTR_PREVIOUS);
+            first.next = null;
+            first.previous = null;
         } else {
-            first.setAttribute(ATTR_NEXT, second);
-            second.setAttribute(ATTR_PREVIOUS, first);
+            first.next = second;
+            second.previous = first;
         }
     }
 
