@@ -44,11 +44,15 @@ public class EditCompaniesDialog extends EditItemsDialog<Company> {
     @Override
     protected Company createNew(String name) {
         Company newCompany = diagram.createCompany(diagram.createId());
-        newCompany.setName(name);
+        newCompany.setAbbr(name);
         return newCompany;
     }
 
     @Override
-    protected void edit(Company item) {
+    protected void edit(Company company) {
+        EditCompanyDialog dialog = new EditCompanyDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(company);
+        dialog.dispose();
     }
 }

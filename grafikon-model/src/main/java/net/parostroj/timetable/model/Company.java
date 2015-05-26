@@ -49,6 +49,14 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
         return attributes.remove(key);
     }
 
+    public String getAbbr() {
+        return attributes.get(ATTR_ABBR, String.class);
+    }
+
+    public void setAbbr(String abbr) {
+        attributes.setRemove(ATTR_ABBR, abbr);
+    }
+
     public String getName() {
         return attributes.get(ATTR_NAME, String.class);
     }
@@ -72,6 +80,6 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
 
     @Override
     public String toString() {
-        return this.getName();
+        return this.getAbbr();
     }
 }

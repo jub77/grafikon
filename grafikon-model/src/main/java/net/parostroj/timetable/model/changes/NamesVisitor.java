@@ -115,6 +115,6 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(Company company) {
-        name = company.getName();
+        name = company.getAbbr();
     }
 }

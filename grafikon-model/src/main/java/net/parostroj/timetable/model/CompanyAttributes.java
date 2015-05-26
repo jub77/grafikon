@@ -7,6 +7,7 @@ package net.parostroj.timetable.model;
  */
 public interface CompanyAttributes {
 
+    public static final String ATTR_ABBR = "abbr";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_LOCALE = "locale";
 }
