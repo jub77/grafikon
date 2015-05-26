@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 import javax.swing.GroupLayout.ParallelGroup;
@@ -84,6 +85,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         if (upButton != null) upButton.setEnabled(enabled);
         if (downButton != null) downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
+        if (editButton != null) editButton.setEnabled(enabled);
     }
 
     private void initComponents() {
@@ -107,6 +109,10 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
             upButton.addActionListener(evt -> upButtonActionPerformed(evt));
             downButton.addActionListener(evt -> downButtonActionPerformed(evt));
         }
+        if (edit) {
+            editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+            editButton.addActionListener(evt -> editButtonActionPerformed(evt));
+        }
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -127,6 +133,9 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         if (move) {
             horizontal.addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+        }
+        if (edit) {
+            horizontal.addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
         }
         horizontal.addComponent(nameTextField);
         layout.setHorizontalGroup(
@@ -150,6 +159,10 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downButton);
         }
+        if (edit) {
+            vertical.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton);
+        }
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -161,6 +174,10 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         );
 
         pack();
+    }
+
+    private Object editButtonActionPerformed(ActionEvent evt) {
+        throw new IllegalStateException("Edit action not implemented");
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -223,4 +240,5 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton upButton;
+    private javax.swing.JButton editButton;
 }
