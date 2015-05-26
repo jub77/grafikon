@@ -74,6 +74,8 @@ public class LSAttributesItem {
             cValue = new LSAttributesValue(((LengthUnit) value).getKey(), "length.unit");
         } else if (value instanceof WeightUnit) {
             cValue = new LSAttributesValue(((WeightUnit) value).getKey(), "weight.unit");
+        } else if (value instanceof Locale) {
+            cValue = new LSAttributesValue(((Locale) value).toLanguageTag(), "locale");
         } else if (value instanceof TextTemplate) {
             TextTemplate tt = (TextTemplate) value;
             cValue = new LSAttributesValue(tt.getTemplate(), "text.template." + tt.getLanguage().name());
@@ -163,6 +165,8 @@ public class LSAttributesItem {
             return WeightUnit.getByKey(value);
         } else if (valueType.equals("freight.color")) {
             return FreightColor.getByKey(value);
+        } else if (valueType.equals("locale")) {
+            return Locale.forLanguageTag(value);
         } else if (valueType.startsWith("text.template.")) {
             return this.convertTextTemplate(value, valueType);
         } else if (valueType.startsWith("model.")) {
