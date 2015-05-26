@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.dialogs;
 
-import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 import javax.swing.GroupLayout.ParallelGroup;
@@ -111,7 +110,9 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         }
         if (edit) {
             editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-            editButton.addActionListener(evt -> editButtonActionPerformed(evt));
+            editButton.addActionListener( evt -> {
+                edit(itemList.getSelectedValue().getElement());
+            });
         }
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -176,7 +177,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         pack();
     }
 
-    private Object editButtonActionPerformed(ActionEvent evt) {
+    protected void edit(T item) {
         throw new IllegalStateException("Edit action not implemented");
     }
 

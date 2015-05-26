@@ -48,4 +48,7 @@ public class EditCompaniesDialog extends EditItemsDialog<Company> {
         return newCompany;
     }
 
+    @Override
+    protected void edit(Company item) {
+    }
 }
