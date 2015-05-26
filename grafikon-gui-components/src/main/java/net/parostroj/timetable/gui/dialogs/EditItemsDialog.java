@@ -97,7 +97,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
             @Override
             protected void change() {
                 String text = nameTextField.getText();
-                newButton.setEnabled(text != null && !"".equals(text.trim()));
+                newButton.setEnabled(!ObjectsUtil.isEmpty(text));
             }
         });
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
