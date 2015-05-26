@@ -89,13 +89,20 @@ public class Localization {
         }
     }
 
+    /**
+     * Returns locale for string. If localization does not contain given locale, it returns
+     * <code>null</code>.
+     *
+     * @param localeString locale string
+     * @return locale
+     */
     public Locale getLocale(String localeString) {
-        for (Locale locale : locales) {
-            if (locale.toString().equals(localeString)) {
-                return locale;
-            }
+        Locale lLocale = Locale.forLanguageTag(localeString);
+        if (locales.contains(lLocale)) {
+            return lLocale;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public Collection<Locale> getLocales() {

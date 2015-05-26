@@ -773,8 +773,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // save locales
         Locale locale = model.getLocale();
-        section.put("locale.program", locale != null ? locale.toString() : null);
-        section.put("locale.output", model.getOutputSettings().getLocale() != null ? model.getOutputSettings().getLocale().toString() : null);
+        section.put("locale.program", locale != null ? locale.toLanguageTag() : null);
+        section.put("locale.output", model.getOutputSettings().getLocale() != null ? model.getOutputSettings().getLocale().toLanguageTag() : null);
 
         // save output type
         section.put("output.type", outputTypeButtonGroup.getSelection().getActionCommand());

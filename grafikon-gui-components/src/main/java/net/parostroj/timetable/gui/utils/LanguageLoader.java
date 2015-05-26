@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import net.parostroj.timetable.utils.LocaleUtils;
 import net.parostroj.timetable.utils.Pair;
 
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public class LanguageLoader {
         Properties properties = getLanguages();
         List<Pair<String, Locale>> list = new ArrayList<Pair<String, Locale>>(properties.size());
         for (Map.Entry<Object,Object> entry : properties.entrySet()) {
-            Locale language = LocaleUtils.parseLocale((String)entry.getKey());
+            Locale language = Locale.forLanguageTag((String) entry.getKey());
             String text = (String)entry.getValue();
             list.add(new Pair<String, Locale>(text, language));
         }

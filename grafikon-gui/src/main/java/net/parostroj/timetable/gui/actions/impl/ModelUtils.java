@@ -19,7 +19,6 @@ import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
-import net.parostroj.timetable.utils.LocaleUtils;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -107,6 +106,6 @@ public class ModelUtils {
     }
 
     public static Locale parseLocale(String localeString) {
-        return LocaleUtils.parseLocale(localeString);
+        return Locale.forLanguageTag(localeString);
     }
 }

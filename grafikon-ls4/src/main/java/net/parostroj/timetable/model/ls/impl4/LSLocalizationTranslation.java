@@ -20,7 +20,7 @@ public class LSLocalizationTranslation {
     }
 
     public LSLocalizationTranslation(Translation translation) {
-        locale = translation.getLocale().toString();
+        locale = translation.getLocale().toLanguageTag();
         text = translation.getText();
     }
 

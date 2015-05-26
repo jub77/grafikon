@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.*;
 import net.parostroj.timetable.model.Localization;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.utils.LocaleUtils;
 
 /**
  * Storage for localization.
@@ -59,7 +58,7 @@ public class LSLocalization {
         Localization localization = diagram.getLocalization();
         if (locales != null) {
             for (String locale : locales) {
-                localization.addLocale(LocaleUtils.parseLocale(locale));
+                localization.addLocale(Locale.forLanguageTag(locale));
             }
         }
         if (items != null) {
