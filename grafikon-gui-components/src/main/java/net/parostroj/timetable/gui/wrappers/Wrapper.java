@@ -139,4 +139,8 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
     public static <V> Wrapper<V> getPrototypeWrapper(String prototypeValue) {
         return new PrototypeWrapper<V>(prototypeValue);
     }
+
+    public static <V> Wrapper<V> getEmptyWrapper(String textValue) {
+        return getPrototypeWrapper(textValue);
+    }
 }
