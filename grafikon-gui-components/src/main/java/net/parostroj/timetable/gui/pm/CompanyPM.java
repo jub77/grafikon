@@ -6,6 +6,7 @@ import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
 
 import net.parostroj.timetable.model.Company;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * View model of company.
@@ -37,7 +38,7 @@ public class CompanyPM extends AbstractPM {
         Company company = companyRef.get();
         if (company != null) {
             // write back
-            company.setName(name.getText());
+            company.setName(ObjectsUtil.checkAndTrim(name.getText()));
         }
         return true;
     }
