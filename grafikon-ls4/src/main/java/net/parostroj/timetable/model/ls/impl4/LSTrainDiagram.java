@@ -9,9 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import net.parostroj.timetable.model.Group;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
 
 /**
  * Storage for train diagram data.
@@ -19,7 +17,7 @@ import net.parostroj.timetable.model.TrainsCycleType;
  * @author jub
  */
 @XmlRootElement(name = "train_diagram")
-@XmlType(propOrder = {"id", "trainsData", "attributes", "changesTracking", "cycleTypes", "groups"})
+@XmlType(propOrder = {"id", "trainsData", "attributes", "changesTracking", "cycleTypes", "groups", "companies"})
 public class LSTrainDiagram {
 
     private String id;
@@ -28,6 +26,7 @@ public class LSTrainDiagram {
     private boolean changesTracking;
     private Set<LSTrainsCycleType> cycleTypes;
     private List<LSGroup> groups;
+    private List<LSCompany> companies;
 
     public LSTrainDiagram() {
     }
@@ -44,6 +43,10 @@ public class LSTrainDiagram {
         for (Group group : diagram.getGroups()) {
             LSGroup lsGroup = new LSGroup(group);
             getGroups().add(lsGroup);
+        }
+        for (Company company : diagram.getCompanies()) {
+            LSCompany lsCompany = new LSCompany(company);
+            getCompanies().add(lsCompany);
         }
     }
 
@@ -103,6 +106,18 @@ public class LSTrainDiagram {
 
     public void setGroups(List<LSGroup> groups) {
         this.groups = groups;
+    }
+
+    @XmlElement(name = "company")
+    public List<LSCompany> getCompanies() {
+        if (companies == null) {
+            companies = new LinkedList<LSCompany>();
+        }
+        return companies;
+    }
+
+    public void setCompanies(List<LSCompany> companies) {
+        this.companies = companies;
     }
 }
 

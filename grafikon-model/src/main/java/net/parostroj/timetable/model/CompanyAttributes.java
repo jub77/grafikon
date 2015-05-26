@@ -1,0 +1,12 @@
+package net.parostroj.timetable.model;
+
+/**
+ * Company attributes.
+ *
+ * @author jub
+ */
+public interface CompanyAttributes {
+
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_LOCALE = "locale";
+}

@@ -2,6 +2,9 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.Collection;
 
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
+
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -22,8 +25,17 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
     protected TrainDiagram diagram;
     private WrapperListModel<T> listModel;
 
+    private final boolean move;
+    private final boolean edit;
+
     public EditItemsDialog(java.awt.Window parent, boolean modal) {
+        this(parent, modal, true, false);
+    }
+
+    public EditItemsDialog(java.awt.Window parent, boolean modal, boolean move, boolean edit) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
+        this.move = move;
+        this.edit = edit;
         initComponents();
     }
 
@@ -47,7 +59,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<T>(Wrapper.getWrapperList(getList()), null, false);
+        listModel = new WrapperListModel<T>(Wrapper.getWrapperList(getList()), null, !move);
         listModel.setObjectListener(new ObjectListener<T>() {
             @Override
             public void added(T object, int index) {
@@ -69,8 +81,8 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
 
     public void updateEnabled() {
         boolean enabled = !itemList.isSelectionEmpty();
-        upButton.setEnabled(enabled);
-        downButton.setEnabled(enabled);
+        if (upButton != null) upButton.setEnabled(enabled);
+        if (downButton != null) downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
     }
 
@@ -89,8 +101,12 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
-        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
-        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
+        if (move) {
+            upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
+            downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
+            upButton.addActionListener(evt -> upButtonActionPerformed(evt));
+            downButton.addActionListener(evt -> downButtonActionPerformed(evt));
+        }
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -100,62 +116,47 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         });
         scrollPane.setViewportView(itemList);
 
-        newButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
-            }
-        });
-
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
-
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
-
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
+        newButton.addActionListener(evt -> newButtonActionPerformed(evt));
+        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
+        ParallelGroup horizontal = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+            .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+        if (move) {
+            horizontal.addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+        }
+        horizontal.addComponent(nameTextField);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scrollPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(nameTextField))
+                .addGroup(horizontal)
                 .addContainerGap())
         );
+        SequentialGroup vertical = layout.createSequentialGroup()
+            .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(newButton)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(deleteButton);
+        if (move) {
+            vertical.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(upButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(downButton);
+        }
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(upButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, vertical))
                 .addContainerGap())
         );
 

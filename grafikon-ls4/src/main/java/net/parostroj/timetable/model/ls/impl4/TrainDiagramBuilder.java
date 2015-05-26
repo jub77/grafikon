@@ -37,6 +37,10 @@ public class TrainDiagramBuilder {
         for (LSGroup lsGroup : lsDiagram.getGroups()) {
             this.diagram.addGroup(lsGroup.createGroup(diagram));
         }
+        // companies
+        for (LSCompany lsCompany : lsDiagram.getCompanies()) {
+            this.diagram.getCompanies().add(lsCompany.createCompany(diagram));
+        }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
             diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));

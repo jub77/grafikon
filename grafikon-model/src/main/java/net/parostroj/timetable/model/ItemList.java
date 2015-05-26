@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.GTEventType;
 
-public class ItemList<T> {
+public class ItemList<T> implements Iterable<T> {
 
     protected enum Type {ADD, REMOVE, MOVE};
 
@@ -77,5 +77,10 @@ public class ItemList<T> {
     }
 
     protected void fireEvent(Type type, GTEventType eventType, T item, int newIndex, int oldIndex) {
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return items.iterator();
     }
 }

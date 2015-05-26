@@ -45,6 +45,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final List<OutputTemplate> outputTemplates;
     /** Groups. */
     private final List<Group> groups;
+    /** Companies */
+    private final ItemList<Company> companies;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
     /** Localization. */
@@ -71,6 +73,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.textItems = new LinkedList<TextItem>();
         this.outputTemplates = new LinkedList<OutputTemplate>();
         this.groups = new LinkedList<Group>();
+        this.companies = new ItemList<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED) {
+            @Override
+            protected void fireEvent(ItemList.Type type, GTEventType eventType,
+                    Company item, int newIndex, int oldIndex) {
+                TrainDiagramEvent event = new TrainDiagramEvent(TrainDiagram.this, eventType, item);
+                TrainDiagram.this.fireEvent(event);
+            }
+        };
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
@@ -313,14 +323,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return getById(id, groups);
     }
 
+    public Company getCompanyById(String id) {
+        return getById(id, companies);
+    }
+
     public FreightNet getFreightNet() {
         return freightNet;
     }
 
-    private <T extends ObjectWithId> T getById(String id, Collection<T> items) {
+    private <T extends ObjectWithId> T getById(String id, Iterable<T> items) {
         for (T item : items) {
-            if (item.getId().equals(id))
+            if (item.getId().equals(id)) {
                 return item;
+            }
         }
         return null;
     }
@@ -493,6 +508,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void removeGroup(Group group) {
         groups.remove(group);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.GROUP_REMOVED, group));
+    }
+
+    public ItemList<Company> getCompanies() {
+        return companies;
     }
 
     public void addTextItem(TextItem item, int position) {
@@ -716,6 +735,16 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     /**
+     * Creates company.
+     *
+     * @param id id
+     * @return new company
+     */
+    public Company createCompany(String id) {
+        return new Company(id);
+    }
+
+    /**
      * accepts visitor.
      *
      * @param visitor visitor
@@ -760,6 +789,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for (Group group : groups) {
             group.accept(visitor);
         }
+        for (Company company : companies) {
+            company.accept(visitor);
+        }
         visitor.visitAfter(this);
     }
 
@@ -797,6 +829,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (object != null)
             return object;
         object = getGroupById(id);
+        if (object !=null)
+            return object;
+        object = getCompanyById(id);
         return object;
     }
 }

@@ -384,6 +384,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.addMenuItemWithListener(diagramMenu, "menu.file.localization", evt -> localizationMenuItemActionPerformed(evt), true); // NOI18N
 
         this.addMenuItem(diagramMenu, "menu.groups", new EditGroupsAction(model), null);
+        this.addMenuItemWithListener(diagramMenu, "menu.companies", evt -> companiesMenuItemActionPerformed(evt), true); // NOI18N
 
         menuBar.add(diagramMenu);
 
@@ -644,6 +645,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private void regionsMenuItemActionPerformed(ActionEvent evt) {
         EditRegionsDialog dialog = new EditRegionsDialog(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(model.getDiagram());
+        dialog.dispose();
+    }
+
+    private void companiesMenuItemActionPerformed(ActionEvent evt) {
+        EditCompaniesDialog dialog = new EditCompaniesDialog(this, true);
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();

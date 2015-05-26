@@ -54,6 +54,8 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Type.OUTPUT_TEMPLATE);
         map.put(GTEventType.GROUP_ADDED, DiagramChange.Type.GROUP);
         map.put(GTEventType.GROUP_REMOVED, DiagramChange.Type.GROUP);
+        map.put(GTEventType.COMPANY_ADDED, DiagramChange.Type.COMPANY);
+        map.put(GTEventType.COMPANY_REMOVED, DiagramChange.Type.COMPANY);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, DiagramChange.Type.FREIGHT_NET);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, DiagramChange.Type.FREIGHT_NET);
         map.put(GTEventType.REGION_ADDED, DiagramChange.Type.REGION);
@@ -97,6 +99,8 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.GROUP_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.GROUP_REMOVED, DiagramChange.Action.REMOVED);
+        map.put(GTEventType.COMPANY_ADDED, DiagramChange.Action.ADDED);
+        map.put(GTEventType.COMPANY_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.OUTPUT_TEMPLATE_ADDED, DiagramChange.Action.ADDED);
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, DiagramChange.Action.REMOVED);
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, DiagramChange.Action.ADDED);
@@ -157,6 +161,8 @@ class EventToChangeConvert {
         map.put(GTEventType.OUTPUT_TEMPLATE_REMOVED, null); // nothing
         map.put(GTEventType.GROUP_ADDED, null); // nothing
         map.put(GTEventType.GROUP_REMOVED, null); // nothing
+        map.put(GTEventType.COMPANY_ADDED, null); // nothing
+        map.put(GTEventType.COMPANY_REMOVED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ADDED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null); // nothing
         map.put(GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, "freight_net_connection_attribute");

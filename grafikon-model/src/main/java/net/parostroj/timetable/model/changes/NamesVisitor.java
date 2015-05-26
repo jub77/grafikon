@@ -112,4 +112,9 @@ public class NamesVisitor implements TrainDiagramVisitor {
     public void visit(Region region) {
         name = region.getName();
     }
+
+    @Override
+    public void visit(Company company) {
+        name = company.getName();
+    }
 }
