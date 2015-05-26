@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import javax.xml.bind.annotation.XmlType;
+
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
@@ -9,6 +11,7 @@ import net.parostroj.timetable.model.ls.LSException;
  *
  * @author jub
  */
+@XmlType(propOrder = {"id", "attributes"})
 public class LSCompany {
 
     private String id;
