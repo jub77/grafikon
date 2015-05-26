@@ -10,12 +10,21 @@ public class ItemList<T> {
 
     private final List<T> items;
     private final Map<Type, GTEventType> events = new EnumMap<Type, GTEventType>(Type.class);
+    private final boolean moveAllowed;
 
     protected ItemList(GTEventType add, GTEventType remove, GTEventType move) {
         events.put(Type.ADD, add);
         events.put(Type.REMOVE, remove);
         events.put(Type.MOVE, move);
         items = new ArrayList<T>();
+        moveAllowed = true;
+    }
+
+    protected ItemList(GTEventType add, GTEventType remove) {
+        events.put(Type.ADD, add);
+        events.put(Type.REMOVE, remove);
+        items = new ArrayList<T>();
+        moveAllowed = false;
     }
 
     public void add(T item) {
@@ -35,15 +44,21 @@ public class ItemList<T> {
     }
 
     public void move(T item, int index) {
+        if (!moveAllowed) {
+            throw new IllegalStateException("Move not allowed");
+        }
         int oldIndex = items.indexOf(item);
         if (oldIndex == -1) {
-            throw new IllegalArgumentException("Item not in list.");
+            throw new IllegalArgumentException("Item not in list");
         }
         this.move(oldIndex, index);
 
     }
 
     public void move(int oldIndex, int newIndex) {
+        if (!moveAllowed) {
+            throw new IllegalStateException("Move not allowed");
+        }
         T item = items.remove(oldIndex);
         items.add(newIndex, item);
         this.fireEvent(Type.MOVE, item, newIndex, oldIndex);
