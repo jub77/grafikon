@@ -2,11 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 
 /**
  * Extracts information for driver cycles.
@@ -50,8 +46,13 @@ public class DriverCyclesExtractor {
         for (TrainsCycleItem item : cycle.getItems()) {
             outputCycle.getRows().add(this.createRow(item));
         }
-        if (this.routesExtractor != null)
+        if (this.routesExtractor != null) {
             this.addNetPartRouteInfos(outputCycle, cycle);
+        }
+        Company company = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
+        if (company != null) {
+            outputCycle.setCompany(CompanyInfo.convert(company));
+        }
         outputCycle.setAttributes(ae.extract(cycle.getAttributes()));
         return outputCycle;
     }

@@ -64,6 +64,10 @@ public class TrainUnitCyclesExtractor {
             outputCycle.getRows().add(createRow(item));
         }
         outputCycle.setAttributes(ae.extract(cycle.getAttributes()));
+        Company company = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
+        if (company != null) {
+            outputCycle.setCompany(CompanyInfo.convert(company));
+        }
         return outputCycle;
     }
 

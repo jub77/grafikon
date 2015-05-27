@@ -6,10 +6,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import net.parostroj.timetable.actions.TrainsHelper;
-import net.parostroj.timetable.model.TimeConverter;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.TransformUtil;
 
 /**
@@ -71,6 +68,10 @@ public class EngineCyclesExtractor {
             current = i.next();
             outputCycle.getRows().add(createRow(current, previous));
             previous = current;
+        }
+        Company company = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
+        if (company != null) {
+            outputCycle.setCompany(CompanyInfo.convert(company));
         }
         return outputCycle;
     }

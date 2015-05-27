@@ -72,6 +72,10 @@ public class CustomCyclesExtractor {
             outputCycle.getRows().add(createRow(current, previous));
             previous = current;
         }
+        Company company = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
+        if (company != null) {
+            outputCycle.setCompany(CompanyInfo.convert(company));
+        }
         return outputCycle;
     }
 

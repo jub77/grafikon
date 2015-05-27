@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "description", "routes", "attributes", "rows"})
+@XmlType(propOrder={"name", "description", "routes", "attributes", "rows", "company"})
 public class DriverCycle {
 
     private String name;
@@ -18,6 +19,7 @@ public class DriverCycle {
     private List<NetPartRouteInfo> routes;
     private List<Attribute> attributes;
     private List<DriverCycleRow> rows;
+    private CompanyInfo company;
 
     public String getDescription() {
         return description;
@@ -64,5 +66,13 @@ public class DriverCycle {
 
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
+    }
+
+    public CompanyInfo getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyInfo company) {
+        this.company = company;
     }
 }
