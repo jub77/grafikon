@@ -5,9 +5,9 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.SwingUtilities;
 
-import net.parostroj.timetable.gui.dialogs.GroupsDialog;
+import net.parostroj.timetable.gui.dialogs.EditGroupsDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.Reference;
 
@@ -29,8 +29,8 @@ public class EditGroupsAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Window parent = SwingUtilities.getWindowAncestor((Component) e.getSource());
-        GroupsDialog dialog = new GroupsDialog(parent, true);
+        Window parent = GuiComponentUtils.getWindow((Component) e.getSource());
+        EditGroupsDialog dialog = new EditGroupsDialog(parent, true);
         dialog.setLocationRelativeTo(parent);
         dialog.showDialog(diagramReference.get());
         dialog.dispose();
