@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Window;
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.Company;
 
@@ -12,8 +13,11 @@ import net.parostroj.timetable.model.Company;
  */
 public class EditCompaniesDialog extends EditItemsDialog<Company> {
 
-    public EditCompaniesDialog(Window parent, boolean modal) {
+    private final Collection<Locale> locales;
+
+    public EditCompaniesDialog(Window parent, boolean modal, Collection<Locale> locales) {
         super(parent, modal, false, true);
+        this.locales = locales;
     }
 
     @Override
@@ -50,7 +54,7 @@ public class EditCompaniesDialog extends EditItemsDialog<Company> {
 
     @Override
     protected void edit(Company company) {
-        EditCompanyDialog dialog = new EditCompanyDialog(this, true);
+        EditCompanyDialog dialog = new EditCompanyDialog(this, true, locales);
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(company);
         dialog.dispose();

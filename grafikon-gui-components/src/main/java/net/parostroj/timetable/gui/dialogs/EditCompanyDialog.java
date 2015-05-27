@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,6 +15,7 @@ import net.parostroj.timetable.model.Company;
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
 /**
@@ -24,17 +27,17 @@ public class EditCompanyDialog extends JDialog {
 
     private final ModelProvider provider = new ModelProvider(CompanyPM.class);
 
-    public EditCompanyDialog(Window parent, boolean modal) {
+    public EditCompanyDialog(Window parent, boolean modal, Collection<Locale> locales) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initComponents();
-        CompanyPM model = new CompanyPM();
+        CompanyPM model = new CompanyPM(locales);
         provider.setPresentationModel(model);
         pack();
         this.setResizable(false);
     }
 
     public void showDialog(Company company) {
-        provider.<CompanyPM> getPresentationModel().init(company);
+        provider.<CompanyPM>getPresentationModel().init(company);
         this.setVisible(true);
     }
 
@@ -55,7 +58,7 @@ public class EditCompanyDialog extends JDialog {
         getContentPane().add(panel, BorderLayout.CENTER);
         GridBagLayout gbLayout = new GridBagLayout();
         gbLayout.columnWeights = new double[]{0.0, 1.0};
-        gbLayout.rowWeights = new double[]{0.0, 0.0, 1.0};
+        gbLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
         panel.setLayout(gbLayout);
 
         JLabel abbrLabel = new JLabel(ResourceLoader.getString("edit.company.abbreviation")); // NOI18N
@@ -93,12 +96,28 @@ public class EditCompanyDialog extends JDialog {
         panel.add(nameTextField, dtfCons);
         nameTextField.setColumns(30);
 
+        JLabel localeLabel = new JLabel(ResourceLoader.getString("edit.company.locale")); // NOI18N
+        GridBagConstraints llCons = new GridBagConstraints();
+        llCons.anchor = GridBagConstraints.WEST;
+        llCons.insets = new Insets(0, 0, 5, 5);
+        llCons.gridx = 0;
+        llCons.gridy = 2;
+        panel.add(localeLabel, llCons);
+
+        BnComboBox localeComboBox = new BnComboBox();
+        GridBagConstraints ltfCons = new GridBagConstraints();
+        ltfCons.insets = new Insets(0, 0, 5, 0);
+        ltfCons.fill = GridBagConstraints.HORIZONTAL;
+        ltfCons.gridx = 1;
+        ltfCons.gridy = 2;
+        panel.add(localeComboBox, ltfCons);
+
         Component verticalGlue = Box.createVerticalGlue();
         GridBagConstraints vgCons = new GridBagConstraints();
         vgCons.fill = GridBagConstraints.VERTICAL;
         vgCons.insets = new Insets(0, 0, 0, 5);
         vgCons.gridx = 0;
-        vgCons.gridy = 2;
+        vgCons.gridy = 3;
         panel.add(verticalGlue, vgCons);
 
         JPanel buttonPanel = new JPanel();
@@ -113,6 +132,8 @@ public class EditCompanyDialog extends JDialog {
         abbrTextField.setPath(new Path("abbr"));
         nameTextField.setModelProvider(provider);
         nameTextField.setPath(new Path("name"));
+        localeComboBox.setModelProvider(provider);
+        localeComboBox.setPath(new Path("locale"));
         okButton.setModelProvider(provider);
         okButton.setPath(new Path("ok"));
     }
