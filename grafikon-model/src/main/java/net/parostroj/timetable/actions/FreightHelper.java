@@ -45,7 +45,7 @@ public class FreightHelper {
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreight(Iterable<TimeInterval> i, final TimeInterval from) {
         final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
-        return Iterables.filter(i, interval -> {
+        return Iterables.filter(i, (TimeInterval interval) -> {
             if (after.get()) {
                 return FreightHelper.isFreightTo(interval);
             } else {
@@ -57,7 +57,7 @@ public class FreightHelper {
 
     public static Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from, final FreightNet net) {
         final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
-        return Iterables.filter(i, interval -> {
+        return Iterables.filter(i, (TimeInterval interval) -> {
             if (after.get()) {
                 return FreightHelper.isFreightTo(interval) || FreightHelper.isConnection(interval, net);
             } else {
