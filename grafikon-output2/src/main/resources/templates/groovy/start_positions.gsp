@@ -52,8 +52,12 @@
         }
         return result
     }
+    
+    def getStartTimeTitle() {
+        return start_time ? " (${diagram.timeConverter.convertIntToText(start_time)})" : "";
+    }
 %>
-<div class="caption1">${translator.getText("title", locale)}</div>
+<div class="caption1">${translator.getText("title", locale)}${getStartTimeTitle()}</div>
 <div class="caption2">${translator.getText("title_engines", locale)}</div>
 <% printPositions(engines) %>
 

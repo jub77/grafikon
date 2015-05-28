@@ -34,17 +34,19 @@ public class GspStartPositionsOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
+            Integer startTime = params.getParamValue("start.time", Integer.class);
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
-            List<Position> engines = pe.getStartPositions(diagram.getEngineCycles(), null);
-            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles(), null);
-            List<Cycles> customCycles = pe.getStartPositionsCustom(null);
+            List<Position> engines = pe.getStartPositions(diagram.getEngineCycles(), startTime);
+            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles(), startTime);
+            List<Cycles> customCycles = pe.getStartPositionsCustom(startTime);
 
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("engines", engines);
             map.put("train_units", trainUnits);
             map.put("custom_cycles", customCycles);
+            map.put("start_time", startTime);
             ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);

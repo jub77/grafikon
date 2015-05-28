@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 
 /**
- * Extracts list of positions from train diagram.
+ * Extracts list of positions from train diagram. End positions does not support starting time.
  *
  * @author jub
  */
@@ -27,6 +27,9 @@ public class PositionsExtractor {
         return getPositionsCustom(this::getStartPositions, startingTime);
     }
 
+    /**
+     * Does not support starting time.
+     */
     public List<Cycles> getEndPositionsCustom(Integer startingTime) {
         return getPositionsCustom(this::getEndPositions, startingTime);
     }
@@ -52,7 +55,7 @@ public class PositionsExtractor {
             TimeInterval interval = cycleItem.second;
             String startName = interval.getOwnerAsNode().getName();
             String startTrack = interval.getTrack().getNumber();
-            String startTime = diagram.getTimeConverter().convertIntToXml(start.getStartTime());
+            String startTime = diagram.getTimeConverter().convertIntToXml(interval.getEnd());
             result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName,
                     startTrack, startTime, start.getTrain().getName(),
                     ae.extract(cycle.getAttributes())));
@@ -60,6 +63,9 @@ public class PositionsExtractor {
         return result;
     }
 
+    /**
+     * Does not support starting time.
+     */
     public List<Position> getEndPositions(List<TrainsCycle> cycles, Integer startingTime) {
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
