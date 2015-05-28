@@ -56,7 +56,10 @@
         return result
     }
 %>
-<% for (c in cycles.cycles) { %>
+<% for (c in cycles.cycles) {
+    def loc = getLocale(c)
+    def company = getCompany(c, loc)
+%>
 <table class="pages" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td class="upperll">&nbsp;</td>
@@ -70,22 +73,24 @@
   <table align="right" class="titlepage" border="0" cellspacing="0">
     <tr><td class="company">${company}<br>${company_part}</td></tr>
     <tr><td class="space1"></td></tr>
-    <tr><td class="gtitle">${train_timetable}</td></tr>
+    <tr><td class="gtitle">${translator.getText("train_timetable", loc)}</td></tr>
     <tr><td class="numbers">${getRouteNames(c, cycles)}</td></tr>
-    <tr><td class="line">${for_line}</td></tr>
+    <tr><td class="line">${translator.getText("for_line", loc)}</td></tr>
     <tr><td class="stations">${getRoutePaths(c, cycles)}</td></tr>
-    <tr><td class="valid"><% if (cycles.validity != null) { %>${validity_from} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
-    <tr><td class="cycle">${cycle}: ${c.name}</td></tr>
-    <tr><td class="cycledesc">${c.description}</td></tr>
+    <tr><td class="valid"><% if (cycles.validity != null) { %>${translator.getText("validity_from", loc)} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
+    <tr><td class="cycle">${translator.getText("cycle", loc)}: ${c.name}</td></tr>
+    <tr><td class="cycledesc">${c.description ?: "&nbsp"}</td></tr>
     <tr><td class="space2">&nbsp;</td></tr>
-    <tr><td class="publish">${publisher}</td></tr>
+    <tr><td class="publish">${translator.getText("publisher", loc)}</td></tr>
   </table>
 </td>
 </tr>
 </table>
 <% }
    Collections.reverse(cycles.cycles);
-   for (c in cycles.cycles) { %>
+   for (c in cycles.cycles) { 
+       def loc = getLocale(c)
+%>
 <table class="pages" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td class="upperll">&nbsp;</td>
@@ -99,13 +104,13 @@
     <tr><td align="center" class="list1">
       <table class="list2" border="0" cellspacing="0">
         <tr>
-          <td colspan="4">${list_train_title}:</td>
+          <td colspan="4">${translator.getText("list_train_title", loc)}:</td>
         </tr>
         <tr class="listh">
-          <td class="ctrainh">${column_train}</td>
-          <td class="cdepartureh">${column_departure}</td>
-          <td class="cfromtoh">${column_from_to}</td>
-          <td class="cnoteh">${column_note}</td>
+          <td class="ctrainh">${translator.getText("column_train", loc)}</td>
+          <td class="cdepartureh">${translator.getText("column_departure", loc)}</td>
+          <td class="cfromtoh">${translator.getText("column_from_to", loc)}</td>
+          <td class="cnoteh">${translator.getText("column_note", loc)}</td>
         </tr><% lastNode = null;
                 def abbrMap = [:]
                 for (item in c.rows) {
@@ -114,7 +119,7 @@
                   if (lastNode != null && lastNode != item.from) {
                     %>
         <tr>
-          <td colspan="4" class="move">&mdash;  ${move_to_station} ${item.from} &mdash; </td>
+          <td colspan="4" class="move">&mdash;  ${translator.getText("move_to_station", loc)} ${item.from} &mdash; </td>
         </tr><%
                   }
               %>
@@ -122,7 +127,7 @@
           <td class="ctrain">${item.trainName}</td>
           <td class="cdeparture">${convertTime(item.fromTime)}</td>
           <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
-          <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
+          <td class="cnote">${getComment(item.comment, loc)}</td>
         </tr><% lastNode = item.to
                 }
               %>
@@ -187,11 +192,29 @@ def getRoutePaths(cycle,cycles) {
   return result
 }
 
+def getComment(comment, loc) {
+    if (comment) {
+        comment = translator.translate(comment, loc)
+    }
+    return comment ?: "&nbsp;"
+}
+
 def add(str, delimiter, value) {
   if (str == null || str.isEmpty())
     str = value
   else
     str += delimiter + value
   return str
+}
+
+def getCompany(cycle, loc) {
+  def company = cycle?.company?.name
+  company ?: cycle?.company?.abbr
+  return company ?: translator.getText("company", loc)
+}
+  
+def getLocale(cycle) {
+  def l = cycle?.company?.locale
+  return l ?: locale
 }
 %>

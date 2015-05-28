@@ -24,6 +24,8 @@ import net.parostroj.timetable.output2.util.SelectionHelper;
  */
 public class GspDriverCyclesOutput extends GspOutput {
 
+    private static final String KEY_PREFIX = "dc_";
+
     public GspDriverCyclesOutput(Locale locale) {
         super(locale);
     }
@@ -38,7 +40,8 @@ public class GspDriverCyclesOutput extends GspOutput {
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("cycles", cycles);
-            ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
+            ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(KEY_PREFIX, LOCALIZATION_BUNDLE, diagram));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
