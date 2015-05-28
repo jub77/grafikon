@@ -58,7 +58,7 @@ public class EditCompanyDialog extends JDialog {
         getContentPane().add(panel, BorderLayout.CENTER);
         GridBagLayout gbLayout = new GridBagLayout();
         gbLayout.columnWeights = new double[]{0.0, 1.0};
-        gbLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
+        gbLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0};
         panel.setLayout(gbLayout);
 
         JLabel abbrLabel = new JLabel(ResourceLoader.getString("edit.company.abbreviation")); // NOI18N
@@ -96,12 +96,29 @@ public class EditCompanyDialog extends JDialog {
         panel.add(nameTextField, dtfCons);
         nameTextField.setColumns(30);
 
+        JLabel partLabel = new JLabel(ResourceLoader.getString("edit.company.part.name")); // NOI18N
+        GridBagConstraints plCons = new GridBagConstraints();
+        plCons.anchor = GridBagConstraints.WEST;
+        plCons.insets = new Insets(0, 0, 5, 5);
+        plCons.gridx = 0;
+        plCons.gridy = 2;
+        panel.add(partLabel, plCons);
+
+        BnTextField partTextField = new BnTextField();
+        partTextField.setColumns(30);
+        GridBagConstraints ptfCons = new GridBagConstraints();
+        ptfCons.insets = new Insets(0, 0, 5, 0);
+        ptfCons.fill = GridBagConstraints.HORIZONTAL;
+        ptfCons.gridx = 1;
+        ptfCons.gridy = 2;
+        panel.add(partTextField, ptfCons);
+
         JLabel localeLabel = new JLabel(ResourceLoader.getString("edit.company.locale")); // NOI18N
         GridBagConstraints llCons = new GridBagConstraints();
         llCons.anchor = GridBagConstraints.WEST;
         llCons.insets = new Insets(0, 0, 5, 5);
         llCons.gridx = 0;
-        llCons.gridy = 2;
+        llCons.gridy = 3;
         panel.add(localeLabel, llCons);
 
         BnComboBox localeComboBox = new BnComboBox();
@@ -109,7 +126,7 @@ public class EditCompanyDialog extends JDialog {
         ltfCons.insets = new Insets(0, 0, 5, 0);
         ltfCons.fill = GridBagConstraints.HORIZONTAL;
         ltfCons.gridx = 1;
-        ltfCons.gridy = 2;
+        ltfCons.gridy = 3;
         panel.add(localeComboBox, ltfCons);
 
         Component verticalGlue = Box.createVerticalGlue();
@@ -117,7 +134,7 @@ public class EditCompanyDialog extends JDialog {
         vgCons.fill = GridBagConstraints.VERTICAL;
         vgCons.insets = new Insets(0, 0, 0, 5);
         vgCons.gridx = 0;
-        vgCons.gridy = 3;
+        vgCons.gridy = 4;
         panel.add(verticalGlue, vgCons);
 
         JPanel buttonPanel = new JPanel();
@@ -134,6 +151,8 @@ public class EditCompanyDialog extends JDialog {
         nameTextField.setPath(new Path("name"));
         localeComboBox.setModelProvider(provider);
         localeComboBox.setPath(new Path("locale"));
+        partTextField.setModelProvider(provider);
+        partTextField.setPath(new Path("part"));
         okButton.setModelProvider(provider);
         okButton.setPath(new Path("ok"));
     }

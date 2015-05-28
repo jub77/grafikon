@@ -18,6 +18,7 @@ public class CompanyPM extends AbstractPM {
 
     final TextPM abbr = new TextPM();
     final TextPM name = new TextPM();
+    final TextPM part = new TextPM();
     final IEnumeratedValuesPM<Locale> locale;
 
     final OperationPM ok = new OperationPM();
@@ -37,6 +38,7 @@ public class CompanyPM extends AbstractPM {
         this.companyRef = new WeakReference<Company>(company);
         this.abbr.setText(company.getAbbr());
         this.name.setText(company.getName());
+        this.part.setText(company.getAttribute(Company.ATTR_PART_NAME, String.class));
         this.locale.setValue(company.getLocale());
     }
 
@@ -46,6 +48,7 @@ public class CompanyPM extends AbstractPM {
         if (company != null) {
             // write back
             company.setName(ObjectsUtil.checkAndTrim(name.getText()));
+            company.setAttribute(Company.ATTR_PART_NAME, ObjectsUtil.checkAndTrim(part.getText()));
             company.setLocale(locale.getValue());
         }
         return true;
