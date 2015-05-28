@@ -3,10 +3,11 @@ package net.parostroj.timetable.output2.impl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.Pair;
 
 /**
  * Extracts list of positions from train diagram.
@@ -22,42 +23,44 @@ public class PositionsExtractor {
         this.diagram = diagram;
     }
 
-    public List<Cycles> getStartPositionsCustom() {
-        return getPositionsCustom(this::getStartPositions);
+    public List<Cycles> getStartPositionsCustom(Integer startingTime) {
+        return getPositionsCustom(this::getStartPositions, startingTime);
     }
 
-    public List<Cycles> getEndPositionsCustom() {
-        return getPositionsCustom(this::getEndPositions);
+    public List<Cycles> getEndPositionsCustom(Integer startingTime) {
+        return getPositionsCustom(this::getEndPositions, startingTime);
     }
 
-    private List<Cycles> getPositionsCustom(Function<List<TrainsCycle>, List<Position>> function) {
+    private List<Cycles> getPositionsCustom(BiFunction<List<TrainsCycle>, Integer, List<Position>> function, Integer startingTime) {
         List<Cycles> cyclesList = new ArrayList<Cycles>();
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!type.isDefaultType()) {
                 Cycles cycles = new Cycles();
                 cycles.setName(type.getName());
-                cycles.setPositions(function.apply(diagram.getCycles(type)));
+                cycles.setPositions(function.apply(diagram.getCycles(type), startingTime));
                 cyclesList.add(cycles);
             }
         }
         return cyclesList;
     }
 
-    public List<Position> getStartPositions(List<TrainsCycle> cycles) {
+    public List<Position> getStartPositions(List<TrainsCycle> cycles, Integer startingTime) {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
-            if (!cycle.isEmpty()) {
-                TrainsCycleItem start = cycle.iterator().next();
-                String startName = start.getFromInterval().getOwnerAsNode().getName();
-                String startTrack = start.getFromInterval().getTrack().getNumber();
-                String startTime = diagram.getTimeConverter().convertIntToXml(start.getStartTime());
-                result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(cycle.getAttributes())));
-            }
+        for (Pair<TrainsCycleItem, TimeInterval> cycleItem : this.getItemStarts(cycles, startingTime)) {
+            TrainsCycleItem start = cycleItem.first;
+            TrainsCycle cycle = start.getCycle();
+            TimeInterval interval = cycleItem.second;
+            String startName = interval.getOwnerAsNode().getName();
+            String startTrack = interval.getTrack().getNumber();
+            String startTime = diagram.getTimeConverter().convertIntToXml(start.getStartTime());
+            result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName,
+                    startTrack, startTime, start.getTrain().getName(),
+                    ae.extract(cycle.getAttributes())));
         }
         return result;
     }
 
-    public List<Position> getEndPositions(List<TrainsCycle> cycles) {
+    public List<Position> getEndPositions(List<TrainsCycle> cycles, Integer startingTime) {
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
             if (!cycle.isEmpty()) {
@@ -65,10 +68,47 @@ public class PositionsExtractor {
                 String endName = end.getToInterval().getOwnerAsNode().getName();
                 String endTrack = end.getToInterval().getTrack().getNumber();
                 String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());
-                result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(cycle.getAttributes())));
+                result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), endName,
+                        endTrack, endTime, end.getTrain().getName(),
+                        ae.extract(cycle.getAttributes())));
             }
         }
         return result;
+    }
+
+    private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(List<TrainsCycle> cycles, Integer startingTime) {
+        List<Pair<TrainsCycleItem, TimeInterval>> itemStarts = new ArrayList<>();
+        for (TrainsCycle cycle : sortTrainsCycleList(cycles)) {
+            List<TrainsCycleItem> items = cycle.getItems();
+            Pair<TrainsCycleItem, TimeInterval> itemStart = null;
+            if (items.size() > 0) {
+                itemStart = new Pair<TrainsCycleItem, TimeInterval>(items.get(0),
+                        items.get(0).getFromInterval());
+            }
+            if (startingTime != null) {
+                boolean stop = false;
+                for (TrainsCycleItem item : items) {
+                    TimeInterval start = item.getFromInterval();
+                    TimeInterval end = item.getToInterval();
+                    while (start != end && !stop) {
+                        if (start.isNodeOwner()) {
+                            if (startingTime < start.getEnd()) {
+                                itemStart = new Pair<TrainsCycleItem, TimeInterval>(item, start);
+                                stop = true;
+                            }
+                        }
+                        start = start.getNextTrainInterval();
+                    }
+                    if (stop) {
+                        break;
+                    }
+                }
+            }
+            if (itemStart != null) {
+                itemStarts.add(itemStart);
+            }
+        }
+        return itemStarts;
     }
 
     private List<TrainsCycle> sortTrainsCycleList(List<TrainsCycle> list) {

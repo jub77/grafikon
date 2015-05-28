@@ -36,9 +36,9 @@ public class GspStartPositionsOutput extends GspOutput {
         try {
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
-            List<Position> engines = pe.getStartPositions(diagram.getEngineCycles());
-            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles());
-            List<Cycles> customCycles = pe.getStartPositionsCustom();
+            List<Position> engines = pe.getStartPositions(diagram.getEngineCycles(), null);
+            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles(), null);
+            List<Cycles> customCycles = pe.getStartPositionsCustom(null);
 
             // call template
             Map<String, Object> map = new HashMap<String, Object>();

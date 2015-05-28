@@ -32,8 +32,8 @@ public class HtmlStartPositionsOutput extends OutputWithLocale {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
-        List<Position> engines = pe.getStartPositions(diagram.getEngineCycles());
-        List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles());
+        List<Position> engines = pe.getStartPositions(diagram.getEngineCycles(), null);
+        List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycles(), null);
 
         // call template
         Map<String, Object> map = new HashMap<String, Object>();

@@ -32,8 +32,8 @@ public class HtmlEndPositionsOutput extends OutputWithLocale {
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
-        List<Position> engines = pe.getEndPositions(diagram.getEngineCycles());
-        List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles());
+        List<Position> engines = pe.getEndPositions(diagram.getEngineCycles(), null);
+        List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles(), null);
 
         // call template
         Map<String, Object> map = new HashMap<String, Object>();
