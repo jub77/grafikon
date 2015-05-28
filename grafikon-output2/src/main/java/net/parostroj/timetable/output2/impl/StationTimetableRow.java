@@ -24,7 +24,7 @@ public class StationTimetableRow {
     private boolean technologicalTime;
     private boolean occupied;
     private String comment;
-    private List<String> freightTo;
+    private List<FreightDstInfo> freightTo;
     private List<String> freightFromTrain;
     private List<FreightToTrain> freightToTrain;
     private List<CycleFromTo> engine;
@@ -134,11 +134,11 @@ public class StationTimetableRow {
         this.comment = comment;
     }
 
-    public List<String> getFreightTo() {
+    public List<FreightDstInfo> getFreightTo() {
         return freightTo;
     }
 
-    public void setFreightTo(List<String> freightTo) {
+    public void setFreightTo(List<FreightDstInfo> freightTo) {
         this.freightTo = freightTo;
     }
 

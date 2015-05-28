@@ -14,16 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 public class FreightToTrain {
 
     private String train;
-    private List<String> freightTo;
+    private List<FreightDstInfo> freightTo;
 
     public FreightToTrain() {
     }
 
-    public List<String> getFreightTo() {
+    public List<FreightDstInfo> getFreightTo() {
         return freightTo;
     }
 
-    public void setFreightTo(List<String> freightTo) {
+    public void setFreightTo(List<FreightDstInfo> freightTo) {
         this.freightTo = freightTo;
     }
 

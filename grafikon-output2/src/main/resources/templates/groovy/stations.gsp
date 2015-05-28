@@ -41,7 +41,7 @@
     }
     
     def comment(separator, str) {
-        return (str == null || str =="") ? str : "${separator}(${str})"
+        return (str == null || str =="") ? "" : "${separator}(${str})"
     }
 %>
 
@@ -57,72 +57,78 @@
       return str
   }
 
-  def get_note(row) {
-    if (row.technologicalTime)
-      return technological_time
+  def get_note(row, loc) {
+    if (row.technologicalTime) {
+      return translator.getText("technological_time", loc)
+    }
 
     note_parts = []
     // length
     if (row.length != null) {
-      length_unit_s = row.length.lengthInAxles ? " ${length_axles}" : row.length.lengthUnit
+      length_unit_s = row.length.lengthInAxles ? " ${translator.getText('length_axles', loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
       note_parts << "[${row.length.length}${length_unit_s}]"
     }
     // engine
+    def engineText = translator.getText("engine", loc)
     if (row.engine != null)
       for (engine_t in row.engine) {
         def str = ""
         if (engine_t.in)
-          str = "${engine}: ${engine_t.name}${comment(' ', engine_t.desc)}"
+          str = "${engineText}: ${engine_t.name}${comment(' ', engine_t.desc)}"
         else
           if (engine_t.trainName == null)
-            str = "${engine}: ${engine_t.name} ${ends}"
+            str = "${engineText}: ${engine_t.name} ${translator.getText('ends', loc)}"
           else
-            str = "${engine}: ${engine_t.name} ${move_to} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
+            str = "${engineText}: ${engine_t.name} ${translator.getText('move_to', loc)} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
         str = engine_t.start ? highlight(str) : str
         str = engine_t.helper == true ? highlightHelper(str) : str
         note_parts << str
       }
     // train unit
+    def trainUnitText = translator.getText("train_unit", loc)
     if (row.trainUnit != null)
       for (train_unit_t in row.trainUnit) {
         def str = ""
         if (train_unit_t.in)
-          str = "${train_unit}: ${train_unit_t.name}${comment(' ', train_unit_t.desc)}"
+          str = "${trainUnitText}: ${train_unit_t.name}${comment(' ', train_unit_t.desc)}"
         else
           if (train_unit_t.trainName == null)
-            str = "${train_unit}: ${train_unit_t.name} ${ends}"
+            str = "${trainUnitText}: ${train_unit_t.name} ${translator.getText('ends', loc)}"
           else
-            str = "${train_unit}: ${train_unit_t.name} ${move_to} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
+            str = "${trainUnitText}: ${train_unit_t.name} ${translator.getText('move_to', loc)} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
         note_parts << (train_unit_t.start ? highlight(str) : str)
       }
     // other
     if (row.cycle != null)
       for (cycle_t in row.cycle) {
         def str = ""
+        def cycleTypeText = translator.translate(cycle_t.type, loc)
         if (cycle_t.in)
-          str = "${cycle_t.type}: ${cycle_t.name}${comment(' ', cycle_t.desc)}"
+          str = "${cycleTypeText}: ${cycle_t.name}${comment(' ', cycle_t.desc)}"
         else
           if (cycle_t.trainName == null)
-            str = "${cycle_t.type}: ${cycle_t.name} ${ends}"
+            str = "${cycleTypeText}: ${cycle_t.name} ${translator.getText('ends', loc)}"
           else
-            str = "${cycle_t.type}: ${cycle_t.name} ${move_to} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+            str = "${cycleTypeText}: ${cycle_t.name} ${translator.getText('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
         note_parts << (cycle_t.start ? highlight(str) : str)
       }
     // comment
-    if (row.comment != null)
-      note_parts << row.comment
+    if (row.comment != null) {
+      note_parts << translator.translate(row.comment, loc)
+    }
     if (row.freightTo != null) {
-      note_parts << "<i>${row.freightTo.collect{i -> i}.join(', ')}</i> &rArr;"
+      note_parts << "<i>${row.freightTo.collect{i -> i.toString(loc, true)}.join(', ')}</i> &rArr;"
     }
     if (row.freightToTrain != null) {
-      note_parts << "<i>${row.freightToTrain.collect{i -> '(&rarr; ' + i.train + ': ' + (i.freightTo.collect{j -> j}.join(', ')) + ')'}.join(', ')}</i>"
+      note_parts << "<i>${row.freightToTrain.collect{i -> '(&rarr; ' + i.train + ': ' + (i.freightTo.collect{j -> j.toString(loc, true)}.join(', ')) + ')'}.join(', ')}</i>"
     }
     if (row.freightFromTrain != null) {
       note_parts << "<i>(${row.freightFromTrain.collect{i -> i + ' &rarr;'}.join(', ')})</i>"
     }
     // occupied track
-    if (row.occupied)
-      note_parts << occupied
+    if (row.occupied) {
+      note_parts << translator.getText("occupied", loc)
+    }
 
     return create_note_str(note_parts)
   }
@@ -132,7 +138,10 @@
   }
 %>
 <body>
-<% for (station in stations) { %>
+<%
+  for (station in stations) {
+      def loc = locale
+%>
 <table class="station" align="center" cellspacing=0 cellpadding=0>
 <thead>
 <tr class="header_station">
@@ -140,14 +149,14 @@
 </tr>
 <tr class="header">
     <td style="width: 5mm; text-align: center">X</td>
-    <td style="width: 22mm">${column_train}</td>
-    <td style="width: 10mm">${column_from}</td>
-    <td style="width: 10mm">${column_arrival}</td>
-    <td style="width: 5mm">${column_track}</td>
-    <td style="width: 10mm">${column_departure}</td>
-    <td style="width: 10mm">${column_to}</td>
-    <td style="width: 10mm">${column_end}</td>
-    <td style="width: 188mm">${column_notes}</td>
+    <td style="width: 22mm">${translator.getText("column_train", loc)}</td>
+    <td style="width: 10mm">${translator.getText("column_from", loc)}</td>
+    <td style="width: 10mm">${translator.getText("column_arrival", loc)}</td>
+    <td style="width: 5mm">${translator.getText("column_track", loc)}</td>
+    <td style="width: 10mm">${translator.getText("column_departure", loc)}</td>
+    <td style="width: 10mm">${translator.getText("column_to", loc)}</td>
+    <td style="width: 10mm">${translator.getText("column_end", loc)}</td>
+    <td style="width: 188mm">${translator.getText("column_notes", loc)}</td>
 </tr>
 </thead>
 <tbody>
@@ -161,7 +170,7 @@
     <td class="time"><% print_out(convertTime(row.departure, true),"&nbsp;") %></td>
     <td><% print_out(row.to,"&nbsp;") %></td>
     <td><% print_out(row.end,"&nbsp;") %></td>
-    <td><% note = get_note(row); note != "" ? print(note) : print("&nbsp;") %></td>
+    <td><% note = get_note(row, loc); note != "" ? print(note) : print("&nbsp;") %></td>
 </tr>
 <% } %>
 </tbody>

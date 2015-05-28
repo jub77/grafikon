@@ -19,13 +19,11 @@ public class StationTimetablesExtractor {
     private final List<Node> nodes;
     private final TimeConverter converter;
     private final boolean techTime;
-    private final Locale locale;
 
     public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, Locale locale) {
         this.diagram = diagram;
         this.nodes = nodes;
         this.techTime = techTime;
-        this.locale = locale;
         this.converter = diagram.getTimeConverter();
     }
 
@@ -98,9 +96,9 @@ public class StationTimetablesExtractor {
         if (isFreight(interval)) {
             List<FreightDst> freightDests = convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
             if (!freightDests.isEmpty()) {
-                ArrayList<String> fl = new ArrayList<String>(freightDests.size());
+                ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
                 for (FreightDst dst : freightDests) {
-                    fl.add(dst.toString(locale));
+                    fl.add(FreightDstInfo.convert(dst));
                 }
                 row.setFreightTo(fl);
             }
@@ -113,9 +111,9 @@ public class StationTimetablesExtractor {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
                     List<FreightDst> mList = convertFreightDst(interval, entry.getValue());
-                    List<String> fl = new ArrayList<String>();
+                    List<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(mList.size());
                     for (FreightDst dst : mList) {
-                        fl.add(dst.toString(locale));
+                        fl.add(FreightDstInfo.convert(dst));
                     }
                     ftt.setFreightTo(fl);
                     fttl.add(ftt);
@@ -131,10 +129,7 @@ public class StationTimetablesExtractor {
             }
             row.setFreightFromTrain(nt);
         }
-        String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
-        if (comment != null) {
-            comment = diagram.getLocalization().translate(comment, locale);
-        }
+        String comment = ObjectsUtil.checkAndTrim(interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class));
         row.setComment(comment);
         row.setOccupied(interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED));
     }
@@ -150,7 +145,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null,
-                        diagram.getLocalization().translate(type.getName(), locale)));
+                        type.getName()));
             }
             if (item.getFromInterval() == interval) {
                 // start
@@ -160,7 +155,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null,
-                                diagram.getLocalization().translate(type.getName(), locale)));
+                        type.getName()));
             }
         }
     }
