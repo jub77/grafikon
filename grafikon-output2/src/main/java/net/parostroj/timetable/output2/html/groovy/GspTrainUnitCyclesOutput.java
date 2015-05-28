@@ -42,7 +42,7 @@ public class GspTrainUnitCyclesOutput extends GspOutput {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("cycles", cycles);
             ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
-            map.put(TRANSLATOR, ResourceHelper.getTranslator(KEY_PREFIX, LOCALIZATION_BUNDLE, diagram));
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
