@@ -82,6 +82,7 @@ public abstract class GspOutput extends OutputWithLocale {
                 map.put((String) entry.getKey(), entry.getValue());
             }
         }
+        map.put("diagram", params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).getValue());
         map.put("locale", this.leaveOnlyLanguage(this.getLocale()));
     }
 

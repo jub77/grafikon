@@ -28,7 +28,6 @@ public class GspDiagramOutput extends GspOutput {
         try {
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("diagram", diagram);
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram));
             this.addContext(params, map);
 
