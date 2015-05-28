@@ -38,7 +38,7 @@
     </style>
 </head>
 <body>
-<div class="caption1">${title}</div>
+<div class="caption1">${translator.getText("title", locale)}</div>
 <%
     separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
     END = "${separator}0"
@@ -55,7 +55,7 @@
     }
 %>
 
-<div class="caption2">${title_engines}</div>
+<div class="caption2">${translator.getText("title_engines", locale)}</div>
 <table class="list" border="0" cellspacing="0" cellpadding="0">
 <%  for (engine in engines) { %>
     <tr>
@@ -69,7 +69,7 @@
 <% } %>
 </table>
 
-<div class="caption2">${title_train_units}</div>
+<div class="caption2">${translator.getText("title_train_units", locale)}</div>
 <table class="list" border="0" cellspacing="0" cellpadding="0">
 <%  for (train_unit in train_units) { %>
     <tr>

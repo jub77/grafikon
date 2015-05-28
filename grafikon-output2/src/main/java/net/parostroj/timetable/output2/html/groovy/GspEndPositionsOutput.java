@@ -24,6 +24,8 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
  */
 public class GspEndPositionsOutput extends GspOutput {
 
+    private static final String KEY_PREFIX = "end_positions_";
+
     public GspEndPositionsOutput(Locale locale) {
         super(locale);
     }
@@ -40,7 +42,8 @@ public class GspEndPositionsOutput extends GspOutput {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("engines", engines);
             map.put("train_units", trainUnits);
-            ResourceHelper.addTextsToMap(map, "end_positions_", this.getLocale(), "texts/html_texts");
+            ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
