@@ -13,6 +13,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
+import net.parostroj.timetable.output2.impl.Cycles;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -37,11 +38,13 @@ public class GspEndPositionsOutput extends GspOutput {
             PositionsExtractor pe = new PositionsExtractor(diagram);
             List<Position> engines = pe.getEndPositions(diagram.getEngineCycles());
             List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles());
+            List<Cycles> customCycles = pe.getEndPositionsCustom();
 
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("engines", engines);
             map.put("train_units", trainUnits);
+            map.put("custom_cycles", customCycles);
             ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);

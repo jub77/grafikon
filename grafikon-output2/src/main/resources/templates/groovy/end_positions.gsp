@@ -5,14 +5,15 @@
     <style type="text/css" media="all">
         div.caption1 {
             font-family: arial, sans-serif;
-            font-size: 6mm;
+            font-size: 5mm;
             font-weight: bold;
+            padding: 1mm 0 0.5mm 0;
         }
         div.caption2 {
             font-family: arial, sans-serif;
             font-size: 4.5mm;
             font-weight: bold;
-            padding: 3mm 0 3mm 0;
+            padding: 1.5mm 0 0.5mm 0;
         }
         table.list {
             font-family: arial, sans-serif;
@@ -37,9 +38,7 @@
         }
     </style>
 </head>
-<body>
-<div class="caption1">${translator.getText("title", locale)}</div>
-<%
+<body><%
     separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
     END = "${separator}0"
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
@@ -54,33 +53,31 @@
         return result
     }
 %>
-
+<div class="caption1">${translator.getText("title", locale)}</div>
 <div class="caption2">${translator.getText("title_engines", locale)}</div>
-<table class="list" border="0" cellspacing="0" cellpadding="0">
-<%  for (engine in engines) { %>
-    <tr>
-        <td>${engine.cycleName}</td>
-        <td>${engine.cycleDescription}&nbsp;</td>
-        <td>${engine.stationName}</td>
-        <td>${engine.track}</td>
-        <td class="right">${convertTime(engine.time)}</td>
-        <td>${engine.trainName}</td>
-    </tr>
-<% } %>
-</table>
+<% printPositions(engines) %>
 
 <div class="caption2">${translator.getText("title_train_units", locale)}</div>
-<table class="list" border="0" cellspacing="0" cellpadding="0">
-<%  for (train_unit in train_units) { %>
-    <tr>
-        <td>${train_unit.cycleName}</td>
-        <td>${train_unit.cycleDescription}&nbsp;</td>
-        <td>${train_unit.stationName}</td>
-        <td>${train_unit.track}</td>
-        <td class="right">${convertTime(train_unit.time)}</td>
-        <td>${train_unit.trainName}</td>
-    </tr>
+<% printPositions(train_units) %>
+
+<% for (cycles in custom_cycles) { %>
+<div class="caption2">${translator.translate(cycles.name, locale)}</div>
+<% printPositions(cycles.positions) %>
 <% } %>
-</table>
+    
+<% def printPositions(positions) {
+%><table class="list" border="0" cellspacing="0" cellpadding="0"><%
+  for (position in positions) { %>
+    <tr>
+        <td>${position.cycleName}</td>
+        <td>${position.cycleDescription?:""}&nbsp;</td>
+        <td>${position.stationName}</td>
+        <td>${position.track}</td>
+        <td class="right">${convertTime(position.time)}</td>
+        <td>${position.trainName}</td>
+    </tr><% 
+  } %>
+</table><% 
+   } %>
 </body>
 </html>
