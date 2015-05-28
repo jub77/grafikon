@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import net.parostroj.timetable.actions.TrainsCycleSort;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.TransformUtil;
 
 /**
  * Extracts list of positions from train diagram.
@@ -21,57 +20,29 @@ public class PositionsExtractor {
         this.diagram = diagram;
     }
 
-    public List<Position> getStartPositionsEngines() {
+    public List<Position> getStartPositions(List<TrainsCycle> cycles) {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getEngineCycles())) {
-            if (!ecCycle.isEmpty()) {
-                TrainsCycleItem start = ecCycle.iterator().next();
+        for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
+            if (!cycle.isEmpty()) {
+                TrainsCycleItem start = cycle.iterator().next();
                 String startName = start.getFromInterval().getOwnerAsNode().getName();
                 String startTrack = start.getFromInterval().getTrack().getNumber();
                 String startTime = diagram.getTimeConverter().convertIntToXml(start.getStartTime());
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
+                result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(cycle.getAttributes())));
             }
         }
         return result;
     }
 
-    public List<Position> getStartPositionsTrainUnits() {
+    public List<Position> getEndPositions(List<TrainsCycle> cycles) {
         List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getTrainUnitCycles())) {
-            if (!tucCycle.isEmpty()) {
-                TrainsCycleItem start = tucCycle.iterator().next();
-                String startName = start.getFromInterval().getOwnerAsNode().getName();
-                String startTrack = start.getFromInterval().getTrack().getNumber();
-                String startTime = diagram.getTimeConverter().convertIntToXml(start.getStartTime());
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), startName, startTrack, startTime, start.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
-            }
-        }
-        return result;
-    }
-
-    public List<Position> getEndPositionsEngines() {
-        List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle ecCycle : this.sortTrainsCycleList(diagram.getEngineCycles())) {
-            if (!ecCycle.isEmpty()) {
-                TrainsCycleItem end = ecCycle.getItems().get(ecCycle.getItems().size() - 1);
+        for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
+            if (!cycle.isEmpty()) {
+                TrainsCycleItem end = cycle.getItems().get(cycle.getItems().size() - 1);
                 String endName = end.getToInterval().getOwnerAsNode().getName();
                 String endTrack = end.getToInterval().getTrack().getNumber();
                 String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());
-                result.add(new Position(ecCycle.getName(), TransformUtil.getEngineCycleDescription(ecCycle), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(ecCycle.getAttributes())));
-            }
-        }
-        return result;
-    }
-
-    public List<Position> getEndPositionsTrainUnits() {
-        List<Position> result = new LinkedList<Position>();
-        for (TrainsCycle tucCycle : this.sortTrainsCycleList(diagram.getTrainUnitCycles())) {
-            if (!tucCycle.isEmpty()) {
-                TrainsCycleItem end = tucCycle.getItems().get(tucCycle.getItems().size() - 1);
-                String endName = end.getToInterval().getOwnerAsNode().getName();
-                String endTrack = end.getToInterval().getTrack().getNumber();
-                String endTime = diagram.getTimeConverter().convertIntToXml(end.getEndTime());
-                result.add(new Position(tucCycle.getName(), tucCycle.getDescription(), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(tucCycle.getAttributes())));
+                result.add(new Position(cycle.getName(), cycle.getDisplayDescription(), endName, endTrack, endTime, end.getTrain().getName(), ae.extract(cycle.getAttributes())));
             }
         }
         return result;

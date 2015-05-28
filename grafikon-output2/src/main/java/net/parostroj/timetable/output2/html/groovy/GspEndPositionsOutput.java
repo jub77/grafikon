@@ -35,8 +35,8 @@ public class GspEndPositionsOutput extends GspOutput {
         try {
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
-            List<Position> engines = pe.getEndPositionsEngines();
-            List<Position> trainUnits = pe.getEndPositionsTrainUnits();
+            List<Position> engines = pe.getEndPositions(diagram.getEngineCycles());
+            List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles());
 
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
