@@ -10,6 +10,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
+import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**
  * Implements output for the whole diagram.
@@ -28,6 +29,7 @@ public class GspDiagramOutput extends GspOutput {
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("diagram", diagram);
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
