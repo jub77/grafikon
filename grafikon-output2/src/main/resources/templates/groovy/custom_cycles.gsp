@@ -172,19 +172,21 @@
   }
 
 def print_cycle(w) {
-    c = w.cycle
+    def c = w.cycle
+    def loc = getLocale(c)
+    def company = getCompany(c)
 %><table align="center" cellspacing="0">
         <tr class="title">
-          <td colspan="3">${cycle} (${c.type}):</td>
+          <td colspan="3">${translator.getText("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</td>
         </tr>
         <tr class="info">
           <td class="info1">${c.name}</td>
-          <td class="info2" colspan="2">${c.description}</td>
+          <td class="info2" colspan="2">${c.description ?: ""}</td>
         </tr>
         <tr class="listh">
-          <td class="trainh">${column_train}</td>
-          <td class="timeh">${column_departure}</td>
-          <td class="fromtoh">${column_from_to}</td>
+          <td class="trainh">${translator.getText("column_train", loc)}</td>
+          <td class="timeh">${translator.getText("column_departure", loc)}</td>
+          <td class="fromtoh">${translator.getText("column_from_to", loc)}</td>
         </tr><% for (row in c.rows) {
               %>
         <tr class="row">
@@ -197,6 +199,16 @@ def print_cycle(w) {
           <div class="next">&nbsp;&rarr; ${c.next.name}</div>
           <div class="citem">${w.id}[${w.seq}/${w.cnt}]</div>
       </div><% }
-} %>
+} 
+
+def getCompany(cycle) {
+    def company = cycle?.company?.abbr
+}
+
+def getLocale(cycle) {
+    def l = cycle?.company?.locale
+    return l ?: locale
+}
+%>
 </body>
 </html>

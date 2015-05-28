@@ -16,15 +16,11 @@ public class CustomCyclesExtractor {
 
     private final List<TrainsCycle> cycles;
     private final AttributesExtractor attributesExtractor = new AttributesExtractor();
-    private final Locale locale;
-    private final TrainDiagram diagram;
 
     private int counter;
 
     public CustomCyclesExtractor(TrainDiagram diagram, List<TrainsCycle> cycles, Locale locale) {
-        this.diagram = diagram;
         this.cycles = cycles;
-        this.locale = locale;
     }
 
     public List<CustomCycle> getCycles() {
@@ -62,7 +58,7 @@ public class CustomCyclesExtractor {
         map.put(cycle, outputCycle);
         outputCycle.setName(cycle.getName());
         outputCycle.setDescription(cycle.getDescription());
-        outputCycle.setType(diagram.getLocalization().translate(cycle.getType().getName(), locale));
+        outputCycle.setType(cycle.getType().getName());
         outputCycle.setAttributes(attributesExtractor.extract(cycle.getAttributes()));
         Iterator<TrainsCycleItem> i = cycle.getItems().iterator();
         TrainsCycleItem current = null;
