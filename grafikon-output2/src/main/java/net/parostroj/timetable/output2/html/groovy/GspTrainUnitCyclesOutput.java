@@ -25,6 +25,8 @@ import net.parostroj.timetable.output2.util.SelectionHelper;
  */
 public class GspTrainUnitCyclesOutput extends GspOutput {
 
+    private static final String KEY_PREFIX = "tuc_";
+
     public GspTrainUnitCyclesOutput(Locale locale) {
         super(locale);
     }
@@ -39,7 +41,8 @@ public class GspTrainUnitCyclesOutput extends GspOutput {
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("cycles", cycles);
-            ResourceHelper.addTextsToMap(map, "tuc_", this.getLocale(), "texts/html_texts");
+            ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(KEY_PREFIX, LOCALIZATION_BUNDLE, diagram));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {

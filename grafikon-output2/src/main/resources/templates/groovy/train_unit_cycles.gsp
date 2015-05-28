@@ -199,14 +199,15 @@
   }
 
   def generateCirculation(w) {
-      def c = w.cycle %>
+      def c = w.cycle
+      def lLoc = getLocale(c) %>
 <table class="card">
   <tr class="header">
-    <td align="center" class="company">${company}</td>
+    <td align="center" class="company">${getCompany(c, lLoc)}</td>
     <td class="headerw1">
       <table class="title">
         <tr>
-          <td class="description">${cycle}:</td></tr>
+          <td class="description">${translator.getText("cycle", lLoc)}:</td></tr>
         <tr>
           <td class="value">${c.name}</td></tr>
       </table>
@@ -214,7 +215,7 @@
     <td class="headerw2">
       <table class="title">
         <tr>
-          <td class="description">${composition}:</td></tr>
+          <td class="description">${translator.getText("composition", lLoc)}:</td></tr>
         <tr>
           <td class="value">${c.description == null ? "&nbsp;" : c.description}</td></tr>
       </table>
@@ -224,16 +225,16 @@
     <td colspan="3" class="listwrap">
       <table align="center" class="list">
         <tr class="listheader">
-          <td class="ctrain">${column_train}</td>
-          <td class="cdepartureh">${column_departure}</td>
-          <td class="cfromto">${column_from_to}</td>
-          <td class="cnote">${column_note}</td>
+          <td class="ctrain">${translator.getText("column_train", lLoc)}</td>
+          <td class="cdepartureh">${translator.getText("column_departure", lLoc)}</td>
+          <td class="cfromto">${translator.getText("column_from_to", lLoc)}</td>
+          <td class="cnote">${translator.getText("column_note", lLoc)}</td>
         </tr><% for (row in c.rows) { %>
         <tr class="listitem">
           <td class="ctrain">${row.trainName}</td>
           <td class="cdeparture">${convertTime(row.fromTime)}</td>
           <td class="cfromto">${row.fromAbbr} - ${row.toAbbr}</td>
-          <td>${createComment(row)}</td>
+          <td>${createComment(row, lLoc)}</td>
         </tr><% } %>
       </table>
     </td>
@@ -249,19 +250,29 @@
 </table><% 
   } 
 
-  def createComment(row) {
+  def createComment(row, loc) {
     def result = row.cycle.inject(row.comment) {
       str, item ->
         if (str == null)
           str = ""
         if (str != "")
           str += ", "
-        def value = "${item.type}: ${item.name}"
+        def value = "${translator.translate(item.type, loc)}: ${item.name}"
         if (item.fromAbbr != null)
           value = "${value} (${item.fromAbbr} - ${item.toAbbr})"
         str + value
     }
     return result == null ? "&nbsp;" : result
+  }
+  
+  def getCompany(cycle, loc) {
+      def company = cycle?.company?.abbr
+      return company ?: translator.getText("company", loc)
+  }
+  
+  def getLocale(cycle) {
+      def l = cycle?.company?.locale
+      return l ?: locale
   }
 %>
 </body>

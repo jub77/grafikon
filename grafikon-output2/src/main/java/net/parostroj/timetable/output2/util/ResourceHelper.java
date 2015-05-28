@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.Translator;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 import org.slf4j.Logger;
@@ -50,5 +52,21 @@ public class ResourceHelper {
                 map.put(key.substring(prefixLength), bundle.getString(key));
             }
         }
+    }
+
+    public static Translator getTranslator(String prefix, String bundleName, TrainDiagram diagram) {
+        return new Translator() {
+
+            @Override
+            public String translate(String text, Locale locale) {
+                return diagram.getLocalization().translate(text, locale);
+            }
+
+            @Override
+            public String getText(String key, Locale locale) {
+                ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
+                return bundle.getString(prefix + key);
+            }
+        };
     }
 }

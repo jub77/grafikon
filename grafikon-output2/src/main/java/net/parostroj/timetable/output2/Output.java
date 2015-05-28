@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface Output {
 
+    public static final String LOCALIZATION_BUNDLE = "texts/html_texts";
+
     public void write(OutputParam... params) throws OutputException;
 
     public void write(List<OutputParam> params) throws OutputException;

@@ -6,6 +6,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Extracts information for train unit cycles.
@@ -15,14 +16,12 @@ import net.parostroj.timetable.model.*;
 public class TrainUnitCyclesExtractor {
 
     private final List<TrainsCycle> cycles;
-    private final Locale locale;
     private final AttributesExtractor ae = new AttributesExtractor();
 
     private int counter;
 
     public TrainUnitCyclesExtractor(List<TrainsCycle> cycles, Locale locale) {
         this.cycles = cycles;
-        this.locale = locale;
     }
 
     public List<TrainUnitCycle> getTrainUnitCycles() {
@@ -79,10 +78,7 @@ public class TrainUnitCyclesExtractor {
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
-        String comment = (item.getComment() == null || item.getComment().trim().equals("")) ? null : item.getComment();
-        if (comment != null) {
-            comment = item.getTrain().getDiagram().getLocalization().translate(comment, locale);
-        }
+        String comment = ObjectsUtil.checkAndTrim(item.getComment());
         row.setComment(comment);
         this.getCustomCyclesItem(row.getCycle(), item);
         return row;
@@ -97,7 +93,6 @@ public class TrainUnitCyclesExtractor {
                 List<TrainsCycleItem> items = train.getCycles(type);
                 for (TrainsCycleItem item : items) {
                     String typeName = item.getCycle().getType().getName();
-                    typeName = item.getTrain().getDiagram().getLocalization().translate(typeName, locale);
                     if (item.getFrom() == tuItem.getFrom() && item.getTo() == tuItem.getTo()) {
                         // the cover the same interval
                         list.add(new TrainUnitCustomCycle(typeName,

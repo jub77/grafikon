@@ -16,6 +16,8 @@ import net.parostroj.timetable.output2.*;
  */
 public abstract class GspOutput extends OutputWithLocale {
 
+    public static final String TRANSLATOR = "translator";
+
     /** Cached default template. */
     private final Map<String, Template> _cachedTemplates;
 
@@ -80,6 +82,10 @@ public abstract class GspOutput extends OutputWithLocale {
                 map.put((String) entry.getKey(), entry.getValue());
             }
         }
-        map.put("locale", this.getLocale());
+        map.put("locale", this.leaveOnlyLanguage(this.getLocale()));
+    }
+
+    private Locale leaveOnlyLanguage(Locale locale) {
+        return Locale.forLanguageTag(locale.getLanguage());
     }
 }
