@@ -23,6 +23,8 @@ import net.parostroj.timetable.output2.util.SelectionHelper;
  */
 public class GspTrainTimetablesOutput extends GspOutput {
 
+    private static final String[] KEY_PREFIXES = { "dc_", "trains_" };
+
     public GspTrainTimetablesOutput(Locale locale) {
         super(locale);
     }
@@ -53,8 +55,9 @@ public class GspTrainTimetablesOutput extends GspOutput {
             map.put("title_page", titlePage);
             map.put("page_sort", pageSort);
             map.put("freight", true);
-            ResourceHelper.addTextsToMap(map, "dc_", this.getLocale(), "texts/html_texts");
-            ResourceHelper.addTextsToMap(map, "trains_", this.getLocale(), "texts/html_texts");
+            ResourceHelper.addTextsToMap(map, KEY_PREFIXES[0], this.getLocale(), LOCALIZATION_BUNDLE);
+            ResourceHelper.addTextsToMap(map, KEY_PREFIXES[1], this.getLocale(), LOCALIZATION_BUNDLE);
+            map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIXES));
             this.addContext(params, map);
 
             if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {

@@ -7,6 +7,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.RoutesExtractor;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Helper class for selection.
@@ -17,7 +18,7 @@ public class SelectionHelper {
 
     public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
         if (params.paramExistWithValue("routes")) {
-            return getList((List<?>) params.getParam("routes").getValue(), Route.class);
+            return ObjectsUtil.getList((List<?>) params.getParam("routes").getValue(), Route.class);
         } else {
             RoutesExtractor extractor = new RoutesExtractor(diagram);
             TrainsCycle cycle = getDriverCycle(params);
@@ -28,14 +29,6 @@ public class SelectionHelper {
                 return extractor.getRoutesForTrains(trains);
             }
         }
-    }
-
-    private static <T> List<T> getList(List<?> orig, Class<T> clazz) {
-        List<T> dest = new LinkedList<T>();
-        for (Object o : orig) {
-            dest.add(clazz.cast(o));
-        }
-        return dest;
     }
 
     public static TrainsCycle getDriverCycle(OutputParams params) {
@@ -49,7 +42,7 @@ public class SelectionHelper {
     public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
             OutputParam param = params.getParam("trains");
-            return getList((List<?>) param.getValue(), Train.class);
+            return ObjectsUtil.getList((List<?>) param.getValue(), Train.class);
         } else if (params.paramExistWithValue("station")) {
             Node station = (Node) params.getParam("station").getValue();
             return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
@@ -61,7 +54,7 @@ public class SelectionHelper {
             }
             return trains;
         } else if (params.paramExistWithValue("routes")) {
-            List<Route> routes = getList((List<?>) params.getParam("routes").getValue(), Route.class);
+            List<Route> routes = ObjectsUtil.getList((List<?>) params.getParam("routes").getValue(), Route.class);
             Set<Train> trains = new HashSet<Train>();
             for (Route route : routes) {
                 for (RouteSegment seg : route.getSegments()) {
@@ -89,7 +82,7 @@ public class SelectionHelper {
     public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
         OutputParam param = params.getParam("cycles");
         if (param != null && param.getValue() != null) {
-            return getList((List<?>) param.getValue(), TrainsCycle.class);
+            return ObjectsUtil.getList((List<?>) param.getValue(), TrainsCycle.class);
         }
         TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
         return s.sort(getCycleByType(diagram, type));
@@ -98,7 +91,7 @@ public class SelectionHelper {
     public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
         OutputParam param = params.getParam("stations");
         if (param != null && param.getValue() != null) {
-            return getList((List<?>) param.getValue(), Node.class);
+            return ObjectsUtil.getList((List<?>) param.getValue(), Node.class);
         }
         NodeSort s = new NodeSort(NodeSort.Type.ASC);
         return s.sort(diagram.getNet().getNodes(), node -> node.getType().isStation() || node.getType().isStop());

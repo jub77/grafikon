@@ -160,6 +160,10 @@
 %>
 <body>
 <%
+  // adapt locale (if cycle contains definition)
+  def cycleLocale = trains?.cycle?.company?.locale
+  locale = cycleLocale ?: locale
+
   trainPages = createTrainPages(trains.trainTimetables)
   pages = addIndexPages(trainPages)
   addTextPages(trains.texts, pages)
@@ -366,8 +370,8 @@
 <table class="two-pages${hasNext ? " page-break" :""}" cellspacing="0" cellpadding="0">
 <tr>
     <td class="header-l-l">${pageLeft.numberShown ? pageLeft.number : "&nbsp;"}</td>
-    <td class="header-l-r">${pageLeft.numberShown ? header_publisher : "&nbsp"}</td>
-    <td class="header-r-l">${pageRight.numberShown ? header_publisher : "&nbsp"}</td>
+    <td class="header-l-r">${pageLeft.numberShown ? translator.getText("header_publisher", locale) : "&nbsp"}</td>
+    <td class="header-r-l">${pageRight.numberShown ? translator.getText("header_publisher", locale) : "&nbsp"}</td>
     <td class="header-r-r">${pageRight.numberShown ? pageRight.number : "&nbsp;"}</td>
 </tr>
 <tr>
@@ -393,16 +397,16 @@
       show_text(page)
     } else if (page.index) {
 %>
-<div class="index-title">${train_list}</div>
+<div class="index-title">${translator.getText("train_list", locale)}</div>
 <div class="spacer4">&nbsp;</div>
 <table class="index" border="0" cellspacing="0">
   <tr>
-    <td class="column-1">${index_train}</td>
-    <td class="column-2">${index_page}</td>
-    <td class="column-1">${index_train}</td>
-    <td class="column-2">${index_page}</td>
-    <td class="column-1">${index_train}</td>
-    <td>${index_page}</td>
+    <td class="column-1">${translator.getText("index_train", locale)}</td>
+    <td class="column-2">${translator.getText("index_page", locale)}</td>
+    <td class="column-1">${translator.getText("index_train", locale)}</td>
+    <td class="column-2">${translator.getText("index_page", locale)}</td>
+    <td class="column-1">${translator.getText("index_train", locale)}</td>
+    <td>${translator.getText("index_page", locale)}</td>
   </tr>
   <tr>
     <td class="column-1-delim">1</td>
@@ -469,10 +473,10 @@
         for (wr in train.weightData) {
           currentEngine = concat(wr.engines, ", ") %>
         <tr>
-          <td>${(currentEngine != "" && currentEngine != lastEngine) ? ((train.diesel ? diesel_unit : engine) + " " + currentEngine + ". &nbsp;") : ""}</td>
-          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? norm_load + ": &nbsp;" : ""}</td>
+          <td>${(currentEngine != "" && currentEngine != lastEngine) ? (translator.getText(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". &nbsp;") : ""}</td>
+          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? translator.getText("norm_load", locale) + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
-          <td align="right">${wr.weight != null ? wr.weight + " " + tons : ""}</td>
+          <td align="right">${wr.weight != null ? wr.weight + " " + translator.getText("tons", locale) : ""}</td>
         </tr><%
           fwt = false
           lastEngine = currentEngine
@@ -482,7 +486,7 @@
           if (train.lengthData.length % 2 == 1)
             train.lengthData.length = train.lengthData.length - 1%>
         <tr>
-          <td colspan="4">${length}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? length_axles : train.lengthData.lengthUnit}</td>
+          <td colspan="4">${translator.getText("length", locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? translator.getText("length_axles", locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}</td>
         </tr><%
         } %>
       </table>
@@ -558,8 +562,8 @@
     toT.compute(row.departure, false, true)
     def stationName = row.station
     def desc = ""
-    if (row.stationType == "stop.with.freight") stationName += " ${abbr_stop_freight}"
-    if (row.stationType == "stop") stationName += " ${abbr_stop}"
+    if (row.stationType == "stop.with.freight") stationName += " ${translator.getText('abbr_stop_freight', locale)}"
+    if (row.stationType == "stop") stationName += " ${translator.getText('abbr_stop', locale)}"
     if (emphName) stationName = "<span class=\"emph\">${stationName}</span>"
     if (row.straight == false && !row.lightSignals) desc += "&rarr;"
     if (row.lightSignals) { desc += "<img src=\"signal.gif\" class=\"signal\">"; images.add("signal.gif")}
@@ -630,11 +634,11 @@
   def totalMinutesStr = Duration.show(totalMinutes)
 %>
   <tr class="fline">
-    <td colspan="${colspan / 2 - 2}" class="totalt">${total_train_time} &nbsp;. . . &nbsp;</td>
+    <td colspan="${colspan / 2 - 2}" class="totalt">${translator.getText("total_train_time", locale)} &nbsp;. . . &nbsp;</td>
     <td class="totalt emph">${runDur.showTotal()}</td>
     <td class="totali">+</td>
     <td class="totalt">${stopDur.showTotal()}</td>
-    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? hours + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? minutes : ""}</td>
+    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? translator.getText("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? translator.getText("minutes", locale) : ""}</td>
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
@@ -735,23 +739,23 @@
     def lineEnd = false
     for (row in train.rows) {
       if (!lineEnd && row.lineEnd) {
-        list << ["&Delta;", entry_line_end]
+        list << ["&Delta;", translator.getText("entry_line_end", locale)]
         lineEnd = true
       }
       if (!occupied && row.occupied) {
-        list << ["&Omicron;",entry_occupied]
+        list << ["&Omicron;",translator.getText("entry_occupied", locale)]
         occupied = true
       }
       if (!shunt && row.shunt) {
-        list << ["&loz;",entry_shunt]
+        list << ["&loz;",translator.getText("entry_shunt", locale)]
         shunt = true
       }
       if (row.comment != null) {
-        list << [symbol,row.comment]
+        list << [symbol,translator.translate(row.comment, locale)]
         symbol += "*"
       }
       if (freight && row.freightDest != null) {
-        list << [fSymbol, row.freightDest.collect{i -> i}.join(', ')]
+        list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
         fSymbol += "&dagger;"
       }
     }
@@ -759,19 +763,21 @@
   }
 
   def show_title(page) {
+      def company = getCompany(trains.cycle, locale)
+      def company_part = getCompanyPart(trains.cycle, locale)
     %>
 <table class="titlepage" border="0" cellspacing="0">
   <tr><td class="company">${company}<br>${company_part}</td></tr>
   <tr><td class="space1">&nbsp;</td></tr>
-  <tr><td class="gtitle">${train_timetable}</td></tr>
+  <tr><td class="gtitle">${translator.getText("train_timetable", locale)}</td></tr>
   <tr><td class="numbers">${getRouteNames(trains)}</td></tr>
-  <tr><td class="line">${for_line}</td></tr>
+  <tr><td class="line">${translator.getText("for_line", locale)}</td></tr>
   <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
-  <tr><td class="valid"><% if (trains.validity != null) { %>${validity_from} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
-  <tr><td class="cycle"><% if (trains.cycle != null) { %>${cycle}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
-  <tr><td class="cycledesc"><% if (trains.cycle != null) { %>${trains.cycle.description != null ? trains.cycle.description : "&nbsp;"}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="valid"><% if (trains.validity != null) { %>${translator.getText("validity_from", locale)} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycle"><% if (trains.cycle != null) { %>${translator.getText("cycle", locale)}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycledesc"><% if (trains.cycle != null) { %>${trains.cycle.description ?: "&nbsp;"}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="space2">&nbsp;</td></tr>
-  <tr><td class="publish">${publisher}</td></tr>
+  <tr><td class="publish">${translator.getText("publisher", locale)}</td></tr>
 </table><%
   }
 
@@ -820,13 +826,13 @@
     %>
 <table class="list2" border="0" cellspacing="0" align="center">
   <tr>
-    <td colspan="4">${list_train_title}:</td>
+    <td colspan="4">${translator.getText("list_train_title", locale)}:</td>
   </tr>
   <tr class="listh">
-    <td class="ctrainh">${column_train}</td>
-    <td class="cdepartureh">${column_departure}</td>
-    <td class="cfromtoh">${column_from_to}</td>
-    <td class="cnoteh">${column_note}</td>
+    <td class="ctrainh">${translator.getText("column_train", locale)}</td>
+    <td class="cdepartureh">${translator.getText("column_departure", locale)}</td>
+    <td class="cfromtoh">${translator.getText("column_from_to", locale)}</td>
+    <td class="cnoteh">${translator.getText("column_note", locale)}</td>
   </tr><% lastNode = null;
           def abbrMap = [:]
           for (item in trains.cycle.rows) {
@@ -835,7 +841,7 @@
             if (lastNode != null && lastNode != item.from) {
               %>
   <tr>
-    <td colspan="4" class="move">&mdash;  ${move_to_station} ${item.from} &mdash; </td>
+    <td colspan="4" class="move">&mdash;  ${translator.getText("move_to_station", locale)} ${item.from} &mdash; </td>
   </tr><%
             }
         %>
@@ -843,7 +849,7 @@
     <td class="ctrain">${item.trainName}</td>
     <td class="cdeparture">${convertTime(item.fromTime)}</td>
     <td class="cfromto">${item.fromAbbr} - ${item.toAbbr}</td>
-    <td class="cnote">${item.comment != null ? item.comment : "&nbsp;"}</td>
+    <td class="cnote">${getComment(item.comment, locale)}</td>
   </tr><%   lastNode = item.to
           }%>
   <tr>
@@ -884,5 +890,25 @@
         str + item
     }
     return result
+  }
+  def getCompany(cycle, loc) {
+    def company = cycle?.company?.name
+    company = company ?: cycle?.company?.abbr
+    return company ?: translator.getText("company", loc)
+  }
+
+  def getCompanyPart(cycle, loc) {
+    def part = cycle?.company?.part
+    if (!part && !cycle?.company?.abbr) {
+        part = translator.getText("company_part", loc)
+    }
+    return part ?: "&nbsp;"
+  }
+
+  def getComment(comment, loc) {
+    if (comment) {
+        comment = translator.translate(comment, loc)
+    }
+    return comment ?: "&nbsp;"
   }
 %>

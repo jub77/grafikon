@@ -1,5 +1,8 @@
 package net.parostroj.timetable.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ObjectsUtil {
 
     public static String checkAndTrim(String str) {
@@ -28,5 +31,16 @@ public class ObjectsUtil {
 
     public static boolean isEmpty(String str) {
         return null == checkAndTrim(str);
+    }
+
+    public static <T> List<T> getList(List<?> orig, Class<T> clazz) {
+        List<T> dest = null;
+        if (orig != null) {
+            dest = new ArrayList<T>(orig.size());
+            for (Object o : orig) {
+                dest.add(clazz.cast(o));
+            }
+        }
+        return dest;
     }
 }

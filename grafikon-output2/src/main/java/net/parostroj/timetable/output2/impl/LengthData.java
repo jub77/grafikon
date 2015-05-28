@@ -1,6 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.units.LengthUnit;
 
 /**
  * Length info for station row.
@@ -12,7 +15,7 @@ public class LengthData {
 
     private int length;
     private boolean lengthInAxles;
-    private String lengthUnit;
+    private LengthUnit lengthUnit;
 
     public LengthData() {
     }
@@ -33,11 +36,12 @@ public class LengthData {
         this.lengthInAxles = lengthInAxles;
     }
 
-    public String getLengthUnit() {
+    @XmlJavaTypeAdapter(LengthUnitAdapter.class)
+    public LengthUnit getLengthUnit() {
         return lengthUnit;
     }
 
-    public void setLengthUnit(String lengthUnit) {
+    public void setLengthUnit(LengthUnit lengthUnit) {
         this.lengthUnit = lengthUnit;
     }
 }

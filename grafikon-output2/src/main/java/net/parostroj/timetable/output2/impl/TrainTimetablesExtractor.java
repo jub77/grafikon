@@ -5,6 +5,7 @@ import java.util.*;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -124,8 +125,8 @@ public class TrainTimetablesExtractor {
                 LengthUnit lengthUnitObj = diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class);
                 LengthData data = new LengthData();
                 data.setLength(length.second);
-                data.setLengthInAxles(lengthUnitObj != null && lengthUnitObj == LengthUnit.AXLE);
-                data.setLengthUnit(lengthUnitObj != null ? lengthUnitObj.getUnitsOfString(locale) : null);
+                data.setLengthInAxles(LengthUnit.AXLE == lengthUnitObj);
+                data.setLengthUnit(lengthUnitObj);
                 timetable.setLengthData(data);
             }
         }
@@ -167,10 +168,7 @@ public class TrainTimetablesExtractor {
             // comment
             if (nodeI.getAttributes().getBool(TimeInterval.ATTR_COMMENT_SHOWN)) {
                 String comment = nodeI.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
-                if (comment != null && !comment.trim().equals("")) {
-                    comment = diagram.getLocalization().translate(comment, locale);
-                    row.setComment(comment);
-                }
+                row.setComment(ObjectsUtil.checkAndTrim(comment));
             }
             // check line end
             if (nodeI.isLast() || nodeI.isInnerStop()) {
@@ -228,9 +226,9 @@ public class TrainTimetablesExtractor {
             if (nodeI.isFirst() && FreightHelper.isFreight(nodeI)) {
                 List<FreightDst> freightDests = FreightHelper.convertFreightDst(nodeI, diagram.getFreightNet().getFreightToNodes(nodeI));
                 if (!freightDests.isEmpty()) {
-                    ArrayList<String> fl = new ArrayList<String>(freightDests.size());
+                    ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
                     for (FreightDst dst : freightDests) {
-                        fl.add(dst.toString(locale));
+                        fl.add(FreightDstInfo.convert(dst));
                     }
                     row.setFreightDest(fl);
                 }
