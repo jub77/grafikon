@@ -59,6 +59,7 @@
 <% for (c in cycles.cycles) {
     def loc = getLocale(c)
     def company = getCompany(c, loc)
+    def company_part = getCompanyPart(c, loc)
 %>
 <table class="pages" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -71,7 +72,7 @@
 <td class="page" colspan="2"></td>
 <td class="page" colspan="2">
   <table align="right" class="titlepage" border="0" cellspacing="0">
-    <tr><td class="company">${company}<br>${company_part}</td></tr>
+    <tr><td class="company">${company}<br>${company_part ?: "&nbsp;"}</td></tr>
     <tr><td class="space1"></td></tr>
     <tr><td class="gtitle">${translator.getText("train_timetable", loc)}</td></tr>
     <tr><td class="numbers">${getRouteNames(c, cycles)}</td></tr>
@@ -209,9 +210,18 @@ def add(str, delimiter, value) {
 
 def getCompany(cycle, loc) {
   def company = cycle?.company?.name
-  company ?: cycle?.company?.abbr
+  company = company ?: cycle?.company?.abbr
   return company ?: translator.getText("company", loc)
 }
+
+def getCompanyPart(cycle, loc) {
+    def part = cycle?.company?.part
+    if (!part && !cycle?.company?.abbr) {
+        part = translator.getText("company_part", loc)
+    }
+    return part
+}
+  
   
 def getLocale(cycle) {
   def l = cycle?.company?.locale
