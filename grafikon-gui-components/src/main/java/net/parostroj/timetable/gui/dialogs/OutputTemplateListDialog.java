@@ -100,10 +100,15 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         if (selected) {
             String description = templatesModel.getIndex(templateList.getSelectedIndex()).getElement()
                     .getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
-            descriptionTextArea.setText(description);
+            updateDescription(description);
         } else {
-            descriptionTextArea.setText("");
+            updateDescription("");
         }
+    }
+
+    private void updateDescription(String description) {
+        descriptionTextArea.setText(description);
+        descriptionTextArea.moveCaretPosition(0);
     }
 
     private void initComponents() {
@@ -250,8 +255,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         descriptionPanel.add(descriptionScrollPane, BorderLayout.CENTER);
         descriptionTextArea = new JTextAreaGrey();
         descriptionTextArea.setEditable(false);
-        descriptionTextArea.setRows(2);
+        descriptionTextArea.setRows(4);
         descriptionTextArea.setLineWrap(true);
+        // same font as list
+        descriptionTextArea.setFont(templateList.getFont());
         descriptionScrollPane.setViewportView(descriptionTextArea);
 
         pack();
@@ -308,6 +315,8 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         this.editSizeLocation.read(dialog);
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
+            // update description
+            updateDescription(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
         }
     }
 

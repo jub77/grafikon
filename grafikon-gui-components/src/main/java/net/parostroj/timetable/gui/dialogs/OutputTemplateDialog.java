@@ -11,16 +11,24 @@ import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
 
-import javax.swing.*;
-
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.gui.components.ScriptEditBox;
+
+import java.awt.Font;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Dialog for editing text template.
@@ -31,7 +39,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
     private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw"));
-    private static final Set<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableSet(Collections.singleton("groovy"));
+    private static final Set<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableSet(Collections
+            .singleton("groovy"));
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
@@ -69,24 +78,64 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         boolean isScript = this.template.getScript() != null;
         textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
         textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
-        extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class) : null);
+        extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION,
+                String.class) : null);
         outputComboBox.setSelectedItem(this.template.getOutput());
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, Object.class));
         scriptCheckBox.setSelected(isScript);
-        scriptButton.setEnabled(isScript);
         extensionTextField.setEnabled(!isScript);
+        scriptEditBox.setScript(template.getScript());
+        scriptEditBox.setEnabled(isScript);
+        descriptionTextArea.setText(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
     }
 
     private void initComponents() {
-        textTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox2();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         ((FlowLayout) buttonPanel.getLayout()).setAlignment(FlowLayout.RIGHT);
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+
+        controlPanel.setLayout(new java.awt.BorderLayout());
+
+        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(okButton);
+
+        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(cancelButton);
+
+        controlPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
+
+        tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+        javax.swing.JPanel templatePanel = new javax.swing.JPanel();
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.template"), null, templatePanel, null); // NOI18N
+        templatePanel.setLayout(new BorderLayout(0, 0));
+        textTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox2();
+        templatePanel.add(textTemplateEditBox);
+
+        textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        textTemplateEditBox.setColumns(80);
+        textTemplateEditBox.setRows(25);
+        textTemplateEditBox.setVisibleTemplateLanguageChange(false);
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
+        templatePanel.add(verifyPanel, BorderLayout.SOUTH);
         FlowLayout flowLayout1 = (FlowLayout) verifyPanel.getLayout();
-        flowLayout1.setVgap(2);
         flowLayout1.setAlignment(FlowLayout.LEFT);
         outputComboBox = new javax.swing.JComboBox<String>();
         outputComboBox.setPrototypeDisplayValue("MMMMMM");
@@ -115,55 +164,25 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             }
         });
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
-        textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
-        textTemplateEditBox.setColumns(80);
-        textTemplateEditBox.setRows(25);
-        textTemplateEditBox.setVisibleTemplateLanguageChange(false);
-        getContentPane().add(textTemplateEditBox, java.awt.BorderLayout.CENTER);
-
-        controlPanel.setLayout(new java.awt.BorderLayout());
-
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(okButton);
-
-        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(cancelButton);
-
-        controlPanel.add(buttonPanel, BorderLayout.SOUTH);
-
         verifyPanel.add(outputComboBox);
         verifyPanel.add(outputTypeComboBox);
 
-        controlPanel.add(verifyPanel, BorderLayout.WEST);
-
-        defaultTemplateCheckbox = new JCheckBox(ResourceLoader.getString("ot.checkbox.default.template"));
+        defaultTemplateCheckbox = new javax.swing.JCheckBox(ResourceLoader.getString("ot.checkbox.default.template"));
         verifyPanel.add(defaultTemplateCheckbox);
         verifyButton = new javax.swing.JButton();
 
-                verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
-                verifyButton.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        verifyButtonActionPerformed(evt);
-                    }
-                });
-                verifyPanel.add(verifyButton);
+        verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
+        verifyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyButtonActionPerformed(evt);
+            }
+        });
+        verifyPanel.add(verifyButton);
 
-        JLabel suffixLabel = new JLabel(ResourceLoader.getString("ot.extension") + ":");
+        javax.swing.JLabel suffixLabel = new javax.swing.JLabel(ResourceLoader.getString("ot.extension") + ":");
         verifyPanel.add(suffixLabel);
 
-        extensionTextField = new JTextField();
+        extensionTextField = new javax.swing.JTextField();
         verifyPanel.add(extensionTextField);
         extensionTextField.setColumns(10);
         defaultTemplateCheckbox.addItemListener(new ItemListener() {
@@ -173,47 +192,49 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             }
         });
 
-        getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
+        javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.script"), null, scriptPanel, null); // NOI18N
+        scriptPanel.setLayout(new BorderLayout(0, 0));
 
-        JPanel scriptPanel = new JPanel();
-        FlowLayout flowLayout2 = (FlowLayout) scriptPanel.getLayout();
-        flowLayout2.setVgap(2);
-        controlPanel.add(scriptPanel, BorderLayout.EAST);
+        scriptEditBox = new ScriptEditBox();
+        scriptPanel.add(scriptEditBox);
+        scriptEditBox.setScriptFont(new Font("Monospaced", Font.PLAIN, 12));
+        scriptEditBox.setRows(15);
+        scriptEditBox.setColumns(60);
 
-        scriptButton = new JButton(ResourceLoader.getString("ot.script"));
-        scriptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ScriptDialog dialog = new ScriptDialog(OutputTemplateDialog.this, true);
-                dialog.setScript(template.getScript());
-                dialog.setLocationRelativeTo(OutputTemplateDialog.this);
-                dialog.setVisible(true);
-                Script selectedScript = dialog.getSelectedScript();
-                if (selectedScript != null) {
-                    template.setScript(selectedScript);
-                }
-            }
-        });
-        scriptPanel.add(scriptButton);
+        JPanel descriptionPanel = new JPanel();
+        descriptionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, descriptionPanel, null); // NOI18N
+        descriptionPanel.setLayout(new BorderLayout(0, 0));
 
-        scriptCheckBox = new JCheckBox();
+        JScrollPane descriptionScrollPane = new JScrollPane();
+        descriptionPanel.add(descriptionScrollPane);
+
+        descriptionTextArea = new JTextArea();
+        descriptionTextArea.setLineWrap(true);
+        // same font as script area
+        descriptionTextArea.setFont(scriptEditBox.getScriptFont());
+        descriptionScrollPane.setViewportView(descriptionTextArea);
+
+        scriptCheckBox = new javax.swing.JCheckBox();
         scriptCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean isScript = scriptCheckBox.isSelected();
-                scriptButton.setEnabled(isScript);
+                scriptEditBox.setEnabled(isScript);
                 extensionTextField.setEnabled(!isScript);
                 if (isScript) {
                     extensionTextField.setText(null);
                     try {
-                        template.setScript(Script.createScript(DEFAULT_OUTPUT_SCRIPT, Script.Language.GROOVY));
+                        scriptEditBox.setScript(Script.createScript(DEFAULT_OUTPUT_SCRIPT, Script.Language.GROOVY));
                     } catch (GrafikonException e1) {
                         log.error("Error creating script.", e);
                     }
                 } else {
-                    template.setScript(null);
+                    scriptEditBox.setScript(null);
                 }
             }
         });
-        scriptPanel.add(scriptCheckBox);
+        scriptEditBox.addComponentToEditBox(scriptCheckBox);
 
         pack();
     }
@@ -224,9 +245,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
-            String ext = extensionTextField.getText().trim();
-            this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION, "".equals(ext) ? null : ext);
-            this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE, defaultTemplateCheckbox.isSelected());
+            this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
+                    ObjectsUtil.checkAndTrim(extensionTextField.getText()));
+            this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE,
+                    defaultTemplateCheckbox.isSelected());
+            this.template.setScript(scriptEditBox.getScript());
+            this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
+                    ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             this.setVisible(false);
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
@@ -258,9 +283,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> outputTypeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
-    private JCheckBox defaultTemplateCheckbox;
-    private JTextField extensionTextField;
-    private JCheckBox scriptCheckBox;
-    private JButton scriptButton;
-    private JComboBox<String> outputComboBox;
+    private javax.swing.JCheckBox defaultTemplateCheckbox;
+    private javax.swing.JTextField extensionTextField;
+    private javax.swing.JCheckBox scriptCheckBox;
+    private javax.swing.JComboBox<String> outputComboBox;
+    private javax.swing.JTabbedPane tabbedPane;
+    private ScriptEditBox scriptEditBox;
+    private JTextArea descriptionTextArea;
 }
