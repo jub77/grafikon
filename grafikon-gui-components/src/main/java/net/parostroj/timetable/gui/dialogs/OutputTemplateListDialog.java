@@ -12,6 +12,7 @@ import javax.swing.JFileChooser;
 
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
+import net.parostroj.timetable.gui.components.JTextAreaGrey;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
@@ -21,7 +22,9 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ScrollPaneConstants;
@@ -245,7 +248,8 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         javax.swing.JScrollPane descriptionScrollPane = new javax.swing.JScrollPane();
         descriptionScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         descriptionPanel.add(descriptionScrollPane, BorderLayout.CENTER);
-        descriptionTextArea = new javax.swing.JTextArea();
+        descriptionTextArea = new JTextAreaGrey();
+        descriptionTextArea.setEditable(false);
         descriptionTextArea.setRows(2);
         descriptionTextArea.setLineWrap(true);
         descriptionScrollPane.setViewportView(descriptionTextArea);
