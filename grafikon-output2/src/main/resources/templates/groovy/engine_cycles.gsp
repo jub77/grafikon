@@ -1,6 +1,6 @@
 <%
     // definition of constants
-    WIDTH = 47.5
+    WIDTH = 46.5
     HEIGHT = 85
     ROW_COUNT = 3
     COLUMN_COUNT = 4
