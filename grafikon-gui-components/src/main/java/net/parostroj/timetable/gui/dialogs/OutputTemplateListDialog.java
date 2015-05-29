@@ -21,6 +21,10 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * Dialog for editing list of output templates.
@@ -88,6 +92,15 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         outputButton.setEnabled(selected);
         // create button
         newButton.setEnabled(!"".equals(nameTextField.getText().trim()));
+
+        // description
+        if (selected) {
+            String description = templatesModel.getIndex(templateList.getSelectedIndex()).getElement()
+                    .getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
+            descriptionTextArea.setText(description);
+        } else {
+            descriptionTextArea.setText("");
+        }
     }
 
     private void initComponents() {
@@ -104,6 +117,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         templateList = new javax.swing.JList<Wrapper<OutputTemplate>>();
+        templateList.setVisibleRowCount(10);
         javax.swing.JPanel locationPanel = new javax.swing.JPanel();
         javax.swing.JPanel locationPanel1 = new javax.swing.JPanel();
         locationTextField = new javax.swing.JTextField();
@@ -223,7 +237,21 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
 
         getContentPane().add(locationPanel, java.awt.BorderLayout.PAGE_START);
 
+        JPanel descriptionPanel = new JPanel();
+        descriptionPanel.setBorder(new EmptyBorder(0, 5, 5, 5));
+        getContentPane().add(descriptionPanel, BorderLayout.SOUTH);
+        descriptionPanel.setLayout(new BorderLayout(0, 0));
+
+        javax.swing.JScrollPane descriptionScrollPane = new javax.swing.JScrollPane();
+        descriptionScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        descriptionPanel.add(descriptionScrollPane, BorderLayout.CENTER);
+        descriptionTextArea = new javax.swing.JTextArea();
+        descriptionTextArea.setRows(2);
+        descriptionTextArea.setLineWrap(true);
+        descriptionScrollPane.setViewportView(descriptionTextArea);
+
         pack();
+        this.setMinimumSize(this.getSize());
     }
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -347,4 +375,5 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private javax.swing.JButton outputButton;
     private javax.swing.JList<Wrapper<OutputTemplate>> templateList;
     private javax.swing.JButton upButton;
+    private javax.swing.JTextArea descriptionTextArea;
 }
