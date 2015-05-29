@@ -249,7 +249,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
                     ObjectsUtil.checkAndTrim(extensionTextField.getText()));
             this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE,
                     defaultTemplateCheckbox.isSelected());
-            this.template.setScript(scriptEditBox.getScript());
+            this.template.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             this.setVisible(false);
