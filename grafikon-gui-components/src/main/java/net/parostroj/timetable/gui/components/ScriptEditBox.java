@@ -1,16 +1,20 @@
 package net.parostroj.timetable.gui.components;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
+
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 /**
@@ -41,6 +45,26 @@ public class ScriptEditBox extends javax.swing.JPanel {
         scrollPane.setBorder(border);
         scriptTextArea.setTabsEmulated(true);
         scriptTextArea.setTabSize(4);
+    }
+
+    public void addComponentToEditBox(Component component) {
+        panel.add(component);
+    }
+
+    public void removeComponentFromEditBox(Component component) {
+        panel.remove(component);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        languageComboBox.setEnabled(enabled);
+        scriptTextArea.setEnabled(enabled);
+        scriptTextArea.setEditable(enabled);
+        scriptTextArea.setHighlightCurrentLine(enabled);
+        scrollPane.setEnabled(enabled);
+        scrollPane.getVerticalScrollBar().setEnabled(enabled);
+        scrollPane.getHorizontalScrollBar().setEnabled(enabled);
     }
 
     public void setColumns(int columns) {
@@ -99,7 +123,7 @@ public class ScriptEditBox extends javax.swing.JPanel {
     }
 
     private void initComponents() {
-        javax.swing.JPanel panel = new javax.swing.JPanel();
+        panel = new javax.swing.JPanel();
         languageComboBox = new javax.swing.JComboBox<Language>();
         scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         scriptTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
@@ -132,4 +156,5 @@ public class ScriptEditBox extends javax.swing.JPanel {
     private javax.swing.JComboBox<Language> languageComboBox;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea scriptTextArea;
     private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
+    private javax.swing.JPanel panel;
 }
