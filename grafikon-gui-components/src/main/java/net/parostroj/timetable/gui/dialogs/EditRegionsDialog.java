@@ -2,14 +2,18 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Frame;
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.utils.IdGenerator;
 
 public class EditRegionsDialog extends EditItemsDialog<Region> {
 
-    public EditRegionsDialog(Frame parent, boolean modal) {
-        super(parent, modal);
+    private final Collection<Locale> locales;
+
+    public EditRegionsDialog(Frame parent, boolean modal, Collection<Locale> locales) {
+        super(parent, modal, false, true);
+        this.locales = locales;
     }
 
     @Override
@@ -42,4 +46,11 @@ public class EditRegionsDialog extends EditItemsDialog<Region> {
         return new Region(IdGenerator.getInstance().getId(), name);
     }
 
+    @Override
+    protected void edit(Region region) {
+        EditRegionDialog dialog = new EditRegionDialog(this, true, locales);
+        dialog.setLocationRelativeTo(this);
+        dialog.showDialog(region);
+        dialog.dispose();
+    }
 }

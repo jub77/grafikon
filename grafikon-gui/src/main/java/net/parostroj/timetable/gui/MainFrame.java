@@ -644,7 +644,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void regionsMenuItemActionPerformed(ActionEvent evt) {
-        EditRegionsDialog dialog = new EditRegionsDialog(this, true);
+        EditRegionsDialog dialog = new EditRegionsDialog(this, true, model.getLanguageLoader().getLocales());
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();

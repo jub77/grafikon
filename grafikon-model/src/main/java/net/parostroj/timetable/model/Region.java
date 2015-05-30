@@ -8,7 +8,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Region implements Visitable, ObjectWithId, AttributesHolder {
+public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes {
 
     private final String id;
     private String name;
