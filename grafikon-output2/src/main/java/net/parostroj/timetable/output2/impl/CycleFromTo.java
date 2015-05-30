@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * @author jub
@@ -62,6 +63,7 @@ public class CycleFromTo {
     }
 
     @XmlAttribute
+    @XmlJavaTypeAdapter(type = boolean.class, value = BooleanAdapter.class)
     public boolean isIn() {
         return in;
     }
@@ -71,6 +73,7 @@ public class CycleFromTo {
     }
 
     @XmlAttribute
+    @XmlJavaTypeAdapter(type = boolean.class, value = BooleanAdapter.class)
     public boolean isStart() {
         return start;
     }
