@@ -22,4 +22,5 @@ public interface NodeAttributes {
     public static final String ATTR_REGION_START = "region.start";
     public static final String ATTR_NOT_STRAIGHT_SPEED = "not.straight.speed";
     public static final String ATTR_SPEED = "speed";
+    public static final String ATTR_COMPANY = "company";
 }

@@ -49,6 +49,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
 
     private static final Region NONE_REGION = new Region(null, "-");
+    private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
 
     private static class EditTrack {
         public NodeTrack track;
@@ -188,6 +189,17 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (!listModel.isEmpty()) {
             trackList.setSelectedIndex(0);
         }
+
+        // company
+        this.companies = new WrapperListModel<Company>(false);
+        this.companies.addWrapper(EMPTY_COMPANY);
+        TrainDiagram diagram = node.getDiagram();
+        for (Company company : diagram.getCompanies()) {
+            this.companies.addWrapper(Wrapper.getWrapper(company));
+        }
+        this.companyComboBox.setModel(companies);
+        Company selCompany = node.getAttribute(Node.ATTR_COMPANY, Company.class);
+        this.companyComboBox.setSelectedItem(selCompany != null ? Wrapper.getWrapper(selCompany) : EMPTY_COMPANY);
     }
 
     private void setBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Integer value, Unit unit, BigDecimal defaultValue) {
@@ -263,6 +275,9 @@ public class EditNodeDialog extends javax.swing.JDialog {
             region = null;
         }
         node.getAttributes().setRemove(Node.ATTR_REGION, region);
+
+        // company
+        node.setAttribute(Node.ATTR_COMPANY, companies.getSelectedObject());
     }
 
     private void getBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Unit unit, String attribute) {
@@ -299,8 +314,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         straightCheckBox = new javax.swing.JCheckBox();
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
+        javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
         regionComboBox = new javax.swing.JComboBox<Region>();
+        companyComboBox = new javax.swing.JComboBox<Wrapper<Company>>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
@@ -313,6 +330,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         jLabel3.setText(ResourceLoader.getString("ne.type")); // NOI18N
 
         jLabel5.setText(ResourceLoader.getString("ne.region") + ":"); // NOI18N
+
+        companyLabel.setText(ResourceLoader.getString("ne.company") + ":"); // NOI18N
 
         typeComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -449,6 +468,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(regionComboBox, 0, 334, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
+                                .addComponent(companyLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(companyComboBox, 0, 334, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
@@ -499,6 +522,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
                         .addComponent(regionComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                            .addComponent(companyLabel)
+                            .addComponent(companyComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jLabel3)
                         .addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(7)
@@ -530,7 +557,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
                             .addComponent(colorsButton)))
                     .addContainerGap())
         );
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4, jLabel5, label, label_1});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4, jLabel5, label, label_1, companyLabel});
 
         sSpeedEditBox = new ValueWithUnitEditBox();
         sSpeedPanel.add(sSpeedEditBox, BorderLayout.CENTER);
@@ -683,6 +710,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox<Wrapper<NodeType>> typeComboBox;
     private javax.swing.JComboBox<Region> regionComboBox;
+    private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
     private javax.swing.JCheckBox regionStartCheckBox;
     private javax.swing.JButton colorsButton;
     private javax.swing.JPanel lengthPanel;
@@ -691,4 +719,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox nsSpeedCheckBox;
     private ValueWithUnitEditBox sSpeedEditBox;
     private javax.swing.JCheckBox sSpeedCheckBox;
+
+    private WrapperListModel<Company> companies;
 }
