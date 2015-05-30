@@ -13,11 +13,13 @@ import net.parostroj.timetable.model.NodeType;
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "type", "rows"})
+@XmlType(propOrder = {"name", "type", "region", "company", "rows"})
 public class StationTimetable {
 
     private String name;
     private NodeType type;
+    private RegionInfo region;
+    private CompanyInfo company;
     private List<StationTimetableRow> rows;
 
     public StationTimetable() {
@@ -41,6 +43,22 @@ public class StationTimetable {
 
     public void setType(NodeType type) {
         this.type = type;
+    }
+
+    public RegionInfo getRegion() {
+        return region;
+    }
+
+    public void setRegion(RegionInfo region) {
+        this.region = region;
+    }
+
+    public CompanyInfo getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyInfo company) {
+        this.company = company;
     }
 
     @XmlElement(name = "row")

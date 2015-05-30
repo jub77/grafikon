@@ -34,6 +34,16 @@ public class StationTimetablesExtractor {
             StationTimetable timetable = new StationTimetable(node.getName());
             timetable.setType(node.getType());
 
+            // region + company
+            Region region = node.getAttribute(Node.ATTR_REGION, Region.class);
+            Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
+            if (region != null) {
+                timetable.setRegion(RegionInfo.convert(region));
+            }
+            if (company != null) {
+                timetable.setCompany(CompanyInfo.convert(company));
+            }
+
             // process rows ...
             for (TimeInterval interval : this.collectIntervals(node)) {
                 if (techTime || !interval.isTechnological()) {
