@@ -43,6 +43,13 @@
     def comment(separator, str) {
         return (str == null || str =="") ? "" : "${separator}(${str})"
     }
+    
+    def getLocale(station) {
+        def loc = locale
+        loc = station.region?.locale ?: loc
+        loc = station.company?.locale ?: loc
+        return loc
+    }
 %>
 
 <%
@@ -140,7 +147,7 @@
 <body>
 <%
   for (station in stations) {
-      def loc = locale
+      def loc = getLocale(station)
 %>
 <table class="station" align="center" cellspacing=0 cellpadding=0>
 <thead>
