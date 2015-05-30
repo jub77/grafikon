@@ -179,7 +179,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
                 cycleFromTo = new CycleFromTo(false, false, cycle.getName(),
-                        type.getName().equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        cycle.getDisplayDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null);
             }
@@ -188,7 +188,7 @@ public class StationTimetablesExtractor {
                 TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
                 cycleFromTo = new CycleFromTo(itemPrev == null, true, cycle.getName(),
-                        type.getName().equals(TrainsCycleType.ENGINE_CYCLE) ?  TransformUtil.getEngineCycleDescription(item.getCycle()) : cycle.getDescription(),
+                        cycle.getDisplayDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
             }
