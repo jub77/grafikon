@@ -39,7 +39,7 @@ public class OutputWriter {
             return this;
         }
 
-        public OutputSettings setEncondig(String encoding) {
+        public OutputSettings setEncoding(String encoding) {
             this.encoding = encoding;
             return this;
         }
@@ -152,7 +152,7 @@ public class OutputWriter {
 
                 @Override
                 public void add(String name, Map<String, Object> context, String encoding) {
-                    out.add(new OutputSettings().setName(name).setContext(context).setEncondig(encoding));
+                    out.add(new OutputSettings().setName(name).setContext(context).setEncoding(encoding));
                 }
 
                 @Override
