@@ -39,6 +39,11 @@ public class OutputParams extends HashMap<String, OutputParam> {
         return param != null ? param.getValue(clazz) : null;
     }
 
+    public <T> T getParamValue(String name, Class<T> clazz, T defaultValue) {
+        T value = this.getParamValue(name, clazz);
+        return value != null ? value : defaultValue;
+    }
+
     public boolean paramExist(String name) {
         return this.containsKey(name);
     }
