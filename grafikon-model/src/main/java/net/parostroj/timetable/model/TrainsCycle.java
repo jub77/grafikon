@@ -269,6 +269,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         return items.get(ind);
     }
 
+    public TrainsCycleItem getNextItemCyclic(TrainsCycleItem item) {
+        TrainsCycleItem nextItem = getNextItem(item);
+        if (nextItem == null) {
+            nextItem = getNext().getFirstItem();
+        }
+        return nextItem;
+    }
+
     public TrainsCycleItem getPreviousItem(TrainsCycleItem item) {
         int ind = items.indexOf(item);
         if (ind == -1) {
@@ -279,6 +287,14 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             return null;
         }
         return items.get(ind);
+    }
+
+    public TrainsCycleItem getPreviousItemCyclic(TrainsCycleItem item) {
+        TrainsCycleItem previousItem = getPreviousItem(item);
+        if (previousItem == null) {
+            previousItem = getPrevious().getLastItem();
+        }
+        return previousItem;
     }
 
     public void addItem(TrainsCycleItem item) {
