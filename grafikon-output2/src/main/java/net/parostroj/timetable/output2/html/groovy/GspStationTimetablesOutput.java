@@ -34,16 +34,24 @@ public class GspStationTimetablesOutput extends GspOutput {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
+            // show circulations in adjacent sessions
+            boolean adjacentSessions = params.getParamValue("adjacent.sessions", Boolean.class, false);
+
+            // technological time
             boolean techTime = false;
-            if (params.paramExistWithValue("tech.time"))
+            if (params.paramExistWithValue("tech.time")) {
                 techTime = params.getParam("tech.time").getValue(Boolean.class);
+            }
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime, this.getLocale());
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram,
+                    SelectionHelper.selectNodes(params, diagram), techTime, adjacentSessions,
+                    this.getLocale());
             List<StationTimetable> timetables = se.getStationTimetables();
 
             // call template
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("stations", timetables);
+            map.put("adjacent_sessions", adjacentSessions);
             ResourceHelper.addTextsToMap(map, KEY_PREFIX, this.getLocale(), LOCALIZATION_BUNDLE);
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);

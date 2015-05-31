@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static net.parostroj.timetable.actions.FreightHelper.*;
 import static net.parostroj.timetable.actions.TrainsHelper.*;
@@ -19,11 +20,13 @@ public class StationTimetablesExtractor {
     private final List<Node> nodes;
     private final TimeConverter converter;
     private final boolean techTime;
+    private final boolean adjacentSessions;
 
-    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, Locale locale) {
+    public StationTimetablesExtractor(TrainDiagram diagram, List<Node> nodes, boolean techTime, boolean adjacentSessions, Locale locale) {
         this.diagram = diagram;
         this.nodes = nodes;
         this.techTime = techTime;
+        this.adjacentSessions = adjacentSessions;
         this.converter = diagram.getTimeConverter();
     }
 
@@ -92,15 +95,22 @@ public class StationTimetablesExtractor {
     private void addOtherData(TimeInterval interval, StationTimetableRow row) {
         // technological time handle differently
         row.setTechnologicalTime(interval.isTechnological());
-        if (row.isTechnologicalTime())
+        if (row.isTechnologicalTime()) {
             return;
+        }
 
         row.setLength(this.getLength(interval));
-        this.addEnginesAndTrainUnits(interval, diagram.getEngineCycleType(), row.getEngine());
-        this.addEnginesAndTrainUnits(interval, diagram.getTrainUnitCycleType(), row.getTrainUnit());
+
+        BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> nextF = getNextFunction();
+        BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> previousF = getPreviousFunction();
+
+        this.addEnginesAndTrainUnits(interval, diagram.getEngineCycleType(), row.getEngine(),
+                nextF, previousF);
+        this.addEnginesAndTrainUnits(interval, diagram.getTrainUnitCycleType(), row.getTrainUnit(),
+                nextF, previousF);
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!type.isDefaultType()) {
-                this.addCycles(interval, type, row.getCycle());
+                this.addCycles(interval, type, row.getCycle(), nextF, previousF);
             }
         }
         if (isFreight(interval)) {
@@ -144,13 +154,15 @@ public class StationTimetablesExtractor {
         row.setOccupied(interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED));
     }
 
-    private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles) {
+    private void addCycles(TimeInterval interval, TrainsCycleType type, List<CycleWithTypeFromTo> cycles,
+            BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> nextItemF,
+            BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> previousItemF) {
         Train train = interval.getTrain();
         for (TrainsCycleItem item : train.getCycles(type)) {
             if (item.getToInterval() == interval) {
                 // end
-                TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
+                TrainsCycleItem itemNext = nextItemF.apply(cycle, item);
                 cycles.add(new CycleWithTypeFromTo(false, false, cycle.getName(),
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
@@ -159,8 +171,8 @@ public class StationTimetablesExtractor {
             }
             if (item.getFromInterval() == interval) {
                 // start
-                TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
+                TrainsCycleItem itemPrev = previousItemF.apply(cycle, item);
                 cycles.add(new CycleWithTypeFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
@@ -170,14 +182,16 @@ public class StationTimetablesExtractor {
         }
     }
 
-    private void addEnginesAndTrainUnits(TimeInterval interval, TrainsCycleType type, List<CycleFromTo> cycles) {
+    private void addEnginesAndTrainUnits(TimeInterval interval, TrainsCycleType type, List<CycleFromTo> cycles,
+            BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> nextItemF,
+            BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> previousItemF) {
         Train train = interval.getTrain();
         for (TrainsCycleItem item : train.getCycles(type)) {
             CycleFromTo cycleFromTo = null;
             if (item.getToInterval() == interval) {
                 // end
-                TrainsCycleItem itemNext = item.getCycle().getNextItem(item);
                 TrainsCycle cycle = item.getCycle();
+                TrainsCycleItem itemNext = nextItemF.apply(cycle, item);
                 cycleFromTo = new CycleFromTo(false, false, cycle.getName(),
                         cycle.getDisplayDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
@@ -185,8 +199,8 @@ public class StationTimetablesExtractor {
             }
             if (item.getFromInterval() == interval) {
                 // start
-                TrainsCycleItem itemPrev = item.getCycle().getPreviousItem(item);
                 TrainsCycle cycle = item.getCycle();
+                TrainsCycleItem itemPrev = previousItemF.apply(cycle, item);
                 cycleFromTo = new CycleFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDisplayDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
@@ -219,5 +233,17 @@ public class StationTimetablesExtractor {
             }
         }
         return lengthInfo;
+    }
+
+    private BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> getNextFunction() {
+        return adjacentSessions ?
+                (cycle, item) -> cycle.getNextItemCyclic(item) :
+                (cycle, item) -> cycle.getNextItem(item);
+    }
+
+    private BiFunction<TrainsCycle, TrainsCycleItem, TrainsCycleItem> getPreviousFunction() {
+        return adjacentSessions ?
+                (cycle, item) -> cycle.getPreviousItemCyclic(item) :
+                (cycle, item) -> cycle.getPreviousItem(item);
     }
 }

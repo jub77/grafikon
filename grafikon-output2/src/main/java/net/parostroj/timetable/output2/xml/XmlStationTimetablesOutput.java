@@ -32,11 +32,18 @@ class XmlStationTimetablesOutput extends OutputWithCharset {
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
         try {
+            // show circulations in adjacent sessions
+            boolean adjacentSessions = params.getParamValue("adjacent.sessions", Boolean.class, false);
+
+            // technological times
             boolean techTime = false;
-            if (params.paramExistWithValue("tech.time"))
+            if (params.paramExistWithValue("tech.time")) {
                 techTime = params.getParam("tech.time").getValue(Boolean.class);
+            }
             // extract positions
-            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram, SelectionHelper.selectNodes(params, diagram), techTime, this.getLocale());
+            StationTimetablesExtractor se = new StationTimetablesExtractor(diagram,
+                    SelectionHelper.selectNodes(params, diagram), techTime, adjacentSessions,
+                    this.getLocale());
             StationTimetables st = new StationTimetables(se.getStationTimetables());
 
             JAXBContext context = JAXBContext.newInstance(StationTimetables.class);
