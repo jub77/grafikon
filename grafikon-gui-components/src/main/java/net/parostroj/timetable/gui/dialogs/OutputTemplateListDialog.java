@@ -257,6 +257,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setRows(4);
         descriptionTextArea.setLineWrap(true);
+        descriptionTextArea.setWrapStyleWord(true);
         // same font as list
         descriptionTextArea.setFont(templateList.getFont());
         descriptionScrollPane.setViewportView(descriptionTextArea);
