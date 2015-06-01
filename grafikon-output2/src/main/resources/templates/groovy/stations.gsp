@@ -121,7 +121,7 @@
       note_parts << translator.translate(row.comment, loc)
     }
     if (row.freightTo != null) {
-      note_parts << "<i>${row.freightTo.collect{i -> i.toString(loc, true)}.join(', ')}</i> &rArr;"
+      note_parts << "<i>${row.freightTo.collect{i -> i.toString(loc, true)}.join(', ')}</i> &rarr;"
     }
     if (row.freightToTrain != null) {
       note_parts << "<i>${row.freightToTrain.collect{i -> '(&rarr; ' + i.train + ': ' + (i.freightTo.collect{j -> j.toString(loc, true)}.join(', ')) + ')'}.join(', ')}</i>"
