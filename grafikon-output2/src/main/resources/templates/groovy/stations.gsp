@@ -50,6 +50,24 @@
         loc = station.company?.locale ?: loc
         return loc
     }
+    
+    def textForCycle(text, cycle_t, loc) {
+      def str = ""
+      def name = cycle_t.name
+      if (cycle_t.adjacent && !cycle_t.in) {
+        name = cycle_t.in ? "${cycle_t.adjacent}&rarr;${name}" : "${name}&rarr;${cycle_t.adjacent}"
+      }
+      if (cycle_t.in) {
+        str = "${text}: ${name}${comment(' ', cycle_t.desc)}"
+      } else {
+        if (cycle_t.trainName == null) {
+          str = "${text}: ${name} ${translator.getText('ends', loc)}"
+        } else {
+          str = "${text}: ${name} ${translator.getText('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+        }
+      }
+      return str
+    }
 %>
 
 <%
@@ -79,14 +97,7 @@
     def engineText = translator.getText("engine", loc)
     if (row.engine != null)
       for (engine_t in row.engine) {
-        def str = ""
-        if (engine_t.in)
-          str = "${engineText}: ${engine_t.name}${comment(' ', engine_t.desc)}"
-        else
-          if (engine_t.trainName == null)
-            str = "${engineText}: ${engine_t.name} ${translator.getText('ends', loc)}"
-          else
-            str = "${engineText}: ${engine_t.name} ${translator.getText('move_to', loc)} ${engine_t.trainName} (${convertTime(engine_t.time, false)})"
+        def str = textForCycle(engineText, engine_t, loc)
         str = engine_t.start ? highlight(str) : str
         str = engine_t.helper == true ? highlightHelper(str) : str
         note_parts << str
@@ -95,28 +106,14 @@
     def trainUnitText = translator.getText("train_unit", loc)
     if (row.trainUnit != null)
       for (train_unit_t in row.trainUnit) {
-        def str = ""
-        if (train_unit_t.in)
-          str = "${trainUnitText}: ${train_unit_t.name}${comment(' ', train_unit_t.desc)}"
-        else
-          if (train_unit_t.trainName == null)
-            str = "${trainUnitText}: ${train_unit_t.name} ${translator.getText('ends', loc)}"
-          else
-            str = "${trainUnitText}: ${train_unit_t.name} ${translator.getText('move_to', loc)} ${train_unit_t.trainName} (${convertTime(train_unit_t.time, false)})"
+        def str = textForCycle(trainUnitText, train_unit_t, loc)
         note_parts << (train_unit_t.start ? highlight(str) : str)
       }
     // other
     if (row.cycle != null)
       for (cycle_t in row.cycle) {
-        def str = ""
         def cycleTypeText = translator.translate(cycle_t.type, loc)
-        if (cycle_t.in)
-          str = "${cycleTypeText}: ${cycle_t.name}${comment(' ', cycle_t.desc)}"
-        else
-          if (cycle_t.trainName == null)
-            str = "${cycleTypeText}: ${cycle_t.name} ${translator.getText('ends', loc)}"
-          else
-            str = "${cycleTypeText}: ${cycle_t.name} ${translator.getText('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+        def str = textForCycle(cycleTypeText, cycle_t, loc)
         note_parts << (cycle_t.start ? highlight(str) : str)
       }
     // comment

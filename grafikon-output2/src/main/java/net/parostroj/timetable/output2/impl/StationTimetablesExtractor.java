@@ -163,21 +163,25 @@ public class StationTimetablesExtractor {
                 // end
                 TrainsCycle cycle = item.getCycle();
                 TrainsCycleItem itemNext = nextItemF.apply(cycle, item);
-                cycles.add(new CycleWithTypeFromTo(false, false, cycle.getName(),
+                CycleWithTypeFromTo cycleFromTo = new CycleWithTypeFromTo(false, false, cycle.getName(),
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null,
-                        type.getName()));
+                        type.getName());
+                this.updateAdjacent(cycleFromTo, item, itemNext);
+                cycles.add(cycleFromTo);
             }
             if (item.getFromInterval() == interval) {
                 // start
                 TrainsCycle cycle = item.getCycle();
                 TrainsCycleItem itemPrev = previousItemF.apply(cycle, item);
-                cycles.add(new CycleWithTypeFromTo(itemPrev == null, true, cycle.getName(),
+                CycleWithTypeFromTo cycleFromTo = new CycleWithTypeFromTo(itemPrev == null, true, cycle.getName(),
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null,
-                        type.getName()));
+                        type.getName());
+                this.updateAdjacent(cycleFromTo, item, itemPrev);
+                cycles.add(cycleFromTo);
             }
         }
     }
@@ -196,6 +200,7 @@ public class StationTimetablesExtractor {
                         cycle.getDisplayDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null);
+                this.updateAdjacent(cycleFromTo, item, itemNext);
             }
             if (item.getFromInterval() == interval) {
                 // start
@@ -205,6 +210,7 @@ public class StationTimetablesExtractor {
                         cycle.getDisplayDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null);
+                this.updateAdjacent(cycleFromTo, item, itemPrev);
             }
             if (cycleFromTo != null) {
                 if (type.getName().equals(TrainsCycleType.ENGINE_CYCLE) && isHelperEngine(item)) {
@@ -245,5 +251,11 @@ public class StationTimetablesExtractor {
         return adjacentSessions ?
                 (cycle, item) -> cycle.getPreviousItemCyclic(item) :
                 (cycle, item) -> cycle.getPreviousItem(item);
+    }
+
+    private void updateAdjacent(CycleFromTo cycle, TrainsCycleItem current, TrainsCycleItem adjacent) {
+        if (adjacent != null && current.getCycle() != adjacent.getCycle()) {
+            cycle.setAdjacent(adjacent.getCycle().getName());
+        }
     }
 }

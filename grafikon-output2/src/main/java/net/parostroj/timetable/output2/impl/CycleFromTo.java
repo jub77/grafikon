@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * @author jub
  */
-@XmlType(propOrder = {"name", "desc", "trainName", "time"})
+@XmlType(propOrder = {"name", "desc", "trainName", "time", "adjacent"})
 public class CycleFromTo {
 
     private boolean in;
@@ -17,6 +17,7 @@ public class CycleFromTo {
     private String trainName;
     private String time;
     private Boolean helper;
+    private String adjacent;
 
     public CycleFromTo() {
     }
@@ -89,5 +90,13 @@ public class CycleFromTo {
 
     public void setHelper(Boolean helper) {
         this.helper = helper;
+    }
+
+    public String getAdjacent() {
+        return adjacent;
+    }
+
+    public void setAdjacent(String adjacent) {
+        this.adjacent = adjacent;
     }
 }
