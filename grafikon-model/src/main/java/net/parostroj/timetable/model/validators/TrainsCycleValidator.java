@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.validators;
 
 import java.util.ArrayList;
 
-import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.events.*;
@@ -14,20 +13,19 @@ import net.parostroj.timetable.model.events.*;
  */
 public class TrainsCycleValidator implements TrainDiagramValidator {
 
+    // list of attributes distributed through sequence of circulations
+    private static final String[] CHECKED_ATTRIBUTES = new String[] {
+            TrainsCycle.ATTR_ENGINE_CLASS,
+            TrainsCycle.ATTR_COMPANY,
+            TrainsCycle.ATTR_DESCRIPTION };
+
+    private boolean changing;
+
     @Override
     public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainsCycleEvent && event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS)) {
-            TrainsCycleEvent tcEvent = (TrainsCycleEvent) event;
-            TrainsCycle circulation = tcEvent.getSource();
-            for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(circulation.getItems())) {
-                item.getTrain().recalculate();
-            }
-            if (circulation.isPartOfSequence()) {
-                // synchronize the same engine class for all circulations in sequence
-                EngineClass engineClass = circulation.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
-                circulation.applyToSequence(tc -> tc.getAttributes().setRemove(TrainsCycle.ATTR_ENGINE_CLASS, engineClass));
-            }
-            return true;
+        boolean validated = false;
+        if (event instanceof TrainsCycleEvent) {
+            validated = handleTrainsCycleEvent(event);
         }
         if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
             TrainsCycle deleted = (TrainsCycle) ((TrainDiagramEvent) event).getObject();
@@ -35,9 +33,51 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
             if (deleted.isPartOfSequence()) {
                 deleted.removeFromSequence();
             }
-            return true;
+            validated = true;
         }
-        return false;
+        return validated;
     }
 
+    private boolean handleTrainsCycleEvent(GTEvent<?> event) {
+        boolean validated = false;
+        TrainsCycleEvent tcEvent = (TrainsCycleEvent) event;
+        TrainsCycle circulation = tcEvent.getSource();
+        boolean attribute = event.getType() == GTEventType.ATTRIBUTE;
+        if (attribute && tcEvent.getSource().isPartOfSequence()
+                && event.getAttributeChange().checkName(CHECKED_ATTRIBUTES)) {
+            distributeAttributesInSequence(circulation, tcEvent.getAttributeChange());
+            validated = true;
+        }
+        if (attribute && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS)) {
+            recalculateEngineClassChange(circulation);
+            validated = true;
+        }
+        return validated;
+    }
+
+    private void distributeAttributesInSequence(TrainsCycle circulation, AttributeChange attrChange) {
+        // suppress events if the change is initiated by validator
+        if (!changing) {
+            changing = true;
+            try {
+                // synchronize the same attribute for all circulations in sequence
+                circulation.applyToSequence(tc -> {
+                    if (TrainsCycle.ATTR_DESCRIPTION.equals(attrChange.getName())) {
+                        // special handling of description
+                        tc.setDescription((String) attrChange.getNewValue());
+                    } else {
+                        tc.getAttributes().setRemove(attrChange.getName(), attrChange.getNewValue());
+                    }
+                });
+            } finally {
+                changing = false;
+            }
+        }
+    }
+
+    private void recalculateEngineClassChange(TrainsCycle circulation) {
+        for (TrainsCycleItem item : new ArrayList<TrainsCycleItem>(circulation.getItems())) {
+            item.getTrain().recalculate();
+        }
+    }
 }
