@@ -1,19 +1,24 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
-public class Group implements ObjectWithId, Visitable, AttributesHolder {
+public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAttributes, TrainDiagramPart {
 
+    private final TrainDiagram diagram;
     /** ID. */
     private final String id;
     /** Name */
     private String name;
     /** Attributes. */
     private Attributes attributes;
+    private AttributesListener attributesListener;
 
-    Group(String id) {
+    Group(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
         this.setAttributes(new Attributes());
     }
 
@@ -22,12 +27,21 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder {
         return id;
     }
 
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange(ATTR_NAME, oldName, name), this));
+        }
     }
 
     @Override
@@ -57,7 +71,17 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder {
 
     @Override
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                diagram.fireEvent(new TrainDiagramEvent(diagram, change, Group.this));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override

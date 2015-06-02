@@ -732,7 +732,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      * @return new group
      */
     public Group createGroup(String id) {
-        return new Group(id);
+        return new Group(id, this);
     }
 
     /**
