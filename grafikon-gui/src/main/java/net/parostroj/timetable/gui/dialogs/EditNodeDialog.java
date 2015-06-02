@@ -48,7 +48,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private static final Logger log = LoggerFactory.getLogger(EditNodeDialog.class);
 
-    private static final Region NONE_REGION = new Region(null, "-");
+    private static final Wrapper<Region> NONE_REGION = Wrapper.<Region>getEmptyWrapper("-");
     private static final Wrapper<Company> EMPTY_COMPANY = Wrapper.<Company>getEmptyWrapper("-");
 
     private static class EditTrack {
@@ -158,15 +158,17 @@ public class EditNodeDialog extends javax.swing.JDialog {
         regionStartCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_REGION_START));
         updateColors();
 
-        regionComboBox.removeAllItems();
         // add current regions
-        regionComboBox.addItem(NONE_REGION);
+        this.regions = new WrapperListModel<>(false);
+        this.regions.addWrapper(NONE_REGION);
         for (Region region : node.getDiagram().getNet().getRegions().get()) {
-            regionComboBox.addItem(region);
+            this.regions.addWrapper(Wrapper.getWrapper(region));
         }
+        this.regionComboBox.setModel(regions);
+
         // select region ...
         Region region = node.getAttributes().get(Node.ATTR_REGION, Region.class);
-        regionComboBox.setSelectedItem(region == null ? NONE_REGION : region);
+        regionComboBox.setSelectedItem(region == null ? NONE_REGION : Wrapper.getWrapper(region));
 
         // set node length
         Integer length = node.getAttribute(Node.ATTR_LENGTH, Integer.class);
@@ -270,14 +272,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         node.getAttributes().setRemove(Node.ATTR_FREIGHT_COLORS, colors);
 
         // region
-        Region region = (Region) regionComboBox.getSelectedItem();
-        if (region == NONE_REGION) {
-            region = null;
-        }
-        node.getAttributes().setRemove(Node.ATTR_REGION, region);
+        node.getAttributes().setRemove(Node.ATTR_REGION, regions.getSelectedObject());
 
         // company
-        node.setAttribute(Node.ATTR_COMPANY, companies.getSelectedObject());
+        node.getAttributes().setRemove(Node.ATTR_COMPANY, companies.getSelectedObject());
     }
 
     private void getBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Unit unit, String attribute) {
@@ -316,7 +314,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         javax.swing.JLabel companyLabel = new javax.swing.JLabel();
 
-        regionComboBox = new javax.swing.JComboBox<Region>();
+        regionComboBox = new javax.swing.JComboBox<Wrapper<Region>>();
         companyComboBox = new javax.swing.JComboBox<Wrapper<Company>>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -709,7 +707,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JList<EditTrack> trackList;
     private javax.swing.JCheckBox trapezoidCheckBox;
     private javax.swing.JComboBox<Wrapper<NodeType>> typeComboBox;
-    private javax.swing.JComboBox<Region> regionComboBox;
+    private javax.swing.JComboBox<Wrapper<Region>> regionComboBox;
     private javax.swing.JComboBox<Wrapper<Company>> companyComboBox;
     private javax.swing.JCheckBox regionStartCheckBox;
     private javax.swing.JButton colorsButton;
@@ -721,4 +719,5 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox sSpeedCheckBox;
 
     private WrapperListModel<Company> companies;
+    private WrapperListModel<Region> regions;
 }

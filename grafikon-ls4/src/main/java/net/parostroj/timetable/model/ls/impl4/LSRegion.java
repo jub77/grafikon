@@ -52,7 +52,7 @@ public class LSRegion {
     }
 
     public Region createRegion(TrainDiagram diagram) throws LSException {
-        Region region = new Region(id, name);
+        Region region = diagram.createRegion(id, name);
         region.setAttributes(attributes.createAttributes(diagram));
         return region;
     }

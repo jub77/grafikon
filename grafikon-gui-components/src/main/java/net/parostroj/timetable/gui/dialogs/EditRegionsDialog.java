@@ -43,7 +43,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region> {
 
     @Override
     protected Region createNew(String name) {
-        return new Region(IdGenerator.getInstance().getId(), name);
+        return diagram.createRegion(IdGenerator.getInstance().getId(), name);
     }
 
     @Override

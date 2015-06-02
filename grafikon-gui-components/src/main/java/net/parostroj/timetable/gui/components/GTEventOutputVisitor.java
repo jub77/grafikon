@@ -38,6 +38,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Company: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof Group)
                     str.append("    Group: ").append(event.getObject().toString()).append('\n');
+                if (event.getObject() instanceof Region)
+                    str.append("    Region: ").append(event.getObject().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
                 if (event.getObject() instanceof Train)

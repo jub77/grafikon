@@ -1,5 +1,9 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.AttributesListener;
+import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -8,16 +12,29 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes {
+public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart {
 
+    private final TrainDiagram diagram;
     private final String id;
     private String name;
     private Attributes attributes;
+    private AttributesListener attributesListener;
 
-    public Region(String id, String name) {
+    Region(String id, String name, TrainDiagram diagram) {
         this.id = id;
         this.name = name;
+        this.diagram = diagram;
         this.setAttributes(new Attributes());
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     @Override
@@ -42,12 +59,17 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     @Override
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-    }
+        this.attributesListener = new AttributesListener() {
 
-    @Override
-    public String getId() {
-        return id;
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     public String getName() {
@@ -55,7 +77,11 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange(ATTR_NAME, oldName, name), this));
+        }
     }
 
     @Override

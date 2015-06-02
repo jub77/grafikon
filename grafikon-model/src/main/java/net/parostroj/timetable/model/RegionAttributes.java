@@ -7,5 +7,6 @@ package net.parostroj.timetable.model;
  */
 public interface RegionAttributes {
 
+    public static final String ATTR_NAME = "name";
     public static final String ATTR_LOCALE = "locale";
 }

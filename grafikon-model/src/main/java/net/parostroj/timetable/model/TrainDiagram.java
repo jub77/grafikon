@@ -736,6 +736,17 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     /**
+     * Creates region.
+     *
+     * @param id id
+     * @param name name of region
+     * @return new region
+     */
+    public Region createRegion(String id, String name) {
+        return new Region(id, name, this);
+    }
+
+    /**
      * Creates company.
      *
      * @param id id
