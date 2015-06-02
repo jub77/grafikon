@@ -21,15 +21,23 @@ public class TransformVisitor implements EventVisitor {
         DiagramChange.Type type = converter.getType(event.getType());
         DiagramChange.Action action = converter.getAction(event.getType());
         if (type != null) {
-            if (action == null)
+            if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
-            change = new DiagramChange(type, action, ((ObjectWithId)event.getObject()).getId());
+            }
+            change = new DiagramChange(type, action, ((ObjectWithId) event.getObject()).getId());
             // get name
             change.setObject(this.getObjectStr(event.getObject()));
         } else {
-            change = new DiagramChange(DiagramChange.Type.DIAGRAM, action, event.getSource().getId()/*event.getObject() != null ? ((ObjectWithId) event.getObject()).getId(): event.getSource().getId()*/);
-            if (action == null)
+            change = new DiagramChange(DiagramChange.Type.DIAGRAM, action,
+                    event.getType() == GTEventType.OBJECT_ATTRIBUTE ?
+                            ((ObjectWithId) event.getObject()).getId() :
+                            event.getSource().getId());
+            if (event.getType() == GTEventType.OBJECT_ATTRIBUTE) {
+                change.setObject(this.getObjectStr(event.getObject()));
+            }
+            if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
+            }
             this.addDescription(event);
         }
     }
@@ -207,6 +215,7 @@ public class TransformVisitor implements EventVisitor {
         switch (event.getType()) {
             case ATTRIBUTE:
             case FREIGHT_NET_CONNECTION_ATTRIBUTE:
+            case OBJECT_ATTRIBUTE:
                 // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();
                 change.addDescription(new DiagramChangeDescription(desc,

@@ -26,6 +26,12 @@ public class TrainDiagramEvent extends GTEvent<TrainDiagram> {
         setAttributeChange(attributeChange);
     }
 
+    public TrainDiagramEvent(TrainDiagram diagram, AttributeChange attributeChange, Object object) {
+        super(diagram, GTEventType.OBJECT_ATTRIBUTE);
+        setAttributeChange(attributeChange);
+        this.object = object;
+    }
+
     public Object getObject() {
         return object;
     }

@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.Locale;
 
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -10,14 +11,17 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable {
+public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart {
 
     private final String id;
+    private final TrainDiagram diagram;
 
     private Attributes attributes;
+    private AttributesListener attributesListener;
 
-    Company(String id) {
+    Company(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
         this.setAttributes(new Attributes());
     }
 
@@ -26,12 +30,27 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
         return id;
     }
 
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
+    }
+
     public Attributes getAttributes() {
         return attributes;
     }
 
     public void setAttributes(Attributes attributes) {
+        if (this.attributes != null && attributesListener != null)
+            this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
+        this.attributesListener = new AttributesListener() {
+
+            @Override
+            public void attributeChanged(Attributes attributes, AttributeChange change) {
+                diagram.fireEvent(new TrainDiagramEvent(diagram, change, Company.this));
+            }
+        };
+        this.attributes.addListener(attributesListener);
     }
 
     @Override

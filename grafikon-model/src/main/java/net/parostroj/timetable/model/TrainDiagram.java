@@ -742,7 +742,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      * @return new company
      */
     public Company createCompany(String id) {
-        return new Company(id);
+        return new Company(id, this);
     }
 
     /**
