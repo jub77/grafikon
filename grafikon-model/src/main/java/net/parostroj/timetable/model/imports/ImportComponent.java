@@ -10,6 +10,8 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public enum ImportComponent {
+    COMPANIES("import.companies", Company.class),
+    REGIONS("import.regions", Region.class),
     NODES("import.stations", Node.class),
     LINE_CLASSES("import.line_classes", LineClass.class),
     LINES("import.lines", Line.class),
@@ -42,6 +44,12 @@ public enum ImportComponent {
             return Collections.emptySet();
         Set<ObjectWithId> map = new LinkedHashSet<ObjectWithId>();
         switch (this) {
+            case COMPANIES:
+                map.addAll(diagram.getCompanies().get());
+                break;
+            case REGIONS:
+                map.addAll(diagram.getNet().getRegions().get());
+                break;
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
                 break;

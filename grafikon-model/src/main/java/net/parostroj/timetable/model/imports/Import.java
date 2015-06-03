@@ -348,6 +348,10 @@ public abstract class Import {
     public static Import getInstance(ImportComponent components, TrainDiagram diagram,
             TrainDiagram library, ImportMatch match) {
         switch (components) {
+            case COMPANIES:
+                return new CompanyImport(diagram, library, match);
+            case REGIONS:
+                return new RegionImport(diagram, library, match);
             case NODES:
                 return new NodeImport(diagram, library, match);
             case TRAINS:
