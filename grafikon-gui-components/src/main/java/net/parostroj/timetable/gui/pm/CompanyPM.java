@@ -26,10 +26,8 @@ public class CompanyPM extends AbstractPM {
     private WeakReference<Company> companyRef;
 
     public CompanyPM(Collection<Locale> locales) {
-        List<Locale> localeList = new ArrayList<Locale>(locales.size() + 1);
-        localeList.add(null);
-        localeList.addAll(locales);
-        locale = new EnumeratedValuesPM<Locale>(localeList, l -> {return l != null ? l.getDisplayName() : "-";});
+        locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
+                locales, l -> l.getDisplayName()), "-");
         abbr.setEditable(false);
         PMManager.setup(this);
     }

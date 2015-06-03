@@ -23,10 +23,8 @@ public class RegionPM extends AbstractPM {
     private WeakReference<Region> regionRef;
 
     public RegionPM(Collection<Locale> locales) {
-        List<Locale> localeList = new ArrayList<Locale>(locales.size() + 1);
-        localeList.add(null);
-        localeList.addAll(locales);
-        locale = new EnumeratedValuesPM<Locale>(localeList, l -> {return l != null ? l.getDisplayName() : "-";});
+        locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
+                locales, l -> l.getDisplayName()), "-");
         name.setEditable(false);
         PMManager.setup(this);
     }

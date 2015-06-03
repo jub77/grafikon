@@ -23,7 +23,8 @@ public class NewModelPM extends AbstractPM {
     private static final double SELECTION_MAX_TIME_SCALE = 10.0;
     private static final double TIME_SCALE_STEP = 0.5;
 
-    final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<Scale>(Scale.getPredefined(), i -> i.getName());
+    final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<Scale>(EnumeratedValuesPM.createValueMap(
+            Scale.getPredefined(), i -> i.getName()));
     final BigDecimalPM timeScale = new BigDecimalPM();
     final IEnumeratedValuesPM<Template> template;
 
@@ -48,7 +49,8 @@ public class NewModelPM extends AbstractPM {
         });
         timeScale.setBigDecimal(BigDecimal.valueOf(INIT_TIME_SCALE));
         // templates
-        template = new EnumeratedValuesPM<Template>(TemplatesLoader.getTemplates(), i -> i.getName());
+        template = new EnumeratedValuesPM<Template>(EnumeratedValuesPM.createValueMap(TemplatesLoader.getTemplates(),
+                i -> i.getName()));
         // setup
         PMManager.setup(this);
     }

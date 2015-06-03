@@ -20,7 +20,8 @@ public class OutputSettingsPM extends AbstractPM {
     private OutputSettings settings;
 
     public OutputSettingsPM(final Map<Locale, String> localeMap) {
-        locale = new EnumeratedValuesPM<Locale>(localeMap.keySet(), i -> localeMap.get(i));
+        locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(localeMap.keySet(),
+                i -> localeMap.get(i)));
         PMManager.setup(this);
     }
 

@@ -75,9 +75,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
         outputSettingsPM = new OutputSettingsPM(languageLoader.getLocaleMap("system"));
         final Map<Locale, String> localeMap = languageLoader.getLocaleMap("system");
-        locale = new EnumeratedValuesPM<Locale>(localeMap.keySet(), i -> localeMap.get(i));
+        locale = new EnumeratedValuesPM<Locale>(localeMap);
         final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
-        lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap.keySet(), i -> lookAndFeelMap.get(i));
+        lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap);
         PMManager.setup(this);
     }
 

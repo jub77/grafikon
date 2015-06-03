@@ -522,7 +522,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // look and feel
         BnButtonGroup<String> lafBGroup = new BnButtonGroup<String>();
         for (String key : model.lookAndFeel.getValues()) {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(model.lookAndFeel.getConversion().toString(key));
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(model.lookAndFeel.getOptions().get(key));
             lafBGroup.add(item, key);
             lookAndFeelMenu.add(item);
         }

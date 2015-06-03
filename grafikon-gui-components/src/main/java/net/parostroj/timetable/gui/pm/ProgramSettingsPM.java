@@ -21,8 +21,10 @@ public class ProgramSettingsPM extends AbstractPM {
     private WeakReference<ProgramSettings> settingsRef;
 
     public ProgramSettingsPM() {
-        speed = new EnumeratedValuesPM<SpeedUnit>(Arrays.asList(SpeedUnit.KMPH, SpeedUnit.MPH), i -> i.toString());
-        length = new EnumeratedValuesPM<LengthUnit>(LengthUnit.getScaleDependent(), i -> i.toString());
+        speed = new EnumeratedValuesPM<SpeedUnit>(EnumeratedValuesPM.createValueMap(
+                Arrays.asList(SpeedUnit.KMPH, SpeedUnit.MPH), i -> i.toString()));
+        length = new EnumeratedValuesPM<LengthUnit>(EnumeratedValuesPM.createValueMap(LengthUnit.getScaleDependent(),
+                i -> i.toString()));
         PMManager.setup(this);
     }
 
