@@ -18,6 +18,7 @@ public enum ImportComponent {
     ROUTES("import.routes", Route.class),
     TRAIN_TYPES("import.train_types", TrainType.class),
     ENGINE_CLASSES("import.engine_classes", EngineClass.class),
+    GROUPS("import.groups", Group.class),
     TRAINS("import.trains", Train.class),
     TRAINS_CYCLE_TYPES("import.cycle_types", TrainsCycleType.class),
     TRAINS_CYCLES("import.cycles", TrainsCycle.class),
@@ -52,6 +53,9 @@ public enum ImportComponent {
                 break;
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
+                break;
+            case GROUPS:
+                map.addAll(diagram.getGroups());
                 break;
             case TRAINS:
                 map.addAll(diagram.getTrains());

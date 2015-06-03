@@ -354,6 +354,8 @@ public abstract class Import {
                 return new RegionImport(diagram, library, match);
             case NODES:
                 return new NodeImport(diagram, library, match);
+            case GROUPS:
+                return new GroupImport(diagram, library, match);
             case TRAINS:
                 return new TrainImport(diagram, library, match);
             case TRAIN_TYPES:
