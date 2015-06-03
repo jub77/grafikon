@@ -52,25 +52,33 @@ public abstract class Import {
     }
 
     protected ObjectWithId getObjectWithId(ObjectWithId orig) {
-        if (orig instanceof TrainType)
-            return this.getTrainType((TrainType) orig);
-        else if (orig instanceof Train)
-            return this.getTrain((Train) orig);
-        else if (orig instanceof Node)
-            return this.getNode((Node) orig);
-        else if (orig instanceof LineClass)
-            return this.getLineClass((LineClass) orig);
-        else if (orig instanceof EngineClass)
-            return this.getEngineClass((EngineClass) orig);
-        else if (orig instanceof Group)
-            return this.getGroup((Group) orig);
-        else if (orig instanceof OutputTemplate)
-            return this.getOutputTemplate((OutputTemplate) orig);
-        else if (orig instanceof TrainsCycle) {
-            return this.getCycle((TrainsCycle) orig);
+        ObjectWithId foundObject = null;
+        if (orig instanceof TrainType) {
+            foundObject = this.getTrainType((TrainType) orig);
+        } else if (orig instanceof Train) {
+            foundObject = this.getTrain((Train) orig);
+        } else if (orig instanceof Node) {
+            foundObject = this.getNode((Node) orig);
+        } else if (orig instanceof LineClass) {
+            foundObject = this.getLineClass((LineClass) orig);
+        } else if (orig instanceof EngineClass) {
+            foundObject = this.getEngineClass((EngineClass) orig);
+        } else if (orig instanceof Group) {
+            foundObject = this.getGroup((Group) orig);
+        } else if (orig instanceof OutputTemplate) {
+            foundObject = this.getOutputTemplate((OutputTemplate) orig);
+        } else if (orig instanceof TrainsCycle) {
+            foundObject = this.getCycle((TrainsCycle) orig);
+        } else if (orig instanceof Region) {
+            foundObject = this.getRegion((Region) orig);
+        } else if (orig instanceof Company) {
+            foundObject = this.getCompany((Company) orig);
         }
-        else
-            return null;
+        // fallback in case of ID match (not listed items) ...
+        if (match == ImportMatch.ID) {
+            foundObject = diagram.getObjectById(orig.getId());
+        }
+        return foundObject;
     }
 
     protected TrainType getTrainType(TrainType origType) {
@@ -96,6 +104,30 @@ public abstract class Import {
             for (Group g : diagram.getGroups()) {
                 if (g.getName().equals(origGroup.getName()))
                     return g;
+            }
+        }
+        return null;
+    }
+
+    protected Company getCompany(Company origCompany) {
+        if (match == ImportMatch.ID) {
+            return diagram.getCompanyById(origCompany.getId());
+        } else {
+            for (Company c : diagram.getCompanies()) {
+                if (c.getAbbr().equals(origCompany.getAbbr()))
+                    return c;
+            }
+        }
+        return null;
+    }
+
+    protected Region getRegion(Region origRegion) {
+        if (match == ImportMatch.ID) {
+            return diagram.getNet().getRegionById(origRegion.getId());
+        } else {
+            for (Region r : diagram.getNet().getRegions()) {
+                if (r.getName().equals(origRegion.getName()))
+                    return r;
             }
         }
         return null;
@@ -251,10 +283,12 @@ public abstract class Import {
         for (Map.Entry<String, Object> entry : orig.entrySet()) {
             if (entry.getValue() instanceof ObjectWithId) {
                 ObjectWithId objectWithId = this.getObjectWithId((ObjectWithId) entry.getValue());
-                if (objectWithId == null)
-                    log.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId)entry.getValue()).getId(), entry.getValue().getClass());
-                else
+                if (objectWithId == null) {
+                    log.warn("Couldn't find object with id: {} class: {}", ((ObjectWithId) entry.getValue()).getId(),
+                            entry.getValue().getClass());
+                } else {
                     dest.set(entry.getKey(), objectWithId);
+                }
             } else {
                 dest.set(entry.getKey(), entry.getValue());
             }
