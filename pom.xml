@@ -29,7 +29,7 @@
         <xmlgraphics.version>1.5</xmlgraphics.version>
         <ini4j.version>0.5.2</ini4j.version>
         <guava.version>18.0</guava.version>
-        <beanfabrics.version>1.4.0</beanfabrics.version>
+        <beanfabrics.version>1.4.2</beanfabrics.version>
         <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
     </properties>
 
