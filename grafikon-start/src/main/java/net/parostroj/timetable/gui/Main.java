@@ -41,7 +41,7 @@ public class Main {
             setDebug();
         }
         setLookAndFeel();
-        ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 290, 103, Main.class.getResource("/images/splashscreen.png"));
+        ApplicationStarter<MainFrame> starter = new ApplicationStarter<MainFrame>(MainFrame.class, 292, 102, Main.class.getResource("/images/splashscreen.png"));
         starter.setAction(new AfterStartAction<MainFrame>() {
 
             @Override

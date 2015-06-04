@@ -1,15 +1,10 @@
 package net.parostroj.timetable.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Toolkit;
+import java.awt.*;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,11 +90,11 @@ class ImagePanel extends JPanel {
         Graphics2D g2d = (Graphics2D)g;
 
         if (text != null) {
+            g.setFont(new Font("SansSerif", Font.BOLD, 11).deriveFont(11.5f));
+            g.setColor(Color.BLACK);
             int posY = y;
             int incY = (int)g.getFont().getStringBounds("YMHC", g2d.getFontRenderContext()).getHeight() + 3;
             for (String str : text) {
-                g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
-                g.setColor(Color.BLACK);
                 log.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;

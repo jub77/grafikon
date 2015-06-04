@@ -35,13 +35,12 @@ public class SplashScreenInfoOrig implements SplashScreenInfo {
         g.fillRect(0, 0, size.width, size.height);
         g.setPaintMode();
         if (text != null) {
-            g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
+            g.setFont(new Font("SansSerif", Font.BOLD, 11).deriveFont(11.5f));
             String[] texts = text.split("\n");
+            g.setColor(Color.BLACK);
             int posY = y;
             int incY = (int)g.getFont().getStringBounds("YMHC", g.getFontRenderContext()).getHeight() + 3;
             for (String str : texts) {
-                g.setFont(g.getFont().deriveFont(12.0f).deriveFont(Font.BOLD));
-                g.setColor(Color.BLACK);
                 log.trace(String.format("Text %d,%d,%s", x, posY, str));
                 g.drawString(str, x, posY);
                 posY += incY;
