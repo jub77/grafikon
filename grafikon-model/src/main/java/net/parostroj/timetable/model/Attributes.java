@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Class for attributes (train or node).
@@ -106,6 +107,18 @@ public class Attributes implements Map<String, Object> {
 
     public <T> T get(String name, Class<T> clazz, T defaultValue) {
         return this.get(name, null, clazz, defaultValue);
+    }
+
+    public <T> Collection<T> getAsCollection(String name, Class<T> clazz) {
+        return this.getAsCollection(name, clazz, null);
+    }
+
+    public <T> Collection<T> getAsCollection(String name, Class<T> clazz, Collection<T> defaultValue) {
+        Object object = this.get(name, null, Object.class, defaultValue);
+        if (object != null && !(object instanceof List)) {
+            throw new ClassCastException("Wrong type: " + object.getClass());
+        }
+        return ObjectsUtil.checkCollection((Collection<?>) object, clazz);
     }
 
     public Object get(String name, String category) {

@@ -35,6 +35,7 @@ public class LanguageLoader {
     private static final Logger log = LoggerFactory.getLogger(LanguageLoader.class);
 
     private final Map<LanguagesType, List<Locale>> locales;
+    private final List<Locale> availableLocales;
 
     private static final LanguageLoader loader = new LanguageLoader();
 
@@ -49,6 +50,7 @@ public class LanguageLoader {
             List<Locale> ls = getLocales(properties, type.getKey());
             locales.put(type, ls);
         }
+        availableLocales = this.initAvailableLocales();
     }
 
     private List<Locale> getLocales(Properties properties, String key) {
@@ -73,8 +75,23 @@ public class LanguageLoader {
         return langProps;
     }
 
+    private List<Locale> initAvailableLocales() {
+        List<Locale> available = new ArrayList<>();
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (!"".equals(locale.getLanguage()) && "".equals(locale.getCountry())) {
+                // only language (and no country)
+                available.add(locale);
+            }
+        }
+        return available;
+    }
+
     public List<Locale> getLocales(LanguagesType type) {
         return locales.get(type);
+    }
+
+    public List<Locale> getAvailableLocales() {
+        return availableLocales;
     }
 
     public Map<Locale, String> createMap(List<Locale> locales) {

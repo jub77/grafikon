@@ -26,14 +26,30 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     }
 
     /**
+     * shows dialog and returns list of selected elements.
+     *
+     * @see #selectElements(List, List)
+     *
+     * @param list list of elements
+     * @return list of selected elements
+     */
+    public List<T> selectElements(List<? extends T> list) {
+        return this.selectElements(list, null);
+    }
+
+    /**
      * shows dialog and returns list of selected elements. It returns
      * <code>null</code> in case cancel was pressed.
      *
      * @param list list of element from which the selection is done
+     * @param selected already selected elements
      * @return list of selected elements
      */
-    public List<T> selectElements(List<? extends T> list) {
+    public List<T> selectElements(List<? extends T> list, List<? extends T> selected) {
         elementSelectionPanel.setListForSelection(Wrapper.getWrapperList(list));
+        if (selected != null) {
+            elementSelectionPanel.addSelected(Wrapper.getWrapperList(selected));
+        }
         setVisible(true);
         if (ok)
             return this.getElements(elementSelectionPanel.getSelectedList());

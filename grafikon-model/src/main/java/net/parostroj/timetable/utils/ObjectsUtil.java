@@ -1,7 +1,6 @@
 package net.parostroj.timetable.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ObjectsUtil {
 
@@ -42,5 +41,19 @@ public class ObjectsUtil {
             }
         }
         return dest;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Collection<T> checkCollection(Collection<?> orig, Class<T> clazz) {
+        if (orig == null) {
+            return null;
+        } else {
+            for (Object o : orig) {
+                if (!clazz.isInstance(o)) {
+                    throw new ClassCastException("Wrong class: " + o.getClass());
+                }
+            }
+            return (Collection<T>) orig;
+        }
     }
 }
