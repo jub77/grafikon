@@ -12,7 +12,6 @@ import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -23,12 +22,9 @@ import net.parostroj.timetable.model.*;
 public class LocalizationView extends JPanel {
 
     private final JTable table;
-    private final LanguageLoader languageLoader;
     private TrainDiagram diagram;
 
     public LocalizationView(LanguageLoader languageLoader) {
-        this.languageLoader = languageLoader;
-
         setLayout(new BorderLayout(0, 0));
 
         JScrollPane scrollPane = new JScrollPane();
@@ -135,7 +131,6 @@ public class LocalizationView extends JPanel {
     }
 
     private void initModel() {
-        Map<Locale, String> lMap = languageLoader.createMap(languageLoader.getLocales(LanguagesType.OUTPUT));
-        table.setModel(new LocalizationViewModel(diagram.getLocalization(), lMap));
+        table.setModel(new LocalizationViewModel(diagram.getLocalization()));
     }
 }

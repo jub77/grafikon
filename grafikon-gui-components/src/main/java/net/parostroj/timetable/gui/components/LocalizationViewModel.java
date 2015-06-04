@@ -17,15 +17,13 @@ import net.parostroj.timetable.utils.Pair;
 public class LocalizationViewModel extends AbstractTableModel {
 
     private final Localization localization;
-    private final Map<Locale, String> localeMap;
 
     private List<Pair<String, Locale>> columns;
     private List<String> keys;
 
 
-    public LocalizationViewModel(Localization localization, Map<Locale, String> localeMap) {
+    public LocalizationViewModel(Localization localization) {
         this.localization = localization;
-        this.localeMap = localeMap;
     }
 
     @Override
@@ -68,10 +66,9 @@ public class LocalizationViewModel extends AbstractTableModel {
 
     private List<Pair<String, Locale>> getColumnsImpl() {
         if (columns == null) {
-            Map<Locale, String> map = localeMap;
             columns = new ArrayList<Pair<String, Locale>>(localization.getLocales().size());
             for (Locale l : localization.getLocales()) {
-                columns.add(new Pair<String, Locale>(map.get(l), l));
+                columns.add(new Pair<String, Locale>(l.getDisplayName(l), l));
             }
             Collections.sort(columns, new Comparator<Pair<String, Locale>>() {
                 @Override
@@ -83,7 +80,7 @@ public class LocalizationViewModel extends AbstractTableModel {
                     } else if (o2.first == null) {
                         return 1;
                     } else {
-                        return o1.first.compareTo(o2.first);
+                        return o1.second.toString().compareTo(o2.second.toString());
                     }
                 }
             });
