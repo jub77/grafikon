@@ -8,7 +8,8 @@ import java.util.*;
 
 import javax.swing.*;
 
-import net.parostroj.timetable.gui.dialogs.LanguagesDialog;
+import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
@@ -75,8 +76,12 @@ public class LocalizationView extends JPanel {
         languagesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LanguagesDialog dialog = new LanguagesDialog(null, languageLoader);
-                Set<Locale> newSelection = dialog.showDialog(LocalizationView.this, diagram.getLocalization().getLocales());
+                ElementSelectionDialog<Locale> dialog = new ElementSelectionDialog<Locale>(GuiComponentUtils
+                        .getWindow(LocalizationView.this), true);
+                dialog.setLocationRelativeTo(LocalizationView.this);
+
+                Collection<Locale> currentLocales = diagram.getLocalization().getLocales();
+                List<Locale> newSelection = dialog.selectElements(languageLoader.getAvailableLocales(), currentLocales);
                 if (newSelection != null) {
                     // add
                     for (Locale l : newSelection) {

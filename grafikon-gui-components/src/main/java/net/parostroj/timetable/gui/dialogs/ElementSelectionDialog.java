@@ -5,8 +5,11 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.Window;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
@@ -20,8 +23,8 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     private boolean ok = false;
 
     /** Creates new form ElementSelectionDialog */
-    public ElementSelectionDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ElementSelectionDialog(Window parent, boolean modal) {
+        super(parent, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
         initComponents();
     }
 
@@ -45,7 +48,7 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
      * @param selected already selected elements
      * @return list of selected elements
      */
-    public List<T> selectElements(List<? extends T> list, List<? extends T> selected) {
+    public List<T> selectElements(Collection<? extends T> list, Collection<? extends T> selected) {
         elementSelectionPanel.setListForSelection(Wrapper.getWrapperList(list));
         if (selected != null) {
             elementSelectionPanel.addSelected(Wrapper.getWrapperList(selected));
