@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import javax.script.ScriptEngineManager;
 import javax.swing.*;
 
 import net.parostroj.timetable.actions.scripts.ScriptAction;
@@ -74,9 +75,37 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
-        String version = getVersion(false);
-        info.setText("Starting Grafikon...\n" + version);
+        log.debug("Version: {}", getVersion(true));
+        this.initAndPreload(info);
+        info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
+        info.setText(getInfoText("Grafikon started..."));
+    }
+
+    private void initAndPreload(SplashScreenInfo info) {
+        // preload FileLoadSave
+        info.setText(getInfoText("Registering LS..."));
+        LSFileFactory.getInstance();
+
+        // initialize groovy
+        info.setText(getInfoText("Initializing Groovy..."));
+        new GroovyShell().parse("");
+
+        // initialize javascript
+        info.setText(getInfoText("Initializing JavaScript..."));
+        new ScriptEngineManager().getEngineByName("javascript");
+
+        // preload file dialogs
+        info.setText(getInfoText("Preloading dialogs..."));
+        FileChooserFactory fcf = FileChooserFactory.getInstance();
+        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
+        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
+        fcf.getFileChooser(FileChooserFactory.Type.GTM);
+    }
+
+    private String getInfoText(String txt) {
+        log.debug(txt);
+        return String.format("%s\n%s", getVersion(false), txt);
     }
 
     private String getVersion(boolean complete) {
@@ -166,18 +195,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         } catch (IOException e) {
             log.error("Error loading preferences.", e);
         }
-
-        // preload file dialogs
-        FileChooserFactory fcf = FileChooserFactory.getInstance();
-        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
-        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
-        fcf.getFileChooser(FileChooserFactory.Type.GTM);
-
-        // preload FileLoadSave
-        LSFileFactory.getInstance();
-
-        // initialize groovy
-        new GroovyShell().parse("");
 
         // add predefined scripts
         for (ScriptAction sd : model.getScriptsLoader().getScriptActions()) {
