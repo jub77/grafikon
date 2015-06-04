@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,26 +16,56 @@ import org.slf4j.LoggerFactory;
  */
 public class LanguageLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(LanguageLoader.class);
+    public enum LanguagesType {
+        GUI("locales.gui"), OUTPUT("locales.output");
 
-    private final List<Pair<String, Locale>> languages;
-    private Map<Locale, String> languagesMap;
-    private List<Locale> locales;
+        private String key;
 
-    public LanguageLoader() {
-        Properties properties = getLanguages();
-        List<Pair<String, Locale>> list = new ArrayList<Pair<String, Locale>>(properties.size());
-        for (Map.Entry<Object,Object> entry : properties.entrySet()) {
-            Locale language = Locale.forLanguageTag((String) entry.getKey());
-            String text = (String)entry.getValue();
-            list.add(new Pair<String, Locale>(text, language));
+        private LanguagesType(String key) {
+            this.key = key;
         }
-        languages = list;
+
+        public String getKey() {
+            return key;
+        }
     }
 
-    private Properties getLanguages() {
+    private static final String LANGUAGES_PROPERTIES = "/languages.properties";
+
+    private static final Logger log = LoggerFactory.getLogger(LanguageLoader.class);
+
+    private final Map<LanguagesType, List<Locale>> locales;
+
+    private static final LanguageLoader loader = new LanguageLoader();
+
+    public static LanguageLoader getInstance() {
+        return loader;
+    }
+
+    private LanguageLoader() {
+        Properties properties = getLanguageProperties();
+        locales = new EnumMap<>(LanguagesType.class);
+        for (LanguagesType type : LanguagesType.values()) {
+            List<Locale> ls = getLocales(properties, type.getKey());
+            locales.put(type, ls);
+        }
+    }
+
+    private List<Locale> getLocales(Properties properties, String key) {
+        String property = properties.getProperty(key, "");
+        List<Locale> locales = new ArrayList<>();
+        for (String lang : property.split(",")) {
+            Locale locale = Locale.forLanguageTag(lang);
+            if (locale != null) {
+                locales.add(locale);
+            }
+        }
+        return locales;
+    }
+
+    private Properties getLanguageProperties() {
         Properties langProps = new Properties();
-        try (InputStream stream = LanguageLoader.class.getResourceAsStream("/languages.properties")) {
+        try (InputStream stream = LanguageLoader.class.getResourceAsStream(LANGUAGES_PROPERTIES)) {
             langProps.load(stream);
         } catch (IOException e) {
             log.error("Error loading languages.", e);
@@ -43,45 +73,15 @@ public class LanguageLoader {
         return langProps;
     }
 
-    public List<Locale> getLocales() {
-        if (locales == null) {
-            List<Pair<String,Locale>> list = getLocalesAndTexts();
-            List<Locale> result = new ArrayList<Locale>(list.size());
-            for (Pair<String, Locale> pair : list) {
-                result.add(pair.second);
-            }
-            locales = result;
-        }
-        return locales;
+    public List<Locale> getLocales(LanguagesType type) {
+        return locales.get(type);
     }
 
-    public List<Pair<String, Locale>> getLocalesAndTexts() {
-        return languages;
+    public Map<Locale, String> createMap(List<Locale> locales) {
+        return EnumeratedValuesPM.createValueMap(locales, l -> l.getDisplayName(l));
     }
 
-    public List<Pair<String, Locale>> getLocalesAndTexts(String systemLocale) {
-        List<Pair<String, Locale>> list = getLocalesAndTexts();
-        List<Pair<String, Locale>> result = new ArrayList<Pair<String,Locale>>(list.size() + 1);
-        result.add(new Pair<String, Locale>(systemLocale, null));
-        result.addAll(list);
-        return result;
-    }
-
-    public Map<Locale, String> getLocaleMap() {
-        if (languagesMap == null) {
-            List<Pair<String, Locale>> list = getLocalesAndTexts();
-            Map<Locale, String> map = new HashMap<Locale, String>();
-            for (Pair<String, Locale> pair : list) {
-                map.put(pair.second, pair.first);
-            }
-            languagesMap = map;
-        }
-        return languagesMap;
-    }
-
-    public Map<Locale, String> getLocaleMap(String systemLocale) {
-        Map<Locale, String> map = new HashMap<Locale, String>(this.getLocaleMap());
-        map.put(null, systemLocale);
-        return map;
+    public Map<Locale, String> createMap(List<Locale> locales, String system) {
+        return EnumeratedValuesPM.createValueMapWithNull(locales, l -> l == null ? system : l.getDisplayName(l));
     }
 }

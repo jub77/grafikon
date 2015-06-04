@@ -70,8 +70,19 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
         return this.getOptions();
     }
 
+    public static <V> Map<V, String> createValueMapWithNull(Collection<? extends V> values, WrapperConversion<V> conversion) {
+        final Map<V, String> conversionMap = new LinkedHashMap<V, String>();
+        conversionMap.put(null, conversion.toString(null));
+        return createValueMapImpl(values, conversion, conversionMap);
+    }
+
     public static <V> Map<V, String> createValueMap(Collection<? extends V> values, WrapperConversion<V> conversion) {
         final Map<V, String> conversionMap = new LinkedHashMap<V, String>();
+        return createValueMapImpl(values, conversion, conversionMap);
+    }
+
+    private static <V> Map<V, String> createValueMapImpl(Collection<? extends V> values, WrapperConversion<V> conversion,
+            final Map<V, String> conversionMap) {
         for (V value : values) {
             conversionMap.put(value, conversion.toString(value));
         }

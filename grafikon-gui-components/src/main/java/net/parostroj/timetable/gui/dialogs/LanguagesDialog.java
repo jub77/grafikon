@@ -9,7 +9,7 @@ import javax.swing.JCheckBox;
 
 import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.utils.Pair;
+import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 
 /**
  * Dialog of displayed languages.
@@ -27,21 +27,19 @@ public class LanguagesDialog extends javax.swing.JDialog {
     public LanguagesDialog(Window parent, LanguageLoader languageLoader) {
         super(parent, ModalityType.APPLICATION_MODAL);
         initComponents();
-        List<Pair<String, Locale>> locales = languageLoader.getLocalesAndTexts();
+
+        List<Locale> locales = languageLoader.getLocales(LanguagesType.OUTPUT);
         localesPanel.setLayout(new GridLayout(locales.size() / COLUMNS, COLUMNS));
         localeMap = new HashMap<Locale, JCheckBox>();
-        for (Pair<String, Locale> locale : locales) {
-            JCheckBox checkBox = new JCheckBox(locale.first);
-            localeMap.put(locale.second, checkBox);
+        for (Locale locale : locales) {
+            JCheckBox checkBox = new JCheckBox(locale.getDisplayName(locale));
+            localeMap.put(locale, checkBox);
             checkBox.setSelected(false);
             localesPanel.add(checkBox);
         }
         this.pack();
     }
 
-    /**
-     *
-     */
     private void initComponents() {
         localesPanel = new javax.swing.JPanel();
         javax.swing.JPanel okPanel = new javax.swing.JPanel();

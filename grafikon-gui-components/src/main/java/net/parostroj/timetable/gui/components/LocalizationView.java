@@ -11,6 +11,7 @@ import javax.swing.*;
 import net.parostroj.timetable.gui.dialogs.LanguagesDialog;
 import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -129,6 +130,7 @@ public class LocalizationView extends JPanel {
     }
 
     private void initModel() {
-        table.setModel(new LocalizationViewModel(diagram.getLocalization(), languageLoader.getLocaleMap()));
+        Map<Locale, String> lMap = languageLoader.createMap(languageLoader.getLocales(LanguagesType.OUTPUT));
+        table.setModel(new LocalizationViewModel(diagram.getLocalization(), lMap));
     }
 }

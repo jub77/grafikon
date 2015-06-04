@@ -19,6 +19,7 @@ import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.OutputSettingsPM;
 import net.parostroj.timetable.gui.utils.LanguageLoader;
+import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.mediator.Mediator;
 import net.parostroj.timetable.mediator.TrainDiagramCollegue;
 import net.parostroj.timetable.model.Train;
@@ -61,7 +62,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      * Default constructor.
      */
     public ApplicationModel() {
-        languageLoader = new LanguageLoader();
+        languageLoader = LanguageLoader.getInstance();
         listeners = new HashSet<ApplicationModelListener>();
         mediator = new Mediator();
         collegue = new TrainDiagramCollegue();
@@ -73,8 +74,9 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         lastOpenedFiles = new LinkedList<File>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
-        outputSettingsPM = new OutputSettingsPM(languageLoader.getLocaleMap("system"));
-        final Map<Locale, String> localeMap = languageLoader.getLocaleMap("system");
+        List<Locale> guiLocales = languageLoader.getLocales(LanguagesType.GUI);
+        final Map<Locale, String> localeMap = languageLoader.createMap(guiLocales, "system");
+        outputSettingsPM = new OutputSettingsPM(localeMap);
         locale = new EnumeratedValuesPM<Locale>(localeMap);
         final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
         lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap);

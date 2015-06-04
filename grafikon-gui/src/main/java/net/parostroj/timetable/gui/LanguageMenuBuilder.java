@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.JRadioButtonMenuItem;
 
 import net.parostroj.timetable.gui.utils.LanguageLoader;
+import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -20,13 +21,13 @@ public class LanguageMenuBuilder {
         this.languageLoader = languageLoader;
     }
 
-    public List<Pair<JRadioButtonMenuItem, Locale>> createLanguageMenuItems(String systemLanguage) {
+    public List<Pair<JRadioButtonMenuItem, Locale>> createLanguageMenuItems(String systemLanguage, LanguagesType type) {
         List<Pair<JRadioButtonMenuItem, Locale>> languages = new ArrayList<Pair<JRadioButtonMenuItem, Locale>>();
 
         // load languages
-        List<Pair<String, Locale>> locales = languageLoader.getLocalesAndTexts(systemLanguage);
-        for (Pair<String, Locale> locale : locales) {
-            languages.add(new Pair<JRadioButtonMenuItem, Locale>(new JRadioButtonMenuItem(locale.first), locale.second));
+        Map<Locale, String> lMap = languageLoader.createMap(languageLoader.getLocales(type), systemLanguage);
+        for (Map.Entry<Locale, String> locale : lMap.entrySet()) {
+            languages.add(new Pair<JRadioButtonMenuItem, Locale>(new JRadioButtonMenuItem(locale.getValue()), locale.getKey()));
         }
         return this.sort(languages);
     }

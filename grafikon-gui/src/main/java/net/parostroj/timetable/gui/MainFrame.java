@@ -31,6 +31,7 @@ import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiUtils;
+import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.gui.views.DriverCycleDelegate;
 import net.parostroj.timetable.gui.views.EngineCycleDelegate;
 import net.parostroj.timetable.gui.views.TrainUnitCycleDelegate;
@@ -500,7 +501,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // add languages to menu
         LanguageMenuBuilder languageMenuBuilder = new LanguageMenuBuilder(model.getLanguageLoader());
 
-        List<Pair<JRadioButtonMenuItem, Locale>> lItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader.getString("menu.language.system"));
+        List<Pair<JRadioButtonMenuItem, Locale>> lItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader
+                .getString("menu.language.system"), LanguagesType.GUI);
         BnButtonGroup<Locale> lBGroup = new BnButtonGroup<Locale>();
         for (Pair<JRadioButtonMenuItem, Locale> item : lItems) {
             languageMenu.add(item.first);
@@ -509,7 +511,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lBGroup.setModelProvider(provider);
         lBGroup.setPath(new Path("locale"));
 
-        List<Pair<JRadioButtonMenuItem, Locale>> oItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader.getString("menu.language.system"));
+        List<Pair<JRadioButtonMenuItem, Locale>> oItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader
+                .getString("menu.language.system"), LanguagesType.OUTPUT);
         BnButtonGroup<Locale> oBGroup = new BnButtonGroup<Locale>();
         for (Pair<JRadioButtonMenuItem, Locale> item : oItems) {
             oLanguageMenu.add(item.first);
@@ -644,14 +647,16 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void regionsMenuItemActionPerformed(ActionEvent evt) {
-        EditRegionsDialog dialog = new EditRegionsDialog(this, true, model.getLanguageLoader().getLocales());
+        EditRegionsDialog dialog = new EditRegionsDialog(this, true, model.getLanguageLoader().getLocales(
+                LanguagesType.OUTPUT));
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
     }
 
     private void companiesMenuItemActionPerformed(ActionEvent evt) {
-        EditCompaniesDialog dialog = new EditCompaniesDialog(this, true, model.getLanguageLoader().getLocales());
+        EditCompaniesDialog dialog = new EditCompaniesDialog(this, true, model.getLanguageLoader().getLocales(
+                LanguagesType.OUTPUT));
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
