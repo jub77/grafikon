@@ -29,12 +29,12 @@ import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
-import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.GuiUtils;
+import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.gui.views.DriverCycleDelegate;
 import net.parostroj.timetable.gui.views.EngineCycleDelegate;
 import net.parostroj.timetable.gui.views.TrainUnitCycleDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
@@ -310,7 +310,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenu lookAndFeelMenu = new javax.swing.JMenu();
         javax.swing.JMenu diagramMenu = new javax.swing.JMenu();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
-        javax.swing.JMenu oLanguageMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem oLanguageMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
         javax.swing.JMenu viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
@@ -421,9 +421,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(new javax.swing.JSeparator());
 
-        oLanguageMenu.setText(ResourceLoader.getString("menu.language.output")); // NOI18N
+        oLanguageMenuItem.setText(ResourceLoader.getString("menu.language.output") + "..."); // NOI18N
 
-        actionMenu.add(oLanguageMenu);
+        actionMenu.add(oLanguageMenuItem);
 
         outputTypeMenu.setText(ResourceLoader.getString("menu.output.type")); // NOI18N
 
@@ -511,16 +511,20 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lBGroup.setModelProvider(provider);
         lBGroup.setPath(new Path("locale"));
 
-        List<Pair<JRadioButtonMenuItem, Locale>> oItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader
-                .getString("menu.language.system"), LanguagesType.OUTPUT);
-        BnButtonGroup<Locale> oBGroup = new BnButtonGroup<Locale>();
-        for (Pair<JRadioButtonMenuItem, Locale> item : oItems) {
-            oLanguageMenu.add(item.first);
-            oBGroup.add(item.first, item.second);
-        }
-        oBGroup.setModelProvider(provider);
-        oBGroup.setPath(new Path("outputSettingsPM.locale"));
-        oBGroup.setSelectedValue(model.getOutputSettings().getLocale());
+        // output language
+        oLanguageMenuItem.addActionListener(e -> {
+            String system = ResourceLoader.getString("menu.language.system");
+            LanguageLoader languageLoader = model.getLanguageLoader();
+            List<Wrapper<Locale>> values = languageLoader.createWrappers(languageLoader.getAvailableLocales(), system);
+            Collections.sort(values);
+            Locale oLocale = model.getOutputSettings().getLocale();
+            Wrapper<?> selected = (Wrapper<?>) JOptionPane.showInputDialog(this, null, null,
+                    JOptionPane.QUESTION_MESSAGE, null, values.toArray(), oLocale == null ? Wrapper.getEmptyWrapper("") : Wrapper.getWrapper(oLocale));
+            if (selected != null) {
+                Locale sLocale = (Locale) selected.getElement();
+                model.getOutputSettings().setLocale(sLocale);
+            }
+        });
 
         // look and feel
         BnButtonGroup<String> lafBGroup = new BnButtonGroup<String>();

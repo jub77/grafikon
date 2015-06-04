@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,5 +101,14 @@ public class LanguageLoader {
 
     public Map<Locale, String> createMap(List<Locale> locales, String system) {
         return EnumeratedValuesPM.createValueMapWithNull(locales, l -> l == null ? system : l.getDisplayName(l));
+    }
+
+    public List<Wrapper<Locale>> createWrappers(List<Locale> locales, String system) {
+        List<Wrapper<Locale>> wrappers = new ArrayList<>(locales.size() + 1);
+        if (system != null) {
+            wrappers.add(Wrapper.getEmptyWrapper(system));
+        }
+        wrappers.addAll(Wrapper.getWrapperList(locales));
+        return wrappers;
     }
 }

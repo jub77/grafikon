@@ -84,7 +84,7 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             } else if (o instanceof ImportComponent) {
                 delegate = (WrapperDelegate<? super T>) new ImportComponentWrapperDelegate();
             } else if (o instanceof Locale) {
-                delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale>(l -> l.getDisplayName(l), l -> l.toString());
+                delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale>(l -> l.getDisplayName(l), l -> l != null ? l.toString() : "");
             }
         }
         return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);

@@ -1,8 +1,5 @@
 package net.parostroj.timetable.gui.pm;
 
-import java.util.Locale;
-import java.util.Map;
-
 import net.parostroj.timetable.gui.data.OutputSettings;
 
 import org.beanfabrics.model.AbstractPM;
@@ -15,13 +12,10 @@ public class OutputSettingsPM extends AbstractPM implements IPM<OutputSettings> 
     final BooleanPM doubleSidedPrint = new BooleanPM();
     final BooleanPM generateTitlePage = new BooleanPM();
     final BooleanPM showTechTimes = new BooleanPM();
-    final EnumeratedValuesPM<Locale> locale;
 
     private OutputSettings settings;
 
-    public OutputSettingsPM(final Map<Locale, String> localeMap) {
-        locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(localeMap.keySet(),
-                i -> localeMap.get(i)));
+    public OutputSettingsPM() {
         PMManager.setup(this);
     }
 
@@ -50,13 +44,6 @@ public class OutputSettingsPM extends AbstractPM implements IPM<OutputSettings> 
     public void changedShowTechTimes() {
         if (this.settings != null) {
             this.settings.setStShowTechTime(showTechTimes.getBoolean());
-        }
-    }
-
-    @OnChange(path = "locale")
-    public void changedLocale() {
-        if (this.settings != null) {
-            this.settings.setLocale(locale.getValue());
         }
     }
 }
