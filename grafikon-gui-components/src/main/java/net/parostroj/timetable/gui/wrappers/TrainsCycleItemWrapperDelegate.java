@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.TrainsCycleItem;
  *
  * @author jub
  */
-public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate {
+public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsCycleItem> {
 
     private final boolean showComment;
 
@@ -21,8 +21,8 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate {
     }
 
     @Override
-    public String toString(Object element) {
-        return toStringItem((TrainsCycleItem) element);
+    public String toString(TrainsCycleItem element) {
+        return toStringItem(element);
     }
 
     public String toStringItem(TrainsCycleItem item) {

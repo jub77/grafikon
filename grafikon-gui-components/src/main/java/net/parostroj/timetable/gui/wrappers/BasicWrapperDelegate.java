@@ -7,7 +7,7 @@ import java.text.Collator;
  *
  * @author jub
  */
-public class BasicWrapperDelegate implements WrapperDelegate<Object> {
+public class BasicWrapperDelegate<T> implements WrapperDelegate<T> {
 
     private static final Collator collator = Collator.getInstance();
 
@@ -15,17 +15,17 @@ public class BasicWrapperDelegate implements WrapperDelegate<Object> {
         return collator;
     }
 
-    protected String toCompareString(Object element) {
+    protected String toCompareString(T element) {
         return toString(element);
     }
 
     @Override
-    public String toString(Object element) {
+    public String toString(T element) {
         return element.toString();
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(T o1, T o2) {
         return getCollator().compare(toCompareString(o1), (toCompareString(o2)));
     }
 }

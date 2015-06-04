@@ -8,10 +8,10 @@ import net.parostroj.timetable.model.NodeType;
  *
  * @author jub
  */
-public class NodeTypeWrapperDelegate extends BasicWrapperDelegate {
+public class NodeTypeWrapperDelegate extends BasicWrapperDelegate<NodeType> {
 
     @Override
-    public String toString(Object element) {
-        return ResourceLoader.getString("node." + ((NodeType) element).getKey() + ".text");
+    public String toString(NodeType element) {
+        return ResourceLoader.getString("node." + element.getKey() + ".text");
     }
 }

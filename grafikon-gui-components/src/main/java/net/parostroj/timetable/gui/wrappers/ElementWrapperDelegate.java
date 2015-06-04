@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.*;
  *
  * @author jub
  */
-public class ElementWrapperDelegate extends BasicWrapperDelegate {
+public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
 
     @Override
     public String toString(Object element) {

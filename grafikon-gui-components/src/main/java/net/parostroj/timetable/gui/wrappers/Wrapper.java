@@ -70,25 +70,28 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return getWrapper(o, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Wrapper<T> getWrapper(T o, WrapperDelegate<? super T> delegate) {
         if (delegate == null) {
             if (o instanceof Train) {
-                delegate = new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getDiagram().getTrainsData().getTrainComparator());
+                delegate = (WrapperDelegate<? super T>) new TrainWrapperDelegate(TrainWrapperDelegate.Type.NAME, ((Train) o).getDiagram().getTrainsData().getTrainComparator());
             } else if (o instanceof Route) {
-                delegate = new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
+                delegate = (WrapperDelegate<? super T>) new RouteWrapperDelegate(RouteWrapperDelegate.Type.SHORT);
             } else if (o instanceof TrainsCycleItem) {
-                delegate = new TrainsCycleItemWrapperDelegate();
+                delegate = (WrapperDelegate<? super T>) new TrainsCycleItemWrapperDelegate();
             } else if (o instanceof ImportMatch) {
-                delegate = new ImportMatchWrapperDelegate();
+                delegate = (WrapperDelegate<? super T>) new ImportMatchWrapperDelegate();
             } else if (o instanceof ImportComponent) {
-                delegate = new ImportComponentWrapperDelegate();
+                delegate = (WrapperDelegate<? super T>) new ImportComponentWrapperDelegate();
+            } else if (o instanceof Locale) {
+                delegate = (WrapperDelegate<? super T>) new WrapperDelegateAdapter<Locale>(l -> l.getDisplayName(l), l -> l.toString());
             }
         }
         return delegate == null ? new Wrapper<T>(o) : new Wrapper<T>(o, delegate);
     }
 
     @SafeVarargs
-    public static <T> List<Wrapper<T>> getWrapperList(T... objList) {
+    public static <T> List<Wrapper<T>> asWrapperList(T... objList) {
         return getWrapperList(Arrays.asList(objList), null);
     }
 
@@ -107,6 +110,11 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
             clazz = o.getClass();
         }
         return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> WrapperDelegate<T> convert(WrapperDelegate<? extends T> delegate) {
+        return (WrapperDelegate<T>) delegate;
     }
 
     public static <T> T unwrap(Wrapper<T> wrapper) {

@@ -8,16 +8,16 @@ import net.parostroj.timetable.model.imports.ImportComponent;
  *
  * @author jub
  */
-public class ImportComponentWrapperDelegate implements WrapperDelegate<Object> {
+public class ImportComponentWrapperDelegate implements WrapperDelegate<ImportComponent> {
 
     @Override
-    public String toString(Object element) {
-        ImportComponent component = (ImportComponent) element;
+    public String toString(ImportComponent element) {
+        ImportComponent component = element;
         return ResourceLoader.getString(component.getKey());
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(ImportComponent o1, ImportComponent o2) {
         return 0;
     }
 

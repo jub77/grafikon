@@ -8,16 +8,16 @@ import net.parostroj.timetable.model.imports.ImportMatch;
  *
  * @author jub
  */
-public class ImportMatchWrapperDelegate implements WrapperDelegate<Object> {
+public class ImportMatchWrapperDelegate implements WrapperDelegate<ImportMatch> {
 
     @Override
-    public String toString(Object element) {
-        ImportMatch match = (ImportMatch) element;
+    public String toString(ImportMatch element) {
+        ImportMatch match = element;
         return ResourceLoader.getString(match.getKey());
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(ImportMatch o1, ImportMatch o2) {
         return 0;
     }
 

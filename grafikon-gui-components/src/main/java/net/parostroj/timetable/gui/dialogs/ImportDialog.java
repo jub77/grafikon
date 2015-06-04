@@ -267,11 +267,12 @@ public class ImportDialog extends javax.swing.JDialog {
     }
 
     private WrapperListModel<ObjectWithId> fillList(ImportComponent comps, JList<Wrapper<ObjectWithId>> list, Set<ObjectWithId> set) {
-        WrapperDelegate<Object> delegate = null;
+        WrapperDelegate<ObjectWithId> delegate = null;
         if (comps == ImportComponent.TRAINS_CYCLES) {
-            delegate = new TrainsCycleWrapperDelegate(true);
+            delegate = Wrapper.convert(new TrainsCycleWrapperDelegate(true));
         }
-        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(Wrapper.getWrapperList(set, delegate ), set, comps.sorted());
+        List<Wrapper<ObjectWithId>> wrapperList = Wrapper.getWrapperList(set, delegate);
+        WrapperListModel<ObjectWithId> model = new WrapperListModel<ObjectWithId>(wrapperList, set, comps.sorted());
         list.setModel(model);
         return model;
     }

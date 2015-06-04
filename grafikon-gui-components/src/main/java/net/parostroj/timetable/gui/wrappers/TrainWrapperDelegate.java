@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class TrainWrapperDelegate implements WrapperDelegate<Object> {
+public class TrainWrapperDelegate implements WrapperDelegate<Train> {
 
     public enum Type {
         NAME, NAME_AND_END_NODES, NAME_AND_END_NODES_WITH_TIME, NAME_AND_END_NODES_WITH_TIME_TWO_LINES;
@@ -31,13 +31,13 @@ public class TrainWrapperDelegate implements WrapperDelegate<Object> {
     }
 
     @Override
-    public String toString(Object element) {
-        return toStringTrain((Train) element);
+    public String toString(Train element) {
+        return toStringTrain(element);
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
-        return comparator.compare((Train) o1, (Train) o2);
+    public int compare(Train o1, Train o2) {
+        return comparator.compare(o1, o2);
     }
 
     private String toStringTrain(Train train) {

@@ -8,7 +8,7 @@ import net.parostroj.timetable.utils.TransformUtil;
  *
  * @author jub
  */
-public class RouteWrapperDelegate extends BasicWrapperDelegate {
+public class RouteWrapperDelegate extends BasicWrapperDelegate<Route> {
 
     private static final int ROUTE_LENGTH = 50;
 
@@ -23,17 +23,17 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate {
     }
 
     @Override
-    protected String toCompareString(Object element) {
-        String result = ((Route) element).getName();
+    protected String toCompareString(Route element) {
+        String result = element.getName();
         if (result == null) {
-            result = ((Route) element).toString();
+            result = element.toString();
         }
         return result;
     }
 
     @Override
-    public String toString(Object element) {
-        return toStringRoute((Route) element);
+    public String toString(Route element) {
+        return toStringRoute(element);
     }
 
     private String toStringRoute(Route route) {

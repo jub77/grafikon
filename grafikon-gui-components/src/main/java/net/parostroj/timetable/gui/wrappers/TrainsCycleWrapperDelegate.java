@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.TrainsCycle;
  *
  * @author jub
  */
-public class TrainsCycleWrapperDelegate extends BasicWrapperDelegate {
+public class TrainsCycleWrapperDelegate extends BasicWrapperDelegate<TrainsCycle> {
 
     private final boolean showType;
 
@@ -20,13 +20,13 @@ public class TrainsCycleWrapperDelegate extends BasicWrapperDelegate {
     }
 
     @Override
-    protected String toCompareString(Object element) {
-        return ((TrainsCycle) element).getName();
+    protected String toCompareString(TrainsCycle element) {
+        return element.getName();
     }
 
     @Override
-    public String toString(Object element) {
-        TrainsCycle cycle = (TrainsCycle) element;
+    public String toString(TrainsCycle element) {
+        TrainsCycle cycle = element;
         String str = cycle.getName();
         if (showType) {
             str = String.format("%s (%s)", cycle.getName(), cycle.getType().getDescriptionText());
