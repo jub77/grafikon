@@ -14,7 +14,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.gui.pm.CopyTrainPM;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.beanfabrics.ModelProvider;
@@ -32,12 +31,12 @@ public class CopyTrainDialog extends javax.swing.JDialog {
 
     private final ModelProvider provider = new ModelProvider(CopyTrainPM.class);
 
-    public CopyTrainDialog(Window parent, boolean modal, TrainDiagram diagram, Train train) {
+    public CopyTrainDialog(Window parent, boolean modal, Train train) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initComponents();
         CopyTrainPM model = new CopyTrainPM();
         provider.setPresentationModel(model);
-        model.init(diagram, train);
+        model.init(train);
         pack();
     }
 

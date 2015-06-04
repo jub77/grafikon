@@ -13,7 +13,7 @@ import org.beanfabrics.support.Operation;
  *
  * @author jub
  */
-public class RegionPM extends AbstractPM {
+public class RegionPM extends AbstractPM implements IPM<Region> {
 
     final TextPM name = new TextPM();
     final IEnumeratedValuesPM<Locale> locale;

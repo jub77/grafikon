@@ -10,7 +10,7 @@ import net.parostroj.timetable.model.units.SpeedUnit;
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
 
-public class ProgramSettingsPM extends AbstractPM {
+public class ProgramSettingsPM extends AbstractPM implements IPM<ProgramSettings> {
 
     final TextPM user = new TextPM();
     final IEnumeratedValuesPM<SpeedUnit> speed;

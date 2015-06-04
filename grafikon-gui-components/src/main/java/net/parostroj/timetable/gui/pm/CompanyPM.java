@@ -14,7 +14,7 @@ import org.beanfabrics.support.Operation;
  *
  * @author jub
  */
-public class CompanyPM extends AbstractPM {
+public class CompanyPM extends AbstractPM implements IPM<Company> {
 
     final TextPM abbr = new TextPM();
     final TextPM name = new TextPM();

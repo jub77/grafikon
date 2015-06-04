@@ -14,7 +14,7 @@ import org.beanfabrics.support.Operation;
  *
  * @author jub
  */
-public class InfoPM extends AbstractPM {
+public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
     final TextPM info = new TextPM();
     final TextPM routeNumbers = new TextPM();

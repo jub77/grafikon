@@ -10,7 +10,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
 
-public class CopyTrainPM extends AbstractPM {
+public class CopyTrainPM extends AbstractPM implements IPM<Train> {
 
     private WeakReference<Train> trainRef;
 
@@ -24,10 +24,10 @@ public class CopyTrainPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public void init(TrainDiagram diagram, Train train) {
+    public void init(Train train) {
         this.trainRef = new WeakReference<Train>(train);
 
-        time.setConverter(diagram.getTimeConverter());
+        time.setConverter(train.getDiagram().getTimeConverter());
         number.setText(train.getNumber());
         time.setTime(train.getStartTime());
         reversed.setBoolean(false);

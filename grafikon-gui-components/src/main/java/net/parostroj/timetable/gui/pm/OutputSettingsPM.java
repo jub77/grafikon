@@ -10,7 +10,7 @@ import org.beanfabrics.model.BooleanPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.support.OnChange;
 
-public class OutputSettingsPM extends AbstractPM {
+public class OutputSettingsPM extends AbstractPM implements IPM<OutputSettings> {
 
     final BooleanPM doubleSidedPrint = new BooleanPM();
     final BooleanPM generateTitlePage = new BooleanPM();
@@ -25,12 +25,11 @@ public class OutputSettingsPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public OutputSettingsPM init(OutputSettings settings) {
+    public void init(OutputSettings settings) {
         this.doubleSidedPrint.setBoolean(settings.isTwoSidedPrint());
         this.generateTitlePage.setBoolean(settings.isGenerateTitlePageTT());
         this.showTechTimes.setBoolean(settings.isStShowTechTime());
         this.settings = settings;
-        return this;
     }
 
     @OnChange(path = "doubleSidedPrint")
