@@ -65,13 +65,17 @@ public class NewModelPM extends AbstractPM {
     }
 
     private void create() {
+        final String templateName = template.getValue().getName();
+        final Scale scaleValue = scale.getValue();
+        final double timeScaleValue = timeScale.getBigDecimal().doubleValue();
+
         this.createTask = new Callable<TrainDiagram>() {
 
             @Override
             public TrainDiagram call() throws LSException {
-                TrainDiagram diagram = (new TemplatesLoader()).getTemplate(template.getValue().getName());
-                diagram.setAttribute(TrainDiagram.ATTR_SCALE, scale.getValue());
-                diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, timeScale.getBigDecimal().doubleValue());
+                TrainDiagram diagram = (new TemplatesLoader()).getTemplate(templateName);
+                diagram.setAttribute(TrainDiagram.ATTR_SCALE, scaleValue);
+                diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, timeScaleValue);
                 return diagram;
             }
         };
