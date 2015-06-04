@@ -468,9 +468,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         settingsMenu.setText(ResourceLoader.getString("menu.settings")); // NOI18N
 
-        this.addMenuItemWithListener(settingsMenu, "menu.settings.columns", evt -> columnsMenuItemActionPerformed(evt), false); // NOI18N
-        this.addMenuItemWithListener(settingsMenu, "menu.settings.sort.columns", evt -> sortColumnsMenuItemActionPerformed(evt), false); // NOI18N
-        this.addMenuItemWithListener(settingsMenu, "menu.settings.resize.columns", evt -> resizeColumnsMenuItemActionPerformed(evt), false); // NOI18N
+        this.addMenuItemWithListener(settingsMenu, "menu.settings.columns", evt -> trainsPane.editColumns(), false); // NOI18N
+        this.addMenuItemWithListener(settingsMenu, "menu.settings.sort.columns", evt -> trainsPane.sortColumns(), false); // NOI18N
+        this.addMenuItemWithListener(settingsMenu, "menu.settings.resize.columns", evt -> trainsPane.resizeColumns(), false); // NOI18N
 
 
         showGTViewMenuItem = this.addCheckMenuItem(settingsMenu, "menu.settings.show.gtview", evt -> showGTViewMenuItemActionPerformed(evt), null, true); // NOI18N
@@ -669,18 +669,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         engineClassesDialog.setLocationRelativeTo(this);
         engineClassesDialog.showDialog(model.getDiagram());
         engineClassesDialog.dispose();
-    }
-
-    private void columnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        trainsPane.editColumns();
-    }
-
-    private void sortColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        trainsPane.sortColumns();
-    }
-
-    private void resizeColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        trainsPane.resizeColumns();
     }
 
     private void penaltyTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
