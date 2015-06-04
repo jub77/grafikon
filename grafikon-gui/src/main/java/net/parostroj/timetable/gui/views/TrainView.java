@@ -161,6 +161,8 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             if (routeTemplate != null)
                 name = String.format("%s (%s)", name, routeTemplate.evaluate(TextTemplate.getBinding(train)));
             trainTextField.setText(name);
+            // scroll to the beginning - ensure that the start in visible
+            trainTextField.setCaretPosition(0);
             speedTextField.setText(Integer.toString(train.getTopSpeed()));
             techTimeTextField.setText(this.createTechTimeString(train));
             speedTextField.setEnabled(true);
