@@ -9,7 +9,7 @@ import net.parostroj.timetable.model.events.TrainDiagramEvent;
  *
  * @author jub
  */
-public class TrainsData {
+public class TrainsData implements TrainDiagramPart {
 
     private SortPattern trainSortPattern;
     private TextTemplate trainNameTemplate;
@@ -73,6 +73,11 @@ public class TrainsData {
 
     void setDiagram(TrainDiagram diagram) {
         this.diagram = diagram;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     public TrainComparator getTrainComparator() {
