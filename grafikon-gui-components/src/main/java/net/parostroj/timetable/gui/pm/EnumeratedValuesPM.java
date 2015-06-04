@@ -16,6 +16,12 @@ import org.beanfabrics.model.TextPM;
  */
 public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM<E> {
 
+    public EnumeratedValuesPM(Options<E> options) {
+        this.setOptions(options);
+        this.setRestrictedToOptions(true);
+        this.setText(this.getOptionsImpl().getValue(0));
+    }
+
     public EnumeratedValuesPM(Map<E, String> valueMap) {
         if (valueMap.isEmpty()) {
             throw new IllegalArgumentException("At least one value has to be present");
