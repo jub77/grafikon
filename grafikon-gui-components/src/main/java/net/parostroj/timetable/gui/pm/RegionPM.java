@@ -24,7 +24,7 @@ public class RegionPM extends AbstractPM implements IPM<Region> {
 
     public RegionPM(Collection<Locale> locales) {
         locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
-                locales, l -> l.getDisplayName()), "-");
+                locales, l -> l.getDisplayName(l)), "-");
         name.setEditable(false);
         PMManager.setup(this);
     }

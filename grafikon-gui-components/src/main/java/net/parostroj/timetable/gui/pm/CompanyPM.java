@@ -27,7 +27,7 @@ public class CompanyPM extends AbstractPM implements IPM<Company> {
 
     public CompanyPM(Collection<Locale> locales) {
         locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
-                locales, l -> l.getDisplayName()), "-");
+                locales, l -> l.getDisplayName(l)), "-");
         abbr.setEditable(false);
         PMManager.setup(this);
     }
