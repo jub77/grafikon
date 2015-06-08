@@ -1,4 +1,4 @@
-package net.parostroj.timetable.output2.pdf;
+package net.parostroj.timetable.output2.pdf.xsl;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
