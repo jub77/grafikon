@@ -12,7 +12,7 @@ import java.util.Map;
 public abstract class TextTemplate {
 
     public static enum Language {
-        GROOVY, MVEL, PLAIN;
+        GROOVY, MVEL, PLAIN, XSL;
     }
 
     private final String template;
@@ -63,6 +63,8 @@ public abstract class TextTemplate {
                 return new TextTemplateGroovy(template, initialize);
             case PLAIN:
                 return new TextTemplatePlain(template);
+            case XSL:
+                return new TextTemplateXsl(template, initialize);
             default:
                 throw new IllegalArgumentException("No template for language available.");
         }

@@ -25,8 +25,9 @@ public final class TextTemplateGroovy extends TextTemplate {
 
     protected TextTemplateGroovy(String template, boolean initialize) throws GrafikonException {
         super(template);
-        if (initialize)
+        if (initialize) {
             initialize();
+        }
     }
 
     private void initialize() throws GrafikonException {
