@@ -31,8 +31,7 @@ public class ResourceHelper {
             ByteSource bs = new ByteSource() {
                 @Override
                 public InputStream openStream() throws IOException {
-                    InputStream fis = (cl != null) ? cl.getResourceAsStream(filename) : ClassLoader
-                            .getSystemResourceAsStream(filename);
+                    InputStream fis = getStream(filename, cl);
                     return fis;
                 }
             };
@@ -42,6 +41,13 @@ public class ResourceHelper {
             log.warn(e.getMessage(), e);
             return "";
         }
+    }
+
+    public static InputStream getStream(String resource, ClassLoader classLoader) {
+        if (classLoader != null)
+            return classLoader.getResourceAsStream(resource);
+        else
+            return ClassLoader.getSystemResourceAsStream(resource);
     }
 
     public static void addTextsToMap(Map<String, Object> map, String prefix, Locale locale, String bundleName) {

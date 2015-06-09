@@ -20,7 +20,7 @@ public abstract class OutputFactory {
     /**
      * @return list of output factory types
      */
-    public static List<String> getTypes() {
+    public static Collection<String> getTypes() {
         List<String> result = new ArrayList<String>();
         synchronized(loader) {
             for (OutputFactory factory : loader) {
@@ -63,7 +63,7 @@ public abstract class OutputFactory {
 
     public abstract String getType();
 
-    public abstract Set<String> getOutputTypes();
+    public abstract Collection<String> getOutputTypes();
 
     public void setParameter(String key, Object value) {
         this.parameters.put(key, value);

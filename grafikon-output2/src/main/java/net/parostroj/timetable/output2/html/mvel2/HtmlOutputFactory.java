@@ -17,7 +17,7 @@ public class HtmlOutputFactory extends OutputFactory {
     private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
-        OUTPUT_TYPES = new HashMap<String, Class<? extends Output>>();
+        OUTPUT_TYPES = new LinkedHashMap<String, Class<? extends Output>>();
         OUTPUT_TYPES.put("starts", HtmlStartPositionsOutput.class);
         OUTPUT_TYPES.put("ends", HtmlEndPositionsOutput.class);
     }
