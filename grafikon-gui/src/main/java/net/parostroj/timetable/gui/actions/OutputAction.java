@@ -16,7 +16,6 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.dialogs.ElementSelectionDialog;
 import net.parostroj.timetable.gui.dialogs.SelectNodesDialog;
-import net.parostroj.timetable.gui.dialogs.TemplateSelectDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.output2.*;
@@ -35,31 +34,24 @@ public class OutputAction extends AbstractAction {
     private static final Logger log = LoggerFactory.getLogger(OutputAction.class);
     private final ApplicationModel model;
     private Component parent;
-    private final TemplateSelectDialog templateSelectDialog;
 
     // selection variables
     private File outputFile;
-    private File templateFile;
     private OutputType outputType;
     private Object selection;
 
     public OutputAction(ApplicationModel model, Frame frame) {
         this.model = model;
-        this.templateSelectDialog = new TemplateSelectDialog(frame, true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         parent = GuiComponentUtils.getTopLevelComponent(e.getSource());
         outputFile = null;
-        templateFile = null;
         outputType = OutputType.fromActionCommand(e.getActionCommand());
         selection = null;
 
         if (!makeSelection()) {
-            return;
-        }
-        if (!selectTemplate()) {
             return;
         }
         if (!selectOutput()) {
@@ -76,22 +68,6 @@ public class OutputAction extends AbstractAction {
             String errorMessage = ResourceLoader.getString("dialog.error.saving");
             GuiComponentUtils.showError(errorMessage + " " + ex.getMessage(), parent);
         }
-    }
-
-    private boolean selectTemplate() {
-        OutputCategory category = model.getOutputCategory();
-        if (category.isTemplateSelect() && outputType != OutputType.ALL) {
-            if (templateSelectDialog.selectTemplate(
-                    FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.TEMPLATE),
-                    model.getOutputTemplates().get(outputType.getOutputType()))) {
-                templateFile = templateSelectDialog.getTemplate();
-                if (templateFile != null && templateFile.canRead()) {
-                    model.getOutputTemplates().put(outputType.getOutputType(), templateFile);
-                }
-            }
-            return templateFile != null && templateFile.canRead();
-        }
-        return true;
     }
 
     private boolean selectOutput() {
@@ -237,14 +213,6 @@ public class OutputAction extends AbstractAction {
         OutputParams params = output.getAvailableParams();
         // diagram
         params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
-        // template
-        if (templateFile != null) {
-            try {
-                params.setParam(DefaultOutputParam.TEMPLATE_STREAM, new FileInputStream(templateFile));
-            } catch (FileNotFoundException e) {
-                throw new OutputException(e);
-            }
-        }
         // selections
         if (select != null) {
             params.setParam(type.getSelectionParam(), select);

@@ -12,6 +12,7 @@ import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 import net.parostroj.timetable.output2.impl.StartPositions;
+import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**
  * Pdf output for start positions.
@@ -54,12 +55,7 @@ class PdfStartPositionsOutput extends PdfOutput {
                 TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, Collections.<String, Object>singletonMap("stream", xml), this.getEncoding(params));
             } else {
-                InputStream xsl = null;
-                if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {
-                    xsl = params.getParam(DefaultOutputParam.TEMPLATE_STREAM).getValue(InputStream.class);
-                } else {
-                    xsl = this.getXslStream(params, "templates/pdf/start_positions.xsl", this.getClass().getClassLoader());
-                }
+                InputStream xsl = ResourceHelper.getStream("templates/pdf/start_positions.xsl", this.getClass().getClassLoader());
                 this.writeOutput(stream, xsl, xml);
             }
         } catch (OutputException e) {

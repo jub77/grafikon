@@ -10,7 +10,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.pdf.PdfTransformer;
-import net.parostroj.timetable.output2.util.ResourceHelper;
 
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.PageSequenceResults;
@@ -24,15 +23,6 @@ public abstract class PdfOutput extends OutputWithLocale {
 
     public PdfOutput(Locale locale) {
         super(locale);
-    }
-
-    protected InputStream getXslStream(OutputParams params, String defaultXsl, ClassLoader classLoader)
-            throws IOException {
-        if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {
-            return (InputStream) params.getParam(DefaultOutputParam.TEMPLATE_STREAM).getValue();
-        } else {
-            return ResourceHelper.getStream(defaultXsl, classLoader);
-        }
     }
 
     protected void writeOutput(OutputStream stream, InputStream xsl, InputStream xml)

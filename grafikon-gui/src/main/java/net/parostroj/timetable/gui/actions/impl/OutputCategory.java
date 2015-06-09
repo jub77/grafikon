@@ -7,20 +7,11 @@ package net.parostroj.timetable.gui.actions.impl;
  */
 public enum OutputCategory {
 
-    HTML("html", "groovy", "html"), HTML_SELECT("html.select", "groovy", "html", "gsp"),
-    XML("xml", "xml", "xml"), PDF("pdf", "pdf", "pdf");
+    HTML("html", "groovy", "html"), XML("xml", "xml", "xml"), PDF("pdf", "pdf", "pdf");
 
     private String outputCategory;
     private String outputFactoryType;
-    private String templateSuffix;
     private String suffix;
-    private boolean templateSelect;
-
-    private OutputCategory(String outputCategory, String outputFactoryType, String suffix, String templateSuffix) {
-        this(outputCategory, outputFactoryType, suffix);
-        this.templateSuffix = templateSuffix;
-        this.templateSelect = true;
-    }
 
     private OutputCategory(String outputCategory, String outputFactoryType, String suffix) {
         this.outputCategory = outputCategory;
@@ -38,14 +29,6 @@ public enum OutputCategory {
 
     public String getSuffix() {
         return suffix;
-    }
-
-    public String getTemplateSuffix() {
-        return templateSuffix;
-    }
-
-    public boolean isTemplateSelect() {
-        return templateSelect;
     }
 
     public static OutputCategory fromString(String string) {

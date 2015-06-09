@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.util.ResourceHelper;
 
 /**
  * Gsp output.
@@ -26,27 +27,12 @@ public abstract class GspOutput extends OutputWithLocale {
         _cachedTemplates = new HashMap<String, Template>();
     }
 
-    protected InputStream getTemplateStream(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
-        if (params.containsKey(DefaultOutputParam.TEMPLATE_STREAM)) {
-            return (InputStream)params.getParam(DefaultOutputParam.TEMPLATE_STREAM).getValue();
-        } else {
-            if (classLoader != null) {
-                return classLoader.getResourceAsStream(defaultTemplate);
-            } else {
-                return ClassLoader.getSystemResourceAsStream(defaultTemplate);
-            }
-        }
-    }
-
     protected Template getTemplate(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
-        boolean templateInStream = params.containsKey(DefaultOutputParam.TEMPLATE_STREAM);
         Template template = null;
         // load template if needed otherwise use cached
-        if (templateInStream || _cachedTemplates.get(defaultTemplate) == null) {
+        if (_cachedTemplates.get(defaultTemplate) == null) {
             template = loadTemplate(params, defaultTemplate, classLoader);
-            if (!templateInStream) {
-                _cachedTemplates.put(defaultTemplate, template);
-            }
+            _cachedTemplates.put(defaultTemplate, template);
         } else {
             template = _cachedTemplates.get(defaultTemplate);
         }
@@ -55,7 +41,7 @@ public abstract class GspOutput extends OutputWithLocale {
 
     protected Template loadTemplate(OutputParams params, String defaultTemplate, ClassLoader classLoader) throws IOException {
         SimpleTemplateEngine ste = new SimpleTemplateEngine();
-        try (InputStream is = getTemplateStream(params, defaultTemplate, classLoader)) {
+        try (InputStream is = ResourceHelper.getStream(defaultTemplate, classLoader)) {
             Template template = ste.createTemplate(new InputStreamReader(is, "utf-8"));
             return template;
         }

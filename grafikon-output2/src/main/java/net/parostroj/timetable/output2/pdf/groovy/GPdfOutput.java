@@ -18,8 +18,7 @@ public abstract class GPdfOutput extends OutputWithDiagramStream {
     static final Collection<String> NO_COPY = Collections.unmodifiableCollection(Arrays.asList(
             DefaultOutputParam.TEXT_TEMPLATE,
             DefaultOutputParam.OUTPUT_FILE,
-            DefaultOutputParam.OUTPUT_STREAM,
-            DefaultOutputParam.TEMPLATE_STREAM));
+            DefaultOutputParam.OUTPUT_STREAM));
 
     private final Output output;
     private final PdfTransformer transformer;

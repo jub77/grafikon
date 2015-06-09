@@ -447,9 +447,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         JRadioButtonMenuItem htmlRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.html", evt -> outputTypeActionPerformed(evt), "html", true); // NOI18N
         outputTypeButtonGroup.add(htmlRItem);
 
-        JRadioButtonMenuItem htmlSelectRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.htmlselect", evt -> outputTypeActionPerformed(evt), "html.select", false); // NOI18N
-        outputTypeButtonGroup.add(htmlSelectRItem);
-
         JRadioButtonMenuItem xmlRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.xml", evt -> outputTypeActionPerformed(evt), "xml", false); // NOI18N
         outputTypeButtonGroup.add(xmlRItem);
 
