@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.ImageSaver;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -60,8 +59,8 @@ public class GspTrainTimetablesOutput extends GspOutput {
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIXES));
             this.addContext(params, map);
 
-            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
-                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+            if (params.paramExistWithValue(PARAM_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(PARAM_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 Template template = this.getTemplate(params, "templates/groovy/trains.gsp", this.getClass().getClassLoader());
@@ -69,8 +68,8 @@ public class GspTrainTimetablesOutput extends GspOutput {
             }
 
             // write images if possible
-            if (params.paramExist(DefaultOutputParam.OUTPUT_FILE)) {
-                File file = (File)params.getParam(DefaultOutputParam.OUTPUT_FILE).getValue();
+            if (params.paramExist(PARAM_OUTPUT_FILE)) {
+                File file = (File)params.getParam(PARAM_OUTPUT_FILE).getValue();
                 file = file.getParentFile();
                 // for all images ...
                 ImageSaver saver = new ImageSaver(diagram);

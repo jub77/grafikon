@@ -212,12 +212,12 @@ public class OutputAction extends AbstractAction {
         }
         OutputParams params = output.getAvailableParams();
         // diagram
-        params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, model.getDiagram());
+        params.setParam(Output.PARAM_TRAIN_DIAGRAM, model.getDiagram());
         // selections
         if (select != null) {
             params.setParam(type.getSelectionParam(), select);
         }
-        params.setParam(DefaultOutputParam.OUTPUT_FILE, file);
+        params.setParam(Output.PARAM_OUTPUT_FILE, file);
         if (type != null && type.getOutputType().equals("trains")) {
             params.setParam("title.page", model.getOutputSettings().isGenerateTitlePageTT());
             params.setParam("page.sort", model.getOutputSettings().isTwoSidedPrint() ? "two_sides" : "one_side");

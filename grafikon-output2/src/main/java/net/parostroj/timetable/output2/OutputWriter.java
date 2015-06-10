@@ -196,15 +196,15 @@ public class OutputWriter {
             Map<String, Object> parameters, Map<String, Object> context, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
-            params.setParam(DefaultOutputParam.TEXT_TEMPLATE, textTemplate);
+            params.setParam(Output.PARAM_TEMPLATE, textTemplate);
         }
-        params.setParam(DefaultOutputParam.TRAIN_DIAGRAM, diagram);
-        params.setParam(DefaultOutputParam.OUTPUT_FILE, outpuFile);
+        params.setParam(Output.PARAM_TRAIN_DIAGRAM, diagram);
+        params.setParam(Output.PARAM_OUTPUT_FILE, outpuFile);
         if (context != null) {
-            params.setParam(DefaultOutputParam.CONTEXT, context);
+            params.setParam(Output.PARAM_CONTEXT, context);
         }
         if (encoding != null) {
-            params.setParam(DefaultOutputParam.OUTPUT_ENCODING, encoding);
+            params.setParam(Output.PARAM_OUTPUT_ENCODING, encoding);
         }
         if (parameters != null) {
             for (String key : parameters.keySet()) {

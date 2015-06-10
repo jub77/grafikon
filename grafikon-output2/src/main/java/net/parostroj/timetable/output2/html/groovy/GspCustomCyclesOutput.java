@@ -11,7 +11,6 @@ import java.util.Map;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
-import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParam;
 import net.parostroj.timetable.output2.OutputParams;
@@ -50,8 +49,8 @@ public class GspCustomCyclesOutput extends GspOutput {
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
             this.addContext(params, map);
 
-            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
-                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+            if (params.paramExistWithValue(PARAM_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(PARAM_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 Template template = this.getTemplate(params, "templates/groovy/custom_cycles.gsp", this.getClass().getClassLoader());

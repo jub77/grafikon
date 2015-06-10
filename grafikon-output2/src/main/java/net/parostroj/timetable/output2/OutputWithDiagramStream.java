@@ -18,14 +18,14 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
 
     @Override
     public void write(OutputParams params) throws OutputException {
-        OutputParamsUtil.checkParamsAnd(params, DefaultOutputParam.TRAIN_DIAGRAM);
-        OutputParamsUtil.checkParamsOr(params, DefaultOutputParam.OUTPUT_FILE, DefaultOutputParam.OUTPUT_STREAM);
-        TrainDiagram diagram = (TrainDiagram) params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).getValue();
-        if (params.paramExist(DefaultOutputParam.OUTPUT_STREAM) && params.getParam(DefaultOutputParam.OUTPUT_STREAM).getValue() != null) {
-            OutputStream stream = (OutputStream) params.getParam(DefaultOutputParam.OUTPUT_STREAM).getValue();
+        OutputParamsUtil.checkParamsAnd(params, PARAM_TRAIN_DIAGRAM);
+        OutputParamsUtil.checkParamsOr(params, PARAM_OUTPUT_FILE, PARAM_OUTPUT_STREAM);
+        TrainDiagram diagram = (TrainDiagram) params.getParam(PARAM_TRAIN_DIAGRAM).getValue();
+        if (params.paramExist(PARAM_OUTPUT_STREAM) && params.getParam(PARAM_OUTPUT_STREAM).getValue() != null) {
+            OutputStream stream = (OutputStream) params.getParam(PARAM_OUTPUT_STREAM).getValue();
             testAndWrite(diagram, params, stream);
         }  else {
-            File oFile = (File) params.getParam(DefaultOutputParam.OUTPUT_FILE).getValue();
+            File oFile = (File) params.getParam(PARAM_OUTPUT_FILE).getValue();
             try (OutputStream stream = new FileOutputStream(oFile)) {
                 testAndWrite(diagram, params, stream);
             } catch (FileNotFoundException e) {
@@ -45,14 +45,14 @@ abstract public class OutputWithDiagramStream extends AbstractOutput {
 
     @Override
     public OutputParams getAvailableParams() {
-        return OutputParamsUtil.createParams(DefaultOutputParam.OUTPUT_STREAM, DefaultOutputParam.TRAIN_DIAGRAM);
+        return OutputParamsUtil.createParams(PARAM_OUTPUT_STREAM, PARAM_TRAIN_DIAGRAM);
     }
 
     protected String getEncoding(OutputParams params) {
         // default encoding -> utf-8
         String encoding = "utf-8";
-        if (params.paramExistWithValue(DefaultOutputParam.OUTPUT_ENCODING)) {
-            encoding = params.getParam(DefaultOutputParam.OUTPUT_ENCODING).getValue(String.class);
+        if (params.paramExistWithValue(PARAM_OUTPUT_ENCODING)) {
+            encoding = params.getParam(PARAM_OUTPUT_ENCODING).getValue(String.class);
         }
         return encoding;
     }

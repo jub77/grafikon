@@ -62,10 +62,10 @@ public abstract class GspOutput extends OutputWithLocale {
     }
 
     protected void addContext(OutputParams params, Map<String, Object> map) {
-        map.put("diagram", params.getParam(DefaultOutputParam.TRAIN_DIAGRAM).getValue());
+        map.put("diagram", params.getParam(PARAM_TRAIN_DIAGRAM).getValue());
         map.put("locale", this.leaveOnlyLanguage(this.getLocale()));
-        if (params.paramExistWithValue(DefaultOutputParam.CONTEXT)) {
-            Map<?, ?> context = params.get(DefaultOutputParam.CONTEXT).getValue(Map.class);
+        if (params.paramExistWithValue(PARAM_CONTEXT)) {
+            Map<?, ?> context = params.get(PARAM_CONTEXT).getValue(Map.class);
             for (Map.Entry<?, ?> entry : context.entrySet()) {
                 map.put((String) entry.getKey(), entry.getValue());
             }

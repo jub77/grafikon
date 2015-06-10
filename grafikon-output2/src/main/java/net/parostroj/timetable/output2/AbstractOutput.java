@@ -9,7 +9,7 @@ import java.util.List;
  * @author jub
  */
 public abstract class AbstractOutput implements Output {
-    
+
     @Override
     public void write(OutputParam... params) throws OutputException {
         this.write(Arrays.asList(params));

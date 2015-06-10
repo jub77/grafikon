@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author jub
  */
-public abstract class TextTemplate {
+public abstract class TextTemplate implements ExecutableTextTemplate {
 
     public static enum Language {
         GROOVY, MVEL, PLAIN, XSL;

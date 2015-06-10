@@ -7,7 +7,6 @@ import java.util.Map;
 
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.DefaultOutputParam;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.util.ResourceHelper;
@@ -31,8 +30,8 @@ public class GspDiagramOutput extends GspOutput {
             map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram));
             this.addContext(params, map);
 
-            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
-                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+            if (params.paramExistWithValue(PARAM_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(PARAM_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, map, this.getEncoding(params));
             } else {
                 // do nothing - no default template exists.

@@ -51,8 +51,8 @@ class PdfStartPositionsOutput extends PdfOutput {
             System.out.println(new String(bytes, "utf-8"));
             InputStream xml = new ByteArrayInputStream(bytes);
 
-            if (params.paramExistWithValue(DefaultOutputParam.TEXT_TEMPLATE)) {
-                TextTemplate textTemplate = params.getParam(DefaultOutputParam.TEXT_TEMPLATE).getValue(TextTemplate.class);
+            if (params.paramExistWithValue(PARAM_TEMPLATE)) {
+                TextTemplate textTemplate = params.getParam(PARAM_TEMPLATE).getValue(TextTemplate.class);
                 textTemplate.evaluate(stream, Collections.<String, Object>singletonMap("stream", xml), this.getEncoding(params));
             } else {
                 InputStream xsl = ResourceHelper.getStream("templates/pdf/start_positions.xsl", this.getClass().getClassLoader());
