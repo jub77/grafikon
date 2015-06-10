@@ -1,4 +1,3 @@
-net.parostroj.timetable.output2.html.groovy.GspOutputFactory
 net.parostroj.timetable.output2.xml.XmlOutputFactory
 net.parostroj.timetable.output2.pdf.xsl.PdfOutputFactory
 net.parostroj.timetable.output2.gt.DrawOutputFactory

@@ -23,7 +23,6 @@ public class GPdfOutputFactory extends OutputFactory {
 
     static {
         OUTPUT_TYPES = new LinkedHashMap<String, Class<? extends Output>>();
-        OUTPUT_TYPES.put("starts", GPdfStartPositionsOutput.class);
     }
 
     private final PdfTransformer transformer;
