@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.template.TemplateWriter;
 
 /**
  * Instance writes output of templates to disk.
@@ -196,7 +197,14 @@ public class OutputWriter {
             Map<String, Object> parameters, Map<String, Object> context, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
-            params.setParam(Output.PARAM_TEMPLATE, textTemplate);
+            TemplateWriter tw = (stream, binding) -> {
+                try {
+                    textTemplate.evaluate(stream, binding, encoding == null ? "utf-8" : encoding);
+                } catch (GrafikonException e) {
+                    throw new OutputException("Error writing template", e);
+                }
+            };
+            params.setParam(Output.PARAM_TEMPLATE, tw);
         }
         params.setParam(Output.PARAM_TRAIN_DIAGRAM, diagram);
         params.setParam(Output.PARAM_OUTPUT_FILE, outpuFile);

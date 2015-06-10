@@ -16,11 +16,13 @@ import net.parostroj.timetable.output2.template.*;
  */
 public class GspOutputFactory extends OutputFactory {
 
-    private static final String TYPE = "test.groovy";
+    private static final String TYPE = "groovy";
     private static final List<String> OUTPUT_TYPES;
 
     static {
-        OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList("starts", "trains", "diagram"));
+        OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList("starts", "ends", "trains",
+                "stations", "train_unit_cycles", "driver_cycles", "engine_cycles",
+                "custom_cycles", "diagram"));
     }
 
     private final GroovyTemplateFactory factory;

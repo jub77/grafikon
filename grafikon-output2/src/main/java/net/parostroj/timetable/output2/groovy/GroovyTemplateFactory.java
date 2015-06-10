@@ -23,14 +23,26 @@ public class GroovyTemplateFactory {
         // templates
         Map<String, String> templates = new HashMap<>();
         templates.put("starts", "start_positions.gsp");
+        templates.put("ends", "end_positions.gsp");
         templates.put("trains", "trains.gsp");
+        templates.put("stations", "stations.gsp");
+        templates.put("train_unit_cycles", "train_unit_cycles.gsp");
+        templates.put("driver_cycles", "driver_cycles.gsp");
+        templates.put("engine_cycles", "engine_cycles.gsp");
+        templates.put("custom_cycles", "custom_cycles.gsp");
         TEMPLATES = Collections.unmodifiableMap(templates);
 
         // binding
         Map<String, TemplateBindingHandler> bindingCreators = new HashMap<>();
         bindingCreators.put("starts", new StartsTemplateBinding());
+        bindingCreators.put("ends", new EndsTemplateBinding());
         bindingCreators.put("trains", new TrainsTemplateBinding());
         bindingCreators.put("diagram", new DiagramTemplateBinding());
+        bindingCreators.put("stations", new StationsTemplateBinding());
+        bindingCreators.put("train_unit_cycles", new TrainUnitCyclesTemplateBinding());
+        bindingCreators.put("driver_cycles", new DriverCyclesTemplateBinding());
+        bindingCreators.put("engine_cycles", new EngineCyclesTemplateBinding());
+        bindingCreators.put("custom_cycles", new CustomCyclesTemplateBinding());
         BINDING_CREATORS = Collections.unmodifiableMap(bindingCreators);
     }
 

@@ -14,7 +14,7 @@ import net.parostroj.timetable.output2.OutputFactory;
  */
 public class GspOutputFactory extends OutputFactory {
 
-    private static final String TYPE = "groovy";
+    private static final String TYPE = "groovy.old";
     private static final Map<String, Class<? extends Output>> OUTPUT_TYPES;
 
     static {
