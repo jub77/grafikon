@@ -1,13 +1,9 @@
 package net.parostroj.timetable.output2.template;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Supplier;
 
-import net.parostroj.timetable.model.ExecutableTextTemplate;
-import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
 
@@ -16,51 +12,41 @@ import net.parostroj.timetable.output2.*;
  *
  * @author jub
  */
-public abstract class TemplateOutput extends OutputWithLocale {
+public class TemplateOutput extends OutputWithLocale {
 
-    public static final String TRANSLATOR = "translator";
+    private final TemplateWriterFactory templateWriterFactory;
+    private final TemplateBindingHandler bindingHandler;
 
-    private final Supplier<ExecutableTextTemplate> templateSupplier;
-
-    public TemplateOutput(Locale locale, Supplier<ExecutableTextTemplate> defaultTemplateSupplier) {
+    public TemplateOutput(Locale locale, TemplateWriterFactory defaultTemplateFactory,
+            TemplateBindingHandler bindingHandler) {
         super(locale);
-        this.templateSupplier = defaultTemplateSupplier;
+        this.templateWriterFactory = defaultTemplateFactory;
+        this.bindingHandler = bindingHandler;
     }
 
-    protected ExecutableTextTemplate processParams(OutputParams params) {
-        ExecutableTextTemplate template = params.getParamValue(PARAM_TEMPLATE, ExecutableTextTemplate.class);
+    protected TemplateWriter processParams(OutputParams params) throws OutputException {
+        TemplateWriter template = params.getParamValue(PARAM_TEMPLATE, TemplateWriter.class);
         if (template == null) {
-            template = templateSupplier.get();
+            template = templateWriterFactory.get();
         }
         return template;
     }
 
     @Override
     protected void writeTo(OutputParams params, OutputStream stream, TrainDiagram diagram) throws OutputException {
-        ExecutableTextTemplate template = processParams(params);
-        // TODO implementation
-        Map<String, Object> binding = new HashMap<>();
-        this.addContext(params, binding);
+        TemplateWriter template = processParams(params);
+        Map<String, Object> binding = bindingHandler.get(diagram, params, this.getLocale());
+        this.addLocale(params, binding);
         this.writeOutput(template, stream, binding);
+        bindingHandler.postProcess(diagram, params, binding);
     }
 
-    protected void writeOutput(ExecutableTextTemplate template, OutputStream stream, Map<String, Object> binding) throws OutputException {
-        try {
-            template.evaluate(stream, binding, "utf-8");
-        } catch (GrafikonException e) {
-            throw new OutputException("Error writing output", e);
-        }
+    protected void writeOutput(TemplateWriter template, OutputStream stream, Map<String, Object> binding) throws OutputException {
+        template.write(stream, binding);
     }
 
-    protected void addContext(OutputParams params, Map<String, Object> map) {
-        map.put("diagram", params.getParam(PARAM_TRAIN_DIAGRAM).getValue());
+    protected void addLocale(OutputParams params, Map<String, Object> map) {
         map.put("locale", this.leaveOnlyLanguage(this.getLocale()));
-        if (params.paramExistWithValue(PARAM_CONTEXT)) {
-            Map<?, ?> context = params.get(PARAM_CONTEXT).getValue(Map.class);
-            for (Map.Entry<?, ?> entry : context.entrySet()) {
-                map.put((String) entry.getKey(), entry.getValue());
-            }
-        }
     }
 
     private Locale leaveOnlyLanguage(Locale locale) {
