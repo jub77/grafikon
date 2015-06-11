@@ -43,9 +43,9 @@
 
 <% def printPositions(positions) { %>
 <block font-size="3mm" space-after="3mm">
-<table ${border()} border-collapse="collapse" table-layout="fixed" width="100%">
+<table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" font-family="SansCondensed">
   <table-column column-width="2cm" ${border()} />
-  <table-column column-width="6cm" ${border()} />
+  <table-column column-width="7cm" ${border()} />
   <table-column column-width="3.5cm" ${border()} />
   <table-column column-width="1cm" ${border()} />
   <table-column column-width="1.5cm" ${border()} />

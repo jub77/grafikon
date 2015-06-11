@@ -15,7 +15,7 @@
 <root xmlns="http://www.w3.org/1999/XSL/Format">
   <layout-master-set>
     <simple-page-master master-name="simpleA4" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-bottom="1.5cm" margin-left="1.5cm" margin-right="1.5cm">
-      <region-body/>
+      <region-body />
     </simple-page-master>
   </layout-master-set>
   <page-sequence master-reference="simpleA4" font-family="Sans">
@@ -39,9 +39,9 @@
 
 <% def printPositions(positions) { %>
 <block font-size="3mm" space-after="3mm">
-<table ${border()} border-collapse="collapse" table-layout="fixed" width="100%">
+<table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" font-family="SansCondensed">
   <table-column column-width="2cm" ${border()} />
-  <table-column column-width="6cm" ${border()} />
+  <table-column column-width="7cm" ${border()} />
   <table-column column-width="3.5cm" ${border()} />
   <table-column column-width="1cm" ${border()} />
   <table-column column-width="1.5cm" ${border()} />
