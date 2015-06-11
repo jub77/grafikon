@@ -38,9 +38,10 @@ import javax.swing.border.EmptyBorder;
 public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
-    private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw"));
-    private static final Set<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableSet(Collections
-            .singleton("groovy"));
+    private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw",
+            "pdf.groovy"));
+    private static final Collection<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableCollection(Arrays.asList(
+            "groovy", "pdf.groovy"));
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 

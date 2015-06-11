@@ -183,7 +183,8 @@ public class OutputWriter {
             this.generateOutput(
                     output,
                     this.getFile(null, template.getName(),
-                            template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class)),
+                            template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
+                            factory.getType()),
                     textTemplate, type, null, null, null);
         } else {
             for(OutputSettings outputName : outputNames) {
@@ -220,10 +221,21 @@ public class OutputWriter {
         return new File(dir, name);
     }
 
-    private File getFile(String directory, String name, String extension) {
+    private File getFile(String directory, String name, String extension, String type) {
         name = name.replaceAll("[\\\\:/\"?<>|*]", "");
         File dir = getDir(directory);
-        return new File(dir, name + "." + (extension == null ? "html" : extension));
+        return new File(dir, name + "." + (extension == null ? getDefaultExtension(type) : extension));
+    }
+
+    private String getDefaultExtension(String type) {
+        String extension = null;
+        switch (type) {
+            case "draw": extension = "svg"; break;
+            case "groovy": extension = "html"; break;
+            case "pdf.groovy": extension = "pdf"; break;
+            default: extension = "unknown"; break;
+        }
+        return extension;
     }
 
     private File getDir(String directory) {
