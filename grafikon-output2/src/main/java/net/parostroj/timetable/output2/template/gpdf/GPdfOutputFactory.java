@@ -25,7 +25,7 @@ public class GPdfOutputFactory extends OutputFactory {
     private static final String TEMPLATE_BASE_LOCATION = "templates/groovy-fo/";
 
     static {
-        OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList("starts", "ends", "stations"));
+        OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList("starts", "ends", "stations", "diagram"));
     }
 
     private final GroovyTemplateFactory factory;
