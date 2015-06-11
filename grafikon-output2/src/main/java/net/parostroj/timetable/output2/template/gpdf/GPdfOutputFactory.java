@@ -14,7 +14,7 @@ import net.parostroj.timetable.output2.pdf.PdfTransformer;
 import net.parostroj.timetable.output2.template.*;
 
 /**
- * Html output factory - groovy.
+ * Pdf output factory - groovy template to XSL-FO.
  *
  * @author jub
  */
