@@ -183,7 +183,7 @@ def print_cycle(w) {
         </tr>
         <tr class="info">
           <td class="info1">${c.name}</td>
-          <td class="info2" colspan="2">${c.description}</td>
+          <td class="info2" colspan="2">${c.description ?: ""}</td>
         </tr>
         <tr class="listh">
           <td class="trainh">${translator.getText("column_train", loc)}</td>
