@@ -14,7 +14,6 @@ import net.parostroj.timetable.output2.util.ResourceHelper;
 
 public class GroovyTemplateFactory {
 
-    private static final String TEMPLATE_BASE_LOCATION = "templates/groovy/";
     private static final Map<String, String> TEMPLATES;
     private static final Map<String, GroovyTemplateBinding> BINDINGS;
 
@@ -46,15 +45,17 @@ public class GroovyTemplateFactory {
     }
 
     private final Map<String, GroovyTemplate> cachedTemplates;
+    private final String templateBaseLocation;
 
-    public GroovyTemplateFactory() {
+    public GroovyTemplateFactory(String templateBaseLocation) {
+        this.templateBaseLocation = templateBaseLocation;
         this.cachedTemplates = new HashMap<>();
     }
 
     public TemplateWriter getTemplate(String type, Charset outputEncoding) throws OutputException {
         GroovyTemplate template = cachedTemplates.get(type);
         if (template == null) {
-            String templateLocation = TEMPLATE_BASE_LOCATION + TEMPLATES.get(type);
+            String templateLocation = templateBaseLocation + TEMPLATES.get(type);
             InputStream is = ResourceHelper.getStream(templateLocation, this.getClass().getClassLoader());
             template = new GroovyTemplate(is != null ? new InputStreamReader(is, StandardCharsets.UTF_8) : null, BINDINGS.get(type));
             cachedTemplates.put(type, template);
