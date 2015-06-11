@@ -45,7 +45,6 @@ public class TemplateOutput extends OutputWithLocale {
     private InputStream getInputStreamFromTemp(OutputStream os) {
         if (os instanceof ByteArrayOutputStream) {
             byte[] bytes = ((ByteArrayOutputStream) os).toByteArray();
-            System.out.println(new String(bytes));
             return new ByteArrayInputStream(bytes);
         } else {
             throw new IllegalArgumentException("Unexpected parameter: " + os);
