@@ -7,7 +7,7 @@ package net.parostroj.timetable.gui.actions.impl;
  */
 public enum OutputCategory {
 
-    HTML("html", "groovy", "html"), XML("xml", "xml", "xml"), PDF("pdf", "pdf", "pdf");
+    HTML("html", "groovy", "html"), XML("xml", "xml", "xml"), PDF("pdf", "pdf.groovy", "pdf");
 
     private String outputCategory;
     private String outputFactoryType;
