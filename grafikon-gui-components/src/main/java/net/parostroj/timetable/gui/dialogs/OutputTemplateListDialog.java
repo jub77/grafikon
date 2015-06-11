@@ -19,6 +19,7 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +88,16 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }
 
     private void updateButtons() {
+        String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
         boolean selected = templateList.getSelectedValue() != null;
         downButton.setEnabled(selected);
         upButton.setEnabled(selected);
         deleteButton.setEnabled(selected);
         editButton.setEnabled(selected);
         outputButton.setEnabled(selected);
+        copyButton.setEnabled(newName != null && selected);
         // create button
-        newButton.setEnabled(!"".equals(nameTextField.getText().trim()));
+        newButton.setEnabled(newName != null);
 
         // description
         if (selected) {
@@ -117,6 +120,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
+        copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 1);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 1);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 1);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
@@ -148,55 +152,30 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         });
         controlPanel.add(nameTextField);
 
-        newButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
-            }
-        });
+        newButton.addActionListener(evt -> newButtonActionPerformed(evt));
         controlPanel.add(newButton);
 
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(evt ->deleteButtonActionPerformed(evt));
         controlPanel.add(deleteButton);
 
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
+        copyButton.addActionListener(evt -> copyButtonActionPerformed());
+        controlPanel.add(copyButton);
+
+        upButton.addActionListener(evt -> upButtonActionPerformed(evt));
         controlPanel.add(upButton);
 
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
+        downButton.addActionListener(evt -> downButtonActionPerformed(evt));
         controlPanel.add(downButton);
 
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        editButton.addActionListener(evt -> editButtonActionPerformed(evt));
         controlPanel.add(editButton);
 
         outputButton.setText(ResourceLoader.getString("ot.button.output")); // NOI18N
-        outputButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                outputButtonActionPerformed(evt);
-            }
-        });
+        outputButton.addActionListener(evt -> outputButtonActionPerformed(evt));
         controlPanel.add(outputButton);
 
         outputAllButton.setText(ResourceLoader.getString("ot.button.outputall")); // NOI18N
-        outputAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                outputAllButtonActionPerformed(evt);
-            }
-        });
+        outputAllButton.addActionListener(evt -> outputAllButtonActionPerformed(evt));
         controlPanel.add(outputAllButton);
 
         buttonPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
@@ -209,11 +188,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         templateList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        templateList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                updateButtons();
-            }
-        });
+        templateList.addListSelectionListener(evt -> updateButtons());
         scrollPane.setViewportView(templateList);
 
         listPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -234,11 +209,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         locationPanel2.setLayout(new java.awt.BorderLayout());
 
         locationButton.setText(ResourceLoader.getString("button.select")); // NOI18N
-        locationButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                locationButtonActionPerformed(evt);
-            }
-        });
+        locationButton.addActionListener(evt -> locationButtonActionPerformed(evt));
         locationPanel2.add(locationButton, java.awt.BorderLayout.CENTER);
 
         locationPanel.add(locationPanel2, java.awt.BorderLayout.EAST);
@@ -287,6 +258,17 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         if (index != -1) {
             templatesModel.removeIndex(index);
         }
+    }
+
+    private void copyButtonActionPerformed() {
+        OutputTemplate selectedTemplate = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
+        OutputTemplate template = this.copyTemplate(selectedTemplate);
+        template.setName(ObjectsUtil.checkAndTrim(nameTextField.getText()));
+        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template);
+        templatesModel.addWrapper(wrapper);
+        nameTextField.setText("");
+        templateList.setSelectedValue(wrapper, true);
+        this.updateButtons();
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,6 +361,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
 
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton copyButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton locationButton;
