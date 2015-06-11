@@ -21,6 +21,7 @@ public class Main {
     private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%6$s%n";
 
     static {
+        Logger.getLogger("").setLevel(Level.WARNING);
         netParostrojLogger.setLevel(Level.FINE);
         Logger.getLogger("").getHandlers()[0].setLevel(Level.ALL);
         Logger.getLogger("").getHandlers()[0].setFormatter(new LogFormatter(FORMAT));
