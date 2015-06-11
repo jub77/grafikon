@@ -9,15 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.template.TemplateBindingHandler;
 import net.parostroj.timetable.output2.template.TemplateWriter;
 import net.parostroj.timetable.output2.util.ResourceHelper;
 
 public class GroovyTemplateFactory {
 
-    private static final String TEMPLATES_BASE_LOCATION = "templates/groovy/";
+    private static final String TEMPLATE_BASE_LOCATION = "templates/groovy/";
     private static final Map<String, String> TEMPLATES;
-    private static final Map<String, TemplateBindingHandler> BINDING_CREATORS;
+    private static final Map<String, GroovyTemplateBinding> BINDINGS;
 
     static {
         // templates
@@ -33,7 +32,7 @@ public class GroovyTemplateFactory {
         TEMPLATES = Collections.unmodifiableMap(templates);
 
         // binding
-        Map<String, TemplateBindingHandler> bindingCreators = new HashMap<>();
+        Map<String, GroovyTemplateBinding> bindingCreators = new HashMap<>();
         bindingCreators.put("starts", new StartsTemplateBinding());
         bindingCreators.put("ends", new EndsTemplateBinding());
         bindingCreators.put("trains", new TrainsTemplateBinding());
@@ -43,7 +42,7 @@ public class GroovyTemplateFactory {
         bindingCreators.put("driver_cycles", new DriverCyclesTemplateBinding());
         bindingCreators.put("engine_cycles", new EngineCyclesTemplateBinding());
         bindingCreators.put("custom_cycles", new CustomCyclesTemplateBinding());
-        BINDING_CREATORS = Collections.unmodifiableMap(bindingCreators);
+        BINDINGS = Collections.unmodifiableMap(bindingCreators);
     }
 
     private final Map<String, GroovyTemplate> cachedTemplates;
@@ -55,18 +54,11 @@ public class GroovyTemplateFactory {
     public TemplateWriter getTemplate(String type, Charset outputEncoding) throws OutputException {
         GroovyTemplate template = cachedTemplates.get(type);
         if (template == null) {
-            String templateLocation = TEMPLATES_BASE_LOCATION + TEMPLATES.get(type);
+            String templateLocation = TEMPLATE_BASE_LOCATION + TEMPLATES.get(type);
             InputStream is = ResourceHelper.getStream(templateLocation, this.getClass().getClassLoader());
-            if (is == null) {
-                throw new OutputException("No default template found: " + templateLocation);
-            }
-            template = new GroovyTemplate(new InputStreamReader(is, StandardCharsets.UTF_8));
+            template = new GroovyTemplate(is != null ? new InputStreamReader(is, StandardCharsets.UTF_8) : null, BINDINGS.get(type));
             cachedTemplates.put(type, template);
         }
         return template.get(outputEncoding);
-    }
-
-    public TemplateBindingHandler getBinding(String type) {
-        return BINDING_CREATORS.get(type);
     }
 }

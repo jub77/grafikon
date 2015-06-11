@@ -1,5 +1,6 @@
 package net.parostroj.timetable.output2.template.gsp;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -31,6 +32,14 @@ public class GspOutputFactory extends OutputFactory {
         factory = new GroovyTemplateFactory();
     }
 
+    private Charset getCharset() {
+        Charset charset = (Charset) this.getParameter("charset");
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
+        }
+        return charset;
+    }
+
     private Locale getLocale() {
         Locale locale = (Locale) this.getParameter("locale");
         if (locale == null)
@@ -46,9 +55,8 @@ public class GspOutputFactory extends OutputFactory {
     @Override
     public Output createOutput(String type) throws OutputException {
         try {
-            TemplateWriterFactory templateFactory = () -> factory.getTemplate(type, StandardCharsets.UTF_8);
-            TemplateBindingHandler bindingFactory = factory.getBinding(type);
-            return new TemplateOutput(getLocale(), templateFactory, bindingFactory);
+            TemplateWriterFactory templateFactory = () -> factory.getTemplate(type, this.getCharset());
+            return new TemplateOutput(getLocale(), templateFactory);
         } catch (Exception e) {
             throw new OutputException(e);
         }

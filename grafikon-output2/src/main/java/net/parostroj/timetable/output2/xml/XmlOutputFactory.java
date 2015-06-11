@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.xml;
 
 import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import net.parostroj.timetable.output2.Output;
@@ -33,7 +34,7 @@ public class XmlOutputFactory extends OutputFactory {
     private Charset getCharset() {
         Charset charset = (Charset) this.getParameter("charset");
         if (charset == null) {
-            charset = Charset.forName("utf-8");
+            charset = StandardCharsets.UTF_8;
         }
         return charset;
     }
