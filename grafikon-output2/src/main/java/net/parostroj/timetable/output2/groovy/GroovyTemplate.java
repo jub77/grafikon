@@ -16,8 +16,6 @@ import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.template.TemplateWriter;
 
-import org.codehaus.groovy.control.CompilationFailedException;
-
 public class GroovyTemplate {
 
     private final Template templateGString;
@@ -29,7 +27,7 @@ public class GroovyTemplate {
             TemplateEngine engine = new SimpleTemplateEngine();
             try {
                 this.templateGString = engine.createTemplate(reader);
-            } catch (CompilationFailedException | ClassNotFoundException | IOException e) {
+            } catch (Exception e) {
                 throw new OutputException("Error loading template", e);
             }
         } else {
