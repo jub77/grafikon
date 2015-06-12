@@ -118,7 +118,7 @@ def printWrappers(wrappers) {
   while(true) {
 %>
 <block font-size="3mm">
-<table table-layout="fixed" width="100%">
+<table border-collapse="separate" border-separation=".2mm" table-layout="fixed" width="100%">
 <% for (ind in 1..COLUMN_COUNT) { %>
     <table-column column-width="${100/COLUMN_COUNT}%"/>
 <% } %>
@@ -135,7 +135,7 @@ def printWrappers(wrappers) {
         if (c != null) {
             // TODO cycle${c?.cycle?.next -> check for background image for sequence
           %>
-    <table-cell>
+    <table-cell ${borderCirc()}>
       <% print_cycle(c) %>
     </table-cell><%
         } else {
@@ -166,10 +166,10 @@ def print_cycle(w) {
     def loc = getLocale(c)
     def company = getCompany(c)
 %>
-<block ${borderCirc()} margin="0.1mm">
+<block>
 <table border-collapse="collapse" table-layout="fixed" width="100%">
 <table-body>
-<table-row height="81mm"><table-cell number-columns-spanned="2" margin="0mm"><block>
+<table-row height="81mm"><table-cell number-columns-spanned="2"><block>
 <table border-collapse="collapse" table-layout="fixed" width="100%">
     <table-column column-width="38%" />
     <table-column column-width="22%" />
