@@ -26,7 +26,7 @@ public class GPdfOutputFactory extends OutputFactory {
 
     static {
         OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList("starts", "ends", "stations", "diagram",
-                "engine_cycles"));
+                "engine_cycles", "custom_cycles"));
     }
 
     private final GroovyTemplateFactory factory;

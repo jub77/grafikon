@@ -200,7 +200,7 @@ def print_cycle(w) {
           <div class="next">&nbsp;&rarr; ${c.next.name}</div>
           <div class="citem">${w.id}[${w.seq}/${w.cnt}]</div>
       </div><% }
-} 
+}
 
 def getCompany(cycle) {
     def company = cycle?.company?.abbr

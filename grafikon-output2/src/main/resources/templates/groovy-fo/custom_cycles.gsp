@@ -176,7 +176,7 @@ def print_cycle(w) {
     <table-column column-width="40%" />
     <table-body>
         <table-row font-size="2mm">
-          <table-cell number-columns-spanned="3"><block ${padding()}>${translator.getText("cycle", loc)}:${company ? " " + company : ""}</block></table-cell>
+          <table-cell number-columns-spanned="3"><block ${padding()}>${translator.getText("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</block></table-cell>
         </table-row>
         <table-row>
           <table-cell font-size="4.5mm" font-weight="bold"><block margin-left=".2mm">${c.name}</block></table-cell>
@@ -187,24 +187,18 @@ def print_cycle(w) {
           <table-cell><block margin-top=".2mm">${translator.getText("column_departure", loc)}</block></table-cell>
           <table-cell><block margin-top=".2mm">${translator.getText("column_from_to", loc)}</block></table-cell>
         </table-row><% for (row in c.rows) {
-                  if (row.wait > 25*60) {
-                    %>
-        <table-row border-top="solid .2mm black">
-          <table-cell number-columns-spanned="3"><block></block></table-cell>
-        </table-row><%
-                  }
               %>
-        <table-row${row.helper ? ' font-style="italic"' : ""}>
+        <table-row>
           <table-cell><block ${padding()}>${row.trainName}</block></table-cell>
           <table-cell><block ${paddingTime()} text-align="right" font-weight="bold">${convertTime(row.fromTime)}</block></table-cell>
           <table-cell><block ${padding()}>${row.fromAbbr} - ${row.toAbbr}</block></table-cell>
         </table-row><% } %></table-body></table></block></table-cell></table-row>
 <% if (c.next) { %> 
-        <table-row height="4mm" border-top=${borderValue()}>
+        <table-row height="4.2mm" border-top=${borderValue()}>
           <table-cell><block ${padding()}>${rarr()} ${c.next.name}</block></table-cell>
           <table-cell text-align="right"><block ${padding()}>${w.id}[${w.seq}/${w.cnt}]</block></table-cell>
         </table-row><% } else {%>
-            <table-row height="4.3mm"><table-cell number-columns-spanned="2"><block></block></table-cell></table-row>
+            <table-row height="4.5mm"><table-cell number-columns-spanned="2"><block></block></table-cell></table-row>
         <% } %>
     </table-body>
 </table>

@@ -212,7 +212,7 @@ def print_cycle(w) {
 def getCompany(cycle) {
     def company = cycle?.company?.abbr
 }
-  
+
 def getLocale(cycle) {
     def l = cycle?.company?.locale
     return l ?: locale
