@@ -160,18 +160,18 @@
   <table-column column-width="192mm" ${border()} />
   <table-header>
       <table-row ${border()}>
-          <table-cell number-columns-spanned="9"><block font-size="5mm" text-align="center" font-weight="bold" font-family="Sans">${station.name}</block></table-cell>
+          <table-cell number-columns-spanned="9" padding="1mm .6mm .1mm 0.6mm"><block font-size="5mm" text-align="center" font-weight="bold" font-family="Sans">${station.name}</block></table-cell>
       </table-row>
-      <table-row ${border()} font-size="2.3mm" font-weight="bold">
-          <table-cell><block text-align="center">X</block></table-cell>
-          <table-cell><block>${translator.getText("column_train", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_from", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_arrival", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_track", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_departure", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_to", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_end", loc)}</block></table-cell>
-          <table-cell><block>${translator.getText("column_notes", loc)}</block></table-cell>
+      <table-row ${border()} font-size="2.3mm" font-weight="bold" text-align="center">
+          <table-cell ${padding()}><block>X</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_train", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_from", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_arrival", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_track", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_departure", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_to", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${translator.getText("column_end", loc)}</block></table-cell>
+          <table-cell ${padding()} text-align="left"><block>${translator.getText("column_notes", loc)}</block></table-cell>
       </table-row>
   </table-header>
   <table-body>
