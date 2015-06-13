@@ -147,4 +147,8 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         listenerSupport.removeListener(listener);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
