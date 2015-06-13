@@ -161,10 +161,6 @@ public class OutputAction extends AbstractAction {
             output = of.createOutput("train_unit_cycles");
             oFile = new File(outputFile, ResourceLoader.getString("out.tuc") + "." + suffix);
             eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.TRAIN_UNIT_CYCLES)));
-            // driver cycles
-            output = of.createOutput("driver_cycles");
-            oFile = new File(outputFile, ResourceLoader.getString("out.dc") + "." + suffix);
-            eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.DRIVER_CYCLES)));
             // start positions
             output = of.createOutput("starts");
             oFile = new File(outputFile, ResourceLoader.getString("out.sp") + "." + suffix);
