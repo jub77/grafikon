@@ -19,19 +19,33 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     private String errorMessage;
 
     private final OutputWriter outputAction;
+    private final int count;
+
+    private int current;
 
     public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<OutputTemplate> templates) {
         super(context);
         this.outputAction = new OutputWriter(diagram, settings, outputDirectory, templates);
+        this.count = templates.size();
     }
 
     @Override
     protected void backgroundAction() {
         long time = System.currentTimeMillis();
-        setWaitMessage(ResourceLoader.getString("ot.message.wait"));
+        String waitMessage = ResourceLoader.getString("ot.message.wait");
+        setWaitMessage(waitMessage);
         setWaitDialogVisible(true);
+        context.setShowProgress(count > 1);
+        current = 0;
         try {
             try {
+                this.outputAction.setListener(template -> {
+                    current++;
+                    if (count > 1) {
+                        setProgressMessage(String.format("%s (%d/%d)", template.getName(), current, count));
+                        setWaitProgress(100 * current / count);
+                    }
+                });
                 this.outputAction.execute();
             } catch (OutputException e) {
                 log.error(e.getMessage(), e);

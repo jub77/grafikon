@@ -12,6 +12,11 @@ import net.parostroj.timetable.model.*;
  */
 public class OutputWriter {
 
+    public interface ProcessListener {
+
+        public void processed(OutputTemplate template);
+    }
+
     public interface OutputCollector {
 
         public void add(String name, Map<String, Object> context);
@@ -113,6 +118,8 @@ public class OutputWriter {
     private final File outputDirectory;
     private final Iterable<OutputTemplate> templates;
 
+    private ProcessListener listener;
+
     public OutputWriter(TrainDiagram diagram, Settings settings, File outputDirectory, Iterable<OutputTemplate> templates) {
         this.diagram = diagram;
         this.settings = settings;
@@ -120,10 +127,17 @@ public class OutputWriter {
         this.templates = templates;
     }
 
+    public void setListener(ProcessListener listener) {
+        this.listener = listener;
+    }
+
     public void execute() throws OutputException {
         if (templates != null) {
             for (OutputTemplate template : templates) {
                 try {
+                    if (listener != null) {
+                        listener.processed(template);
+                    }
                     this.generateOutput(template);
                 } catch (OutputException e) {
                     errorTemplate = template;

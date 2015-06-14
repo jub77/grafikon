@@ -29,6 +29,7 @@ public class ActionContext {
     private Component locationComponent;
     private boolean showProgress;
     private int progress;
+    private String progressDescription;
 
     public ActionContext() {
         this.support = new PropertyChangeSupport(this);
@@ -53,6 +54,12 @@ public class ActionContext {
         String oldDescription = this.description;
         this.description = description;
         this.fireEventInEDT("description", oldDescription, description);
+    }
+
+    public void setProgressDescription(String progressDescription) {
+        String oldProgressDescription = this.progressDescription;
+        this.progressDescription = progressDescription;
+        this.fireEventInEDT("progressDescription", oldProgressDescription, progressDescription);
     }
 
     public void setShowProgress(boolean showProgress) {

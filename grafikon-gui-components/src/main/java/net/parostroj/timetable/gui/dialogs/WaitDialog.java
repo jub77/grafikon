@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class WaitDialog extends javax.swing.JDialog implements PropertyChangeListener {
 
     private static final Logger log = LoggerFactory.getLogger(WaitDialog.class);
-    private static final int WIDTH = 300;
+    private static final int WAIT_DIALOG_WIDTH = 300;
 
     private int level = 0;
 
@@ -35,11 +35,8 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     public WaitDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        Dimension size = messageLabel.getPreferredSize();
-        size.width = WIDTH;
-        messageLabel.setPreferredSize(size);
-        size = progressBar.getPreferredSize();
-        size.width = WIDTH;
+        Dimension size = progressBar.getPreferredSize();
+        size.width = WAIT_DIALOG_WIDTH;
         progressBar.setPreferredSize(size);
         pack();
     }
@@ -57,8 +54,20 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        messageLabel = new javax.swing.JLabel();
-        progressBar = new javax.swing.JProgressBar();
+        messageLabel = new javax.swing.JLabel() {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                return new Dimension(Math.max(size.width, WAIT_DIALOG_WIDTH), size.height);
+            }
+        };
+        progressBar = new javax.swing.JProgressBar() {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                return new Dimension(Math.max(size.width, WAIT_DIALOG_WIDTH), size.height);
+            }
+        };
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -114,8 +123,9 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
                         progressBar.setValue(context.getProgress());
                         progressBar.setVisible(context.isShowProgress());
                         pack();
-                        if (context.getLocationComponent() != null)
+                        if (context.getLocationComponent() != null) {
                             setLocationRelativeTo(context.getLocationComponent());
+                        }
                         setVisible(true);
                     }
                 });
@@ -123,10 +133,15 @@ public class WaitDialog extends javax.swing.JDialog implements PropertyChangeLis
                 timer.start();
             }
         } else if ("description".equals(evt.getPropertyName())) {
-            if (evt.getNewValue() != null)
-                messageLabel.setText((String) evt.getNewValue());
+            String newValue = (String) evt.getNewValue();
+            if (newValue != null) {
+                messageLabel.setText(newValue);
+            }
         } else if ("progress".equals(evt.getPropertyName())) {
-            progressBar.setValue((Integer)evt.getNewValue());
+            progressBar.setValue((Integer) evt.getNewValue());
+        } else if ("progressDescription".equals(evt.getPropertyName())) {
+            String newValue = (String) evt.getNewValue();
+            progressBar.setString(newValue);
         }
     }
 }
