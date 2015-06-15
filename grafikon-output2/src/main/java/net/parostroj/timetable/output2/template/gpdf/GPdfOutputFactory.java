@@ -65,7 +65,7 @@ public class GPdfOutputFactory extends OutputFactory {
             }
             TemplateWriterFactory templateFactory = () -> factory.getTemplate(type, this.getCharset());
             TemplateTransformerFactory transformerFactory = () -> {
-                return (is, os) -> transformer.write(os, is);
+                return (is, os, params) -> transformer.write(os, is);
             };
             return new TemplateOutput(getLocale(), templateFactory, transformerFactory);
         } catch (Exception e) {

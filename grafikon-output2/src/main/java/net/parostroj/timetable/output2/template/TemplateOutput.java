@@ -34,7 +34,7 @@ public class TemplateOutput extends OutputWithLocale {
             InputStream is = getInputStreamFromTemp(os);
             TemplateTransformer transformer = fi.next().get();
             os = getOutputStream(stream, !fi.hasNext());
-            transformer.process(is, os);
+            transformer.process(is, os, params);
         }
     }
 
