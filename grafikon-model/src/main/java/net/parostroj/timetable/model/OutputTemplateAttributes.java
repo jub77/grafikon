@@ -14,4 +14,5 @@ public interface OutputTemplateAttributes {
     public static final String ATTR_TEMPLATE = "template";
     public static final String ATTR_SCRIPT = "script";
     public static final String ATTR_DESCRIPTION = "description";
+    public static final String ATTR_ATTACHMENT = "attachment";
 }

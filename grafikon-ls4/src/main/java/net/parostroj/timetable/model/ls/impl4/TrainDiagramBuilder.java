@@ -19,8 +19,10 @@ public class TrainDiagramBuilder {
     private TrainDiagram diagram;
     private final boolean trackChanges;
     private final Map<String, String> circulationSequenceMap;
+    private final FileLoadSaveAttachments flsAttachments;
 
-    public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
+    public TrainDiagramBuilder(LSTrainDiagram lsDiagram, FileLoadSaveAttachments flsAttachments) throws LSException {
+        this.flsAttachments = flsAttachments;
         circulationSequenceMap = new HashMap<String, String>();
         // trains data
         TrainsData data = lsDiagram.getTrainsData().createTrainsData();
@@ -138,7 +140,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
-        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram);
+        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram, flsAttachments);
         diagram.addOutputTemplate(template);
     }
 

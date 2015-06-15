@@ -21,6 +21,8 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private TextTemplate template;
     private Script script;
 
+    private final ItemList<Attachment> attachments;
+
     private Attributes attributes;
     private final GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
     private AttributesListener attributesListener;
@@ -29,6 +31,23 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         this.id = id;
         this.diagram = diagram;
         this.setAttributes(new Attributes());
+        this.attachments = new ItemList<Attachment>(GTEventType.ATTRIBUTE, GTEventType.ATTRIBUTE) {
+            @Override
+            protected void fireEvent(Type type, GTEventType eventType, Attachment item, int newIndex, int oldIndex) {
+                AttributeChange change = null;
+                switch (type) {
+                    case ADD:
+                        change = new AttributeChange(ATTR_ATTACHMENT, null, item);
+                        break;
+                    case REMOVE:
+                        change = new AttributeChange(ATTR_ATTACHMENT, item, null);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported type: " + type);
+                }
+                listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change));
+            }
+        };
         listenerSupport = new GTListenerSupport<OutputTemplateListener, OutputTemplateEvent>(new GTEventSender<OutputTemplateListener, OutputTemplateEvent>() {
 
             @Override
@@ -87,6 +106,10 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     public Script getScript() {
         return script;
+    }
+
+    public ItemList<Attachment> getAttachments() {
+        return attachments;
     }
 
     public String getOutput() {

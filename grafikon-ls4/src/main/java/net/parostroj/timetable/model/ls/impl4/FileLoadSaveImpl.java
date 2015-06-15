@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.*;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
@@ -35,6 +36,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
+    private static final String DATA_ATTACHMENTS = "attachments/";
     private static final String DATA_CHANGES = "changes/";
     private final LSSerializer lss;
     private static final List<ModelVersion> VERSIONS;
@@ -116,6 +118,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
             ZipEntry entry = null;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
+            FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
             ModelVersion version = null;
             while ((entry = zipInput.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
@@ -127,7 +130,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
                     LSTrainDiagram lstd = lss.load(zipInput, LSTrainDiagram.class);
-                    builder = new TrainDiagramBuilder(lstd);
+                    builder = new TrainDiagramBuilder(lstd, attachments);
                 }
                 // test diagram
                 if (builder == null) {
@@ -163,6 +166,8 @@ public class FileLoadSaveImpl implements FileLoadSave {
                     } else {
                         builder.addImageFile(new File(entry.getName()).getName(), loadImages.loadTimetableImage(zipInput, entry));
                     }
+                } else if (entry.getName().startsWith(DATA_ATTACHMENTS)) {
+                    attachments.load(zipInput, entry);
                 }
             }
             TrainDiagram trainDiagram = builder.getTrainDiagram();
@@ -179,6 +184,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
             this.createMetadata().store(zipOutput, null);
+            FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
 
             // save train diagram
             this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
@@ -214,7 +220,7 @@ public class FileLoadSaveImpl implements FileLoadSave {
             cnt = 0;
             // save output templates
             for (OutputTemplate template : diagram.getOutputTemplates()) {
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), new LSOutputTemplate(template));
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), new LSOutputTemplate(template, attachments));
             }
             cnt = 0;
             // save diagram change sets
@@ -236,6 +242,9 @@ public class FileLoadSaveImpl implements FileLoadSave {
                 this.save(zipOutput, createEntryName(DATA_IMAGES, "xml", cnt++), new LSImage(image));
                 saveImages.saveTimetableImage(image, zipOutput);
             }
+            // save attachments
+            attachments.save(zipOutput);
+
             // save freight net
             this.save(zipOutput, FREIGHT_NET, new LSFreightNet(diagram.getFreightNet()));
             // save localization

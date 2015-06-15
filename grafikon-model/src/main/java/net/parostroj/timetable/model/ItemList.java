@@ -83,4 +83,9 @@ public class ItemList<T> implements Iterable<T> {
     public Iterator<T> iterator() {
         return items.iterator();
     }
+
+    @Override
+    public String toString() {
+        return items.toString();
+    }
 }
