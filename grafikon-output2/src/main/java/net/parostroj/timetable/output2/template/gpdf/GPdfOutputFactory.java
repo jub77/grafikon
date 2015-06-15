@@ -1,17 +1,20 @@
 package net.parostroj.timetable.output2.template.gpdf;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
-import net.parostroj.timetable.output2.Output;
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputFactory;
+import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.groovy.GroovyTemplateFactory;
 import net.parostroj.timetable.output2.pdf.PdfTransformer;
-import net.parostroj.timetable.output2.template.*;
+import net.parostroj.timetable.output2.template.TemplateOutput;
+import net.parostroj.timetable.output2.template.TemplateTransformerFactory;
+import net.parostroj.timetable.output2.template.TemplateWriterFactory;
 
 /**
  * Pdf output factory - groovy template to XSL-FO.
@@ -65,12 +68,28 @@ public class GPdfOutputFactory extends OutputFactory {
             }
             TemplateWriterFactory templateFactory = () -> factory.getTemplate(type, this.getCharset());
             TemplateTransformerFactory transformerFactory = () -> {
-                return (is, os, params) -> transformer.write(os, is);
+                return (is, os, params) -> transformer.write(os, is, getResolver(params));
             };
             return new TemplateOutput(getLocale(), templateFactory, transformerFactory);
         } catch (Exception e) {
             throw new OutputException(e);
         }
+    }
+
+    private URIResolver getResolver(OutputParams params) {
+        final OutputResources resources = this.getOutputResources(params);
+        return (href, base) -> {
+            InputStream is = GPdfOutputFactory.class.getClassLoader().getResourceAsStream(href);
+            if (is == null) {
+                // in case there is no classpath resource
+                is = resources != null ? resources.getStream(href) : null;
+            }
+            return is == null ? null : new StreamSource(is);
+        };
+    }
+
+    private OutputResources getOutputResources(OutputParams params) {
+        return params.getParamValue(Output.PARAM_RESOURCES, OutputResources.class);
     }
 
     @Override

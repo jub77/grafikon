@@ -18,6 +18,7 @@ public interface Output {
     public static final String PARAM_TEXT_TEMPLATE = "text.template";
     public static final String PARAM_CONTEXT = "context";
     public static final String PARAM_OUTPUT_ENCODING = "encoding";
+    public static final String PARAM_RESOURCES = "resources";
 
     public void write(OutputParam... params) throws OutputException;
 

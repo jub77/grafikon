@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.template.TemplateOutputResources;
 
 /**
  * Instance writes output of templates to disk.
@@ -192,6 +193,7 @@ public class OutputWriter {
         factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
+        OutputResources resources = new TemplateOutputResources(template);
         List<OutputSettings> outputNames = this.createOutputs(template);
         if (outputNames == null) {
             this.generateOutput(
@@ -199,19 +201,23 @@ public class OutputWriter {
                     this.getFile(null, template.getName(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
-                    textTemplate, type, null, null, null);
+                    textTemplate, type, null, null, resources, null);
         } else {
             for(OutputSettings outputName : outputNames) {
-                this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate, type, outputName.params, outputName.context, outputName.encoding);
+                this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate,
+                        type, outputName.params, outputName.context, resources, outputName.encoding);
             }
         }
     }
 
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
-            Map<String, Object> parameters, Map<String, Object> context, String encoding) throws OutputException {
+            Map<String, Object> parameters, Map<String, Object> context, OutputResources resources, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
         if (textTemplate != null) {
             params.setParam(Output.PARAM_TEXT_TEMPLATE, textTemplate);
+        }
+        if (resources != null) {
+            params.setParam(Output.PARAM_RESOURCES, resources);
         }
         params.setParam(Output.PARAM_TRAIN_DIAGRAM, diagram);
         params.setParam(Output.PARAM_OUTPUT_FILE, outpuFile);

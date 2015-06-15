@@ -26,8 +26,12 @@ public class PdfTransformer {
     }
 
     public FormattingResults write(OutputStream os, InputStream is) throws OutputException {
+        return this.write(os, is, null);
+    }
+
+    public FormattingResults write(OutputStream os, InputStream is, URIResolver resolver) throws OutputException {
         FopFactory fopFactory = getFopFactory();
-        FOUserAgent foUserAgent = getFoUserAgent(fopFactory);
+        FOUserAgent foUserAgent = getFoUserAgent(fopFactory, resolver);
 
         try {
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, os);
@@ -43,14 +47,11 @@ public class PdfTransformer {
         }
     }
 
-    private FOUserAgent getFoUserAgent(FopFactory fopFactory) {
+    private FOUserAgent getFoUserAgent(FopFactory fopFactory, URIResolver resolver) {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.setURIResolver(new URIResolver() {
-
-            public Source resolve(String href, String base) throws TransformerException {
-                return new StreamSource(ClassLoader.getSystemResourceAsStream(href));
-            }
-        });
+        if (resolver != null) {
+            foUserAgent.setURIResolver(resolver);
+        }
         return foUserAgent;
     }
 
