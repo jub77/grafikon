@@ -1,5 +1,10 @@
 package net.parostroj.timetable.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 public class Attachment {
 
     public static enum AttachmentType {
@@ -40,6 +45,22 @@ public class Attachment {
 
     public byte[] getBinary() {
         return binary;
+    }
+
+    public InputStream toStream() {
+        return toStream(StandardCharsets.UTF_8);
+    }
+
+    public InputStream toStream(Charset encoding) {
+        return new ByteArrayInputStream(toArray(encoding));
+    }
+
+    public byte[] toArray() {
+        return toArray(StandardCharsets.UTF_8);
+    }
+
+    public byte[] toArray(Charset encoding) {
+        return type == AttachmentType.BINARY ? binary : text.getBytes(encoding);
     }
 
     @Override
