@@ -5,35 +5,36 @@ import java.util.Collection;
 import java.util.Locale;
 
 import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
 
-public class EditRegionsDialog extends EditItemsDialog<Region> {
+public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     private final Collection<Locale> locales;
 
     public EditRegionsDialog(Frame parent, boolean modal, Collection<Locale> locales) {
-        super(parent, modal, false, true);
+        super(parent, modal, false, true, true);
         this.locales = locales;
     }
 
     @Override
     protected Collection<Region> getList() {
-        return diagram.getNet().getRegions().get();
+        return element.getNet().getRegions().get();
     }
 
     @Override
     protected void add(Region item, int index) {
-        diagram.getNet().getRegions().add(item, index);
+        element.getNet().getRegions().add(item, index);
     }
 
     @Override
     protected void remove(Region item) {
-        diagram.getNet().getRegions().remove(item);
+        element.getNet().getRegions().remove(item);
     }
 
     @Override
     protected void move(Region item, int oldIndex, int newIndex) {
-        diagram.getNet().getRegions().move(oldIndex, newIndex);
+        element.getNet().getRegions().move(oldIndex, newIndex);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region> {
 
     @Override
     protected Region createNew(String name) {
-        return diagram.createRegion(IdGenerator.getInstance().getId(), name);
+        return element.createRegion(IdGenerator.getInstance().getId(), name);
     }
 
     @Override

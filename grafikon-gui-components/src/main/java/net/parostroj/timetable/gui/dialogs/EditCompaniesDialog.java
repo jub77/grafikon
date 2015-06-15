@@ -5,34 +5,35 @@ import java.util.Collection;
 import java.util.Locale;
 
 import net.parostroj.timetable.model.Company;
+import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Dialog for editing companies.
  *
  * @author jub
  */
-public class EditCompaniesDialog extends EditItemsDialog<Company> {
+public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> {
 
     private final Collection<Locale> locales;
 
     public EditCompaniesDialog(Window parent, boolean modal, Collection<Locale> locales) {
-        super(parent, modal, false, true);
+        super(parent, modal, false, true, true);
         this.locales = locales;
     }
 
     @Override
     protected Collection<Company> getList() {
-        return diagram.getCompanies().get();
+        return element.getCompanies().get();
     }
 
     @Override
     protected void add(Company item, int index) {
-        diagram.getCompanies().add(item, index);
+        element.getCompanies().add(item, index);
     }
 
     @Override
     protected void remove(Company item) {
-        diagram.getCompanies().remove(item);
+        element.getCompanies().remove(item);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class EditCompaniesDialog extends EditItemsDialog<Company> {
 
     @Override
     protected Company createNew(String name) {
-        Company newCompany = diagram.createCompany(diagram.createId());
+        Company newCompany = element.createCompany(element.createId());
         newCompany.setAbbr(name);
         return newCompany;
     }

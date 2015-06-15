@@ -3,12 +3,10 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Frame;
 import java.util.Collection;
 
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.TimeIntervalDirection;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 
-public class EditLineClassesDialog extends EditItemsDialog<LineClass> {
+public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagram> {
 
     public EditLineClassesDialog(Frame parent, boolean modal) {
         super(parent, modal);
@@ -16,29 +14,29 @@ public class EditLineClassesDialog extends EditItemsDialog<LineClass> {
 
     @Override
     protected Collection<LineClass> getList() {
-        return diagram.getNet().getLineClasses();
+        return element.getNet().getLineClasses();
     }
 
     @Override
     protected void add(LineClass item, int index) {
-        diagram.getNet().addLineClass(item, index);
+        element.getNet().addLineClass(item, index);
     }
 
     @Override
     protected void remove(LineClass item) {
-        diagram.getNet().removeLineClass(item);
+        element.getNet().removeLineClass(item);
     }
 
     @Override
     protected void move(LineClass item, int oldIndex, int newIndex) {
-        diagram.getNet().moveLineClass(oldIndex, newIndex);
+        element.getNet().moveLineClass(oldIndex, newIndex);
     }
 
     @Override
     protected boolean deleteAllowed(LineClass lineClass) {
         if (lineClass == null)
             return false;
-        for (Line line : diagram.getNet().getLines()) {
+        for (Line line : element.getNet().getLines()) {
             if (line.getLineClass(TimeIntervalDirection.FORWARD) == lineClass)
                 return false;
             if (line.getLineClass(TimeIntervalDirection.BACKWARD) == lineClass)

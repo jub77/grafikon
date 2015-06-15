@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class FileChooserFactory {
 
     public enum Type {
-        OUTPUT, GTM, OUTPUT_DIRECTORY, TEMPLATE;
+        OUTPUT, GTM, OUTPUT_DIRECTORY, TEMPLATE, ALL_FILES;
     }
 
     public static final String FILE_EXTENSION = "gtm";
@@ -31,6 +31,7 @@ public class FileChooserFactory {
     private JFileChooser gtmFileChooserInstance;
     private JFileChooser outputDirectoryFileChooserInstance;
     private JFileChooser templateFileChooserInstance;
+    private JFileChooser allFileChooserInstance;
 
     public static FileChooserFactory getInstance() {
         return INSTANCE;
@@ -71,6 +72,12 @@ public class FileChooserFactory {
                     setLastDirectory(gtmFileChooserInstance, "last.directory.model");
                 }
                 return gtmFileChooserInstance;
+            case ALL_FILES:
+                if (allFileChooserInstance == null) {
+                    allFileChooserInstance = new JFileChooser();
+                    setLastDirectory(allFileChooserInstance, "last.directory.all.files");
+                }
+                return allFileChooserInstance;
         }
         return null;
     }
@@ -115,6 +122,8 @@ public class FileChooserFactory {
                 this.getFileChooser(Type.TEMPLATE).getCurrentDirectory().getAbsolutePath());
         section.put("last.directory.output",
                 this.getFileChooser(Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
+        section.put("last.directory.all.files",
+                this.getFileChooser(Type.ALL_FILES).getCurrentDirectory().getAbsolutePath());
         JFileChooser dChooser = this.getFileChooser(Type.OUTPUT_DIRECTORY);
         File oDir = dChooser.getSelectedFile() == null ? dChooser.getCurrentDirectory() : dChooser.getSelectedFile();
         section.put("last.directory.html.dir", oDir.getAbsolutePath());

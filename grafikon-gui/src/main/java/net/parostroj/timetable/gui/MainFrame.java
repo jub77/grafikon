@@ -754,7 +754,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         OutputTemplateListDialog dialog = new OutputTemplateListDialog(this, true);
         dialog.setLocationRelativeTo(this);
         OutputSettings settings = model.getOutputSettings();
-        dialog.showDialog(model.getDiagram(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
+        FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
+        dialog.showDialog(model.getDiagram(), chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
+                chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES),
                 new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), settings.getLocale()));
         dialog.dispose();
     }

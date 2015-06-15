@@ -4,31 +4,32 @@ import java.awt.Window;
 import java.util.Collection;
 
 import net.parostroj.timetable.model.Group;
+import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Dialog for editing groups.
  *
  * @author jub
  */
-public class EditGroupsDialog extends EditItemsDialog<Group> {
+public class EditGroupsDialog extends EditItemsDialog<Group, TrainDiagram> {
 
     public EditGroupsDialog(Window parent, boolean modal) {
-        super(parent, modal, false, false);
+        super(parent, modal, false, false, true);
     }
 
     @Override
     protected Collection<Group> getList() {
-        return diagram.getGroups();
+        return element.getGroups();
     }
 
     @Override
     protected void add(Group item, int index) {
-        diagram.addGroup(item, index);
+        element.addGroup(item, index);
     }
 
     @Override
     protected void remove(Group item) {
-        diagram.removeGroup(item);
+        element.removeGroup(item);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class EditGroupsDialog extends EditItemsDialog<Group> {
 
     @Override
     protected Group createNew(String name) {
-        Group newGroup = diagram.createGroup(diagram.createId());
+        Group newGroup = element.createGroup(element.createId());
         newGroup.setName(name);
         return newGroup;
     }

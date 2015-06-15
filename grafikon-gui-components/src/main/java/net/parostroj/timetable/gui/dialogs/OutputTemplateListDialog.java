@@ -43,8 +43,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
     private JFileChooser chooser;
+    private JFileChooser attachmentsChooser;
     private Settings settings;
     private final WindowLocationSize editSizeLocation = new WindowLocationSize();
+
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
@@ -52,9 +54,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, Settings settings) {
+    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, JFileChooser attachmentsChooser, Settings settings) {
         this.diagram = diagram;
         this.chooser = chooser;
+        this.attachmentsChooser = attachmentsChooser;
         this.settings = settings;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
         this.locationTextField.setText(this.outputDirectory.getPath());
@@ -288,7 +291,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        OutputTemplateDialog dialog = new OutputTemplateDialog(this, true);
+        OutputTemplateDialog dialog = new OutputTemplateDialog(this, true, attachmentsChooser);
         dialog.setLocationRelativeTo(this);
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
@@ -332,6 +335,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         try {
             copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
                     template.getTemplate().getLanguage()));
+            copy.getAttachments().addAll(template.getAttachments());
         } catch (GrafikonException e) {
             log.error("Error creating copy of template.", e);
         }
@@ -357,6 +361,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         }
         template.getAttributes().merge(fromTemplate.getAttributes());
         template.setScript(fromTemplate.getScript());
+        template.getAttachments().mergeImmutable(fromTemplate.getAttachments().get());
     }
 
     private javax.swing.JPanel buttonPanel;

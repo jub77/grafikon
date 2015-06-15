@@ -1,6 +1,8 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -12,7 +14,6 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
@@ -20,27 +21,29 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  *
  * @author jub
  */
-abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
+abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
-    protected TrainDiagram diagram;
+    protected E element;
     private WrapperListModel<T> listModel;
 
     private final boolean move;
     private final boolean edit;
+    private boolean newByName;
 
     public EditItemsDialog(java.awt.Window parent, boolean modal) {
-        this(parent, modal, true, false);
+        this(parent, modal, true, false, true);
     }
 
-    public EditItemsDialog(java.awt.Window parent, boolean modal, boolean move, boolean edit) {
+    public EditItemsDialog(java.awt.Window parent, boolean modal, boolean move, boolean edit, boolean newByName) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         this.move = move;
         this.edit = edit;
+        this.newByName = newByName;
         initComponents();
     }
 
-    public void showDialog(TrainDiagram diagram) {
-        this.diagram = diagram;
+    public void showDialog(E element) {
+        this.element = element;
         this.updateValues();
         this.setVisible(true);
     }
@@ -59,7 +62,7 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<T>(Wrapper.getWrapperList(getList()), null, !move);
+        listModel = new WrapperListModel<T>(this.createWrapperList(getList()), null, !move);
         listModel.setObjectListener(new ObjectListener<T>() {
             @Override
             public void added(T object, int index) {
@@ -90,17 +93,19 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         itemList = new javax.swing.JList<Wrapper<T>>();
-        nameTextField = new javax.swing.JTextField();
-        nameTextField.setColumns(6);
-        nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
-            @Override
-            protected void change() {
-                String text = nameTextField.getText();
-                newButton.setEnabled(!ObjectsUtil.isEmpty(text));
-            }
-        });
+        if (newByName) {
+            nameTextField = new javax.swing.JTextField();
+            nameTextField.setColumns(6);
+            nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
+                @Override
+                protected void change() {
+                    String text = nameTextField.getText();
+                    newButton.setEnabled(!ObjectsUtil.isEmpty(text));
+                }
+            });
+        }
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
-        newButton.setEnabled(false);
+        newButton.setEnabled(!newByName);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         if (move) {
             upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
@@ -138,7 +143,9 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         if (edit) {
             horizontal.addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
         }
-        horizontal.addComponent(nameTextField);
+        if (newByName) {
+            horizontal.addComponent(nameTextField);
+        }
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -148,10 +155,12 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
                 .addGroup(horizontal)
                 .addContainerGap())
         );
-        SequentialGroup vertical = layout.createSequentialGroup()
-            .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(newButton)
+        SequentialGroup vertical = layout.createSequentialGroup();
+        if (newByName) {
+            vertical.addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED);
+        }
+        vertical.addComponent(newButton)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(deleteButton);
         if (move) {
@@ -181,13 +190,32 @@ abstract public class EditItemsDialog<T> extends javax.swing.JDialog {
         throw new IllegalStateException("Edit action not implemented");
     }
 
+    protected Wrapper<T> createWrapper(T item) {
+        return Wrapper.getWrapper(item);
+    }
+
+    private List<Wrapper<T>> createWrapperList(Iterable<? extends T> items) {
+        List<Wrapper<T>> result = new ArrayList<>();
+        for (T item : items) {
+            result.add(this.createWrapper(item));
+        }
+        return result;
+    }
+
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = ObjectsUtil.checkAndTrim(nameTextField.getText());
-        if (name != null) {
-            // create new item
-            T item = this.createNew(name);
-            listModel.addWrapper(Wrapper.getWrapper(item));
-            nameTextField.setText("");
+        T item = null;
+        if (newByName) {
+            String name = ObjectsUtil.checkAndTrim(nameTextField.getText());
+            if (name != null) {
+                // create new item
+                item = this.createNew(name);
+                nameTextField.setText("");
+            }
+        } else {
+            item = this.createNew(null);
+        }
+        if (item != null) {
+            listModel.addWrapper(createWrapper(item));
         }
     }
 

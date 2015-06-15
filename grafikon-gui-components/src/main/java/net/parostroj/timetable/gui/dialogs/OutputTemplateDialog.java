@@ -25,10 +25,9 @@ import net.parostroj.timetable.gui.components.ScriptEditBox;
 
 import java.awt.Font;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
 
 /**
  * Dialog for editing text template.
@@ -47,8 +46,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     private OutputTemplate template;
 
-    public OutputTemplateDialog(Window parent, boolean modal) {
+    private final JFileChooser attachmentChooser;
+
+    public OutputTemplateDialog(Window parent, boolean modal, JFileChooser attachmentChooser) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
+        this.attachmentChooser = attachmentChooser;
         initComponents();
         init();
     }
@@ -117,9 +119,20 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         });
         buttonPanel.add(cancelButton);
 
-        controlPanel.add(buttonPanel, BorderLayout.SOUTH);
+        controlPanel.add(buttonPanel, BorderLayout.EAST);
 
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
+
+        JPanel attachmentPanel = new JPanel();
+        controlPanel.add(attachmentPanel, BorderLayout.WEST);
+
+        attachmentsButton = new JButton(ResourceLoader.getString("ot.button.attachments")); // NOI18N
+        attachmentPanel.add(attachmentsButton);
+        attachmentsButton.addActionListener(evt -> {
+            EditAttachmentsDialog dialog = new EditAttachmentsDialog(GuiComponentUtils.getWindow(this), true, attachmentChooser);
+            dialog.setLocationRelativeTo(this);
+            dialog.showDialog(template);
+        });;
 
         tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -291,4 +304,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JTabbedPane tabbedPane;
     private ScriptEditBox scriptEditBox;
     private JTextArea descriptionTextArea;
+    private JButton attachmentsButton;
 }
