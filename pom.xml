@@ -30,6 +30,7 @@
         <ini4j.version>0.5.2</ini4j.version>
         <guava.version>18.0</guava.version>
         <beanfabrics.version>1.4.2</beanfabrics.version>
+        <xml-apis.version>1.3.04</xml-apis.version>
         <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
     </properties>
 
@@ -202,6 +203,10 @@
                     </exclusion>
                     <exclusion>
                         <artifactId>batik-ext</artifactId>
+                        <groupId>org.apache.xmlgraphics</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>batik-js</artifactId>
                         <groupId>org.apache.xmlgraphics</groupId>
                     </exclusion>
                     <exclusion>
