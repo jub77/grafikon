@@ -29,7 +29,7 @@ public class TemplateOutput extends OutputWithLocale {
         Iterator<TemplateTransformerFactory> fi = transformerFactories.iterator();
         OutputStream os = getOutputStream(stream, !fi.hasNext());
         TemplateWriter template = templateWriterFactory.get();
-        template.write(os, params, diagram, this.getLocale());
+        template.write(os, params, this.getLocale());
         while (fi.hasNext()) {
             InputStream is = getInputStreamFromTemp(os);
             TemplateTransformer transformer = fi.next().get();
