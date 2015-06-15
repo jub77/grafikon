@@ -27,6 +27,27 @@ public class ItemList<T> implements Iterable<T> {
         moveAllowed = false;
     }
 
+    public void addAll(Iterable<? extends T> list) {
+        for (T item : list) {
+            this.add(item);
+        }
+    }
+
+    public void mergeImmutable(Collection<? extends T> list) {
+        // add missing
+        for (T item : list) {
+            if (!items.contains(item)) {
+                this.add(item);
+            }
+        }
+        // remove deleted
+        for (T item : new ArrayList<>(items)) {
+            if (!list.contains(item)) {
+                this.remove(item);
+            }
+        }
+    }
+
     public void add(T item) {
         items.add(item);
         this.fireEvent(Type.ADD, item, items.size() - 1, 0);
