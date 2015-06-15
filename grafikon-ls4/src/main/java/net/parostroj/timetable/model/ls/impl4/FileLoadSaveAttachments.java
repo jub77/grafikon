@@ -63,11 +63,7 @@ public class FileLoadSaveAttachments {
     }
 
     private byte[] getBytes(Attachment attachment) {
-        if (attachment.getType() == AttachmentType.BINARY) {
-            return attachment.getBinary();
-        } else {
-            return attachment.getText().getBytes(TEXT_ENCODING);
-        }
+        return attachment.toArray(TEXT_ENCODING);
     }
 
     private Attachment getAttachment(Pair<LSAttachment, OutputTemplate> pair, byte[] bytes) {
