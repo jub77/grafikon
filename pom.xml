@@ -185,14 +185,6 @@
                         <groupId>org.apache.avalon.framework</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>batik-svg-dom</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>batik-gvt</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
@@ -213,15 +205,7 @@
                         <groupId>org.apache.xmlgraphics</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>batik-script</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>batik-util</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>batik-anim</artifactId>
                         <groupId>org.apache.xmlgraphics</groupId>
                     </exclusion>
                     <exclusion>
@@ -233,20 +217,12 @@
                         <groupId>org.apache.xmlgraphics</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>batik-parser</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>xalan</artifactId>
                         <groupId>xalan</groupId>
                     </exclusion>
                     <exclusion>
                         <artifactId>batik-xml</artifactId>
                         <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>xml-apis-ext</artifactId>
-                        <groupId>xml-apis</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
