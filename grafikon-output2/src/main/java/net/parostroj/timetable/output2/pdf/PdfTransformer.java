@@ -58,7 +58,7 @@ public class PdfTransformer {
     private FopFactory getFopFactory() throws OutputException {
         try {
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            Configuration cfg = cfgBuilder.build(ResourceHelper.getStream("templates/pdf/fop-cfg.xml", null));
+            Configuration cfg = cfgBuilder.build(ResourceHelper.getStream("templates/pdf/fop-cfg.xml", this.getClass().getClassLoader()));
             FopFactory fopFactory = FopFactory.newInstance();
             fopFactory.setUserConfig(cfg);
             return fopFactory;
