@@ -49,7 +49,8 @@ public abstract class GroovyTemplateBinding {
             ImageSaver saver = new ImageSaver(diagram);
             for (Object image : images) {
                 try {
-                    saver.saveImage((String) image, file);
+                    saver.saveImage((String) image, file,
+                            params.getParamValue(Output.PARAM_RESOURCES, OutputResources.class));
                 } catch (IOException e) {
                     throw new OutputException("Error saving image: " + image, e);
                 }

@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -11,8 +12,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
+import com.google.common.io.*;
 
 /**
  * Saves html needed for HTML pages with output.
@@ -40,7 +40,7 @@ public class ImageSaver {
         this.diagram = diagram;
     }
 
-    public void saveImage(String image, File directory) throws IOException {
+    public void saveImage(String image, File directory, OutputResources resources) throws IOException {
         URL resLocation = null;
         if (PREDEFINED_IMAGES.contains(image)) {
             resLocation = ImageSaver.class.getResource("/images/" + image);
@@ -55,12 +55,23 @@ public class ImageSaver {
         if (resLocation != null) {
             this.saveImage(new File(directory,image), resLocation);
         } else {
-            log.warn("Image {} not found.", image);
+            try (InputStream stream = resources.getStream(image)) {
+                if (stream != null) {
+                    saveImageStream(new File(directory, image), stream);
+                } else {
+                    log.warn("Image {} not found.", image);
+                }
+            }
         }
     }
 
+    private void saveImageStream(File location, InputStream stream) throws IOException {
+        log.trace("Saving stream to file {}", location.getName());
+        Files.asByteSink(location).writeFrom(stream);
+    }
+
     private void saveImage(File location, URL resLocation) throws IOException {
-        log.trace("Saving file {}.", location.getName());
+        log.trace("Saving file {}", location.getName());
         Resources.asByteSource(resLocation).copyTo(Files.asByteSink(location));
     }
 }
