@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%
     // definition of constants
-    HEIGHT = 85
+    HEIGHT = 90
     ROW_COUNT = 3
     COLUMN_COUNT = 4
 
@@ -173,7 +173,7 @@ def print_cycle(w) {
 <block>
 <table border-collapse="collapse" table-layout="fixed" width="100%" ${backgroundSequence(c)}>
 <table-body>
-<table-row height="81mm"><table-cell number-columns-spanned="2"><block>
+<table-row height="${HEIGHT-4}mm"><table-cell number-columns-spanned="2"><block>
 <table border-collapse="collapse" table-layout="fixed" width="100%">
     <table-column column-width="38%" />
     <table-column column-width="22%" />
