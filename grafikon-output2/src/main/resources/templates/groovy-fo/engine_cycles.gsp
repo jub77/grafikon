@@ -22,10 +22,10 @@
     def borderCirc() {'border="solid .3mm black"'}
     def borderValue() {'"solid .3mm black"'}
     def rarr() { return "&#8594;" }
-    
+
     // counter of sequences
     seqId = 1
-    
+
     def getSequence(cycle) {
         if (!cycle.next) {
             return [new CycleWrapper(cycle)]
@@ -45,7 +45,7 @@
             return sequence
         }
     }
-    
+
     def getFirstFreeSequence(sequences, freeColumns) {
         if (sequences.empty) {
             return null
@@ -80,7 +80,7 @@
     }
 
     // prepare cycles - duplicate the ones needed in sequences
-    def sequences = [] 
+    def sequences = []
     for (cycle in cycles) {
         sequences << getSequence(cycle)
     }
@@ -161,13 +161,17 @@ def printWrappers(wrappers) {
   }
 }
 
+def backgroundSequence(c) {
+    return c.next ? 'background-image="images/arrow_seq_pdf.svg" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center"' : "";
+}
+
 def print_cycle(w) {
     def c = w.cycle
     def loc = getLocale(c)
     def company = getCompany(c)
 %>
 <block>
-<table border-collapse="collapse" table-layout="fixed" width="100%">
+<table border-collapse="collapse" table-layout="fixed" width="100%" ${backgroundSequence(c)}>
 <table-body>
 <table-row height="81mm"><table-cell number-columns-spanned="2"><block>
 <table border-collapse="collapse" table-layout="fixed" width="100%">
@@ -199,7 +203,7 @@ def print_cycle(w) {
           <table-cell><block ${paddingTime()} text-align="right" font-weight="bold">${convertTime(row.fromTime)}</block></table-cell>
           <table-cell><block ${padding()}>${row.fromAbbr} - ${row.toAbbr}</block></table-cell>
         </table-row><% } %></table-body></table></block></table-cell></table-row>
-<% if (c.next) { %> 
+<% if (c.next) { %>
         <table-row height="4mm" border-top=${borderValue()}>
           <table-cell><block ${padding()}>${rarr()} ${c.next.name}</block></table-cell>
           <table-cell text-align="right"><block ${padding()}>${w.id}[${w.seq}/${w.cnt}]</block></table-cell>
@@ -214,7 +218,7 @@ def print_cycle(w) {
 def getCompany(cycle) {
     def company = cycle?.company?.abbr
 }
-  
+
 def getLocale(cycle) {
     def l = cycle?.company?.locale
     return l ?: locale

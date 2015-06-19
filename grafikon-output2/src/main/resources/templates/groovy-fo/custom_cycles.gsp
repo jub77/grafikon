@@ -161,13 +161,17 @@ def printWrappers(wrappers) {
   }
 }
 
+def backgroundSequence(c) {
+    return c.next ? 'background-image="images/arrow_seq_pdf.svg" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center"' : "";
+}
+
 def print_cycle(w) {
     def c = w.cycle
     def loc = getLocale(c)
     def company = getCompany(c)
 %>
 <block>
-<table border-collapse="collapse" table-layout="fixed" width="100%">
+<table border-collapse="collapse" table-layout="fixed" width="100%" ${backgroundSequence(c)}>
 <table-body>
 <table-row height="81mm"><table-cell number-columns-spanned="2"><block>
 <table border-collapse="collapse" table-layout="fixed" width="100%">
