@@ -1,7 +1,5 @@
 package net.parostroj.timetable.output2.groovy;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
@@ -32,36 +30,12 @@ public class TrainsTemplateBinding extends GroovyTemplateBinding {
         TrainTimetables timetables = tte.getTrainTimetables();
 
         // call template
-        Set<String> images = new HashSet<String>();
         map.put("trains", timetables);
-        map.put("images", images);
         map.put("title_page", titlePage);
         map.put("page_sort", pageSort);
         map.put("freight", true);
         ResourceHelper.addTextsToMap(map, KEY_PREFIXES[0], locale, LOCALIZATION_BUNDLE);
         ResourceHelper.addTextsToMap(map, KEY_PREFIXES[1], locale, LOCALIZATION_BUNDLE);
         map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIXES));
-    }
-
-    @Override
-    public void postProcess(TrainDiagram diagram, OutputParams params, Map<String, Object> binding) throws OutputException {
-        super.postProcess(diagram, params, binding);
-
-        // write images if possible
-        Set<?> images = (Set<?>) binding.get("images");
-        if (params.paramExist(Output.PARAM_OUTPUT_FILE)) {
-            File file = params.getParamValue(Output.PARAM_OUTPUT_FILE, File.class);
-            file = file.getParentFile();
-            // for all images ...
-            ImageSaver saver = new ImageSaver(diagram);
-            for (Object image : images) {
-                try {
-                    saver.saveImage((String) image, file);
-                } catch (IOException e) {
-                    throw new OutputException("Error saving image: " + image, e);
-                }
-            }
-        }
-
     }
 }

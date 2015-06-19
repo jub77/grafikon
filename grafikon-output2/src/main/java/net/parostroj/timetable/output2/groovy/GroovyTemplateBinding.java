@@ -1,13 +1,11 @@
 package net.parostroj.timetable.output2.groovy;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.output2.Output;
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.OutputParams;
+import net.parostroj.timetable.output2.*;
 
 public abstract class GroovyTemplateBinding {
 
@@ -27,6 +25,7 @@ public abstract class GroovyTemplateBinding {
     public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
         Map<String, Object> binding = new HashMap<>();
         this.addSpecific(params, binding, diagram, locale);
+        binding.put("images", new HashSet<String>());
         this.addContext(params, binding);
         this.addLocale(locale, binding);
         return binding;
@@ -41,7 +40,21 @@ public abstract class GroovyTemplateBinding {
     }
 
     public void postProcess(TrainDiagram diagram, OutputParams params, Map<String, Object> binding) throws OutputException {
-        // default implementation do nothing
+        // write images if possible
+        Set<?> images = (Set<?>) binding.get("images");
+        if (images != null && params.paramExist(Output.PARAM_OUTPUT_FILE)) {
+            File file = params.getParamValue(Output.PARAM_OUTPUT_FILE, File.class);
+            file = file.getParentFile();
+            // for all images ...
+            ImageSaver saver = new ImageSaver(diagram);
+            for (Object image : images) {
+                try {
+                    saver.saveImage((String) image, file);
+                } catch (IOException e) {
+                    throw new OutputException("Error saving image: " + image, e);
+                }
+            }
+        }
     }
 
     abstract protected void addSpecific(OutputParams params, Map<String, Object> binding, TrainDiagram diagram, Locale locale);

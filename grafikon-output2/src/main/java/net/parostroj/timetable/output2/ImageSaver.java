@@ -32,6 +32,7 @@ public class ImageSaver {
         images.add("signal.gif");
         images.add("control_station.gif");
         images.add("trapezoid_sign.gif");
+        images.add("arrow_seq.svg");
         PREDEFINED_IMAGES = Collections.unmodifiableSet(images);
     }
 
@@ -41,9 +42,9 @@ public class ImageSaver {
 
     public void saveImage(String image, File directory) throws IOException {
         URL resLocation = null;
-        if (PREDEFINED_IMAGES.contains(image))
+        if (PREDEFINED_IMAGES.contains(image)) {
             resLocation = ImageSaver.class.getResource("/images/" + image);
-        else {
+        } else {
             List<TimetableImage> images = diagram.getImages();
             for (TimetableImage i : images) {
                 if (i.getFilename().equals(image)) {
@@ -51,10 +52,11 @@ public class ImageSaver {
                 }
             }
         }
-        if (resLocation != null)
+        if (resLocation != null) {
             this.saveImage(new File(directory,image), resLocation);
-        else
+        } else {
             log.warn("Image {} not found.", image);
+        }
     }
 
     private void saveImage(File location, URL resLocation) throws IOException {
