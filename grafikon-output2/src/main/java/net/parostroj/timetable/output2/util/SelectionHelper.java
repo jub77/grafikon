@@ -84,7 +84,7 @@ public class SelectionHelper {
         if (param != null && param.getValue() != null) {
             return ObjectsUtil.getList((List<?>) param.getValue(), TrainsCycle.class);
         }
-        TrainsCycleSort s = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
+        ElementSort<TrainsCycle> s = new ElementSort<TrainsCycle>(new TrainsCycleComparator());
         return s.sort(getCycleByType(diagram, type));
     }
 

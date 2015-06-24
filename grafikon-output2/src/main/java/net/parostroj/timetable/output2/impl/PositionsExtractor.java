@@ -5,7 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import net.parostroj.timetable.actions.TrainsCycleSort;
+import net.parostroj.timetable.actions.ElementSort;
+import net.parostroj.timetable.actions.TrainsCycleComparator;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 
@@ -118,7 +119,7 @@ public class PositionsExtractor {
     }
 
     private List<TrainsCycle> sortTrainsCycleList(List<TrainsCycle> list) {
-        TrainsCycleSort sort = new TrainsCycleSort(TrainsCycleSort.Type.ASC);
+        ElementSort<TrainsCycle> sort = new ElementSort<>(new TrainsCycleComparator());
         return sort.sort(list);
     }
 }
