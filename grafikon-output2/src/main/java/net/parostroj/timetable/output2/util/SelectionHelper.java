@@ -2,6 +2,8 @@ package net.parostroj.timetable.output2.util;
 
 import java.util.*;
 
+import com.google.common.collect.Lists;
+
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputParam;
@@ -45,7 +47,7 @@ public class SelectionHelper {
             return ObjectsUtil.getList((List<?>) param.getValue(), Train.class);
         } else if (params.paramExistWithValue("station")) {
             Node station = (Node) params.getParam("station").getValue();
-            return (new TrainSortByNodeFilter()).sortAndFilter(diagram.getTrains(), station);
+            return Lists.newArrayList(TrainsHelper.filterAndSortByNode(diagram.getTrains(), station));
         } else if (params.paramExistWithValue("driver_cycle")) {
             TrainsCycle cycle = (TrainsCycle) params.getParam("driver_cycle").getValue();
             List<Train> trains = new LinkedList<Train>();
@@ -67,14 +69,12 @@ public class SelectionHelper {
                     }
                 }
             }
-            TrainSort s = new TrainSort(
-                    new TrainComparator(TrainComparator.Type.ASC,
-                    diagram.getTrainsData().getTrainSortPattern()));
+            ElementSort<Train> s = new ElementSort<Train>(
+                    new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
             return s.sort(trains);
         } else {
-            TrainSort s = new TrainSort(
-                    new TrainComparator(TrainComparator.Type.ASC,
-                    diagram.getTrainsData().getTrainSortPattern()));
+            ElementSort<Train> s = new ElementSort<Train>(
+                    new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
             return s.sort(diagram.getTrains());
         }
     }
@@ -93,8 +93,9 @@ public class SelectionHelper {
         if (param != null && param.getValue() != null) {
             return ObjectsUtil.getList((List<?>) param.getValue(), Node.class);
         }
-        NodeSort s = new NodeSort(NodeSort.Type.ASC);
-        return s.sort(diagram.getNet().getNodes(), node -> node.getType().isStation() || node.getType().isStop());
+        ElementSort<Node> s = new ElementSort<Node>(new NodeComparator(),
+                node -> node.getType().isStation() || node.getType().isStop());
+        return s.sort(diagram.getNet().getNodes());
     }
 
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {

@@ -16,7 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import net.parostroj.timetable.actions.NodeSort;
+import net.parostroj.timetable.actions.ElementSort;
+import net.parostroj.timetable.actions.NodeComparator;
 import net.parostroj.timetable.actions.RouteBuilder;
 import net.parostroj.timetable.gui.commands.CreateTrainCommand;
 import net.parostroj.timetable.gui.components.GroupSelect;
@@ -63,7 +64,7 @@ public class CreateTrainView extends javax.swing.JPanel {
         DefaultComboBoxModel<Node> toModel = new DefaultComboBoxModel<Node>();
 
         Collection<Node> v = diagram.getNet().getNodes();
-        NodeSort sort = new NodeSort(NodeSort.Type.ASC);
+        ElementSort<Node> sort = new ElementSort<Node>(new NodeComparator());
         List<Node> list = sort.sort(v);
 
         for (Node node : list) {

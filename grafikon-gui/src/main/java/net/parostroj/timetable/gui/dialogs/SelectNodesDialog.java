@@ -2,10 +2,14 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.List;
 import java.util.Set;
-import net.parostroj.timetable.actions.NodeSort;
+
+import net.parostroj.timetable.actions.ElementSort;
+import net.parostroj.timetable.actions.NodeComparator;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.utils.ResourceLoader;
+
 import java.awt.BorderLayout;
+
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -24,7 +28,7 @@ public class SelectNodesDialog extends javax.swing.JDialog {
     }
 
     public void setNodes(Set<Node> nodes) {
-        List<Node> sortedNodes = (new NodeSort(NodeSort.Type.ASC)).sort(nodes);
+        List<Node> sortedNodes = (new ElementSort<Node>(new NodeComparator())).sort(nodes);
 
         nodesComboBox.removeAllItems();
         for (Node node : sortedNodes) {

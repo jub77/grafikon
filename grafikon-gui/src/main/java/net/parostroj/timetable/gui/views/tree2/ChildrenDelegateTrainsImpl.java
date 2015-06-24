@@ -14,7 +14,7 @@ public class ChildrenDelegateTrainsImpl extends ChildrenDelegateImpl implements 
     private final TrainComparator comparator;
 
     public ChildrenDelegateTrainsImpl(TrainDiagram diagram) {
-        comparator = new TrainComparator(TrainComparator.Type.ASC, diagram.getTrainsData().getTrainSortPattern());
+        comparator = new TrainComparator(diagram.getTrainsData().getTrainSortPattern());
     }
 
     @Override

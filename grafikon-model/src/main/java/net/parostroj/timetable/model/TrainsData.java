@@ -82,7 +82,7 @@ public class TrainsData implements TrainDiagramPart {
 
     public TrainComparator getTrainComparator() {
         if (trainComparator == null) {
-            trainComparator = new TrainComparator(TrainComparator.Type.ASC, getTrainSortPattern());
+            trainComparator = new TrainComparator(getTrainSortPattern());
         }
         return trainComparator;
     }

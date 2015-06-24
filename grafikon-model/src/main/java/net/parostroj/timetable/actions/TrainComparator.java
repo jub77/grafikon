@@ -18,16 +18,10 @@ public class TrainComparator implements Comparator<Train> {
 
     private static final Logger log = LoggerFactory.getLogger(TrainComparator.class);
 
-    public enum Type {ASC, DESC; }
-
-    private final Type type;
-
     private final Pattern pattern;
-
     private final SortPattern sortPattern;
 
-    public TrainComparator(Type type, SortPattern pattern) {
-        this.type = type;
+    public TrainComparator(SortPattern pattern) {
         this.pattern = Pattern.compile(pattern.getPattern());
         this.sortPattern = pattern;
     }
@@ -49,12 +43,6 @@ public class TrainComparator implements Comparator<Train> {
         for (SortPatternGroup group : sortPattern.getGroups()) {
             String s1 = m1.group(group.getGroup());
             String s2 = m2.group(group.getGroup());
-            // switch
-            if (type == Type.DESC) {
-                String aux = s1;
-                s1 = s2;
-                s2 = aux;
-            }
             int res = 0;
             switch (group.getType()) {
                 case STRING:

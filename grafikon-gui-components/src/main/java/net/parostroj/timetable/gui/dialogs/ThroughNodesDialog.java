@@ -2,7 +2,8 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
 
-import net.parostroj.timetable.actions.NodeSort;
+import net.parostroj.timetable.actions.ElementSort;
+import net.parostroj.timetable.actions.NodeComparator;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -35,7 +36,7 @@ public class ThroughNodesDialog extends javax.swing.JDialog {
         this.nodes = nodes;
 
         // update values for nodes
-        NodeSort sort = new NodeSort(NodeSort.Type.ASC);
+        ElementSort<Node> sort = new ElementSort<Node>(new NodeComparator());
         List<Node> sorted = sort.sort(allNodes);
         nodeComboBox.removeAllItems();
         for (Node node : sorted) {

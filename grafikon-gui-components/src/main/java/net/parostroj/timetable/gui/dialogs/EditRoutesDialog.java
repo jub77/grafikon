@@ -2,8 +2,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.util.*;
 
-import net.parostroj.timetable.actions.NodeSort;
-import net.parostroj.timetable.actions.RouteBuilder;
+import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
@@ -57,7 +56,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
 
     private void updateValues() {
         // update list of nodes
-        NodeSort sort = new NodeSort(NodeSort.Type.ASC);
+        ElementSort<Node> sort = new ElementSort<Node>(new NodeComparator());
         fromComboBox.removeAllItems();
         toComboBox.removeAllItems();
         List<Node> nodes = sort.sort(diagram.getNet().getNodes());

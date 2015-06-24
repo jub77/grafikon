@@ -15,6 +15,9 @@ import net.parostroj.timetable.utils.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
 /**
  * Helper actions for trains.
  *
@@ -492,6 +495,18 @@ public class TrainsHelper {
         return (node.getType().isStation() || (node.getType().isStop() && (type != null && type.isPlatform()))) && !ignore;
     }
 
+    public static Iterable<Train> filterAndSortByNode(List<Train> trains, final RouteSegment segment) {
+        Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.find(train.getTimeIntervalList(),
+                interval -> segment.equals(interval.getOwner()), null)), Predicates.notNull());
+        return Iterables.transform(intervals, interval -> interval.getTrain());
+    }
+
+    /**
+     * Returns iterable with all time intervals for the route segment.
+     *
+     * @param segment route segment
+     * @return iterable with time intervals
+     */
     public static Iterable<TimeInterval> getTimeIntervals(final RouteSegment segment) {
         return new Iterable<TimeInterval>() {
             @Override

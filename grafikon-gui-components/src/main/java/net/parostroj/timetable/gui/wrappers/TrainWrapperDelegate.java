@@ -20,9 +20,7 @@ public class TrainWrapperDelegate implements WrapperDelegate<Train> {
 
     public TrainWrapperDelegate(Type type, TrainDiagram diagram) {
         this.type = type;
-        this.comparator = new TrainComparator(
-                TrainComparator.Type.ASC,
-                diagram.getTrainsData().getTrainSortPattern());
+        this.comparator = new TrainComparator(diagram.getTrainsData().getTrainSortPattern());
     }
 
     public TrainWrapperDelegate(Type type, TrainComparator comparator) {
