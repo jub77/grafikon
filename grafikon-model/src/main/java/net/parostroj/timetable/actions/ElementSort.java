@@ -1,11 +1,11 @@
 package net.parostroj.timetable.actions;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Sorting of elements.
@@ -33,10 +33,7 @@ public class ElementSort<T> {
      * @return sorted list
      */
     public List<T> sort(Collection<? extends T> elements) {
-        List<T> newElements = filter == null ? Lists.newArrayList(elements) : Lists.newArrayList(Iterables.filter(
-                elements, filter));
-        Collections.sort(newElements, comparator);
-        return newElements;
+        return sort(elements, comparator, filter);
     }
 
     public static <E> List<E> sort(Collection<? extends E> elements, Comparator<? super E> comparator) {
