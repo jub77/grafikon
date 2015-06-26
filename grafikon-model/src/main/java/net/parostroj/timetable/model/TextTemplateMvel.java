@@ -22,8 +22,9 @@ public final class TextTemplateMvel extends TextTemplate {
 
     protected TextTemplateMvel(String template, boolean initialize) {
         super(template);
-        if (initialize)
+        if (initialize) {
             initialize();
+        }
     }
 
     private void initialize() {
@@ -34,8 +35,9 @@ public final class TextTemplateMvel extends TextTemplate {
     @Override
     public String evaluateWithException(Map<String, Object> binding) throws GrafikonException {
         try {
-            if (compiledTemplate == null)
+            if (compiledTemplate == null) {
                 initialize();
+            }
             return TemplateRuntime.execute(compiledTemplate, binding).toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,6 +68,9 @@ public final class TextTemplateMvel extends TextTemplate {
     @Override
     public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
         try {
+            if (compiledTemplate == null) {
+                initialize();
+            }
             output.write(this.evaluateWithException(binding));
             output.flush();
         } catch (IOException e) {

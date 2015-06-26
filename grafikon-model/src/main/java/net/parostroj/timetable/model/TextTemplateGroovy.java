@@ -42,8 +42,9 @@ public final class TextTemplateGroovy extends TextTemplate {
     @Override
     public String evaluateWithException(Map<String, Object> binding) throws GrafikonException {
         try {
-            if (templateGString == null)
+            if (templateGString == null) {
                 initialize();
+            }
             return templateGString.make(binding).toString();
         } catch (GrafikonException e) {
             throw e;
@@ -74,6 +75,9 @@ public final class TextTemplateGroovy extends TextTemplate {
 
     @Override
     public void evaluate(Writer output, Map<String, Object> binding) throws GrafikonException {
+        if (templateGString == null) {
+            initialize();
+        }
         Writable result = templateGString.make(binding);
         try {
             result.writeTo(output);
