@@ -12,7 +12,7 @@ public abstract class Script {
     public static enum Language {
         GROOVY, JAVASCRIPT;
     }
-    
+
     private final String sourceCode;
     private final Language language;
 
@@ -29,11 +29,11 @@ public abstract class Script {
     }
 
     public abstract Object evaluate(Map<String, Object> binding);
-    
+
     public abstract Object evaluateWithException(Map<String, Object> binding) throws GrafikonException;
 
     public static Script createScript(String sourceCode, Language language) throws GrafikonException {
-        return createScript(sourceCode, language, true);
+        return createScript(sourceCode, language, false);
     }
 
     public static Script createScript(String sourceCode, Language language, boolean initizalize) throws GrafikonException {
@@ -44,7 +44,7 @@ public abstract class Script {
                 throw new IllegalArgumentException("No script for language available.");
         }
     }
-    
+
     public void freeResources() {
         // nothing
     }

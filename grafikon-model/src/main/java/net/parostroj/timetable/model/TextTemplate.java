@@ -52,7 +52,7 @@ public abstract class TextTemplate {
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {
-        return createTextTemplate(template, language, true);
+        return createTextTemplate(template, language, false);
     }
 
     public static TextTemplate createTextTemplate(String template, Language language, boolean initialize) throws GrafikonException {
