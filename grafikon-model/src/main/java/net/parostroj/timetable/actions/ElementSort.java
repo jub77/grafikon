@@ -1,6 +1,7 @@
 package net.parostroj.timetable.actions;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -32,9 +33,22 @@ public class ElementSort<T> {
      * @return sorted list
      */
     public List<T> sort(Collection<? extends T> elements) {
-        List<T> newElements = filter == null ? Lists.newArrayList(elements) :
-            Lists.newArrayList(Iterables.filter(elements, filter));
+        List<T> newElements = filter == null ? Lists.newArrayList(elements) : Lists.newArrayList(Iterables.filter(
+                elements, filter));
         Collections.sort(newElements, comparator);
         return newElements;
+    }
+
+    public static <E> List<E> sort(Collection<? extends E> elements, Comparator<? super E> comparator) {
+        return elements.stream().sorted(comparator).collect(Collectors.toList());
+    }
+
+    public static <E> List<E> sort(Collection<? extends E> elements, Comparator<? super E> comparator,
+            Predicate<? super E> filter) {
+        return elements.stream().filter(getPredicate(filter)).sorted(comparator).collect(Collectors.toList());
+    }
+
+    public static <E> java.util.function.Predicate<? super E> getPredicate(Predicate<? super E> predicate) {
+        return item -> predicate.apply(item);
     }
 }
