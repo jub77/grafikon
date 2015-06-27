@@ -42,10 +42,10 @@ public class ElementSort<T> {
 
     public static <E> List<E> sort(Collection<E> elements, Comparator<? super E> comparator,
             Predicate<? super E> filter) {
-        Stream<? extends E> stream = elements.stream();
+        Stream<E> stream = elements.stream();
         if (filter != null) {
             stream = stream.filter(filter);
         }
-        return stream.sorted(comparator).collect(Collectors.toList());
+        return stream.sorted(comparator).collect(Collectors.<E>toList());
     }
 }
