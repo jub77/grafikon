@@ -3,9 +3,9 @@ package net.parostroj.timetable.actions;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Sorting of elements.
@@ -32,20 +32,20 @@ public class ElementSort<T> {
      * @param elements elements
      * @return sorted list
      */
-    public List<T> sort(Collection<? extends T> elements) {
+    public <E extends T> List<E> sort(Collection<E> elements) {
         return sort(elements, comparator, filter);
     }
 
-    public static <E> List<E> sort(Collection<? extends E> elements, Comparator<? super E> comparator) {
-        return elements.stream().sorted(comparator).collect(Collectors.toList());
+    public static <E> List<E> sort(Collection<E> elements, Comparator<? super E> comparator) {
+        return sort(elements, comparator, null);
     }
 
-    public static <E> List<E> sort(Collection<? extends E> elements, Comparator<? super E> comparator,
+    public static <E> List<E> sort(Collection<E> elements, Comparator<? super E> comparator,
             Predicate<? super E> filter) {
-        return elements.stream().filter(getPredicate(filter)).sorted(comparator).collect(Collectors.toList());
-    }
-
-    public static <E> java.util.function.Predicate<? super E> getPredicate(Predicate<? super E> predicate) {
-        return item -> predicate.apply(item);
+        Stream<? extends E> stream = elements.stream();
+        if (filter != null) {
+            stream = stream.filter(filter);
+        }
+        return stream.sorted(comparator).collect(Collectors.toList());
     }
 }
