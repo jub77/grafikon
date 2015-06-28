@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 /**
  * Helper actions for trains.
@@ -495,10 +496,18 @@ public class TrainsHelper {
         return (node.getType().isStation() || (node.getType().isStop() && (type != null && type.isPlatform()))) && !ignore;
     }
 
+    /**
+     * Returns sorted list by time of trains which goes through given route segment.
+     *
+     * @param trains trains to be filtered
+     * @param segment route segment
+     * @return iterable with trains
+     */
     public static Iterable<Train> filterAndSortByNode(List<Train> trains, final RouteSegment segment) {
         Iterable<TimeInterval> intervals = Iterables.filter(Iterables.transform(trains, train -> Iterables.find(train.getTimeIntervalList(),
                 interval -> segment.equals(interval.getOwner()), null)), Predicates.notNull());
-        return Iterables.transform(intervals, interval -> interval.getTrain());
+        Ordering<TimeInterval> sort = Ordering.from((TimeInterval i1, TimeInterval i2) -> i1.getStart() - i2.getStart());
+        return Iterables.transform(sort.sortedCopy(intervals), interval -> interval.getTrain());
     }
 
     /**
