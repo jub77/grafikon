@@ -508,42 +508,7 @@ public class TrainsHelper {
      * @return iterable with time intervals
      */
     public static Iterable<TimeInterval> getTimeIntervals(final RouteSegment segment) {
-        return new Iterable<TimeInterval>() {
-            @Override
-            public Iterator<TimeInterval> iterator() {
-                return new Iterator<TimeInterval>() {
-
-                    private final Iterator<? extends Track> tracks = segment.getTracks().iterator();
-                    private Iterator<TimeInterval> intervals;
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public TimeInterval next() {
-                        if (hasNext()) {
-                            return intervals.next();
-                        } else {
-                            throw new NoSuchElementException();
-                        }
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        do {
-                            if (intervals != null && !intervals.hasNext()) {
-                                intervals = null;
-                            }
-                            if (intervals == null && tracks.hasNext()) {
-                                intervals = tracks.next().getTimeIntervalList().iterator();
-                            }
-                        } while (intervals != null && !intervals.hasNext());
-                        return intervals != null && intervals.hasNext();
-                    }
-                };
-            }
-        };
+        Iterable<List<TimeInterval>> intervals = Iterables.transform(segment.getTracks(), track -> track.getTimeIntervalList());
+        return Iterables.concat(intervals);
     }
 }
