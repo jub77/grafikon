@@ -17,13 +17,4 @@ public interface Translator {
      * @return translated text
      */
     String translate(String text, Locale locale);
-
-    /**
-     * Returns predefined text for given location and key.
-     *
-     * @param key key
-     * @param locale locale
-     * @return localized text
-     */
-    String getText(String key, Locale locale);
 }

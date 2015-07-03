@@ -180,16 +180,16 @@ def print_cycle(w) {
     <table-column column-width="40%" />
     <table-body>
         <table-row font-size="2mm">
-          <table-cell number-columns-spanned="3"><block ${padding()}>${translator.getText("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</block></table-cell>
+          <table-cell number-columns-spanned="3"><block ${padding()}>${localization.translate("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</block></table-cell>
         </table-row>
         <table-row>
           <table-cell font-size="4.5mm" font-weight="bold"><block margin-left=".2mm">${c.name}</block></table-cell>
           <table-cell font-size="3.5mm" font-weight="bold" number-columns-spanned="2"><block>${c.description ?: ""}</block></table-cell>
         </table-row>
         <table-row font-size="2mm" text-align="center" border-top=${borderValue()}>
-          <table-cell><block margin-top=".2mm">${translator.getText("column_train", loc)}</block></table-cell>
-          <table-cell><block margin-top=".2mm">${translator.getText("column_departure", loc)}</block></table-cell>
-          <table-cell><block margin-top=".2mm">${translator.getText("column_from_to", loc)}</block></table-cell>
+          <table-cell><block margin-top=".2mm">${localization.translate("column_train", loc)}</block></table-cell>
+          <table-cell><block margin-top=".2mm">${localization.translate("column_departure", loc)}</block></table-cell>
+          <table-cell><block margin-top=".2mm">${localization.translate("column_from_to", loc)}</block></table-cell>
         </table-row><% for (row in c.rows) {
               %>
         <table-row>

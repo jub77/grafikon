@@ -74,15 +74,15 @@
   <table align="right" class="titlepage" border="0" cellspacing="0">
     <tr><td class="company">${company}<br>${company_part ?: "&nbsp;"}</td></tr>
     <tr><td class="space1"></td></tr>
-    <tr><td class="gtitle">${translator.getText("train_timetable", loc)}</td></tr>
+    <tr><td class="gtitle">${localization.translate("train_timetable", loc)}</td></tr>
     <tr><td class="numbers">${getRouteNames(c, cycles)}</td></tr>
-    <tr><td class="line">${translator.getText("for_line", loc)}</td></tr>
+    <tr><td class="line">${localization.translate("for_line", loc)}</td></tr>
     <tr><td class="stations">${getRoutePaths(c, cycles)}</td></tr>
-    <tr><td class="valid"><% if (cycles.validity != null) { %>${translator.getText("validity_from", loc)} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
-    <tr><td class="cycle">${translator.getText("cycle", loc)}: ${c.name}</td></tr>
+    <tr><td class="valid"><% if (cycles.validity != null) { %>${localization.translate("validity_from", loc)} ${cycles.validity}<% } else { %>&nbsp;<% } %></td></tr>
+    <tr><td class="cycle">${localization.translate("cycle", loc)}: ${c.name}</td></tr>
     <tr><td class="cycledesc">${c.description ?: "&nbsp"}</td></tr>
     <tr><td class="space2">&nbsp;</td></tr>
-    <tr><td class="publish">${translator.getText("publisher", loc)}</td></tr>
+    <tr><td class="publish">${localization.translate("publisher", loc)}</td></tr>
   </table>
 </td>
 </tr>
@@ -105,13 +105,13 @@
     <tr><td align="center" class="list1">
       <table class="list2" border="0" cellspacing="0">
         <tr>
-          <td colspan="4">${translator.getText("list_train_title", loc)}:</td>
+          <td colspan="4">${localization.translate("list_train_title", loc)}:</td>
         </tr>
         <tr class="listh">
-          <td class="ctrainh">${translator.getText("column_train", loc)}</td>
-          <td class="cdepartureh">${translator.getText("column_departure", loc)}</td>
-          <td class="cfromtoh">${translator.getText("column_from_to", loc)}</td>
-          <td class="cnoteh">${translator.getText("column_note", loc)}</td>
+          <td class="ctrainh">${localization.translate("column_train", loc)}</td>
+          <td class="cdepartureh">${localization.translate("column_departure", loc)}</td>
+          <td class="cfromtoh">${localization.translate("column_from_to", loc)}</td>
+          <td class="cnoteh">${localization.translate("column_note", loc)}</td>
         </tr><% lastNode = null;
                 def abbrMap = [:]
                 for (item in c.rows) {
@@ -120,7 +120,7 @@
                   if (lastNode != null && lastNode != item.from) {
                     %>
         <tr>
-          <td colspan="4" class="move">&mdash;  ${translator.getText("move_to_station", loc)} ${item.from} &mdash; </td>
+          <td colspan="4" class="move">&mdash;  ${localization.translate("move_to_station", loc)} ${item.from} &mdash; </td>
         </tr><%
                   }
               %>
@@ -211,13 +211,13 @@ def add(str, delimiter, value) {
 def getCompany(cycle, loc) {
   def company = cycle?.company?.name
   company = company ?: cycle?.company?.abbr
-  return company ?: translator.getText("company", loc)
+  return company ?: localization.translate("company", loc)
 }
 
 def getCompanyPart(cycle, loc) {
     def part = cycle?.company?.part
     if (!part && !cycle?.company?.abbr) {
-        part = translator.getText("company_part", loc)
+        part = localization.translate("company_part", loc)
     }
     return part
 }

@@ -207,7 +207,7 @@
     <td class="headerw1">
       <table class="title">
         <tr>
-          <td class="description">${translator.getText("cycle", lLoc)}:</td></tr>
+          <td class="description">${localization.translate("cycle", lLoc)}:</td></tr>
         <tr>
           <td class="value">${c.name}</td></tr>
       </table>
@@ -215,7 +215,7 @@
     <td class="headerw2">
       <table class="title">
         <tr>
-          <td class="description">${translator.getText("composition", lLoc)}:</td></tr>
+          <td class="description">${localization.translate("composition", lLoc)}:</td></tr>
         <tr>
           <td class="value">${c.description == null ? "&nbsp;" : c.description}</td></tr>
       </table>
@@ -225,10 +225,10 @@
     <td colspan="3" class="listwrap">
       <table align="center" class="list">
         <tr class="listheader">
-          <td class="ctrain">${translator.getText("column_train", lLoc)}</td>
-          <td class="cdepartureh">${translator.getText("column_departure", lLoc)}</td>
-          <td class="cfromto">${translator.getText("column_from_to", lLoc)}</td>
-          <td class="cnote">${translator.getText("column_note", lLoc)}</td>
+          <td class="ctrain">${localization.translate("column_train", lLoc)}</td>
+          <td class="cdepartureh">${localization.translate("column_departure", lLoc)}</td>
+          <td class="cfromto">${localization.translate("column_from_to", lLoc)}</td>
+          <td class="cnote">${localization.translate("column_note", lLoc)}</td>
         </tr><% for (row in c.rows) { %>
         <tr class="listitem">
           <td class="ctrain">${row.trainName}</td>
@@ -267,7 +267,7 @@
   
   def getCompany(cycle, loc) {
       def company = cycle?.company?.abbr
-      return company ?: translator.getText("company", loc)
+      return company ?: localization.translate("company", loc)
   }
   
   def getLocale(cycle) {

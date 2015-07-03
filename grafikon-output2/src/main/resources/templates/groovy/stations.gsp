@@ -61,9 +61,9 @@
         str = "${text}: ${name}${comment(' ', cycle_t.desc)}"
       } else {
         if (cycle_t.trainName == null) {
-          str = "${text}: ${name} ${translator.getText('ends', loc)}"
+          str = "${text}: ${name} ${localization.translate('ends', loc)}"
         } else {
-          str = "${text}: ${name} ${translator.getText('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+          str = "${text}: ${name} ${localization.translate('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
         }
       }
       return str
@@ -84,17 +84,17 @@
 
   def get_note(row, loc) {
     if (row.technologicalTime) {
-      return translator.getText("technological_time", loc)
+      return localization.translate("technological_time", loc)
     }
 
     note_parts = []
     // length
     if (row.length != null) {
-      length_unit_s = row.length.lengthInAxles ? " ${translator.getText('length_axles', loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
+      length_unit_s = row.length.lengthInAxles ? " ${localization.translate('length_axles', loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
       note_parts << "[${row.length.length}${length_unit_s}]"
     }
     // engine
-    def engineText = translator.getText("engine", loc)
+    def engineText = localization.translate("engine", loc)
     if (row.engine != null)
       for (engine_t in row.engine) {
         def str = textForCycle(engineText, engine_t, loc)
@@ -103,7 +103,7 @@
         note_parts << str
       }
     // train unit
-    def trainUnitText = translator.getText("train_unit", loc)
+    def trainUnitText = localization.translate("train_unit", loc)
     if (row.trainUnit != null)
       for (train_unit_t in row.trainUnit) {
         def str = textForCycle(trainUnitText, train_unit_t, loc)
@@ -131,7 +131,7 @@
     }
     // occupied track
     if (row.occupied) {
-      note_parts << translator.getText("occupied", loc)
+      note_parts << localization.translate("occupied", loc)
     }
 
     return create_note_str(note_parts)
@@ -153,14 +153,14 @@
 </tr>
 <tr class="header">
     <td style="width: 5mm; text-align: center">X</td>
-    <td style="width: 22mm">${translator.getText("column_train", loc)}</td>
-    <td style="width: 10mm">${translator.getText("column_from", loc)}</td>
-    <td style="width: 10mm">${translator.getText("column_arrival", loc)}</td>
-    <td style="width: 5mm">${translator.getText("column_track", loc)}</td>
-    <td style="width: 10mm">${translator.getText("column_departure", loc)}</td>
-    <td style="width: 10mm">${translator.getText("column_to", loc)}</td>
-    <td style="width: 10mm">${translator.getText("column_end", loc)}</td>
-    <td style="width: 188mm">${translator.getText("column_notes", loc)}</td>
+    <td style="width: 22mm">${localization.translate("column_train", loc)}</td>
+    <td style="width: 10mm">${localization.translate("column_from", loc)}</td>
+    <td style="width: 10mm">${localization.translate("column_arrival", loc)}</td>
+    <td style="width: 5mm">${localization.translate("column_track", loc)}</td>
+    <td style="width: 10mm">${localization.translate("column_departure", loc)}</td>
+    <td style="width: 10mm">${localization.translate("column_to", loc)}</td>
+    <td style="width: 10mm">${localization.translate("column_end", loc)}</td>
+    <td style="width: 188mm">${localization.translate("column_notes", loc)}</td>
 </tr>
 </thead>
 <tbody>

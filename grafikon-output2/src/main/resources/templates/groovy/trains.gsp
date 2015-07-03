@@ -370,8 +370,8 @@
 <table class="two-pages${hasNext ? " page-break" :""}" cellspacing="0" cellpadding="0">
 <tr>
     <td class="header-l-l">${pageLeft.numberShown ? pageLeft.number : "&nbsp;"}</td>
-    <td class="header-l-r">${pageLeft.numberShown ? translator.getText("header_publisher", locale) : "&nbsp"}</td>
-    <td class="header-r-l">${pageRight.numberShown ? translator.getText("header_publisher", locale) : "&nbsp"}</td>
+    <td class="header-l-r">${pageLeft.numberShown ? localization.translate("header_publisher", locale) : "&nbsp"}</td>
+    <td class="header-r-l">${pageRight.numberShown ? localization.translate("header_publisher", locale) : "&nbsp"}</td>
     <td class="header-r-r">${pageRight.numberShown ? pageRight.number : "&nbsp;"}</td>
 </tr>
 <tr>
@@ -397,16 +397,16 @@
       show_text(page)
     } else if (page.index) {
 %>
-<div class="index-title">${translator.getText("train_list", locale)}</div>
+<div class="index-title">${localization.translate("train_list", locale)}</div>
 <div class="spacer4">&nbsp;</div>
 <table class="index" border="0" cellspacing="0">
   <tr>
-    <td class="column-1">${translator.getText("index_train", locale)}</td>
-    <td class="column-2">${translator.getText("index_page", locale)}</td>
-    <td class="column-1">${translator.getText("index_train", locale)}</td>
-    <td class="column-2">${translator.getText("index_page", locale)}</td>
-    <td class="column-1">${translator.getText("index_train", locale)}</td>
-    <td>${translator.getText("index_page", locale)}</td>
+    <td class="column-1">${localization.translate("index_train", locale)}</td>
+    <td class="column-2">${localization.translate("index_page", locale)}</td>
+    <td class="column-1">${localization.translate("index_train", locale)}</td>
+    <td class="column-2">${localization.translate("index_page", locale)}</td>
+    <td class="column-1">${localization.translate("index_train", locale)}</td>
+    <td>${localization.translate("index_page", locale)}</td>
   </tr>
   <tr>
     <td class="column-1-delim">1</td>
@@ -473,10 +473,10 @@
         for (wr in train.weightData) {
           currentEngine = concat(wr.engines, ", ") %>
         <tr>
-          <td>${(currentEngine != "" && currentEngine != lastEngine) ? (translator.getText(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". &nbsp;") : ""}</td>
-          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? translator.getText("norm_load", locale) + ": &nbsp;" : ""}</td>
+          <td>${(currentEngine != "" && currentEngine != lastEngine) ? (localization.translate(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". &nbsp;") : ""}</td>
+          <td>${(wr.weight != null && (fwt || (currentEngine != "" && currentEngine != lastEngine))) ? localization.translate("norm_load", locale) + ": &nbsp;" : ""}</td>
           <td>${wr.from != null && wr.to != null ? wr.from + " - " + wr.to + " &nbsp;" : ""}</td>
-          <td align="right">${wr.weight != null ? wr.weight + " " + translator.getText("tons", locale) : ""}</td>
+          <td align="right">${wr.weight != null ? wr.weight + " " + localization.translate("tons", locale) : ""}</td>
         </tr><%
           fwt = false
           lastEngine = currentEngine
@@ -486,7 +486,7 @@
           if (train.lengthData.length % 2 == 1)
             train.lengthData.length = train.lengthData.length - 1%>
         <tr>
-          <td colspan="4">${translator.getText("length", locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? translator.getText("length_axles", locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}</td>
+          <td colspan="4">${localization.translate("length", locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? localization.translate("length_axles", locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}</td>
         </tr><%
         } %>
       </table>
@@ -562,8 +562,8 @@
     toT.compute(row.departure, false, true)
     def stationName = row.station
     def desc = ""
-    if (row.stationType == "stop.with.freight") stationName += " ${translator.getText('abbr_stop_freight', locale)}"
-    if (row.stationType == "stop") stationName += " ${translator.getText('abbr_stop', locale)}"
+    if (row.stationType == "stop.with.freight") stationName += " ${localization.translate('abbr_stop_freight', locale)}"
+    if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
     if (emphName) stationName = "<span class=\"emph\">${stationName}</span>"
     if (row.straight == false && !row.lightSignals) desc += "&rarr;"
     if (row.lightSignals) { desc += "<img src=\"signal.gif\" class=\"signal\">"; images.add("signal.gif")}
@@ -634,11 +634,11 @@
   def totalMinutesStr = Duration.show(totalMinutes)
 %>
   <tr class="fline">
-    <td colspan="${colspan / 2 - 2}" class="totalt">${translator.getText("total_train_time", locale)} &nbsp;. . . &nbsp;</td>
+    <td colspan="${colspan / 2 - 2}" class="totalt">${localization.translate("total_train_time", locale)} &nbsp;. . . &nbsp;</td>
     <td class="totalt emph">${runDur.showTotal()}</td>
     <td class="totali">+</td>
     <td class="totalt">${stopDur.showTotal()}</td>
-    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? translator.getText("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? translator.getText("minutes", locale) : ""}</td>
+    <td colspan="${colspan / 2 - 1}" class="totalv">&nbsp;= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</td>
   </tr><%
   comments = createComments(train)
   for (comment in comments) { %>
@@ -739,15 +739,15 @@
     def lineEnd = false
     for (row in train.rows) {
       if (!lineEnd && row.lineEnd) {
-        list << ["&Delta;", translator.getText("entry_line_end", locale)]
+        list << ["&Delta;", localization.translate("entry_line_end", locale)]
         lineEnd = true
       }
       if (!occupied && row.occupied) {
-        list << ["&Omicron;",translator.getText("entry_occupied", locale)]
+        list << ["&Omicron;",localization.translate("entry_occupied", locale)]
         occupied = true
       }
       if (!shunt && row.shunt) {
-        list << ["&loz;",translator.getText("entry_shunt", locale)]
+        list << ["&loz;",localization.translate("entry_shunt", locale)]
         shunt = true
       }
       if (row.comment != null) {
@@ -769,15 +769,15 @@
 <table class="titlepage" border="0" cellspacing="0">
   <tr><td class="company">${company}<br>${company_part}</td></tr>
   <tr><td class="space1">&nbsp;</td></tr>
-  <tr><td class="gtitle">${translator.getText("train_timetable", locale)}</td></tr>
+  <tr><td class="gtitle">${localization.translate("train_timetable", locale)}</td></tr>
   <tr><td class="numbers">${getRouteNames(trains)}</td></tr>
-  <tr><td class="line">${translator.getText("for_line", locale)}</td></tr>
+  <tr><td class="line">${localization.translate("for_line", locale)}</td></tr>
   <tr><td class="stations">${getRoutePaths(trains)}</td></tr>
-  <tr><td class="valid"><% if (trains.validity != null) { %>${translator.getText("validity_from", locale)} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
-  <tr><td class="cycle"><% if (trains.cycle != null) { %>${translator.getText("cycle", locale)}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="valid"><% if (trains.validity != null) { %>${localization.translate("validity_from", locale)} ${trains.validity}<% } else { %>&nbsp;<% } %></td></tr>
+  <tr><td class="cycle"><% if (trains.cycle != null) { %>${localization.translate("cycle", locale)}: ${trains.cycle.name}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="cycledesc"><% if (trains.cycle != null) { %>${trains.cycle.description ?: "&nbsp;"}<% } else { %>&nbsp;<% } %></td></tr>
   <tr><td class="space2">&nbsp;</td></tr>
-  <tr><td class="publish">${translator.getText("publisher", locale)}</td></tr>
+  <tr><td class="publish">${localization.translate("publisher", locale)}</td></tr>
 </table><%
   }
 
@@ -826,13 +826,13 @@
     %>
 <table class="list2" border="0" cellspacing="0" align="center">
   <tr>
-    <td colspan="4">${translator.getText("list_train_title", locale)}:</td>
+    <td colspan="4">${localization.translate("list_train_title", locale)}:</td>
   </tr>
   <tr class="listh">
-    <td class="ctrainh">${translator.getText("column_train", locale)}</td>
-    <td class="cdepartureh">${translator.getText("column_departure", locale)}</td>
-    <td class="cfromtoh">${translator.getText("column_from_to", locale)}</td>
-    <td class="cnoteh">${translator.getText("column_note", locale)}</td>
+    <td class="ctrainh">${localization.translate("column_train", locale)}</td>
+    <td class="cdepartureh">${localization.translate("column_departure", locale)}</td>
+    <td class="cfromtoh">${localization.translate("column_from_to", locale)}</td>
+    <td class="cnoteh">${localization.translate("column_note", locale)}</td>
   </tr><% lastNode = null;
           def abbrMap = [:]
           for (item in trains.cycle.rows) {
@@ -841,7 +841,7 @@
             if (lastNode != null && lastNode != item.from) {
               %>
   <tr>
-    <td colspan="4" class="move">&mdash;  ${translator.getText("move_to_station", locale)} ${item.from} &mdash; </td>
+    <td colspan="4" class="move">&mdash;  ${localization.translate("move_to_station", locale)} ${item.from} &mdash; </td>
   </tr><%
             }
         %>
@@ -894,13 +894,13 @@
   def getCompany(cycle, loc) {
     def company = cycle?.company?.name
     company = company ?: cycle?.company?.abbr
-    return company ?: translator.getText("company", loc)
+    return company ?: localization.translate("company", loc)
   }
 
   def getCompanyPart(cycle, loc) {
     def part = cycle?.company?.part
     if (!part && !cycle?.company?.abbr) {
-        part = translator.getText("company_part", loc)
+        part = localization.translate("company_part", loc)
     }
     return part ?: "&nbsp;"
   }

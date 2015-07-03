@@ -30,6 +30,7 @@ public class StartsTemplateBinding extends GroovyTemplateBinding {
         map.put("custom_cycles", customCycles);
         map.put("start_time", startTime);
         ResourceHelper.addTextsToMap(map, KEY_PREFIX, locale, LOCALIZATION_BUNDLE);
-        map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram, KEY_PREFIX));
+        map.put(LOCALIZATION, ResourceHelper.getBundleTranslator(LOCALIZATION_BUNDLE, KEY_PREFIX));
+        map.put(TRANSLATOR, ResourceHelper.getTranslator(diagram));
     }
 }

@@ -179,16 +179,16 @@ def print_cycle(w) {
     def company = getCompany(c)
 %><table align="center" cellspacing="0">
         <tr class="title">
-          <td colspan="3">${translator.getText("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</td>
+          <td colspan="3">${localization.translate("cycle", loc)} (${translator.translate(c.type, loc)}):${company ? " " + company : ""}</td>
         </tr>
         <tr class="info">
           <td class="info1">${c.name}</td>
           <td class="info2" colspan="2">${c.description ?: ""}</td>
         </tr>
         <tr class="listh">
-          <td class="trainh">${translator.getText("column_train", loc)}</td>
-          <td class="timeh">${translator.getText("column_departure", loc)}</td>
-          <td class="fromtoh">${translator.getText("column_from_to", loc)}</td>
+          <td class="trainh">${localization.translate("column_train", loc)}</td>
+          <td class="timeh">${localization.translate("column_departure", loc)}</td>
+          <td class="fromtoh">${localization.translate("column_from_to", loc)}</td>
         </tr><% for (row in c.rows) {
               %>
         <tr class="row">

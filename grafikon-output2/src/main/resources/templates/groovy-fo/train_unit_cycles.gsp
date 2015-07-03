@@ -173,11 +173,11 @@ def printWrappers(wrappers) {
   <table-row border-bottom="${BORDER}" height="11mm">
     <table-cell width="25mm" border-right="${BORDER}" display-align="center" text-align="center"><block font-size="5.5mm" font-weight="bold" font-family="Sans" margin="2mm 1mm .3mm 1mm">${getCompany(c, lLoc)}</block></table-cell>
     <table-cell width="25mm" border-right="${BORDER}">
-      <block margin="${MARGIN}" font-size="2.5mm">${translator.getText("cycle", lLoc)}:</block>
+      <block margin="${MARGIN}" font-size="2.5mm">${localization.translate("cycle", lLoc)}:</block>
       <block margin="${MARGIN}" font-size="4.5mm" font-weight="bold">${c.name}</block>
     </table-cell>
     <table-cell>
-      <block margin="${MARGIN}" font-size="2.5mm">${translator.getText("composition", lLoc)}:</block>
+      <block margin="${MARGIN}" font-size="2.5mm">${localization.translate("composition", lLoc)}:</block>
       <block margin="${MARGIN}" font-size="4mm" font-weight="bold">${c.description ?: ""}</block>
      </table-cell>
   </table-row>
@@ -185,10 +185,10 @@ def printWrappers(wrappers) {
     <table-cell number-columns-spanned="3" padding="2mm 2mm 0mm 2mm"><block>
       <table table-layout="fixed" width="100%"><table-body>
         <table-row text-align="center" font-weight="bold" font-size="2.5mm">
-          <table-cell border="${BORDER}" width="20mm"><block margin="${MARGIN}">${translator.getText("column_train", lLoc)}</block></table-cell>
-          <table-cell border="${BORDER}" width="12mm"><block margin="${MARGIN}">${translator.getText("column_departure", lLoc)}</block></table-cell>
-          <table-cell border="${BORDER}" width="20mm"><block margin="${MARGIN}">${translator.getText("column_from_to", lLoc)}</block></table-cell>
-          <table-cell border="${BORDER}"><block margin="${MARGIN}">${translator.getText("column_note", lLoc)}</block></table-cell>
+          <table-cell border="${BORDER}" width="20mm"><block margin="${MARGIN}">${localization.translate("column_train", lLoc)}</block></table-cell>
+          <table-cell border="${BORDER}" width="12mm"><block margin="${MARGIN}">${localization.translate("column_departure", lLoc)}</block></table-cell>
+          <table-cell border="${BORDER}" width="20mm"><block margin="${MARGIN}">${localization.translate("column_from_to", lLoc)}</block></table-cell>
+          <table-cell border="${BORDER}"><block margin="${MARGIN}">${localization.translate("column_note", lLoc)}</block></table-cell>
         </table-row><% for (row in c.rows) { %>
         <table-row>
           <table-cell border="${BORDER}"><block margin="${MARGIN}">${row.trainName}</block></table-cell>
@@ -230,7 +230,7 @@ def printWrappers(wrappers) {
   
   def getCompany(cycle, loc) {
       def company = cycle?.company?.abbr
-      return company ?: translator.getText("company", loc)
+      return company ?: localization.translate("company", loc)
   }
   
   def getLocale(cycle) {

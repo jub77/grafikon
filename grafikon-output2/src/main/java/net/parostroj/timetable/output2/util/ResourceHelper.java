@@ -60,27 +60,22 @@ public class ResourceHelper {
         }
     }
 
-    public static Translator getTranslator(String bundleName, TrainDiagram diagram, String... prefixes) {
-        return new Translator() {
+    public static Translator getTranslator(TrainDiagram diagram) {
+        return (text, locale) -> diagram.getLocalization().translate(text, locale);
+    }
 
-            @Override
-            public String translate(String text, Locale locale) {
-                return diagram.getLocalization().translate(text, locale);
-            }
-
-            @Override
-            public String getText(String key, Locale locale) {
-                ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
-                String text = null;
-                for (String prefix : prefixes) {
-                    String pKey = prefix + key;
-                    if (bundle.containsKey(pKey)) {
-                        text = bundle.getString(pKey);
-                        break;
-                    }
+    public static Translator getBundleTranslator(String bundleName, String... prefixes) {
+        return (key, locale) -> {
+            ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
+            String text = null;
+            for (String prefix : prefixes) {
+                String pKey = prefix + key;
+                if (bundle.containsKey(pKey)) {
+                    text = bundle.getString(pKey);
+                    break;
                 }
-                return text == null ? bundle.getString(key) : text;
             }
+            return text == null ? bundle.getString(key) : text;
         };
     }
 }

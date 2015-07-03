@@ -57,11 +57,11 @@
         return start_time ? " (${diagram.timeConverter.convertIntToText(start_time)})" : "";
     }
 %>
-<div class="caption1">${translator.getText("title", locale)}${getStartTimeTitle()}</div>
-<div class="caption2">${translator.getText("title_engines", locale)}</div>
+<div class="caption1">${localization.translate("title", locale)}${getStartTimeTitle()}</div>
+<div class="caption2">${localization.translate("title_engines", locale)}</div>
 <% printPositions(engines) %>
 
-<div class="caption2">${translator.getText("title_train_units", locale)}</div>
+<div class="caption2">${localization.translate("title_train_units", locale)}</div>
 <% printPositions(train_units) %>
 
 <% for (cycles in custom_cycles) { %>

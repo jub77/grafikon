@@ -45,9 +45,9 @@
         str = "${text}: ${name}${comment(' ', cycle_t.desc)}"
       } else {
         if (cycle_t.trainName == null) {
-          str = "${text}: ${name} ${translator.getText('ends', loc)}"
+          str = "${text}: ${name} ${localization.translate('ends', loc)}"
         } else {
-          str = "${text}: ${name} ${translator.getText('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
+          str = "${text}: ${name} ${localization.translate('move_to', loc)} ${cycle_t.trainName} (${convertTime(cycle_t.time, false)})"
         }
       }
       return str
@@ -71,17 +71,17 @@
 
   def get_note(row, loc) {
     if (row.technologicalTime) {
-      return translator.getText("technological_time", loc)
+      return localization.translate("technological_time", loc)
     }
 
     note_parts = []
     // length
     if (row.length != null) {
-      length_unit_s = row.length.lengthInAxles ? " ${translator.getText('length_axles', loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
+      length_unit_s = row.length.lengthInAxles ? " ${localization.translate('length_axles', loc)}" : row.length.lengthUnit.getUnitsOfString(loc)
       note_parts << "[${row.length.length}${length_unit_s}]"
     }
     // engine
-    def engineText = translator.getText("engine", loc)
+    def engineText = localization.translate("engine", loc)
     if (row.engine != null)
       for (engine_t in row.engine) {
         def str = textForCycle(engineText, engine_t, loc)
@@ -90,7 +90,7 @@
         note_parts << str
       }
     // train unit
-    def trainUnitText = translator.getText("train_unit", loc)
+    def trainUnitText = localization.translate("train_unit", loc)
     if (row.trainUnit != null)
       for (train_unit_t in row.trainUnit) {
         def str = textForCycle(trainUnitText, train_unit_t, loc)
@@ -118,7 +118,7 @@
     }
     // occupied track
     if (row.occupied) {
-      note_parts << translator.getText("occupied", loc)
+      note_parts << localization.translate("occupied", loc)
     }
 
     return create_note_str(note_parts)
@@ -164,14 +164,14 @@
       </table-row>
       <table-row ${border()} font-size="2.3mm" font-weight="bold" text-align="center">
           <table-cell ${padding()}><block>X</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_train", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_from", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_arrival", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_track", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_departure", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_to", loc)}</block></table-cell>
-          <table-cell ${padding()}><block>${translator.getText("column_end", loc)}</block></table-cell>
-          <table-cell ${padding()} text-align="left"><block>${translator.getText("column_notes", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_train", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_from", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_arrival", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_track", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_departure", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_to", loc)}</block></table-cell>
+          <table-cell ${padding()}><block>${localization.translate("column_end", loc)}</block></table-cell>
+          <table-cell ${padding()} text-align="left"><block>${localization.translate("column_notes", loc)}</block></table-cell>
       </table-row>
   </table-header>
   <table-body>

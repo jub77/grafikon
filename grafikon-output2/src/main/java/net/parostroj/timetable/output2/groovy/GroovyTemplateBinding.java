@@ -11,6 +11,7 @@ public abstract class GroovyTemplateBinding {
 
     public static final String LOCALIZATION_BUNDLE = "texts/html_texts";
     public static final String TRANSLATOR = "translator";
+    public static final String LOCALIZATION = "localization";
 
     protected void addContext(OutputParams params, Map<String, Object> binding) {
         binding.put("diagram", params.getParam(Output.PARAM_TRAIN_DIAGRAM).getValue());

@@ -11,6 +11,7 @@ public class DiagramTemplateBinding extends GroovyTemplateBinding {
 
     @Override
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
-        map.put(TRANSLATOR, ResourceHelper.getTranslator(LOCALIZATION_BUNDLE, diagram));
+        map.put(LOCALIZATION, ResourceHelper.getBundleTranslator(LOCALIZATION_BUNDLE));
+        map.put(TRANSLATOR, ResourceHelper.getTranslator(diagram));
     }
 }

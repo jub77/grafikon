@@ -24,10 +24,10 @@
   </layout-master-set>
   <page-sequence master-reference="simpleA4" font-family="Sans">
     <flow flow-name="xsl-region-body">
-      <block font-size="5mm" font-weight="bold" space-after="3mm">${translator.getText("title", locale)}${getStartTimeTitle()}</block>
-      <% printTitle(translator.getText("title_engines", locale)) %>
+      <block font-size="5mm" font-weight="bold" space-after="3mm">${localization.translate("title", locale)}${getStartTimeTitle()}</block>
+      <% printTitle(localization.translate("title_engines", locale)) %>
       <% printPositions(engines) %>
-      <% printTitle(translator.getText("title_train_units", locale)) %>
+      <% printTitle(localization.translate("title_train_units", locale)) %>
       <% printPositions(train_units) %>
       <% for (cycles in custom_cycles) { %>
       <% printTitle(translator.translate(cycles.name, locale)) %>
