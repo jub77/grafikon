@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -13,7 +14,6 @@ import net.parostroj.timetable.utils.ResourceBundleUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -35,7 +35,7 @@ public class ResourceHelper {
                     return fis;
                 }
             };
-            CharSource cs = bs.asCharSource(Charsets.UTF_8);
+            CharSource cs = bs.asCharSource(StandardCharsets.UTF_8);
             return cs.read();
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
