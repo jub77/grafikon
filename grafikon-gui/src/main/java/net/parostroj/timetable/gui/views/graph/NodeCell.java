@@ -28,7 +28,8 @@ public class NodeCell extends mxCell {
     }
 
     private NodeShape getShapeForNode(Node vertex) {
-        NodeShape shape = (NodeShape) mxStencilRegistry.getStencil(vertex.getType().getKey());
+        NodeType type = vertex.getType();
+        NodeShape shape = type != null ? (NodeShape) mxStencilRegistry.getStencil(type.getKey()) : null;
         if (shape == null) {
             // shape for station should always exist
             shape = (NodeShape) mxStencilRegistry.getStencil(NodeType.STATION.getKey());
