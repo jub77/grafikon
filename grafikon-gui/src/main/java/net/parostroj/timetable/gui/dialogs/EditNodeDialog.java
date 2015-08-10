@@ -151,7 +151,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         removed = new LinkedList<EditTrack>();
         nameTextField.setText(node.getName());
         abbrTextField.setText(node.getAbbr());
-        types.setSelectedObject(node.getType());
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
         controlCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_CONTROL_STATION));
         trapezoidCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN));
@@ -191,6 +190,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         if (!listModel.isEmpty()) {
             trackList.setSelectedIndex(0);
         }
+
+        types.setSelectedObject(node.getType());
 
         // company
         this.companies = new WrapperListModel<Company>(false);
