@@ -1,13 +1,13 @@
 /*
  * NodeType.java
- * 
+ *
  * Created on 29.8.2007, 22:10:27
  */
 package net.parostroj.timetable.model;
 
 /**
  * Type of the node.
- * 
+ *
  * @author jub
  */
 public enum NodeType {
@@ -54,9 +54,5 @@ public enum NodeType {
 
     public boolean isStop() {
         return this == STOP || this == STOP_WITH_FREIGHT;
-    }
-
-    public boolean isStationOrStop() {
-        return this.isStation() || this.isStop();
     }
 }
