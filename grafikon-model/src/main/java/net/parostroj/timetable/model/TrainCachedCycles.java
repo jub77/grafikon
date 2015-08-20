@@ -2,12 +2,9 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 
-import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.utils.ResultList;
-import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.utils.*;
 
 /**
  * Cached map with time intervals and cycle items.
@@ -23,17 +20,10 @@ class TrainCachedCycles {
     }
 
     public void add(List<TimeInterval> intervals, TrainsCycleItem item) {
-        boolean in = false;
-        for (TimeInterval interval : intervals) {
-            if (interval == item.getFromInterval()) {
-                in = true;
-            }
-            if (in) {
-                this.add(interval, item);
-            }
-            if (interval == item.getToInterval()) {
-                break;
-            }
+        Iterable<TimeInterval> iterable = CollectionUtils.closedIntervalIterable(
+                intervals, item.getFromInterval(), item.getToInterval());
+        for (TimeInterval interval : iterable) {
+            this.add(interval, item);
         }
     }
 
@@ -69,22 +59,24 @@ class TrainCachedCycles {
     }
 
     public boolean isCovered(TimeInterval interval, TrainsCycleType type, TrainsCycleItem ignored) {
-        if (ignored == null)
+        if (ignored == null) {
             return isCovered(interval, type);
-        else {
+        } else {
             Collection<TrainsCycleItem> list = this.get(interval, type);
             boolean contains = list.contains(ignored);
-            if (contains)
+            if (contains) {
                 return list.size() > 1;
-            else
+            } else {
                 return !list.isEmpty();
+            }
         }
     }
 
     public boolean isCovered(List<TimeInterval> intervals, TrainsCycleType type) {
         for (TimeInterval interval : intervals) {
-            if (!this.isCovered(interval, type))
+            if (!this.isCovered(interval, type)) {
                 return false;
+            }
         }
         return true;
     }
@@ -96,8 +88,9 @@ class TrainCachedCycles {
         for (TimeInterval interval : intervals) {
             boolean covered = isCovered(interval, type);
             if (!covered) {
-                if (current == null)
+                if (current == null) {
                     current = new Tuple<TimeInterval>((last == null) ? interval : last, null);
+                }
             } else {
                 if (current != null) {
                     current.second = interval;
@@ -116,8 +109,9 @@ class TrainCachedCycles {
 
     public List<Pair<TimeInterval, Boolean>> getCoverage(List<TimeInterval> intervals, TrainsCycleType type) {
         List<Pair<TimeInterval, Boolean>> result = new LinkedList<Pair<TimeInterval,Boolean>>();
-        for (TimeInterval interval : intervals)
+        for (TimeInterval interval : intervals) {
             result.add(new Pair<TimeInterval, Boolean>(interval, this.isCovered(interval, type)));
+        }
         return result;
     }
 
@@ -127,8 +121,9 @@ class TrainCachedCycles {
             return false;
         }
         // if overlapping is allowed return true
-        if (overlapping)
+        if (overlapping) {
             return true;
+        }
 
         TrainsCycleType type = newItem.getCycle().getType();
 
@@ -136,11 +131,13 @@ class TrainCachedCycles {
         boolean in = false;
         for (TimeInterval interval : intervals) {
             boolean covered = isCovered(interval, type, ignoredItem);
-            if (interval == newItem.getToInterval())
+            if (interval == newItem.getToInterval()) {
                 break;
+            }
             // do not test first and last interval of the trains cycle
-            if (in && covered)
+            if (in && covered) {
                 return false;
+            }
             if (!in && (interval == newItem.getFromInterval())) {
                 in = true;
             }
@@ -155,23 +152,20 @@ class TrainCachedCycles {
      * @return if the nodes of trains cycle item belong to time interval in correct order
      */
     private boolean checkNodes(List<TimeInterval> timeIntervalList, TrainsCycleItem item) {
-        if (!item.getFromInterval().isNodeOwner() || !item.getToInterval().isNodeOwner())
+        if (!item.getFromInterval().isNodeOwner() || !item.getToInterval().isNodeOwner()) {
             throw new IllegalArgumentException("TrainsCycleItem intervals doesn't belong to nodes.");
+        }
         if (item.getFromInterval() == item.getToInterval()) {
             return false;
         }
-        boolean in = false;
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isNodeOwner()) {
-                if (!in && (interval == item.getFromInterval())) {
-                    in = true;
-                }
-                if (interval == item.getToInterval()) {
-                    return in;
-                }
-            }
+
+        Iterator<TimeInterval> iterator = Iterators.filter(timeIntervalList.iterator(), interval -> interval.isNodeOwner());
+        PeekingIterator<TimeInterval> peekingIterator = Iterators.peekingIterator(iterator);
+        boolean found = CollectionUtils.advanceTo(peekingIterator, interval -> interval == item.getFromInterval());
+        if (found) {
+            found = CollectionUtils.advanceTo(peekingIterator, interval -> interval == item.getToInterval());
         }
-        return false;
+        return found;
     }
 
     /**
@@ -189,11 +183,13 @@ class TrainCachedCycles {
         TrainsCycleItem current = i.hasNext() ? i.next() : null;
         for (TimeInterval interval : timeIntervalList) {
             if (interval.isNodeOwner()) {
-                if (current != null && interval == current.getFromInterval())
+                if (current != null && interval == current.getFromInterval()) {
                     current = i.hasNext() ? i.next() : null;
+                }
                 if (current == null || interval == item.getFromInterval()) {
-                    if (current != null && i.hasPrevious())
+                    if (current != null && i.hasPrevious()) {
                         i.previous();
+                    }
                     i.add(item);
                     return;
                 }

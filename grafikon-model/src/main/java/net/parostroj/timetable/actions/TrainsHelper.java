@@ -4,20 +4,18 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.UnitUtil;
-import net.parostroj.timetable.utils.Pair;
-import net.parostroj.timetable.utils.ResultList;
-import net.parostroj.timetable.utils.Triplet;
+import net.parostroj.timetable.utils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
+import com.google.common.collect.*;
 
 /**
  * Helper actions for trains.
@@ -55,10 +53,11 @@ public class TrainsHelper {
      */
     public static Integer getWeightFromLineAndEngine(TimeInterval interval) {
         Pair<Integer, Collection<TrainsCycleItem>> weightAndCycle = getWeightAndCycles(interval);
-        if (weightAndCycle == null || weightAndCycle.first == null)
+        if (weightAndCycle == null || weightAndCycle.first == null) {
             return null;
-        else
+        } else {
             return weightAndCycle.first;
+        }
     }
 
     /**
@@ -130,21 +129,20 @@ public class TrainsHelper {
         Collection<TrainsCycleItem> items = getEngineCyclesForInterval(interval);
         if (lineClass != null) {
             // compute weight
-            Integer weight = null;
-            for (TrainsCycleItem item : items) {
+            Integer weight = items.stream().reduce(null, (w, item) -> {
                 EngineClass engine = getEngineClass(item);
                 if (engine != null) {
-                    if (weight == null) {
-                        weight = 0;
-                    }
                     WeightTableRow weightTableRow = engine.getWeightTableRowForSpeed(interval.getSpeed());
                     if (weightTableRow != null) {
-                        weight += weightTableRow.getWeight(lineClass);
+                        w = weightTableRow.getWeight(lineClass) + (w == null ? 0 : w);
                     }
                 }
-            }
-            if (weight != null)
+                return w;
+            }, (x, y) -> x + y);
+
+            if (weight != null) {
                 retValue = new Pair<Integer, Collection<TrainsCycleItem>>(weight, items);
+            }
         }
         return retValue;
     }
@@ -169,8 +167,7 @@ public class TrainsHelper {
             try {
                 length = UnitUtil.convert(converted);
             } catch (ArithmeticException e) {
-                log.warn("Couldn't convert value {} to {}.", length, lengthUnit.getKey());
-                log.warn(e.getMessage());
+                log.warn("Couldn't convert value {} to {}: {}", length, lengthUnit.getKey(), e.getMessage());
             }
         }
         return length;
@@ -211,8 +208,7 @@ public class TrainsHelper {
             try {
                 result = UnitUtil.convert(converted);
             } catch (ArithmeticException e) {
-                log.warn("Couldn't convert value {} to {}.", result, lu.getKey());
-                log.warn(e.getMessage());
+                log.warn("Couldn't convert value {} to {}: {}", result, lu.getKey(), e.getMessage());
                 result = null;
             }
         }
@@ -279,40 +275,22 @@ public class TrainsHelper {
         if (engineClasses.isEmpty() || lineClass == null) {
             return null;
         }
-        List<Integer> speeds = new ArrayList<Integer>();
-        List<WeightTableRow> table = engineClasses.get(0).getWeightTable();
-        for (int i = table.size() - 1; i >= 0; i--) {
-            speeds.add(table.get(i).getSpeed());
-        }
-        if (engineClasses.size() > 1) {
-            for (int i = engineClasses.size() - 1; i >= 1; i--) {
-                // sort in
-                table = engineClasses.get(i).getWeightTable();
-                for (int j = table.size() - 1; j >= 0; j--) {
-                    int speed = table.get(j).getSpeed();
-                    for (int k = 0; k < speeds.size(); k++) {
-                        Integer current = speeds.get(k);
-                        if (speed > current) {
-                            speeds.add(k, speed);
-                            break;
-                        } else if (speed == current) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        TreeSet<Integer> speeds = engineClasses.stream()
+                .flatMap(engineClass -> engineClass.getWeightTable().stream())
+                .map(table -> table.getSpeed())
+                .collect(Collectors.toCollection(
+                        () -> new TreeSet<Integer>(Comparator.<Integer>naturalOrder().reversed())));
+
         Integer result = null;
         for (Integer speed : speeds) {
-            int totalWeight = 0;
             result = speed;
-            for (EngineClass ec : engineClasses) {
-                WeightTableRow rowForSpeed = ec.getWeightTableRowForSpeed(speed);
-                Integer w = rowForSpeed != null ? rowForSpeed.getWeight(lineClass) : null;
-                if (w != null) {
-                    totalWeight += w;
-                }
-            }
+            int totalWeight = engineClasses.stream()
+                    .map(ec -> ec.getWeightTableRowForSpeed(speed))
+                    .reduce(0, (w, rfs) -> {
+                        Integer ew = rfs != null ? rfs.getWeight(lineClass) : null;
+                        return ew == null ? w : w + ew;
+                    }, (w1, w2) -> w1 + w2);
+
             if (totalWeight >= weight) {
                 break;
             }
@@ -330,8 +308,9 @@ public class TrainsHelper {
         ResultList<EngineClass> result = new ResultList<EngineClass>();
         for (TrainsCycleItem item : list) {
             EngineClass eClass = getEngineClass(item);
-            if (eClass != null)
+            if (eClass != null) {
                 result.add(eClass);
+            }
         }
         return result.get();
     }
@@ -357,9 +336,9 @@ public class TrainsHelper {
         List<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>> result =
             new ArrayList<Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>>(intervals.size());
         for (TimeInterval interval : intervals) {
-            if (interval.isNodeOwner())
+            if (interval.isNodeOwner()) {
                 result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, null, null));
-            else {
+            } else {
                 Integer weight = getWeight(interval);
                 Collection<TrainsCycleItem> cycles = getEngineCyclesForInterval(interval);
                 result.add(new Triplet<TimeInterval, Integer, Collection<TrainsCycleItem>>(interval, weight, cycles));
@@ -414,22 +393,17 @@ public class TrainsHelper {
     public static Integer getLengthFromTo(Node from, Node to, Train train) {
         Integer length = null;
         // skip nodes
-        ListIterator<TimeInterval> iterator = train.getTimeIntervalList().listIterator();
-        while (iterator.hasNext()) {
-            TimeInterval interval = iterator.next();
-            if (interval.getOwner() == from) {
-                iterator.previous();
-                break;
-            }
-        }
+        PeekingIterator<TimeInterval> iterator = Iterators.peekingIterator(train.getTimeIntervalList().iterator());
+        CollectionUtils.advanceTo(iterator, interval -> interval.getOwner() == from);
         while (iterator.hasNext()) {
             TimeInterval interval = iterator.next();
             Integer tempLength = getLength(interval);
-            if (length == null || (tempLength != null && tempLength < length))
+            if (length == null || (tempLength != null && tempLength < length)) {
                 length = tempLength;
-
-            if (interval.getOwner() == to)
+            }
+            if (interval.getOwner() == to) {
                 break;
+            }
         }
         return length;
     }
@@ -442,8 +416,9 @@ public class TrainsHelper {
      * @return if the criteria are met
      */
     public static boolean isNextTypeNode(TimeInterval interval, NextType type) {
-        if (interval == null || !interval.isNodeOwner())
+        if (interval == null || !interval.isNodeOwner()) {
             throw new IllegalArgumentException("Wrong interval parameter: " + interval);
+        }
         Node node = interval.getOwnerAsNode();
         if (interval.isStop()) {
             switch (type) {
@@ -469,16 +444,13 @@ public class TrainsHelper {
      * @return found node
      */
     public static Node getNextNodeByType(Node node, Train train, NextType type) {
-        Iterator<TimeInterval> iterator = train.getTimeIntervalList().iterator();
-        while (iterator.hasNext())
-            if (iterator.next().getOwner() == node)
-                break;
-        while (iterator.hasNext()) {
-            TimeInterval i = iterator.next();
-            if (i.isNodeOwner() && isNextTypeNode(i, type))
-                return i.getOwnerAsNode();
-        }
-        return null;
+        Iterator<TimeInterval> i2 = Iterators.filter(
+                train.getTimeIntervalList().iterator(),
+                interval -> interval.isNodeOwner());
+        // advance to specified node
+        Iterators.find(i2, item -> item.getOwner() == node, null);
+        TimeInterval interval = Iterators.find(i2, item -> isNextTypeNode(item, type), null);
+        return interval == null ? null : interval.getOwnerAsNode();
     }
 
     /**
