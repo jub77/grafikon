@@ -37,14 +37,12 @@ public class RoutesExtractor {
         Set<Route> routes = null;
         // collect routes
         for (Train t : trains) {
-            for (TimeInterval i : t.getTimeIntervalList()) {
-                if (i.isLineOwner()) {
-                    Route route = routeMap.get(i.getOwnerAsLine());
-                    if (route != null) {
-                        if (routes == null)
-                            routes = new HashSet<Route>();
-                        routes.add(route);
-                    }
+            for (TimeInterval i : t.getLineIntervals()) {
+                Route route = routeMap.get(i.getOwnerAsLine());
+                if (route != null) {
+                    if (routes == null)
+                        routes = new HashSet<Route>();
+                    routes.add(route);
                 }
             }
         }

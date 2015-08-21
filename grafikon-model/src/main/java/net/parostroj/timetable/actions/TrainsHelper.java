@@ -444,12 +444,10 @@ public class TrainsHelper {
      * @return found node
      */
     public static Node getNextNodeByType(Node node, Train train, NextType type) {
-        Iterator<TimeInterval> i2 = Iterators.filter(
-                train.getTimeIntervalList().iterator(),
-                interval -> interval.isNodeOwner());
+        Iterator<TimeInterval> nodeIterator = train.getNodeIntervals().iterator();
         // advance to specified node
-        Iterators.find(i2, item -> item.getOwner() == node, null);
-        TimeInterval interval = Iterators.find(i2, item -> isNextTypeNode(item, type), null);
+        Iterators.find(nodeIterator, item -> item.getOwner() == node, null);
+        TimeInterval interval = Iterators.find(nodeIterator, item -> isNextTypeNode(item, type), null);
         return interval == null ? null : interval.getOwnerAsNode();
     }
 

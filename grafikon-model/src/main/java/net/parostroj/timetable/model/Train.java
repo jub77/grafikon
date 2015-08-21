@@ -50,6 +50,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
 
     /* Cached map for train cycles. */
     private final TrainCachedCycles _cachedCycles;
+    private final Collection<TimeInterval> nodeIntervalsView;
+    private final Collection<TimeInterval> lineIntervalsView;
+    private final List<TimeInterval> timeIntervalsView;
 
     /**
      * Constructor.
@@ -64,6 +67,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         _cachedName = new CachedValue<String>();
         _cachedCompleteName = new CachedValue<String>();
         timeIntervalList = new TimeIntervalList();
+        nodeIntervalsView = Collections.unmodifiableCollection(Collections2.filter(timeIntervalList, ModelPredicates::nodeInterval));
+        lineIntervalsView = Collections.unmodifiableCollection(Collections2.filter(timeIntervalList, ModelPredicates::lineInterval));
+        timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
         this.setAttributes(new Attributes());
         cycles = LinkedListMultimap.create();
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
@@ -251,7 +257,15 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return the intervals
      */
     public List<TimeInterval> getTimeIntervalList() {
-        return Collections.unmodifiableList(timeIntervalList);
+        return timeIntervalsView;
+    }
+
+    public Collection<TimeInterval> getNodeIntervals() {
+        return nodeIntervalsView;
+    }
+
+    public Collection<TimeInterval> getLineIntervals() {
+        return lineIntervalsView;
     }
 
     protected TimeIntervalList getIntervalList() {

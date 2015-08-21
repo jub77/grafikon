@@ -87,11 +87,10 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
     }
 
     private boolean hasZeroWeight(Train train) {
-        for (TimeInterval i : train.getTimeIntervalList()) {
-            if (i.isLineOwner()) {
-                Integer weight = TrainsHelper.getWeight(i);
-                if (weight != null && weight.intValue() == 0)
-                    return true;
+        for (TimeInterval i : train.getLineIntervals()) {
+            Integer weight = TrainsHelper.getWeight(i);
+            if (weight != null && weight.intValue() == 0) {
+                return true;
             }
         }
         return false;

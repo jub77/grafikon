@@ -26,24 +26,22 @@ public class TrainTimetableWriter {
 
         str.append("Train: ");
         str.append(train.getCompleteName()).append('\n');
-        for (TimeInterval time : train.getTimeIntervalList()) {
+        for (TimeInterval time : train.getNodeIntervals()) {
             Node node = time.getOwnerAsNode();
-            if (node != null) {
-                @SuppressWarnings("resource")
-                Formatter f = new Formatter(str);
-                f.format("%1$-20s", node.getName());
-                if (time.isFirst() || !time.isStop()) {
-                    str.append("      ").append(c.convertIntToText(time.getEnd(), true)).append("\n");
-                } else if (time.isLast()) {
-                    str.append(c.convertIntToText(time.getStart(), true)).append("\n");
-                } else if (time.isStop()) {
-                    str.append(c.convertIntToText(time.getStart(), true)).append(" ");
-                    str.append(c.convertIntToText(time.getEnd(), true)).append("\n");
-                } else {
-                    str.append('\n');
-                }
-                f.flush();
+            @SuppressWarnings("resource")
+            Formatter f = new Formatter(str);
+            f.format("%1$-20s", node.getName());
+            if (time.isFirst() || !time.isStop()) {
+                str.append("      ").append(c.convertIntToText(time.getEnd(), true)).append("\n");
+            } else if (time.isLast()) {
+                str.append(c.convertIntToText(time.getStart(), true)).append("\n");
+            } else if (time.isStop()) {
+                str.append(c.convertIntToText(time.getStart(), true)).append(" ");
+                str.append(c.convertIntToText(time.getEnd(), true)).append("\n");
+            } else {
+                str.append('\n');
             }
+            f.flush();
         }
     }
 }

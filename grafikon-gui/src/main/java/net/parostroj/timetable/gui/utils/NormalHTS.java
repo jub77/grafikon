@@ -33,7 +33,8 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
             public void modelChanged(ApplicationModelEvent event) {
                 if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
                     final Train selectedTrain = model.getSelectedTrain();
-                    view.selectItems(selectedTrain == null ? Collections.<TimeInterval>emptyList() : selectedTrain.getTimeIntervalList(), TimeInterval.class);
+                    view.selectItems(selectedTrain == null ? Collections.<TimeInterval> emptyList()
+                            : selectedTrain.getTimeIntervalList(), TimeInterval.class);
                 }
             }
         });

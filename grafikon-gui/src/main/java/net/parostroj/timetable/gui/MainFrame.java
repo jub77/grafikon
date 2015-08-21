@@ -626,10 +626,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
                 train.recalculate();
                 // round correctly stops
                 TimeConverter converter = train.getDiagram().getTimeConverter();
-                for (TimeInterval interval : train.getTimeIntervalList()) {
-                	if (interval.isNodeOwner()) {
-                		train.changeStopTime(interval, converter.round(interval.getLength()));
-                	}
+                for (TimeInterval interval : train.getNodeIntervals()) {
+                    train.changeStopTime(interval, converter.round(interval.getLength()));
                 }
             }, ResourceLoader.getString("wait.message.recalculate"), "Recalculate");
             ActionHandler.getInstance().execute(action);

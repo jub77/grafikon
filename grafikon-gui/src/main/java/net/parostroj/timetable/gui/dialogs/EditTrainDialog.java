@@ -96,10 +96,8 @@ public class EditTrainDialog extends javax.swing.JDialog {
             toNodeButton.setText(train.getLastInterval().getOwnerAsNode().getName());
 
             stationsComboBox.removeAllItems();
-            for (TimeInterval i : train.getTimeIntervalList()) {
-                if (i.isNodeOwner()) {
-                    stationsComboBox.addItem(i.getOwnerAsNode());
-                }
+            for (TimeInterval i : train.getNodeIntervals()) {
+                stationsComboBox.addItem(i.getOwnerAsNode());
             }
 
             timeBeforeTextField.setText(Integer.toString(train.getTimeBefore() / 60));
