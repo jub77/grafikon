@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.events.TrainEvent.TimeIntervalListType;
 import net.parostroj.timetable.utils.*;
@@ -825,11 +826,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return result of the check
      */
     public boolean allLinesHaveAttribute(String key, Object value) {
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isLineOwner()) {
-                if (!value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
-                    return false;
-                }
+        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
+            if (!value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
+                return false;
             }
         }
         return true;
@@ -843,11 +842,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return result of the check
      */
     public boolean allNodesHaveAttribute(String key, Object value) {
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isNodeOwner()) {
-                if (!value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
-                    return false;
-                }
+        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
+            if (!value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
+                return false;
             }
         }
         return true;
@@ -861,11 +858,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return result of the check
      */
     public boolean oneLineHasAttribute(String key, Object value) {
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isLineOwner()) {
-                if (value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
-                    return true;
-                }
+        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::lineInterval)) {
+            if (value.equals(interval.getOwnerAsLine().getAttribute(key, Object.class))) {
+                return true;
             }
         }
         return false;
@@ -879,11 +874,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return result of the check
      */
     public boolean oneNodeHasAttribute(String key, Object value) {
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isNodeOwner()) {
-                if (value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
-                    return true;
-                }
+        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
+            if (value.equals(interval.getOwnerAsNode().getAttribute(key, Object.class))) {
+                return true;
             }
         }
         return false;
