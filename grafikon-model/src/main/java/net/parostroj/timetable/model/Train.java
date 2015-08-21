@@ -1048,29 +1048,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return null;
     }
 
-    public Route getBestRouteMatch() {
-        Pair<Route, Integer> selected = null;
-        for (Route route : diagram.getRoutes()) {
-            int cnt = 0;
-            for (RouteSegment segment : route) {
-                boolean containTrain = false;
-                for (TimeInterval interval : segment.getTimeIntervals()) {
-                    if (interval.getTrain() == this) {
-                        containTrain = true;
-                        break;
-                    }
-                }
-                if (containTrain) {
-                    cnt++;
-                }
-            }
-            if (cnt > 0 && (selected == null || selected.second < cnt)) {
-                selected = new Pair<Route, Integer>(route, cnt);
-            }
-        }
-        return selected != null ? selected.first : null;
-    }
-
     /**
      * returns if the train is attached to net.
      * @return attached

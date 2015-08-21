@@ -9,6 +9,7 @@ import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
+import net.parostroj.timetable.actions.RouteHelper;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -455,7 +456,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 if (selectedTrain != null) {
                     if (!trainRegionCollector.containsTrain(selectedTrain) &&
                             settings.getOption(Key.TO_TRAIN_CHANGE_ROUTE)) {
-                        Route newRoute = selectedTrain.getBestRouteMatch();
+                        Route newRoute = RouteHelper.getBestRouteMatch(diagram.getRoutes(), selectedTrain);
                         if (newRoute != null) {
                             this.setRoute(newRoute);
                         }
