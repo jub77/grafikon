@@ -38,7 +38,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /* cached data */
     private final CachedValue<String> _cachedName;
     private final CachedValue<String> _cachedCompleteName;
-    private Map<String,Object> _cachedBinding;
+    private Map<String, Object> _cachedBinding;
     private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
     private AttributesListener attributesListener;
     private boolean attached;

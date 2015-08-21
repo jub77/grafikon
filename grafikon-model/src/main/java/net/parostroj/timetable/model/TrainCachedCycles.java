@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.utils.*;
 
 /**
@@ -13,10 +14,10 @@ import net.parostroj.timetable.utils.*;
  */
 class TrainCachedCycles {
 
-    private final Map<TimeInterval, Multimap<TrainsCycleType, TrainsCycleItem>> map;
+    private final SetMultimap<TimeInterval, TrainsCycleItem> map;
 
     public TrainCachedCycles() {
-        map = new HashMap<TimeInterval, Multimap<TrainsCycleType, TrainsCycleItem>>();
+        map = HashMultimap.create();
     }
 
     public void add(List<TimeInterval> intervals, TrainsCycleItem item) {
@@ -28,29 +29,17 @@ class TrainCachedCycles {
     }
 
     private void add(TimeInterval interval, TrainsCycleItem item) {
-        Multimap<TrainsCycleType, TrainsCycleItem> types = map.get(interval);
-        if (types == null) {
-            types = HashMultimap.create();
-            map.put(interval, types);
-        }
-        types.put(item.getCycle().getType(), item);
+        map.put(interval, item);
     }
 
     public void remove(TrainsCycleItem item) {
-        for (Multimap<TrainsCycleType, TrainsCycleItem> types : map.values()) {
-            types.remove(item.getCycle().getType(), item);
+        for (TimeInterval key : map.keys()) {
+            map.remove(key, item);
         }
     }
 
     public Collection<TrainsCycleItem> get(TimeInterval interval, TrainsCycleType type) {
-        Collection<TrainsCycleItem> items = null;
-        Multimap<TrainsCycleType, TrainsCycleItem> types = map.get(interval);
-        if (types != null) {
-            items = types.get(type);
-        } else {
-            items = Collections.emptyList();
-        }
-        return items;
+        return Collections2.filter(map.get(interval), item -> item.getCycle().getType() == type);
     }
 
     public boolean isCovered(TimeInterval interval, TrainsCycleType type) {
@@ -159,7 +148,7 @@ class TrainCachedCycles {
             return false;
         }
 
-        Iterator<TimeInterval> iterator = Iterators.filter(timeIntervalList.iterator(), interval -> interval.isNodeOwner());
+        Iterator<TimeInterval> iterator = Iterators.filter(timeIntervalList.iterator(), ModelPredicates::nodeInterval);
         PeekingIterator<TimeInterval> peekingIterator = Iterators.peekingIterator(iterator);
         boolean found = CollectionUtils.advanceTo(peekingIterator, interval -> interval == item.getFromInterval());
         if (found) {
@@ -177,22 +166,21 @@ class TrainCachedCycles {
      * @param overlapping of the overlapping is allowed
      */
     public void addCycleItem(List<TimeInterval> timeIntervalList, List<TrainsCycleItem> items, TrainsCycleItem item, boolean overlapping) {
-        if (!testAddCycle(timeIntervalList, item, null, overlapping))
+        if (!testAddCycle(timeIntervalList, item, null, overlapping)) {
             throw new IllegalArgumentException("Overlapping item.");
+        }
         ListIterator<TrainsCycleItem> i = items.listIterator();
         TrainsCycleItem current = i.hasNext() ? i.next() : null;
-        for (TimeInterval interval : timeIntervalList) {
-            if (interval.isNodeOwner()) {
-                if (current != null && interval == current.getFromInterval()) {
-                    current = i.hasNext() ? i.next() : null;
+        for (TimeInterval interval : Iterables.filter(timeIntervalList, ModelPredicates::nodeInterval)) {
+            if (current != null && interval == current.getFromInterval()) {
+                current = i.hasNext() ? i.next() : null;
+            }
+            if (current == null || interval == item.getFromInterval()) {
+                if (current != null && i.hasPrevious()) {
+                    i.previous();
                 }
-                if (current == null || interval == item.getFromInterval()) {
-                    if (current != null && i.hasPrevious()) {
-                        i.previous();
-                    }
-                    i.add(item);
-                    return;
-                }
+                i.add(item);
+                return;
             }
         }
         throw new IllegalArgumentException("Cannot include item: " + item);
