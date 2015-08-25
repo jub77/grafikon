@@ -16,22 +16,6 @@ public class TimeIntervalList extends ArrayList<TimeInterval> {
     }
 
     /**
-     * returns time interval for specified train. If the time interval for specified train
-     * doesn't exist, it returns <code>null</code>.
-     *
-     * @param train train
-     * @return time interval
-     */
-    public TimeInterval getTimeInterval(Train train) {
-        for (TimeInterval interval : this) {
-            if (interval.getTrain().equals(train)) {
-                return interval;
-            }
-        }
-        return null;
-    }
-
-    /**
      * returns time interval relative to the one passed as an argument.
      *
      * @param i reference interval
