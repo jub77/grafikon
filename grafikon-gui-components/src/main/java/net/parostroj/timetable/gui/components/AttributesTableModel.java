@@ -7,7 +7,6 @@ import javax.swing.table.AbstractTableModel;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
 
 /**
@@ -90,14 +89,11 @@ public class AttributesTableModel extends AbstractTableModel {
             throw new IllegalStateException("Already editing");
         this.attributes = attributes;
         this.userNames = new LinkedList<String>(attributes.getAttributesMap(category).keySet());
-        this.listener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                if (change.getNewValue() != null)
-                    addAttribute(change.getName());
-                else
-                    removeAttribute(change.getName());
+        this.listener = (attrs, change) -> {
+            if (change.getNewValue() != null) {
+                addAttribute(change.getName());
+            } else {
+                removeAttribute(change.getName());
             }
         };
         this.attributes.addListener(listener);

@@ -145,16 +145,12 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
-                event.setNewCycleItem(TrainsCycleItem.this);
-                event.setOldCycleItem(TrainsCycleItem.this);
-                event.setAttributeChange(change);
-                getCycle().fireEvent(event);
-            }
+        this.attributesListener = (attrs, change) ->  {
+            TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
+            event.setNewCycleItem(TrainsCycleItem.this);
+            event.setOldCycleItem(TrainsCycleItem.this);
+            event.setAttributeChange(change);
+            getCycle().fireEvent(event);
         };
         this.attributes.addListener(attributesListener);
     }

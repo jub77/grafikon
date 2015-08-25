@@ -74,13 +74,8 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                diagram.fireEvent(new TrainDiagramEvent(diagram, change, Group.this));
-            }
-        };
+        this.attributesListener = (attrs, change) -> diagram
+                .fireEvent(new TrainDiagramEvent(diagram, change, Group.this));
         this.attributes.addListener(attributesListener);
     }
 

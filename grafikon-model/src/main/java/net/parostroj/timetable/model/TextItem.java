@@ -137,13 +137,8 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new TextItemEvent(TextItem.this, change));
-            }
-        };
+        this.attributesListener = (attrs, change) -> listenerSupport
+                .fireEvent(new TextItemEvent(TextItem.this, change));
         this.attributes.addListener(attributesListener);
     }
 

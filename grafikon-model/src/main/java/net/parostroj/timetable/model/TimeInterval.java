@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TrainEvent;
 
@@ -502,13 +501,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                train.fireEvent(new TrainEvent(train, change, train.getTimeIntervalList().indexOf(TimeInterval.this)));
-            }
-        };
+        this.attributesListener = (attrs, change) -> train
+                .fireEvent(new TrainEvent(train, change, train.getTimeIntervalList().indexOf(TimeInterval.this)));
         this.attributes.addListener(attributesListener);
     }
 

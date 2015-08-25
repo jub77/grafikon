@@ -205,13 +205,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new NodeEvent(Node.this, change));
-            }
-        };
+        this.attributesListener = (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change));
         this.attributes.addListener(attributesListener);
     }
 

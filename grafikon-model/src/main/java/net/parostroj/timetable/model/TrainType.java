@@ -265,13 +265,8 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new TrainTypeEvent(TrainType.this, change));
-            }
-        };
+        this.attributesListener = (attrs, change) -> listenerSupport
+                .fireEvent(new TrainTypeEvent(TrainType.this, change));
         this.attributes.addListener(attributesListener);
     }
 

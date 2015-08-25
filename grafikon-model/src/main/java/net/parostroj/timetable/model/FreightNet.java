@@ -30,20 +30,19 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     public FreightNet(String id) {
         this.id = id;
-        this.attributesListener = new AttributesListener() {
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                FreightNetEvent event = null;
-                if (attributes instanceof FNConnection) {
-                    event = new FreightNetEvent(FreightNet.this, GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change, (FNConnection) attributes);
-                } else {
-                    event = new FreightNetEvent(FreightNet.this, change);
-                }
-                listenerSupport.fireEvent(event);
-            }
-        };
         this.listenerSupport = new GTListenerSupport<FreightNetListener, FreightNetEvent>(
                 (listener, event) -> listener.freightNetChanged(event));
+        this.attributesListener = (attributes, change) -> {
+            FreightNetEvent event = null;
+            if (attributes instanceof FNConnection) {
+                event = new FreightNetEvent(FreightNet.this,
+                        GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change,
+                        (FNConnection) attributes);
+            } else {
+                event = new FreightNetEvent(FreightNet.this, change);
+            }
+            listenerSupport.fireEvent(event);
+        };
         this.setAttributes(new Attributes());
     }
 

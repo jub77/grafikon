@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.Collections;
 import java.util.List;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.AttributesListener;
 
 /**
@@ -130,13 +129,8 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue());
-            }
-        };
+        this.attributesListener = (attrs, change) -> fireAttributeChanged(change.getName(), change.getOldValue(),
+                change.getNewValue());
         this.attributes.addListener(attributesListener);
     }
 

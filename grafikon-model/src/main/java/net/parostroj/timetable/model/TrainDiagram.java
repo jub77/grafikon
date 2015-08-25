@@ -421,13 +421,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
-            }
-        };
+        this.attributesListener = (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
         this.attributes.addListener(attributesListener);
     }
 

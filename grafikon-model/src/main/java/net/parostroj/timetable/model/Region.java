@@ -62,13 +62,8 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this));
-            }
-        };
+        this.attributesListener = (attrs, change) -> diagram
+                .fireEvent(new TrainDiagramEvent(diagram, change, Region.this));
         this.attributes.addListener(attributesListener);
     }
 

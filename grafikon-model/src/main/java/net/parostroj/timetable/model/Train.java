@@ -344,19 +344,15 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (this.attributes != null && attributesListener != null)
             this.attributes.removeListener(attributesListener);
         this.attributes = attributes;
-        this.attributesListener = new AttributesListener() {
-
-            @Override
-            public void attributeChanged(Attributes attributes, AttributeChange change) {
-                listenerSupport.fireEvent(new TrainEvent(Train.this, change));
-                refreshCachedNames();
-                if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
-                    Train.this.recalculate();
-                }
-                if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
-                    for (TimeInterval interval : timeIntervalList) {
-                        interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
-                    }
+        this.attributesListener = (attrs, change) ->  {
+            listenerSupport.fireEvent(new TrainEvent(Train.this, change));
+            refreshCachedNames();
+            if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
+                Train.this.recalculate();
+            }
+            if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
+                for (TimeInterval interval : timeIntervalList) {
+                    interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
             }
         };
