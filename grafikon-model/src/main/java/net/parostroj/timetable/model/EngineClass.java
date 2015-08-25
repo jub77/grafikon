@@ -24,13 +24,8 @@ public class EngineClass implements ObjectWithId, Visitable {
         this.name = name;
         this.id = id;
         this.weightTable = new LinkedList<WeightTableRow>();
-        this.listenerSupport = new GTListenerSupport<EngineClassListener, EngineClassEvent>(new GTEventSender<EngineClassListener, EngineClassEvent>() {
-
-            @Override
-            public void fireEvent(EngineClassListener listener, EngineClassEvent event) {
-                listener.engineClassChanged(event);
-            }
-        });
+        this.listenerSupport = new GTListenerSupport<EngineClassListener, EngineClassEvent>(
+                (listener, event) -> listener.engineClassChanged(event));
     }
 
     public String getName() {

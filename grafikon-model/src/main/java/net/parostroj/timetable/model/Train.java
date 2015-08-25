@@ -68,17 +68,15 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         _cachedName = new CachedValue<String>();
         _cachedCompleteName = new CachedValue<String>();
         timeIntervalList = new TimeIntervalList();
-        nodeIntervalsView = Collections.unmodifiableCollection(Collections2.filter(timeIntervalList, ModelPredicates::nodeInterval));
-        lineIntervalsView = Collections.unmodifiableCollection(Collections2.filter(timeIntervalList, ModelPredicates::lineInterval));
+        nodeIntervalsView = Collections.unmodifiableCollection(
+                Collections2.filter(timeIntervalList, ModelPredicates::nodeInterval));
+        lineIntervalsView = Collections.unmodifiableCollection(
+                Collections2.filter(timeIntervalList, ModelPredicates::lineInterval));
         timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
         this.setAttributes(new Attributes());
         cycles = LinkedListMultimap.create();
-        listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(new GTEventSender<TrainListener, TrainEvent>() {
-            @Override
-            public void fireEvent(TrainListener listener, TrainEvent event) {
-                listener.trainChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(
+                (listener, event) -> listener.trainChanged(event));
         attached = false;
         timeBefore = null;
         timeAfter = null;

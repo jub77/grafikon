@@ -54,13 +54,8 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.id = id;
         this.diagram = diagram;
         this.topSpeed = topSpeed;
-        this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(new GTEventSender<LineListener, LineEvent>() {
-
-            @Override
-            public void fireEvent(LineListener listener, LineEvent event) {
-                listener.lineChanged(event);
-            }
-        });
+        this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
+                (listener, event) -> listener.lineChanged(event));
     }
 
     @Override

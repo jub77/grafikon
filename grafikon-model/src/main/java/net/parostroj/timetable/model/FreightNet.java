@@ -43,12 +43,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
             }
         };
         this.listenerSupport = new GTListenerSupport<FreightNetListener, FreightNetEvent>(
-                new GTEventSender<FreightNetListener, FreightNetEvent>() {
-                    @Override
-                    public void fireEvent(FreightNetListener listener, FreightNetEvent event) {
-                        listener.freightNetChanged(event);
-                    }
-                });
+                (listener, event) -> listener.freightNetChanged(event));
         this.setAttributes(new Attributes());
     }
 

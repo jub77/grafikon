@@ -45,13 +45,8 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     protected TrainType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        listenerSupport = new GTListenerSupport<TrainTypeListener, TrainTypeEvent>(new GTEventSender<TrainTypeListener, TrainTypeEvent>() {
-
-            @Override
-            public void fireEvent(TrainTypeListener listener, TrainTypeEvent event) {
-                listener.trainTypeChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<TrainTypeListener, TrainTypeEvent>(
+                (listener, event) -> listener.trainTypeChanged(event));
         this.setAttributes(new Attributes());
     }
 

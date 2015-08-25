@@ -49,12 +49,8 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     public TrainsCycleType(String id) {
         this.id = id;
         this.cycles = new LinkedList<TrainsCycle>();
-        listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(new GTEventSender<TrainsCycleTypeListener, TrainsCycleTypeEvent>() {
-            @Override
-            public void fireEvent(TrainsCycleTypeListener listener, TrainsCycleTypeEvent event) {
-                listener.trainsCycleTypeChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(
+                (listener, event) -> listener.trainsCycleTypeChanged(event));
         this.setAttributes(new Attributes());
     }
 

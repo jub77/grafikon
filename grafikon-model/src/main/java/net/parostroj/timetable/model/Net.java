@@ -43,19 +43,10 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
                 Net.this.fireEvent(event);
             }
         };
-        listenerSupport = new GTListenerSupport<NetListener, NetEvent>(new GTEventSender<NetListener, NetEvent>() {
-
-            @Override
-            public void fireEvent(NetListener listener, NetEvent event) {
-                listener.netChanged(event);
-            }
-        });
-        listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(new GTEventSender<AllEventListener, GTEvent<?>>() {
-            @Override
-            public void fireEvent(AllEventListener listener, GTEvent<?> event) {
-                listener.changed(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<NetListener, NetEvent>(
+                (listener, event) -> listener.netChanged(event));
+        listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(
+                (listener, event) -> listener.changed(event));
         listener = new GTListenerNetImpl(this);
         this.id = id;
         this.diagram = diagram;

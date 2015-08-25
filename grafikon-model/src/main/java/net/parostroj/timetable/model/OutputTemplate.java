@@ -48,13 +48,8 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
                 listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change));
             }
         };
-        listenerSupport = new GTListenerSupport<OutputTemplateListener, OutputTemplateEvent>(new GTEventSender<OutputTemplateListener, OutputTemplateEvent>() {
-
-            @Override
-            public void fireEvent(OutputTemplateListener listener, OutputTemplateEvent event) {
-                listener.outputTemplateChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<OutputTemplateListener, OutputTemplateEvent>(
+                (listener, event) -> listener.outputTemplateChanged(event));
     }
 
     @Override

@@ -54,13 +54,8 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         this.id = id;
         this.diagram = diagram;
         this.setAttributes(new Attributes());
-        listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(new GTEventSender<TextItemListener, TextItemEvent>() {
-
-            @Override
-            public void fireEvent(TextItemListener listener, TextItemEvent event) {
-                listener.textItemChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(
+                (listener, event) -> listener.textItemChanged(event));
     }
 
     @Override

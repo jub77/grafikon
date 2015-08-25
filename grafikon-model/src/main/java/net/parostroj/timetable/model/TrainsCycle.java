@@ -52,13 +52,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.setAttributes(new Attributes());
         this.type = type;
         this.items = new LinkedList<TrainsCycleItem>();
-        listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(new GTEventSender<TrainsCycleListener, TrainsCycleEvent>() {
-
-            @Override
-            public void fireEvent(TrainsCycleListener listener, TrainsCycleEvent event) {
-                listener.trainsCycleChanged(event);
-            }
-        });
+        listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(
+                (listener, event) -> listener.trainsCycleChanged(event));
     }
 
     @Override

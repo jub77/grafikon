@@ -88,20 +88,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.setAttributes(new Attributes());
         this.setTrainsData(data);
         this.listener = new GTListenerTrainDiagramImpl(this);
-        this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(new GTEventSender<TrainDiagramListener, TrainDiagramEvent>() {
-
-            @Override
-            public void fireEvent(TrainDiagramListener listener, TrainDiagramEvent event) {
-                listener.trainDiagramChanged(event);
-            }
-        });
-        this.listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(new GTEventSender<AllEventListener, GTEvent<?>>() {
-
-            @Override
-            public void fireEvent(AllEventListener listener, GTEvent<?> event) {
-                listener.changed(event);
-            }
-        });
+        this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(
+                (listener, event) -> listener.trainDiagramChanged(event));
+        this.listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(
+                (listener, event) -> listener.changed(event));
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
