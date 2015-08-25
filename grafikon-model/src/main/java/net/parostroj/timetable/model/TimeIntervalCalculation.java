@@ -1,8 +1,6 @@
 package net.parostroj.timetable.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,20 +44,14 @@ class TimeIntervalCalculation {
     }
 
     public Integer min(Integer... s) {
-        Integer result = null;
-        for (Integer i : s) {
-            if (result == null) {
-                result = i;
-            } else if (i != null) {
-                result = Math.min(result, i);
-            }
-        }
-        return result;
+        Optional<Integer> min = Arrays.stream(s).min(Comparator.naturalOrder());
+        return min.orElse(null);
     }
 
     private int computeLineSpeed(TimeInterval lineInterval, Integer speedLimit) {
-        if (speedLimit != null && speedLimit < 1)
+        if (speedLimit != null && speedLimit < 1) {
             throw new IllegalArgumentException("Speed has to be greater than 0.");
+        }
         Train train = lineInterval.getTrain();
         // apply speed limit
         int speed = min(train.getTopSpeed(), speedLimit);
