@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.parostroj.timetable.model.events.AttributesListener;
@@ -10,7 +11,7 @@ import net.parostroj.timetable.model.events.AttributesListener;
  *
  * @author jub
  */
-public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes {
+public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttributes, Iterable<TimeInterval> {
     /** ID. */
     private final String id;
     /** Track number. */
@@ -150,4 +151,9 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     }
 
     abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);
+
+    @Override
+    public Iterator<TimeInterval> iterator() {
+        return intervalList.iterator();
+    }
 }

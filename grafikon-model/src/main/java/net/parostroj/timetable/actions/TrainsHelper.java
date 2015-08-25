@@ -479,15 +479,4 @@ public class TrainsHelper {
         Ordering<TimeInterval> sort = Ordering.from((TimeInterval i1, TimeInterval i2) -> i1.getStart() - i2.getStart());
         return Iterables.transform(sort.sortedCopy(intervals), interval -> interval.getTrain());
     }
-
-    /**
-     * Returns iterable with all time intervals for the route segment.
-     *
-     * @param segment route segment
-     * @return iterable with time intervals
-     */
-    public static Iterable<TimeInterval> getTimeIntervals(final RouteSegment segment) {
-        Iterable<List<TimeInterval>> intervals = Iterables.transform(segment.getTracks(), track -> track.getTimeIntervalList());
-        return Iterables.concat(intervals);
-    }
 }

@@ -2,7 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.actions.TrainsHelper;
+import com.google.common.collect.Iterators;
+
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -367,8 +368,9 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         visitor.visitAfter(this);
     }
 
-    public Iterable<TimeInterval> getTimeIntervals() {
-        return TrainsHelper.getTimeIntervals(this);
+    @Override
+    public Iterator<TimeInterval> iterator() {
+        return Iterators.concat(Iterators.transform(tracks.iterator(), track -> track.iterator()));
     }
 
     private Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction) {

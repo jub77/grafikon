@@ -22,7 +22,7 @@ public final class RouteHelper {
             int cnt = 0;
             for (RouteSegment segment : route) {
                 boolean containTrain = false;
-                for (TimeInterval interval : segment.getTimeIntervals()) {
+                for (TimeInterval interval : segment) {
                     if (interval.getTrain() == train) {
                         containTrain = true;
                         break;

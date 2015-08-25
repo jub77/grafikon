@@ -23,7 +23,7 @@ public class NodeValidator implements TrainDiagramValidator {
                 Node node = (Node) event.getSource();
                 return checkNodeControl(node);
             } else if (event.getAttributeChange().checkName(Node.ATTR_LENGTH, Node.ATTR_NOT_STRAIGHT_SPEED, Node.ATTR_SPEED)) {
-                for (TimeInterval i : ((Node) event.getSource()).getTimeIntervals()) {
+                for (TimeInterval i : (Node) event.getSource()) {
                     i.getTrain().recalculate();
                 }
             }
