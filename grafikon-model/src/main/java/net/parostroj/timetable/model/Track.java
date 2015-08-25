@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.parostroj.timetable.model.events.AttributesListener;
-
 /**
  * Track in the station.
  *
@@ -19,8 +17,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /** Interval list. */
     private final TimeIntervalList intervalList;
     /** Attributes. */
-    private Attributes attributes;
-    private AttributesListener attributesListener;
+    private final AttributesWrapper attributesWrapper;
 
     /**
      * Constructor.
@@ -29,8 +26,9 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
      */
     public Track(String id) {
         this.id = id;
-        intervalList = new TimeIntervalList();
-        this.setAttributes(new Attributes());
+        this.intervalList = new TimeIntervalList();
+        this.attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue()));
     }
 
     /**
@@ -123,31 +121,26 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     }
 
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> fireAttributeChanged(change.getName(), change.getOldValue(),
-                change.getNewValue());
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);

@@ -27,7 +27,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Abbreviation. */
     private String abbr;
     /** Attributes of the node. */
-    private Attributes attributes;
+    private AttributesWrapper attributesWrapper;
     /** List of node tracks. */
     private List<NodeTrack> tracks;
     /** Node type. */
@@ -35,7 +35,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Location of node. */
     private Location location;
     private GTListenerSupport<NodeListener, NodeEvent> listenerSupport;
-    private AttributesListener attributesListener;
 
     /**
      * Initialization.
@@ -43,7 +42,8 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     private void init() {
         tracks = new LinkedList<NodeTrack>();
         location = new Location(0, 0);
-        this.setAttributes(new Attributes());
+        attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change)));
         listenerSupport = new GTListenerSupport<NodeListener, NodeEvent>(
                 (listener, event) -> listener.nodeChanged(event));
     }
@@ -199,30 +199,26 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change));
-        this.attributes.addListener(attributesListener);
+        attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return this.attributes.remove(key);
+        return this.attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override

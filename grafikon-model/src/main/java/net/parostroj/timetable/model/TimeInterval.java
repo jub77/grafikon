@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.parostroj.timetable.model.events.AttributesListener;
 import net.parostroj.timetable.model.events.TrainEvent;
 
 /**
@@ -29,12 +28,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Added time. */
     private int addedTime;
     /** Attributes. */
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     /** For tests - overlapping time intervals. */
     private Set<TimeInterval> overlappingIntervals;
     /** Direction of the time interval regarding the underlying line. */
     private TimeIntervalDirection direction;
-    private AttributesListener attributesListener;
     /** Speed used for calculation of running time (line as an owner). */
     private Integer usedSpeed;
     /** Changed - used for indication that the time interval for whatever reason changed. */
@@ -62,7 +60,9 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.speedLimit = speed;
         this.direction = direction;
         this.track = track;
-        this.setAttributes(new Attributes());
+        this.attributesWrapper = new AttributesWrapper((attrs, change) -> train
+                .fireEvent(new TrainEvent(train, change,
+                        train.getTimeIntervalList().indexOf(TimeInterval.this))));
         this.id = id;
         this.addedTime = addedTime;
     }
@@ -493,32 +493,27 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> train
-                .fireEvent(new TrainEvent(train, change, train.getTimeIntervalList().indexOf(TimeInterval.this)));
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     public boolean isNodeOwner() {

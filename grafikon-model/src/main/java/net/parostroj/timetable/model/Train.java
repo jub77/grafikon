@@ -36,13 +36,12 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** Cycles. */
     private final ListMultimap<TrainsCycleType, TrainsCycleItem> cycles;
     /* Attributes of the train. */
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     /* cached data */
     private final CachedValue<String> _cachedName;
     private final CachedValue<String> _cachedCompleteName;
     private Map<String, Object> _cachedBinding;
     private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
-    private AttributesListener attributesListener;
     private boolean attached;
 
     /* Technological times. */
@@ -73,10 +72,21 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         lineIntervalsView = Collections.unmodifiableCollection(
                 Collections2.filter(timeIntervalList, ModelPredicates::lineInterval));
         timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
-        this.setAttributes(new Attributes());
-        cycles = LinkedListMultimap.create();
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(
                 (listener, event) -> listener.trainChanged(event));
+        attributesWrapper = new AttributesWrapper((attrs, change) ->  {
+            listenerSupport.fireEvent(new TrainEvent(Train.this, change));
+            refreshCachedNames();
+            if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
+                Train.this.recalculate();
+            }
+            if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
+                for (TimeInterval interval : timeIntervalList) {
+                    interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                }
+            }
+        });
+        cycles = LinkedListMultimap.create();
         attached = false;
         timeBefore = null;
         timeAfter = null;
@@ -333,7 +343,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     /**
@@ -341,38 +351,23 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) ->  {
-            listenerSupport.fireEvent(new TrainEvent(Train.this, change));
-            refreshCachedNames();
-            if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
-                Train.this.recalculate();
-            }
-            if (change.checkName(Train.ATTR_MANAGED_FREIGHT) && !Boolean.TRUE.equals(change.getNewValue())) {
-                for (TimeInterval interval : timeIntervalList) {
-                    interval.removeAttribute(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
-                }
-            }
-        };
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
         this.refreshCachedNames();
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     /**

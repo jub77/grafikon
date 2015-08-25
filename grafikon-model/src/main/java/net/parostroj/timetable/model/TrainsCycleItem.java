@@ -24,8 +24,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     private final TimeInterval from;
     private final TimeInterval to;
 
-    private Attributes attributes;
-    private AttributesListener attributesListener;
+    private final AttributesWrapper attributesWrapper;
 
     public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to, Attributes attributes) {
         this.cycle = cycle;
@@ -33,7 +32,13 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         this.comment = comment;
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
-        this.setAttributes(attributes != null ? attributes : new Attributes());
+        this.attributesWrapper = new AttributesWrapper((attrs, change) -> {
+            TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
+            event.setNewCycleItem(TrainsCycleItem.this);
+            event.setOldCycleItem(TrainsCycleItem.this);
+            event.setAttributeChange(change);
+            getCycle().fireEvent(event);
+        } , attributes != null ? attributes : new Attributes());
     }
 
     public boolean containsInterval(TimeInterval interval) {
@@ -142,37 +147,27 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
 
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) ->  {
-            TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
-            event.setNewCycleItem(TrainsCycleItem.this);
-            event.setOldCycleItem(TrainsCycleItem.this);
-            event.setAttributeChange(change);
-            getCycle().fireEvent(event);
-        };
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override

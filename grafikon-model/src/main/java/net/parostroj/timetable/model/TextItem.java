@@ -46,16 +46,16 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     private String name;
     private Type type;
     private TextTemplate template;
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     private final GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
-    private AttributesListener attributesListener;
 
     public TextItem(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.setAttributes(new Attributes());
         listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(
                 (listener, event) -> listener.textItemChanged(event));
+        attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> listenerSupport.fireEvent(new TextItemEvent(TextItem.this, change)));
     }
 
     @Override
@@ -114,32 +114,25 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        Object oldValue = attributes.get(key);
-        attributes.set(key, value);
-        this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(key, oldValue, value)));
+        this.attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> listenerSupport
-                .fireEvent(new TextItemEvent(TextItem.this, change));
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     /**

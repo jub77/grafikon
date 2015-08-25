@@ -28,10 +28,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private String name;
     private String description;
     private TrainsCycleType type;
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     private final List<TrainsCycleItem> items;
     private final GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
-    private AttributesListener attributesListener;
     private TrainsCycle next;
     private TrainsCycle previous;
 
@@ -49,11 +48,12 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.diagram = diagram;
         this.name = name;
         this.description = description;
-        this.setAttributes(new Attributes());
         this.type = type;
         this.items = new LinkedList<TrainsCycleItem>();
         listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(
                 (listener, event) -> listener.trainsCycleChanged(event));
+        attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleEvent(TrainsCycle.this, change)));
     }
 
     @Override
@@ -340,32 +340,27 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> listenerSupport
-                .fireEvent(new TrainsCycleEvent(TrainsCycle.this, change));
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     public TrainsCycleType getType() {

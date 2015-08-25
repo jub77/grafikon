@@ -19,8 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
 public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private final String id;
-    private Attributes attributes;
-    private final AttributesListener attributesListener;
+    private final AttributesWrapper attributesWrapper;
     private final GTListenerSupport<FreightNetListener, FreightNetEvent> listenerSupport;
 
     private final Multimap<Train, FNConnection> fromMap = HashMultimap.create();
@@ -32,25 +31,23 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         this.id = id;
         this.listenerSupport = new GTListenerSupport<FreightNetListener, FreightNetEvent>(
                 (listener, event) -> listener.freightNetChanged(event));
-        this.attributesListener = (attributes, change) -> {
+        this.attributesWrapper = new AttributesWrapper((attributes, change) -> {
             FreightNetEvent event = null;
             if (attributes instanceof FNConnection) {
-                event = new FreightNetEvent(FreightNet.this,
-                        GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change,
+                event = new FreightNetEvent(FreightNet.this, GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change,
                         (FNConnection) attributes);
             } else {
                 event = new FreightNetEvent(FreightNet.this, change);
             }
             listenerSupport.fireEvent(event);
-        };
-        this.setAttributes(new Attributes());
+        });
     }
 
     public FNConnection addConnection(TimeInterval from, TimeInterval to) {
         if (from == to || from.getOwnerAsNode() != to.getOwnerAsNode()) {
             throw new IllegalArgumentException(String.format("Invalid connection: %s -> %s", from, to));
         }
-        FNConnection conn = new FNConnection(from, to, attributesListener);
+        FNConnection conn = new FNConnection(from, to, attributesWrapper.getListener());
         this.addConnectionImpl(conn);
         return conn;
     }
@@ -157,31 +154,27 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return this.attributes.get(key, clazz);
+        return this.attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        this.attributes.set(key, value);
+        this.attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return this.attributes.get(key);
+        return this.attributesWrapper.getAttributes().get(key);
     }
 
     @Override
     public Attributes getAttributes() {
-        return this.attributes;
+        return this.attributesWrapper.getAttributes();
     }
 
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null) {
-            this.attributes.removeListener(attributesListener);
-        }
-        this.attributes = attributes;
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     public Map<Train, List<FreightDst>> getFreightPassedInNode(TimeInterval fromInterval) {

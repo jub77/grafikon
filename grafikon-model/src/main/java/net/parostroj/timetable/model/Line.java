@@ -28,13 +28,12 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     /** Top speed for the track. */
     private Integer topSpeed;
     /** Attributes. */
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     /** Starting point. */
     private final Node from;
     /** Ending point. */
     private final Node to;
     private final GTListenerSupport<LineListener, LineEvent> listenerSupport;
-    private AttributesListener attributesListener;
 
     /**
      * creates track with specified length.
@@ -47,30 +46,27 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param topSpeed top speed
      */
     Line(String id, TrainDiagram diagram, int length, Node from, Node to, Integer topSpeed) {
-        tracks = new ArrayList<LineTrack>();
-        this.setAttributes(new Attributes());
+        this.tracks = new ArrayList<LineTrack>();
+        this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
+                (listener, event) -> listener.lineChanged(event));
+        this.attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> listenerSupport.fireEvent(new LineEvent(Line.this, change)));
         this.length = length;
         this.from = from;
         this.to = to;
         this.id = id;
         this.diagram = diagram;
         this.topSpeed = topSpeed;
-        this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
-                (listener, event) -> listener.lineChanged(event));
     }
 
     @Override
 	public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
 	public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> listenerSupport.fireEvent(new LineEvent(Line.this, change));
-        this.attributes.addListener(attributesListener);
+        attributesWrapper.setAttributes(attributes);
     }
 
     /**
@@ -300,17 +296,17 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override

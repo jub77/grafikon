@@ -13,13 +13,13 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
     /** Name */
     private String name;
     /** Attributes. */
-    private Attributes attributes;
-    private AttributesListener attributesListener;
+    private final AttributesWrapper attributesWrapper;
 
     Group(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.setAttributes(new Attributes());
+        this.attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Group.this)));
     }
 
     @Override
@@ -51,32 +51,27 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> diagram
-                .fireEvent(new TrainDiagramEvent(diagram, change, Group.this));
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override

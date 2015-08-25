@@ -34,8 +34,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     /** Listener support. */
     private final GTListenerSupport<TrainTypeListener, TrainTypeEvent> listenerSupport;
     /** Attributes */
-    private Attributes attributes;
-    private AttributesListener attributesListener;
+    private final AttributesWrapper attributesWrapper;
 
     /**
      * creates instance.
@@ -47,7 +46,8 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         this.diagram = diagram;
         listenerSupport = new GTListenerSupport<TrainTypeListener, TrainTypeEvent>(
                 (listener, event) -> listener.trainTypeChanged(event));
-        this.setAttributes(new Attributes());
+        attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> listenerSupport.fireEvent(new TrainTypeEvent(TrainType.this, change)));
     }
 
     /**
@@ -254,7 +254,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      */
     @Override
     public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     /**
@@ -262,38 +262,34 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      */
     @Override
     public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> listenerSupport
-                .fireEvent(new TrainTypeEvent(TrainType.this, change));
-        this.attributes.addListener(attributesListener);
+        this.attributesWrapper.setAttributes(attributes);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     public double getLineWidth() {
-        return attributes.get(ATTR_LINE_WIDTH, Double.class, 1.0d);
+        return attributesWrapper.getAttributes().get(ATTR_LINE_WIDTH, Double.class, 1.0d);
     }
 
     public double getLineLength() {
-        return attributes.get(ATTR_LINE_LENGTH, Double.class, 1.0d);
+        return attributesWrapper.getAttributes().get(ATTR_LINE_LENGTH, Double.class, 1.0d);
     }
 
     public LineType getLineType() {
-        return LineType.valueOf(attributes.get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
+        return LineType.valueOf(
+                attributesWrapper.getAttributes().get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
     }
 }

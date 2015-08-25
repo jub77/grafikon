@@ -34,7 +34,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Train types available. */
     private final List<TrainType> trainTypes;
     /** Attributes. */
-    private Attributes attributes;
+    private final AttributesWrapper attributesWrapper;
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
@@ -57,7 +57,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ChangesTrackerImpl changesTracker;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
     private final GTListenerSupport<AllEventListener, GTEvent<?>> listenerSupportAll;
-    private AttributesListener attributesListener;
     private TimeConverter timeConverter;
 
     /**
@@ -85,7 +84,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new LinkedList<TrainType>();
-        this.setAttributes(new Attributes());
+        this.attributesWrapper = new AttributesWrapper(
+                (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change)));
         this.setTrainsData(data);
         this.listener = new GTListenerTrainDiagramImpl(this);
         this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(
@@ -398,31 +398,27 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
+        return attributesWrapper.getAttributes().get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
+        attributesWrapper.getAttributes().set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributes.remove(key);
+        return attributesWrapper.getAttributes().remove(key);
     }
 
     @Override
 	public Attributes getAttributes() {
-        return attributes;
+        return attributesWrapper.getAttributes();
     }
 
     @Override
 	public void setAttributes(Attributes attributes) {
-        if (this.attributes != null && attributesListener != null)
-            this.attributes.removeListener(attributesListener);
-        this.attributes = attributes;
-        this.attributesListener = (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change));
-        this.attributes.addListener(attributesListener);
+        attributesWrapper.setAttributes(attributes);
     }
 
     public double getTimeScale() {
