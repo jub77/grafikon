@@ -16,7 +16,8 @@ import com.google.common.collect.*;
  *
  * @author jub
  */
-public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes, TrainDiagramPart {
+public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes,
+        TrainDiagramPart, Iterable<TimeInterval> {
 
     /** Train diagram reference. */
     private final TrainDiagram diagram;
@@ -1077,6 +1078,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
 
     public boolean isEmpty() {
         return this.getAttributes().getBool(ATTR_EMPTY);
+    }
+
+    @Override
+    public Iterator<TimeInterval> iterator() {
+        return timeIntervalList.iterator();
     }
 
     /**
