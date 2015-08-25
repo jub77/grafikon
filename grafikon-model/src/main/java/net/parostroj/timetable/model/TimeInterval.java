@@ -187,7 +187,8 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     @Override
     public String toString() {
         TimeConverter converter = this.getTrain().getDiagram().getTimeConverter();
-        Object owner = getOwner() != null ? (isNodeOwner() ? getOwner() : getOwnerAsLine().toString(getDirection()))
+        String owner = getOwner() != null ?
+                (isNodeOwner() ? getOwner().toString() : getOwnerAsLine().toString(getDirection()))
                 : "-";
         return getStart() != getEnd() ? String.format("%s(%s,%s)", owner, converter.convertIntToText(getStart()),
                 converter.convertIntToText(getEnd())) : String.format("%s(%s)", owner,
@@ -321,7 +322,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @return length of the interval
      */
     public int getLength() {
-        return interval.getEnd() - interval.getStart();
+        return interval.getLength();
     }
 
     /**
