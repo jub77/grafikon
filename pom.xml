@@ -16,7 +16,7 @@
         <batik.version>1.8</batik.version>
         <groovy.version>2.4.4</groovy.version>
         <jgraph.version>2.3.0.5</jgraph.version>
-        <jgrapht.version>0.9.0</jgrapht.version>
+        <jgrapht.version>0.9.1</jgrapht.version>
         <mvel2.version>2.2.2.Final</mvel2.version>
         <jersey.version>1.18.3</jersey.version>
         <slf4j.version>1.7.12</slf4j.version>
