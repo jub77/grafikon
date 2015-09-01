@@ -3,19 +3,21 @@ package net.parostroj.timetable.output2.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.util.ResourceHelper;
-
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.apps.*;
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
 import org.xml.sax.SAXException;
+
+import net.parostroj.timetable.output2.OutputException;
+import net.parostroj.timetable.output2.template.gpdf.GPdfOutputFactory;
+import net.parostroj.timetable.output2.util.ResourceHelper;
 
 public class PdfTransformer {
 
@@ -30,11 +32,10 @@ public class PdfTransformer {
     }
 
     public FormattingResults write(OutputStream os, InputStream is, URIResolver resolver) throws OutputException {
-        FopFactory fopFactory = getFopFactory();
-        FOUserAgent foUserAgent = getFoUserAgent(fopFactory, resolver);
+        FopFactory fopFactory = getFopFactory(resolver);
 
         try {
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, os);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopFactory.newFOUserAgent(), os);
             Transformer transformer = factory.newTransformer();
             Source src = new StreamSource(is);
 
@@ -47,23 +48,42 @@ public class PdfTransformer {
         }
     }
 
-    private FOUserAgent getFoUserAgent(FopFactory fopFactory, URIResolver resolver) {
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        if (resolver != null) {
-            foUserAgent.setURIResolver(resolver);
-        }
-        return foUserAgent;
-    }
-
-    private FopFactory getFopFactory() throws OutputException {
+    private FopFactory getFopFactory(URIResolver resolver) throws OutputException {
         try {
-            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            Configuration cfg = cfgBuilder.build(ResourceHelper.getStream("templates/pdf/fop-cfg.xml", this.getClass().getClassLoader()));
-            FopFactory fopFactory = FopFactory.newInstance();
-            fopFactory.setUserConfig(cfg);
+            // base uri is empty
+            URI baseURI = new URI("");
+            FopConfParser parser = new FopConfParser(
+                    ResourceHelper.getStream("templates/pdf/fop-cfg.xml", this.getClass().getClassLoader()),
+                    baseURI,
+                    this.convertResolver(resolver));
+            FopFactory fopFactory = parser.getFopFactoryBuilder().build();
             return fopFactory;
-        } catch (ConfigurationException | SAXException | IOException e) {
+        } catch (IOException | SAXException | URISyntaxException e) {
             throw new OutputException("Error creating FOP factory", e);
         }
+    }
+
+    private ResourceResolver convertResolver(URIResolver uriResolver) {
+        return new ResourceResolver() {
+            @Override
+            public Resource getResource(URI uri) throws IOException {
+                InputStream is = null;
+                if (uriResolver != null) {
+                    try {
+                        is = ((StreamSource) uriResolver.resolve(uri.toASCIIString(), null)).getInputStream();
+                    } catch (TransformerException e) {
+                        throw new IOException(e);
+                    }
+                } else {
+                    is = GPdfOutputFactory.class.getClassLoader().getResourceAsStream(uri.toASCIIString());
+                }
+                return is == null ? null : new Resource(is);
+            }
+
+            @Override
+            public OutputStream getOutputStream(URI uri) throws IOException {
+                return null;
+            }
+        };
     }
 }
