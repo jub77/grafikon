@@ -193,10 +193,6 @@
                         <artifactId>batik-awt-util</artifactId>
                         <groupId>org.apache.xmlgraphics</groupId>
                     </exclusion>
-<!--                     <exclusion>
-                        <artifactId>batik-transcoder</artifactId>
-                        <groupId>org.apache.xmlgraphics</groupId>
-                    </exclusion> -->
                     <exclusion>
                         <artifactId>batik-extension</artifactId>
                         <groupId>org.apache.xmlgraphics</groupId>
