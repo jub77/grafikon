@@ -25,7 +25,7 @@
         <avalon.version>4.2.0</avalon.version>
         <rsyntaxtextarea.version>2.5.7</rsyntaxtextarea.version>
         <jxlayer.version>3.0.4</jxlayer.version>
-        <jodatime.version>2.6</jodatime.version>
+        <jodatime.version>2.8.2</jodatime.version>
         <xmlgraphics.version>2.0.1</xmlgraphics.version>
         <ini4j.version>0.5.2</ini4j.version>
         <guava.version>18.0</guava.version>
