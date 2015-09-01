@@ -14,7 +14,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
 
         <batik.version>1.8</batik.version>
-        <groovy.version>2.3.9</groovy.version>
+        <groovy.version>2.4.4</groovy.version>
         <jgraph.version>2.3.0.5</jgraph.version>
         <jgrapht.version>0.9.0</jgrapht.version>
         <mvel2.version>2.2.2.Final</mvel2.version>
