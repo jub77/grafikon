@@ -57,6 +57,7 @@ public class PdfTransformer {
                     baseURI,
                     this.convertResolver(resolver));
             FopFactory fopFactory = parser.getFopFactoryBuilder().build();
+            fopFactory.getFontManager().disableFontCache();
             return fopFactory;
         } catch (IOException | SAXException | URISyntaxException e) {
             throw new OutputException("Error creating FOP factory", e);

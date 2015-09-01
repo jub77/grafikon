@@ -8,28 +8,28 @@
     <renderers>
         <renderer mime="application/pdf">
             <fonts>
-                <font embed-url="templates/pdf/DejaVuSans.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSans.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="Sans" style="normal" weight="normal"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSans-Oblique.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSans-Oblique.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="Sans" style="italic" weight="normal"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSans-Bold.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSans-Bold.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="Sans" style="normal" weight="bold"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSans-BoldOblique.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSans-BoldOblique.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="Sans" style="italic" weight="bold"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSansCondensed.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSansCondensed.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="normal" weight="normal"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSansCondensed-Oblique.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSansCondensed-Oblique.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="italic" weight="normal"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSansCondensed-Bold.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSansCondensed-Bold.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="normal" weight="bold"/>
                 </font>
-                <font embed-url="templates/pdf/DejaVuSansCondensed-BoldOblique.ttf" kerning="yes" embedding-mode="full">
+                <font embed-url="templates/pdf/DejaVuSansCondensed-BoldOblique.ttf" kerning="yes" embedding-mode="subset">
                     <font-triplet name="SansCondensed" style="italic" weight="bold"/>
                 </font>
             </fonts>

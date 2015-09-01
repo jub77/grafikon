@@ -140,7 +140,7 @@ public class OutputWriter {
                         listener.processed(template);
                     }
                     this.generateOutput(template);
-                } catch (OutputException e) {
+                } catch (Exception e) {
                     errorTemplate = template;
                     throw e;
                 }
