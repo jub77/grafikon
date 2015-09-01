@@ -79,11 +79,7 @@ public class GPdfOutputFactory extends OutputFactory {
     private URIResolver getResolver(OutputParams params) {
         final OutputResources resources = this.getOutputResources(params);
         return (href, base) -> {
-            InputStream is = GPdfOutputFactory.class.getClassLoader().getResourceAsStream(href);
-            if (is == null) {
-                // in case there is no classpath resource
-                is = resources != null ? resources.getStream(href) : null;
-            }
+            InputStream is = resources != null ? resources.getStream(href) : null;
             return is == null ? null : new StreamSource(is);
         };
     }

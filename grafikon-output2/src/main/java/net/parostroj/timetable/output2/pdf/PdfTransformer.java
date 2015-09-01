@@ -16,7 +16,6 @@ import org.apache.xmlgraphics.io.ResourceResolver;
 import org.xml.sax.SAXException;
 
 import net.parostroj.timetable.output2.OutputException;
-import net.parostroj.timetable.output2.template.gpdf.GPdfOutputFactory;
 import net.parostroj.timetable.output2.util.ResourceHelper;
 
 public class PdfTransformer {
@@ -54,8 +53,7 @@ public class PdfTransformer {
             URI baseURI = new URI("");
             FopConfParser parser = new FopConfParser(
                     ResourceHelper.getStream("templates/pdf/fop-cfg.xml", this.getClass().getClassLoader()),
-                    baseURI,
-                    this.convertResolver(resolver));
+                    EnvironmentalProfileFactory.createRestrictedIO(baseURI, this.convertResolver(resolver)));
             FopFactory fopFactory = parser.getFopFactoryBuilder().build();
             fopFactory.getFontManager().disableFontCache();
             return fopFactory;
@@ -68,15 +66,13 @@ public class PdfTransformer {
         return new ResourceResolver() {
             @Override
             public Resource getResource(URI uri) throws IOException {
-                InputStream is = null;
-                if (uriResolver != null) {
+                InputStream is = PdfTransformer.class.getClassLoader().getResourceAsStream(uri.toASCIIString());
+                if (is == null && uriResolver != null) {
                     try {
                         is = ((StreamSource) uriResolver.resolve(uri.toASCIIString(), null)).getInputStream();
                     } catch (TransformerException e) {
                         throw new IOException(e);
                     }
-                } else {
-                    is = GPdfOutputFactory.class.getClassLoader().getResourceAsStream(uri.toASCIIString());
                 }
                 return is == null ? null : new Resource(is);
             }
