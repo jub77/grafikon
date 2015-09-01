@@ -23,6 +23,7 @@
         <jar href="batik-script-${batik.version}.jar" download="eager"/>
         <jar href="batik-svg-dom-${batik.version}.jar" download="eager"/>
         <jar href="batik-svggen-${batik.version}.jar" download="eager"/>
+        <jar href="batik-transcoder-${batik.version}.jar" download="eager"/>
         <jar href="batik-util-${batik.version}.jar" download="eager"/>
         <jar href="batik-xml-${batik.version}.jar" download="eager"/>
         <jar href="commons-io-${commons.io.version}.jar" download="eager"/>
