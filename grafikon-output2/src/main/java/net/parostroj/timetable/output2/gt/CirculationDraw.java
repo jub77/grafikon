@@ -49,6 +49,7 @@ public class CirculationDraw {
         public Font titleFont;
         public String titleText;
         public float zoom;
+        public CirculationDrawColors colors;
 
         public int getRow(int rowIndex) {
             return startY + rowIndex * this.row + this.title;
@@ -93,9 +94,16 @@ public class CirculationDraw {
         }
     }
 
-    private static final Color COLOR_1 = new Color(210, 210, 210);
-    private static final Color COLOR_2 = new Color(230, 230, 230);
-    private static final Color COLOR_LINE = new Color(170, 170, 170);
+    private static final Color C_COLOR_1 = new Color(210, 210, 210);
+    private static final Color C_COLOR_2 = new Color(230, 230, 230);
+    private static final Color C_COLOR_LINE = new Color(170, 170, 170);
+
+    public static final String COLOR_1 = "color_1";
+    public static final String COLOR_2 = "color_2";
+    public static final String COLOR_LINE = "color_line";
+    public static final String COLOR_TEXT = "color_text";
+    public static final String COLOR_FILL = "color_fill";
+    public static final String COLOR_OUTLINE = "color_outline";
 
     private final Collection<TrainsCycle> circulations;
     private final Layout layout;
@@ -111,6 +119,22 @@ public class CirculationDraw {
         this.layout.rows = circulations.size();
         this.update = true;
         this.layout.titleText = params.getTitle();
+        CirculationDrawColors colors = params.getColors();
+        this.layout.colors = (location, item) -> {
+            Color color = colors != null ? colors.getColor(location) : null;
+            if (color == null) {
+                switch (location) {
+                    case COLOR_1: color = C_COLOR_1; break;
+                    case COLOR_2: color = C_COLOR_2; break;
+                    case COLOR_LINE: color = C_COLOR_LINE; break;
+                    case COLOR_TEXT: color = Color.BLACK; break;
+                    case COLOR_FILL: color = Color.RED; break;
+                    case COLOR_OUTLINE: color = Color.BLACK; break;
+                    default: color = Color.BLACK;
+                }
+            }
+            return color;
+        };
     }
 
     public void draw(Graphics2D g) {
@@ -174,7 +198,8 @@ public class CirculationDraw {
         int seconds = layout.fromTime - (layout.fromTime % 3600);
         int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
         while (seconds <= layout.toTime) {
-            g.setColor(odd ? COLOR_1 : COLOR_2);
+            Color rowColor = layout.colors.getColor(odd  ? COLOR_1 : COLOR_2);
+            g.setColor(rowColor);
             int x1 = this.getX(Math.max(layout.fromTime, seconds));
             int x2 = this.getX(Math.min(layout.toTime, seconds + 3600));
             g.fillRect(x1, layout.startY, x2 - x1 + 1, height);
@@ -187,7 +212,7 @@ public class CirculationDraw {
         }
 
         // row delimiters
-        g.setColor(COLOR_LINE);
+        g.setColor(layout.colors.getColor(COLOR_LINE));
         for (int i = 0; i <= layout.rows; i++) {
             int p = layout.getRow(i);
             g.drawLine(layout.border, p, layout.size.width - layout.border, p);
@@ -197,15 +222,15 @@ public class CirculationDraw {
     private void drawHourTextWithLine(Graphics2D g, int seconds, int titleTextPos, String hStr) {
         if (seconds >= layout.fromTime && seconds <= layout.toTime) {
             int pos = this.getX(seconds);
-            g.setColor(Color.BLACK);
+            g.setColor(layout.colors.getColor(COLOR_TEXT));
             g.drawString(hStr, pos - DrawUtils.getStringWidth(g, hStr) / 2, titleTextPos);
-            g.setColor(COLOR_LINE);
+            g.setColor(layout.colors.getColor(COLOR_LINE));
             g.drawLine(pos, layout.startY + layout.title, pos, layout.size.height - layout.border);
         }
     }
 
     private void paintCirculation(Graphics2D g, TrainsCycle circulation, int row) {
-        g.setColor(Color.BLACK);
+        g.setColor(layout.colors.getColor(COLOR_TEXT));
         int textY = layout.getRow(row) + layout.row - layout.rowGap - layout.textOffset;
         int partY = layout.getRow(row) + layout.rowGapSmall + layout.letterSmall.height - layout.textOffsetSmall;
         g.drawString(circulation.getName(), layout.border, textY);
@@ -233,9 +258,9 @@ public class CirculationDraw {
         eTime = Math.min(eTime, layout.toTime);
         int x = this.getX(sTime);
         int width = (int) ((eTime - sTime) * layout.step);
-        g.setColor(Color.RED);
+        g.setColor(layout.colors.getColor(COLOR_FILL, item));
         g.fillRect(x, y, width, height);
-        g.setColor(Color.BLACK);
+        g.setColor(layout.colors.getColor(COLOR_OUTLINE, item));
         g.drawRect(x, y, width, height);
         int w = DrawUtils.getStringWidth(g, item.getTrain().getName());
         if (x + w <= this.getX(layout.toTime)) {

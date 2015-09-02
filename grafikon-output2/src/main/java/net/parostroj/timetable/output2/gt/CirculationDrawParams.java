@@ -16,6 +16,7 @@ public class CirculationDrawParams {
     private int widthInChars;
     private String title;
     private float zoom;
+    private CirculationDrawColors colors;
 
     public CirculationDrawParams(Collection<TrainsCycle> circulations) {
         this.circulations = circulations;
@@ -53,6 +54,10 @@ public class CirculationDrawParams {
         return zoom;
     }
 
+    public CirculationDrawColors getColors() {
+        return colors;
+    }
+
     public CirculationDrawParams setFrom(int from) {
         this.from = from;
         return this;
@@ -79,6 +84,11 @@ public class CirculationDrawParams {
 
     public CirculationDrawParams setZoom(float zoom) {
         this.zoom = zoom;
+        return this;
+    }
+
+    public CirculationDrawParams setColors(CirculationDrawColors colors) {
+        this.colors = colors;
         return this;
     }
 }
