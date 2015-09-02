@@ -94,12 +94,12 @@ public class CirculationDraw {
         }
     }
 
-    private static final Color C_COLOR_1 = new Color(210, 210, 210);
-    private static final Color C_COLOR_2 = new Color(230, 230, 230);
+    private static final Color C_COLOR_COLUMN_1 = new Color(210, 210, 210);
+    private static final Color C_COLOR_COLUMN_2 = new Color(230, 230, 230);
     private static final Color C_COLOR_LINE = new Color(170, 170, 170);
 
-    public static final String COLOR_1 = "color_1";
-    public static final String COLOR_2 = "color_2";
+    public static final String COLOR_COLUMN_1 = "color_column_1";
+    public static final String COLOR_COLUMN_2 = "color_column_2";
     public static final String COLOR_LINE = "color_line";
     public static final String COLOR_TEXT = "color_text";
     public static final String COLOR_FILL = "color_fill";
@@ -124,8 +124,8 @@ public class CirculationDraw {
             Color color = colors != null ? colors.getColor(location) : null;
             if (color == null) {
                 switch (location) {
-                    case COLOR_1: color = C_COLOR_1; break;
-                    case COLOR_2: color = C_COLOR_2; break;
+                    case COLOR_COLUMN_1: color = C_COLOR_COLUMN_1; break;
+                    case COLOR_COLUMN_2: color = C_COLOR_COLUMN_2; break;
                     case COLOR_LINE: color = C_COLOR_LINE; break;
                     case COLOR_TEXT: color = Color.BLACK; break;
                     case COLOR_FILL: color = Color.RED; break;
@@ -198,7 +198,7 @@ public class CirculationDraw {
         int seconds = layout.fromTime - (layout.fromTime % 3600);
         int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
         while (seconds <= layout.toTime) {
-            Color rowColor = layout.colors.getColor(odd  ? COLOR_1 : COLOR_2);
+            Color rowColor = layout.colors.getColor(odd  ? COLOR_COLUMN_1 : COLOR_COLUMN_2);
             g.setColor(rowColor);
             int x1 = this.getX(Math.max(layout.fromTime, seconds));
             int x2 = this.getX(Math.min(layout.toTime, seconds + 3600));
