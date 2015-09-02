@@ -3,7 +3,7 @@
     <information>
         <title>Grafikon ${project.version} libraries</title>
         <vendor>jub</vendor>
-        <homepage href="http://code.google.com/p/grafikon"/>
+        <homepage href="https://github.com/jub77/grafikon"/>
     </information>
     <security>
         <all-permissions/>

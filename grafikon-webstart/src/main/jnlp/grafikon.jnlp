@@ -5,7 +5,7 @@
         <vendor>jub</vendor>
         <description>Grafikon ${project.version}</description>
         <description kind="short">Grafikon ${project.version}</description>
-        <homepage href="http://code.google.com/p/grafikon"/>
+        <homepage href="https://github.com/jub77/grafikon"/>
         <icon href="grafikon.gif"/>
         <icon href="splashscreen.png" kind="splash"/>
         <offline-allowed/>
