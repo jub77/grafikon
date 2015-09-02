@@ -121,6 +121,18 @@ public class Attributes implements Map<String, Object> {
         return ObjectsUtil.checkCollection((Collection<?>) object, clazz);
     }
 
+    public <T> List<T> getAsList(String name, Class<T> clazz) {
+        return this.getAsList(name, clazz, null);
+    }
+
+    public <T> List<T> getAsList(String name, Class<T> clazz, List<T> defaultValue) {
+        Object object = this.get(name, null, Object.class, defaultValue);
+        if (object != null && !(object instanceof List)) {
+            throw new ClassCastException("Wrong type: " + object.getClass());
+        }
+        return ObjectsUtil.checkList((List<?>) object, clazz);
+    }
+
     public Object get(String name, String category) {
         if (this.mapExistsForCategory(category)) {
             return this.getMapForCategory(category).get(name);

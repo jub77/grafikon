@@ -54,4 +54,18 @@ public class ObjectsUtil {
             return (Collection<T>) orig;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> checkList(List<?> orig, Class<T> clazz) {
+        if (orig == null) {
+            return null;
+        } else {
+            for (Object o : orig) {
+                if (!clazz.isInstance(o)) {
+                    throw new ClassCastException("Wrong class: " + o.getClass());
+                }
+            }
+            return (List<T>) orig;
+        }
+    }
 }
