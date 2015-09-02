@@ -1,6 +1,7 @@
 package net.parostroj.timetable.utils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ObjectsUtil {
 
@@ -32,15 +33,12 @@ public class ObjectsUtil {
         return null == checkAndTrim(str);
     }
 
-    public static <T> List<T> getList(List<?> orig, Class<T> clazz) {
-        List<T> dest = null;
-        if (orig != null) {
-            dest = new ArrayList<T>(orig.size());
-            for (Object o : orig) {
-                dest.add(clazz.cast(o));
-            }
+    public static <T> List<T> copyToList(Collection<?> orig, Class<T> clazz) {
+        if (orig == null) {
+            return null;
+        } else {
+            return orig.stream().map(o -> clazz.cast(o)).collect(Collectors.toList());
         }
-        return dest;
     }
 
     @SuppressWarnings("unchecked")

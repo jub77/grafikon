@@ -100,7 +100,7 @@ public class FreightDstInfo {
             info.setName(dst.getNode().getName());
             info.setAbbr(dst.getNode().getAbbr());
             List<?> lColors = dst.getNode().getAttribute(Node.ATTR_FREIGHT_COLORS, List.class);
-            info.setColors(ObjectsUtil.getList(lColors, FreightColor.class));
+            info.setColors(ObjectsUtil.copyToList(lColors, FreightColor.class));
             if (dst.getNode().getType() == NodeType.STATION_HIDDEN) {
                 info.setHidden(true);
             }

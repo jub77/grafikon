@@ -8,6 +8,7 @@ import java.util.*;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Draw output for circulations.
@@ -36,7 +37,7 @@ public class CirculationDrawOutput extends DrawOutput {
             // create default values
             return Collections.singletonList(new CirculationDrawParams(diagram.getDriverCycles()));
         } else {
-            return this.convert(cdParamList, CirculationDrawParams.class);
+            return ObjectsUtil.checkCollection(cdParamList, CirculationDrawParams.class);
         }
     }
 

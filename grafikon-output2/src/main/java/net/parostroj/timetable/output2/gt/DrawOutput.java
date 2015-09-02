@@ -153,12 +153,4 @@ public abstract class DrawOutput extends OutputWithLocale implements DrawParams 
                 throw new IllegalArgumentException();
         }
     }
-
-    protected <T> Collection<T> convert(Collection<?> collection, Class<T> clazz) {
-        Collection<T> result = new ArrayList<T>(collection.size());
-        for (Object o : collection) {
-            result.add(clazz.cast(o));
-        }
-        return result;
-    }
 }
