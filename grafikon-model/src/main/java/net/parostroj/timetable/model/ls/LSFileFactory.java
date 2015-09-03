@@ -33,7 +33,7 @@ public class LSFileFactory {
             ServiceLoader<FileLoadSave> loader = ServiceLoader.load(FileLoadSave.class);
             for (FileLoadSave fls : loader) {
                 List<ModelVersion> versions = fls.getLoadVersions();
-                log.debug("REGISTERED: {}", fls.getClass().getName());
+                log.debug("Registered: {}", fls.getClass().getName());
                 for (ModelVersion version : versions) {
                     cacheLoad.put(version, fls.getClass());
                 }
