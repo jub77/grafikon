@@ -8,6 +8,9 @@ import com.google.common.collect.Lists;
 
 public class ObjectsUtil {
 
+    private ObjectsUtil() {
+    }
+
     /**
      * Checks string and if it is not null, it trims it and transforms empty string to null,
      * otherwise it returns it trimmed.
