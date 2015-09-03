@@ -8,6 +8,13 @@ import com.google.common.collect.Lists;
 
 public class ObjectsUtil {
 
+    /**
+     * Checks string and if it is not null, it trims it and transforms empty string to null,
+     * otherwise it returns it trimmed.
+     *
+     * @param str string
+     * @return checked and trimmed string
+     */
     public static String checkAndTrim(String str) {
         if (str != null) {
             str = str.trim();
@@ -18,24 +25,45 @@ public class ObjectsUtil {
         return str;
     }
 
+    /**
+     * Trims non-null string. If it is null, it returns empty string.
+     *
+     * @param str string
+     * @return trimmed string
+     */
     public static String trimNonEmpty(String str) {
         return (str == null) ? "" : str.trim();
     }
 
+    /**
+     * Returns if the instances are equal or not.
+     *
+     * @param o1 first object
+     * @param o2 second object
+     * @return equality
+     */
     public static boolean compareWithNull(Object o1, Object o2) {
-        if (o1 == null && o2 == null) {
-            return true;
-        } else if (o1 != null && o1.equals(o2)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Objects.equals(o1, o2);
     }
 
+    /**
+     * Returns <code>true</code> if the string is empty or null.
+     *
+     * @param str string
+     * @return if it is null or empty
+     */
     public static boolean isEmpty(String str) {
         return null == checkAndTrim(str);
     }
 
+    /**
+     * Returns new list of given type. It checks if the source collection contains elements of
+     * given type.
+     *
+     * @param orig source collection
+     * @param clazz type of elements
+     * @return list
+     */
     public static <T> List<T> copyToList(Collection<?> orig, Class<T> clazz) {
         if (orig == null) {
             return null;
@@ -44,6 +72,13 @@ public class ObjectsUtil {
         }
     }
 
+    /**
+     * Returns checked read-only collection. It checks if the elements are of given type.
+     *
+     * @param orig source collection
+     * @param clazz element type
+     * @return checked collection
+     */
     public static <T> Collection<T> checkedCollection(Collection<?> orig, Class<T> clazz) {
         if (orig == null) {
             return null;
@@ -53,6 +88,13 @@ public class ObjectsUtil {
         }
     }
 
+    /**
+     * Returns checked read-only list. It checks if the elements are of given type.
+     *
+     * @param orig source list
+     * @param clazz element type
+     * @return checked list
+     */
     public static <T> List<T> checkedList(List<?> orig, Class<T> clazz) {
         if (orig == null) {
             return null;
