@@ -118,7 +118,7 @@ public class Attributes implements Map<String, Object> {
         if (object != null && !(object instanceof List)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
-        return ObjectsUtil.checkCollection((Collection<?>) object, clazz);
+        return ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
     }
 
     public <T> List<T> getAsList(String name, Class<T> clazz) {
@@ -130,7 +130,7 @@ public class Attributes implements Map<String, Object> {
         if (object != null && !(object instanceof List)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
-        return ObjectsUtil.checkList((List<?>) object, clazz);
+        return ObjectsUtil.checkedList((List<?>) object, clazz);
     }
 
     public Object get(String name, String category) {

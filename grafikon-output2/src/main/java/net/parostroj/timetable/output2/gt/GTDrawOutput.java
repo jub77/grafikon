@@ -40,7 +40,7 @@ public class GTDrawOutput extends DrawOutput {
     private Collection<GTDraw> getDraws(OutputParams params) {
         Collection<?> draws = params.getParamValue(GT_DRAWS, Collection.class);
         if (draws != null && !draws.isEmpty()) {
-            return ObjectsUtil.checkCollection(draws, GTDraw.class);
+            return ObjectsUtil.checkedCollection(draws, GTDraw.class);
         } else {
             return null;
         }
@@ -55,7 +55,7 @@ public class GTDrawOutput extends DrawOutput {
             }
             return Collections.singletonList(new GTDrawParams(diagram.getRoutes().get(0)));
         } else {
-            return ObjectsUtil.checkCollection(gtParamList, GTDrawParams.class);
+            return ObjectsUtil.checkedCollection(gtParamList, GTDrawParams.class);
         }
     }
 

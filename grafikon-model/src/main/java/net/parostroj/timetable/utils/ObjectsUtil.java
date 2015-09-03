@@ -3,6 +3,9 @@ package net.parostroj.timetable.utils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 public class ObjectsUtil {
 
     public static String checkAndTrim(String str) {
@@ -41,31 +44,27 @@ public class ObjectsUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Collection<T> checkCollection(Collection<?> orig, Class<T> clazz) {
+    public static <T> Collection<T> checkedCollection(Collection<?> orig, Class<T> clazz) {
         if (orig == null) {
             return null;
         } else {
-            for (Object o : orig) {
-                if (!clazz.isInstance(o)) {
-                    throw new ClassCastException("Wrong class: " + o.getClass());
-                }
-            }
-            return (Collection<T>) orig;
+            checkClass(orig, clazz);
+            return Collections2.transform(orig, o -> clazz.cast(o));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> List<T> checkList(List<?> orig, Class<T> clazz) {
+    public static <T> List<T> checkedList(List<?> orig, Class<T> clazz) {
         if (orig == null) {
             return null;
         } else {
-            for (Object o : orig) {
-                if (!clazz.isInstance(o)) {
-                    throw new ClassCastException("Wrong class: " + o.getClass());
-                }
-            }
-            return (List<T>) orig;
+            checkClass(orig, clazz);
+            return Lists.transform(orig, o -> clazz.cast(o));
+        }
+    }
+
+    private static <T> void checkClass(Collection<?> orig, Class<T> clazz) {
+        if (orig.stream().anyMatch(o -> !clazz.isInstance(o))) {
+            throw new ClassCastException("Wrong class");
         }
     }
 }

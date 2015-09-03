@@ -37,7 +37,7 @@ public class CirculationDrawOutput extends DrawOutput {
             // create default values
             return Collections.singletonList(new CirculationDrawParams(diagram.getDriverCycles()));
         } else {
-            return ObjectsUtil.checkCollection(cdParamList, CirculationDrawParams.class);
+            return ObjectsUtil.checkedCollection(cdParamList, CirculationDrawParams.class);
         }
     }
 
