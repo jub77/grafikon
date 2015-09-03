@@ -195,7 +195,7 @@ public class TransformUtil {
             throw new IllegalArgumentException("Engine cycle expected.");
         }
 
-        String result = (ec.getDescription() != null) ? ec.getDescription().trim() : "";
+        String result = ObjectsUtil.trimNonEmpty(ec.getDescription());
         EngineClass cl = ec.getAttribute(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);
         if (cl != null) {
             String desc = result;

@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -268,7 +269,7 @@ public class TimeConverter {
         char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
         // remove spaces
-        text = text.trim();
+        text = ObjectsUtil.trimNonEmpty(text);
 
         int size = 0;
         int[] values = new int[4];
