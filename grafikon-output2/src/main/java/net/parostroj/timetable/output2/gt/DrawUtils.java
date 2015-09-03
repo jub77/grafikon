@@ -59,10 +59,27 @@ public class DrawUtils {
         }
     }
 
+    /**
+     * Returns string for given width. If the string is shortened, it adds three dots at the end.
+     *
+     * @param g graphics
+     * @param str string
+     * @param width desired width
+     * @return string with maximum length givem by width
+     */
     public static String getStringForWidth(Graphics2D g, String str, int width) {
         return getStringForWidth(g, new ShortenStringFunction(str), width, "...");
     }
 
+    /**
+     * Returns string for given width.
+     *
+     * @param g graphics
+     * @param strFunc function creating string (increasing int parameter returns increasingly shorter string)
+     * @param width desired width
+     * @param suffix suffix added after string
+     * @return string with maximum length defined by <code>width</code>
+     */
     public static String getStringForWidth(Graphics2D g, Function<Integer, String> strFunc, int width, String suffix) {
         int shortening = 0;
         String result = strFunc.apply(shortening);
@@ -89,10 +106,25 @@ public class DrawUtils {
         return result;
     }
 
+    /**
+     * Returns width of the string.
+     *
+     * @param g graphics
+     * @param str string
+     * @return its length
+     */
     public static int getStringWidth(Graphics2D g, String str) {
         return g.getFontMetrics().stringWidth(str);
     }
 
+    /**
+     * Returns width of string for given font.
+     *
+     * @param g graphics
+     * @param font font
+     * @param str string
+     * @return its length
+     */
     public static int getStringWidth(Graphics2D g, Font font, String str) {
         return g.getFontMetrics(font).stringWidth(str);
     }
