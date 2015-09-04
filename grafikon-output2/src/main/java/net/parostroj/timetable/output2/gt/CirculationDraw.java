@@ -121,7 +121,7 @@ public class CirculationDraw {
         this.layout.titleText = params.getTitle();
         CirculationDrawColors colors = params.getColors();
         this.layout.colors = (location, item) -> {
-            Color color = colors != null ? colors.getColor(location) : null;
+            Color color = colors != null ? colors.getColor(location, item) : null;
             if (color == null) {
                 switch (location) {
                     case COLOR_COLUMN_1: color = C_COLOR_COLUMN_1; break;
