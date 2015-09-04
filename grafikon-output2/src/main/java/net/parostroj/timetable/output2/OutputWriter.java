@@ -3,6 +3,9 @@ package net.parostroj.timetable.output2;
 import java.io.File;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.template.TemplateOutputResources;
 
@@ -112,6 +115,8 @@ public class OutputWriter {
         }
     }
 
+    private static final Logger scriptLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Script");
+
     private OutputTemplate errorTemplate;
 
     private final TrainDiagram diagram;
@@ -159,6 +164,7 @@ public class OutputWriter {
             Map<String, Object> binding = new HashMap<String, Object>();
             binding.put("diagram", diagram);
             binding.put("template", template);
+            binding.put("log", scriptLog);
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {

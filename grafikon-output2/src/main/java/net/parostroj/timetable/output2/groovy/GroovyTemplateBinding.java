@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
 
@@ -12,6 +15,8 @@ public abstract class GroovyTemplateBinding {
     public static final String LOCALIZATION_BUNDLE = "texts/html_texts";
     public static final String TRANSLATOR = "translator";
     public static final String LOCALIZATION = "localization";
+
+    private static final Logger templateLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Template");
 
     protected void addContext(OutputParams params, Map<String, Object> binding) {
         binding.put("diagram", params.getParam(Output.PARAM_TRAIN_DIAGRAM).getValue());
@@ -27,6 +32,7 @@ public abstract class GroovyTemplateBinding {
         Map<String, Object> binding = new HashMap<>();
         this.addSpecific(params, binding, diagram, locale);
         binding.put("images", new HashSet<String>());
+        binding.put("log", templateLog);
         this.addContext(params, binding);
         this.addLocale(locale, binding);
         return binding;
