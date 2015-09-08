@@ -38,7 +38,7 @@
             <artifactId>grafikon-net</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.tinyjee.jgraphx</groupId>
+            <groupId>com.github.monkeysintown</groupId>
             <artifactId>jgraphx</artifactId>
         </dependency>
         <dependency>

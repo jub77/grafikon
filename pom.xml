@@ -15,7 +15,7 @@
 
         <batik.version>1.8</batik.version>
         <groovy.version>2.4.4</groovy.version>
-        <jgraph.version>2.3.0.5</jgraph.version>
+        <jgraph.version>3.3.1.1</jgraph.version>
         <jgrapht.version>0.9.1</jgrapht.version>
         <mvel2.version>2.2.6.Final</mvel2.version>
         <jersey.version>1.18.3</jersey.version>
@@ -163,7 +163,7 @@
                 <version>${ini4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.tinyjee.jgraphx</groupId>
+                <groupId>com.github.monkeysintown</groupId>
                 <artifactId>jgraphx</artifactId>
                 <version>${jgraph.version}</version>
             </dependency>
