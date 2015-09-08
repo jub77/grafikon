@@ -73,7 +73,7 @@ public class CirculationDraw {
             this.border = (int) (this.letter.height * BORDER);
             this.row = (int) (this.letter.height * ROW);
             this.description = this.letter.width * (DESCRIPTION + 1);
-            this.step = this.letter.width * stepWidth * STEP_RATIO / 3600d;
+            this.step = this.letter.width * stepWidth * STEP_RATIO / SECONDS_IN_HOUR;
             this.title = (int) (this.letter.height * TITLE);
             this.titleGap = (this.title - this.letter.height) / 2;
             this.rowGap = (this.row - this.letter.height) / 2;
@@ -104,6 +104,9 @@ public class CirculationDraw {
     public static final String COLOR_TEXT = "color_text";
     public static final String COLOR_FILL = "color_fill";
     public static final String COLOR_OUTLINE = "color_outline";
+
+    private static final int SECONDS_IN_HOUR = 3600;
+    private static final int HOURS_IN_DAY = 24;
 
     private final Collection<TrainsCycle> circulations;
     private final Layout layout;
@@ -195,20 +198,20 @@ public class CirculationDraw {
     private void paintTimeTimeline(Graphics2D g) {
         int height = layout.row * layout.rows + layout.title;
         boolean odd = true;
-        int seconds = layout.fromTime - (layout.fromTime % 3600);
+        int seconds = layout.fromTime - (layout.fromTime % SECONDS_IN_HOUR);
         int titleTextPos = layout.startY + layout.title - layout.titleGap - layout.textOffset;
         while (seconds <= layout.toTime) {
             Color rowColor = layout.colors.getColor(odd  ? COLOR_COLUMN_1 : COLOR_COLUMN_2);
             g.setColor(rowColor);
             int x1 = this.getX(Math.max(layout.fromTime, seconds));
-            int x2 = this.getX(Math.min(layout.toTime, seconds + 3600));
+            int x2 = this.getX(Math.min(layout.toTime, seconds + SECONDS_IN_HOUR));
             g.fillRect(x1, layout.startY, x2 - x1 + 1, height);
             if (seconds >= layout.fromTime) {
-                String hStr = Integer.toString(seconds / 3600 % 24);
+                String hStr = Integer.toString(seconds / SECONDS_IN_HOUR % HOURS_IN_DAY);
                 drawHourTextWithLine(g, seconds, titleTextPos, hStr);
             }
             odd = !odd;
-            seconds += 3600;
+            seconds += SECONDS_IN_HOUR;
         }
 
         // row delimiters
