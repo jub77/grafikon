@@ -44,7 +44,7 @@ class TimeIntervalCalculation {
     }
 
     public Integer min(Integer... s) {
-        Optional<Integer> min = Arrays.stream(s).min(Comparator.naturalOrder());
+        Optional<Integer> min = Arrays.stream(s).filter(speed -> speed != null).min(Comparator.naturalOrder());
         return min.orElse(null);
     }
 
