@@ -32,6 +32,9 @@ import net.parostroj.timetable.output2.gt.DrawUtils;
 public class CirculationViewPanel extends javax.swing.JPanel {
 
     private static final int BASE_WIDTH_OFFSET = 5;
+    private static final float BASE_ZOOM_OFFSET = 0.5f;
+    private static final float ZOOM_SLIDER_RATIO = 0.1f;
+
     private SaveImageDialog dialog;
 
     private static enum DrawType {
@@ -238,7 +241,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         gbc_zoomSlider.gridy = 0;
         buttonPanel.add(drawTypeComboBox, gbc_drawType);
 
-        horizontalGlue = Box.createHorizontalGlue();
+        Component horizontalGlue = Box.createHorizontalGlue();
         GridBagConstraints gbc_horizontalGlue = new GridBagConstraints();
         gbc_horizontalGlue.insets = new Insets(0, 0, 0, 5);
         gbc_horizontalGlue.weightx = 1.0;
@@ -341,7 +344,7 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     }
 
     private float computeZoom(int sliderValue) {
-        return 0.5f + 0.1f * sliderValue;
+        return BASE_ZOOM_OFFSET + ZOOM_SLIDER_RATIO * sliderValue;
     }
 
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
@@ -350,11 +353,12 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<Wrapper<TrainsCycleType>> typeComboBox;
     private javax.swing.JComboBox<DrawType> drawTypeComboBox;
     private LimitedSlider zoomSlider;
-    private Component horizontalGlue;
 
     static class LimitedSlider extends javax.swing.JSlider {
 
-        private int widthInChar = 10;
+        private static final int DEFAULT_SLIDER_WIDTH_IN_CHARS = 10;
+
+        private int widthInChar = DEFAULT_SLIDER_WIDTH_IN_CHARS;
 
         public void setWidthInChar(int widthInChar) {
             this.widthInChar = widthInChar;
