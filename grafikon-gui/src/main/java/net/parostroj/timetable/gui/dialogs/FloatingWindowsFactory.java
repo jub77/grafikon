@@ -354,6 +354,7 @@ public class FloatingWindowsFactory {
                 Ini.Section section = super.saveToPreferences(prefs);
                 section.put("size", panel.getSizeSlider());
                 section.put("zoom", panel.getZoomSlider());
+                section.put("type", panel.getDrawType());
                 return section;
             }
 
@@ -362,6 +363,7 @@ public class FloatingWindowsFactory {
                 Ini.Section section = super.loadFromPreferences(prefs);
                 panel.setSizeSlider(section.get("size", Integer.class, panel.getSizeSlider()));
                 panel.setZoomSlider(section.get("zoom", Integer.class, panel.getZoomSlider()));
+                panel.setDrawType(section.get("type", String.class, panel.getDrawType()));
                 return section;
             }
         };

@@ -19,9 +19,9 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycle;
-import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.output2.gt.CirculationDraw;
+import net.parostroj.timetable.output2.gt.CirculationDrawColors;
 import net.parostroj.timetable.output2.gt.DrawUtils;
 
 /**
@@ -34,9 +34,43 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private static final int BASE_WIDTH_OFFSET = 5;
     private SaveImageDialog dialog;
 
+    private static enum DrawType {
+        NORMAL("circulation.view.panel.type.normal"),
+        NO_BG("circulation.view.panel.type.nobg"),
+        TRAIN_COLORS("circulation.view.panel.type.traincolors"),
+        TRAIN_COLORS_NO_BG("circulation.view.panel.type.traincolors.nobg");
+
+        private String key;
+
+        private DrawType(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return ResourceLoader.getString(key);
+        }
+
+        public String toSaveString() {
+            return name();
+        }
+
+        public static DrawType fromSaveString(String strType) {
+            for (DrawType type : values()) {
+                if (type.name().equals(strType)) {
+                    return type;
+                }
+            }
+            return NORMAL;
+        }
+    }
+
     /** Creates new form CirculationViewPanel */
     public CirculationViewPanel() {
         initComponents();
+        for (DrawType td : DrawType.values()) {
+            drawTypeComboBox.addItem(td);
+        }
     }
 
     private void updateListOfTypes(TrainDiagram diagram) {
@@ -97,6 +131,15 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         return zoomSlider.getValue();
     }
 
+    public String getDrawType() {
+        return ((DrawType) drawTypeComboBox.getSelectedItem()).toSaveString();
+    }
+
+    public void setDrawType(String drawType) {
+        DrawType td = DrawType.fromSaveString(drawType);
+        drawTypeComboBox.setSelectedItem(td);
+    }
+
     private void enabledDisableSave() {
         saveButton.setEnabled(circulationView.getCount() > 0);
     }
@@ -139,37 +182,24 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         zoomSlider.setLabelTable(this.createDictionaryZoom(zoomSlider));
         zoomSlider.setPaintLabels(true);
 
+        drawTypeComboBox = new javax.swing.JComboBox<DrawType>();
+        drawTypeComboBox.addItemListener(event -> drawTypeComboBoxItemStateChanged(event));
+
         circulationView.setZoom(this.computeZoom(zoomSlider.getValue()));
 
         saveButton = new javax.swing.JButton();
 
         saveButton.setText(ResourceLoader.getString("gt.save")); // NOI18N
         saveButton.setEnabled(false);
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
-        sizeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                sizeSliderStateChanged(evt);
-            }
-        });
-        zoomSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            @Override
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                zoomSliderStateChanged(evt);
-            }});
+        saveButton.addActionListener(evt -> saveButtonActionPerformed(evt));
+        sizeSlider.addChangeListener(evt -> sizeSliderStateChanged(evt));
+        zoomSlider.addChangeListener(evt -> zoomSliderStateChanged(evt));
         GridBagLayout gbl_buttonPanel = new GridBagLayout();
         buttonPanel.setLayout(gbl_buttonPanel);
-        typeComboBox = new javax.swing.JComboBox<Object>();
+        typeComboBox = new javax.swing.JComboBox<Wrapper<TrainsCycleType>>();
 
-        typeComboBox.setPrototypeDisplayValue("mmmmmmmmmmmmmmmmm");
-        typeComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                typeComboBoxItemStateChanged(evt);
-            }
-        });
+        typeComboBox.setPrototypeDisplayValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmm"));
+        typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
         GridBagConstraints gbc_typeComboBox = new GridBagConstraints();
         gbc_typeComboBox.anchor = GridBagConstraints.WEST;
         gbc_typeComboBox.insets = new Insets(0, 5, 0, 5);
@@ -195,23 +225,31 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         gbc_zLabel.gridx = 3;
         gbc_zLabel.gridy = 0;
         buttonPanel.add(zLabel, gbc_zLabel);
+
         GridBagConstraints gbc_zoomSlider = new GridBagConstraints();
         gbc_zoomSlider.insets = new Insets(0, 0, 0, 5);
         gbc_zoomSlider.gridx = 4;
         gbc_zoomSlider.gridy = 0;
         buttonPanel.add(zoomSlider, gbc_zoomSlider);
 
+        GridBagConstraints gbc_drawType = new GridBagConstraints();
+        gbc_drawType.insets = new Insets(0, 0, 0, 5);
+        gbc_zoomSlider.gridx = 5;
+        gbc_zoomSlider.gridy = 0;
+        buttonPanel.add(drawTypeComboBox, gbc_drawType);
+
         horizontalGlue = Box.createHorizontalGlue();
         GridBagConstraints gbc_horizontalGlue = new GridBagConstraints();
         gbc_horizontalGlue.insets = new Insets(0, 0, 0, 5);
         gbc_horizontalGlue.weightx = 1.0;
         gbc_horizontalGlue.fill = GridBagConstraints.HORIZONTAL;
-        gbc_horizontalGlue.gridx = 5;
+        gbc_horizontalGlue.gridx = 6;
         gbc_horizontalGlue.gridy = 0;
         buttonPanel.add(horizontalGlue, gbc_horizontalGlue);
+
         GridBagConstraints gbc_saveButton = new GridBagConstraints();
         gbc_saveButton.insets = new Insets(0, 0, 0, 5);
-        gbc_saveButton.gridx = 6;
+        gbc_saveButton.gridx = 7;
         gbc_saveButton.gridy = 0;
         buttonPanel.add(saveButton, gbc_saveButton);
     }
@@ -260,6 +298,44 @@ public class CirculationViewPanel extends javax.swing.JPanel {
         }
     }
 
+    private void drawTypeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
+        DrawType dt = DrawType.NORMAL;
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            dt = (DrawType) drawTypeComboBox.getSelectedItem();
+        }
+        switch(dt) {
+            case NORMAL: circulationView.setDrawColors(null); break;
+            case NO_BG: circulationView.setDrawColors(getDrawColors(false, false)); break;
+            case TRAIN_COLORS: circulationView.setDrawColors(getDrawColors(true, true)); break;
+            case TRAIN_COLORS_NO_BG: circulationView.setDrawColors(getDrawColors(true, false)); break;
+            default: circulationView.setDrawColors(null); break;
+        }
+    }
+
+    private CirculationDrawColors getDrawColors(boolean trainColors, boolean background) {
+        return (type, item) -> {
+            Color color = null;
+            // background
+            if (!background) {
+                switch (type) {
+                    case CirculationDraw.COLOR_COLUMN_1:
+                    case CirculationDraw.COLOR_COLUMN_2:
+                        color = Color.WHITE;
+                        break;
+                    default:
+                        // nothing
+                }
+            }
+            if (trainColors && item != null && CirculationDraw.COLOR_FILL.equals(type)) {
+                TrainType trainType = item.getTrain().getType();
+                if (trainType != null) {
+                    color = trainType.getColor();
+                }
+            }
+            return color;
+        };
+    }
+
     private int computeWidth(int sliderValue) {
         return sliderValue + BASE_WIDTH_OFFSET;
     }
@@ -271,7 +347,8 @@ public class CirculationViewPanel extends javax.swing.JPanel {
     private net.parostroj.timetable.gui.components.CirculationView circulationView;
     private javax.swing.JButton saveButton;
     private LimitedSlider sizeSlider;
-    private javax.swing.JComboBox<Object> typeComboBox;
+    private javax.swing.JComboBox<Wrapper<TrainsCycleType>> typeComboBox;
+    private javax.swing.JComboBox<DrawType> drawTypeComboBox;
     private LimitedSlider zoomSlider;
     private Component horizontalGlue;
 

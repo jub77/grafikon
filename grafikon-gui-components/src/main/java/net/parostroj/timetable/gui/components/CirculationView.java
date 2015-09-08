@@ -16,9 +16,7 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog.Type;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
-import net.parostroj.timetable.output2.gt.CirculationDraw;
-import net.parostroj.timetable.output2.gt.CirculationDrawParams;
-import net.parostroj.timetable.output2.gt.FileOutputType;
+import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
 
 /**
@@ -31,6 +29,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
     private CirculationDraw draw;
     private TrainDiagram diagram;
     private TrainsCycleType type;
+    private CirculationDrawColors drawColors;
     private int stepWidth;
     private float zoom;
 
@@ -51,7 +50,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         Tuple<Integer> limits = this.getLimits();
         List<TrainsCycle> circulations = this.getCirculations();
         CirculationDrawParams cdParams = new CirculationDrawParams(circulations).setFrom(limits.first)
-                .setTo(limits.second).setWidthInChars(stepWidth).setZoom(zoom);
+                .setTo(limits.second).setWidthInChars(stepWidth).setZoom(zoom).setColors(drawColors);
         output.write(output.getAvailableParams().setParam(Output.PARAM_OUTPUT_FILE, outputFile)
                 .setParam(Output.PARAM_TRAIN_DIAGRAM, diagram).setParam(DrawParams.CD_PARAMS, Arrays.asList(cdParams))
                 .setParam(DrawParams.OUTPUT_TYPE, type == Type.SVG ? FileOutputType.SVG : FileOutputType.PNG));
@@ -79,8 +78,9 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
         if (diagram != null && type != null) {
             List<TrainsCycle> circulations = getCirculations();
             Tuple<Integer> newLimits = this.getLimits();
-            draw = new CirculationDraw(new CirculationDrawParams(circulations).setFrom(newLimits.first)
-                    .setTo(newLimits.second).setWidthInChars(stepWidth).setZoom(zoom));
+            CirculationDrawParams params = new CirculationDrawParams(circulations).setFrom(newLimits.first)
+                    .setTo(newLimits.second).setWidthInChars(stepWidth).setZoom(zoom).setColors(drawColors);
+            draw = new CirculationDraw(params);
         }
         this.repaint();
     }
@@ -138,6 +138,11 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
 
     public void setType(TrainsCycleType type) {
         this.type = type;
+        this.repaintAndUpdateSize();
+    }
+
+    public void setDrawColors(CirculationDrawColors drawColors) {
+        this.drawColors = drawColors;
         this.repaintAndUpdateSize();
     }
 
