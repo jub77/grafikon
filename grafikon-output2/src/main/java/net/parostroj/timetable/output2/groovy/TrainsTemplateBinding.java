@@ -15,7 +15,7 @@ public class TrainsTemplateBinding extends GroovyTemplateBinding {
     @Override
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
         // title page
-        boolean titlePage = false;
+        boolean titlePage = true;
         if (params.paramExistWithValue("title.page"))
             titlePage = params.getParam("title.page").getValue(Boolean.class);
         String pageSort = "two_sides"; //"one_side";
