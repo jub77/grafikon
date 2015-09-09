@@ -254,8 +254,8 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
-        outputSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, false));
-        outputSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, false));
+        outputSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, true));
+        outputSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, true));
         outputSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
