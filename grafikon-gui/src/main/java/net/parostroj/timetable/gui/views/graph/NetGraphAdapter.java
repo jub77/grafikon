@@ -81,12 +81,14 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     }
 
     private String convertLine(Line line) {
-        if (appModel == null)
+        if (appModel == null) {
             return line.toString();
+        }
         StringBuilder result = new StringBuilder();
         collectRoutes(line, result);
-        if (result.length() != 0)
-            result.append(';');
+        if (result.length() != 0) {
+            result.append('\n');
+        }
         LengthUnit lengthUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, appModel.getProgramSettings().getLengthUnit());
         BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
         result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
@@ -94,7 +96,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         if (topSpeed != null) {
             SpeedUnit speedUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, appModel.getProgramSettings().getSpeedUnit());
             BigDecimal sValue = speedUnit.convertFrom(new BigDecimal(topSpeed), SpeedUnit.KMPH);
-            result.append(';').append(UnitUtil.convertToString("#0", sValue)).append(speedUnit.getUnitsOfString());
+            result.append('(').append(UnitUtil.convertToString("#0", sValue)).append(speedUnit.getUnitsOfString()).append(')');
         }
         return result.toString();
     }
@@ -106,8 +108,9 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
             if (route.isNetPart()) {
                 for (RouteSegment seg : route.getSegments()) {
                     if (seg.asLine() != null && seg.asLine() == line) {
-                        if (added)
+                        if (added) {
                             builder.append(',');
+                        }
                         added = true;
                         builder.append(route.getName());
                     }
@@ -123,10 +126,11 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
             // compute size of rectangle relative to some predefined width
             // (height?)
             NodeShape shape = ((NodeCell) cell).getShape();
-            if (shape != null)
+            if (shape != null) {
                 result = new mxRectangle(0, 0, shape.getWidth() / 2, shape.getHeight() / 2);
-            else
+            } else {
                 result = new mxRectangle(0, 0, 100, 100);
+            }
         } else {
             result = super.getPreferredSizeForCell(cell);
         }
