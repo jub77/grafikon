@@ -37,7 +37,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
     private TrainDiagram diagram;
     private WrapperListModel<Route> routes;
 
-    private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(RouteWrapperDelegate.Type.FULL);
+    private static final RouteWrapperDelegate RW_DELEGATE = new RouteWrapperDelegate(RouteWrapperDelegate.Type.FULL_WITH_NET);
 
     /** Creates new form EditRoutesDialog */
     public EditRoutesDialog(java.awt.Window parent, boolean modal) {

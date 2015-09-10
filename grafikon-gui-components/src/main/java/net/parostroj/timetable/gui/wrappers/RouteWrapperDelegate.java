@@ -13,7 +13,7 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate<Route> {
     private static final int ROUTE_LENGTH = 50;
 
     public enum Type {
-        SHORT, FULL;
+        SHORT, FULL, SHORT_WITH_NET, FULL_WITH_NET;
     }
 
     private final Type type;
@@ -37,6 +37,13 @@ public class RouteWrapperDelegate extends BasicWrapperDelegate<Route> {
     }
 
     private String toStringRoute(Route route) {
-        return TransformUtil.transformRoute(route, TransformUtil.ROUTE_FORMAT, TransformUtil.SEPARATOR, "", type == Type.SHORT ? ROUTE_LENGTH : 0, 0);
+        String netPart = type == Type.SHORT_WITH_NET || type == Type.FULL_WITH_NET ?
+                TransformUtil.NET_PART : "";
+        return TransformUtil.transformRoute(route,
+                TransformUtil.ROUTE_FORMAT,
+                TransformUtil.SEPARATOR,
+                netPart,
+                type == Type.SHORT || type == Type.SHORT_WITH_NET ? ROUTE_LENGTH : 0,
+                0);
     }
 }
