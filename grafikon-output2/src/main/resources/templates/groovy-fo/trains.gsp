@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<%
+  FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+  PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
+  
+  // adapt locale (if cycle contains definition of one)
+  def cycleLocale = trains?.cycle?.company?.locale
+  locale = cycleLocale ?: locale
+%>
+
+<root xmlns="http://www.w3.org/1999/XSL/Format">
+<layout-master-set>
+  <simple-page-master master-name="A5-Title" page-height="21cm" page-width="14.8cm" margin="1cm 1cm 1cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
+    <region-body />
+    <region-after region-name="footer" precedence="true" extent="2cm"/>
+  </simple-page-master>
+  <simple-page-master master-name="A5-Pages-Even" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
+    <region-body margin-top=".5cm" margin-bottom=".5cm"/>
+    <region-before region-name="header-even" precedence="true" extent=".5cm" />
+    <region-after region-name="footer-even" precedence="true" extent=".5cm" />
+  </simple-page-master>
+  <simple-page-master master-name="A5-Pages-Odd" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
+    <region-body margin-top=".5cm" margin-bottom=".5cm"/>
+    <region-before region-name="header-odd" precedence="true" extent=".5cm" />
+    <region-after region-name="footer-odd" precedence="true" extent=".5cm" />
+  </simple-page-master>
+  <simple-page-master master-name="A5-Pages-List" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
+      line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
+    <region-body margin-top=".5cm" margin-bottom=".5cm"/>
+    <region-after region-name="footer-even" precedence="true" extent=".5cm" />
+  </simple-page-master>
+  <page-sequence-master master-name="A5-Pages">
+    <repeatable-page-master-alternatives>
+    <% if (title_page) { %><conditional-page-master-reference page-position="first" master-reference="A5-Pages-List"/><% } %>
+    <conditional-page-master-reference odd-or-even="even" master-reference="A5-Pages-Even"/>
+    <conditional-page-master-reference odd-or-even="odd" master-reference="A5-Pages-Odd"/>
+    </repeatable-page-master-alternatives>
+  </page-sequence-master>
+</layout-master-set>
+<% if(title_page) printTitlePage() %>
+<page-sequence master-reference="A5-Pages" font-family="SansCondensed" font-size="4mm">
+<static-content flow-name="header-even">
+  <block text-align-last="justify" font-size="3mm"><page-number/><leader leader-pattern="space" />${localization.translate("header_publisher", locale)}</block>
+</static-content>
+<static-content flow-name="header-odd">
+  <block text-align-last="justify" font-size="3mm">${localization.translate("header_publisher", locale)}<leader leader-pattern="space" /><page-number/></block>
+</static-content>
+<static-content flow-name="footer-even">
+  <block></block>
+</static-content>
+<static-content flow-name="footer-odd">
+  <block></block>
+</static-content>
+<flow flow-name="xsl-region-body">
+  <% if (title_page) printTrainList() %>
+  <% printTimetables() %>
+</flow>
+</page-sequence>
+</root>
+
+<!-- ======================== Title Page ======================== -->
+<%
+def printTitlePage() {
+  def company = getCompany(trains.cycle, locale)
+  def company_part = getCompanyPart(trains.cycle, locale)
+%>
+<page-sequence master-reference="A5-Title" font-family="Sans" font-size="4mm">
+<static-content flow-name="footer">
+  <block text-align="center" font-size="3mm">${localization.translate("publisher", locale)}</block>
+</static-content>
+<flow flow-name="xsl-region-body">
+  <block-container text-align="center" font-weight="bold" height="35mm">
+    <block>${company}</block>
+    <block>${company_part}</block>
+  </block-container>
+  <block-container text-align="center" font-weight="bold">
+    <block font-size="8mm" space-after="7mm">${localization.translate("train_timetable", locale)}</block>
+    <block linefeed-treatment="preserve" font-size="12mm">${getRouteNames(trains)}</block>
+  </block-container>
+  <block text-align="center">${localization.translate("for_line", locale)}</block>
+  <block linefeed-treatment="preserve" text-align="center" font-weight="bold" space-after="7mm">${getRoutePaths(trains)}</block>
+  <% if (trains.validity) { %><block font-weight="bold" text-align="center" space-after="15mm">${localization.translate("validity_from", locale)} ${trains.validity}</block><% } %>
+  <% if (trains.cycle) { %><block font-weight="bold" text-align="center" space-after="3mm" font-size="5mm">${localization.translate("cycle", locale)}: ${trains.cycle.name}</block><% } %>
+  <% if (trains.cycle && trains.cycle.description) { %><block text-align="center">${trains.cycle.description}</block><% } %>
+</flow>
+</page-sequence>
+<%
+}
+%>
+
+<!-- ======================== Train List ======================== -->
+<%
+def printTrainList() { 
+if (trains.cycle) { %>
+
+<block>${localization.translate("list_train_title", locale)}:</block>
+<table border-collapse="collapse" table-layout="fixed" space-after="4mm" width="100%">
+  <table-column column-width="23%" />
+  <table-column column-width="12%" />
+  <table-column column-width="19%" />
+  <table-column column-width="41%" />
+  <table-column column-width="5%" />
+  <table-header font-size="3mm">
+    <table-row border-top="solid .2mm" border-bottom="solid .2mm">
+      <table-cell><block>${localization.translate("column_train", locale)}</block></table-cell>
+      <table-cell><block>${localization.translate("column_departure", locale)}</block></table-cell>
+      <table-cell><block>${localization.translate("column_from_to", locale)}</block></table-cell>
+      <table-cell><block>${localization.translate("column_note", locale)}</block></table-cell>
+      <table-cell><block></block></table-cell>
+    </table-row>
+  </table-header>
+  <table-body>
+<%
+  def lastNode = null
+  def abbrMap = [:]
+  def index = 0
+  for (item in trains?.cycle?.rows) {
+    abbrMap[item.fromAbbr] = item.from
+    abbrMap[item.toAbbr] = item.to
+    if (lastNode != null && lastNode != item.from) {
+    %><table-row><table-cell number-columns-spanned="5"><block>&#8212; ${localization.translate("move_to_station", locale)} ${item.from} &#8212;</block></table-cell></table-row><%
+    }
+    lastNode = item.to
+%>
+    <table-row>
+      <table-cell><block>${item.trainName}</block></table-cell>
+      <table-cell margin-right="2mm"><block text-align="right" font-weight="bold">${convertTime(item.fromTime)}</block></table-cell>
+      <table-cell><block>${item.fromAbbr} - ${item.toAbbr}</block></table-cell>
+      <table-cell><block>${getComment(item.comment, locale)}</block></table-cell>
+      <table-cell><block text-align="right"><page-number-citation ref-id="train${index}"/></block></table-cell>
+    </table-row>
+<%
+    index++
+  } %>
+  </table-body>
+</table>
+<%
+  abbrMap.sort().each {
+    %><block font-size="3.25mm">${it.key} - ${it.value}</block><%
+  }
+}
+%>
+<block page-break-after="always">&#160;</block>
+<%
+}
+%>
+
+<!-- ======================== Timetables ======================== -->
+<%
+def printTimetables() {
+  def index = 0
+  for (train in trains.trainTimetables) {
+    def colspan = (train.controlled == true) ? 10 : 8
+%>
+<block-container keep-together.within-page="always">
+  <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
+  <block-container font-size="3mm">
+  <!-- ======== Route info ========= -->
+  <% if (train.routeInfo) { %><block text-align="center">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
+  <!-- ======== Weight info ========= -->
+  <%
+     def fwt = true
+     if (train.weightData) {
+       lastEngine = null
+       for (wr in train.weightData) {
+         currentEngine = wr.engines.join(", ") %>
+      <block>
+        <inline>${(currentEngine && currentEngine != lastEngine) ? (localization.translate(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". ") : ""}</inline>
+        <inline>${(wr.weight  && (fwt || (currentEngine && currentEngine != lastEngine))) ? localization.translate("norm_load", locale) + ": " : ""}</inline>
+        <inline>${wr.from  && wr.to ? wr.from + " - " + wr.to + " " : ""}</inline>
+        <inline text-align="right">${wr.weight ? wr.weight + " " + localization.translate("tons", locale) : ""}</inline>
+      </block><%
+         fwt = false
+         lastEngine = currentEngine
+       }
+     } %>
+  <!-- ======== Length info ========= -->
+  <%
+     if (train.lengthData) {
+       if (train.lengthData.length % 2 == 1) {
+         train.lengthData.length = train.lengthData.length - 1
+       } %>
+      <block>
+        <inline>${localization.translate("length", locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? localization.translate("length_axles", locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}</inline>
+      </block><%
+      } %>
+  <!-- ========= Rows ============ -->
+  <%
+  def rowL = train.rows.size - 1
+  def cnt = 0
+  def lastSpeed = null
+  def lastSpeed2 = null
+  def isSpeed2 = false
+  def fromT = new Time()
+  def toT = new Time()
+  def stopDur = new Duration()
+  def runDur = new Duration()
+  def lastTo = null
+  def lastLineClass = null
+  def cChar = "*"
+  def fChar = "&#8224;" // dagger
+  for (row in train.rows) {
+    def speed = row.setSpeed != null ? row.setSpeed : row.speed
+    def speed2 = row.speed
+    isSpeed2 = isSpeed2 || speed != speed2
+    def emphName = (cnt == 0) || (cnt == rowL) || row.stationType == "branch.station"
+    def speedStr = ((lastSpeed == null || lastSpeed != speed) && speed != null) ?  speed : " "
+    fromT.compute(row.arrival, cnt == rowL, row.arrival != row.departure)
+    toT.compute(row.departure, false, true)
+    def stationName = row.station
+    def desc = ""
+    if (row.stationType == "stop.with.freight") stationName += " ${localization.translate('abbr_stop_freight', locale)}"
+    if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
+    if (emphName) stationName = "<inline font-weight=\"bold\">${stationName}</inline>"
+    if (row.straight == false && !row.lightSignals) desc += "&#8594;" // rarr
+    if (row.lightSignals) { desc += "SIGNAL"; images.add("signal.gif")} // TODO image - signal 
+    if (train.controlled && row.trapezoid) {
+      // TODO image - trapezoid
+      desc += "TRAPEZOID"
+      images.add("trapezoid_sign.gif")
+    }
+    if (row.lineEnd) desc += "&#916;" // Delta
+    if (row.occupied) desc += "&#927;" // Omicron
+    if (row.shunt) desc += "&#9674;" // loz
+    if (row.comment != null) {desc += cChar; cChar += "*"}
+    if (freight && row.freightDest != null) {desc += fChar; fChar += "&#8224;"} // dagger
+    if (desc == "") desc = " "
+    def speed2Str = (lastSpeed2 == null || lastSpeed2 != speed2) && speed2 != null && isSpeed2 ? speed2 : null;
+    def lineClassStr = " "
+    if ((lastLineClass == null || (lastLineClass != row.lineClass)) && row.lineClass != null) {
+      lineClassStr += row.lineClass
+      if (isSpeed2)
+        lineClassStr += "/" + speed2
+    } else if (speed2Str != null) {
+        lineClassStr += (row.lineClass != null ? row.lineClass : "-") + "/" + speed2Str
+    }
+    lastLineClass = row.lineClass
+    if (train.controlled) {
+      def showTrack = row.track != null && !row.controlStation && row.onControlled
+      def tTrains = null
+      if (row.trapezoidTrains != null) {
+        for (tTrain in row.trapezoidTrains) {
+          if (tTrains == null) tTrains = ""
+          else tTrains += ", "
+          tTrains += tTrain
+        }
+      }
+      if (tTrains == null) tTrains = " "
+      if (row.controlStation) images.add("control_station.gif")
+      %>
+    <block>
+        <inline>${stationName}${row.controlStation ? " CONTROL_STATION" : ""}</inline> <!-- // TODO image - control station -->
+        <inline>${desc}</inline>
+        <inline>${showTrack ? row.track : " "}</inline>
+        <inline>${runDur.show(lastTo, row.arrival)}</inline>
+        <inline>${fromT.out}</inline>
+        <inline>${stopDur.show(row.arrival,row.departure)}</inline>
+        <inline>${toT.out}</inline>
+        <inline>${speedStr}</inline>
+        <inline>${lineClassStr}</inline>
+        <inline>${tTrains}</inline>
+    </block><%
+      // ---------------- controlled --------------
+    } else { %>
+    <block>
+      <inline>${stationName}</inline>-
+      <inline>${desc}</inline>-
+      <inline>${runDur.show(lastTo, row.arrival)}</inline>-
+      <inline>${fromT.out}</inline>-
+      <inline>${stopDur.show(row.arrival,row.departure)}</inline>-
+      <inline>${toT.out}</inline>-
+      <inline>${speedStr}</inline>-
+      <inline>${lineClassStr}</inline>-
+    </block><%
+      // ----------------  normal -----------------
+    }
+    cnt++
+    lastSpeed = speed
+    lastSpeed2 = speed2
+    lastTo = row.departure
+  }
+  def timeTotal = stopDur.total + runDur.total
+  def totalHours = (int) (timeTotal / 60)
+  def totalMinutes = timeTotal - totalHours * 60
+  def totalMinutesStr = Duration.show(totalMinutes)
+
+  %>
+  <block>
+    <inline>${localization.translate("total_train_time", locale)} . . . </inline>
+    <inline>${runDur.showTotal()}</inline>
+    <inline>+</inline>
+    <inline>${stopDur.showTotal()}</inline>
+    <inline> = ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</inline>
+  </block><%
+  // ---------------- footer of the timetable -----------
+  comments = createComments(train)
+  for (comment in comments) {
+    // ----------- comments --------------
+    %><block>${comment[0]}= ${comment[1]}</block><%
+  }
+
+  %>
+  </block-container>
+</block-container>
+<%
+    index++
+  }
+}
+%>
+
+
+<!-- ======================== Helper methods =================== -->
+<%
+  def getCompany(cycle, loc) {
+    def company = cycle?.company?.name
+    company = company ?: cycle?.company?.abbr
+    return company ?: localization.translate("company", loc)
+  }
+
+  def getCompanyPart(cycle, loc) {
+    def part = cycle?.company?.part
+    if (!part && !cycle?.company?.abbr) {
+        part = localization.translate("company_part", loc)
+    }
+    return part ?: ""
+  }
+
+  // returns names of routes
+  def getRouteNames(trains) {
+    def result = ""
+    def routeNames = [] as Set
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        if (!routeNames.contains(route.name)) {
+          result = add(result,"\n",route.name)
+          routeNames << route.name
+        }
+      }
+    } else {
+      result = (trains.routeNumbers == null) ? "-" : trains.routeNumbers
+    }
+    return result
+  }
+
+  // returns paths of routes
+  def getRoutePaths(trains) {
+    def result = ""
+    if (trains.routes != null && !trains.routes.isEmpty()) {
+      for (route in trains.routes) {
+        def stationsStr = null
+        stationsStr = add(stationsStr," - ",route.segments.first().name)
+        stationsStr = add(stationsStr," - ",route.segments.last().name)
+        result = add(result,"\n",stationsStr)
+      }
+    } else {
+      result = (trains.routeStations == null) ? "-" : trains.routeStations
+    }
+    return result
+  }
+
+  def add(str, delimiter, value) {
+    if (str == null || str.isEmpty())
+      str = value
+    else
+      str += delimiter + value
+    return str
+  }
+
+  def getComment(comment, loc) {
+    if (comment) {
+      comment = translator.translate(comment, loc)
+    }
+    return comment ?: ""
+  }
+
+  def convertTime(time) {
+    def parsed = FORMATTER.parseLocalTime(time)
+    def result = PRINT_FORMATTER.print(parsed)
+    return result
+  }
+
+  def createComments(train) {
+    def symbol = "*";
+    def fSymbol = "&#8224;" // dagger
+    def list = []
+    def shunt = false
+    def occupied = false
+    def lineEnd = false
+    for (row in train.rows) {
+      if (!lineEnd && row.lineEnd) { // Delta
+        list << ["&#916;", localization.translate("entry_line_end", locale)]
+        lineEnd = true
+      }
+      if (!occupied && row.occupied) { // Omicron
+        list << ["&#927;", localization.translate("entry_occupied", locale)]
+        occupied = true
+      }
+      if (!shunt && row.shunt) { // loz
+        list << ["&#9674;" ,localization.translate("entry_shunt", locale)]
+        shunt = true
+      }
+      if (row.comment != null) {
+        list << [symbol,translator.translate(row.comment, locale)]
+        symbol += "*"
+      }
+      if (freight && row.freightDest != null) {
+        list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
+        fSymbol += "&#8224;"
+      }
+    }
+    return list
+  }
+%>
+<!-- ================ Time helpers ================ -->
+<%
+  class Duration {
+    def total = 0
+
+    def show(from,to) {
+      if (from == null || to ==null)
+        return " "
+      def f = Time.parse(from)
+      def t = Time.parse(to)
+      def period = new org.joda.time.Period(f,t);
+      if (t < f) {
+        period = period.plusDays(1).normalizedStandard();
+      }
+      double dur = period.toStandardMinutes().minutes
+      dur += period.seconds / 60
+      total += dur
+      return Duration.show(dur)
+    }
+
+    def showTotal() {
+      return Duration.show(total)
+    }
+
+    def static show(dur) {
+      // convert to html
+      if (dur == null)
+        return " "
+      else {
+        def minutes = (int) dur
+        def seconds = (int) (dur - minutes) * 10
+        def str = minutes + (seconds == 0 ?  " " : "<inline vertical-align=\"super\" font-size=\"1.85mm\">${seconds}</inline>") // TODO super position smaller size
+        return str
+      }
+    }
+  }
+
+  class Time {
+    def hour
+    def out = " "
+    static org.joda.time.format.DateTimeFormatter FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
+    static org.joda.time.format.DateTimeFormatter PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(' ').appendMinuteOfHour(2).toFormatter();
+
+    def compute(timeStr, forceShowHour, show) {
+      def parsed = parse(timeStr)
+      if (parsed == null)
+        out = " "
+      else {
+        def result
+        if (parsed.hourOfDay != hour || forceShowHour)
+          result = PRINT_FORMATTER.print(parsed)
+        else
+          result = parsed.minuteOfHour
+
+        if (show)
+          hour = parsed.hourOfDay
+
+        if (parsed.secondOfMinute != 0) {
+          def part = (int) parsed.secondOfMinute / 60 * 10
+          result += "<inline vertical-align=\"super\" font-size=\"2mm\">${part}</inline>" // TODO super position smaller size
+        } else {
+          result += " "
+        }
+        out = show ? result : " "
+      }
+    }
+
+    def static parse(str) {
+      if (str == null)
+        return null
+      else {
+        return FORMATTER.parseLocalTime(str)
+      }
+    }
+  }
+%>
