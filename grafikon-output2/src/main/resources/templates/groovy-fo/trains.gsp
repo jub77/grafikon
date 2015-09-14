@@ -7,6 +7,12 @@
   // adapt locale (if cycle contains definition of one)
   def cycleLocale = trains?.cycle?.company?.locale
   locale = cycleLocale ?: locale
+  
+  DAGGER = "&#8224;"
+  DELTA = "&#916;"
+  OMICRON = "&#927;"
+  LOZ = "&#9674;"
+  RARR = "&#8594;"
 %>
 
 <root xmlns="http://www.w3.org/1999/XSL/Format">
@@ -190,6 +196,7 @@ def printTimetables() {
       } %>
   <!-- ========= Rows ============ -->
   <%
+  printTimetableHeader(train.controlled)
   def rowL = train.rows.size - 1
   def cnt = 0
   def lastSpeed = null
@@ -202,7 +209,7 @@ def printTimetables() {
   def lastTo = null
   def lastLineClass = null
   def cChar = "*"
-  def fChar = "&#8224;" // dagger
+  def fChar = DAGGER // dagger
   for (row in train.rows) {
     def speed = row.setSpeed != null ? row.setSpeed : row.speed
     def speed2 = row.speed
@@ -216,18 +223,18 @@ def printTimetables() {
     if (row.stationType == "stop.with.freight") stationName += " ${localization.translate('abbr_stop_freight', locale)}"
     if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
     if (emphName) stationName = "<inline font-weight=\"bold\">${stationName}</inline>"
-    if (row.straight == false && !row.lightSignals) desc += "&#8594;" // rarr
-    if (row.lightSignals) { desc += "SIGNAL"; images.add("signal.gif")} // TODO image - signal 
+    if (row.straight == false && !row.lightSignals) desc += RARR // rarr
+    if (row.lightSignals) { desc += "(S)"; images.add("signal.gif")} // TODO image - signal 
     if (train.controlled && row.trapezoid) {
       // TODO image - trapezoid
-      desc += "TRAPEZOID"
+      desc += "(T)"
       images.add("trapezoid_sign.gif")
     }
-    if (row.lineEnd) desc += "&#916;" // Delta
-    if (row.occupied) desc += "&#927;" // Omicron
-    if (row.shunt) desc += "&#9674;" // loz
+    if (row.lineEnd) desc += DELTA // Delta
+    if (row.occupied) desc += OMICRON // Omicron
+    if (row.shunt) desc += LOZ // loz
     if (row.comment != null) {desc += cChar; cChar += "*"}
-    if (freight && row.freightDest != null) {desc += fChar; fChar += "&#8224;"} // dagger
+    if (freight && row.freightDest != null) {desc += fChar; fChar += DAGGER} // dagger
     if (desc == "") desc = " "
     def speed2Str = (lastSpeed2 == null || lastSpeed2 != speed2) && speed2 != null && isSpeed2 ? speed2 : null;
     def lineClassStr = " "
@@ -252,30 +259,30 @@ def printTimetables() {
       if (tTrains == null) tTrains = " "
       if (row.controlStation) images.add("control_station.gif")
       %>
-    <block>
-        <inline>${stationName}${row.controlStation ? " CONTROL_STATION" : ""}</inline> <!-- // TODO image - control station -->
-        <inline>${desc}</inline>
-        <inline>${showTrack ? row.track : " "}</inline>
-        <inline>${runDur.show(lastTo, row.arrival)}</inline>
-        <inline>${fromT.out}</inline>
-        <inline>${stopDur.show(row.arrival,row.departure)}</inline>
-        <inline>${toT.out}</inline>
-        <inline>${speedStr}</inline>
-        <inline>${lineClassStr}</inline>
-        <inline>${tTrains}</inline>
-    </block><%
+    <table-row>
+        <table-cell><block>${stationName}${row.controlStation ? "(C)" : ""}</block></table-cell> <!-- // TODO image - control station -->
+        <table-cell><block text-align="center">${desc}</block></table-cell>
+        <table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell>
+        <table-cell><block text-align="right" font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
+        <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
+        <table-cell><block text-align="right">${stopDur.show(row.arrival,row.departure)}</block></table-cell>
+        <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
+        <table-cell><block text-align="right">${speedStr}</block></table-cell>
+        <table-cell><block font-size="3mm">${lineClassStr}</block></table-cell>
+        <table-cell><block font-size="3mm">${tTrains}</block></table-cell>
+    </table-row><%
       // ---------------- controlled --------------
     } else { %>
-    <block>
-      <inline>${stationName}</inline>-
-      <inline>${desc}</inline>-
-      <inline>${runDur.show(lastTo, row.arrival)}</inline>-
-      <inline>${fromT.out}</inline>-
-      <inline>${stopDur.show(row.arrival,row.departure)}</inline>-
-      <inline>${toT.out}</inline>-
-      <inline>${speedStr}</inline>-
-      <inline>${lineClassStr}</inline>-
-    </block><%
+    <table-row>
+      <table-cell><block>${stationName}</block></table-cell>
+      <table-cell><block text-align="center">${desc}</block></table-cell>
+      <table-cell><block text-align="right" font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
+      <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
+      <table-cell><block text-align="right">${stopDur.show(row.arrival,row.departure)}</block></table-cell>
+      <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
+      <table-cell><block text-align="right">${speedStr}</block></table-cell>
+      <table-cell><block font-size="3mm">${lineClassStr}</block></table-cell>
+    </table-row><%
       // ----------------  normal -----------------
     }
     cnt++
@@ -283,6 +290,9 @@ def printTimetables() {
     lastSpeed2 = speed2
     lastTo = row.departure
   }
+  
+  printTimetableFooter()
+  
   def timeTotal = stopDur.total + runDur.total
   def totalHours = (int) (timeTotal / 60)
   def totalMinutes = timeTotal - totalHours * 60
@@ -309,6 +319,50 @@ def printTimetables() {
 <%
     index++
   }
+}
+%>
+
+<!-- ======================== Print timetable =================== -->
+<%
+def printTimetableHeader(controlled) {
+%><table border-collapse="collapse" table-layout="fixed" width="100%" font-size="3.5mm">
+  <table-column column-width="31%" />
+  <table-column column-width="6%" />
+  <% if (controlled) { %><table-column column-width="6%" /><% } %>
+  <table-column column-width="6%" />
+  <table-column column-width="11%" />
+  <table-column column-width="6%" />
+  <table-column column-width="11%" />
+  <table-column column-width="6%" />
+  <table-column column-width="${controlled ? '6%' : '23%'}" />
+  <% if (controlled) { %><table-column column-width="11%" /><% } %>
+  <table-header font-size="2.5mm">
+    <table-row border-top="solid .7mm" border-bottom="solid .4mm" text-align="center">
+      <table-cell ${paddingTTop()} ${separationT()}><block>1</block></table-cell>
+      <table-cell ${paddingTTop()} ${separationT()}><block>2</block></table-cell>
+      <% if (controlled) { %><table-cell ${paddingTTop()} ${separationT()}><block>2a</block></table-cell><% } %>
+      <table-cell ${paddingTTop()} ${separationT()}><block>3</block></table-cell>
+      <table-cell ${paddingTTop()} ${separationT()}><block>4</block></table-cell>
+      <table-cell ${paddingTTop()} ${separationT()}><block>5</block></table-cell>
+      <table-cell ${paddingTTop()} ${separationT()}><block>6</block></table-cell>
+      <table-cell ${paddingTTop()} ${separationT()}><block>7</block></table-cell>
+      <table-cell ${paddingTTop()} ${controlled ? separationT() : ""}><block>8</block></table-cell>
+      <% if (controlled) { %><table-cell ${paddingTTop()}><block>9</block></table-cell><% } %>
+    </table-row>
+  </table-header>
+  <table-body><%
+}
+  
+def paddingTTop() {
+  return 'padding-top=".3mm"'
+}
+  
+def separationT() {
+  return 'border-right="solid .2mm"'
+}
+
+def printTimetableFooter() {
+//%></table-body></table><%
 }
 %>
 
@@ -385,22 +439,22 @@ def printTimetables() {
 
   def createComments(train) {
     def symbol = "*";
-    def fSymbol = "&#8224;" // dagger
+    def fSymbol = DAGGER // dagger
     def list = []
     def shunt = false
     def occupied = false
     def lineEnd = false
     for (row in train.rows) {
       if (!lineEnd && row.lineEnd) { // Delta
-        list << ["&#916;", localization.translate("entry_line_end", locale)]
+        list << [DELTA, localization.translate("entry_line_end", locale)]
         lineEnd = true
       }
       if (!occupied && row.occupied) { // Omicron
-        list << ["&#927;", localization.translate("entry_occupied", locale)]
+        list << [OMICRON, localization.translate("entry_occupied", locale)]
         occupied = true
       }
       if (!shunt && row.shunt) { // loz
-        list << ["&#9674;" ,localization.translate("entry_shunt", locale)]
+        list << [LOZ ,localization.translate("entry_shunt", locale)]
         shunt = true
       }
       if (row.comment != null) {
@@ -409,7 +463,7 @@ def printTimetables() {
       }
       if (freight && row.freightDest != null) {
         list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
-        fSymbol += "&#8224;"
+        fSymbol += DAGGER
       }
     }
     return list
