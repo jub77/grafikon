@@ -5,8 +5,6 @@
     ROW_COUNT = 3
     COLUMN_COUNT = 4
 
-    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
-    END = "${separator}0"
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
 

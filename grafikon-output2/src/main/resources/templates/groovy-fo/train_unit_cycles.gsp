@@ -9,8 +9,6 @@
     RARR = "&#8594;"
     MARGIN = ".4mm .5mm .1mm .5mm"
 
-    separator = java.text.DecimalFormatSymbols.getInstance().getDecimalSeparator();
-    END = "${separator}0"
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
 
@@ -211,7 +209,6 @@ def printWrappers(wrappers) {
 </block></table-cell>
 <% 
   }
- 
 
   def createComment(row, loc) {
     def result = row.cycle.inject(row.comment) {
