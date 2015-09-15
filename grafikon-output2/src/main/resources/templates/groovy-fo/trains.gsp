@@ -108,15 +108,13 @@ if (trains.cycle) { %>
   <table-column column-width="23%" />
   <table-column column-width="12%" />
   <table-column column-width="19%" />
-  <table-column column-width="41%" />
-  <table-column column-width="5%" />
+  <table-column column-width="46%" />
   <table-header font-size="3mm">
     <table-row border-top="solid .2mm" border-bottom="solid .2mm">
       <table-cell><block>${localization.translate("column_train", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_departure", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_from_to", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_note", locale)}</block></table-cell>
-      <table-cell><block></block></table-cell>
     </table-row>
   </table-header>
   <table-body>
@@ -128,7 +126,7 @@ if (trains.cycle) { %>
     abbrMap[item.fromAbbr] = item.from
     abbrMap[item.toAbbr] = item.to
     if (lastNode != null && lastNode != item.from) {
-    %><table-row><table-cell number-columns-spanned="5"><block>&#8212; ${localization.translate("move_to_station", locale)} ${item.from} &#8212;</block></table-cell></table-row><%
+    %><table-row><table-cell number-columns-spanned="4"><block>&#8212; ${localization.translate("move_to_station", locale)} ${item.from} &#8212;</block></table-cell></table-row><%
     }
     lastNode = item.to
 %>
@@ -136,8 +134,7 @@ if (trains.cycle) { %>
       <table-cell><block>${item.trainName}</block></table-cell>
       <table-cell margin-right="2mm"><block text-align="right" font-weight="bold">${convertTime(item.fromTime)}</block></table-cell>
       <table-cell><block>${item.fromAbbr} - ${item.toAbbr}</block></table-cell>
-      <table-cell><block>${getComment(item.comment, locale)}</block></table-cell>
-      <table-cell><block text-align="right"><page-number-citation ref-id="train${index}"/></block></table-cell>
+      <table-cell><block text-align-last="justify"><inline>${getComment(item.comment, locale)}</inline><leader leader-pattern="space" /><inline><page-number-citation ref-id="train${index}"/></inline></block></table-cell>
     </table-row>
 <%
     index++
@@ -160,9 +157,8 @@ if (trains.cycle) { %>
 def printTimetables() {
   def index = 0
   for (train in trains.trainTimetables) {
-    def colspan = (train.controlled == true) ? 10 : 8
 %>
-<block-container keep-together.within-page="always">
+<block-container keep-together.within-page="always" space-after="5mm">
   <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
@@ -172,17 +168,19 @@ def printTimetables() {
      def fwt = true
      if (train.weightData) {
        lastEngine = null
+       %><table border-collapse="collapse" table-layout="fixed" width="100%" font-size="2.75mm"><table-column column-width="50%"/><table-column column-width="50%"/><table-body><%
        for (wr in train.weightData) {
          currentEngine = wr.engines.join(", ") %>
-      <block>
-        <inline>${(currentEngine && currentEngine != lastEngine) ? (localization.translate(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". ") : ""}</inline>
-        <inline>${(wr.weight  && (fwt || (currentEngine && currentEngine != lastEngine))) ? localization.translate("norm_load", locale) + ": " : ""}</inline>
-        <inline>${wr.from  && wr.to ? wr.from + " - " + wr.to + " " : ""}</inline>
-        <inline text-align="right">${wr.weight ? wr.weight + " " + localization.translate("tons", locale) : ""}</inline>
-      </block><%
+      <table-row>
+        <table-cell><block text-align-last="justify" margin-right="1mm"><inline>${(currentEngine && currentEngine != lastEngine) ? (localization.translate(train.diesel ? "diesel_unit" : "engine", locale) + " " + currentEngine + ". ") : ""}</inline>
+        <leader leader-pattern="space" /><inline>${(wr.weight  && (fwt || (currentEngine && currentEngine != lastEngine))) ? localization.translate("norm_load", locale) + ":" : "&#160;"}</inline></block></table-cell>
+        <table-cell><block text-align-last="justify"><inline>${wr.from  && wr.to ? wr.from + " - " + wr.to : "&#160;"}</inline><leader leader-pattern="space" />
+        <inline>${wr.weight ? wr.weight + " " + localization.translate("tons", locale) : "&#160;"}</inline></block></table-cell>
+      </table-row><%
          fwt = false
          lastEngine = currentEngine
        }
+       %></table-body></table><%
      } %>
   <!-- ======== Length info ========= -->
   <%
@@ -190,7 +188,7 @@ def printTimetables() {
        if (train.lengthData.length % 2 == 1) {
          train.lengthData.length = train.lengthData.length - 1
        } %>
-      <block>
+      <block font-size="2.75mm">
         <inline>${localization.translate("length", locale)}: ${train.lengthData.length} ${train.lengthData.lengthInAxles ? localization.translate("length_axles", locale) : train.lengthData.lengthUnit.getUnitsOfString(locale)}</inline>
       </block><%
       } %>
@@ -224,11 +222,10 @@ def printTimetables() {
     if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
     if (emphName) stationName = "<inline font-weight=\"bold\">${stationName}</inline>"
     if (row.straight == false && !row.lightSignals) desc += RARR // rarr
-    if (row.lightSignals) { desc += "(S)"; images.add("signal.gif")} // TODO image - signal 
+    if (row.lightSignals) { desc += "(S)" } // TODO image - signal 
     if (train.controlled && row.trapezoid) {
       // TODO image - trapezoid
       desc += "(T)"
-      images.add("trapezoid_sign.gif")
     }
     if (row.lineEnd) desc += DELTA // Delta
     if (row.occupied) desc += OMICRON // Omicron
@@ -246,9 +243,11 @@ def printTimetables() {
         lineClassStr += (row.lineClass != null ? row.lineClass : "-") + "/" + speed2Str
     }
     lastLineClass = row.lineClass
+    def showTrack
+    def tTrains
     if (train.controlled) {
-      def showTrack = row.track != null && !row.controlStation && row.onControlled
-      def tTrains = null
+      showTrack = row.track != null && !row.controlStation && row.onControlled
+      tTrains = null
       if (row.trapezoidTrains != null) {
         for (tTrain in row.trapezoidTrains) {
           if (tTrains == null) tTrains = ""
@@ -257,41 +256,25 @@ def printTimetables() {
         }
       }
       if (tTrains == null) tTrains = " "
-      if (row.controlStation) images.add("control_station.gif")
+    }
       %>
     <table-row>
-        <table-cell><block>${stationName}${row.controlStation ? "(C)" : ""}</block></table-cell> <!-- // TODO image - control station -->
+        <table-cell><block>${stationName}${train.controlled && row.controlStation ? "(C)" : ""}</block></table-cell> <!-- // TODO image - control station -->
         <table-cell><block text-align="center">${desc}</block></table-cell>
-        <table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell>
-        <table-cell><block text-align="right" font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
-        <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
-        <table-cell><block text-align="right">${stopDur.show(row.arrival,row.departure)}</block></table-cell>
-        <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
-        <table-cell><block text-align="right">${speedStr}</block></table-cell>
-        <table-cell><block font-size="3mm">${lineClassStr}</block></table-cell>
-        <table-cell><block font-size="3mm">${tTrains}</block></table-cell>
+        <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
+        <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()}>${stopDur.show(row.arrival,row.departure)}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()}>${speedStr}</block></table-cell>
+        <table-cell><block font-size="3mm" ${marginTL()}>${lineClassStr}</block></table-cell>
+        <% if (train.controlled) { %><table-cell><block font-size="2.5mm" ${marginTL()}>${tTrains}</block></table-cell><% } %>
     </table-row><%
-      // ---------------- controlled --------------
-    } else { %>
-    <table-row>
-      <table-cell><block>${stationName}</block></table-cell>
-      <table-cell><block text-align="center">${desc}</block></table-cell>
-      <table-cell><block text-align="right" font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
-      <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
-      <table-cell><block text-align="right">${stopDur.show(row.arrival,row.departure)}</block></table-cell>
-      <table-cell><block text-align="right" font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
-      <table-cell><block text-align="right">${speedStr}</block></table-cell>
-      <table-cell><block font-size="3mm">${lineClassStr}</block></table-cell>
-    </table-row><%
-      // ----------------  normal -----------------
-    }
     cnt++
     lastSpeed = speed
     lastSpeed2 = speed2
     lastTo = row.departure
   }
-  
-  printTimetableFooter()
   
   def timeTotal = stopDur.total + runDur.total
   def totalHours = (int) (timeTotal / 60)
@@ -299,18 +282,20 @@ def printTimetables() {
   def totalMinutesStr = Duration.show(totalMinutes)
 
   %>
-  <block>
-    <inline>${localization.translate("total_train_time", locale)} . . . </inline>
-    <inline>${runDur.showTotal()}</inline>
-    <inline>+</inline>
-    <inline>${stopDur.showTotal()}</inline>
-    <inline> = ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</inline>
-  </block><%
+  <table-row border-top="solid .4mm" border-bottom="solid .4mm">
+    <table-cell number-columns-spanned="${train.controlled ? '3' : '2'}"><block margin-right="1mm" text-align="right">${localization.translate("total_train_time", locale)} . . .</block></table-cell>
+    <table-cell><block text-align="right" ${marginTR()}>${runDur.showTotal()}</block></table-cell>
+    <table-cell><block text-align="center">+</block></table-cell>
+    <table-cell><block text-align="right" ${marginTR()}>${stopDur.showTotal()}</block></table-cell>
+    <table-cell number-columns-spanned="${train.controlled ? '4' : '3'}"><block margin-left="1mm">= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</block></table-cell>
+  </table-row><%
   // ---------------- footer of the timetable -----------
+  printTimetableFooter()
+  
   comments = createComments(train)
   for (comment in comments) {
     // ----------- comments --------------
-    %><block>${comment[0]}= ${comment[1]}</block><%
+    %><block><inline-container width="8mm"><block text-align-last="justify">${comment[0]}<leader leader-pattern="space" />=</block></inline-container><inline-container width="100%"><block margin-left="1mm">${comment[1]}</block></inline-container></block><%
   }
 
   %>
@@ -325,28 +310,28 @@ def printTimetables() {
 <!-- ======================== Print timetable =================== -->
 <%
 def printTimetableHeader(controlled) {
-%><table border-collapse="collapse" table-layout="fixed" width="100%" font-size="3.5mm">
-  <table-column column-width="31%" />
-  <table-column column-width="6%" />
-  <% if (controlled) { %><table-column column-width="6%" /><% } %>
-  <table-column column-width="6%" />
-  <table-column column-width="11%" />
-  <table-column column-width="6%" />
-  <table-column column-width="11%" />
-  <table-column column-width="6%" />
-  <table-column column-width="${controlled ? '6%' : '23%'}" />
-  <% if (controlled) { %><table-column column-width="11%" /><% } %>
+%><table border-collapse="collapse" table-layout="fixed" width="100%" font-size="3.5mm" display-align="center" space-after=".7mm">
+  <table-column column-width="31%" ${separationT()} />
+  <table-column column-width="6%" ${separationT()} />
+  <% if (controlled) { %><table-column column-width="6%" ${separationT()} /><% } %>
+  <table-column column-width="6%" ${separationT()} />
+  <table-column column-width="11%" ${separationT()} />
+  <table-column column-width="6%" ${separationT()} />
+  <table-column column-width="11%" ${separationT()} />
+  <table-column column-width="6%" ${separationT()}  />
+  <table-column column-width="${controlled ? '4.5%' : '23%'}" ${controlled ? separationT() : ""}/>
+  <% if (controlled) { %><table-column column-width="12.5%" /><% } %>
   <table-header font-size="2.5mm">
     <table-row border-top="solid .7mm" border-bottom="solid .4mm" text-align="center">
-      <table-cell ${paddingTTop()} ${separationT()}><block>1</block></table-cell>
-      <table-cell ${paddingTTop()} ${separationT()}><block>2</block></table-cell>
-      <% if (controlled) { %><table-cell ${paddingTTop()} ${separationT()}><block>2a</block></table-cell><% } %>
-      <table-cell ${paddingTTop()} ${separationT()}><block>3</block></table-cell>
-      <table-cell ${paddingTTop()} ${separationT()}><block>4</block></table-cell>
-      <table-cell ${paddingTTop()} ${separationT()}><block>5</block></table-cell>
-      <table-cell ${paddingTTop()} ${separationT()}><block>6</block></table-cell>
-      <table-cell ${paddingTTop()} ${separationT()}><block>7</block></table-cell>
-      <table-cell ${paddingTTop()} ${controlled ? separationT() : ""}><block>8</block></table-cell>
+      <table-cell ${paddingTTop()}><block>1</block></table-cell>
+      <table-cell ${paddingTTop()}><block>2</block></table-cell>
+      <% if (controlled) { %><table-cell ${paddingTTop()}><block>2a</block></table-cell><% } %>
+      <table-cell ${paddingTTop()}><block>3</block></table-cell>
+      <table-cell ${paddingTTop()}><block>4</block></table-cell>
+      <table-cell ${paddingTTop()}><block>5</block></table-cell>
+      <table-cell ${paddingTTop()}><block>6</block></table-cell>
+      <table-cell ${paddingTTop()}><block>7</block></table-cell>
+      <table-cell ${paddingTTop()}><block>8</block></table-cell>
       <% if (controlled) { %><table-cell ${paddingTTop()}><block>9</block></table-cell><% } %>
     </table-row>
   </table-header>
@@ -359,6 +344,14 @@ def paddingTTop() {
   
 def separationT() {
   return 'border-right="solid .2mm"'
+}
+
+def marginTR() {
+  return 'margin-right=".7mm"'
+}
+
+def marginTL() {
+  return 'margin-left=".7mm"'
 }
 
 def printTimetableFooter() {
