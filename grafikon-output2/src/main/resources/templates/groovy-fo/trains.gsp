@@ -222,10 +222,9 @@ def printTimetables() {
     if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
     if (emphName) stationName = "<inline font-weight=\"bold\">${stationName}</inline>"
     if (row.straight == false && !row.lightSignals) desc += RARR // rarr
-    if (row.lightSignals) { desc += "(S)" } // TODO image - signal 
+    if (row.lightSignals) { desc += getImage("images/signal.gif", "3.4mm") } 
     if (train.controlled && row.trapezoid) {
-      // TODO image - trapezoid
-      desc += "(T)"
+      desc += getImage("images/trapezoid_sign.gif", "3.4mm")
     }
     if (row.lineEnd) desc += DELTA // Delta
     if (row.occupied) desc += OMICRON // Omicron
@@ -259,7 +258,7 @@ def printTimetables() {
     }
       %>
     <table-row>
-        <table-cell><block>${stationName}${train.controlled && row.controlStation ? "(C)" : ""}</block></table-cell> <!-- // TODO image - control station -->
+        <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.gif", "2.5mm") : ""}</block></table-cell>
         <table-cell><block text-align="center">${desc}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
@@ -336,6 +335,10 @@ def printTimetableHeader(controlled) {
     </table-row>
   </table-header>
   <table-body><%
+}
+  
+def getImage(image, height) {
+  return "<external-graphic src=\"${image}\" height=\"${height}\" content-width=\"scale-to-fit\" content-height=\"scale-to-fit\" vertical-align=\"middle\" padding-right=\".3mm\"/>"
 }
   
 def paddingTTop() {
