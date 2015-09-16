@@ -66,10 +66,14 @@ public class PdfTransformer {
         return new ResourceResolver() {
             @Override
             public Resource getResource(URI uri) throws IOException {
-                InputStream is = PdfTransformer.class.getClassLoader().getResourceAsStream(uri.toASCIIString());
+                String asciiUri = uri.toASCIIString();
+                InputStream is = PdfTransformer.class.getClassLoader().getResourceAsStream(asciiUri);
                 if (is == null && uriResolver != null) {
                     try {
-                        is = ((StreamSource) uriResolver.resolve(uri.toASCIIString(), null)).getInputStream();
+                        StreamSource streamSource = (StreamSource) uriResolver.resolve(asciiUri, null);
+                        if (streamSource != null) {
+                            is = streamSource.getInputStream();
+                        }
                     } catch (TransformerException e) {
                         throw new IOException(e);
                     }
