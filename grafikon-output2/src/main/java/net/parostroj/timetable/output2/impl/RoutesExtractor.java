@@ -1,6 +1,10 @@
 package net.parostroj.timetable.output2.impl;
 
+import java.text.Collator;
 import java.util.*;
+
+import net.parostroj.timetable.actions.ConvertComparator;
+import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.model.*;
 
 /**
@@ -140,7 +144,10 @@ public class RoutesExtractor {
                 }
                 infos.add(info);
             }
-            return infos;
+            // sort by route name
+            ElementSort<NetPartRouteInfo> sort = new ElementSort<NetPartRouteInfo>(
+                    new ConvertComparator<>(Collator.getInstance(), e -> e.getName()));
+            return sort.sort(infos);
         } else {
             return Collections.emptyList();
         }
