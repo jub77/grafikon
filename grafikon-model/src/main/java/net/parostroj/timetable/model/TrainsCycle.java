@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import com.google.common.collect.Iterables;
+
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TransformUtil;
@@ -373,6 +375,10 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             this.type = type;
             this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
         }
+    }
+
+    public TrainsCycleItem getItemForTrain(Train train) {
+        return Iterables.find(this, item -> item.getTrain() == train, null);
     }
 
     @Override
