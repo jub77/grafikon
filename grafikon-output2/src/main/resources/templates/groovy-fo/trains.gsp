@@ -157,6 +157,8 @@ if (trains.cycle) { %>
 def printTimetables() {
   def index = 0
   for (train in trains.trainTimetables) {
+    def limited = settings['timetable.limit.to.circulation'] && partOfTrain(train)
+    def limits = getLimitsPartOfTrain(train)
 %>
 <block-container keep-together.within-page="always" space-after="5mm">
   <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
@@ -164,6 +166,7 @@ def printTimetables() {
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
   <% if (train.routeInfo) { %><block text-align="center">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
+  <% if (!train.routeInfo && limited) { %><block text-align="center">${train.rows.first().station} - ${train.rows.last().station}</block><% } %>
   <!-- ======== Weight info ========= -->
   <%
      def fwt = true
@@ -215,8 +218,8 @@ def printTimetables() {
     isSpeed2 = isSpeed2 || speed != speed2
     def emphName = (cnt == 0) || (cnt == rowL) || row.stationType == "branch.station"
     def speedStr = ((lastSpeed == null || lastSpeed != speed) && speed != null) ?  speed : " "
-    fromT.compute(row.arrival, cnt == rowL, row.arrival != row.departure)
-    toT.compute(row.departure, false, true)
+    fromT.compute(row.arrival, cnt == rowL || limits[0] == cnt || limits[1] == cnt, row.arrival != row.departure)
+    toT.compute(row.departure, limits[0] == cnt || limits[1] == cnt, true)
     def stationName = row.station
     def desc = ""
     if (row.stationType == "stop.with.freight") stationName += " ${localization.translate('abbr_stop_freight', locale)}"
@@ -257,19 +260,21 @@ def printTimetables() {
       }
       if (tTrains == null) tTrains = " "
     }
+    if (!limited || row.inCirculation) {
       %>
-    <table-row>
+      <table-row>
         <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.gif", "2.5mm") : ""}</block></table-cell>
         <table-cell><block text-align="center">${desc}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
-        <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${runDur.show(lastTo, row.arrival)}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${cnt != limits[0] ? runDur.show(lastTo, row.arrival) : ""}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()}>${stopDur.show(row.arrival,row.departure)}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()}>${speedStr}</block></table-cell>
         <table-cell><block font-size="3mm" ${marginTL()}>${lineClassStr}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block font-size="2.5mm" ${marginTL()}>${tTrains}</block></table-cell><% } %>
-    </table-row><%
+      </table-row><%
+    }
     cnt++
     lastSpeed = speed
     lastSpeed2 = speed2
@@ -465,6 +470,32 @@ def printTimetableFooter() {
     }
     return list
   }
+  
+  def partOfTrain(train) {
+    if (settings['timetable.limit.to.circulation'] && trains.cycle) {
+      for (row in train.rows) {
+        if (!row.inCirculation) return true
+      }
+    }
+    return false
+  }
+  
+  def getLimitsPartOfTrain(train) {
+      if (settings['timetable.limit.to.circulation'] && trains.cycle) {
+          def start = -1
+          def end
+          def cnt = 0
+          for (row in train.rows) {
+            if (row.inCirculation) {
+              end = cnt
+              if (start == -1) start = cnt
+            }
+            cnt++  
+          }
+          return [start, end]
+        }
+        return [0, train.rows.size - 1]
+  }
 %>
 <!-- ================ Time helpers ================ -->
 <%
@@ -476,9 +507,9 @@ def printTimetableFooter() {
         return " "
       def f = Time.parse(from)
       def t = Time.parse(to)
-      def period = new org.joda.time.Period(f,t);
+      def period = new org.joda.time.Period(f,t)
       if (t < f) {
-        period = period.plusDays(1).normalizedStandard();
+        period = period.plusDays(1).normalizedStandard()
       }
       double dur = period.toStandardMinutes().minutes
       dur += period.seconds / 60
