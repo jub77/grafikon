@@ -160,6 +160,7 @@ def printTimetables() {
 %>
 <block-container keep-together.within-page="always" space-after="5mm">
   <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
+  <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
   <% if (train.routeInfo) { %><block text-align="center">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
@@ -320,7 +321,7 @@ def printTimetableHeader(controlled) {
   <table-column column-width="6%" ${separationT()}  />
   <table-column column-width="${controlled ? '4.5%' : '23%'}" ${controlled ? separationT() : ""}/>
   <% if (controlled) { %><table-column column-width="12.5%" /><% } %>
-  <table-header font-size="2.5mm">
+  <table-header font-size="2mm">
     <table-row border-top="solid .7mm" border-bottom="solid .4mm" text-align="center">
       <table-cell ${paddingTTop()}><block>1</block></table-cell>
       <table-cell ${paddingTTop()}><block>2</block></table-cell>
