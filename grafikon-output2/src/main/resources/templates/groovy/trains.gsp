@@ -670,7 +670,7 @@
           hour = parsed.hourOfDay
 
         if (parsed.secondOfMinute != 0) {
-          def part = (int) parsed.secondOfMinute / 60 * 10
+          def part = (int) (parsed.secondOfMinute / 60.0 * 10)
           result += "<span class=\"s2\">${part}</span>"
         } else {
           result += "&nbsp;"
