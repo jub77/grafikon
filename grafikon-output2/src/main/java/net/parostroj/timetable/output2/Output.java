@@ -17,6 +17,7 @@ public interface Output {
     public static final String PARAM_TEMPLATE = "template";
     public static final String PARAM_TEXT_TEMPLATE = "text.template";
     public static final String PARAM_CONTEXT = "context";
+    public static final String PARAM_SETTINGS = "settings";
     public static final String PARAM_OUTPUT_ENCODING = "encoding";
     public static final String PARAM_RESOURCES = "resources";
 

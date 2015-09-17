@@ -26,6 +26,11 @@ public abstract class GroovyTemplateBinding {
                 binding.put((String) entry.getKey(), entry.getValue());
             }
         }
+        if (params.paramExistWithValue(Output.PARAM_SETTINGS)) {
+            binding.put("settings", params.getParamValue(Output.PARAM_SETTINGS, Object.class));
+        } else {
+            binding.put("settings", Collections.emptyMap());
+        }
     }
 
     public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
