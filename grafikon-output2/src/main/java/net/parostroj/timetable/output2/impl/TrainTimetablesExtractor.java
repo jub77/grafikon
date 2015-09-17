@@ -136,6 +136,7 @@ public class TrainTimetablesExtractor {
         timetable.setRows(new LinkedList<TrainTimetableRow>());
         Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
         TimeInterval lastLineI = null;
+        TrainsCycleItem cycleItem = cycle != null ? cycle.getItemForTrain(train) : null;
         while (i.hasNext()) {
             TimeInterval nodeI = i.next();
             TimeInterval lineI = i.hasNext() ? i.next() : null;
@@ -232,6 +233,11 @@ public class TrainTimetablesExtractor {
                     }
                     row.setFreightDest(fl);
                 }
+            }
+
+            // in circulation
+            if (cycle != null) {
+                row.setInCirculation(cycleItem.containsInterval(nodeI));
             }
 
             timetable.getRows().add(row);
