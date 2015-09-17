@@ -160,7 +160,7 @@ def printTimetables() {
     def limited = settings['timetable.limit.to.circulation'] && partOfTrain(train)
     def limits = getLimitsPartOfTrain(train)
 %>
-<block-container keep-together.within-page="always" space-after="5mm">
+<block-container keep-together.within-page="always" space-before="5mm">
   <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
   <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
   <block-container font-size="3mm">
