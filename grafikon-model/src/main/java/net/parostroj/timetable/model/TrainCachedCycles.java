@@ -33,7 +33,7 @@ class TrainCachedCycles {
     }
 
     public void remove(TrainsCycleItem item) {
-        for (TimeInterval key : map.keys()) {
+        for (TimeInterval key : new ArrayList<>(map.keys())) {
             map.remove(key, item);
         }
     }
