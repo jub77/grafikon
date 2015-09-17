@@ -528,7 +528,7 @@ def printTimetableFooter() {
       else {
         def minutes = (int) dur
         def seconds = (int) (dur - minutes) * 10
-        def str = minutes + (seconds == 0 ?  " " : "<inline vertical-align=\"super\" font-size=\"1.85mm\">${seconds}</inline>") // TODO super position smaller size
+        def str = minutes + (seconds == 0 ?  " " : "<inline vertical-align=\"text-top\" font-size=\"1.85mm\">${seconds}</inline>") // TODO super position smaller size
         return str
       }
     }
@@ -555,8 +555,8 @@ def printTimetableFooter() {
           hour = parsed.hourOfDay
 
         if (parsed.secondOfMinute != 0) {
-          def part = (int) parsed.secondOfMinute / 60 * 10
-          result += "<inline vertical-align=\"super\" font-size=\"2mm\">${part}</inline>" // TODO super position smaller size
+          def part = (int) (parsed.secondOfMinute / 60.0 * 10)
+          result += "<inline vertical-align=\"text-top\" font-size=\"2mm\">${part}</inline>" // TODO super position smaller size
         } else {
           result += " "
         }
