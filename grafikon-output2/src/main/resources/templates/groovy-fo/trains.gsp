@@ -226,9 +226,9 @@ def printTimetables() {
     if (row.stationType == "stop") stationName += " ${localization.translate('abbr_stop', locale)}"
     if (emphName) stationName = "<inline font-weight=\"bold\">${stationName}</inline>"
     if (row.straight == false && !row.lightSignals) desc += RARR // rarr
-    if (row.lightSignals) { desc += getImage("images/signal.gif", "3.4mm") } 
+    if (row.lightSignals) { desc += getImage("images/signal.svg", "3.4mm") } 
     if (train.controlled && row.trapezoid) {
-      desc += getImage("images/trapezoid_sign.gif", "3.4mm")
+      desc += getImage("images/trapezoid_sign.svg", "3.2mm")
     }
     if (row.lineEnd) desc += DELTA // Delta
     if (row.occupied) desc += OMICRON // Omicron
@@ -263,7 +263,7 @@ def printTimetables() {
     if (!limited || row.inCirculation) {
       %>
       <table-row>
-        <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.gif", "2.5mm") : ""}</block></table-cell>
+        <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.svg", "2.7mm") : ""}</block></table-cell>
         <table-cell><block text-align="center">${desc}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${cnt != limits[0] ? runDur.show(lastTo, row.arrival) : ""}</block></table-cell>
