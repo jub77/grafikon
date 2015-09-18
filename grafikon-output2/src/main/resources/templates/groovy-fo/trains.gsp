@@ -160,7 +160,7 @@ def printTimetables() {
     def limited = settings['timetable.limit.to.circulation'] && partOfTrain(train)
     def limits = getLimitsPartOfTrain(train)
 %>
-<block-container keep-together.within-page="always" space-before="5mm">
+<block-container keep-together.within-page="always" space-before.minimum="1mm" space-before.optimum="5mm" space-before.maximum="7mm">
   <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
   <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
   <block-container font-size="3mm">
@@ -288,11 +288,11 @@ def printTimetables() {
 
   %>
   <table-row border-top="solid .4mm" border-bottom="solid .4mm">
-    <table-cell number-columns-spanned="${train.controlled ? '3' : '2'}"><block margin-right="1mm" text-align="right">${localization.translate("total_train_time", locale)} . . .</block></table-cell>
-    <table-cell><block text-align="right" ${marginTR()}>${runDur.showTotal()}</block></table-cell>
-    <table-cell><block text-align="center">+</block></table-cell>
-    <table-cell><block text-align="right" ${marginTR()}>${stopDur.showTotal()}</block></table-cell>
-    <table-cell number-columns-spanned="${train.controlled ? '4' : '3'}"><block margin-left="1mm">= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</block></table-cell>
+    <table-cell number-columns-spanned="${train.controlled ? '3' : '2'}"><block margin-top=".3mm" margin-right="1mm" text-align="right">${localization.translate("total_train_time", locale)} . . .</block></table-cell>
+    <table-cell><block margin-top=".3mm" text-align="right" ${marginTR()}>${runDur.showTotal()}</block></table-cell>
+    <table-cell><block margin-top=".3mm" text-align="center">+</block></table-cell>
+    <table-cell><block margin-top=".3mm" text-align="right" ${marginTR()}>${stopDur.showTotal()}</block></table-cell>
+    <table-cell number-columns-spanned="${train.controlled ? '4' : '3'}"><block margin-top=".3mm" margin-left="1mm">= ${totalHours != 0 ? totalHours + " " : ""}${totalHours != 0 ? localization.translate("hours", locale) + " " : ""}${totalMinutes != 0 ? totalMinutesStr : ""}${totalMinutes != 0 ? localization.translate("minutes", locale) : ""}</block></table-cell>
   </table-row><%
   // ---------------- footer of the timetable -----------
   printTimetableFooter()
