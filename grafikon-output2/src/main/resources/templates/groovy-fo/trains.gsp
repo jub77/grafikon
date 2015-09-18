@@ -165,8 +165,8 @@ def printTimetables() {
   <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
-  <% if (train.routeInfo) { %><block text-align="center">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
-  <% if (!train.routeInfo && limited) { %><block text-align="center">${train.rows.first().station} - ${train.rows.last().station}</block><% } %>
+  <% if (train.routeInfo) { %><block text-align="center" space-after=".8mm">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
+  <% if (!train.routeInfo && limited) { %><block text-align="center" space-after=".8mm">${train.rows.first().station} - ${train.rows.last().station}</block><% } %>
   <!-- ======== Weight info ========= -->
   <%
      def fwt = true
