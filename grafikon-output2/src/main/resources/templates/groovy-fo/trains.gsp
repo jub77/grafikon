@@ -170,7 +170,7 @@ def printTimetables() {
   <!-- ======== Weight info ========= -->
   <%
      def fwt = true
-     if (train.weightData) {
+     if (train.weightData && !settings['timetable.hide.weight.info']) {
        lastEngine = null
        %><table border-collapse="collapse" table-layout="fixed" width="100%" font-size="2.75mm"><table-column column-width="50%"/><table-column column-width="50%"/><table-body><%
        for (wr in train.weightData) {
