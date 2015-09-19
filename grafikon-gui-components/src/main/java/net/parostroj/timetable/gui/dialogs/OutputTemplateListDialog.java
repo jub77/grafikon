@@ -260,6 +260,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         int index = templateList.getSelectedIndex();
         if (index != -1) {
             templatesModel.removeIndex(index);
+            if (index > templatesModel.getSize() - 1) {
+                templateList.setSelectedIndex(templatesModel.getSize() - 1);
+            } else {
+                templateList.setSelectedIndex(index);
+            }
         }
     }
 
