@@ -39,7 +39,8 @@
 <block font-size="4mm" font-weight="bold" space-after="0.5mm">${title}</block>
 <% } %>
 
-<% def printPositions(positions) { %>
+<% def printPositions(positions) { 
+     if (!positions) return %>
 <block font-size="3mm" space-after="3mm">
 <table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" font-family="SansCondensed">
   <table-column column-width="2cm" ${border()} />

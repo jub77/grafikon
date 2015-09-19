@@ -142,8 +142,10 @@
 
 <%
   def printStations() {
+  if (!stations) { %><block></block><% }
   for (station in stations) {
       def loc = getLocale(station)
+      if (!station.rows) { %><block></block><% continue }
 %>
 <block font-size="3mm" font-family="SansCondensed">
 <table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" break-after="page">
