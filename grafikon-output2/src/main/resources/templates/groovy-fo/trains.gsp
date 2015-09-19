@@ -523,7 +523,7 @@ def printTimetableFooter() {
 
     def static show(dur) {
       // convert to html
-      if (dur == null)
+      if (dur == null || dur == 0)
         return " "
       else {
         def minutes = (int) dur

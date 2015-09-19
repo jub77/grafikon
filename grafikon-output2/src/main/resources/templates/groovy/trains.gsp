@@ -712,7 +712,7 @@
 
     def static show(dur) {
       // convert to html
-      if (dur == null)
+      if (dur == null || dur == 0)
         return "&nbsp;"
       else {
         def minutes = (int) dur
