@@ -58,12 +58,10 @@ public class SelectionHelper {
             List<Route> routes = ObjectsUtil.copyToList(params.getParamValue("routes", List.class), Route.class);
             Set<Train> trains = new HashSet<Train>();
             for (Route route : routes) {
-                for (RouteSegment seg : route.getSegments()) {
-                    if (seg.isLine()) {
-                        for (Track track : seg.asLine().getTracks()) {
-                            for (TimeInterval i : track.getTimeIntervalList()) {
-                                trains.add(i.getTrain());
-                            }
+                for (Line line : route.getLines()) {
+                    for (Track track : line.getTracks()) {
+                        for (TimeInterval i : track.getTimeIntervalList()) {
+                            trains.add(i.getTrain());
                         }
                     }
                 }
