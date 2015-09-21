@@ -106,6 +106,7 @@
 <page-sequence master-reference="simpleA4-portrait" font-family="SansCondensed">
   <flow flow-name="xsl-region-body">
   <% printWrappers(wrappers) %>
+  <% if (!wrappers) { %><block></block><% } %>
   </flow>
 </page-sequence>
 </root>
