@@ -300,7 +300,7 @@ def printTimetables() {
   // ---------------- footer of the timetable -----------
   printTimetableFooter()
   
-  comments = createComments(train)
+  comments = createComments(tHolder)
   for (comment in comments) {
     // ----------- comments --------------
     %><block><inline-container width="8mm"><block text-align-last="justify">${comment[0]}<leader leader-pattern="space" />=</block></inline-container><inline-container width="100%"><block margin-left="1mm">${comment[1]}</block></inline-container></block><%
@@ -442,34 +442,38 @@ def printTimetableFooter() {
     return result
   }
 
-  def createComments(train) {
+  def createComments(tHolder) {
+    def train = tHolder.train
     def symbol = "*";
     def fSymbol = DAGGER // dagger
     def list = []
     def shunt = false
     def occupied = false
     def lineEnd = false
+    def cnt = 0
     for (row in train.rows) {
-      if (!lineEnd && row.lineEnd) { // Delta
+      def isIn = tHolder.isIn(cnt)
+      if (!lineEnd && row.lineEnd && isIn) { // Delta
         list << [DELTA, localization.translate("entry_line_end", locale)]
         lineEnd = true
       }
-      if (!occupied && row.occupied) { // Omicron
+      if (!occupied && row.occupied && isIn) { // Omicron
         list << [OMICRON, localization.translate("entry_occupied", locale)]
         occupied = true
       }
-      if (!shunt && row.shunt) { // loz
+      if (!shunt && row.shunt && isIn) { // loz
         list << [LOZ ,localization.translate("entry_shunt", locale)]
         shunt = true
       }
       if (row.comment != null) {
-        list << [symbol,translator.translate(row.comment, locale)]
+        if (isIn) list << [symbol,translator.translate(row.comment, locale)]
         symbol += "*"
       }
       if (freight && row.freightDest != null) {
-        list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
+        if (isIn) list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
         fSymbol += DAGGER
       }
+      cnt++
     }
     return list
   }
