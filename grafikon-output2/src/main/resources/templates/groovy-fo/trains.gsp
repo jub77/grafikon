@@ -13,6 +13,9 @@
   OMICRON = "&#927;"
   LOZ = "&#9674;"
   RARR = "&#8594;"
+
+  limited = settings['timetable.limit.to.circulation'] && trains.cycle
+  tiHolder = TrainsItemsHolder.create(trains, limited)
 %>
 
 <root xmlns="http://www.w3.org/1999/XSL/Format">
@@ -47,7 +50,7 @@
     </repeatable-page-master-alternatives>
   </page-sequence-master>
 </layout-master-set>
-<% if(title_page) printTitlePage() %>
+<% if (title_page) printTitlePage() %>
 <page-sequence master-reference="A5-Pages" font-family="SansCondensed" font-size="4mm">
 <static-content flow-name="header-even">
   <block text-align-last="justify" font-size="3mm"><page-number/><leader leader-pattern="space" />${localization.translate("header_publisher", locale)}</block>
@@ -122,7 +125,8 @@ if (trains.cycle) { %>
   def lastNode = null
   def abbrMap = [:]
   def index = 0
-  for (item in trains?.cycle?.rows) {
+  for (iHolder in tiHolder.items) {
+    def item = iHolder.item
     abbrMap[item.fromAbbr] = item.from
     abbrMap[item.toAbbr] = item.to
     if (lastNode != null && lastNode != item.from) {
@@ -134,7 +138,7 @@ if (trains.cycle) { %>
       <table-cell><block>${item.trainName}</block></table-cell>
       <table-cell margin-right="2mm"><block text-align="right" font-weight="bold">${convertTime(item.fromTime)}</block></table-cell>
       <table-cell><block>${item.fromAbbr} - ${item.toAbbr}</block></table-cell>
-      <table-cell><block text-align-last="justify"><inline>${getComment(item.comment, locale)}</inline><leader leader-pattern="space" /><inline><page-number-citation ref-id="train${index}"/></inline></block></table-cell>
+      <table-cell><block text-align-last="justify"><inline>${getComment(item.comment, locale)}</inline><leader leader-pattern="space" /><inline><page-number-citation ref-id="${iHolder.trainHolder.refId}"/></inline></block></table-cell>
     </table-row>
 <%
     index++
@@ -156,17 +160,16 @@ if (trains.cycle) { %>
 <%
 def printTimetables() {
   def index = 0
-  for (train in trains.trainTimetables) {
-    def limited = settings['timetable.limit.to.circulation'] && partOfTrain(train)
-    def limits = getLimitsPartOfTrain(train)
+  for (tHolder in tiHolder.trains) {
+    def train = tHolder.train
 %>
 <block-container keep-together.within-page="always" space-before.minimum="1mm" space-before.optimum="5mm" space-before.maximum="7mm">
-  <block text-align="center" id="train${index}" font-weight="bold" font-size="5mm">${train.completeName}</block>
+  <block text-align="center" id="${tHolder.refId}" font-weight="bold" font-size="5mm">${train.completeName}</block>
   <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
   <% if (train.routeInfo) { %><block text-align="center" space-after=".8mm">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
-  <% if (!train.routeInfo && limited) { %><block text-align="center" space-after=".8mm">${train.rows.first().station} - ${train.rows.last().station}</block><% } %>
+  <% if (!train.routeInfo && !tHolder.whole) { %><block text-align="center" space-after=".8mm">${train.rows.first().station} - ${train.rows.last().station}</block><% } %>
   <!-- ======== Weight info ========= -->
   <%
      def fwt = true
@@ -218,8 +221,8 @@ def printTimetables() {
     isSpeed2 = isSpeed2 || speed != speed2
     def emphName = (cnt == 0) || (cnt == rowL) || row.stationType == "branch.station"
     def speedStr = ((lastSpeed == null || lastSpeed != speed) && speed != null) ?  speed : " "
-    fromT.compute(row.arrival, cnt == rowL || limits[0] == cnt || limits[1] == cnt, row.arrival != row.departure)
-    toT.compute(row.departure, limits[0] == cnt || limits[1] == cnt, true)
+    fromT.compute(row.arrival, cnt == rowL || tHolder.isLimit(cnt), row.arrival != row.departure)
+    toT.compute(row.departure, tHolder.isLimit(cnt), true)
     def stationName = row.station
     def desc = ""
     if (row.stationType == "stop.with.freight") stationName += " ${localization.translate('abbr_stop_freight', locale)}"
@@ -260,13 +263,13 @@ def printTimetables() {
       }
       if (tTrains == null) tTrains = " "
     }
-    if (!limited || row.inCirculation) {
+    if (!limited || tHolder.isIn(cnt)) {
       %>
       <table-row>
         <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.svg", "2.7mm") : ""}</block></table-cell>
         <table-cell><block text-align="center">${desc}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
-        <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${cnt != limits[0] ? runDur.show(lastTo, row.arrival) : ""}</block></table-cell>
+        <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${cnt != tHolder.start ? runDur.show(lastTo, row.arrival) : ""}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${fromT.out}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()}>${stopDur.show(row.arrival,row.departure)}</block></table-cell>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold" font-size="4mm">${toT.out}</block></table-cell>
@@ -364,7 +367,7 @@ def marginTL() {
 }
 
 def printTimetableFooter() {
-//%></table-body></table><%
+%></table-body></table><%
 }
 %>
 
@@ -470,31 +473,107 @@ def printTimetableFooter() {
     }
     return list
   }
-  
-  def partOfTrain(train) {
-    if (settings['timetable.limit.to.circulation'] && trains.cycle) {
+%>
+<!-- ================ Train + circulation holder ================ -->
+<%
+  class TrainsItemsHolder {
+    def items = []
+    def trains = []
+    
+    def static create(trains, limited) {
+      def holder = new TrainsItemsHolder()
+      if (!limited) {
+        def ts = [:]
+        // trains
+        for (train in trains.trainTimetables) {
+          def tHolder = TrainHolder.createFromTrain(train)
+          holder.trains << tHolder
+          ts[train.name] = tHolder
+        }
+        // cirulation items
+        if (trains.cycle) {
+          for (item in trains.cycle.rows) {
+            def tHolder = ts[item.trainName]
+            def iHolder = new CirculationItemHolder(item, tHolder)
+            holder.items << iHolder
+          }
+        }
+      } else {
+        // limited
+        def ts = [:]
+        for (train in trains.trainTimetables) {
+          ts[train.name] = train
+        }
+        for (item in trains.cycle.rows) {
+          def tHolder = TrainHolder.createFromCirculationItem(item, ts[item.trainName])
+          def iHolder = new CirculationItemHolder(item, tHolder)
+          holder.items << iHolder
+          holder.trains << tHolder
+        }
+      }
+      return holder
+    }
+  }
+
+  class CirculationItemHolder {
+    def trainHolder
+    def item
+    
+    CirculationItemHolder(item, train) {
+      this.trainHolder = train
+      this.item = item
+    }
+  }
+
+  class TrainHolder {
+    def train
+    def start
+    def end
+    def refId
+    
+    private static counter = 0
+    
+    private TrainHolder(train) {
+      this.train = train
+      this.refId = "train${counter++}"
+    }
+    
+    def static createFromTrain(train) {
+      def holder = new TrainHolder(train)
+      holder.start = 0
+      holder.end = train.rows.size - 1
+      return holder
+    }
+    
+    def static createFromCirculationItem(item, train) {
+      def holder = new TrainHolder(train)
+      // define limits
+      holder.start = getIndex(train, item.fromAbbr)
+      holder.end = getIndex(train, item.toAbbr)
+      return holder
+    }
+    
+    private static getIndex(train, abbr) {
+      def cnt = 0
       for (row in train.rows) {
-        if (!row.inCirculation) return true
+        if (row.stationAbbr == abbr) {
+            return cnt
+        }
+        cnt++
       }
     }
-    return false
-  }
-  
-  def getLimitsPartOfTrain(train) {
-      if (settings['timetable.limit.to.circulation'] && trains.cycle) {
-          def start = -1
-          def end
-          def cnt = 0
-          for (row in train.rows) {
-            if (row.inCirculation) {
-              end = cnt
-              if (start == -1) start = cnt
-            }
-            cnt++  
-          }
-          return [start, end]
-        }
-        return [0, train.rows.size - 1]
+    
+    def isIn(position) {
+      return start <= position && position <= end
+    }
+    
+    def isLimit(position) {
+      return position == start || position == end
+    }
+    
+    def getWhole() {
+      return start == 0 && end == train.rows.size - 1
+    }
   }
 %>
 <!-- ================ Time helpers ================ -->
@@ -503,7 +582,7 @@ def printTimetableFooter() {
     def total = 0
 
     def show(from,to) {
-      if (from == null || to ==null)
+      if (from == null || to == null)
         return " "
       def f = Time.parse(from)
       def t = Time.parse(to)

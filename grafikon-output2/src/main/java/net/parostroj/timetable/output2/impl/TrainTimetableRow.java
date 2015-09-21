@@ -10,14 +10,15 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"station", "stationType", "track", "straight", "arrival", "departure",
+@XmlType(propOrder={"station", "stationAbbr", "stationType", "track", "straight", "arrival", "departure",
     "speed", "setSpeed", "controlStation", "comment", "shunt", "occupied", "lineEnd", "lightSignals",
     "onControlled", "trapezoid", "trapezoidTrains", "lineClass", "routePosition", "routePositionOut",
-    "lineTracks", "freightDest", "inCirculation"
+    "lineTracks", "freightDest"
 })
 public class TrainTimetableRow {
 
     private String station;
+    private String stationAbbr;
     private String stationType;
     private String track;
     private Boolean straight;
@@ -39,7 +40,6 @@ public class TrainTimetableRow {
     private Double routePositionOut;
     private Integer lineTracks;
     private List<FreightDstInfo> freightDest;
-    private Boolean inCirculation;
 
     public String getArrival() {
         return arrival;
@@ -79,6 +79,14 @@ public class TrainTimetableRow {
 
     public void setStation(String station) {
         this.station = station;
+    }
+
+    public String getStationAbbr() {
+        return stationAbbr;
+    }
+
+    public void setStationAbbr(String stationAbbr) {
+        this.stationAbbr = stationAbbr;
     }
 
     public String getTrack() {
@@ -213,14 +221,6 @@ public class TrainTimetableRow {
 
     public void setFreightDest(List<FreightDstInfo> freightDest) {
         this.freightDest = freightDest;
-    }
-
-    public Boolean getInCirculation() {
-        return inCirculation;
-    }
-
-    public void setInCirculation(Boolean inCirculation) {
-        this.inCirculation = inCirculation;
     }
 
     @XmlElement(name="dest")

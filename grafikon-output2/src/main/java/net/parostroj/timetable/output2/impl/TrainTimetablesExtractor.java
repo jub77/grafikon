@@ -2,6 +2,8 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableSet;
+
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -16,15 +18,15 @@ import net.parostroj.timetable.utils.Pair;
 public class TrainTimetablesExtractor {
 
     private final TrainDiagram diagram;
-    private final List<Train> trains;
-    private final List<Route> routes;
+    private final Collection<Train> trains;
+    private final Collection<Route> routes;
     private final TrainsCycle cycle;
     private final Map<Pair<Line, Node>, Double> cachedRoutePositions;
     private final Locale locale;
 
-    public TrainTimetablesExtractor(TrainDiagram diagram, List<Train> trains, List<Route> routes, TrainsCycle cycle, Locale locale) {
+    public TrainTimetablesExtractor(TrainDiagram diagram, Collection<Train> trains, Collection<Route> routes, TrainsCycle cycle, Locale locale) {
         this.diagram = diagram;
-        this.trains = trains;
+        this.trains = ImmutableSet.copyOf(trains);
         this.routes = routes;
         this.cycle = cycle;
         this.locale = locale;
@@ -136,7 +138,6 @@ public class TrainTimetablesExtractor {
         timetable.setRows(new LinkedList<TrainTimetableRow>());
         Iterator<TimeInterval> i = train.getTimeIntervalList().iterator();
         TimeInterval lastLineI = null;
-        TrainsCycleItem cycleItem = cycle != null ? cycle.getItemForTrain(train) : null;
         while (i.hasNext()) {
             TimeInterval nodeI = i.next();
             TimeInterval lineI = i.hasNext() ? i.next() : null;
@@ -155,6 +156,7 @@ public class TrainTimetablesExtractor {
                 row.setLightSignals(true);
             }
             row.setStation(nodeI.getOwnerAsNode().getName());
+            row.setStationAbbr(nodeI.getOwnerAsNode().getAbbr());
             row.setStationType(nodeI.getOwnerAsNode().getType().getKey());
             if (!nodeI.isFirst())
                 row.setArrival(diagram.getTimeConverter().convertIntToXml(nodeI.getStart()));
@@ -233,11 +235,6 @@ public class TrainTimetablesExtractor {
                     }
                     row.setFreightDest(fl);
                 }
-            }
-
-            // in circulation
-            if (cycle != null) {
-                row.setInCirculation(cycleItem.containsInterval(nodeI));
             }
 
             timetable.getRows().add(row);
