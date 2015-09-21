@@ -117,7 +117,7 @@ if (trains.cycle) { %>
       <table-cell><block>${localization.translate("column_train", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_departure", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_from_to", locale)}</block></table-cell>
-      <table-cell><block>${localization.translate("column_note", locale)}</block></table-cell>
+      <table-cell><block text-align-last="justify"><inline>${localization.translate("column_note", locale)}</inline><leader leader-pattern="space" /><inline>${localization.translate("index_page", locale)}</inline></block></table-cell>
     </table-row>
   </table-header>
   <table-body>
