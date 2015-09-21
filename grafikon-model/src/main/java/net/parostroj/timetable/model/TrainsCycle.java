@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -377,8 +377,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
-    public TrainsCycleItem getItemForTrain(Train train) {
-        return Iterables.find(this, item -> item.getTrain() == train, null);
+    public Collection<TrainsCycleItem> getItemsForTrain(Train train) {
+        return Collections2.filter(items, item -> item.getTrain() == train);
     }
 
     @Override
