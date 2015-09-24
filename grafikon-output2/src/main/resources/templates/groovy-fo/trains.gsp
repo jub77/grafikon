@@ -23,7 +23,7 @@
   <simple-page-master master-name="A5-Title" page-height="21cm" page-width="14.8cm" margin="1cm 1cm 1cm 1cm"
       line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
     <region-body />
-    <region-after region-name="footer" precedence="true" extent="2cm"/>
+    <region-after region-name="footer" precedence="true" extent="2.5cm"/>
   </simple-page-master>
   <simple-page-master master-name="A5-Pages-Even" page-height="21cm" page-width="14.8cm" margin=".5cm 1cm .5cm 1cm"
       line-stacking-strategy="font-height" line-height-shift-adjustment="disregard-shifts">
@@ -79,6 +79,7 @@ def printTitlePage() {
 %>
 <page-sequence master-reference="A5-Title" font-family="Sans" font-size="4mm">
 <static-content flow-name="footer">
+  <block text-align="center" font-size="3.5mm" space-after="15mm">${localization.translate("internal_use", locale)}</block>
   <block text-align="center" font-size="3mm">${localization.translate("publisher", locale)}</block>
 </static-content>
 <flow flow-name="xsl-region-body">
@@ -266,7 +267,7 @@ def printTimetables() {
     if (!limited || tHolder.isIn(cnt)) {
       %>
       <table-row>
-        <table-cell><block>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.svg", "2.7mm") : ""}</block></table-cell>
+        <table-cell><block text-align-last="justify" margin-right="1mm"><inline>${stationName}${train.controlled && row.controlStation ? " " + getImage("images/control_station.svg", "2.7mm") : ""}</inline> <leader leader-pattern="dots" font-family="Sans" /></block></table-cell>
         <table-cell><block text-align="center">${desc}</block></table-cell>
         <% if (train.controlled) { %><table-cell><block text-align="center">${showTrack ? row.track : " "}</block></table-cell><% } %>
         <table-cell><block text-align="right" ${marginTR()} font-weight="bold">${cnt != tHolder.start ? runDur.show(lastTo, row.arrival) : ""}</block></table-cell>
