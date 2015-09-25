@@ -99,7 +99,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         upButton.setEnabled(selectedCount == 1);
         deleteButton.setEnabled(selectedCount > 0);
         editButton.setEnabled(selectedCount == 1);
-        outputButton.setEnabled(selectedCount > 1);
+        outputButton.setEnabled(selectedCount > 0);
         copyButton.setEnabled(newName != null && selectedCount == 1);
         // create button
         newButton.setEnabled(newName != null);
