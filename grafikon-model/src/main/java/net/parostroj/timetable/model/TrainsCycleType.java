@@ -44,8 +44,6 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     private final GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent> listenerSupport;
 
-    private String _cachedDescription;
-
     public TrainsCycleType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
@@ -73,7 +71,6 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this._cachedDescription = null;
             this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
@@ -86,7 +83,6 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         if (!ObjectsUtil.compareWithNull(description, this.description)) {
             String oldDescription = this.description;
             this.description = description;
-            this._cachedDescription = null;
             this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_DESCRIPTION,
                     oldDescription, description)));
         }
@@ -126,15 +122,17 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public String getDescriptionText(Locale locale) {
-        if (_cachedDescription == null) {
-            if (isDefaultType(name)) {
-                ResourceBundle bundle = ResourceBundleUtil.getBundle("net.parostroj.timetable.model.cycle_type_texts", TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
-                _cachedDescription = bundle.getString(name);
-            } else {
-                _cachedDescription = (description != null) ? description : name;
-            }
+        String text = null;
+        if (isDefaultType(name)) {
+            ResourceBundle bundle = ResourceBundleUtil.getBundle(
+                    "net.parostroj.timetable.model.cycle_type_texts",
+                    TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
+            text = bundle.getString(name);
+        } else {
+            text = (description != null) ? description : name;
+            text = diagram.getLocalization().translate(text, locale);
         }
-        return _cachedDescription;
+        return text;
     }
 
     public void addListener(TrainsCycleTypeListener listener) {
