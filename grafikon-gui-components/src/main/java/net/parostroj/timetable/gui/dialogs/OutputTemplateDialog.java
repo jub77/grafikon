@@ -142,7 +142,12 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         attachmentPanel.add(writeTemplateOutputButton);
         writeTemplateOutputButton.setEnabled(this.templateWriter != null);
         writeTemplateOutputButton.addActionListener(
-                evt -> templateWriter.accept(Collections.singletonList(this.template)));
+            evt -> {
+                OutputTemplate tempTemplate = this.createTempOutputTemplate();
+                if (tempTemplate != null) {
+                    templateWriter.accept(Collections.singletonList(tempTemplate));
+                }
+            });
 
         tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -280,6 +285,29 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
+        }
+    }
+
+    private OutputTemplate createTempOutputTemplate() {
+        try {
+            TextTemplate textTemplate = this.convertToTemplate();
+            OutputTemplate outputTemplate = new OutputTemplate("temp_id", this.template.getDiagram());
+            outputTemplate.setName(this.template.getName());
+            outputTemplate.setTemplate(textTemplate);
+            outputTemplate.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
+            outputTemplate.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
+            outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
+                    ObjectsUtil.checkAndTrim(extensionTextField.getText()));
+            outputTemplate.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE,
+                    defaultTemplateCheckbox.isSelected());
+            outputTemplate.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
+            outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
+                    ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
+            return outputTemplate;
+        } catch (GrafikonException e) {
+            LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
+            GuiComponentUtils.showError(e.getMessage(), this);
+            return null;
         }
     }
 
