@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
+import java.util.Collection;
 
 import javax.swing.JFileChooser;
 
@@ -175,7 +176,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         controlPanel.add(editButton);
 
         outputButton.setText(ResourceLoader.getString("ot.button.output")); // NOI18N
-        outputButton.addActionListener(evt -> outputButtonActionPerformed(evt));
+        outputButton.addActionListener(
+                evt -> outputButtonAction(
+                        templateList.isSelectionEmpty() ? null :
+                            Collections2.transform(templatesModel.getIndices(templateList.getSelectedIndices()),
+                        item -> item.getElement())));
         controlPanel.add(outputButton);
 
         outputAllButton.setText(ResourceLoader.getString("ot.button.outputall")); // NOI18N
@@ -299,7 +304,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        OutputTemplateDialog dialog = new OutputTemplateDialog(this, true, attachmentsChooser);
+        OutputTemplateDialog dialog = new OutputTemplateDialog(this, true, attachmentsChooser, this::outputButtonAction);
         dialog.setLocationRelativeTo(this);
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
@@ -323,13 +328,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         }
     }
 
-    private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void outputButtonAction(Collection<OutputTemplate> outputTemplates) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
-                templateList.isSelectionEmpty() ? null
-                        : Collections2.transform(templatesModel.getIndices(templateList.getSelectedIndices()),
-                                item -> item.getElement()));
+                outputTemplates);
         ActionHandler.getInstance().execute(action);
     }
 

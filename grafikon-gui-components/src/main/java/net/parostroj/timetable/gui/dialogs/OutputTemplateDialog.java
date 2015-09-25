@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
@@ -47,10 +48,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private OutputTemplate template;
 
     private final JFileChooser attachmentChooser;
+    private final Consumer<Collection<OutputTemplate>> templateWriter;
 
-    public OutputTemplateDialog(Window parent, boolean modal, JFileChooser attachmentChooser) {
+    public OutputTemplateDialog(Window parent, boolean modal, JFileChooser attachmentChooser,
+            Consumer<Collection<OutputTemplate>> templateWriter) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         this.attachmentChooser = attachmentChooser;
+        this.templateWriter = templateWriter;
         initComponents();
         init();
     }
@@ -133,6 +137,12 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             dialog.setLocationRelativeTo(this);
             dialog.showDialog(template);
         });;
+
+        writeTemplateOutputButton = new JButton(ResourceLoader.getString("ot.button.output")); // NOI18N
+        attachmentPanel.add(writeTemplateOutputButton);
+        writeTemplateOutputButton.setEnabled(this.templateWriter != null);
+        writeTemplateOutputButton.addActionListener(
+                evt -> templateWriter.accept(Collections.singletonList(this.template)));
 
         tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -305,4 +315,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private ScriptEditBox scriptEditBox;
     private JTextArea descriptionTextArea;
     private JButton attachmentsButton;
+    private JButton writeTemplateOutputButton;
 }
