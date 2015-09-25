@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
-import java.util.Collections;
 
 import javax.swing.JFileChooser;
 
@@ -23,6 +22,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Collections2;
 
 import java.awt.BorderLayout;
 
@@ -92,18 +93,18 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
 
     private void updateButtons() {
         String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
-        boolean selected = templateList.getSelectedValue() != null;
-        downButton.setEnabled(selected);
-        upButton.setEnabled(selected);
-        deleteButton.setEnabled(selected);
-        editButton.setEnabled(selected);
-        outputButton.setEnabled(selected);
-        copyButton.setEnabled(newName != null && selected);
+        int selectedCount = templateList.getSelectedIndices().length;
+        downButton.setEnabled(selectedCount == 1);
+        upButton.setEnabled(selectedCount == 1);
+        deleteButton.setEnabled(selectedCount > 0);
+        editButton.setEnabled(selectedCount == 1);
+        outputButton.setEnabled(selectedCount > 1);
+        copyButton.setEnabled(newName != null && selectedCount == 1);
         // create button
         newButton.setEnabled(newName != null);
 
         // description
-        if (selected) {
+        if (selectedCount == 1) {
             String description = templatesModel.getIndex(templateList.getSelectedIndex()).getElement()
                     .getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
             updateDescription(description);
@@ -189,8 +190,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         listPanel.setLayout(new java.awt.BorderLayout());
 
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        templateList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         templateList.addListSelectionListener(evt -> updateButtons());
         scrollPane.setViewportView(templateList);
 
@@ -257,9 +256,13 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        int index = templateList.getSelectedIndex();
-        if (index != -1) {
-            templatesModel.removeIndex(index);
+        int[] indices = templateList.getSelectedIndices();
+        if (indices.length > 0) {
+            int cnt = 0;
+            for (int index : indices) {
+                templatesModel.removeIndex(index - (cnt++));
+            }
+            int index = indices[0];
             if (index > templatesModel.getSize() - 1) {
                 templateList.setSelectedIndex(templatesModel.getSize() - 1);
             } else {
@@ -324,7 +327,9 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
-                templateList.isSelectionEmpty() ? null : Collections.singletonList(templatesModel.getIndex(templateList.getSelectedIndex()).getElement()));
+                templateList.isSelectionEmpty() ? null
+                        : Collections2.transform(templatesModel.getIndices(templateList.getSelectedIndices()),
+                                item -> item.getElement()));
         ActionHandler.getInstance().execute(action);
     }
 

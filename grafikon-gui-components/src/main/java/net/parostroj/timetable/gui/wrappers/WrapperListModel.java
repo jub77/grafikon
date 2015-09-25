@@ -107,6 +107,14 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
         return list.get(index);
     }
 
+    public List<Wrapper<T>> getIndices(int[] indices) {
+        List<Wrapper<T>> elementList = new ArrayList<>(indices.length);
+        for (int index : indices) {
+            elementList.add(list.get(index));
+        }
+        return elementList;
+    }
+
     public void refreshIndex(int index) {
         this.fireContentsChanged(this, index, index);
     }
