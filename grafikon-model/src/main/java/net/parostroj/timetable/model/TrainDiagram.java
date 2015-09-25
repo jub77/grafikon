@@ -737,6 +737,16 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     /**
+     * Creates new cycle type.
+     *
+     * @param id id
+     * @return new cycle type
+     */
+    public TrainsCycleType createCycleType(String id) {
+        return new TrainsCycleType(id, this);
+    }
+
+    /**
      * accepts visitor.
      *
      * @param visitor visitor

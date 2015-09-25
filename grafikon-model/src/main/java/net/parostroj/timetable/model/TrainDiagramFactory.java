@@ -56,14 +56,20 @@ public class TrainDiagramFactory {
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.AXLE);
             diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, 10);
 
-            diagram.addCyclesType(new TrainsCycleType(IdGenerator.getInstance().getId(), TrainsCycleType.DRIVER_CYCLE));
-            diagram.addCyclesType(new TrainsCycleType(IdGenerator.getInstance().getId(), TrainsCycleType.ENGINE_CYCLE));
-            diagram.addCyclesType(new TrainsCycleType(IdGenerator.getInstance().getId(), TrainsCycleType.TRAIN_UNIT_CYCLE));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE, diagram));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE, diagram));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE, diagram));
 
             return diagram;
         } catch (GrafikonException e) {
             log.error("Error creating diagram.");
             return null;
         }
+    }
+
+    private TrainsCycleType createTrainsCycleType(String name, TrainDiagram diagram) {
+        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
+        cycleType.setName(name);
+        return cycleType;
     }
 }

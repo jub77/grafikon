@@ -38,14 +38,20 @@ public class LSVisitorBuilder implements LSVisitor {
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.DRIVER_CYCLE));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.ENGINE_CYCLE));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.addCyclesType(new TrainsCycleType(UUID.randomUUID().toString(), TrainsCycleType.TRAIN_UNIT_CYCLE));
+            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE));
         }
+    }
+
+    private TrainsCycleType createTrainsCycleType(String name) {
+        TrainsCycleType cycleType = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
+        cycleType.setName(name);
+        return cycleType;
     }
 
     @Override

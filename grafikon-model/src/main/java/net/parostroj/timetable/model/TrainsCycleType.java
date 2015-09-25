@@ -36,6 +36,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     private final String id;
+    private final TrainDiagram diagram;
     private String name;
     private String description;
     private final AttributesWrapper attributesWrapper;
@@ -45,8 +46,9 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     private String _cachedDescription;
 
-    public TrainsCycleType(String id) {
+    public TrainsCycleType(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
         this.cycles = new LinkedList<TrainsCycle>();
         listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(
                 (listener, event) -> listener.trainsCycleTypeChanged(event));
@@ -54,19 +56,13 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
                 (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleTypeEvent(TrainsCycleType.this, change)));
     }
 
-    public TrainsCycleType(String id, String name) {
-        this(id);
-        this.name = name;
-    }
-
-    public TrainsCycleType(String id, String name, String description) {
-        this(id, name);
-        this.description = description;
-    }
-
     @Override
     public String getId() {
         return id;
+    }
+
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     public String getName() {

@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for type of trains cycles.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"id", "name", "description", "attributes"})
@@ -20,7 +20,7 @@ public class LSTrainsCycleType {
     private LSAttributes attributes;
 
     public LSTrainsCycleType() {}
-    
+
     public LSTrainsCycleType(TrainsCycleType type) {
         this.id = type.getId();
         this.name = type.getName();
@@ -61,7 +61,9 @@ public class LSTrainsCycleType {
     }
 
     public TrainsCycleType createTrainsCycleType(TrainDiagram diagram) throws LSException {
-        TrainsCycleType type = new TrainsCycleType(id, name, description);
+        TrainsCycleType type = new TrainsCycleType(id, diagram);
+        type.setName(name);
+        type.setDescription(description);
         type.setAttributes(attributes.createAttributes(diagram));
         return type;
     }

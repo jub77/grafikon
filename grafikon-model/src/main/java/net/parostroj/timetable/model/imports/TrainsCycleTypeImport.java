@@ -36,7 +36,9 @@ public class TrainsCycleTypeImport extends Import {
             return null;
         }
 
-        TrainsCycleType type = new TrainsCycleType(this.getId(importedCycleType), importedCycleType.getName(), importedCycleType.getDescription());
+        TrainsCycleType type = new TrainsCycleType(this.getId(importedCycleType), this.getDiagram());
+        type.setName(importedCycleType.getName());
+        type.setDescription(importedCycleType.getDescription());
         type.setAttributes(this.importAttributes(importedCycleType.getAttributes()));
 
         this.getDiagram().addCyclesType(type);
