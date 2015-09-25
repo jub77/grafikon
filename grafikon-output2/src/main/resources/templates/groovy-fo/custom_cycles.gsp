@@ -131,7 +131,6 @@ def printWrappers(wrappers) {
           c = null;
         }
         if (c != null) {
-            // TODO cycle${c?.cycle?.next -> check for background image for sequence
           %>
     <table-cell ${borderCirc()}>
       <% print_cycle(c) %>
