@@ -293,6 +293,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     @Override
     public String toString() {
-        return "FreightNet";
+        return String.format("FreightNet[connections=%d]", connections.size());
     }
 }
