@@ -161,9 +161,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        }
     }
 
     public String getAbbr() {
@@ -171,9 +173,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setAbbr(String abbr) {
-        String oldAbbr = this.abbr;
-        this.abbr = abbr;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
+        if (!ObjectsUtil.compareWithNull(abbr, this.abbr)) {
+            String oldAbbr = this.abbr;
+            this.abbr = abbr;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
+        }
     }
 
     public NodeType getType() {
@@ -181,9 +185,11 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     public void setType(NodeType type) {
-        NodeType oldType = this.type;
-        this.type = type;
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        if (type != this.type) {
+            NodeType oldType = this.type;
+            this.type = type;
+            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+        }
     }
 
     public Location getLocation() {
