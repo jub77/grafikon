@@ -160,7 +160,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // add current regions
         this.regions = new WrapperListModel<>(false);
         this.regions.addWrapper(NONE_REGION);
-        for (Region region : node.getDiagram().getNet().getRegions().get()) {
+        for (Region region : node.getDiagram().getNet().getRegions().toList()) {
             this.regions.addWrapper(Wrapper.getWrapper(region));
         }
         this.regionComboBox.setModel(regions);

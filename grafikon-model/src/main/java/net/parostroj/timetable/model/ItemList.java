@@ -85,7 +85,7 @@ public class ItemList<T> implements Iterable<T> {
         this.fireEvent(Type.MOVE, item, newIndex, oldIndex);
     }
 
-    public List<T> get() {
+    public List<T> toList() {
         return Collections.unmodifiableList(items);
     }
 

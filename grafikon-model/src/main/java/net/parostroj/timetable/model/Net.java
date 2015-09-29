@@ -212,7 +212,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
     }
 
     public Region getRegionById(String id) {
-        for (Region region : regions.get()) {
+        for (Region region : regions.toList()) {
             if (region.getId().equals(id)) {
                 return region;
             }
@@ -280,7 +280,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
         for (LineClass lineClass : lineClasses) {
             lineClass.accept(visitor);
         }
-        for (Region region : regions.get()) {
+        for (Region region : regions.toList()) {
             region.accept(visitor);
         }
         visitor.visitAfter(this);

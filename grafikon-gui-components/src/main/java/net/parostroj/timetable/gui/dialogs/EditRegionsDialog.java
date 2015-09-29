@@ -19,7 +19,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     @Override
     protected Collection<Region> getList() {
-        return element.getNet().getRegions().get();
+        return element.getNet().getRegions().toList();
     }
 
     @Override

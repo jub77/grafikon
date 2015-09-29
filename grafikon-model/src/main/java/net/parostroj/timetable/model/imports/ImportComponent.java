@@ -46,10 +46,10 @@ public enum ImportComponent {
         Set<ObjectWithId> map = new LinkedHashSet<ObjectWithId>();
         switch (this) {
             case COMPANIES:
-                map.addAll(diagram.getCompanies().get());
+                map.addAll(diagram.getCompanies().toList());
                 break;
             case REGIONS:
-                map.addAll(diagram.getNet().getRegions().get());
+                map.addAll(diagram.getNet().getRegions().toList());
                 break;
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
