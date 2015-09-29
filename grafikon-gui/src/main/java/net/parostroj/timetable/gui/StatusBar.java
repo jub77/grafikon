@@ -19,6 +19,7 @@ import net.parostroj.timetable.model.changes.DiagramChange.Action;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.GTEventType;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -60,8 +61,8 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                     return;
                 event.accept(tv);
                 DiagramChange change = tv.getChange();
-                String text = this.transformChange(change);
-                if (!"".equals(text)) {
+                String text = ObjectsUtil.checkAndTrim(this.transformChange(change));
+                if (text != null) {
                     updateCenter(text);
                 }
             }
@@ -170,8 +171,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     private void updateCenter(String text) {
+        text = ObjectsUtil.checkAndTrim(text);
         center.setText(text);
-        if (!"".equals(text)) {
+        if (text != null) {
             // start timer
             if (timer != null) {
                 timer.stop();

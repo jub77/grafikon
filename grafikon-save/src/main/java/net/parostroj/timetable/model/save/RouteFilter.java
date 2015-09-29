@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Route filter.
@@ -19,10 +20,8 @@ public class RouteFilter implements TrainDiagramFilter {
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
         for (Train train : diagram.getTrains()) {
-            String routeInfo = train.getAttribute("route.info", String.class);
-            if (routeInfo != null)
-                routeInfo = routeInfo.trim();
-            if (routeInfo != null && !"".equals(routeInfo)) {
+            String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
+            if (routeInfo != null) {
                 try {
                     train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                 } catch (GrafikonException e) {

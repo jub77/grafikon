@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -645,8 +646,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         BigDecimal wpae = emptyWeightEditBox.getValueInUnit(WeightUnit.KG);
         BigDecimal lpa = lengthPerAxleEditBox.getValueInUnit(LengthUnit.MM);
         LengthUnit lu = (LengthUnit) lengthUnitComboBox.getSelectedItem();
-        if (lu != diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class))
+        if (lu != diagram.getAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.class)) {
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, lu);
+        }
         this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE, wpa);
         this.setAttributeBDtoInt(TrainDiagram.ATTR_WEIGHT_PER_AXLE_EMPTY, wpae);
         this.setAttributeBDtoInt(TrainDiagram.ATTR_LENGTH_PER_AXLE, lpa);
@@ -654,14 +656,14 @@ public class SettingsDialog extends javax.swing.JDialog {
         // route length
         try {
             Double rlRatio = null;
-            if (rlRatioTextField.getText() != null && !"".equals(rlRatioTextField.getText())) {
+            if (!ObjectsUtil.isEmpty(rlRatioTextField.getText())) {
                 rlRatio = Double.valueOf(rlRatioTextField.getText());
             }
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
         } catch (NumberFormatException e) {
             log.warn("Cannot convert route length ratio to double.", e);
         }
-        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, !"".equals(rlUnitTextField.getText().trim()) ? rlUnitTextField.getText().trim() : null);
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, ObjectsUtil.checkAndTrim(rlUnitTextField.getText()));
 
         // time range
         Tuple<Integer> timeRange = this.getTimeRange();

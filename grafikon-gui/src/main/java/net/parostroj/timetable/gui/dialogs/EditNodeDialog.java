@@ -29,6 +29,7 @@ import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -224,20 +225,18 @@ public class EditNodeDialog extends javax.swing.JDialog {
     }
 
     private void writeValuesBack() {
-        String newName = nameTextField.getText();
-        if (!"".equals(newName) && !newName.equals(node.getName())) {
-            node.setName(nameTextField.getText());
+        String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
+        if (newName != null) {
+            node.setName(newName);
         }
-        String newAbbr = abbrTextField.getText();
-        if (!"".equals(newAbbr) && !newAbbr.equals(node.getAbbr())) {
-            node.setAbbr(abbrTextField.getText());
+        String newAbbr = ObjectsUtil.checkAndTrim(abbrTextField.getText());
+        if (newAbbr != null) {
+            node.setAbbr(newAbbr);
         }
 
         node.getAttributes().setRemove(Node.ATTR_INTERLOCKING_PLANT, signalsCheckBox.isSelected() ? Node.IP_NEW_SIGNALS : null);
 
-        NodeType newType = types.getSelectedObject();
-        if (node.getType() != newType)
-            node.setType(newType);
+        node.setType(types.getSelectedObject());
 
         node.getAttributes().setBool(Node.ATTR_CONTROL_STATION, controlCheckBox.isSelected());
         node.getAttributes().setBool(Node.ATTR_TRAPEZOID_SIGN, trapezoidCheckBox.isSelected());

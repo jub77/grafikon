@@ -22,10 +22,8 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
-import net.parostroj.timetable.utils.Conversions;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.*;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
@@ -457,10 +455,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         // update values of a type
         TrainType type = typesModel.getIndex(trainTypesList.getSelectedIndex()).getElement();
         if (type != null) {
-            String abbr = abbrTextField.getText().trim();
-            String desc = descTextField.getText().trim();
+            String abbr = ObjectsUtil.checkAndTrim(abbrTextField.getText());
+            String desc = ObjectsUtil.checkAndTrim(descTextField.getText());
             // check values ....
-            if ("".equals(abbr) || "".equals(desc)) {
+            if (abbr == null || desc == null) {
                 this.showErrorDialog("dialog.error.missingvalues");
                 return;
             }
@@ -519,10 +517,10 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test values
-        String abbr = abbrTextField.getText().trim();
-        String desc = descTextField.getText().trim();
+        String abbr = ObjectsUtil.checkAndTrim(abbrTextField.getText());
+        String desc = ObjectsUtil.checkAndTrim(descTextField.getText());
         // check values ....
-        if ("".equals(abbr) || "".equals(desc)) {
+        if (abbr == null || desc == null) {
             this.showErrorDialog("dialog.error.missingvalues");
             return;
         }

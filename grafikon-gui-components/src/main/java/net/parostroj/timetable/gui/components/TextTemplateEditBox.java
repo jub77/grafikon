@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.TextTemplate.Language;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.model.TextTemplate;
 
 /**
@@ -63,14 +64,15 @@ public class TextTemplateEditBox extends javax.swing.JPanel {
     }
 
     public TextTemplate getTemplateEmpty() throws GrafikonException {
-        String str = templateTextField.getText().trim();
+        String str = ObjectsUtil.checkAndTrim(templateTextField.getText());
         Language lang = (Language) languageComboBox.getSelectedItem();
         if (lang == null)
             throw new GrafikonException("No language selected.");
-        if ("".equals(str))
+        if (str == null) {
             return null;
-        else
+        } else {
             return TextTemplate.createTextTemplate(str, lang);
+        }
     }
 
     public void setTemplate(TextTemplate template) {

@@ -30,9 +30,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
-import net.parostroj.timetable.utils.CheckingUtils;
-import net.parostroj.timetable.utils.IdGenerator;
-import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.*;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
@@ -628,7 +626,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             protected Object createCell(mxCellState startState, String style) {
                 mxCell cell = (mxCell) super.createCell(startState, style);
                 if (graph.getModel().isEdge(cell)) {
-                    cell.setStyle((style == null || "".equals(style) ? "" : style + ";")
+                    String checkedStyle = ObjectsUtil.checkAndTrim(style);
+                    cell.setStyle((checkedStyle == null ? "" : checkedStyle + ";")
                             + "endArrow=none;startArrow=none");
                 }
                 return cell;

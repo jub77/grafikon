@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import net.parostroj.timetable.model.SortPattern;
 import net.parostroj.timetable.model.SortPatternGroup;
 import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.utils.ObjectsUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +53,8 @@ public class TrainComparator implements Comparator<Train> {
                         return res;
                     break;
                 case NUMBER:
-                    Integer tn1 = ("".equals(s1))? Integer.MAX_VALUE : Integer.valueOf(s1);
-                    Integer tn2 = ("".equals(s2))? Integer.MAX_VALUE : Integer.valueOf(s2);
+                    Integer tn1 = ObjectsUtil.isEmpty(s1) ? Integer.MAX_VALUE : Integer.valueOf(s1);
+                    Integer tn2 = ObjectsUtil.isEmpty(s2) ? Integer.MAX_VALUE : Integer.valueOf(s2);
                     res = tn1.compareTo(tn2);
                     if (res != 0)
                         return res;

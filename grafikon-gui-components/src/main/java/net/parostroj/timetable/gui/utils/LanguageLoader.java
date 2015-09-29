@@ -6,6 +6,7 @@ import java.util.*;
 
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class LanguageLoader {
     private List<Locale> initAvailableLocales() {
         List<Locale> available = new ArrayList<>();
         for (Locale locale : Locale.getAvailableLocales()) {
-            if (!"".equals(locale.getLanguage()) && "".equals(locale.getCountry())) {
+            if (!ObjectsUtil.isEmpty(locale.getLanguage()) && ObjectsUtil.isEmpty(locale.getCountry())) {
                 // only language (and no country)
                 available.add(locale);
             }

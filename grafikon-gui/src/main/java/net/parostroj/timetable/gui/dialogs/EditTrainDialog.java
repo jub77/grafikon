@@ -14,6 +14,7 @@ import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.views.CreateTrainView;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.WeightUnit;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -496,11 +497,13 @@ public class EditTrainDialog extends javax.swing.JDialog {
         train.getAttributes().setBool(Train.ATTR_SHOW_STATION_LENGTH, showLengthCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_EMPTY, emptyCheckBox.isSelected());
         train.getAttributes().setBool(Train.ATTR_OPTIONAL, optionalCheckBox.isSelected());
-        if (!numberTextField.getText().equals(train.getNumber())) {
-            train.setNumber(numberTextField.getText());
+        String newNumber = ObjectsUtil.checkAndTrim(numberTextField.getText());
+        if (newNumber != null) {
+            train.setNumber(newNumber);
         }
-        if (!descriptionTextField.getText().equals(train.getDescription())) {
-            train.setDescription(descriptionTextField.getText());
+        String newDescription = ObjectsUtil.checkAndTrim(descriptionTextField.getText());
+        if (newDescription != null) {
+            train.setDescription(newDescription);
         }
         Group sGroup = groupsComboBox.getGroupSelection().getGroup();
         train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
@@ -509,9 +512,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
         Integer oldWI = train.getAttribute(Train.ATTR_WEIGHT, Integer.class);
         Integer newWI = null;
         try {
-            String weightStr = weightTextField.getText().trim();
-            if (!"".equals(weightStr))
+            String weightStr = ObjectsUtil.checkAndTrim(weightTextField.getText());
+            if (weightStr != null) {
                 newWI = Integer.valueOf(weightStr);
+            }
         } catch (NumberFormatException e) {
             log.warn("Couldn't convert weight to int.");
             newWI = oldWI;
@@ -536,12 +540,12 @@ public class EditTrainDialog extends javax.swing.JDialog {
         // check max speed - modify if changed
         try {
             int maxSpeed = Integer.parseInt(speedTextField.getText());
-            if (maxSpeed != train.getTopSpeed() && maxSpeed > 0) {
+            if (maxSpeed > 0) {
                 // modify top speed
                 train.setTopSpeed(maxSpeed);
-            }
-            if (maxSpeed <= 0)
+            } else {
                 log.warn("Speed has to be positive number: {}", maxSpeed);
+            }
         } catch (NumberFormatException e) {
             log.warn("Cannot convert speed to number: {}", speedTextField.getText());
         }

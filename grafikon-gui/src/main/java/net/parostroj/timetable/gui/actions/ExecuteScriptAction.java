@@ -22,6 +22,7 @@ import net.parostroj.timetable.gui.utils.WindowLocationSize;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.ini4j.spi.EscapeTool;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class ExecuteScriptAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand() == null || "".equals(e.getActionCommand())) {
+        if (ObjectsUtil.isEmpty(e.getActionCommand())) {
             editScriptExecution(e);
         } else {
             String id = null;

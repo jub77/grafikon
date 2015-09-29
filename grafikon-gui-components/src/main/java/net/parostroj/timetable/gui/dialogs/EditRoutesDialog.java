@@ -257,8 +257,9 @@ public class EditRoutesDialog extends javax.swing.JDialog {
             return;
         }
         // set name
-        if (routeNameTextField.getText() != null && !"".equals(routeNameTextField.getText())) {
-            newRoute.setName(routeNameTextField.getText());
+        String newRouteName = ObjectsUtil.checkAndTrim(routeNameTextField.getText());
+        if (newRouteName != null) {
+            newRoute.setName(newRouteName);
         }
         // net part
         newRoute.setNetPart(netPartCheckBox.isSelected());

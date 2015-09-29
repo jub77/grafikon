@@ -200,7 +200,7 @@ public class TransformUtil {
         if (cl != null) {
             String desc = result;
             result = cl.getName();
-            if (!"".equals(desc)) {
+            if (!ObjectsUtil.isEmpty(desc)) {
                 result = String.format("%s (%s)", result, desc);
             }
         }

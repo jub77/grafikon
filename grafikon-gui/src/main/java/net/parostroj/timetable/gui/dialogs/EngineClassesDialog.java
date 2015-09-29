@@ -286,8 +286,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         speedTextField.addCaretListener(new CaretListener() {
             @Override
             public void caretUpdate(CaretEvent e) {
-                String text = speedTextField.getText();
-                newRowButton.setEnabled(text != null && !"".equals(text.trim()));
+                newRowButton.setEnabled(ObjectsUtil.isEmpty(speedTextField.getText()));
             }
         });
 
@@ -354,9 +353,10 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (nameTextField != null && !"".equals(nameTextField.getText())) {
+        String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
+        if (newName != null) {
             // create new LineClass
-            EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), nameTextField.getText());
+            EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
             listModel.addWrapper(Wrapper.getWrapper(clazz));
             nameTextField.setText("");
         }

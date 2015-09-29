@@ -8,6 +8,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Adjust older versions.
@@ -31,11 +32,8 @@ public class LoadFilter {
             }
             // fix route info
             for (Train train : diagram.getTrains()) {
-                String routeInfo = train.getAttribute("route.info", String.class);
+                String routeInfo = ObjectsUtil.checkAndTrim(train.getAttribute("route.info", String.class));
                 if (routeInfo != null) {
-                    routeInfo = routeInfo.trim();
-                }
-                if (routeInfo != null && !"".equals(routeInfo)) {
                     try {
                         train.setAttribute(Train.ATTR_ROUTE, this.convert(routeInfo));
                     } catch (GrafikonException e) {

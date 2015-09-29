@@ -60,9 +60,10 @@ public class TrainTimetablesExtractor {
         timetables.setRoutes(RoutesExtractor.convert(routes, diagram));
 
         // route length unit
-        String unit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class);
-        if (unit != null && !"".equals(unit))
+        String unit = ObjectsUtil.checkAndTrim(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class));
+        if (unit != null) {
             timetables.setRouteLengthUnit(unit);
+        }
 
         // route info (lower priority)
         timetables.setRouteNumbers(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_NUMBERS, String.class));

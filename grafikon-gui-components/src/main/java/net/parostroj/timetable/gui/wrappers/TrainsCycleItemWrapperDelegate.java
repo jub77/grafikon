@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.wrappers;
 
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Delegate for trains cycle items.
@@ -32,8 +33,9 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsC
                         c.convertIntToText(item.getStartTime()),
                         item.getToInterval().getOwnerAsNode().getName(),
                         c.convertIntToText(item.getEndTime()));
-        if (showComment && item.getComment() != null && !"".equals(item.getComment().trim())) {
-            str = String.format("%s - %s", str, item.getComment());
+        String comment = ObjectsUtil.checkAndTrim(item.getComment());
+        if (showComment && comment != null) {
+            str = String.format("%s - %s", str, comment);
         }
         return str;
     }
