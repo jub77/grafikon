@@ -147,7 +147,7 @@ public class TrainDiagramBuilder {
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
         OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram, flsAttachments);
-        diagram.addOutputTemplate(template);
+        diagram.getOutputTemplates().add(template);
     }
 
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {

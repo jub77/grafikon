@@ -63,21 +63,22 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         this.settings = settings;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
         this.locationTextField.setText(this.outputDirectory.getPath());
-        templatesModel = new WrapperListModel<OutputTemplate>(Wrapper.getWrapperList(diagram.getOutputTemplates()), null, false);
+        templatesModel = new WrapperListModel<OutputTemplate>(Wrapper.getWrapperList(diagram.getOutputTemplates().toList()), null, false);
+        ItemList<OutputTemplate> outputTemplates = diagram.getOutputTemplates();
         templatesModel.setObjectListener(new WrapperListModel.ObjectListener<OutputTemplate>() {
             @Override
             public void added(OutputTemplate object, int index) {
-                diagram.addOutputTemplate(object, index);
+                outputTemplates.add(object, index);
             }
 
             @Override
             public void removed(OutputTemplate object) {
-                diagram.removeOutputTemplate(object);
+                outputTemplates.remove(object);
             }
 
             @Override
             public void moved(OutputTemplate object, int fromIndex, int toIndex) {
-                diagram.moveOutputTemplate(fromIndex, toIndex);
+                outputTemplates.move(fromIndex, toIndex);
             }
         });
         templateList.setModel(templatesModel);
@@ -339,7 +340,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
-        OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory, diagram.getOutputTemplates());
+        OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory, diagram.getOutputTemplates().toList());
         ActionHandler.getInstance().execute(action);
     }
 

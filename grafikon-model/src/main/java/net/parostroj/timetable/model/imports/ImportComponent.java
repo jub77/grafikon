@@ -70,7 +70,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getEngineClasses());
                 break;
             case OUTPUT_TEMPLATES:
-                map.addAll(diagram.getOutputTemplates());
+                map.addAll(diagram.getOutputTemplates().toList());
                 break;
             case TRAINS_CYCLES:
                 map.addAll(diagram.getCycles());

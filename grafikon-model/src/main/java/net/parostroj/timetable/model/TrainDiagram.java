@@ -42,7 +42,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of text items. */
     private final List<TextItem> textItems;
     /** List of output templates. */
-    private final List<OutputTemplate> outputTemplates;
+    private final ItemList<OutputTemplate> outputTemplates;
     /** Groups. */
     private final ItemList<Group> groups;
     /** Companies */
@@ -70,7 +70,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
-        this.outputTemplates = new LinkedList<OutputTemplate>();
+        this.outputTemplates = new ItemListTrainDiagramEvent<OutputTemplate>(GTEventType.OUTPUT_TEMPLATE_ADDED, GTEventType.OUTPUT_TEMPLATE_REMOVED, GTEventType.OUTPUT_TEMPLATE_MOVED);
         this.groups = new ItemListTrainDiagramEvent<Group>(GTEventType.GROUP_ADDED, GTEventType.GROUP_REMOVED);
         this.companies = new ItemListTrainDiagramEvent<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED);
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
@@ -454,16 +454,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return Collections.unmodifiableList(textItems);
     }
 
-    public List<OutputTemplate> getOutputTemplates() {
-        return Collections.unmodifiableList(outputTemplates);
+    public ItemList<OutputTemplate> getOutputTemplates() {
+        return outputTemplates;
     }
 
     public void addTextItem(TextItem item) {
         this.addTextItem(item, textItems.size());
-    }
-
-    public void addOutputTemplate(OutputTemplate template) {
-        this.addOutputTemplate(template, outputTemplates.size());
     }
 
     public ItemList<Group> getGroups() {
@@ -480,22 +476,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_ADDED, item));
     }
 
-    public void addOutputTemplate(OutputTemplate template, int position) {
-        template.addListener(listener);
-        outputTemplates.add(position, template);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_ADDED, template));
-    }
-
     public void removeTextItem(TextItem item) {
         textItems.remove(item);
         item.removeListener(listener);
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_REMOVED, item));
-    }
-
-    public void removeOutputTemplate(OutputTemplate template) {
-        outputTemplates.remove(template);
-        template.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_REMOVED, template));
     }
 
     public void moveTextItem(int from, int to) {
@@ -503,14 +487,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (moved != null) {
             textItems.add(to, moved);
             this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_MOVED, moved));
-        }
-    }
-
-    public void moveOutputTemplate(int from, int to) {
-        OutputTemplate moved = outputTemplates.remove(from);
-        if (moved != null) {
-            outputTemplates.add(to, moved);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.OUTPUT_TEMPLATE_MOVED, moved));
         }
     }
 
@@ -820,6 +796,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
         protected ItemListTrainDiagramEvent(GTEventType add, GTEventType remove) {
             super(add, remove);
+        }
+
+        public ItemListTrainDiagramEvent(GTEventType add, GTEventType remove, GTEventType move) {
+            super(add, remove, move);
         }
 
         @Override
