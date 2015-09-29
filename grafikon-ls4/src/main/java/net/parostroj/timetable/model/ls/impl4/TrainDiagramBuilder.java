@@ -190,7 +190,7 @@ public class TrainDiagramBuilder {
 
     public void addImage(LSImage lsImage) {
         TimetableImage image = lsImage.createTimetableImage(diagram);
-        diagram.addImage(image);
+        diagram.getImages().add(image);
     }
 
     public void addImageFile(String filename, File file) {

@@ -193,7 +193,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
                 Files.asByteSource(chooser.getSelectedFile()).copyTo(Files.asByteSink(tempFile));
                 image.setImageFile(tempFile);
                 tempFile.deleteOnExit();
-                diagram.addImage(image);
+                diagram.getImages().add(image);
                 listModel.addWrapper(new Wrapper<TimetableImage>(image));
             } catch (IOException e) {
                 log.warn("Cannot save temporary image file.", e);
@@ -222,8 +222,8 @@ public class EditImagesDialog extends javax.swing.JDialog {
             }
             newImage.setImageFile(selected.getImageFile());
             // train diagram
-            diagram.removeImage(selected);
-            diagram.addImage(newImage);
+            diagram.getImages().remove(selected);
+            diagram.getImages().add(newImage);
             // list model
             listModel.removeObject(selected);
             Wrapper<TimetableImage> newWrapper = new Wrapper<TimetableImage>(newImage);
@@ -244,7 +244,7 @@ public class EditImagesDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         TimetableImage selected = (TimetableImage) ((Wrapper<?>)imagesList.getSelectedValue()).getElement();
-        diagram.removeImage(selected);
+        diagram.getImages().remove(selected);
         listModel.removeIndex(imagesList.getSelectedIndex());
         // remove temp file
         if (!selected.getImageFile().delete()) {

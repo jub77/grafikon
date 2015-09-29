@@ -212,6 +212,6 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSImage lsImage) {
         TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), lsImage.getFilename(), lsImage.getImageWidth(), lsImage.getImageHeight());
-        diagram.addImage(image);
+        diagram.getImages().add(image);
     }
 }

@@ -30,7 +30,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Cycles. */
     private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
-    private final List<TimetableImage> images;
+    private final ItemList<TimetableImage> images;
     /** Train types available. */
     private final ItemList<TrainType> trainTypes;
     /** Attributes. */
@@ -67,7 +67,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.routes = new ArrayList<Route>();
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
-        this.images = new LinkedList<TimetableImage>();
+        this.images = new ItemListTrainDiagramEvent<TimetableImage>(GTEventType.IMAGE_ADDED, GTEventType.IMAGE_REMOVED);
         this.engineClasses = new ItemListTrainDiagramEvent<EngineClass>(GTEventType.ENGINE_CLASS_ADDED, GTEventType.ENGINE_CLASS_REMOVED, GTEventType.ENGINE_CLASS_MOVED);
         this.textItems = new ItemListTrainDiagramEvent<TextItem>(GTEventType.TEXT_ITEM_ADDED, GTEventType.TEXT_ITEM_REMOVED, GTEventType.TEXT_ITEM_MOVED);
         this.outputTemplates = new ItemListTrainDiagramEvent<OutputTemplate>(GTEventType.OUTPUT_TEMPLATE_ADDED, GTEventType.OUTPUT_TEMPLATE_REMOVED, GTEventType.OUTPUT_TEMPLATE_MOVED);
@@ -332,23 +332,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return type.getCycles();
     }
 
-    public List<TimetableImage> getImages() {
-        return Collections.unmodifiableList(images);
-    }
-
-    public void addImage(TimetableImage image) {
-        this.images.add(image);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_ADDED, image));
-    }
-
-    public void addImage(TimetableImage image, int position) {
-        this.images.add(position, image);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_ADDED, image));
-    }
-
-    public void removeImage(TimetableImage image) {
-        this.images.remove(image);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_REMOVED, image));
+    public ItemList<TimetableImage> getImages() {
+        return images;
     }
 
     public ItemList<TrainType> getTrainTypes() {

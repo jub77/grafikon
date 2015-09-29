@@ -45,8 +45,7 @@ public class ImageSaver {
         if (PREDEFINED_IMAGES.contains(image)) {
             resLocation = ImageSaver.class.getResource("/images/" + image);
         } else {
-            List<TimetableImage> images = diagram.getImages();
-            for (TimetableImage i : images) {
+            for (TimetableImage i : diagram.getImages()) {
                 if (i.getFilename().equals(image)) {
                     resLocation = i.getImageFile().toURI().toURL();
                 }
