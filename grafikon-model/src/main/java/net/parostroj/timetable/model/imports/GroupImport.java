@@ -42,7 +42,7 @@ public class GroupImport extends Import {
         group.setAttributes(this.importAttributes(importedGroup.getAttributes()));
 
         // add to diagram
-        this.getDiagram().addGroup(group);
+        this.getDiagram().getGroups().add(group);
         this.addImportedObject(group);
         log.trace("Successfully imported group: " + group);
         return group;

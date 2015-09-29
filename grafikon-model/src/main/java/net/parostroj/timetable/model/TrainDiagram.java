@@ -44,7 +44,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of output templates. */
     private final List<OutputTemplate> outputTemplates;
     /** Groups. */
-    private final List<Group> groups;
+    private final ItemList<Group> groups;
     /** Companies */
     private final ItemList<Company> companies;
     /** Penalty table. */
@@ -71,15 +71,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.engineClasses = new LinkedList<EngineClass>();
         this.textItems = new LinkedList<TextItem>();
         this.outputTemplates = new LinkedList<OutputTemplate>();
-        this.groups = new LinkedList<Group>();
-        this.companies = new ItemList<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED) {
-            @Override
-            protected void fireEvent(ItemList.Type type, GTEventType eventType,
-                    Company item, int newIndex, int oldIndex) {
-                TrainDiagramEvent event = new TrainDiagramEvent(TrainDiagram.this, eventType, item);
-                TrainDiagram.this.fireEvent(event);
-            }
-        };
+        this.groups = new ItemListTrainDiagramEvent<Group>(GTEventType.GROUP_ADDED, GTEventType.GROUP_REMOVED);
+        this.companies = new ItemListTrainDiagramEvent<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED);
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
@@ -473,22 +466,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.addOutputTemplate(template, outputTemplates.size());
     }
 
-    public List<Group> getGroups() {
-        return Collections.unmodifiableList(groups);
-    }
-
-    public void addGroup(Group group) {
-        this.addGroup(group, groups.size());
-    }
-
-    public void addGroup(Group group, int position) {
-        groups.add(position, group);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.GROUP_ADDED, group));
-    }
-
-    public void removeGroup(Group group) {
-        groups.remove(group);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.GROUP_REMOVED, group));
+    public ItemList<Group> getGroups() {
+        return groups;
     }
 
     public ItemList<Company> getCompanies() {
@@ -835,5 +814,19 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             return object;
         object = getCompanyById(id);
         return object;
+    }
+
+    private class ItemListTrainDiagramEvent<T> extends ItemList<T> {
+
+        protected ItemListTrainDiagramEvent(GTEventType add, GTEventType remove) {
+            super(add, remove);
+        }
+
+        @Override
+        protected void fireEvent(net.parostroj.timetable.model.ItemList.Type type, GTEventType eventType, T item,
+                int newIndex, int oldIndex) {
+            TrainDiagramEvent event = new TrainDiagramEvent(TrainDiagram.this, eventType, item);
+            TrainDiagram.this.fireEvent(event);
+        }
     }
 }

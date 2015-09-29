@@ -55,7 +55,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getNet().getNodes());
                 break;
             case GROUPS:
-                map.addAll(diagram.getGroups());
+                map.addAll(diagram.getGroups().toList());
                 break;
             case TRAINS:
                 map.addAll(diagram.getTrains());

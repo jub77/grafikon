@@ -37,7 +37,7 @@ public class TrainDiagramBuilder {
         }
         // groups
         for (LSGroup lsGroup : lsDiagram.getGroups()) {
-            this.diagram.addGroup(lsGroup.createGroup(diagram));
+            this.diagram.getGroups().add(lsGroup.createGroup(diagram));
         }
         // companies
         for (LSCompany lsCompany : lsDiagram.getCompanies()) {
