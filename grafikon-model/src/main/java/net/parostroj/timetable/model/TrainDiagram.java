@@ -32,7 +32,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of images for trains timetable. */
     private final List<TimetableImage> images;
     /** Train types available. */
-    private final List<TrainType> trainTypes;
+    private final ItemList<TrainType> trainTypes;
     /** Attributes. */
     private final AttributesWrapper attributesWrapper;
     /** Trains data. */
@@ -76,7 +76,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
-        this.trainTypes = new LinkedList<TrainType>();
+        this.trainTypes = new ItemListTrainDiagramEvent<TrainType>(GTEventType.TRAIN_TYPE_ADDED, GTEventType.TRAIN_TYPE_REMOVED, GTEventType.TRAIN_TYPE_MOVED);
         this.attributesWrapper = new AttributesWrapper(
                 (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change)));
         this.setTrainsData(data);
@@ -351,33 +351,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.fireEvent(new TrainDiagramEvent(this, GTEventType.IMAGE_REMOVED, image));
     }
 
-    public List<TrainType> getTrainTypes() {
-        return Collections.unmodifiableList(trainTypes);
-    }
-
-    public void removeTrainType(TrainType type) {
-        trainTypes.remove(type);
-        type.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_REMOVED, type));
-    }
-
-    public void addTrainType(TrainType type) {
-        this.addTrainType(type, trainTypes.size());
-    }
-
-    public void addTrainType(TrainType type, int position) {
-        type.addListener(listener);
-        trainTypes.add(position, type);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_ADDED, type));
-    }
-
-    public void moveTrainType(int from, int to) {
-        TrainType moved = trainTypes.remove(from);
-        if (moved != null) {
-            trainTypes.add(to, moved);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_TYPE_MOVED, moved));
-        }
-
+    public ItemList<TrainType> getTrainTypes() {
+        return trainTypes;
     }
 
     public TrainType getTrainTypeById(String id) {

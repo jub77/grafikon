@@ -97,6 +97,10 @@ public class ItemList<T> implements Iterable<T> {
         return items.toArray(array);
     }
 
+    public int size() {
+        return items.size();
+    }
+
     private void fireEvent(Type type, T item, int newIndex, int oldIndex) {
         this.fireEvent(type, getType(type), item, newIndex, oldIndex);
     }

@@ -34,7 +34,7 @@ public class LSVisitorBuilder implements LSVisitor {
         LSPenaltyTableHelper.fillPenaltyTable(diagram.getPenaltyTable());
         trainTypeList.updateMapping(diagram);
         for (TrainType type : trainTypeList.getTrainTypeList()) {
-            diagram.addTrainType(type);
+            diagram.getTrainTypes().add(type);
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {

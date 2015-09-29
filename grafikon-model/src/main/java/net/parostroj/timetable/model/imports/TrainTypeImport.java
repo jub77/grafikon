@@ -57,7 +57,7 @@ public class TrainTypeImport extends Import {
         type.setTrainNameTemplate(importedType.getTrainNameTemplate());
 
         // add to diagram
-        this.getDiagram().addTrainType(type);
+        this.getDiagram().getTrainTypes().add(type);
         this.addImportedObject(type);
         log.trace("Successfully imported type: " + type);
         return type;

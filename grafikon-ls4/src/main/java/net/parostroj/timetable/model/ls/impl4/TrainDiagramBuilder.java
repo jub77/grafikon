@@ -135,9 +135,9 @@ public class TrainDiagramBuilder {
         TrainType type = lsType.createTrainType(diagram);
         TrainType foundTrainType = null;
         if ((foundTrainType = diagram.getTrainTypeById(type.getId())) != null) {
-            diagram.removeTrainType(foundTrainType);
+            diagram.getTrainTypes().remove(foundTrainType);
         }
-        diagram.addTrainType(type);
+        diagram.getTrainTypes().add(type);
     }
 
     public void setTextItem(LSTextItem lsTextItem) throws LSException {
