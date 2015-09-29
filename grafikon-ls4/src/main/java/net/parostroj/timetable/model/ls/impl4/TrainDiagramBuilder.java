@@ -142,7 +142,7 @@ public class TrainDiagramBuilder {
 
     public void setTextItem(LSTextItem lsTextItem) throws LSException {
         TextItem item = lsTextItem.createTextItem(diagram);
-        diagram.addTextItem(item);
+        diagram.getTextItems().add(item);
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {

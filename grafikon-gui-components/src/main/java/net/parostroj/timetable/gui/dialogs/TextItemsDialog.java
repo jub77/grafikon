@@ -14,6 +14,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Dialog for text items.
@@ -39,17 +40,17 @@ public class TextItemsDialog extends javax.swing.JDialog {
         itemsModel.setObjectListener(new WrapperListModel.ObjectListener<TextItem>() {
             @Override
             public void added(TextItem object, int index) {
-                diagram.addTextItem(object, index);
+                diagram.getTextItems().add(object, index);
             }
 
             @Override
             public void removed(TextItem object) {
-                diagram.removeTextItem(object);
+                diagram.getTextItems().remove(object);
             }
 
             @Override
             public void moved(TextItem object, int fromIndex, int toIndex) {
-                diagram.moveTextItem(fromIndex, toIndex);
+                diagram.getTextItems().move(fromIndex, toIndex);
             }
         });
         itemList.setModel(itemsModel);
@@ -68,7 +69,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
-        itemsModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getTextItems()));
+        itemsModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getTextItems().toList()));
         this.setVisible(true);
     }
 
@@ -79,7 +80,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         deleteButton.setEnabled(selected);
         editButton.setEnabled(selected);
         // create button
-        createButton.setEnabled(!"".equals(nameTextField.getText().trim()));
+        createButton.setEnabled(!ObjectsUtil.isEmpty(nameTextField.getText()));
     }
 
     private void initComponents() {

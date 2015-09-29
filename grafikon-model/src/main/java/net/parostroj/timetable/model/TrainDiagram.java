@@ -40,7 +40,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of engine classes. */
     private final List<EngineClass> engineClasses;
     /** List of text items. */
-    private final List<TextItem> textItems;
+    private final ItemList<TextItem> textItems;
     /** List of output templates. */
     private final ItemList<OutputTemplate> outputTemplates;
     /** Groups. */
@@ -69,7 +69,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.cycles = new HashSet<TrainsCycleType>();
         this.images = new LinkedList<TimetableImage>();
         this.engineClasses = new LinkedList<EngineClass>();
-        this.textItems = new LinkedList<TextItem>();
+        this.textItems = new ItemListTrainDiagramEvent<TextItem>(GTEventType.TEXT_ITEM_ADDED, GTEventType.TEXT_ITEM_REMOVED, GTEventType.TEXT_ITEM_MOVED);
         this.outputTemplates = new ItemListTrainDiagramEvent<OutputTemplate>(GTEventType.OUTPUT_TEMPLATE_ADDED, GTEventType.OUTPUT_TEMPLATE_REMOVED, GTEventType.OUTPUT_TEMPLATE_MOVED);
         this.groups = new ItemListTrainDiagramEvent<Group>(GTEventType.GROUP_ADDED, GTEventType.GROUP_REMOVED);
         this.companies = new ItemListTrainDiagramEvent<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED);
@@ -450,16 +450,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    public List<TextItem> getTextItems() {
-        return Collections.unmodifiableList(textItems);
+    public ItemList<TextItem> getTextItems() {
+        return textItems;
     }
 
     public ItemList<OutputTemplate> getOutputTemplates() {
         return outputTemplates;
-    }
-
-    public void addTextItem(TextItem item) {
-        this.addTextItem(item, textItems.size());
     }
 
     public ItemList<Group> getGroups() {
@@ -468,26 +464,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public ItemList<Company> getCompanies() {
         return companies;
-    }
-
-    public void addTextItem(TextItem item, int position) {
-        item.addListener(listener);
-        textItems.add(position, item);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_ADDED, item));
-    }
-
-    public void removeTextItem(TextItem item) {
-        textItems.remove(item);
-        item.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_REMOVED, item));
-    }
-
-    public void moveTextItem(int from, int to) {
-        TextItem moved = textItems.remove(from);
-        if (moved != null) {
-            textItems.add(to, moved);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.TEXT_ITEM_MOVED, moved));
-        }
     }
 
     public EngineClass getEngineClassById(String id) {
