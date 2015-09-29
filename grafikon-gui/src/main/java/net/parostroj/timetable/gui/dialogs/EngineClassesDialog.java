@@ -155,21 +155,21 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, false);
+        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses().toList()), null, false);
         listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
-                diagram.addEngineClass(object, index);
+                diagram.getEngineClasses().add(object, index);
             }
 
             @Override
             public void removed(EngineClass object) {
-                diagram.removeEngineClass(object);
+                diagram.getEngineClasses().remove(object);
             }
 
             @Override
             public void moved(EngineClass object, int fromIndex, int toIndex) {
-                diagram.moveEngineClass(fromIndex, toIndex);
+                diagram.getEngineClasses().move(fromIndex, toIndex);
             }
         });
         engineClassesList.setModel(listModel);

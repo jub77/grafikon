@@ -60,7 +60,7 @@ public class EngineClassImport extends Import {
         }
 
         // add to diagram
-        this.getDiagram().addEngineClass(engineClass);
+        this.getDiagram().getEngineClasses().add(engineClass);
         this.addImportedObject(engineClass);
         log.trace("Successfully imported engine class: " + engineClass);
         return engineClass;

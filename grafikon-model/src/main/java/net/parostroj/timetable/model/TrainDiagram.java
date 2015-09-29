@@ -38,7 +38,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
-    private final List<EngineClass> engineClasses;
+    private final ItemList<EngineClass> engineClasses;
     /** List of text items. */
     private final ItemList<TextItem> textItems;
     /** List of output templates. */
@@ -68,7 +68,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
         this.images = new LinkedList<TimetableImage>();
-        this.engineClasses = new LinkedList<EngineClass>();
+        this.engineClasses = new ItemListTrainDiagramEvent<EngineClass>(GTEventType.ENGINE_CLASS_ADDED, GTEventType.ENGINE_CLASS_REMOVED, GTEventType.ENGINE_CLASS_MOVED);
         this.textItems = new ItemListTrainDiagramEvent<TextItem>(GTEventType.TEXT_ITEM_ADDED, GTEventType.TEXT_ITEM_REMOVED, GTEventType.TEXT_ITEM_MOVED);
         this.outputTemplates = new ItemListTrainDiagramEvent<OutputTemplate>(GTEventType.OUTPUT_TEMPLATE_ADDED, GTEventType.OUTPUT_TEMPLATE_REMOVED, GTEventType.OUTPUT_TEMPLATE_MOVED);
         this.groups = new ItemListTrainDiagramEvent<Group>(GTEventType.GROUP_ADDED, GTEventType.GROUP_REMOVED);
@@ -422,32 +422,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return this.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
     }
 
-    public List<EngineClass> getEngineClasses() {
-        return Collections.unmodifiableList(engineClasses);
-    }
-
-    public void addEngineClass(EngineClass engineClass) {
-        this.addEngineClass(engineClass, engineClasses.size());
-    }
-
-    public void addEngineClass(EngineClass engineClass, int position) {
-        engineClasses.add(position, engineClass);
-        engineClass.addListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_ADDED, engineClass));
-    }
-
-    public void removeEngineClass(EngineClass engineClass) {
-        engineClasses.remove(engineClass);
-        engineClass.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_REMOVED, engineClass));
-    }
-
-    public void moveEngineClass(int from, int to) {
-        EngineClass eClass = engineClasses.remove(from);
-        if (eClass != null) {
-            engineClasses.add(to, eClass);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.ENGINE_CLASS_MOVED, eClass));
-        }
+    public ItemList<EngineClass> getEngineClasses() {
+        return engineClasses;
     }
 
     public ItemList<TextItem> getTextItems() {

@@ -170,9 +170,9 @@ public class TrainDiagramBuilder {
         EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet());
         EngineClass foundEc = null;
         if ((foundEc = diagram.getEngineClassById(ec.getId())) != null) {
-            diagram.removeEngineClass(foundEc);
+            diagram.getEngineClasses().remove(foundEc);
         }
-        diagram.addEngineClass(ec);
+        diagram.getEngineClasses().add(ec);
     }
 
     public void setTrainsCycle(LSTrainsCycle lsTrainsCycle) throws LSException {

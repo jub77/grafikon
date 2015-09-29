@@ -67,7 +67,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getNet().getLineClasses());
                 break;
             case ENGINE_CLASSES:
-                map.addAll(diagram.getEngineClasses());
+                map.addAll(diagram.getEngineClasses().toList());
                 break;
             case OUTPUT_TEMPLATES:
                 map.addAll(diagram.getOutputTemplates().toList());
