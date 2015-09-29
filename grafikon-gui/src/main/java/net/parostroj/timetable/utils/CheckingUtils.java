@@ -1,6 +1,5 @@
 package net.parostroj.timetable.utils;
 
-import java.util.List;
 import net.parostroj.timetable.model.Line;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.Route;
@@ -18,7 +17,7 @@ public class CheckingUtils {
      * @param routes list of routes
      * @return if is a part
      */
-    public static boolean checkRoutesForNode(Node node, List<Route> routes) {
+    public static boolean checkRoutesForNode(Node node, Iterable<? extends Route> routes) {
         for (Route route : routes) {
             if (route.contains(node))
                 return true;
@@ -33,7 +32,7 @@ public class CheckingUtils {
      * @param routes list of routes
      * @return if is a part
      */
-    public static boolean checkRoutesForLine(Line line, List<Route> routes) {
+    public static boolean checkRoutesForLine(Line line, Iterable<? extends Route> routes) {
         for (Route route : routes) {
             if (route.contains(line))
                 return true;

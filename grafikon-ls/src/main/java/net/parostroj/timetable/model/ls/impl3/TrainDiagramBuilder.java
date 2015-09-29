@@ -79,9 +79,9 @@ public class TrainDiagramBuilder {
         Route route = lsRoute.createRoute(diagram.getNet());
         Route foundRoute = null;
         if ((foundRoute = diagram.getRouteById(route.getId())) != null) {
-            diagram.removeRoute(foundRoute);
+            diagram.getRoutes().remove(foundRoute);
         }
-        diagram.addRoute(route);
+        diagram.getRoutes().add(route);
     }
 
     public void setTrainType(LSTrainType lsType) throws LSException {

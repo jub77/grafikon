@@ -95,11 +95,11 @@ public class Wrapper<T> implements Comparable<Wrapper<T>> {
         return getWrapperList(Arrays.asList(objList), null);
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList) {
+    public static <T> List<Wrapper<T>> getWrapperList(Iterable<? extends T> objList) {
         return getWrapperList(objList, null);
     }
 
-    public static <T> List<Wrapper<T>> getWrapperList(Collection<? extends T> objList, WrapperDelegate<? super T> delegate) {
+    public static <T> List<Wrapper<T>> getWrapperList(Iterable<? extends T> objList, WrapperDelegate<? super T> delegate) {
         List<Wrapper<T>> list = new LinkedList<Wrapper<T>>();
         Class<?> clazz = null;
         for (T o : objList) {

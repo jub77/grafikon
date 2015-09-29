@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.io.OutputStream;
 import java.util.*;
 
+import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
@@ -49,11 +50,12 @@ public class GTDrawOutput extends DrawOutput {
     private Collection<GTDrawParams> getParams(OutputParams params, TrainDiagram diagram) throws OutputException {
         Collection<?> gtParamList = params.getParamValue(GT_PARAMS, Collection.class);
         if (gtParamList == null || gtParamList.isEmpty()) {
+            List<Route> routes = diagram.getRoutes().toList();
             // create default values
-            if (diagram.getRoutes().isEmpty()) {
+            if (routes.isEmpty()) {
                 throw new OutputException("Routes missing");
             }
-            return Collections.singletonList(new GTDrawParams(diagram.getRoutes().get(0)));
+            return Collections.singletonList(new GTDrawParams(routes.get(0)));
         } else {
             return ObjectsUtil.checkedCollection(gtParamList, GTDrawParams.class);
         }

@@ -53,7 +53,7 @@ public class RouteImport extends Import {
         route.setTrainRoute(importedRoute.isTrainRoute());
 
         // add to diagram
-        this.getDiagram().addRoute(route);
+        this.getDiagram().getRoutes().add(route);
         this.addImportedObject(route);
         log.trace("Successfully imported route: " + route);
         return route;

@@ -86,7 +86,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getNet().getLines());
                 break;
             case ROUTES:
-                map.addAll(diagram.getRoutes());
+                map.addAll(diagram.getRoutes().toList());
                 break;
         }
         return map;

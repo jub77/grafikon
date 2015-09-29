@@ -1,7 +1,5 @@
 package net.parostroj.timetable.actions;
 
-import java.util.Collection;
-
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.Pair;
 
@@ -16,7 +14,7 @@ public final class RouteHelper {
      * @param train
      * @return
      */
-    public static Route getBestRouteMatch(Collection<Route> routes, Train train) {
+    public static Route getBestRouteMatch(Iterable<Route> routes, Train train) {
         Pair<Route, Integer> selected = null;
         for (Route route : routes) {
             int cnt = 0;

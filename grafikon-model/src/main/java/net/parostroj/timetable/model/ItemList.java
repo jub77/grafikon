@@ -89,6 +89,10 @@ public class ItemList<T> implements Iterable<T> {
         return Collections.unmodifiableList(items);
     }
 
+    public T get(int index) {
+        return items.get(index);
+    }
+
     public int indexOf(T item) {
         return items.indexOf(item);
     }
@@ -99,6 +103,10 @@ public class ItemList<T> implements Iterable<T> {
 
     public int size() {
         return items.size();
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
     private void fireEvent(Type type, T item, int newIndex, int oldIndex) {

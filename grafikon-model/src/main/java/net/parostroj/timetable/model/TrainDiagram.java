@@ -24,7 +24,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Freight net. */
     private FreightNet freightNet;
     /** Predefined routes. */
-    private final List<Route> routes;
+    private final ItemList<Route> routes;
     /** Trains. */
     private final List<Train> trains;
     /** Cycles. */
@@ -64,7 +64,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      */
     public TrainDiagram(String id, TrainsData data) {
         this.id = id;
-        this.routes = new ArrayList<Route>();
+        this.routes = new ItemListTrainDiagramEvent<Route>(GTEventType.ROUTE_ADDED, GTEventType.ROUTE_REMOVED);
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
         this.images = new ItemListTrainDiagramEvent<TimetableImage>(GTEventType.IMAGE_ADDED, GTEventType.IMAGE_REMOVED);
@@ -135,18 +135,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /**
      * @return predefined routes
      */
-    public List<Route> getRoutes() {
-        return Collections.unmodifiableList(this.routes);
-    }
-
-    public void addRoute(Route route) {
-        this.routes.add(route);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ROUTE_ADDED, route));
-    }
-
-    public void removeRoute(Route route) {
-        this.routes.remove(route);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.ROUTE_REMOVED, route));
+    public ItemList<Route> getRoutes() {
+        return routes;
     }
 
     public Route getRouteById(String id) {

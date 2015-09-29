@@ -185,7 +185,7 @@ public class LSVisitorBuilder implements LSVisitor {
             route.getSegments().add(segment);
         }
         // add route to diagram
-        diagram.addRoute(route);
+        diagram.getRoutes().add(route);
     }
 
     @Override

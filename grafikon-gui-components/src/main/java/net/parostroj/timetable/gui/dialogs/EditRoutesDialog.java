@@ -266,7 +266,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         int newIndex = routes.getIndexOfObject(newRoute);
         routesList.setSelectedIndex(newIndex);
         routesList.ensureIndexIsVisible(newIndex);
-        diagram.addRoute(newRoute);
+        diagram.getRoutes().add(newRoute);
         // clear name
         routeNameTextField.setText("");
         netPartCheckBox.setSelected(false);
@@ -285,7 +285,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         // delete route
         int index = routesList.getSelectedIndex();
         Wrapper<Route> deletedRoute = routes.removeIndex(index);
-        diagram.removeRoute(deletedRoute.getElement());
+        diagram.getRoutes().remove(deletedRoute.getElement());
         routesList.setSelectedIndex(index >= routes.getSize() ? routes.getSize() - 1 : index);
     }
 

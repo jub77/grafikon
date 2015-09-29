@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -60,7 +59,7 @@ public class RouteSelectionDialog extends JDialog {
         this.listener = listener;
     }
 
-    public void setListValues(List<Route> routes, Route selected) {
+    public void setListValues(Iterable<? extends Route> routes, Route selected) {
         listModel = new WrapperListModel<Route>(Wrapper.getWrapperList(routes));
         getList().setModel(listModel);
         if (selected != null) {
