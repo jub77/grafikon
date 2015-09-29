@@ -40,7 +40,7 @@ public class LineClassImport extends Import {
         LineClass lineClass = new LineClass(this.getId(importedLineClass), importedLineClass.getName());
 
         // add to diagram
-        this.getDiagram().getNet().addLineClass(lineClass);
+        this.getDiagram().getNet().getLineClasses().add(lineClass);
         this.addImportedObject(lineClass);
         log.trace("Successfully imported line class: " + lineClass);
         return lineClass;

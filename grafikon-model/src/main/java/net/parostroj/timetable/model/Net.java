@@ -22,7 +22,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     private final String id;
     private final TrainDiagram diagram;
-    private final List<LineClass> lineClasses;
+    private final ItemList<LineClass> lineClasses;
     private final ItemList<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
     private final GTListenerNetImpl listener;
@@ -34,15 +34,8 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
      */
     public Net(String id, TrainDiagram diagram) {
         netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
-        lineClasses = new LinkedList<LineClass>();
-        regions = new ItemList<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_MOVED) {
-            @Override
-            protected void fireEvent(net.parostroj.timetable.model.ItemList.Type type, GTEventType eventType,
-                    Region item, int newIndex, int oldIndex) {
-                NetEvent event = new NetEvent(Net.this, eventType, item, oldIndex, newIndex);
-                Net.this.fireEvent(event);
-            }
-        };
+        lineClasses = new ItemListNetEvent<LineClass>(GTEventType.LINE_CLASS_ADDED, GTEventType.LINE_CLASS_REMOVED, GTEventType.LINE_CLASS_MOVED);
+        regions = new ItemListNetEvent<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_MOVED);
         listenerSupport = new GTListenerSupport<NetListener, NetEvent>(
                 (listener, event) -> listener.netChanged(event));
         listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(
@@ -131,40 +124,12 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
         return DijkstraShortestPath.findPathBetween(netDelegate, from, to);
     }
 
-    public List<LineClass> getLineClasses() {
-        return Collections.unmodifiableList(lineClasses);
+    public ItemList<LineClass> getLineClasses() {
+        return lineClasses;
     }
 
     public ItemList<Region> getRegions() {
         return regions;
-    }
-
-    public void addLineClass(LineClass lineClass) {
-        lineClasses.add(lineClass);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_CLASS_ADDED, lineClass));
-    }
-
-    public void addLineClass(LineClass lineClass, int position) {
-        lineClasses.add(position, lineClass);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_CLASS_ADDED, lineClass));
-    }
-
-    public void removeLineClass(LineClass lineClass) {
-        lineClasses.remove(lineClass);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_CLASS_REMOVED, lineClass));
-    }
-
-    public void moveLineClass(LineClass lineClass, int position) {
-        int oldIndex = lineClasses.indexOf(lineClass);
-        if (oldIndex == -1)
-            throw new IllegalArgumentException("Line class not in list.");
-        this.moveLineClass(oldIndex, position);
-    }
-
-    public void moveLineClass(int oldIndex, int newIndex) {
-        LineClass lineClass = lineClasses.remove(oldIndex);
-        lineClasses.add(newIndex, lineClass);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_CLASS_MOVED, lineClass, oldIndex, newIndex));
     }
 
     public Node getNodeById(String id) {
@@ -300,5 +265,19 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
             return object;
         object = getLineClassById(id);
         return object;
+    }
+
+    private class ItemListNetEvent<T> extends ItemList<T> {
+
+        public ItemListNetEvent(GTEventType add, GTEventType remove, GTEventType move) {
+            super(add, remove, move);
+        }
+
+        @Override
+        protected void fireEvent(ItemList.Type type, GTEventType eventType, T item,
+                int newIndex, int oldIndex) {
+            NetEvent event = new NetEvent(Net.this, eventType, item, oldIndex, newIndex);
+            Net.this.fireEvent(event);
+        }
     }
 }

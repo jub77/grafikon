@@ -64,7 +64,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getTrainTypes().toList());
                 break;
             case LINE_CLASSES:
-                map.addAll(diagram.getNet().getLineClasses());
+                map.addAll(diagram.getNet().getLineClasses().toList());
                 break;
             case ENGINE_CLASSES:
                 map.addAll(diagram.getEngineClasses().toList());

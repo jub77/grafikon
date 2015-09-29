@@ -57,7 +57,7 @@ public class TrainDiagramBuilder {
         // add line classes
         if (lsNet.getLineClasses() != null)
             for (LSLineClass lsLineClass : lsNet.getLineClasses()) {
-                net.addLineClass(lsLineClass.createLineClass());
+                net.getLineClasses().add(lsLineClass.createLineClass());
             }
         // create nodes ...
         if (lsNet.getNodes() != null)
