@@ -53,5 +53,6 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(region);
         dialog.dispose();
+        this.refresh(region);
     }
 }

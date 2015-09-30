@@ -59,5 +59,6 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(company);
         dialog.dispose();
+        this.refresh(company);
     }
 }

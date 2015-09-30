@@ -8,6 +8,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
+import org.beanfabrics.support.Validation;
 
 /**
  * View model of company.
@@ -28,7 +29,7 @@ public class CompanyPM extends AbstractPM implements IPM<Company> {
     public CompanyPM(Collection<Locale> locales) {
         locale = new EnumeratedValuesPM<Locale>(EnumeratedValuesPM.createValueMap(
                 locales, l -> l.getDisplayName(l)), "-");
-        abbr.setEditable(false);
+        abbr.setMandatory(true);
         PMManager.setup(this);
     }
 
@@ -40,6 +41,11 @@ public class CompanyPM extends AbstractPM implements IPM<Company> {
         this.locale.setValue(company.getLocale());
     }
 
+    @Validation(path = { "ok" })
+    public boolean isAbbrValid() {
+        return !ObjectsUtil.isEmpty(abbr.getText());
+    }
+
     @Operation(path = "ok")
     public boolean ok() {
         Company company = companyRef.get();
@@ -48,6 +54,7 @@ public class CompanyPM extends AbstractPM implements IPM<Company> {
             company.setName(ObjectsUtil.checkAndTrim(name.getText()));
             company.setAttribute(Company.ATTR_PART_NAME, ObjectsUtil.checkAndTrim(part.getText()));
             company.setLocale(locale.getValue());
+            company.setAbbr(ObjectsUtil.checkAndTrim(abbr.getText()));
         }
         return true;
     }
