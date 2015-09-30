@@ -2,8 +2,6 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.collect.Iterators;
-
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -16,20 +14,16 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
+public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, NodeAttributes, TrainDiagramPart {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
-    /** ID. */
-    private final String id;
     /** Name of the node. */
     private String name;
     /** Abbreviation. */
     private String abbr;
     /** Attributes of the node. */
     private AttributesWrapper attributesWrapper;
-    /** List of node tracks. */
-    private List<NodeTrack> tracks;
     /** Node type. */
     private NodeType type;
     /** Location of node. */
@@ -40,7 +34,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * Initialization.
      */
     private void init() {
-        tracks = new LinkedList<NodeTrack>();
         location = new Location(0, 0);
         attributesWrapper = new AttributesWrapper(
                 (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change)));
@@ -58,7 +51,7 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param abbr abbreviation
      */
     Node(String id, TrainDiagram diagram, NodeType type, String name, String abbr) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.type = type;
         this.abbr = abbr;
@@ -72,14 +65,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     public void removeListener(NodeListener listener) {
         this.listenerSupport.removeListener(listener);
-    }
-
-    /**
-     * @return id of the node
-     */
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override
@@ -109,51 +94,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             selectedTrack = tracks.get(0);
         }
         return selectedTrack;
-    }
-
-    /**
-     * @return the node tracks
-     */
-    @Override
-    public List<NodeTrack> getTracks() {
-        return Collections.unmodifiableList(tracks);
-    }
-
-    public void addTrack(NodeTrack track) {
-        track.node = this;
-        tracks.add(track);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TRACK_ADDED, track));
-    }
-
-    public void addTrack(NodeTrack track, int position) {
-        track.node = this;
-        tracks.add(position, track);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TRACK_ADDED, track));
-    }
-
-    public void removeTrack(NodeTrack track) {
-        track.node = null;
-        tracks.remove(track);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TRACK_REMOVED, track));
-    }
-
-    public void moveTrack(NodeTrack track, int position) {
-        int oldIndex = tracks.indexOf(track);
-        this.moveTrack(oldIndex, position);
-    }
-
-    public void moveTrack(int fromIndex, int toIndex) {
-        NodeTrack track = tracks.remove(fromIndex);
-        tracks.add(toIndex, track);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TRACK_MOVED, track, fromIndex, toIndex));
-    }
-
-    public void removeAllTracks() {
-        for (NodeTrack track : tracks) {
-            track.node = null;
-        }
-        tracks.clear();
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TRACK_REMOVED));
     }
 
     public String getName() {
@@ -233,36 +173,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public void removeTimeInterval(TimeInterval interval) {
-        interval.getTrack().removeTimeInterval(interval);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TIME_INTERVAL_REMOVED, interval));
-    }
-
-    @Override
-    public void addTimeInterval(TimeInterval interval) {
-        interval.getTrack().addTimeInterval(interval);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TIME_INTERVAL_ADDED, interval));
-    }
-
-    @Override
-    public void updateTimeInterval(TimeInterval interval) {
-        Track track = this.getTrackForInterval(interval);
-        if (track == null)
-            throw new IllegalStateException("Node doesn't contain interval.");
-        track.removeTimeInterval(interval);
-        interval.getTrack().addTimeInterval(interval);
-        this.listenerSupport.fireEvent(new NodeEvent(this, GTEventType.TIME_INTERVAL_UPDATED, interval));
-    }
-
-    private Track getTrackForInterval(TimeInterval interval) {
-        for (Track track : getTracks()) {
-            if (track.getTimeIntervalList().contains(interval))
-                return track;
-        }
-        return null;
-    }
-
-    @Override
     public Line asLine() {
         return null;
     }
@@ -270,31 +180,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     @Override
     public Node asNode() {
         return this;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        for (NodeTrack track : tracks) {
-            if (!track.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * returns node track with specified number.
-     *
-     * @param number number
-     * @return node track
-     */
-    public NodeTrack getNodeTrackByNumber(String number) {
-        for (NodeTrack track : tracks) {
-            if (track.getNumber().equals(number)) {
-                return track;
-            }
-        }
-        return null;
     }
 
     /**
@@ -323,31 +208,6 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         }
     }
 
-    @Override
-    public NodeTrack getTrackById(String id) {
-        for (NodeTrack track : getTracks()) {
-            if (track.getId().equals(id)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public NodeTrack getTrackByNumber(String number) {
-        for (NodeTrack track : getTracks()) {
-            if (track.getNumber().equals(number)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Iterator<TimeInterval> iterator() {
-        return Iterators.concat(Iterators.transform(tracks.iterator(), track -> track.iterator()));
-    }
-
     public Integer getNotStraightSpeed() {
         return this.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
     }
@@ -360,8 +220,23 @@ public class Node implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return this.getAttribute(Node.ATTR_LENGTH, Integer.class);
     }
 
-    void fireTrackAttributeChanged(String attributeName, NodeTrack track, Object oldValue, Object newValue) {
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(attributeName, oldValue, newValue), track));
+    @Override
+    protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType) {
+        this.listenerSupport.fireEvent(new NodeEvent(this, eventType, interval));
+    }
+
+    @Override
+    protected void fireTrackAttributeChanged(String attributeName, Track track, Object oldValue, Object newValue) {
+        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(attributeName, oldValue, newValue), (NodeTrack) track));
+    }
+
+    @Override
+    protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to) {
+        if (from == null && to == null) {
+            this.listenerSupport.fireEvent(new NodeEvent(this, eventType, (NodeTrack) track));
+        } else {
+            this.listenerSupport.fireEvent(new NodeEvent(this, eventType, (NodeTrack) track, from, to));
+        }
     }
 
     /**

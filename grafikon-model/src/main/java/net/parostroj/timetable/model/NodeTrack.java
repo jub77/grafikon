@@ -13,9 +13,6 @@ public class NodeTrack extends Track implements Visitable {
     /** Platform. */
     private boolean platform;
 
-    // node reference
-    Node node;
-
     /**
      * Constructor.
      *
@@ -58,8 +55,9 @@ public class NodeTrack extends Track implements Visitable {
 
     @Override
     void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {
-        if (node != null)
-            node.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
+        if (changeCallback != null) {
+            changeCallback.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
+        }
     }
 
     /**

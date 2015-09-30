@@ -19,6 +19,12 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /** Attributes. */
     private final AttributesWrapper attributesWrapper;
 
+    interface ChangeCallback {
+        void fireTrackAttributeChanged(String attributeName, Track nodeTrack, Object oldValue, Object newValue);
+    }
+
+    ChangeCallback changeCallback;
+
     /**
      * Constructor.
      *

@@ -2,8 +2,6 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.collect.Iterators;
-
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -15,16 +13,12 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, LineAttributes, TrainDiagramPart {
+public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, LineAttributes, TrainDiagramPart {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
-    /** ID. */
-    private final String id;
     /** Length in mm. */
     private int length;
-    /** List of node tracks. */
-    private final List<LineTrack> tracks;
     /** Top speed for the track. */
     private Integer topSpeed;
     /** Attributes. */
@@ -46,7 +40,7 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
      * @param topSpeed top speed
      */
     Line(String id, TrainDiagram diagram, int length, Node from, Node to, Integer topSpeed) {
-        this.tracks = new ArrayList<LineTrack>();
+        super(id);
         this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
                 (listener, event) -> listener.lineChanged(event));
         this.attributesWrapper = new AttributesWrapper(
@@ -54,7 +48,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         this.length = length;
         this.from = from;
         this.to = to;
-        this.id = id;
         this.diagram = diagram;
         this.topSpeed = topSpeed;
     }
@@ -69,13 +62,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         attributesWrapper.setAttributes(attributes);
     }
 
-    /**
-     * @return id of the line
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
 
     @Override
     public TrainDiagram getDiagram() {
@@ -120,51 +106,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     /**
-     * @return tracks
-     */
-    @Override
-    public List<LineTrack> getTracks() {
-        return Collections.unmodifiableList(tracks);
-    }
-
-    public void addTrack(LineTrack track) {
-        track.line = this;
-        tracks.add(track);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TRACK_ADDED, track));
-    }
-
-    public void addTrack(LineTrack track, int position) {
-        track.line = this;
-        tracks.add(position, track);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TRACK_ADDED, track));
-    }
-
-    public void removeTrack(LineTrack track) {
-        track.line = null;
-        tracks.remove(track);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TRACK_REMOVED, track));
-    }
-
-    public void moveTrack(LineTrack track, int position) {
-        int oldIndex = tracks.indexOf(track);
-        this.moveTrack(oldIndex, position);
-    }
-
-    public void moveTrack(int fromIndex, int toIndex) {
-        LineTrack track = tracks.remove(fromIndex);
-        tracks.add(toIndex, track);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TRACK_MOVED, track, fromIndex, toIndex));
-    }
-
-    public void removeAllTracks() {
-        for (LineTrack track : tracks) {
-            track.line = null;
-        }
-        tracks.clear();
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TRACK_REMOVED));
-    }
-
-    /**
      * @return top speed
      */
     public Integer getTopSpeed() {
@@ -196,44 +137,12 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public void removeTimeInterval(TimeInterval interval) {
-        interval.getTrack().removeTimeInterval(interval);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TIME_INTERVAL_REMOVED, interval));
-    }
-
-    @Override
     public String toString() {
         return this.toString(TimeIntervalDirection.FORWARD);
     }
 
     public String toString(TimeIntervalDirection direction) {
         return String.format("%s-%s", this.getFrom(direction).getAbbr(), this.getTo(direction).getAbbr());
-    }
-
-    @Override
-    public void addTimeInterval(TimeInterval interval) {
-        interval.getTrack().addTimeInterval(interval);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TIME_INTERVAL_ADDED, interval));
-    }
-
-    @Override
-    public void updateTimeInterval(TimeInterval interval) {
-        Track track = this.getTrackForInterval(interval);
-        if (track == null) {
-            throw new IllegalStateException("Line doesn't contain interval.");
-        }
-        track.removeTimeInterval(interval);
-        interval.getTrack().addTimeInterval(interval);
-        this.listenerSupport.fireEvent(new LineEvent(this, GTEventType.TIME_INTERVAL_UPDATED, interval));
-    }
-
-    private Track getTrackForInterval(TimeInterval interval) {
-        for (Track track : getTracks()) {
-            if (track.getTimeIntervalList().contains(interval)) {
-                return track;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -274,31 +183,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
     }
 
     @Override
-    public boolean isEmpty() {
-        for (LineTrack track : tracks) {
-            if (!track.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * returns line track with specified number.
-     *
-     * @param number number
-     * @return line track
-     */
-    public LineTrack getLineTrackByNumber(String number) {
-        for (LineTrack track : tracks) {
-            if (track.getNumber().equals(number)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
         return attributesWrapper.getAttributes().get(key, clazz);
     }
@@ -313,26 +197,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
         return attributesWrapper.getAttributes().remove(key);
     }
 
-    @Override
-    public LineTrack getTrackById(String id) {
-        for (LineTrack track : getTracks()) {
-            if (track.getId().equals(id)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public LineTrack getTrackByNumber(String number) {
-        for (LineTrack track : getTracks()) {
-            if (track.getNumber().equals(number)) {
-                return track;
-            }
-        }
-        return null;
-    }
-
     public void addListener(LineListener listener) {
         this.listenerSupport.addListener(listener);
     }
@@ -343,6 +207,25 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
 
     void fireTrackAttributeChanged(String attributeName, LineTrack track, Object oldValue, Object newValue) {
         this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(attributeName, oldValue, newValue), track));
+    }
+
+    @Override
+    protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType) {
+        this.listenerSupport.fireEvent(new LineEvent(this, eventType, interval));
+    }
+
+    @Override
+    protected void fireTrackAttributeChanged(String attributeName, Track track, Object oldValue, Object newValue) {
+        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(attributeName, oldValue, newValue), (LineTrack) track));
+    }
+
+    @Override
+    protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to) {
+        if (from == null && to == null) {
+            this.listenerSupport.fireEvent(new LineEvent(this, eventType, (LineTrack) track));
+        } else {
+            this.listenerSupport.fireEvent(new LineEvent(this, eventType, (LineTrack) track, from, to));
+        }
     }
 
     /**
@@ -366,11 +249,6 @@ public class Line implements RouteSegment, AttributesHolder, ObjectWithId, Visit
             track.accept(visitor);
         }
         visitor.visitAfter(this);
-    }
-
-    @Override
-    public Iterator<TimeInterval> iterator() {
-        return Iterators.concat(Iterators.transform(tracks.iterator(), track -> track.iterator()));
     }
 
     private Iterable<LineTrack> getIterableByDirection(TimeIntervalDirection direction) {
