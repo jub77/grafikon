@@ -49,8 +49,10 @@ public class NodeTrack extends Track implements Visitable {
      */
     public void setPlatform(boolean platform) {
         boolean oldPlatform = this.platform;
-        this.platform = platform;
-        this.fireAttributeChanged("platform", oldPlatform, platform);
+        if (oldPlatform != platform) {
+            this.platform = platform;
+            this.fireAttributeChanged(ATTR_PLATFORM, oldPlatform, platform);
+        }
     }
 
     /**

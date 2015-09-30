@@ -12,4 +12,5 @@ public interface TrackAttributes {
     public static final String ATTR_NODE_TRACK_STRAIGHT = "node.track.straight";
     public static final String ATTR_FROM_STRAIGHT = "fromStraightTrack";
     public static final String ATTR_TO_STRAIGHT = "toStraightTrack";
+    public static final String ATTR_PLATFORM = "platform";
 }
