@@ -3,6 +3,8 @@ package net.parostroj.timetable.model.validators;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.GTEvent;
 import net.parostroj.timetable.model.events.GTEventType;
@@ -21,7 +23,7 @@ public class LineValidator implements TrainDiagramValidator {
             Line line = (Line) event.getSource();
             Set<Train> trains = new HashSet<Train>();
             for (Track track : line.getTracks()) {
-                for (TimeInterval interval : track.getTimeIntervalList()) {
+                for (TimeInterval interval : ImmutableList.copyOf(track.getTimeIntervalList())) {
                     trains.add(interval.getTrain());
                 }
             }
@@ -32,7 +34,7 @@ public class LineValidator implements TrainDiagramValidator {
             return true;
         } else if (event instanceof LineEvent && event.getType() == GTEventType.TRACK_ATTRIBUTE && event.getAttributeChange().checkName(Track.ATTR_FROM_STRAIGHT, Track.ATTR_TO_STRAIGHT)) {
             LineEvent le = (LineEvent) event;
-            for (TimeInterval i : le.getTrack().getTimeIntervalList()) {
+            for (TimeInterval i : ImmutableList.copyOf(le.getTrack().getTimeIntervalList())) {
                 i.getTrain().recalculate();
             }
             return true;
