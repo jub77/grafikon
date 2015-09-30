@@ -2,8 +2,10 @@ package net.parostroj.timetable.gui.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Collator;
 import java.util.*;
 
+import net.parostroj.timetable.actions.ConvertComparator;
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -85,6 +87,7 @@ public class LanguageLoader {
                 available.add(locale);
             }
         }
+        Collections.sort(available, new ConvertComparator<>(Collator.getInstance(), e -> e.getDisplayName()));
         return available;
     }
 
