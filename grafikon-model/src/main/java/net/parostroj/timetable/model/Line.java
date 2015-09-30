@@ -205,10 +205,6 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
         this.listenerSupport.removeListener(listener);
     }
 
-    void fireTrackAttributeChanged(String attributeName, LineTrack track, Object oldValue, Object newValue) {
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(attributeName, oldValue, newValue), track));
-    }
-
     @Override
     protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType) {
         this.listenerSupport.fireEvent(new LineEvent(this, eventType, interval));
