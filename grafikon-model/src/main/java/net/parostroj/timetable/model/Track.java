@@ -149,7 +149,11 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
         attributesWrapper.getAttributes().set(key, value);
     }
 
-    abstract void fireAttributeChanged(String attributeName, Object oldValue, Object newValue);
+    void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {
+        if (changeCallback != null) {
+            changeCallback.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
+        }
+    }
 
     @Override
     public Iterator<TimeInterval> iterator() {

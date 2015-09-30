@@ -53,13 +53,6 @@ public class NodeTrack extends Track implements Visitable {
         this.fireAttributeChanged("platform", oldPlatform, platform);
     }
 
-    @Override
-    void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {
-        if (changeCallback != null) {
-            changeCallback.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
-        }
-    }
-
     /**
      * accepts visitor.
      *

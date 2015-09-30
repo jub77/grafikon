@@ -13,9 +13,6 @@ public class LineTrack extends Track implements Visitable {
     private NodeTrack fromStraightTrack;
     private NodeTrack toStraightTrack;
 
-    // reference to line
-    Line line;
-
     /**
      * Constructor.
      *
@@ -61,12 +58,6 @@ public class LineTrack extends Track implements Visitable {
 
     public NodeTrack getToStraightTrack(TimeIntervalDirection direction) {
         return (direction == TimeIntervalDirection.FORWARD) ? toStraightTrack : fromStraightTrack;
-    }
-
-    @Override
-    void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {
-        if (line != null)
-            line.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
     }
 
     /**
