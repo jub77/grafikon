@@ -145,6 +145,22 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         return this.getToInterval().getStart();
     }
 
+    public TrainsCycleItem getNextItem() {
+        return getCycle().getNextItem(this);
+    }
+
+    public TrainsCycleItem getNextItemCyclic() {
+        return getCycle().getNextItemCyclic(this);
+    }
+
+    public TrainsCycleItem getPreviousItem() {
+        return getCycle().getPreviousItem(this);
+    }
+
+    public TrainsCycleItem getPreviousItemCyclic() {
+        return getCycle().getPreviousItemCyclic(this);
+    }
+
     @Override
     public void setAttributes(Attributes attributes) {
         this.attributesWrapper.setAttributes(attributes);
