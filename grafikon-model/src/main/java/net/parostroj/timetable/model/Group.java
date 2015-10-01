@@ -1,7 +1,6 @@
 package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -10,8 +9,6 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
     private final TrainDiagram diagram;
     /** ID. */
     private final String id;
-    /** Name */
-    private String name;
     /** Attributes. */
     private final Attributes attributes;
 
@@ -33,15 +30,11 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
     }
 
     public String getName() {
-        return name;
+        return attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange(ATTR_NAME, oldName, name), this));
-        }
+        attributes.setRemove(ATTR_NAME, name);
     }
 
     @Override
@@ -71,6 +64,6 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 }

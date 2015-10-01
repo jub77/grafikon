@@ -15,6 +15,7 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSGroup {
 
     private String id;
+    // name kept only for backward compatibility
     private String name;
     private LSAttributes attributes;
 
@@ -23,7 +24,6 @@ public class LSGroup {
 
     public LSGroup(Group group) {
         this.setId(group.getId());
-        this.setName(group.getName());
         this.setAttributes(new LSAttributes(group.getAttributes()));
     }
 
@@ -53,6 +53,7 @@ public class LSGroup {
 
     public Group createGroup(TrainDiagram diagram) throws LSException {
         Group group = diagram.createGroup(id);
+        // expected value -> null (for compatibility before version 4.18.2)
         group.setName(name);
         group.getAttributes().add(attributes.createAttributes(diagram));
         return group;
