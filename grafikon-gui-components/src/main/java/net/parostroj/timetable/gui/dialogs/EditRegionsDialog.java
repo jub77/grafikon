@@ -7,6 +7,7 @@ import java.util.Locale;
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
@@ -51,8 +52,11 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
     protected void edit(Region region) {
         EditRegionDialog dialog = new EditRegionDialog(this, true, locales);
         dialog.setLocationRelativeTo(this);
+        String regionName = region.getName();
         dialog.showDialog(region);
         dialog.dispose();
-        this.refresh(region);
+        if (!ObjectsUtil.compareWithNull(regionName, region.getName())) {
+            this.refreshAll();
+        }
     }
 }

@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Dialog for editing companies.
@@ -57,8 +58,11 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
     protected void edit(Company company) {
         EditCompanyDialog dialog = new EditCompanyDialog(this, true, locales);
         dialog.setLocationRelativeTo(this);
+        String companyAbbr = company.getAbbr();
         dialog.showDialog(company);
         dialog.dispose();
-        this.refresh(company);
+        if (!ObjectsUtil.compareWithNull(companyAbbr, company.getAbbr())) {
+            this.refreshAll();
+        }
     }
 }

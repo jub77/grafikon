@@ -126,6 +126,13 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
         }
     }
 
+    public void refreshAll() {
+        this.sort(list);
+        if (list.size() > 0) {
+            this.fireIntervalAdded(this, 0, list.size() - 1);
+        }
+    }
+
     public void moveIndexDown(int index) {
         if (this.sorted) {
             throw new IllegalStateException("Cannot move in sorted list.");

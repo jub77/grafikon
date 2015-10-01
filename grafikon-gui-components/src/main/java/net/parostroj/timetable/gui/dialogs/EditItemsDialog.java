@@ -64,6 +64,10 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         listModel.refreshObject(item);
     }
 
+    protected void refreshAll() {
+        listModel.refreshAll();
+    }
+
     public void updateValues() {
         // update list of available classes ...
         listModel = new WrapperListModel<T>(this.createWrapperList(getList()), null, !move);
