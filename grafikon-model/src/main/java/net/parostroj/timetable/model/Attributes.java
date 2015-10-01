@@ -200,6 +200,10 @@ public class Attributes implements Map<String, Object> {
         listeners.remove(listener);
     }
 
+    public void removeAllListeners() {
+        listeners.clear();
+    }
+
     protected void fireChange(String name, Object oldV, Object newV, String category) {
         AttributeChange change = new AttributeChange(name, oldV, newV, category);
         this.fireChange(change);
