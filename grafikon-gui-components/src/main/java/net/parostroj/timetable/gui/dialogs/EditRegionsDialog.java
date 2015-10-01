@@ -45,7 +45,9 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     @Override
     protected Region createNew(String name) {
-        return element.createRegion(IdGenerator.getInstance().getId(), name);
+        Region newRegion = element.createRegion(IdGenerator.getInstance().getId());
+        newRegion.setName(name);
+        return newRegion;
     }
 
     @Override

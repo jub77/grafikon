@@ -15,6 +15,7 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSRegion {
 
     private String id;
+    // name kept only for backward compatibility
     private String name;
     private LSAttributes attributes;
 
@@ -23,7 +24,6 @@ public class LSRegion {
 
     public LSRegion(Region region) {
         this.id = region.getId();
-        this.name = region.getName();
         this.attributes = new LSAttributes(region.getAttributes());
     }
 
@@ -52,7 +52,9 @@ public class LSRegion {
     }
 
     public Region createRegion(TrainDiagram diagram) throws LSException {
-        Region region = diagram.createRegion(id, name);
+        Region region = diagram.createRegion(id);
+        // expected value -> null before version 4.18.2
+        region.setName(name);
         region.getAttributes().add(attributes.createAttributes(diagram));
         return region;
     }

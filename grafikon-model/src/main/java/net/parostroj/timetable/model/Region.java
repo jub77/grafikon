@@ -15,12 +15,10 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     private final String id;
     private final Attributes attributes;
 
-    Region(String id, String name, TrainDiagram diagram) {
+    Region(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributes = new Attributes();
-        this.attributes.set(ATTR_NAME, name);
-        this.attributes.addListener((attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this)));
+        this.attributes = new Attributes((attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this)));
     }
 
     @Override
