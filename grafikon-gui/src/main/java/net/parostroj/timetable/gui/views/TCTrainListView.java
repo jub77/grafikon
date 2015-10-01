@@ -414,14 +414,14 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 if (cycle != null) {
                     TrainsCycleItem item = null;
                     if (overlappingEnabled) {
-                        item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval(), null);
+                        item = new TrainsCycleItem(cycle, t, null, t.getFirstInterval(), t.getLastInterval());
                     } else {
                         Tuple<TimeInterval> tuple = t.getFirstUncoveredPart(delegate.getType());
                         if (tuple == null) {
                             log.warn("Uncovered part does not exists for {}", t);
                             continue;
                         }
-                        item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second, null);
+                        item = new TrainsCycleItem(cycle, t, null, tuple.first, tuple.second);
                     }
                     // add to correct place
                     cycle.addItem(item);
@@ -451,7 +451,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // new trains cycle item
             boolean oldCovered = train.isCovered(delegate.getType());
             if (from != item.getFromInterval() || to != item.getToInterval()) {
-                TrainsCycleItem newItem = new TrainsCycleItem(item.getCycle(), train, item.getComment(), from, to, item.getAttributes());
+                TrainsCycleItem newItem = new TrainsCycleItem(item.getCycle(), train, item.getComment(), from, to);
+                newItem.getAttributes().add(item.getAttributes());
                 if (train.testAddCycle(newItem, item, overlappingEnabled)) {
                     TrainsCycle cycle = item.getCycle();
                     cycle.replaceItem(newItem, item);

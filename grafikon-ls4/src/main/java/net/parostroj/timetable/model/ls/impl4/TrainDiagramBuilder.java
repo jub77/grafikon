@@ -29,7 +29,7 @@ public class TrainDiagramBuilder {
         this.diagram = new TrainDiagram(lsDiagram.getId(), data);
         // attributes
         Attributes attributes = lsDiagram.getAttributes().createAttributes(this.diagram);
-        this.diagram.setAttributes(attributes);
+        this.diagram.getAttributes().add(attributes);
         trackChanges = lsDiagram.isChangesTracking();
         // circulation types
         for (LSTrainsCycleType cType : lsDiagram.getCycleTypes()) {

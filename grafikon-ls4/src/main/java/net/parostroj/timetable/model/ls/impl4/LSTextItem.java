@@ -74,7 +74,7 @@ public class LSTextItem {
 
     public TextItem createTextItem(TrainDiagram diagram) throws LSException {
         TextItem item = new TextItem(id, diagram);
-        item.setAttributes(attributes.createAttributes(diagram));
+        item.getAttributes().add(attributes.createAttributes(diagram));
         if (template != null) {
             item.setTemplate(template.createTextTemplate());
         }

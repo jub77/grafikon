@@ -39,7 +39,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private final TrainDiagram diagram;
     private String name;
     private String description;
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     private final List<TrainsCycle> cycles;
 
     private final GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent> listenerSupport;
@@ -50,7 +50,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         this.cycles = new LinkedList<TrainsCycle>();
         listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(
                 (listener, event) -> listener.trainsCycleTypeChanged(event));
-        attributesWrapper = new AttributesWrapper(
+        attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleTypeEvent(TrainsCycleType.this, change)));
     }
 
@@ -90,27 +90,22 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     List<TrainsCycle> getCycles() {

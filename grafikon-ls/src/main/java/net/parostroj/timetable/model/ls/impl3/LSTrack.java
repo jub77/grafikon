@@ -49,7 +49,7 @@ abstract public class LSTrack {
     }
 
     protected void addValuesTrack(Track track) {
-        track.setAttributes(attributes.createAttributes());
+        track.getAttributes().add(attributes.createAttributes());
         track.setNumber(number);
     }
 }

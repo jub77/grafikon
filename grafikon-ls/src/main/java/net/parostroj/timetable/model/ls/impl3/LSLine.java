@@ -109,7 +109,7 @@ public class LSLine {
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
         Line line = diagram.createLine(id, length, fromNode, toNode, speed > 0 ? speed : null);
-        line.setAttributes(attributes.createAttributes(diagram));
+        line.getAttributes().add(attributes.createAttributes(diagram));
         // tracks
         for (LSLineTrack lsLineTrack : getTracks()) {
             LineTrack lineTrack = lsLineTrack.createLineTrack();

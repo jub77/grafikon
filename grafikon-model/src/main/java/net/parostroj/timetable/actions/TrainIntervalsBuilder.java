@@ -43,7 +43,7 @@ public class TrainIntervalsBuilder {
             lastInterval = new TimeInterval(intervalId,
                     train, node, 0, stop, track);
         }
-        lastInterval.setAttributes(attributes);
+        lastInterval.getAttributes().add(attributes);
         train.addInterval(lastInterval);
     }
 
@@ -63,7 +63,7 @@ public class TrainIntervalsBuilder {
                 intervalId, train, line, 0, 0, speed,
                 lastInterval.getOwnerAsNode() == line.getFrom() ? TimeIntervalDirection.FORWARD : TimeIntervalDirection.BACKWARD,
                 track, addedTime);
-        lastInterval.setAttributes(attributes);
+        lastInterval.getAttributes().add(attributes);
         train.addInterval(lastInterval);
     }
 

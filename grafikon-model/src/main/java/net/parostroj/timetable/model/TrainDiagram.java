@@ -34,7 +34,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Train types available. */
     private final ItemList<TrainType> trainTypes;
     /** Attributes. */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
@@ -77,7 +77,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new ItemListTrainDiagramEvent<TrainType>(GTEventType.TRAIN_TYPE_ADDED, GTEventType.TRAIN_TYPE_REMOVED, GTEventType.TRAIN_TYPE_MOVED);
-        this.attributesWrapper = new AttributesWrapper(
+        this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change)));
         this.setTrainsData(data);
         this.listener = new GTListenerTrainDiagramImpl(this);
@@ -341,27 +341,22 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
 	public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-	public void setAttributes(Attributes attributes) {
-        attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     public double getTimeScale() {

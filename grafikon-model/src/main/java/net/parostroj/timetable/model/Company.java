@@ -16,12 +16,12 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
     private final String id;
     private final TrainDiagram diagram;
 
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
 
     Company(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributesWrapper = new AttributesWrapper(
+        this.attributes = new Attributes(
                 (attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Company.this)));
     }
 
@@ -36,50 +36,46 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
     }
 
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     public String getAbbr() {
-        return attributesWrapper.getAttributes().get(ATTR_ABBR, String.class);
+        return attributes.get(ATTR_ABBR, String.class);
     }
 
     public void setAbbr(String abbr) {
-        attributesWrapper.getAttributes().setRemove(ATTR_ABBR, abbr);
+        attributes.setRemove(ATTR_ABBR, abbr);
     }
 
     public String getName() {
-        return attributesWrapper.getAttributes().get(ATTR_NAME, String.class);
+        return attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        attributesWrapper.getAttributes().setRemove(ATTR_NAME, name);
+        attributes.setRemove(ATTR_NAME, name);
     }
 
     public Locale getLocale() {
-        return attributesWrapper.getAttributes().get(ATTR_LOCALE, Locale.class);
+        return attributes.get(ATTR_LOCALE, Locale.class);
     }
 
     public void setLocale(Locale locale) {
-        attributesWrapper.getAttributes().setRemove(ATTR_LOCALE, locale);
+        attributes.setRemove(ATTR_LOCALE, locale);
     }
 
     @Override

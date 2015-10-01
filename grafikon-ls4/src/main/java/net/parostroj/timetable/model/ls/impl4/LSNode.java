@@ -114,7 +114,7 @@ public class LSNode {
 
     public Node createNode(TrainDiagram diagram) throws LSException {
         Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
-        node.setAttributes(attributes.createAttributes(diagram));
+        node.getAttributes().add(attributes.createAttributes(diagram));
         node.setLocation(new Location(x, y));
         // tracks
         if (this.tracks != null) {

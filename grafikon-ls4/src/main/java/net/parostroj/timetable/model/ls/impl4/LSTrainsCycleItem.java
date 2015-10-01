@@ -80,8 +80,8 @@ public class LSTrainsCycleItem {
     public TrainsCycleItem createTrainsCycleItem(TrainsCycle cycle, TrainDiagram diagram) throws LSException {
         Train modelTrain = diagram.getTrainById(train);
         TrainsCycleItem item = new TrainsCycleItem(cycle, modelTrain,
-                comment, modelTrain.getIntervalById(from), modelTrain.getIntervalById(to),
-                attributes != null ? attributes.createAttributes(diagram) : null);
+                comment, modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));
+        item.getAttributes().add(attributes != null ? attributes.createAttributes(diagram) : null);
         return item;
     }
 }

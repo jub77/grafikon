@@ -104,7 +104,7 @@ public class LSOutputTemplate {
         if (this.script != null) {
             outputTemplate.setScript(this.script.createScript());
         }
-        outputTemplate.setAttributes(attributes.createAttributes(diagram));
+        outputTemplate.getAttributes().add(attributes.createAttributes(diagram));
         // process attachments
         if (attachments != null) {
             for (LSAttachment attachment : attachments) {

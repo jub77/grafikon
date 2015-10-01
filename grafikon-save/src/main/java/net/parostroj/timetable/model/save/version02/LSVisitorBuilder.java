@@ -39,7 +39,7 @@ public class LSVisitorBuilder implements LSVisitor {
             diagram.getTrainTypes().add(type);
         }
         if (lsDiagram.getAttributes() != null) {
-            diagram.setAttributes(lsDiagram.getAttributes().convertToAttributes());
+            diagram.getAttributes().add(lsDiagram.getAttributes().convertToAttributes());
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
@@ -64,7 +64,7 @@ public class LSVisitorBuilder implements LSVisitor {
         NodeType type = NodeType.valueOf(lsNode.getNodeType());
         Node node = diagram.createNode(lsNode.getUuid(), type, lsNode.getName(), lsNode.getAbbr());
         if (lsNode.getAttributes() != null) {
-            node.setAttributes(lsNode.getAttributes().convertToAttributes());
+            node.getAttributes().add(lsNode.getAttributes().convertToAttributes());
         }
         node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
         ids.put(lsNode.getId(), node);
@@ -82,7 +82,7 @@ public class LSVisitorBuilder implements LSVisitor {
 
         nodeTrack.setPlatform(lsNodeTrack.isPlatform());
         if (lsNodeTrack.getAttributes() != null) {
-            nodeTrack.setAttributes(lsNodeTrack.getAttributes().convertToAttributes());        // add to last node
+            nodeTrack.getAttributes().add(lsNodeTrack.getAttributes().convertToAttributes());        // add to last node
         }
         lastNode.addTrack(nodeTrack);
     }
@@ -105,7 +105,7 @@ public class LSVisitorBuilder implements LSVisitor {
         ids.put(lsLine.getId(), line);
 
         if (lsLine.getAttributes() != null) {
-            line.setAttributes(lsLine.getAttributes().convertToAttributes());        // add to net
+            line.getAttributes().add(lsLine.getAttributes().convertToAttributes());        // add to net
         }
         Net net = diagram.getNet();
         net.addLine(from, to, line);
@@ -122,7 +122,7 @@ public class LSVisitorBuilder implements LSVisitor {
         ids.put(lsLineTrack.getId(), lineTrack);
 
         if (lsLineTrack.getAttributes() != null) {
-            lineTrack.setAttributes(lsLineTrack.getAttributes().convertToAttributes());        // add to last line
+            lineTrack.getAttributes().add(lsLineTrack.getAttributes().convertToAttributes());        // add to last line
         }
         lastLine.addTrack(lineTrack);
     }
@@ -141,7 +141,7 @@ public class LSVisitorBuilder implements LSVisitor {
         train.setType(type);
         train.setDescription(lsTrain.getDescription());
         if (lsTrain.getAttributes() != null) {
-            train.setAttributes(lsTrain.getAttributes().convertToAttributes());
+            train.getAttributes().add(lsTrain.getAttributes().convertToAttributes());
         }
         this.trains.add(train);
 
@@ -164,7 +164,7 @@ public class LSVisitorBuilder implements LSVisitor {
         lastTrain.addInterval(interval);
 
         if (lsInterval.getAttributes() != null) {
-            interval.setAttributes(lsInterval.getAttributes().convertToAttributes());
+            interval.getAttributes().add(lsInterval.getAttributes().convertToAttributes());
         }
     }
 
@@ -201,7 +201,7 @@ public class LSVisitorBuilder implements LSVisitor {
         if (lsCycle.getItems() != null) {
             for (LSTrainsCycleItem item : lsCycle.getItems()) {
                 Train train = (Train) ids.get(item.getTrainId());
-                TrainsCycleItem tcItem = new TrainsCycleItem(cycle, train, item.getComment(), null, null, null);
+                TrainsCycleItem tcItem = new TrainsCycleItem(cycle, train, item.getComment(), null, null);
                 cycle.addItem(tcItem);
             }
         }

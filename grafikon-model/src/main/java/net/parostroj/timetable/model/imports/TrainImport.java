@@ -50,7 +50,7 @@ public class TrainImport extends Import {
         }
         Train train = getDiagram().createTrain(this.getId(importedTrain));
         train.setNumber(importedTrain.getNumber());
-        train.setAttributes(this.importAttributes(importedTrain.getAttributes()));
+        train.getAttributes().add(this.importAttributes(importedTrain.getAttributes()));
         train.setDescription(importedTrain.getDescription());
         train.setType(trainType);
         train.setTopSpeed(importedTrain.getTopSpeed());

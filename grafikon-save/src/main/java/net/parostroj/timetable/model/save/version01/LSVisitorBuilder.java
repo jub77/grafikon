@@ -183,7 +183,7 @@ public class LSVisitorBuilder implements LSVisitor {
         if (lsCycle.getItems() != null) {
             for (LSTrainsCycleItem item : lsCycle.getItems()) {
                 Train train = (Train) ids.get(item.getTrainId());
-                TrainsCycleItem tcItem = new TrainsCycleItem(cycle, train, item.getComment(), null, null, null);
+                TrainsCycleItem tcItem = new TrainsCycleItem(cycle, train, item.getComment(), null, null);
                 cycle.addItem(tcItem);
             }
         }

@@ -54,7 +54,7 @@ public class LSGroup {
     public Group createGroup(TrainDiagram diagram) throws LSException {
         Group group = diagram.createGroup(id);
         group.setName(name);
-        group.setAttributes(attributes.createAttributes(diagram));
+        group.getAttributes().add(attributes.createAttributes(diagram));
         return group;
     }
 }

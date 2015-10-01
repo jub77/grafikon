@@ -48,12 +48,12 @@ public class LineImport extends Import {
         }
 
         Line line = getDiagram().createLine(this.getId(importedLine), importedLine.getLength(), iNodeFrom, iNodeTo, importedLine.getTopSpeed());
-        line.setAttributes(this.importAttributes(importedLine.getAttributes()));
+        line.getAttributes().add(this.importAttributes(importedLine.getAttributes()));
 
         // tracks
         for (LineTrack importedTrack : importedLine.getTracks()) {
             LineTrack track = new LineTrack(this.getId(importedTrack), importedTrack.getNumber());
-            track.setAttributes(this.importAttributes(importedTrack.getAttributes()));
+            track.getAttributes().add(this.importAttributes(importedTrack.getAttributes()));
             line.addTrack(track);
         }
 

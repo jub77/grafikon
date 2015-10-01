@@ -23,7 +23,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     private final ItemList<Attachment> attachments;
 
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     private final GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
 
     public OutputTemplate(String id, TrainDiagram diagram) {
@@ -31,7 +31,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         this.diagram = diagram;
         listenerSupport = new GTListenerSupport<OutputTemplateListener, OutputTemplateEvent>(
                 (listener, event) -> listener.outputTemplateChanged(event));
-        this.attributesWrapper = new AttributesWrapper(
+        this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change)));
         this.attachments = new ItemList<Attachment>(GTEventType.ATTRIBUTE, GTEventType.ATTRIBUTE) {
             @Override
@@ -114,27 +114,22 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     /**

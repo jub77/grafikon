@@ -46,7 +46,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     private String name;
     private Type type;
     private TextTemplate template;
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     private final GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
 
     public TextItem(String id, TrainDiagram diagram) {
@@ -54,7 +54,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         this.diagram = diagram;
         listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(
                 (listener, event) -> listener.textItemChanged(event));
-        attributesWrapper = new AttributesWrapper(
+        attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new TextItemEvent(TextItem.this, change)));
     }
 
@@ -114,25 +114,21 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        this.attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     /**

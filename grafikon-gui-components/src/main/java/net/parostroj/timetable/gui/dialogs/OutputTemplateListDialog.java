@@ -354,7 +354,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
             log.error("Error creating copy of template.", e);
         }
         copy.setName(template.getName());
-        copy.setAttributes(new Attributes(template.getAttributes()));
+        copy.getAttributes().add(template.getAttributes());
         try {
             if (template.getScript() != null) {
                 copy.setScript(Script.createScript(template.getScript().getSourceCode(),

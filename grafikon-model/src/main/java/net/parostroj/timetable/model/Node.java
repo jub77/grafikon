@@ -23,7 +23,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
     /** Abbreviation. */
     private String abbr;
     /** Attributes of the node. */
-    private AttributesWrapper attributesWrapper;
+    private Attributes attributes;
     /** Node type. */
     private NodeType type;
     /** Location of node. */
@@ -35,7 +35,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
      */
     private void init() {
         location = new Location(0, 0);
-        attributesWrapper = new AttributesWrapper(
+        attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change)));
         listenerSupport = new GTListenerSupport<NodeListener, NodeEvent>(
                 (listener, event) -> listener.nodeChanged(event));
@@ -144,27 +144,24 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         }
     }
 
+    @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    public void setAttributes(Attributes attributes) {
-        attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return this.attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override

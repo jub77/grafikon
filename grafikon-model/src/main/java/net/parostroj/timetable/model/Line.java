@@ -22,7 +22,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
     /** Top speed for the track. */
     private Integer topSpeed;
     /** Attributes. */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     /** Starting point. */
     private final Node from;
     /** Ending point. */
@@ -43,7 +43,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
         super(id);
         this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
                 (listener, event) -> listener.lineChanged(event));
-        this.attributesWrapper = new AttributesWrapper(
+        this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new LineEvent(Line.this, change)));
         this.length = length;
         this.from = from;
@@ -54,12 +54,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
 
     @Override
 	public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-	public void setAttributes(Attributes attributes) {
-        attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
 
@@ -184,17 +179,17 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     public void addListener(LineListener listener) {

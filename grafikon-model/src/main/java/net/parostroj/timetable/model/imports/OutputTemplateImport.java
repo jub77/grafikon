@@ -32,7 +32,7 @@ public class OutputTemplateImport extends Import {
         // create new output template
         OutputTemplate outputTemplate = new OutputTemplate(this.getId(importedOutputTemplate), this.getDiagram());
         outputTemplate.setName(importedOutputTemplate.getName());
-        outputTemplate.setAttributes(new Attributes(importedOutputTemplate.getAttributes()));
+        outputTemplate.getAttributes().add(new Attributes(importedOutputTemplate.getAttributes()));
         outputTemplate.setTemplate(importedOutputTemplate.getTemplate());
         outputTemplate.setScript(importedOutputTemplate.getScript());
 

@@ -28,7 +28,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Added time. */
     private int addedTime;
     /** Attributes. */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     /** For tests - overlapping time intervals. */
     private Set<TimeInterval> overlappingIntervals;
     /** Direction of the time interval regarding the underlying line. */
@@ -60,7 +60,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.speedLimit = speed;
         this.direction = direction;
         this.track = track;
-        this.attributesWrapper = new AttributesWrapper((attrs, change) -> train
+        this.attributes = new Attributes((attrs, change) -> train
                 .fireEvent(new TrainEvent(train, change,
                         train.getTimeIntervalList().indexOf(TimeInterval.this))));
         this.id = id;
@@ -90,7 +90,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
                 interval.getEnd(), interval.getSpeedLimit(), interval.getDirection(),
                 interval.getTrack(), interval.getAddedTime());
-        this.setAttributes(new Attributes(interval.getAttributes()));
+        this.getAttributes().add(interval.getAttributes());
     }
 
     private void setChanged() {
@@ -493,27 +493,22 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     public boolean isNodeOwner() {

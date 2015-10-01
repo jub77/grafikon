@@ -30,7 +30,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private String name;
     private String description;
     private TrainsCycleType type;
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     private final List<TrainsCycleItem> items;
     private final GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
     private TrainsCycle next;
@@ -54,7 +54,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.items = new LinkedList<TrainsCycleItem>();
         listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(
                 (listener, event) -> listener.trainsCycleChanged(event));
-        attributesWrapper = new AttributesWrapper(
+        attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleEvent(TrainsCycle.this, change)));
     }
 
@@ -342,27 +342,22 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     public TrainsCycleType getType() {

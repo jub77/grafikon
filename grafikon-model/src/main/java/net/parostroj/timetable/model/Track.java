@@ -17,7 +17,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     /** Interval list. */
     private final TimeIntervalList intervalList;
     /** Attributes. */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
 
     interface ChangeCallback {
         void fireTrackAttributeChanged(String attributeName, Track nodeTrack, Object oldValue, Object newValue);
@@ -33,7 +33,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     public Track(String id) {
         this.id = id;
         this.intervalList = new TimeIntervalList();
-        this.attributesWrapper = new AttributesWrapper(
+        this.attributes = new Attributes(
                 (attrs, change) -> fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue()));
     }
 
@@ -126,27 +126,24 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
         return intervalList.isEmpty();
     }
 
+    @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {

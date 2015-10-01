@@ -51,7 +51,7 @@ abstract public class LSTrack {
     }
 
     protected void addValuesTrack(TrainDiagram diagram, Track track) throws LSException {
-        track.setAttributes(attributes.createAttributes(diagram));
+        track.getAttributes().add(attributes.createAttributes(diagram));
         track.setNumber(number);
     }
 }

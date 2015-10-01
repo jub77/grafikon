@@ -99,7 +99,7 @@ public class LSTrainsCycle {
             }
         }
         TrainsCycle cycle = new TrainsCycle(id, diagram, name, description, cycleType);
-        cycle.setAttributes(attributes.createAttributes(diagram));
+        cycle.getAttributes().add(attributes.createAttributes(diagram));
         for (LSTrainsCycleItem item : items) {
             cycle.addItem(item.createTrainsCycleItem(cycle, diagram));
         }

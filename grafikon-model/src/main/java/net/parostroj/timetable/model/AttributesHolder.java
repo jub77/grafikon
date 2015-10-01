@@ -14,6 +14,4 @@ public interface AttributesHolder {
     public Object removeAttribute(String key);
 
     public Attributes getAttributes();
-
-    public void setAttributes(Attributes attributes);
 }

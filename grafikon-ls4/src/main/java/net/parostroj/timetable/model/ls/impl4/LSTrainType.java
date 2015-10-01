@@ -137,7 +137,7 @@ public class LSTrainType {
         type.setTrainNameTemplate(trainNameTemplate != null ?
             trainNameTemplate.createTextTemplate() : null);
         if (attributes != null) {
-            type.setAttributes(attributes.createAttributes(diagram));
+            type.getAttributes().add(attributes.createAttributes(diagram));
         }
         return type;
     }

@@ -27,6 +27,16 @@ public class Attributes implements Map<String, Object> {
     }
 
     /**
+     * Creates attributes with initial listener.
+     *
+     * @param listener listener
+     */
+    public Attributes(AttributesListener listener) {
+        this();
+        this.addListener(listener);
+    }
+
+    /**
      * Copy constructor (shallow copy).
      *
      * @param attributes copied attributes
@@ -267,6 +277,20 @@ public class Attributes implements Map<String, Object> {
             if (!fromMap.containsKey(name)) {
                 this.remove(name, category);
             }
+        }
+    }
+
+    public void add(Attributes from) {
+        for (String category : from.getCategories()) {
+            this.add(from, category);
+        }
+        this.add(from, null);
+    }
+
+    public void add(Attributes from, String category) {
+        Map<String, Object> fromMap = from.getAttributesMap(category);
+        for (String name : fromMap.keySet()) {
+            this.set(name, fromMap.get(name), category);
         }
     }
 

@@ -64,7 +64,7 @@ public class LSTrainsCycleType {
         TrainsCycleType type = new TrainsCycleType(id, diagram);
         type.setName(name);
         type.setDescription(description);
-        type.setAttributes(attributes.createAttributes(diagram));
+        type.getAttributes().add(attributes.createAttributes(diagram));
         return type;
     }
 }

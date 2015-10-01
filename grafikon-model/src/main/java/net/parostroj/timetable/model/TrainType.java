@@ -34,7 +34,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     /** Listener support. */
     private final GTListenerSupport<TrainTypeListener, TrainTypeEvent> listenerSupport;
     /** Attributes */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
 
     /**
      * creates instance.
@@ -46,7 +46,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         this.diagram = diagram;
         listenerSupport = new GTListenerSupport<TrainTypeListener, TrainTypeEvent>(
                 (listener, event) -> listener.trainTypeChanged(event));
-        attributesWrapper = new AttributesWrapper(
+        attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new TrainTypeEvent(TrainType.this, change)));
     }
 
@@ -249,47 +249,36 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         visitor.visit(this);
     }
 
-    /**
-     * @return attributes
-     */
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    /**
-     * @param attributes attributes to be set
-     */
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     public double getLineWidth() {
-        return attributesWrapper.getAttributes().get(ATTR_LINE_WIDTH, Double.class, 1.0d);
+        return attributes.get(ATTR_LINE_WIDTH, Double.class, 1.0d);
     }
 
     public double getLineLength() {
-        return attributesWrapper.getAttributes().get(ATTR_LINE_LENGTH, Double.class, 1.0d);
+        return attributes.get(ATTR_LINE_LENGTH, Double.class, 1.0d);
     }
 
     public LineType getLineType() {
         return LineType.valueOf(
-                attributesWrapper.getAttributes().get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
+                attributes.get(ATTR_LINE_TYPE, Integer.class, LineType.SOLID.getValue()));
     }
 }

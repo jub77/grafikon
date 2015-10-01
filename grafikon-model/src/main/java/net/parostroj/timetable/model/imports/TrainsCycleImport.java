@@ -50,7 +50,7 @@ public class TrainsCycleImport extends Import {
         }
         TrainsCycle cycle = new TrainsCycle(this.getId(importedCycle), this.getDiagram(),
                 importedCycle.getName(), importedCycle.getDescription(), cycleType);
-        cycle.setAttributes(this.importAttributes(importedCycle.getAttributes()));
+        cycle.getAttributes().add(this.importAttributes(importedCycle.getAttributes()));
 
         // import cycles
         List<Triplet<Train, TimeInterval, TimeInterval>> items = this.createCycleItems(importedCycle);
@@ -61,7 +61,8 @@ public class TrainsCycleImport extends Import {
         for (int i = 0; i < items.size(); i++) {
             Triplet<Train, TimeInterval, TimeInterval> item = items.get(i);
             TrainsCycleItem importedItem = importedCycle.getItems().get(i);
-            TrainsCycleItem cycleItem = new TrainsCycleItem(cycle, item.first, importedItem.getComment(), item.second, item.third, this.importAttributes(importedItem.getAttributes()));
+            TrainsCycleItem cycleItem = new TrainsCycleItem(cycle, item.first, importedItem.getComment(), item.second, item.third);
+            cycleItem.getAttributes().add(this.importAttributes(importedItem.getAttributes()));
             cycle.addItem(cycleItem);
         }
 

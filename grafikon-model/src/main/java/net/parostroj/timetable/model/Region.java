@@ -1,8 +1,6 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -15,15 +13,14 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     private final TrainDiagram diagram;
     private final String id;
-    private String name;
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
 
     Region(String id, String name, TrainDiagram diagram) {
         this.id = id;
-        this.name = name;
         this.diagram = diagram;
-        this.attributesWrapper = new AttributesWrapper(
-                (attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this)));
+        this.attributes = new Attributes();
+        this.attributes.set(ATTR_NAME, name);
+        this.attributes.addListener((attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this)));
     }
 
     @Override
@@ -38,44 +35,35 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
+        return attributes;
     }
 
     public String getName() {
-        return name;
+        return attributes.get(ATTR_NAME, String.class);
     }
 
     public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange(ATTR_NAME, oldName, name), this));
-        }
+        attributes.set(ATTR_NAME, name);
     }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     @Override

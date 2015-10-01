@@ -24,21 +24,21 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     private final TimeInterval from;
     private final TimeInterval to;
 
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
 
-    public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to, Attributes attributes) {
+    public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to) {
         this.cycle = cycle;
         this.train = train;
         this.comment = comment;
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
-        this.attributesWrapper = new AttributesWrapper((attrs, change) -> {
+        this.attributes = new Attributes((attrs, change) -> {
             TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
             event.setNewCycleItem(TrainsCycleItem.this);
             event.setOldCycleItem(TrainsCycleItem.this);
             event.setAttributeChange(change);
             getCycle().fireEvent(event);
-        } , attributes != null ? attributes : new Attributes());
+        });
     }
 
     public boolean containsInterval(TimeInterval interval) {
@@ -162,28 +162,23 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     }
 
     @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
-    }
-
-    @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     /** Cycles. */
     private final ListMultimap<TrainsCycleType, TrainsCycleItem> cycles;
     /* Attributes of the train. */
-    private final AttributesWrapper attributesWrapper;
+    private final Attributes attributes;
     /* cached data */
     private final CachedValue<String> _cachedName;
     private final CachedValue<String> _cachedCompleteName;
@@ -74,7 +74,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
         listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(
                 (listener, event) -> listener.trainChanged(event));
-        attributesWrapper = new AttributesWrapper((attrs, change) ->  {
+        attributes = new Attributes((attrs, change) ->  {
             listenerSupport.fireEvent(new TrainEvent(Train.this, change));
             refreshCachedNames();
             if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
@@ -338,36 +338,24 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return _cachedCycles.get(interval, type);
     }
 
-    /**
-     * @return attributes
-     */
     @Override
     public Attributes getAttributes() {
-        return attributesWrapper.getAttributes();
-    }
-
-    /**
-     * @param attributes attributes to be set
-     */
-    @Override
-    public void setAttributes(Attributes attributes) {
-        this.attributesWrapper.setAttributes(attributes);
-        this.refreshCachedNames();
+        return attributes;
     }
 
     @Override
     public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributesWrapper.getAttributes().get(key, clazz);
+        return attributes.get(key, clazz);
     }
 
     @Override
     public Object removeAttribute(String key) {
-        return attributesWrapper.getAttributes().remove(key);
+        return attributes.remove(key);
     }
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributesWrapper.getAttributes().set(key, value);
+        attributes.set(key, value);
     }
 
     /**

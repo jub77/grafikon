@@ -152,7 +152,7 @@ public class LSTrain {
     public Train createTrain(TrainDiagram diagram) {
         Train train = diagram.createTrain(id);
         train.setNumber(number);
-        train.setAttributes(attributes.createAttributes());
+        train.getAttributes().add(attributes.createAttributes());
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
         train.setType(diagram.getTrainTypeById(type));
