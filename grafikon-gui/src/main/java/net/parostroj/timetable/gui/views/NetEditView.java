@@ -345,6 +345,16 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                             }
                         }
                         break;
+                    case OBJECT_ATTRIBUTE:
+                        if (event.getObject() instanceof Region && event.getAttributeChange().checkName(Region.ATTR_NAME)) {
+                            Region region = (Region) event.getObject();
+                            for (Node node : event.getSource().getNet().getNodes()) {
+                                if (node.getAttribute(Node.ATTR_REGION, Region.class) == region) {
+                                    updateNode(node);
+                                }
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
