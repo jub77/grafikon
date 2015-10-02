@@ -326,6 +326,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     updateNode(event.getSource());
                 }
             }
+
             @Override
             public void processLineEvent(LineEvent event) {
                 if (event.getType() == GTEventType.ATTRIBUTE || event.getType() == GTEventType.TRACK_ADDED ||
@@ -333,6 +334,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     updateLine(event.getSource());
                 }
             }
+
             @Override
             public void processTrainDiagramEvent(TrainDiagramEvent event) {
                 switch (event.getType()) {
@@ -346,19 +348,25 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         }
                         break;
                     case OBJECT_ATTRIBUTE:
-                        if (event.getObject() instanceof Region && event.getAttributeChange().checkName(Region.ATTR_NAME)) {
-                            Region region = (Region) event.getObject();
-                            for (Node node : event.getSource().getNet().getNodes()) {
-                                if (node.getAttribute(Node.ATTR_REGION, Region.class) == region) {
-                                    updateNode(node);
-                                }
-                            }
-                        }
+                        updateNodeForObjectAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGION, event);
+                        updateNodeForObjectAttribute(Company.class, Company.ATTR_ABBR, Node.ATTR_COMPANY, event);
                         break;
                     default:
                         break;
                 }
             }
+
+            private <T> void updateNodeForObjectAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, TrainDiagramEvent event) {
+                if (objectClass.isInstance(event.getObject()) && event.getAttributeChange().checkName(objectAttribute)) {
+                    T object = objectClass.cast(event.getObject());
+                    for (Node node : event.getSource().getNet().getNodes()) {
+                        if (node.getAttribute(nodeAttribute, objectClass) == object) {
+                            updateNode(node);
+                        }
+                    }
+                }
+            }
+
             @Override
             public void processNetEvent(NetEvent event) {
                 if (event.getType() == GTEventType.NODE_ADDED) {
@@ -366,6 +374,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     updateNodeLocation(node);
                 }
             }
+
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {

@@ -64,10 +64,18 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
             value = this.convertLine((Line) mxCell.getValue());
         } else if (mxCell.getValue() instanceof Node) {
             Node node = (Node) mxCell.getValue();
-            Region region = node.getAttributes().get(Node.ATTR_REGION, Region.class);
+            Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
+            Region region = node.getAttribute(Node.ATTR_REGION, Region.class);
             value = node.getName();
+            String description = null;
+            if (company != null) {
+                description = company.getAbbr();
+            }
             if (region != null) {
-                value = String.format("%s%n(%s)", value, region.getName());
+                description = description == null ? region.getName() : description + "," + region.getName();
+            }
+            if (description != null) {
+                value = String.format("%s%n(%s)", value, description);
             }
         } else {
             value = "";
