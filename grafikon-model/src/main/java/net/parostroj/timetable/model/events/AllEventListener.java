@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.events;
 
+import net.parostroj.timetable.model.ObjectWithId;
+
 /**
  * All event listener.
  *
@@ -7,5 +9,5 @@ package net.parostroj.timetable.model.events;
  */
 public interface AllEventListener extends GTListener {
 
-    void changed(GTEvent<?> event);
+    void changed(GTEvent<? extends ObjectWithId> event);
 }

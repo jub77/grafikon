@@ -56,7 +56,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final GTListenerTrainDiagramImpl listener;
     private final ChangesTrackerImpl changesTracker;
     private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
-    private final GTListenerSupport<AllEventListener, GTEvent<?>> listenerSupportAll;
+    private final GTListenerSupport<AllEventListener, GTEvent<? extends ObjectWithId>> listenerSupportAll;
     private TimeConverter timeConverter;
 
     /**
@@ -446,7 +446,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         listenerSupportAll.removeListener(listener);
     }
 
-    protected void fireNestedEvent(GTEvent<?> event) {
+    protected void fireNestedEvent(GTEvent<? extends ObjectWithId> event) {
         processValidators(event);
         listenerSupportAll.fireEvent(event);
     }
