@@ -8,7 +8,7 @@ import com.google.common.base.Predicate;
 public class ModelPredicates {
 
     public static Predicate<Train> managedTrain() {
-        return train -> FreightHelper.isManaged(train);
+        return FreightHelper::isManaged;
     }
 
     public static <T extends AttributesHolder> Predicate<T> inGroup(final Group group) {
