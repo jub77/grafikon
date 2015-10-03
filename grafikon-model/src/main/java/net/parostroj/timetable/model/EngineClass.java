@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements ObjectWithId, Visitable {
+public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<EngineClassListener> {
 
     private final String id;
     private String name;

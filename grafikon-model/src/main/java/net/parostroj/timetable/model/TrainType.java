@@ -12,7 +12,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes, ListenerHolder<TrainTypeListener> {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */
@@ -232,6 +232,11 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      */
     public void removeListener(TrainTypeListener listener) {
         listenerSupport.removeListener(listener);
+    }
+
+    @Override
+    public void removeAllListeners() {
+        listenerSupport.removeAllListeners();
     }
 
     @Override

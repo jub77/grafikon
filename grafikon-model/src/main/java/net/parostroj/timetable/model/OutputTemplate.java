@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart {
+public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart, ListenerHolder<OutputTemplateListener> {
 
     public static final String DEFAULT_OUTPUT = "groovy";
 
@@ -148,6 +148,11 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
      */
     public void removeListener(OutputTemplateListener listener) {
         listenerSupport.removeListener(listener);
+    }
+
+    @Override
+    public void removeAllListeners() {
+        listenerSupport.removeAllListeners();
     }
 
     @Override

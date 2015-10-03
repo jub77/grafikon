@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes, ListenerHolder<TextItemListener> {
 
     public static enum Type {
         PLAIN_TEXT("plain");
@@ -147,6 +147,11 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
      */
     public void removeListener(TextItemListener listener) {
         listenerSupport.removeListener(listener);
+    }
+
+    @Override
+    public void removeAllListeners() {
+        listenerSupport.removeAllListeners();
     }
 
     @Override
