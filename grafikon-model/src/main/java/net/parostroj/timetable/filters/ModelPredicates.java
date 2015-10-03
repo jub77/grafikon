@@ -3,9 +3,25 @@ package net.parostroj.timetable.filters;
 import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.model.*;
 
+import java.util.Set;
+
 import com.google.common.base.Predicate;
 
 public class ModelPredicates {
+
+    public static enum PredefinedTrainTypes {
+        FREIGHT("freight"), PASSENGER("passenger");
+
+        private final String key;
+
+        private PredefinedTrainTypes(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
 
     public static Predicate<Train> managedTrain() {
         return FreightHelper::isManaged;
@@ -28,5 +44,26 @@ public class ModelPredicates {
 
     public static boolean lineInterval(TimeInterval interval) {
         return interval.isLineOwner();
+    }
+
+    public static Predicate<Train> getTrainsByType(final Set<TrainType> types) {
+        return train -> types.contains(train.getType());
+    }
+
+    public static Predicate<Train> getTrainsByType(PredefinedTrainTypes types) {
+        switch (types) {
+            case FREIGHT:
+                return train -> {
+                    TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
+                    return category != null ? category.getKey().equals(PredefinedTrainTypes.FREIGHT.getKey()) : false;
+                };
+            case PASSENGER:
+                return train -> {
+                    TrainTypeCategory category = train.getType() != null ? train.getType().getCategory() : null;
+                    return category != null ? category.getKey().equals(PredefinedTrainTypes.PASSENGER.getKey()) : false;
+                };
+            default:
+                throw new IllegalArgumentException("Unexpected train types: " + types);
+        }
     }
 }

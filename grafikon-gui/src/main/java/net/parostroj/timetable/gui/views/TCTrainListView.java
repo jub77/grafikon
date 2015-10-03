@@ -16,7 +16,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.filters.TrainTypePredicate;
+import com.google.common.base.Predicate;
+
+import net.parostroj.timetable.filters.ModelPredicates;
+import net.parostroj.timetable.filters.ModelPredicates.PredefinedTrainTypes;
 import net.parostroj.timetable.gui.dialogs.TCItemChangeDialog;
 import net.parostroj.timetable.gui.dialogs.TrainsFilterDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -61,7 +64,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     }
 
     private TCDelegate delegate;
-    private TrainTypePredicate filter;
+    private Predicate<Train> filter;
     private boolean overlappingEnabled;
     private final TCItemChangeDialog changeDialog;
 
@@ -536,9 +539,9 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
 
     private void setFilter(String type, Component component) {
         if (TrainFilter.PASSENGER.isType(type)) {
-            filter = TrainTypePredicate.getTrainsByType(TrainTypePredicate.PredefinedType.PASSENGER);
+            filter = ModelPredicates.getTrainsByType(PredefinedTrainTypes.PASSENGER);
         } else if (TrainFilter.FREIGHT.isType(type)) {
-            filter = TrainTypePredicate.getTrainsByType(TrainTypePredicate.PredefinedType.FREIGHT);
+            filter = ModelPredicates.getTrainsByType(PredefinedTrainTypes.FREIGHT);
         } else if (TrainFilter.CUSTOM.isType(type)) {
             // custom filter
             TrainsFilterDialog dialog = new TrainsFilterDialog((java.awt.Frame)GuiComponentUtils.getTopLevelComponent(component), true);
@@ -548,7 +551,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             dialog.dispose();
 
             this.selectedTypes = dialog.getSelectedTypes();
-            this.filter = TrainTypePredicate.getTrainsByType(selectedTypes);
+            this.filter = ModelPredicates.getTrainsByType(selectedTypes);
         } else {
             filter = null;
         }
