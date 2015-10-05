@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -41,7 +42,7 @@ public class LineTrack extends Track implements Visitable {
         NodeTrack oldTrack = this.fromStraightTrack;
         if (!ObjectsUtil.compareWithNull(oldTrack, fromStraightTrack)) {
             this.fromStraightTrack = fromStraightTrack;
-            this.fireAttributeChanged(ATTR_FROM_STRAIGHT, oldTrack, fromStraightTrack);
+            this.fireAttributeChanged(new AttributeChange(ATTR_FROM_STRAIGHT, oldTrack, fromStraightTrack));
         }
     }
 
@@ -53,7 +54,7 @@ public class LineTrack extends Track implements Visitable {
         NodeTrack oldTrack = this.toStraightTrack;
         if (!ObjectsUtil.compareWithNull(oldTrack, toStraightTrack)) {
             this.toStraightTrack = toStraightTrack;
-            this.fireAttributeChanged(ATTR_TO_STRAIGHT, oldTrack, toStraightTrack);
+            this.fireAttributeChanged(new AttributeChange(ATTR_TO_STRAIGHT, oldTrack, toStraightTrack));
         }
     }
 

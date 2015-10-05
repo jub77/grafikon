@@ -126,7 +126,7 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment {
 
     abstract protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType);
 
-    abstract protected void fireTrackAttributeChanged(String attributeName, Track track, Object oldValue, Object newValue);
+    abstract protected void fireTrackAttributeChanged(Track track, AttributeChange attributeChange);
 
     abstract protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to);
 }

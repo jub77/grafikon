@@ -206,8 +206,8 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
     }
 
     @Override
-    protected void fireTrackAttributeChanged(String attributeName, Track track, Object oldValue, Object newValue) {
-        this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(attributeName, oldValue, newValue), (LineTrack) track));
+    protected void fireTrackAttributeChanged(Track track, AttributeChange change) {
+        this.listenerSupport.fireEvent(new LineEvent(this, change, (LineTrack) track));
     }
 
     @Override

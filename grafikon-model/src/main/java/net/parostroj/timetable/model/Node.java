@@ -223,8 +223,8 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
     }
 
     @Override
-    protected void fireTrackAttributeChanged(String attributeName, Track track, Object oldValue, Object newValue) {
-        this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(attributeName, oldValue, newValue), (NodeTrack) track));
+    protected void fireTrackAttributeChanged(Track track, AttributeChange change) {
+        this.listenerSupport.fireEvent(new NodeEvent(this, change, (NodeTrack) track));
     }
 
     @Override

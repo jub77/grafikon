@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -51,7 +52,7 @@ public class NodeTrack extends Track implements Visitable {
         boolean oldPlatform = this.platform;
         if (oldPlatform != platform) {
             this.platform = platform;
-            this.fireAttributeChanged(ATTR_PLATFORM, oldPlatform, platform);
+            this.fireAttributeChanged(new AttributeChange(ATTR_PLATFORM, oldPlatform, platform));
         }
     }
 

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+
 /**
  * Track in the station.
  *
@@ -20,7 +22,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     private final Attributes attributes;
 
     interface ChangeCallback {
-        void fireTrackAttributeChanged(String attributeName, Track nodeTrack, Object oldValue, Object newValue);
+        void fireTrackAttributeChanged(Track track, AttributeChange attributeChange);
     }
 
     ChangeCallback changeCallback;
@@ -34,7 +36,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
         this.id = id;
         this.intervalList = new TimeIntervalList();
         this.attributes = new Attributes(
-                (attrs, change) -> fireAttributeChanged(change.getName(), change.getOldValue(), change.getNewValue()));
+                (attrs, change) -> fireAttributeChanged(change));
     }
 
     /**
@@ -68,7 +70,7 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
     public void setNumber(String number) {
         String oldNumber = this.number;
         this.number = number;
-        this.fireAttributeChanged(ATTR_NUMBER, oldNumber, number);
+        this.fireAttributeChanged(new AttributeChange(ATTR_NUMBER, oldNumber, number));
     }
 
     /**
@@ -146,9 +148,9 @@ public abstract class Track implements AttributesHolder, ObjectWithId, TrackAttr
         attributes.set(key, value);
     }
 
-    void fireAttributeChanged(String attributeName, Object oldValue, Object newValue) {
+    void fireAttributeChanged(AttributeChange attributeChange) {
         if (changeCallback != null) {
-            changeCallback.fireTrackAttributeChanged(attributeName, this, oldValue, newValue);
+            changeCallback.fireTrackAttributeChanged(this, attributeChange);
         }
     }
 
