@@ -24,6 +24,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     private final ApplicationModel model;
     private final GraphicalTimetableView view;
     private boolean selection;
+    private boolean appEvent;
 
     public NormalHTS(final ApplicationModel model, Color selectionColor,
             final GraphicalTimetableView view) {
@@ -31,10 +32,15 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
 
             @Override
             public void modelChanged(ApplicationModelEvent event) {
-                if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
-                    final Train selectedTrain = model.getSelectedTrain();
-                    view.selectItems(selectedTrain == null ? Collections.<TimeInterval> emptyList()
-                            : selectedTrain.getTimeIntervalList(), TimeInterval.class);
+                appEvent = true;
+                try {
+                    if (!selection && event.getType() == ApplicationModelEventType.SELECTED_TRAIN_CHANGED) {
+                        final Train selectedTrain = model.getSelectedTrain();
+                        view.selectItems(selectedTrain == null ? Collections.<TimeInterval> emptyList()
+                                : selectedTrain.getTimeIntervalList(), TimeInterval.class);
+                    }
+                } finally {
+                    appEvent = false;
                 }
             }
         });
@@ -64,7 +70,9 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
             set = selected == null ? Collections.<Train>emptySet() : Collections.singleton(selected);
             model.setSelectedTrain(selected);
             selectedTimeInterval = interval;
-            model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
+            if (!appEvent) {
+                model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
+            }
             return interval != null;
         } finally {
             selection = false;
