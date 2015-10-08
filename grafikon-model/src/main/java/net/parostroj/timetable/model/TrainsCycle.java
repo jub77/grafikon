@@ -185,7 +185,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     private static Consumer<TrainsCycle> getSendChangedSequence() {
         return tc -> {
-            tc.fireEvent(new Event(tc, Event.Type.SPECIAL, Special.SEQUENCE));
+            tc.fireEvent(new Event(tc, Special.SEQUENCE));
         };
     }
 
