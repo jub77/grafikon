@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
+class ChangesTrackerImpl implements Listener, ChangesTracker {
 
     private static final Logger log = LoggerFactory.getLogger(ChangesTrackerImpl.class);
 
@@ -39,16 +39,18 @@ class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
         listeners = new HashSet<ChangesTrackerListener>();
     }
 
-    private void receiveEvent(GTEvent<?> event) {
-        if (!enabled)
+    private void receiveEvent(Event event) {
+        if (!enabled) {
             return;
+        }
 
         // check if the event belongs to tracked events
-        if (!isTracked(event))
+        if (!isTracked(event)) {
             return;
+        }
 
         // add to changes
-        event.accept(transformVisitor);
+        EventProcessing.visit(event, transformVisitor);
         DiagramChange change = transformVisitor.getChange();
         this.addChange(change);
     }
@@ -73,8 +75,8 @@ class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
         }
     }
 
-    private boolean isTracked(GTEvent<?> event) {
-        event.accept(trackedVisitor);
+    private boolean isTracked(Event event) {
+        EventProcessing.visit(event, trackedVisitor);
         return trackedVisitor.isTracked();
     }
 
@@ -94,7 +96,7 @@ class ChangesTrackerImpl implements AllEventListener, ChangesTracker {
     }
 
     @Override
-    public void changed(GTEvent<?> event) {
+    public void changed(Event event) {
         this.receiveEvent(event);
     }
 

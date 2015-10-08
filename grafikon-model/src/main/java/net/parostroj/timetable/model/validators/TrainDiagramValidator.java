@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model.validators;
 
-import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.Event;
 
 /**
  * Validator to keep the train diagram valid.
@@ -9,5 +9,5 @@ import net.parostroj.timetable.model.events.GTEvent;
  */
 public interface TrainDiagramValidator {
 
-    boolean validate(GTEvent<?> event);
+    boolean validate(Event event);
 }

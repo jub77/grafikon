@@ -52,15 +52,19 @@ public class FloatingWindowsFactory {
         mediator.addColleague(new ApplicationGTEventColleague(){
 
             @Override
-            public void processTrainEvent(TrainEvent event) {
+            public void processTrainEvent(Event event) {
                 switch (event.getType()) {
-                    case TIME_INTERVAL_LIST:
-                    case TECHNOLOGICAL:
-                        panel.updateTrain(event.getSource());
+                    case SPECIAL:
+                        if (event.getData() instanceof SpecialTrainTimeIntervalList) {
+                            panel.updateTrain((Train) event.getSource());
+                        }
                         break;
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                            panel.refreshTrain(event.getSource());
+                            panel.refreshTrain((Train) event.getSource());
+                        }
+                        if (event.getAttributeChange().checkName(Train.ATTR_TECHNOLOGICAL_AFTER, Train.ATTR_TECHNOLOGICAL_BEFORE)) {
+                            panel.updateTrain((Train) event.getSource());
                         }
                         break;
                     default:
@@ -69,13 +73,17 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case TRAIN_ADDED:
-                        panel.updateTrain((Train)event.getObject());
+                    case ADDED:
+                        if (event.getObject() instanceof Train) {
+                            panel.updateTrain((Train) event.getObject());
+                        }
                         break;
-                    case TRAIN_REMOVED:
-                        panel.removeTrain((Train)event.getObject());
+                    case REMOVED:
+                        if (event.getObject() instanceof Train) {
+                            panel.removeTrain((Train) event.getObject());
+                        }
                         break;
                     default:
                         break;
@@ -142,17 +150,19 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainEvent(TrainEvent event) {
+            public void processTrainEvent(Event event) {
                 switch (event.getType()) {
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(Train.ATTR_WEIGHT)) {
-                            panel.updateTrain(event.getSource());
+                            panel.updateTrain((Train) event.getSource());
                         } else if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                            panel.refreshTrain(event.getSource());
+                            panel.refreshTrain((Train) event.getSource());
                         }
                         break;
-                    case TIME_INTERVAL_LIST:
-                        panel.updateTrain(event.getSource());
+                    case SPECIAL:
+                        if (event.getData() instanceof SpecialTrainTimeIntervalList) {
+                            panel.updateTrain((Train) event.getSource());
+                        }
                         break;
                     default:
                         break;
@@ -160,9 +170,9 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainsCycleEvent(TrainsCycleEvent event) {
-                if (TrainsCycleType.ENGINE_CYCLE.equals(event.getSource().getType().getName())) {
-                    TrainsCycle cycle = event.getSource();
+            public void processTrainsCycleEvent(Event event) {
+                if (TrainsCycleType.ENGINE_CYCLE.equals(((TrainsCycle) event.getSource()).getType().getName())) {
+                    TrainsCycle cycle = (TrainsCycle) event.getSource();
                     for (TrainsCycleItem item : cycle) {
                         panel.updateTrain(item.getTrain());
                     }
@@ -170,13 +180,17 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case TRAIN_ADDED:
-                        panel.updateTrain((Train)event.getObject());
+                    case ADDED:
+                        if (event.getObject() instanceof Train) {
+                            panel.updateTrain((Train) event.getObject());
+                        }
                         break;
-                    case TRAIN_REMOVED:
-                        panel.removeTrain((Train)event.getObject());
+                    case REMOVED:
+                        if (event.getObject() instanceof Train) {
+                            panel.removeTrain((Train) event.getObject());
+                        }
                         break;
                     default:
                         break;
@@ -318,19 +332,21 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case TRAINS_CYCLE_ADDED:
-                        panel.circulationAdded((TrainsCycle) event.getObject());
+                    case ADDED:
+                        if (event.getObject() instanceof TrainsCycle) {
+                            panel.circulationAdded((TrainsCycle) event.getObject());
+                        } else if (event.getObject() instanceof TrainsCycleType) {
+                            panel.typeAdded((TrainsCycleType) event.getObject());
+                        }
                         break;
-                    case TRAINS_CYCLE_REMOVED:
-                        panel.circulationRemoved((TrainsCycle) event.getObject());
-                        break;
-                    case CYCLE_TYPE_ADDED:
-                        panel.typeAdded((TrainsCycleType) event.getObject());
-                        break;
-                    case CYCLE_TYPE_REMOVED:
-                        panel.typeRemoved((TrainsCycleType) event.getObject());
+                    case REMOVED:
+                        if (event.getObject() instanceof TrainsCycle) {
+                            panel.circulationRemoved((TrainsCycle) event.getObject());
+                        } else if (event.getObject() instanceof TrainsCycleType) {
+                            panel.typeRemoved((TrainsCycleType) event.getObject());
+                        }
                         break;
                     case ATTRIBUTE:
                         if (event.getAttributeChange().getName().equals(TrainDiagram.ATTR_FROM_TIME)
@@ -344,8 +360,8 @@ public class FloatingWindowsFactory {
             }
 
             @Override
-            public void processTrainsCycleEvent(TrainsCycleEvent event) {
-                panel.circulationUpdated(event.getSource());
+            public void processTrainsCycleEvent(Event event) {
+                panel.circulationUpdated((TrainsCycle) event.getSource());
             }
         });
         FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.circulationview.title", "circulations.view") {
@@ -390,14 +406,14 @@ public class FloatingWindowsFactory {
         final FloatingWindow dialog = new FloatingDialog(frame, panel, "dialog.trainchanged.title", "changed.trains");
         mediator.addColleague(new GTEventsReceiverColleague() {
             @Override
-            public void processTrainEvent(TrainEvent event) {
+            public void processTrainEvent(Event event) {
                 if (!dialog.isVisible())
                     return;
-                if (event.getType() == GTEventType.TIME_INTERVAL_LIST) {
-                    panel.addTrainToList(event.getSource());
+                if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
+                    panel.addTrainToList((Train) event.getSource());
                 }
             }
-        }, TrainEvent.class);
+        }, Event.class);
         mediator.addColleague(new ApplicationGTEventColleague() {
             @Override
             public void processApplicationEvent(ApplicationModelEvent event) {

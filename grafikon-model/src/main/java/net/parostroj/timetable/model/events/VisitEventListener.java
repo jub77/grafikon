@@ -7,7 +7,7 @@ import net.parostroj.timetable.visitors.EventVisitor;
  *
  * @author jub
  */
-public class VisitEventListener implements AllEventListener {
+public class VisitEventListener implements Listener {
 
     private final EventVisitor visitor;
 
@@ -17,7 +17,7 @@ public class VisitEventListener implements AllEventListener {
     }
 
     @Override
-    public void changed(GTEvent<?> event) {
-        event.accept(visitor);
+    public void changed(Event event) {
+        EventProcessing.visit(event, visitor);
     }
 }

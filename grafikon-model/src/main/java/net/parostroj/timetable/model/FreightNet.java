@@ -24,12 +24,12 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
+public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Observable {
 
     private final String id;
     private final Attributes attributes;
     private final AttributesListener defaultAttributesListener;
-    private final GTListenerSupport<FreightNetListener, FreightNetEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
 
     private final Multimap<Train, FNConnection> fromMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toMap = HashMultimap.create();
@@ -38,15 +38,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     public FreightNet(String id) {
         this.id = id;
-        this.listenerSupport = new GTListenerSupport<FreightNetListener, FreightNetEvent>(
-                (listener, event) -> listener.freightNetChanged(event));
+        this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
-            FreightNetEvent event = null;
+            Event event = null;
             if (attributes instanceof FNConnection) {
-                event = new FreightNetEvent(FreightNet.this, GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE, change,
-                        (FNConnection) attributes);
+                event = new Event(FreightNet.this, attributes, change);
             } else {
-                event = new FreightNetEvent(FreightNet.this, change);
+                event = new Event(FreightNet.this, change);
             }
             listenerSupport.fireEvent(event);
         };
@@ -88,7 +86,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         nodeMap.put(conn.getFrom().getOwnerAsNode(), conn);
         this.addConn(fromMap, conn, conn.getFrom().getTrain());
         this.addConn(toMap, conn, conn.getTo().getTrain());
-        this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_ADDED, null, conn));
+        this.fireEvent(new Event(this, Event.Type.ADDED, conn));
     }
 
     private void removeConnectionImpl(FNConnection conn) {
@@ -97,7 +95,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
             nodeMap.remove(conn.getFrom().getOwnerAsNode(), conn);
             this.removeConn(fromMap, conn, conn.getFrom().getTrain());
             this.removeConn(toMap, conn, conn.getTo().getTrain());
-            this.fireEvent(new FreightNetEvent(this, GTEventType.FREIGHT_NET_CONNECTION_REMOVED, null, conn));
+            this.fireEvent(new Event(this, Event.Type.REMOVED, conn));
         }
     }
 
@@ -139,16 +137,18 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         }
     }
 
-    public void addListener(FreightNetListener listener) {
+    @Override
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
-    public void removeListener(FreightNetListener listener) {
+    @Override
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
 
-    private void fireEvent(FreightNetEvent event) {
+    private void fireEvent(Event event) {
         this.listenerSupport.fireEvent(event);
     }
 

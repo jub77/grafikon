@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.validators;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Company remove correction.
@@ -17,9 +18,9 @@ public class CompanyRemoveValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.COMPANY_REMOVED) {
-            Company removedCompany = (Company) ((TrainDiagramEvent) event).getObject();
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Company) {
+            Company removedCompany = (Company) event.getObject();
             // remove company from circulations...
             for (TrainsCycleType type : diagram.getCycleTypes()) {
                 for (TrainsCycle circulation : diagram.getCycles(type)) {

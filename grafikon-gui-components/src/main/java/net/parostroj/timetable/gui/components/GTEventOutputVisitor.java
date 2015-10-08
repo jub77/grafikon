@@ -27,10 +27,11 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainDiagramEvent event) {
+    public void visitDiagramEvent(Event event) {
         try {
             str.append("TrainDiagramEvent[");
-            str.append(Integer.toString(event.getSource().getTrains().size())).append(" trains]");
+            TrainDiagram diagram = (TrainDiagram) event.getSource();
+            str.append(Integer.toString(diagram.getTrains().size())).append(" trains]");
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
@@ -63,11 +64,12 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NetEvent event) {
+    public void visitNetEvent(Event event) {
         try {
             str.append("NetEvent[");
-            str.append(Integer.toString(event.getSource().getNodes().size())).append(" nodes, ");
-            str.append(Integer.toString(event.getSource().getLines().size())).append(" lines]");
+            Net net = (Net) event.getSource();
+            str.append(Integer.toString(net.getNodes().size())).append(" nodes, ");
+            str.append(Integer.toString(net.getLines().size())).append(" lines]");
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
@@ -82,9 +84,12 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getObject() instanceof Region) {
                     str.append("    Region: ").append(((Region) event.getObject()).getName()).append('\n');
                 }
-                if (event.getFromIndex() != 0 || event.getToIndex() != 0) {
-                    str.append("    From index: ").append(Integer.toString(event.getFromIndex())).append('\n');
-                    str.append("    To index  : ").append(Integer.toString(event.getToIndex())).append('\n');
+                if (event.getData() instanceof ListData) {
+                    ListData data = (ListData) event.getData();
+                    if (data.getFromIndex() != null || data.getToIndex() != null) {
+                        str.append("    From index: ").append(Integer.toString(data.getFromIndex())).append('\n');
+                        str.append("    To index  : ").append(Integer.toString(data.getToIndex())).append('\n');
+                    }
                 }
             }
         } catch (IOException e) {
@@ -93,15 +98,16 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(FreightNetEvent event) {
+    public void visitFreightNetEvent(Event event) {
         try {
-            str.append(event.getType() == GTEventType.FREIGHT_NET_CONNECTION_ATTRIBUTE ? "FreightNet(connection)[" : "FreightNet[");
-            str.append(Integer.toString(event.getSource().getConnections().size())).append(" connections]");
+            FreightNet freightNet = (FreightNet) event.getSource();
+            str.append(event.getType() == Event.Type.OBJECT_ATTRIBUTE && event.getObject() instanceof FNConnection ? "FreightNet(connection)[" : "FreightNet[");
+            str.append(Integer.toString(freightNet.getConnections().size())).append(" connections]");
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
-                if (event.getConnection() != null) {
-                    FNConnection connection = event.getConnection();
+                if (event.getObject() instanceof FNConnection) {
+                    FNConnection connection = (FNConnection) event.getObject();
                     String from = connection.getFrom().getTrain().getName();
                     String to = connection.getTo().getTrain().getName();
                     String text = String.format("%s - %s (%s)", from, to, connection.getFrom().getOwnerAsNode().getAbbr());
@@ -117,25 +123,27 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NodeEvent event) {
+    public void visitNodeEvent(Event event) {
         try {
-        	TimeConverter c = event.getSource().getDiagram().getTimeConverter();
+        	Node node = (Node) event.getSource();
+            TimeConverter c = node.getDiagram().getTimeConverter();
             str.append("NodeEvent[");
-            str.append(event.getSource().getAbbr());
+            str.append(node.getAbbr());
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Node: ").append(event.getSource().getName()).append('\n');
+                str.append("  Node: ").append(node.getName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
-                if (event.getInterval() != null) {
-                    str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
-                    str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(c.convertIntToText(event.getInterval().getStart()));
-                    str.append("-").append(c.convertIntToText(event.getInterval().getEnd()));
+                if (event.getObject() instanceof TimeInterval) {
+                    TimeInterval interval = (TimeInterval) event.getObject();
+                    str.append("    Train: ").append(interval.getTrain().getName()).append('\n');
+                    str.append("    Track: ").append(interval.getTrack().getNumber()).append('\n');
+                    str.append("    Time:  ").append(c.convertIntToText(interval.getStart()));
+                    str.append("-").append(c.convertIntToText(interval.getEnd()));
                     str.append('\n');
                 }
-                if (event.getTrack() != null)
-                    str.append("    Track: ").append(event.getTrack().getNumber()).append('\n');
+                if (event.getObject() instanceof Track)
+                    str.append("    Track: ").append(((Train) event.getObject()).getNumber()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
@@ -145,31 +153,33 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(LineEvent event) {
+    public void visitLineEvent(Event event) {
         try {
-        	TimeConverter c = event.getSource().getDiagram().getTimeConverter();
+        	Line line = (Line) event.getSource();
+            TimeConverter c = line.getDiagram().getTimeConverter();
             str.append("LineEvent[");
-            str.append(event.getSource().getFrom().getAbbr());
+            str.append(line.getFrom().getAbbr());
             str.append('-');
-            str.append(event.getSource().getTo().getAbbr());
+            str.append(line.getTo().getAbbr());
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Line: ").append(event.getSource().getFrom().getName()).append('-');
-                str.append(event.getSource().getTo().getName()).append('\n');
+                str.append("  Line: ").append(line.getFrom().getName()).append('-');
+                str.append(line.getTo().getName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
-                if (event.getInterval() != null) {
-                    str.append("    Train: ").append(event.getInterval().getTrain().getName()).append('\n');
-                    str.append("    Track: ").append(event.getInterval().getTrack().getNumber()).append('\n');
-                    str.append("    Time:  ").append(c.convertIntToText(event.getInterval().getStart()));
-                    str.append("-").append(c.convertIntToText(event.getInterval().getEnd()));
+                if (event.getObject() instanceof TimeInterval) {
+                    TimeInterval interval = (TimeInterval) event.getObject();
+                    str.append("    Train: ").append(interval.getTrain().getName()).append('\n');
+                    str.append("    Track: ").append(interval.getTrack().getNumber()).append('\n');
+                    str.append("    Time:  ").append(c.convertIntToText(interval.getStart()));
+                    str.append("-").append(c.convertIntToText(interval.getEnd()));
                     str.append('\n');
-                    str.append("    Direction: ").append(event.getInterval().getFrom().getAbbr());
-                    str.append("-").append(event.getInterval().getTo().getAbbr());
+                    str.append("    Direction: ").append(interval.getFrom().getAbbr());
+                    str.append("-").append(interval.getTo().getAbbr());
                     str.append('\n');
                 }
-                if (event.getTrack() != null)
-                    str.append("    Track: ").append(event.getTrack().getNumber()).append('\n');
+                if (event.getObject() instanceof Track)
+                    str.append("    Track: ").append(((Track) event.getObject()).getNumber()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
@@ -179,25 +189,28 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainEvent event) {
+    public void visitTrainEvent(Event event) {
         try {
+            Train train = (Train) event.getSource();
             str.append("TrainEvent[");
-            str.append(event.getSource().getName());
+            str.append(train.getName());
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Name: ").append(event.getSource().getCompleteName()).append('\n');
+                str.append("  Name: ").append(train.getCompleteName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
-                if (event.getCycleItem() != null) {
-                    str.append("    Cycle item: ").append(event.getCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
-                    str.append('-').append(event.getCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
+                if (event.getObject() instanceof TrainsCycleItem) {
+                    TrainsCycleItem item = (TrainsCycleItem) event.getObject();
+                    str.append("    Cycle item: ").append(item.getFromInterval().getOwnerAsNode().getAbbr());
+                    str.append('-').append(item.getToInterval().getOwnerAsNode().getAbbr()).append('\n');
                 }
-                if (event.getTimeIntervalListType() != null) {
-                    str.append("    Interval type: ").append(event.getTimeIntervalListType().toString()).append('\n');
-                    str.append("    Change start:  ").append(Integer.toString(event.getIntervalChangeStart())).append('\n');
-                    str.append("    Change:        ").append(Integer.toString(event.getChangedInterval())).append('\n');
+                if (event.getData() instanceof SpecialTrainTimeIntervalList) {
+                    SpecialTrainTimeIntervalList special = (SpecialTrainTimeIntervalList) event.getData();
+                    str.append("    Interval type: ").append(special.getType().toString()).append('\n');
+                    str.append("    Change start:  ").append(Integer.toString(special.getStart())).append('\n');
+                    str.append("    Change:        ").append(Integer.toString(special.getChanged())).append('\n');
                 }
             }
         } catch (IOException e) {
@@ -206,10 +219,11 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainTypeEvent event) {
+    public void visitTrainTypeEvent(Event event) {
         try {
+            TrainType traintType = (TrainType) event.getSource();
             str.append("TrainTypeEvent[");
-            str.append(event.getSource().getAbbr());
+            str.append(traintType.getAbbr());
             str.append(']');
             if (full) {
                 str.append('\n');
@@ -223,22 +237,24 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainsCycleEvent event) {
+    public void visitTrainsCycleEvent(Event event) {
         try {
             str.append("TrainsCycleEvent[");
-            str.append(event.getSource().getName());
+            TrainsCycle trainsCycle = (TrainsCycle) event.getSource();
+            str.append(trainsCycle.getName());
             str.append(']');
             if (full) {
                 str.append('\n');
-                str.append("  Name: ").append(event.getSource().getName()).append('\n');
-                str.append("  Cycle type: ").append(event.getSource().getType().getName()).append('\n');
+                str.append("  Name: ").append(trainsCycle.getName()).append('\n');
+                str.append("  Cycle type: ").append(trainsCycle.getType().getName()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange())).append('\n');
-                if (event.getNewCycleItem() != null) {
-                    str.append("    Cycle item: ").append(event.getNewCycleItem().getFromInterval().getOwnerAsNode().getAbbr());
-                    str.append('-').append(event.getNewCycleItem().getToInterval().getOwnerAsNode().getAbbr()).append('\n');
-                    str.append("    Train: ").append(event.getNewCycleItem().getTrain().getName()).append('\n');
+                if (event.getObject() instanceof TrainsCycleItem) {
+                    TrainsCycleItem item = (TrainsCycleItem) event.getObject();
+                    str.append("    Cycle item: ").append(item.getFromInterval().getOwnerAsNode().getAbbr());
+                    str.append('-').append(item.getToInterval().getOwnerAsNode().getAbbr()).append('\n');
+                    str.append("    Train: ").append(item.getTrain().getName()).append('\n');
                 }
             }
         } catch (IOException e) {
@@ -247,10 +263,11 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainsCycleTypeEvent event) {
+    public void visitTrainsCycleTypeEvent(Event event) {
         try {
             str.append("TrainsCycleTypeEvent[");
-            str.append(event.getSource().getName());
+            TrainsCycleType trainsCycleType = (TrainsCycleType) event.getSource();
+            str.append(trainsCycleType.getName());
             str.append(']');
             if (full) {
                 str.append('\n');
@@ -265,10 +282,10 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TextItemEvent event) {
+    public void visitTextItemEvent(Event event) {
         try {
             str.append("TextItemEvent[");
-            str.append(event.getSource().getName());
+            str.append(((TextItem) event.getSource()).getName());
             str.append(']');
             if (full) {
                 str.append('\n');
@@ -282,10 +299,10 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(OutputTemplateEvent event) {
+    public void visitOutputTemplateEvent(Event event) {
         try {
             str.append("OutputTemplateEvent[");
-            str.append(event.getSource().getName());
+            str.append(((OutputTemplate) event.getSource()).getName());
             str.append(']');
             if (full) {
                 str.append('\n');
@@ -299,21 +316,33 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(EngineClassEvent event) {
+    public void visitEngineClassEvent(Event event) {
         try {
+            EngineClass engineClass = (EngineClass) event.getSource();
             str.append("EngineClassEvent[");
-            str.append(event.getSource().getName());
+            str.append(engineClass.getName());
             str.append(']');
             if (full) {
                 str.append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
-                if (event.getTableActionType() != null && event.getWeightTableRow() != null) {
-                    str.append("    Table action type: ").append(event.getTableActionType().toString()).append('\n');
-                    str.append("    Weight table row speed: ").append(Integer.toString(event.getWeightTableRow().getSpeed()));
+                if (event.getObject() instanceof WeightTableRow) {
+                    str.append("    Table action type: ").append(event.getType().toString()).append('\n');
+                    str.append("    Weight table row speed: ").append(Integer.toString(((WeightTableRow) event.getObject()).getSpeed()));
                 }
             }
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visitOtherEvent(Event event) {
+        try {
+            str.append("OtherEvent[");
+            str.append(event.getSource().toString());
+            str.append("]");
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
         }

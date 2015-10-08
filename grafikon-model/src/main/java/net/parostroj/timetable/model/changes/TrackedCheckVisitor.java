@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.changes;
 
+import net.parostroj.timetable.model.FNConnection;
+import net.parostroj.timetable.model.Track;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.EventVisitor;
 
@@ -19,9 +21,9 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainDiagramEvent event) {
+    public void visitDiagramEvent(Event event) {
         switch (event.getType()) {
-            case TRAIN_TYPE_MOVED: case TEXT_ITEM_MOVED: case ENGINE_CLASS_MOVED: case OUTPUT_TEMPLATE_MOVED:
+            case MOVED:
                 tracked = false;
                 break;
             default:
@@ -30,19 +32,20 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NetEvent event) {
-        if (event.getType() == GTEventType.LINE_CLASS_MOVED || event.getType() == GTEventType.REGION_MOVED)
+    public void visitNetEvent(Event event) {
+        if (event.getType() == Event.Type.MOVED) {
             tracked = false;
-        else
+        } else {
             tracked = true;
+        }
     }
 
     @Override
-    public void visit(FreightNetEvent event) {
+    public void visitFreightNetEvent(Event event) {
         switch (event.getType()) {
-            case FREIGHT_NET_CONNECTION_ADDED:
-            case FREIGHT_NET_CONNECTION_REMOVED:
-                tracked = true;
+            case ADDED:
+            case REMOVED:
+                tracked = event.getObject() instanceof FNConnection;
                 break;
             default:
                 tracked = false;
@@ -51,10 +54,13 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NodeEvent event) {
+    public void visitNodeEvent(Event event) {
         switch (event.getType()) {
-            case ATTRIBUTE: case TRACK_ADDED: case TRACK_ATTRIBUTE: case TRACK_REMOVED:
+            case ATTRIBUTE:
                 tracked = true;
+                break;
+            case ADDED: case OBJECT_ATTRIBUTE: case REMOVED:
+                tracked = event.getObject() instanceof Track;
                 break;
             default:
                 tracked = false;
@@ -62,10 +68,13 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(LineEvent event) {
+    public void visitLineEvent(Event event) {
         switch(event.getType()) {
-            case ATTRIBUTE: case TRACK_ADDED: case TRACK_ATTRIBUTE: case TRACK_REMOVED:
+            case ATTRIBUTE:
                 tracked = true;
+                break;
+            case ADDED: case OBJECT_ATTRIBUTE: case REMOVED:
+                tracked = event.getObject() instanceof Track;
                 break;
             default:
                 tracked = false;
@@ -73,9 +82,9 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainEvent event) {
+    public void visitTrainEvent(Event event) {
         switch(event.getType()) {
-            case ATTRIBUTE: case TECHNOLOGICAL: case TIME_INTERVAL_LIST: case TIME_INTERVAL_ATTRIBUTE:
+            case ATTRIBUTE: case OBJECT_ATTRIBUTE: case SPECIAL:
                 tracked = true;
                 break;
             default:
@@ -84,32 +93,37 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(TrainTypeEvent event) {
+    public void visitTrainTypeEvent(Event event) {
         tracked = true;
     }
 
     @Override
-    public void visit(TrainsCycleEvent event) {
+    public void visitTrainsCycleEvent(Event event) {
         tracked = true;
     }
 
     @Override
-    public void visit(TrainsCycleTypeEvent event) {
+    public void visitTrainsCycleTypeEvent(Event event) {
         tracked = true;
     }
 
     @Override
-    public void visit(TextItemEvent event) {
+    public void visitTextItemEvent(Event event) {
         tracked = true;
     }
 
     @Override
-    public void visit(OutputTemplateEvent event) {
+    public void visitOutputTemplateEvent(Event event) {
         tracked = true;
     }
 
     @Override
-    public void visit(EngineClassEvent event) {
+    public void visitEngineClassEvent(Event event) {
         tracked = true;
+    }
+
+    @Override
+    public void visitOtherEvent(Event event) {
+        tracked = false;
     }
 }

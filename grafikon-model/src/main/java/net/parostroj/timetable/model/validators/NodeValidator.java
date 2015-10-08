@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Validator for changes in Node.
@@ -21,8 +22,8 @@ public class NodeValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof NodeEvent && event.getType() == GTEventType.ATTRIBUTE) {
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof Node && event.getType() == Type.ATTRIBUTE) {
             if (event.getAttributeChange().checkName(Node.ATTR_REGION_START)) {
                 Node node = (Node) event.getSource();
                 return checkNodeControl(node);
@@ -32,8 +33,8 @@ public class NodeValidator implements TrainDiagramValidator {
                     i.getTrain().recalculate();
                 }
             }
-        } else if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.NODE_ADDED) {
-            Node node = (Node) ((TrainDiagramEvent) event).getObject();
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ADDED && event.getObject() instanceof Node) {
+            Node node = (Node) event.getObject();
             return checkNodeControl(node);
         }
         return false;

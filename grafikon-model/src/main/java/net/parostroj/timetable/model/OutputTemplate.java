@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart, ListenerHolder<OutputTemplateListener> {
+public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder, OutputTemplateAttributes, TrainDiagramPart, Observable {
 
     public static final String DEFAULT_OUTPUT = "groovy";
 
@@ -24,30 +24,29 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private final ItemList<Attachment> attachments;
 
     private final Attributes attributes;
-    private final GTListenerSupport<OutputTemplateListener, OutputTemplateEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
 
     public OutputTemplate(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        listenerSupport = new GTListenerSupport<OutputTemplateListener, OutputTemplateEvent>(
-                (listener, event) -> listener.outputTemplateChanged(event));
+        listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change)));
-        this.attachments = new ItemList<Attachment>(GTEventType.ATTRIBUTE, GTEventType.ATTRIBUTE) {
+                (attrs, change) -> listenerSupport.fireEvent(new Event(OutputTemplate.this, change)));
+        this.attachments = new ItemList<Attachment>(false) {
             @Override
-            protected void fireEvent(Type type, GTEventType eventType, Attachment item, int newIndex, int oldIndex) {
+            protected void fireEvent(Event.Type type, Attachment item, Integer newIndex, Integer oldIndex) {
                 AttributeChange change = null;
                 switch (type) {
-                    case ADD:
+                    case ADDED:
                         change = new AttributeChange(ATTR_ATTACHMENT, null, item);
                         break;
-                    case REMOVE:
+                    case REMOVED:
                         change = new AttributeChange(ATTR_ATTACHMENT, item, null);
                         break;
                     default:
                         throw new IllegalArgumentException("Unsupported type: " + type);
                 }
-                listenerSupport.fireEvent(new OutputTemplateEvent(OutputTemplate.this, change));
+                listenerSupport.fireEvent(new Event(OutputTemplate.this, change));
             }
         };
     }
@@ -71,7 +70,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -83,7 +82,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         if (!ObjectsUtil.compareWithNull(template, this.template)) {
             TextTemplate oldTemplate = this.template;
             this.template = template;
-            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
         }
     }
 
@@ -95,7 +94,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         if (!ObjectsUtil.compareWithNull(script, this.script)) {
             Script oldScript = this.script;
             this.script = script;
-            this.listenerSupport.fireEvent(new OutputTemplateEvent(this, new AttributeChange(ATTR_SCRIPT, oldScript, script)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_SCRIPT, oldScript, script)));
         }
     }
 
@@ -137,7 +136,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
      *
      * @param listener listener
      */
-    public void addListener(OutputTemplateListener listener) {
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
@@ -146,11 +145,10 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
      *
      * @param listener listener
      */
-    public void removeListener(OutputTemplateListener listener) {
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
-    @Override
     public void removeAllListeners() {
         listenerSupport.removeAllListeners();
     }

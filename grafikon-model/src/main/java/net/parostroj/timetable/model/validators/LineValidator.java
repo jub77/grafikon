@@ -6,9 +6,8 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.LineEvent;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Validator for changes in Line
@@ -18,8 +17,8 @@ import net.parostroj.timetable.model.events.LineEvent;
 public class LineValidator implements TrainDiagramValidator {
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof LineEvent && event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(Line.ATTR_LENGTH, Line.ATTR_SPEED)) {
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof Line && event.getType() == Type.ATTRIBUTE && event.getAttributeChange().checkName(Line.ATTR_LENGTH, Line.ATTR_SPEED)) {
             Line line = (Line) event.getSource();
             Set<Train> trains = new HashSet<Train>();
             for (Track track : line.getTracks()) {
@@ -32,9 +31,10 @@ public class LineValidator implements TrainDiagramValidator {
                 train.recalculate();
             }
             return true;
-        } else if (event instanceof LineEvent && event.getType() == GTEventType.TRACK_ATTRIBUTE && event.getAttributeChange().checkName(Track.ATTR_FROM_STRAIGHT, Track.ATTR_TO_STRAIGHT)) {
-            LineEvent le = (LineEvent) event;
-            for (TimeInterval i : ImmutableList.copyOf(le.getTrack().getTimeIntervalList())) {
+        } else if (event.getSource() instanceof Line && event.getType() == Type.OBJECT_ATTRIBUTE
+                && event.getObject() instanceof Track
+                && event.getAttributeChange().checkName(Track.ATTR_FROM_STRAIGHT, Track.ATTR_TO_STRAIGHT)) {
+            for (TimeInterval i : ImmutableList.copyOf(((Track) event.getObject()).getTimeIntervalList())) {
                 i.getTrain().recalculate();
             }
             return true;

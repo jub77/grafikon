@@ -2,7 +2,7 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.actions.TrainComparator;
 import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.Event;
 
 /**
  * Data about trains names creation a sorting, computing of times.
@@ -33,7 +33,7 @@ public class TrainsData implements TrainDiagramPart {
     public void setTrainNameTemplate(TextTemplate trainNameTemplate) {
         TextTemplate oldValue = this.trainNameTemplate;
         this.trainNameTemplate = trainNameTemplate;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram,
+        this.diagram.fireEvent(new Event(diagram,
                 new AttributeChange(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE,
                 oldValue, this.trainNameTemplate)));
     }
@@ -45,7 +45,7 @@ public class TrainsData implements TrainDiagramPart {
     public void setTrainCompleteNameTemplate(TextTemplate trainCompleteNameTemplate) {
         TextTemplate oldValue = this.trainCompleteNameTemplate;
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram,
+        this.diagram.fireEvent(new Event(diagram,
                 new AttributeChange(TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE,
                 oldValue, this.trainCompleteNameTemplate)));
     }
@@ -58,7 +58,7 @@ public class TrainsData implements TrainDiagramPart {
         SortPattern oldValue = this.trainSortPattern;
         this.trainSortPattern = trainSortPattern;
         this.trainComparator = null;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("train.sort.pattern", oldValue, this.trainSortPattern)));
+        this.diagram.fireEvent(new Event(diagram, new AttributeChange("train.sort.pattern", oldValue, this.trainSortPattern)));
     }
 
     public Script getRunningTimeScript() {
@@ -68,7 +68,7 @@ public class TrainsData implements TrainDiagramPart {
     public void setRunningTimeScript(Script runningTimeScript) {
         Script oldValue = this.runningTimeScript;
         this.runningTimeScript = runningTimeScript;
-        this.diagram.fireEvent(new TrainDiagramEvent(diagram, new AttributeChange("running.script", oldValue, this.runningTimeScript)));
+        this.diagram.fireEvent(new Event(diagram, new AttributeChange("running.script", oldValue, this.runningTimeScript)));
     }
 
     void setDiagram(TrainDiagram diagram) {

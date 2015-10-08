@@ -1,6 +1,6 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -18,7 +18,7 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
     Region(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributes = new Attributes((attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Region.this)));
+        this.attributes = new Attributes((attrs, change) -> diagram.fireEvent(new Event(diagram, Region.this, change)));
     }
 
     @Override

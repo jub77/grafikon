@@ -24,4 +24,6 @@ public interface TrainAttributes {
     public static final String ATTR_MANAGED_FREIGHT = "managed.freight";
     public static final String ATTR_NO_TRANSITIVE_REGION_START = "no.transitive.region.start";
     public static final String ATTR_OPTIONAL = "optional";
+    public static final String ATTR_TECHNOLOGICAL_BEFORE = "technological.before";
+    public static final String ATTR_TECHNOLOGICAL_AFTER = "technological.after";
 }

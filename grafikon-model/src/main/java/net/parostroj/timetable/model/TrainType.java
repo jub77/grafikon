@@ -12,7 +12,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes, ListenerHolder<TrainTypeListener> {
+public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes, Observable {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */
@@ -32,7 +32,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     /** Template for complete train name. */
     private TextTemplate trainCompleteNameTemplate;
     /** Listener support. */
-    private final GTListenerSupport<TrainTypeListener, TrainTypeEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
     /** Attributes */
     private final Attributes attributes;
 
@@ -44,10 +44,9 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
     protected TrainType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        listenerSupport = new GTListenerSupport<TrainTypeListener, TrainTypeEvent>(
-                (listener, event) -> listener.trainTypeChanged(event));
+        listenerSupport = new ListenerSupport();
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new TrainTypeEvent(TrainType.this, change)));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(TrainType.this, change)));
     }
 
     /**
@@ -76,7 +75,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(abbr, this.abbr)) {
             String oldAbbr = this.abbr;
             this.abbr = abbr;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
         }
     }
 
@@ -94,7 +93,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(color, this.color)) {
             Color oldColor = this.color;
             this.color = color;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_COLOR, oldColor, color)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_COLOR, oldColor, color)));
         }
     }
 
@@ -112,7 +111,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(desc, this.desc)) {
             String oldDesc = this.desc;
             this.desc = desc;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_DESC, oldDesc, desc)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESC, oldDesc, desc)));
         }
     }
 
@@ -130,7 +129,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (platform != this.platform) {
             boolean oldPlatform = this.platform;
             this.platform = platform;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_PLATFORM, oldPlatform,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_PLATFORM, oldPlatform,
                     platform)));
         }
     }
@@ -149,7 +148,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(category, this.category)) {
             TrainTypeCategory oldCategory = this.category;
             this.category = category;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_CATEGORY, oldCategory,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_CATEGORY, oldCategory,
                     category)));
         }
     }
@@ -168,7 +167,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(trainNameTemplate, this.trainNameTemplate)) {
             TextTemplate oldTemplate = this.trainNameTemplate;
             this.trainNameTemplate = trainNameTemplate;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(ATTR_TRAIN_NAME_TEMPLATE,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TRAIN_NAME_TEMPLATE,
                     oldTemplate, trainNameTemplate)));
         }
     }
@@ -187,7 +186,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         if (!ObjectsUtil.compareWithNull(trainCompleteNameTemplate, this.trainCompleteNameTemplate)) {
             TextTemplate oldTemplate = this.trainCompleteNameTemplate;
             this.trainCompleteNameTemplate = trainCompleteNameTemplate;
-            this.listenerSupport.fireEvent(new TrainTypeEvent(this, new AttributeChange(
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(
                     ATTR_TRAIN_COMPLETE_NAME_TEMPLATE, oldTemplate, trainCompleteNameTemplate)));
         }
     }
@@ -222,7 +221,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * adds listener to train.
      * @param listener listener
      */
-    public void addListener(TrainTypeListener listener) {
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
@@ -230,11 +229,10 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * removes listener from train.
      * @param listener listener
      */
-    public void removeListener(TrainTypeListener listener) {
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
-    @Override
     public void removeAllListeners() {
         listenerSupport.removeAllListeners();
     }

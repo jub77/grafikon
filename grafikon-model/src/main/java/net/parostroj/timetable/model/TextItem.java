@@ -10,7 +10,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes, ListenerHolder<TextItemListener> {
+public class TextItem implements ObjectWithId, AttributesHolder, Visitable, TextItemAttributes, Observable {
 
     public static enum Type {
         PLAIN_TEXT("plain");
@@ -47,15 +47,14 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
     private Type type;
     private TextTemplate template;
     private final Attributes attributes;
-    private final GTListenerSupport<TextItemListener, TextItemEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
 
     public TextItem(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        listenerSupport = new GTListenerSupport<TextItemListener, TextItemEvent>(
-                (listener, event) -> listener.textItemChanged(event));
+        listenerSupport = new ListenerSupport();
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new TextItemEvent(TextItem.this, change)));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(TextItem.this, change)));
     }
 
     @Override
@@ -75,7 +74,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         if (type != this.type) {
             Type oldType = this.type;
             this.type = type;
-            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
         }
     }
 
@@ -87,7 +86,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -99,7 +98,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
         if (!ObjectsUtil.compareWithNull(template, this.template)) {
             TextTemplate oldTemplate = this.template;
             this.template = template;
-            this.listenerSupport.fireEvent(new TextItemEvent(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TEMPLATE, oldTemplate, template)));
         }
     }
 
@@ -136,7 +135,7 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
      *
      * @param listener listener
      */
-    public void addListener(TextItemListener listener) {
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
@@ -145,11 +144,10 @@ public class TextItem implements ObjectWithId, AttributesHolder, Visitable, Text
      *
      * @param listener listener
      */
-    public void removeListener(TextItemListener listener) {
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
-    @Override
     public void removeAllListeners() {
         listenerSupport.removeAllListeners();
     }

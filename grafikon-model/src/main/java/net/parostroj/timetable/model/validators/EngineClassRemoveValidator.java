@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model.validators;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Correction of diagram after removal of engine class.
@@ -19,9 +18,9 @@ public class EngineClassRemoveValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.ENGINE_CLASS_REMOVED) {
-            EngineClass clazz = (EngineClass) ((TrainDiagramEvent) event).getObject();
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof EngineClass) {
+            EngineClass clazz = (EngineClass) event.getObject();
             // remove engine class from engine cycles
             for (TrainsCycle cycle : diagram.getEngineCycles()) {
                 EngineClass eClass = cycle.getAttributes().get(TrainsCycle.ATTR_ENGINE_CLASS, EngineClass.class);

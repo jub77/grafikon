@@ -131,13 +131,13 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         }, IntervalSelectionMessage.class);
         model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
-            public void processTrainEvent(TrainEvent event) {
+            public void processTrainEvent(Event event) {
                 Train selectedTrain = model.getSelectedTrain();
                 if (event.getSource() == selectedTrain) {
                     updateView(selectedTrain);
                 }
             }
-        }, GTEvent.class);
+        }, Event.class);
     }
 
 

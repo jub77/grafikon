@@ -12,13 +12,10 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.*;
 import net.parostroj.timetable.model.changes.DiagramChange.Action;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -55,11 +52,12 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
             private final TransformVisitor tv = new TransformVisitor();
 
             @Override
-            public void processGTEventAll(GTEvent<?> event) {
-                event.accept(tcv);
-                if (!tcv.isTracked() || isIgnoredEvent(event))
+            public void processGTEventAll(Event event) {
+                EventProcessing.visit(event, tcv);
+                if (!tcv.isTracked() || isIgnoredEvent(event)) {
                     return;
-                event.accept(tv);
+                }
+                EventProcessing.visit(event, tv);
                 DiagramChange change = tv.getChange();
                 String text = ObjectsUtil.checkAndTrim(this.transformChange(change));
                 if (text != null) {
@@ -68,13 +66,16 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
+                TrainDiagram diagram = (TrainDiagram) event.getSource();
                 switch (event.getType()) {
-                    case TRAINS_CYCLE_ADDED: case TRAINS_CYCLE_REMOVED:
-                        updateCirculations(event.getSource());
-                        break;
-                    case TRAIN_ADDED: case TRAIN_REMOVED:
-                        updateTrainCount(event.getSource());
+                    case ADDED: case REMOVED:
+                        if (event.getObject() instanceof TrainsCycle) {
+                            updateCirculations(diagram);
+                        }
+                        if (event.getObject() instanceof Train) {
+                            updateTrainCount(diagram);
+                        }
                         break;
                     default:
                         // nothing
@@ -82,8 +83,8 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
                 }
             }
 
-            private boolean isIgnoredEvent(GTEvent<?> event) {
-                if (event.getType() == GTEventType.ATTRIBUTE && event.getSource() instanceof Node) {
+            private boolean isIgnoredEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE && event.getSource() instanceof Node) {
                     String attribName = event.getAttributeChange().getName();
                     return attribName.equals("positionX") || attribName.equals("positionY");
                 } else {

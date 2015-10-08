@@ -16,7 +16,7 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
         this.id = id;
         this.diagram = diagram;
         this.attributes = new Attributes(
-                (attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Group.this)));
+                (attrs, change) -> diagram.fireEvent(new Event(diagram, Group.this, change)));
     }
 
     @Override

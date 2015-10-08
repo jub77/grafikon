@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model.validators;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.NetEvent;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Region remove callback.
@@ -19,9 +18,9 @@ public class RegionRemoveValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof NetEvent && event.getType() == GTEventType.REGION_REMOVED) {
-            Region region = (Region) ((NetEvent) event).getObject();
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED && event.getObject() instanceof Region) {
+            Region region = (Region) event.getObject();
             // remove region from all nodes where it appears
             for (Node node : diagram.getNet().getNodes()) {
                 if (region == node.getAttributes().get(Node.ATTR_REGION, Region.class)) {

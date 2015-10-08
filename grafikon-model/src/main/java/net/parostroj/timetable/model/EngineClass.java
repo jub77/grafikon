@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
-import net.parostroj.timetable.model.events.AttributeChange;
-import net.parostroj.timetable.model.events.EngineClassEvent;
-import net.parostroj.timetable.model.events.EngineClassListener;
+
+import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -13,19 +12,18 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<EngineClassListener> {
+public class EngineClass implements ObjectWithId, Visitable, Observable, EngineClassAttributes {
 
     private final String id;
     private String name;
     private final List<WeightTableRow> weightTable;
-    private final GTListenerSupport<EngineClassListener, EngineClassEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
 
     public EngineClass(String id, String name) {
         this.name = name;
         this.id = id;
         this.weightTable = new LinkedList<WeightTableRow>();
-        this.listenerSupport = new GTListenerSupport<EngineClassListener, EngineClassEvent>(
-                (listener, event) -> listener.engineClassChanged(event));
+        this.listenerSupport = new ListenerSupport();
     }
 
     public String getName() {
@@ -35,7 +33,7 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        this.fireEvent(new EngineClassEvent(this, new AttributeChange("name", oldName, name)));
+        this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
     }
 
     @Override
@@ -54,7 +52,7 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
             if (row.getSpeed() < currentRow.getSpeed()) {
                 i.previous();
                 i.add(row);
-                this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_ADDED));
+                this.fireEvent(new Event(this, Event.Type.ADDED, row));
                 return;
             }
             if (row.getSpeed() == currentRow.getSpeed())
@@ -62,7 +60,7 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
                 return;
         }
         weightTable.add(row);
-        this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_ADDED));
+        this.fireEvent(new Event(this, Event.Type.ADDED, row));
     }
 
     public void removeWeightTableRowForSpeed(int speed) {
@@ -70,7 +68,7 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
             WeightTableRow row = i.next();
             if (row.getSpeed() == speed) {
                 i.remove();
-                this.fireEvent(new EngineClassEvent(this, row, EngineClassEvent.Type.ROW_REMOVED));
+                this.fireEvent(new Event(this, Event.Type.REMOVED, row));
                 return;
             }
         }
@@ -79,7 +77,7 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
     public void removeWeightTableRow(int position) {
         WeightTableRow removed = weightTable.remove(position);
         if (removed != null) {
-            this.fireEvent(new EngineClassEvent(this, removed, EngineClassEvent.Type.ROW_REMOVED));
+            this.fireEvent(new Event(this, Event.Type.REMOVED, removed));
         }
     }
 
@@ -139,15 +137,17 @@ public class EngineClass implements ObjectWithId, Visitable, ListenerHolder<Engi
      *
      * @param event event
      */
-    protected void fireEvent(EngineClassEvent event) {
+    protected void fireEvent(Event event) {
         listenerSupport.fireEvent(event);
     }
 
-    public void addListener(EngineClassListener listener) {
+    @Override
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
-    public void removeListener(EngineClassListener listener) {
+    @Override
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 

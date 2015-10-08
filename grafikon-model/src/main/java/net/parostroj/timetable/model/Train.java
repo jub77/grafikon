@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.TrainEvent.TimeIntervalListType;
 import net.parostroj.timetable.utils.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -17,7 +16,7 @@ import com.google.common.collect.*;
  * @author jub
  */
 public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes,
-        TrainDiagramPart, Iterable<TimeInterval> {
+        TrainDiagramPart, Iterable<TimeInterval>, Observable {
 
     /** Train diagram reference. */
     private final TrainDiagram diagram;
@@ -41,7 +40,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private final CachedValue<String> _cachedName;
     private final CachedValue<String> _cachedCompleteName;
     private Map<String, Object> _cachedBinding;
-    private final GTListenerSupport<TrainListener, TrainEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
     private boolean attached;
 
     /* Technological times. */
@@ -72,10 +71,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         lineIntervalsView = Collections.unmodifiableCollection(
                 Collections2.filter(timeIntervalList, ModelPredicates::lineInterval));
         timeIntervalsView = Collections.unmodifiableList(timeIntervalList);
-        listenerSupport = new GTListenerSupport<TrainListener, TrainEvent>(
-                (listener, event) -> listener.trainChanged(event));
+        listenerSupport = new ListenerSupport();
         attributes = new Attributes((attrs, change) ->  {
-            listenerSupport.fireEvent(new TrainEvent(Train.this, change));
+            listenerSupport.fireEvent(new Event(Train.this, change));
             refreshCachedNames();
             if (change.checkName(Train.ATTR_WEIGHT_LIMIT)) {
                 Train.this.recalculate();
@@ -114,7 +112,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * adds listener to train.
      * @param listener listener
      */
-    public void addListener(TrainListener listener) {
+    @Override
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
@@ -122,7 +121,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * removes listener from train.
      * @param listener listener
      */
-    public void removeListener(TrainListener listener) {
+    @Override
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
@@ -140,7 +140,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (!ObjectsUtil.compareWithNull(number, this.number)) {
             String oldNumber = this.number;
             this.number = number;
-            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NUMBER, oldNumber, number)));
             this.refreshCachedNames();
         }
     }
@@ -177,7 +177,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         String oldName = _cachedName.getValue();
         String newName = this.getNameImpl();
         if (_cachedName.set(newName)) {
-            this.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_NAME, oldName, newName)));
+            this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, newName)));
         }
     }
 
@@ -185,7 +185,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         String oldName = _cachedCompleteName.getValue();
         String newName = this.getCompleteNameImpl();
         if (_cachedCompleteName.set(newName)) {
-            this.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_COMPLETE_NAME, oldName, newName)));
+            this.fireEvent(new Event(this, new AttributeChange(ATTR_COMPLETE_NAME, oldName, newName)));
         }
     }
 
@@ -211,7 +211,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (!ObjectsUtil.compareWithNull(description, this.description)) {
             String oldDesc = this.description;
             this.description = description;
-            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESCRIPTION, oldDesc,
                     description)));
             this.refreshCachedNames();
         }
@@ -231,7 +231,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (this.topSpeed != topSpeed) {
             int oldSpeed = this.topSpeed;
             this.topSpeed = topSpeed;
-            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TOP_SPEED, oldSpeed, topSpeed)));
             this.recalculate();
         }
     }
@@ -255,7 +255,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         if (!ObjectsUtil.compareWithNull(type, this.type)) {
             TrainType oldType = this.type;
             this.type = type;
-            this.listenerSupport.fireEvent(new TrainEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
             this.refreshCachedNames();
             // penalties can be changed
             this.recalculate();
@@ -308,7 +308,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         TrainsCycleType cycleType = item.getCycle().getType();
         _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), item, true);
         _cachedCycles.add(timeIntervalList, item);
-        this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_ADDED, item));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.ADDED, item));
         this.checkRecalculateCycle(item.getCycle());
     }
 
@@ -319,7 +319,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         TrainsCycleType cycleType = item.getCycle().getType();
         this.cycles.remove(cycleType, item);
         _cachedCycles.remove(item);
-        this.listenerSupport.fireEvent(new TrainEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, item));
         this.checkRecalculateCycle(item.getCycle());
     }
 
@@ -464,6 +464,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public void setTimeBefore(int length) {
         boolean fireEvent = true;
+        int oldLength = this.getTimeBefore();
         if (length == 0 && timeBefore != null) {
             if (isAttached()) {
                 timeBefore.removeFromOwner();
@@ -491,7 +492,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             fireEvent = false;
         }
         if (fireEvent) {
-            listenerSupport.fireEvent(new TrainEvent(this, GTEventType.TECHNOLOGICAL));
+            listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TECHNOLOGICAL_BEFORE, oldLength, length)));
         }
     }
 
@@ -500,6 +501,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public void setTimeAfter(int length) {
         boolean fireEvent = true;
+        int oldLength = this.getTimeAfter();
         if (length == 0 && timeAfter != null) {
             if (isAttached()) {
                 timeAfter.removeFromOwner();
@@ -527,7 +529,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             fireEvent = false;
         }
         if (fireEvent) {
-            listenerSupport.fireEvent(new TrainEvent(this, GTEventType.TECHNOLOGICAL));
+            listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TECHNOLOGICAL_AFTER, oldLength, length)));
         }
     }
 
@@ -583,9 +585,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void move(int time) {
     	timeIntervalList.get(0).move(time);
     	this.recalculateImpl(0);
-        this.listenerSupport.fireEvent(new TrainEvent(this,
-                TimeIntervalListType.MOVED,
-                0, 0));
+        this.listenerSupport.fireEvent(new Event(this, new SpecialTrainTimeIntervalList(
+                SpecialTrainTimeIntervalList.Type.MOVED, 0, 0)));
     }
 
     /**
@@ -622,7 +623,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         // recalculate intervals
         this.recalculateImpl(changedIndex);
 
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.STOP_TIME, index, changedIndex));
+        this.listenerSupport.fireEvent(new Event(this,
+                new SpecialTrainTimeIntervalList(SpecialTrainTimeIntervalList.Type.STOP_TIME, changedIndex, index)));
     }
 
     /**
@@ -651,7 +653,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         // recalculate intervals
         this.recalculateImpl(changedIndex);
 
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.SPEED, index, changedIndex));
+        this.listenerSupport.fireEvent(new Event(this,
+                new SpecialTrainTimeIntervalList(SpecialTrainTimeIntervalList.Type.SPEED, changedIndex, index)));
     }
 
     /**
@@ -677,7 +680,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         // update - from/to straight could change
         this.recalculateImpl(0);
 
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(nodeInterval)));
+        this.listenerSupport
+                .fireEvent(new Event(this, new SpecialTrainTimeIntervalList(SpecialTrainTimeIntervalList.Type.TRACK, 0,
+                        timeIntervalList.indexOf(nodeInterval))));
     }
 
     /**
@@ -699,7 +704,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         // update - from/to straight could change
         this.recalculateImpl(0);
 
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.TRACK, timeIntervalList.indexOf(lineInterval)));
+        this.listenerSupport
+                .fireEvent(new Event(this, new SpecialTrainTimeIntervalList(SpecialTrainTimeIntervalList.Type.TRACK, 0,
+                        timeIntervalList.indexOf(lineInterval))));
     }
 
     /**
@@ -708,7 +715,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     public void recalculate() {
         Integer changeStart = this.recalculateImpl(0);
         if (changeStart != null) {
-            this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.RECALCULATE, changeStart, changeStart));
+            this.listenerSupport.fireEvent(new Event(this, new SpecialTrainTimeIntervalList(
+                    SpecialTrainTimeIntervalList.Type.RECALCULATE, changeStart, changeStart)));
         }
     }
 
@@ -764,7 +772,9 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
             throw new IllegalStateException("Cannot add interval to already attached train.");
         }
         timeIntervalList.addIntervalLastForTrain(interval);
-        this.listenerSupport.fireEvent(new TrainEvent(this, TimeIntervalListType.ADDED, timeIntervalList.size() - 1));
+        this.listenerSupport
+                .fireEvent(new Event(this, new SpecialTrainTimeIntervalList(SpecialTrainTimeIntervalList.Type.ADDED, 0,
+                        timeIntervalList.size() - 1)));
     }
 
     /**
@@ -920,7 +930,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      *
      * @param event train event
      */
-    void fireEvent(TrainEvent event) {
+    void fireEvent(Event event) {
         listenerSupport.fireEvent(event);
     }
 

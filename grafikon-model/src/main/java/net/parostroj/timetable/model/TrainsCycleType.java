@@ -19,7 +19,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, TrainsCycleTypeAttributes {
+public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, TrainsCycleTypeAttributes, Observable {
 
     public static final String ENGINE_CYCLE = "ENGINE_CYCLE";
     public static final String DRIVER_CYCLE = "DRIVER_CYCLE";
@@ -42,16 +42,15 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private final Attributes attributes;
     private final List<TrainsCycle> cycles;
 
-    private final GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
 
     public TrainsCycleType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
         this.cycles = new LinkedList<TrainsCycle>();
-        listenerSupport = new GTListenerSupport<TrainsCycleTypeListener, TrainsCycleTypeEvent>(
-                (listener, event) -> listener.trainsCycleTypeChanged(event));
+        listenerSupport = new ListenerSupport();
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleTypeEvent(TrainsCycleType.this, change)));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(TrainsCycleType.this, change)));
     }
 
     @Override
@@ -71,7 +70,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -83,7 +82,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         if (!ObjectsUtil.compareWithNull(description, this.description)) {
             String oldDescription = this.description;
             this.description = description;
-            this.listenerSupport.fireEvent(new TrainsCycleTypeEvent(this, new AttributeChange(ATTR_DESCRIPTION,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESCRIPTION,
                     oldDescription, description)));
         }
     }
@@ -130,11 +129,11 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return text;
     }
 
-    public void addListener(TrainsCycleTypeListener listener) {
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
-    public void removeListener(TrainsCycleTypeListener listener) {
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 

@@ -28,7 +28,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
     private NodeType type;
     /** Location of node. */
     private Location location;
-    private GTListenerSupport<NodeListener, NodeEvent> listenerSupport;
 
     /**
      * Initialization.
@@ -36,9 +35,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
     private void init() {
         location = new Location(0, 0);
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new NodeEvent(Node.this, change)));
-        listenerSupport = new GTListenerSupport<NodeListener, NodeEvent>(
-                (listener, event) -> listener.nodeChanged(event));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(Node.this, change)));
     }
 
     /**
@@ -57,14 +54,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         this.abbr = abbr;
         this.diagram = diagram;
         init();
-    }
-
-    public void addListener(NodeListener listener) {
-        this.listenerSupport.addListener(listener);
-    }
-
-    public void removeListener(NodeListener listener) {
-        this.listenerSupport.removeListener(listener);
     }
 
     @Override
@@ -104,7 +93,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -116,7 +105,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         if (!ObjectsUtil.compareWithNull(abbr, this.abbr)) {
             String oldAbbr = this.abbr;
             this.abbr = abbr;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
         }
     }
 
@@ -128,7 +117,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         if (type != this.type) {
             NodeType oldType = this.type;
             this.type = type;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
         }
     }
 
@@ -140,7 +129,7 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         if (!ObjectsUtil.compareWithNull(location, this.location)) {
             Location oldLocation = this.location;
             this.location = location;
-            this.listenerSupport.fireEvent(new NodeEvent(this, new AttributeChange(ATTR_LOCATION, oldLocation, location)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_LOCATION, oldLocation, location)));
         }
     }
 
@@ -215,25 +204,6 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
 
     public Integer getLength() {
         return this.getAttribute(Node.ATTR_LENGTH, Integer.class);
-    }
-
-    @Override
-    protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType) {
-        this.listenerSupport.fireEvent(new NodeEvent(this, eventType, interval));
-    }
-
-    @Override
-    protected void fireTrackAttributeChanged(Track track, AttributeChange change) {
-        this.listenerSupport.fireEvent(new NodeEvent(this, change, (NodeTrack) track));
-    }
-
-    @Override
-    protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to) {
-        if (from == null && to == null) {
-            this.listenerSupport.fireEvent(new NodeEvent(this, eventType, (NodeTrack) track));
-        } else {
-            this.listenerSupport.fireEvent(new NodeEvent(this, eventType, (NodeTrack) track, from, to));
-        }
     }
 
     /**

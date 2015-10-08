@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.Event;
 
 public abstract class GTDrawDecorator implements GTDraw {
 
@@ -54,7 +54,7 @@ public abstract class GTDrawDecorator implements GTDraw {
     }
 
     @Override
-    public Refresh processEvent(GTEvent<?> event) {
+    public Refresh processEvent(Event event) {
         return draw.processEvent(event);
     }
 

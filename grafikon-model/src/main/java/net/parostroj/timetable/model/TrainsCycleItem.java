@@ -33,11 +33,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
         this.attributes = new Attributes((attrs, change) -> {
-            TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
-            event.setNewCycleItem(TrainsCycleItem.this);
-            event.setOldCycleItem(TrainsCycleItem.this);
-            event.setAttributeChange(change);
-            getCycle().fireEvent(event);
+            getCycle().fireEvent(new Event(getCycle(), TrainsCycleItem.this, change));
         });
     }
 
@@ -76,11 +72,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         if (!ObjectsUtil.compareWithNull(comment, this.comment)) {
             String oldComment = this.comment;
             this.comment = comment;
-            TrainsCycleEvent event = new TrainsCycleEvent(getCycle(), GTEventType.CYCLE_ITEM_UPDATED);
-            event.setNewCycleItem(this);
-            event.setOldCycleItem(this);
-            event.setAttributeChange(new AttributeChange(ATTR_COMMENT, oldComment, comment));
-            getCycle().fireEvent(event);
+            getCycle().fireEvent(new Event(getCycle(), this, new AttributeChange(ATTR_COMMENT, oldComment, comment)));
         }
     }
 

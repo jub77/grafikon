@@ -17,8 +17,8 @@ public class TransformVisitor implements EventVisitor {
     private final NamesVisitor names = new NamesVisitor();
 
     @Override
-    public void visit(TrainDiagramEvent event) {
-        DiagramChange.Type type = converter.getType(event.getType());
+    public void visitDiagramEvent(Event event) {
+        DiagramChange.Type type = getChangeType(event);
         DiagramChange.Action action = converter.getAction(event.getType());
         if (type != null) {
             if (action == null) {
@@ -29,10 +29,10 @@ public class TransformVisitor implements EventVisitor {
             change.setObject(this.getObjectStr(event.getObject()));
         } else {
             change = new DiagramChange(DiagramChange.Type.DIAGRAM, action,
-                    event.getType() == GTEventType.OBJECT_ATTRIBUTE ?
+                    event.getType() == Event.Type.OBJECT_ATTRIBUTE ?
                             ((ObjectWithId) event.getObject()).getId() :
-                            event.getSource().getId());
-            if (event.getType() == GTEventType.OBJECT_ATTRIBUTE) {
+                            ((ObjectWithId) event.getSource()).getId());
+            if (event.getType() == Event.Type.OBJECT_ATTRIBUTE) {
                 change.setObject(this.getObjectStr(event.getObject()));
             }
             if (action == null) {
@@ -43,8 +43,8 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NetEvent event) {
-        DiagramChange.Type type = converter.getType(event.getType());
+    public void visitNetEvent(Event event) {
+        DiagramChange.Type type = getChangeType(event);
         DiagramChange.Action action = converter.getAction(event.getType());
         if (type != null) {
             if (action == null)
@@ -56,17 +56,17 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(FreightNetEvent event) {
-        DiagramChange.Type type = converter.getType(event.getType());
+    public void visitFreightNetEvent(Event event) {
+        DiagramChange.Type type = getChangeType(event);
         DiagramChange.Action action = converter.getAction(event.getType());
-        ObjectWithId o = event.getConnection();
+        ObjectWithId o = (ObjectWithId) event.getObject();
         if (type != null) {
             if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             }
             change = new DiagramChange(type, action, o.getId());
         } else {
-            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, event.getSource().getId());
+            change = new DiagramChange(DiagramChange.Type.FREIGHT_NET, action, ((ObjectWithId) event.getSource()).getId());
             if (action == null) {
                 throw new IllegalArgumentException("Action missing: " + event.getType());
             }
@@ -78,120 +78,145 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
-    public void visit(NodeEvent event) {
-        change = new DiagramChange(DiagramChange.Type.NODE, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitNodeEvent(Event event) {
+        change = new DiagramChange(DiagramChange.Type.NODE, ((ObjectWithId) event.getSource()).getId());
+        change.setObject(((Node) event.getSource()).getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(LineEvent event) {
-        change = new DiagramChange(DiagramChange.Type.LINE, event.getSource().getId());
-        Line line = event.getSource();
+    public void visitLineEvent(Event event) {
+        Line line = (Line) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.LINE, line.getId());
         change.setObject(line.getFrom().getName() + " - " + line.getTo().getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(TrainEvent event) {
-        change = new DiagramChange(DiagramChange.Type.TRAIN, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitTrainEvent(Event event) {
+        Train train = (Train) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.TRAIN, train.getId());
+        change.setObject(train.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
         switch (event.getType()) {
-            case TECHNOLOGICAL:
-                change.addDescription(new DiagramChangeDescription(desc));
-                break;
-            case TIME_INTERVAL_ATTRIBUTE:
-                TimeInterval ti = event.getSource().getTimeIntervalList().get(event.getChangedInterval());
-                change.addDescription(new DiagramChangeDescription(desc,
-                        new Parameter(event.getAttributeChange().getName(), true),
-                        new Parameter(this.getSegmentDescription(ti))));
-                break;
-            case TIME_INTERVAL_LIST:
-                desc = converter.getTilDesc(event.getTimeIntervalListType());
-                DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
-                switch (event.getTimeIntervalListType()) {
-                    case SPEED: case STOP_TIME: case TRACK:
-                        dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event))));
-                        break;
-                    default:
-                        break;
+            case ATTRIBUTE:
+                if (event.getAttributeChange().checkName(Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
+                    change.addDescription(new DiagramChangeDescription(desc));
                 }
-                change.addDescription(dcd);
+                break;
+            case OBJECT_ATTRIBUTE:
+                if (event.getObject() instanceof TimeInterval) {
+                    TimeInterval ti = (TimeInterval) event.getObject();
+                    change.addDescription(new DiagramChangeDescription(desc,
+                            new Parameter(event.getAttributeChange().getName(), true),
+                            new Parameter(this.getSegmentDescription(ti))));
+                }
+                break;
+            case SPECIAL:
+                if (event.getData() instanceof SpecialTrainTimeIntervalList) {
+                    SpecialTrainTimeIntervalList special = (SpecialTrainTimeIntervalList) event.getData();
+                    desc = converter.getTilDesc(special.getType());
+                    DiagramChangeDescription dcd = new DiagramChangeDescription(desc);
+                    switch (special.getType()) {
+                        case SPEED:
+                        case STOP_TIME:
+                        case TRACK:
+                            dcd.setParams(new Parameter(getSegmentDescription(getChangedInterval(event, special))));
+                            break;
+                        default:
+                            break;
+                    }
+                    change.addDescription(dcd);
+                }
                 break;
             default:
                 break;
         }
     }
 
-    private TimeInterval getChangedInterval(TrainEvent event) {
-        return event.getSource().getTimeIntervalList().get(event.getChangedInterval());
+    private TimeInterval getChangedInterval(Event event, SpecialTrainTimeIntervalList special) {
+        return ((Train) event.getSource()).getTimeIntervalList().get(special.getChanged());
     }
 
     @Override
-    public void visit(TrainTypeEvent event) {
-        change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, event.getSource().getId());
-        change.setObject(this.getObjectStr(event.getSource()));
+    public void visitTrainTypeEvent(Event event) {
+        TrainType trainType = (TrainType) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE, trainType.getId());
+        change.setObject(this.getObjectStr(trainType));
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(TrainsCycleEvent event) {
-        change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitTrainsCycleEvent(Event event) {
+        TrainsCycle trainsCycle = (TrainsCycle) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.TRAINS_CYCLE, trainsCycle.getId());
+        change.setObject(trainsCycle.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
         switch (event.getType()) {
-            case CYCLE_ITEM_ADDED:
-            case CYCLE_ITEM_MOVED:
-            case CYCLE_ITEM_REMOVED:
-            case CYCLE_ITEM_UPDATED:
-                Train t = event.getNewCycleItem() != null ? event.getNewCycleItem().getTrain() : event.getOldCycleItem().getTrain();
-                change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
+            case ADDED:
+            case MOVED:
+            case REMOVED:
+            case OBJECT_ATTRIBUTE:
+                Train t = event.getObject() instanceof TrainsCycleItem ? ((TrainsCycleItem) event.getObject()).getTrain() : null;
+                if (t != null) {
+                    change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
+                }
                 break;
-            case CYCLE_SEQUENCE:
-                change.addDescription(new DiagramChangeDescription(desc));
+            case SPECIAL:
+                if (event.getData() == Special.SEQUENCE) {
+                    change.addDescription(new DiagramChangeDescription(desc));
+                }
             default:
                 break;
         }
     }
 
     @Override
-    public void visit(TrainsCycleTypeEvent event) {
-        change = new DiagramChange(DiagramChange.Type.CYCLE_TYPE, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitTrainsCycleTypeEvent(Event event) {
+        TrainsCycleType trainsCycleType = (TrainsCycleType) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.CYCLE_TYPE, trainsCycleType.getId());
+        change.setObject(trainsCycleType.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(TextItemEvent event) {
-        change = new DiagramChange(DiagramChange.Type.TEXT_ITEM, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitTextItemEvent(Event event) {
+        TextItem textItem = (TextItem) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.TEXT_ITEM, textItem.getId());
+        change.setObject(textItem.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(OutputTemplateEvent event) {
-        change = new DiagramChange(DiagramChange.Type.OUTPUT_TEMPLATE, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitOutputTemplateEvent(Event event) {
+        OutputTemplate outputTemplate = (OutputTemplate) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.OUTPUT_TEMPLATE, outputTemplate.getId());
+        change.setObject(outputTemplate.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }
 
     @Override
-    public void visit(EngineClassEvent event) {
-        change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, event.getSource().getId());
-        change.setObject(event.getSource().getName());
+    public void visitEngineClassEvent(Event event) {
+        EngineClass engineClass = (EngineClass) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.ENGINE_CLASS, engineClass.getId());
+        change.setObject(engineClass.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
-        if (event.getType() == GTEventType.WEIGHT_TABLE_MODIFIED)
+        if (event.getObject() instanceof WeightTableRow)
             change.addDescription(new DiagramChangeDescription(desc));
+    }
+
+    @Override
+    public void visitOtherEvent(Event event) {
+        // no change recorded
     }
 
     public DiagramChange getChange() {
@@ -209,29 +234,25 @@ public class TransformVisitor implements EventVisitor {
         }
     }
 
-    private String addDescription(GTEvent<?> event) {
+    private String addDescription(Event event) {
         String desc = converter.getDesc(event.getType());
         AttributeChange aC = null;
         switch (event.getType()) {
             case ATTRIBUTE:
-            case FREIGHT_NET_CONNECTION_ATTRIBUTE:
             case OBJECT_ATTRIBUTE:
-                // TODO transformation of attribute name? transformation table?
                 aC = event.getAttributeChange();
                 change.addDescription(new DiagramChangeDescription(desc,
                         new Parameter(aC.getName(), true)));
-                break;
-            case TRACK_ATTRIBUTE:
-                aC = event.getAttributeChange();
-                RouteSegmentEvent<?,?> rse = (RouteSegmentEvent<?, ?>) event;
-                change.addDescription(new DiagramChangeDescription(desc,
-                        new Parameter(aC.getName(), true),
-                        new Parameter(rse.getTrack().getNumber())));
                 break;
             default:
                 break;
         }
         return desc;
+    }
+
+    private DiagramChange.Type getChangeType(Event event) {
+        DiagramChange.Type type = event.getType().isList() ? converter.getType(event.getObject().getClass()) : null;
+        return type;
     }
 
     private String getSegmentDescription(TimeInterval interval) {

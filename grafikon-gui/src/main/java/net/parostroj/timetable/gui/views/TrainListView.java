@@ -379,43 +379,40 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
-                switch (event.getType()) {
-                    case GROUP_ADDED:
-                        updateGroupsMenu(true, (Group) event.getObject());
-                        break;
-                    case GROUP_REMOVED:
-                        updateGroupsMenu(false, (Group) event.getObject());
-                        break;
-                    case TRAIN_ADDED:
-                        addAndSelectTrain((Train) event.getObject());
-                        break;
-                    case TRAIN_REMOVED:
-                        deleteAndDeselectTrain((Train) event.getObject());
-                        break;
-                    case TRAIN_TYPE_ADDED: case TRAIN_TYPE_REMOVED: case TRAIN_TYPE_MOVED:
+            public void processTrainDiagramEvent(Event event) {
+                if (event.getType().isList()) {
+                    if (event.getObject() instanceof Group) {
+                        if (event.getType() == Event.Type.ADDED) {
+                            updateGroupsMenu(true, (Group) event.getObject());
+                        } else if (event.getType() == Event.Type.REMOVED) {
+                            updateGroupsMenu(false, (Group) event.getObject());
+                        }
+                    } else if (event.getObject() instanceof Train) {
+                        if (event.getType() == Event.Type.ADDED) {
+                            addAndSelectTrain((Train) event.getObject());
+                        } else if (event.getType() == Event.Type.REMOVED) {
+                            deleteAndDeselectTrain((Train) event.getObject());
+                        }
+                    } else if (event.getObject() instanceof TrainType) {
                         updateViewDiagramChanged();
-                        break;
-                    default:
-                        // nothing
-                        break;
+                    }
                 }
             }
 
             @Override
-            public void processTrainTypeEvent(TrainTypeEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(TrainType.ATTR_DESC)) {
+            public void processTrainTypeEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE && event.getAttributeChange().checkName(TrainType.ATTR_DESC)) {
                     updateViewDiagramChanged();
                 }
             }
 
             @Override
-            public void processTrainEvent(TrainEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE) {
+            public void processTrainEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE) {
                     if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                        refreshTrain(event.getSource());
+                        refreshTrain((Train) event.getSource());
                     } else if (event.getAttributeChange().checkName(Train.ATTR_TYPE, Train.ATTR_GROUP)) {
-                        modifyTrain(event.getSource());
+                        modifyTrain((Train) event.getSource());
                     }
                 }
             }

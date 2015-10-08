@@ -22,7 +22,7 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
         this.id = id;
         this.diagram = diagram;
         this.attributes = new Attributes(
-                (attrs, change) -> diagram.fireEvent(new TrainDiagramEvent(diagram, change, Company.this)));
+                (attrs, change) -> diagram.fireEvent(new Event(diagram, Company.this, change)));
     }
 
     @Override

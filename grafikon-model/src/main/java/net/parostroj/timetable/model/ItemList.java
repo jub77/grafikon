@@ -2,29 +2,20 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import net.parostroj.timetable.model.events.GTEventType;
+import net.parostroj.timetable.model.events.Event;
 
 public class ItemList<T> implements Iterable<T> {
 
-    protected enum Type {ADD, REMOVE, MOVE};
-
     private final List<T> items;
-    private final Map<Type, GTEventType> events = new EnumMap<Type, GTEventType>(Type.class);
     private final boolean moveAllowed;
 
-    protected ItemList(GTEventType add, GTEventType remove, GTEventType move) {
-        events.put(Type.ADD, add);
-        events.put(Type.REMOVE, remove);
-        events.put(Type.MOVE, move);
-        items = new ArrayList<T>();
-        moveAllowed = true;
+    protected ItemList(boolean moveAllowed) {
+        this.items = new ArrayList<>();
+        this.moveAllowed = moveAllowed;
     }
 
-    protected ItemList(GTEventType add, GTEventType remove) {
-        events.put(Type.ADD, add);
-        events.put(Type.REMOVE, remove);
-        items = new ArrayList<T>();
-        moveAllowed = false;
+    protected ItemList() {
+        this(false);
     }
 
     public void addAll(Iterable<? extends T> list) {
@@ -50,17 +41,18 @@ public class ItemList<T> implements Iterable<T> {
 
     public void add(T item) {
         items.add(item);
-        this.fireEvent(Type.ADD, item, items.size() - 1, 0);
+        this.fireEvent(Event.Type.ADDED, item, items.size() - 1, null);
     }
 
     public void add(T item, int index) {
         items.add(index, item);
-        this.fireEvent(Type.ADD, item, index, 0);
+        this.fireEvent(Event.Type.ADDED, item, index, null);
     }
 
     public void remove(T item) {
+        int index = items.indexOf(item);
         if (items.remove(item)) {
-            this.fireEvent(Type.REMOVE, item, 0, 0);
+            this.fireEvent(Event.Type.REMOVED, item, index, null);
         }
     }
 
@@ -82,7 +74,7 @@ public class ItemList<T> implements Iterable<T> {
         }
         T item = items.remove(oldIndex);
         items.add(newIndex, item);
-        this.fireEvent(Type.MOVE, item, newIndex, oldIndex);
+        this.fireEvent(Event.Type.MOVED, item, newIndex, oldIndex);
     }
 
     public List<T> toList() {
@@ -109,15 +101,7 @@ public class ItemList<T> implements Iterable<T> {
         return items.isEmpty();
     }
 
-    private void fireEvent(Type type, T item, int newIndex, int oldIndex) {
-        this.fireEvent(type, getType(type), item, newIndex, oldIndex);
-    }
-
-    protected GTEventType getType(Type type) {
-        return events.get(type);
-    }
-
-    protected void fireEvent(Type type, GTEventType eventType, T item, int newIndex, int oldIndex) {
+    protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
     }
 
     @Override

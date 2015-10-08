@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.events.*;
  *
  * @author jub
  */
-public class TrainDiagramCollegue extends AbstractColleague implements AllEventListener {
+public class TrainDiagramCollegue extends AbstractColleague implements Listener {
 
     private TrainDiagram diagram;
 
@@ -35,7 +35,7 @@ public class TrainDiagramCollegue extends AbstractColleague implements AllEventL
     }
 
     @Override
-    public void changed(GTEvent<?> event) {
+    public void changed(Event event) {
         // process and distribute all events
         this.sendMessage(event);
     }

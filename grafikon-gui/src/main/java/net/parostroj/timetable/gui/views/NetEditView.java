@@ -27,7 +27,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.views.graph.*;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.*;
@@ -321,29 +321,31 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         setNet(model);
         model.getMediator().addColleague(new ApplicationGTEventColleague() {
             @Override
-            public void processNodeEvent(NodeEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE) {
-                    updateNode(event.getSource());
+            public void processNodeEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE) {
+                    updateNode((Node) event.getSource());
                 }
             }
 
             @Override
-            public void processLineEvent(LineEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE || event.getType() == GTEventType.TRACK_ADDED ||
-                        event.getType() == GTEventType.TRACK_REMOVED) {
-                    updateLine(event.getSource());
+            public void processLineEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE || (event.getType() == Event.Type.ADDED ||
+                        event.getType() == Event.Type.REMOVED) && event.getObject() instanceof Track) {
+                    updateLine((Line) event.getSource());
                 }
             }
 
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case ROUTE_ADDED:
-                    case ROUTE_REMOVED:
-                        Route route = (Route) event.getObject();
-                        for (RouteSegment seg : route.getSegments()) {
-                            if (seg.asLine() != null) {
-                                updateLine(seg.asLine());
+                    case ADDED:
+                    case REMOVED:
+                        if (event.getObject() instanceof Route) {
+                            Route route = (Route) event.getObject();
+                            for (RouteSegment seg : route.getSegments()) {
+                                if (seg.asLine() != null) {
+                                    updateLine(seg.asLine());
+                                }
                             }
                         }
                         break;
@@ -356,10 +358,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 }
             }
 
-            private <T> void updateNodeForObjectAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, TrainDiagramEvent event) {
+            private <T> void updateNodeForObjectAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, Event event) {
                 if (objectClass.isInstance(event.getObject()) && event.getAttributeChange().checkName(objectAttribute)) {
                     T object = objectClass.cast(event.getObject());
-                    for (Node node : event.getSource().getNet().getNodes()) {
+                    for (Node node : ((TrainDiagram) event.getSource()).getNet().getNodes()) {
                         if (node.getAttribute(nodeAttribute, objectClass) == object) {
                             updateNode(node);
                         }
@@ -368,8 +370,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             }
 
             @Override
-            public void processNetEvent(NetEvent event) {
-                if (event.getType() == GTEventType.NODE_ADDED) {
+            public void processNetEvent(Event event) {
+                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof Node) {
                     Node node = (Node) event.getObject();
                     updateNodeLocation(node);
                 }

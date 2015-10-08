@@ -7,10 +7,10 @@ package net.parostroj.timetable.model.events;
  */
 public class AttributeChange {
 
-    private String name;
-    private Object oldValue;
-    private Object newValue;
-    private String category;
+    private final String name;
+    private final Object oldValue;
+    private final Object newValue;
+    private final String category;
 
     public AttributeChange(String name, Object oldValue, Object newValue) {
         this(name, oldValue, newValue, null);
@@ -23,39 +23,20 @@ public class AttributeChange {
         this.category = category;
     }
 
-    public AttributeChange() {
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Object getNewValue() {
         return newValue;
     }
 
-    public void setNewValue(Object newValue) {
-        this.newValue = newValue;
-    }
-
     public Object getOldValue() {
         return oldValue;
     }
 
-    public void setOldValue(Object oldValue) {
-        this.oldValue = oldValue;
-    }
-
     public String getCategory() {
         return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public boolean checkName(String... names) {

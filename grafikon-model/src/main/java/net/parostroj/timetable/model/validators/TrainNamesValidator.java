@@ -4,6 +4,7 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Train names validator.
@@ -19,13 +20,13 @@ public class TrainNamesValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainDiagramEvent &&  event.getType() == GTEventType.ATTRIBUTE &&
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.ATTRIBUTE &&
                 event.getAttributeChange().checkName(TrainDiagram.ATTR_TRAIN_NAME_TEMPLATE,
                         TrainDiagram.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE)) {
             this.clearCachedTrainNames(null);
             return true;
-        } else if (event instanceof TrainTypeEvent && event.getType() == GTEventType.ATTRIBUTE &&
+        } else if (event.getSource() instanceof TrainType && event.getType() == Type.ATTRIBUTE &&
                 event.getAttributeChange().checkName(TrainType.ATTR_ABBR,
                         TrainType.ATTR_TRAIN_COMPLETE_NAME_TEMPLATE, TrainType.ATTR_TRAIN_NAME_TEMPLATE)) {
             this.clearCachedTrainNames((TrainType) event.getSource());

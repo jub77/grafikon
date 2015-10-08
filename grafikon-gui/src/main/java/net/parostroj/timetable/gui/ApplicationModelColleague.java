@@ -20,7 +20,7 @@ public class ApplicationModelColleague extends AbstractColleague implements Appl
     @Override
     public void receiveMessage(Object message) {
         if (!model.isModelChanged()) {
-            if (message instanceof GTEvent<?>) {
+            if (message instanceof Event) {
                 // all model changes causes model changed
                 model.setModelChanged(true);
             }

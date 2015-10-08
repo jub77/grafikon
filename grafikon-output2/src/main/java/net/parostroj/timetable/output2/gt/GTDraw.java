@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.Event;
 
 public interface GTDraw {
 
@@ -41,7 +41,7 @@ public interface GTDraw {
 
     Dimension getSize();
 
-    Refresh processEvent(GTEvent<?> event);
+    Refresh processEvent(Event event);
 
     GTDrawSettings getSettings();
 }

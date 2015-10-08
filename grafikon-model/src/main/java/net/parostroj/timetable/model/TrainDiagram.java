@@ -15,7 +15,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, TrainDiagramAttributes {
+public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, TrainDiagramAttributes, Observable {
 
     /** Id. */
     private final String id;
@@ -53,10 +53,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final Localization localization;
 
     private final List<TrainDiagramValidator> validators;
-    private final GTListenerTrainDiagramImpl listener;
+    private final Listener listener;
     private final ChangesTrackerImpl changesTracker;
-    private final GTListenerSupport<TrainDiagramListener, TrainDiagramEvent> listenerSupport;
-    private final GTListenerSupport<AllEventListener, GTEvent<? extends ObjectWithId>> listenerSupportAll;
+    private final ListenerSupport listenerSupport;
+    private final ListenerSupport listenerSupportAll;
     private TimeConverter timeConverter;
 
     /**
@@ -64,33 +64,25 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      */
     public TrainDiagram(String id, TrainsData data) {
         this.id = id;
-        this.listener = new GTListenerTrainDiagramImpl(this);
-        this.routes = new ItemListTrainDiagramEvent<Route>(GTEventType.ROUTE_ADDED, GTEventType.ROUTE_REMOVED);
+        this.listener = event -> this.fireNestedEvent(event);
+        this.routes = new ItemListTrainDiagramEvent<Route>();
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
-        this.images = new ItemListTrainDiagramEvent<TimetableImage>(GTEventType.IMAGE_ADDED, GTEventType.IMAGE_REMOVED);
-        this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass, EngineClassListener>(
-                GTEventType.ENGINE_CLASS_ADDED, GTEventType.ENGINE_CLASS_REMOVED, GTEventType.ENGINE_CLASS_MOVED,
-                listener);
-        this.textItems = new ItemListTrainDiagramEventWithListener<TextItem, TextItemListener>(
-                GTEventType.TEXT_ITEM_ADDED, GTEventType.TEXT_ITEM_REMOVED, GTEventType.TEXT_ITEM_MOVED, listener);
-        this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate, OutputTemplateListener>(
-                GTEventType.OUTPUT_TEMPLATE_ADDED, GTEventType.OUTPUT_TEMPLATE_REMOVED,
-                GTEventType.OUTPUT_TEMPLATE_MOVED, listener);
-        this.groups = new ItemListTrainDiagramEvent<Group>(GTEventType.GROUP_ADDED, GTEventType.GROUP_REMOVED);
-        this.companies = new ItemListTrainDiagramEvent<Company>(GTEventType.COMPANY_ADDED, GTEventType.COMPANY_REMOVED);
+        this.images = new ItemListTrainDiagramEvent<TimetableImage>();
+        this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass>(true, listener);
+        this.textItems = new ItemListTrainDiagramEventWithListener<TextItem>(true, listener);
+        this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate>(true, listener);
+        this.groups = new ItemListTrainDiagramEvent<Group>();
+        this.companies = new ItemListTrainDiagramEvent<Company>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
-        this.trainTypes = new ItemListTrainDiagramEventWithListener<TrainType, TrainTypeListener>(
-                GTEventType.TRAIN_TYPE_ADDED, GTEventType.TRAIN_TYPE_REMOVED, GTEventType.TRAIN_TYPE_MOVED, listener);
+        this.trainTypes = new ItemListTrainDiagramEventWithListener<TrainType>(true, listener);
         this.attributes = new Attributes(
-                (attrs, change) -> fireEvent(new TrainDiagramEvent(TrainDiagram.this, change)));
+                (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
         this.setTrainsData(data);
-        this.listenerSupport = new GTListenerSupport<TrainDiagramListener, TrainDiagramEvent>(
-                (listener, event) -> listener.trainDiagramChanged(event));
-        this.listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(
-                (listener, event) -> listener.changed(event));
+        this.listenerSupport = new ListenerSupport();
+        this.listenerSupportAll = new ListenerSupport();
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
@@ -160,14 +152,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         train.addListener(listener);
         this.trains.add(train);
         train.attach();
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_ADDED, train));
+        this.fireEvent(new Event(this, Event.Type.ADDED, train));
     }
 
     public void removeTrain(Train train) {
         train.detach();
         this.trains.remove(train);
         train.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAIN_REMOVED, train));
+        this.fireEvent(new Event(this, Event.Type.REMOVED, train));
     }
 
     public Train getTrainById(String id) {
@@ -236,7 +228,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         if (!cycles.contains(type)) {
             type.addListener(listener);
             cycles.add(type);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_ADDED, type));
+            this.fireEvent(new Event(this, Event.Type.ADDED, type));
         }
     }
 
@@ -249,7 +241,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             }
             cycles.remove(type);
             type.removeListener(listener);
-            this.fireEvent(new TrainDiagramEvent(this, GTEventType.CYCLE_TYPE_REMOVED, type));
+            this.fireEvent(new Event(this, Event.Type.REMOVED, type));
         }
     }
 
@@ -272,14 +264,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public void addCycle(TrainsCycle cycle) {
         cycle.addListener(listener);
         this.getCyclesIntern(cycle.getType()).add(cycle);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_ADDED, cycle));
+        this.fireEvent(new Event(this, Event.Type.ADDED, cycle));
     }
 
     public void removeCycle(TrainsCycle cycle) {
         cycle.clear();
         this.getCyclesIntern(cycle.getType()).remove(cycle);
         cycle.removeListener(listener);
-        this.fireEvent(new TrainDiagramEvent(this, GTEventType.TRAINS_CYCLE_REMOVED, cycle));
+        this.fireEvent(new Event(this, Event.Type.REMOVED, cycle));
     }
 
     public TrainsCycle getCycleById(String id) {
@@ -436,34 +428,36 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return id;
     }
 
-    public void addListener(TrainDiagramListener listener) {
+    @Override
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
-    public void removeListener(TrainDiagramListener listener) {
+    @Override
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
-    public void addAllEventListener(AllEventListener listener) {
+    public void addAllEventListener(Listener listener) {
         listenerSupportAll.addListener(listener);
     }
 
-    public void removeAllEventListener(AllEventListener listener) {
+    public void removeAllEventListener(Listener listener) {
         listenerSupportAll.removeListener(listener);
     }
 
-    protected void fireNestedEvent(GTEvent<? extends ObjectWithId> event) {
+    protected void fireNestedEvent(Event event) {
         processValidators(event);
         listenerSupportAll.fireEvent(event);
     }
 
-    protected void fireEvent(TrainDiagramEvent event) {
+    protected void fireEvent(Event event) {
         processValidators(event);
         listenerSupport.fireEvent(event);
         listenerSupportAll.fireEvent(event);
     }
 
-    private void processValidators(GTEvent<?> event) {
+    private void processValidators(Event event) {
         for (TrainDiagramValidator validator : validators) {
             validator.validate(event);
         }
@@ -696,44 +690,38 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     private class ItemListTrainDiagramEvent<T> extends ItemList<T> {
 
-        protected ItemListTrainDiagramEvent(GTEventType add, GTEventType remove) {
-            super(add, remove);
+        protected ItemListTrainDiagramEvent() {
+            super(false);
         }
 
-        public ItemListTrainDiagramEvent(GTEventType add, GTEventType remove, GTEventType move) {
-            super(add, remove, move);
+        public ItemListTrainDiagramEvent(boolean moveAllowed) {
+            super(moveAllowed);
         }
 
         @Override
-        protected void fireEvent(ItemList.Type type, GTEventType eventType, T item, int newIndex, int oldIndex) {
-            TrainDiagramEvent event = new TrainDiagramEvent(TrainDiagram.this, eventType, item);
+        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
+            Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
             TrainDiagram.this.fireEvent(event);
         }
     }
 
-    private class ItemListTrainDiagramEventWithListener<T extends ListenerHolder<U>, U> extends ItemListTrainDiagramEvent<T> {
+    private class ItemListTrainDiagramEventWithListener<T extends Observable> extends ItemListTrainDiagramEvent<T> {
 
-        private final U listener;
+        private final Listener listener;
 
-        protected ItemListTrainDiagramEventWithListener(GTEventType add, GTEventType remove, U listener) {
-            super(add, remove);
-            this.listener = listener;
-        }
-
-        protected ItemListTrainDiagramEventWithListener(GTEventType add, GTEventType remove, GTEventType move, U listener) {
-            super(add, remove, move);
+        protected ItemListTrainDiagramEventWithListener(boolean moveAllowed, Listener listener) {
+            super(moveAllowed);
             this.listener = listener;
         }
 
         @Override
-        protected void fireEvent(ItemList.Type type, GTEventType eventType, T item,
-                int newIndex, int oldIndex) {
-            super.fireEvent(type, eventType, item, newIndex, oldIndex);
+        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
+            super.fireEvent(type, item, newIndex, oldIndex);
             switch (type) {
-                case ADD:
+                case ADDED:
                     item.addListener(listener);
                     break;
-                case REMOVE:
+                case REMOVED:
                     item.removeListener(listener);
                     break;
                 default: // nothing

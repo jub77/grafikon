@@ -5,7 +5,7 @@ import java.awt.Shape;
 import java.util.Collections;
 import java.util.List;
 
-import net.parostroj.timetable.model.events.GTEvent;
+import net.parostroj.timetable.model.events.Event;
 
 public abstract class RegionCollector<T> {
 
@@ -77,5 +77,5 @@ public abstract class RegionCollector<T> {
 
     abstract public void addRegion(T region, Shape shape);
 
-    abstract public void processEvent(GTEvent<?> event);
+    abstract public void processEvent(Event event);
 }

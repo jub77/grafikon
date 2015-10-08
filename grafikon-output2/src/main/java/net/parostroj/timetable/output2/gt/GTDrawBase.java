@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 import net.parostroj.timetable.utils.TransformUtil;
 import net.parostroj.timetable.utils.Tuple;
@@ -679,17 +680,21 @@ abstract public class GTDrawBase implements GTDraw {
     }
 
     @Override
-    public Refresh processEvent(GTEvent<?> event) {
+    public Refresh processEvent(Event event) {
         GTDrawEventVisitor visitor = new GTDrawEventVisitor() {
             @Override
-            public void visit(TrainDiagramEvent event) {
+            public void visitDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case TRAIN_REMOVED:
-                        stringBounds.remove(((Train) event.getObject()).getName());
-                        setRefresh(Refresh.REPAINT);
+                    case REMOVED:
+                        if (event.getObject() instanceof Train) {
+                            stringBounds.remove(((Train) event.getObject()).getName());
+                            setRefresh(Refresh.REPAINT);
+                        }
                         break;
-                    case TRAIN_ADDED:
-                        setRefresh(Refresh.REPAINT);
+                    case ADDED:
+                        if (event.getObject() instanceof Train) {
+                            setRefresh(Refresh.REPAINT);
+                        }
                         break;
                     case ATTRIBUTE:
                         String name = event.getAttributeChange().getName();
@@ -704,16 +709,16 @@ abstract public class GTDrawBase implements GTDraw {
             }
 
             @Override
-            public void visit(TrainEvent event) {
+            public void visitTrainEvent(Event event) {
                 switch (event.getType()) {
-                    case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
+                    case SPECIAL:
                         setRefresh(Refresh.REPAINT);
                         break;
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                            stringBounds.remove((event.getSource()).getName());
+                            stringBounds.remove(((Train) event.getSource()).getName());
                             setRefresh(Refresh.REPAINT);
-                        } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL)) {
+                        } else if (event.getAttributeChange().checkName(Train.ATTR_OPTIONAL, Train.ATTR_TECHNOLOGICAL_AFTER, Train.ATTR_TECHNOLOGICAL_BEFORE)) {
                             setRefresh(Refresh.REPAINT);
                         }
                         break;
@@ -723,11 +728,11 @@ abstract public class GTDrawBase implements GTDraw {
             }
 
             @Override
-            public void visit(NodeEvent event) {
+            public void visitNodeEvent(Event event) {
                 switch (event.getType()) {
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(Node.ATTR_NAME)) {
-                            stringBounds.remove((event.getSource()).getName());
+                            stringBounds.remove(((Node) event.getSource()).getName());
                             nodeStrings.remove(event.getSource());
                             setRefresh(Refresh.REPAINT);
                         }
@@ -738,16 +743,16 @@ abstract public class GTDrawBase implements GTDraw {
             }
 
             @Override
-            public void visit(LineEvent event) {
+            public void visitLineEvent(Event event) {
                 switch (event.getType()) {
-                    case TRACK_ATTRIBUTE:
-                        if (route != null && route.contains(event.getSource())) {
+                    case OBJECT_ATTRIBUTE:
+                        if (event.getObject() instanceof Track && route != null && route.contains((RouteSegment) event.getSource())) {
                             setRefresh(Refresh.RECREATE);
                         }
                         break;
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
-                            if (route != null && route.contains(event.getSource())) {
+                            if (route != null && route.contains((RouteSegment) event.getSource())) {
                                 setRefresh(Refresh.RECREATE);
                             }
                         }
@@ -758,7 +763,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
 
             @Override
-            public void visit(TrainTypeEvent event) {
+            public void visitTrainTypeEvent(Event event) {
                 switch (event.getType()) {
                     case ATTRIBUTE:
                         if (event.getAttributeChange().checkName(TrainType.ATTR_COLOR)) {
@@ -775,7 +780,7 @@ abstract public class GTDrawBase implements GTDraw {
                 }
             }
         };
-        event.accept(visitor);
+        EventProcessing.visit(event, visitor);
         return visitor.getRefresh();
     }
 

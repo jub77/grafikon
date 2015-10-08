@@ -11,16 +11,19 @@ import net.parostroj.timetable.model.events.*;
  *
  * @author jub
  */
-abstract class RouteSegmentImpl<T extends Track> implements RouteSegment {
+abstract class RouteSegmentImpl<T extends Track> implements RouteSegment, Observable {
 
     /** Id of an object. */
     private final String id;
     /** List of tracks. */
     protected final List<T> tracks;
 
+    protected final ListenerSupport listenerSupport;
+
     public RouteSegmentImpl(String id) {
         this.id = id;
         this.tracks = new LinkedList<T>();
+        this.listenerSupport = new ListenerSupport();
     }
 
     @Override
@@ -31,13 +34,13 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment {
     @Override
     public void addTimeInterval(TimeInterval interval) {
         interval.getTrack().addTimeInterval(interval);
-        fireTimeIntervalEvent(interval, GTEventType.TIME_INTERVAL_ADDED);
+        fireTimeIntervalEvent(interval, Event.Type.ADDED);
     }
 
     @Override
     public void removeTimeInterval(TimeInterval interval) {
         interval.getTrack().removeTimeInterval(interval);
-        fireTimeIntervalEvent(interval, GTEventType.TIME_INTERVAL_REMOVED);
+        fireTimeIntervalEvent(interval, Event.Type.REMOVED);
     }
 
     @Override
@@ -48,32 +51,32 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment {
         }
         track.removeTimeInterval(interval);
         interval.getTrack().addTimeInterval(interval);
-        fireTimeIntervalEvent(interval, GTEventType.TIME_INTERVAL_UPDATED);
+        fireTimeIntervalEvent(interval, Event.Type.MOVED);
 
     }
 
     public void addTrack(T track) {
         track.changeCallback = this::fireTrackAttributeChanged;
         tracks.add(track);
-        this.fireTrackEvent(track, GTEventType.TRACK_ADDED, null, null);
+        this.fireTrackEvent(track, Event.Type.ADDED, null, null);
     }
 
     public void addTrack(T track, int position) {
         track.changeCallback = this::fireTrackAttributeChanged;
         tracks.add(position, track);
-        this.fireTrackEvent(track, GTEventType.TRACK_ADDED, null, null);
+        this.fireTrackEvent(track, Event.Type.ADDED, null, null);
     }
 
     public void removeTrack(T track) {
         track.changeCallback = this::fireTrackAttributeChanged;
         tracks.remove(track);
-        this.fireTrackEvent(track, GTEventType.TRACK_REMOVED, null, null);
+        this.fireTrackEvent(track, Event.Type.REMOVED, null, null);
     }
 
     public void moveTrack(int fromIndex, int toIndex) {
         T track = tracks.remove(fromIndex);
         tracks.add(toIndex, track);
-        this.fireTrackEvent(track, GTEventType.TRACK_MOVED, fromIndex, toIndex);
+        this.fireTrackEvent(track, Event.Type.MOVED, fromIndex, toIndex);
     }
 
     @Override
@@ -124,9 +127,29 @@ abstract class RouteSegmentImpl<T extends Track> implements RouteSegment {
         return null;
     }
 
-    abstract protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType);
+    private void fireTimeIntervalEvent(TimeInterval interval, Event.Type eventType) {
+        this.listenerSupport.fireEvent(new Event(this, eventType, interval));
+    }
 
-    abstract protected void fireTrackAttributeChanged(Track track, AttributeChange attributeChange);
+    private void fireTrackAttributeChanged(Track track, AttributeChange change) {
+        this.listenerSupport.fireEvent(new Event(this, track, change));
+    }
 
-    abstract protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to);
+    private void fireTrackEvent(Track track, Event.Type eventType, Integer from, Integer to) {
+        if (from == null && to == null) {
+            this.listenerSupport.fireEvent(new Event(this, eventType, track));
+        } else {
+            this.listenerSupport.fireEvent(new Event(this, eventType, track, ListData.createData(from, to)));
+        }
+    }
+
+    @Override
+    public void addListener(Listener listener) {
+        this.listenerSupport.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        this.listenerSupport.removeListener(listener);
+    }
 }

@@ -15,62 +15,67 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     public GTEventsReceiverColleague() {
         this.visitor = new EventVisitor() {
             @Override
-            public void visit(OutputTemplateEvent event) {
+            public void visitOtherEvent(Event event) {
                 processGTEvent(event);
             }
 
             @Override
-            public void visit(EngineClassEvent event) {
+            public void visitOutputTemplateEvent(Event event) {
                 processGTEvent(event);
             }
 
             @Override
-            public void visit(TextItemEvent event) {
+            public void visitEngineClassEvent(Event event) {
                 processGTEvent(event);
             }
 
             @Override
-            public void visit(TrainsCycleEvent event) {
+            public void visitTextItemEvent(Event event) {
+                processGTEvent(event);
+            }
+
+            @Override
+            public void visitTrainsCycleEvent(Event event) {
                 processTrainsCycleEvent(event);
             }
 
             @Override
-            public void visit(TrainsCycleTypeEvent event) {
+            public void visitTrainsCycleTypeEvent(Event event) {
                 processTrainsCycleTypeEvent(event);
             }
 
             @Override
-            public void visit(TrainTypeEvent event) {
+            public void visitTrainTypeEvent(Event event) {
                 processTrainTypeEvent(event);
             }
 
             @Override
-            public void visit(TrainEvent event) {
+            public void visitTrainEvent(Event event) {
                 processTrainEvent(event);
             }
 
             @Override
-            public void visit(LineEvent event) {
+            public void visitLineEvent(Event event) {
                 processLineEvent(event);
             }
 
             @Override
-            public void visit(NodeEvent event) {
+            public void visitNodeEvent(Event event) {
                 processNodeEvent(event);
             }
 
             @Override
-            public void visit(NetEvent event) {
+            public void visitNetEvent(Event event) {
                 processNetEvent(event);
             }
 
             @Override
-            public void visit(TrainDiagramEvent event) {
+            public void visitDiagramEvent(Event event) {
                 processTrainDiagramEvent(event);
             }
 
             @Override
-            public void visit(FreightNetEvent event) {
+            public void visitFreightNetEvent(Event event) {
                 processFreightNetEvent(event);
             }
         };
@@ -78,38 +83,37 @@ public class GTEventsReceiverColleague extends AbstractColleague {
 
     @Override
     public void receiveMessage(Object message) {
-        if (message instanceof GTEvent<?>) {
-            processGTEventImpl((GTEvent<?>) message);
+        if (message instanceof Event) {
+            processGTEventImpl((Event) message);
         }
     }
 
-    private void processGTEventImpl(GTEvent<?> event) {
+    private void processGTEventImpl(Event event) {
         // process by specific method
-        event.accept(this.visitor);
+        EventProcessing.visit(event, visitor);
         // process by common method
         processGTEventAll(event);
     }
 
-    public void processLineEvent(LineEvent event) {}
+    public void processLineEvent(Event event) {}
 
-    public void processNetEvent(NetEvent event) {}
+    public void processNetEvent(Event event) {}
 
-    public void processNodeEvent(NodeEvent event) {}
+    public void processNodeEvent(Event event) {}
 
-    public void processTrainDiagramEvent(TrainDiagramEvent event) {}
+    public void processTrainDiagramEvent(Event event) {}
 
-    public void processTrainEvent(TrainEvent event) {}
+    public void processTrainEvent(Event event) {}
 
-    public void processTrainTypeEvent(TrainTypeEvent event) {}
+    public void processTrainTypeEvent(Event event) {}
 
-    public void processTrainsCycleEvent(TrainsCycleEvent event) {}
+    public void processTrainsCycleEvent(Event event) {}
 
-    public void processTrainsCycleTypeEvent(TrainsCycleTypeEvent event) {}
+    public void processTrainsCycleTypeEvent(Event event) {}
 
-    public void processFreightNetEvent(FreightNetEvent event) {}
+    public void processFreightNetEvent(Event event) {}
 
-    public void processGTEvent(GTEvent<?> event) {}
+    public void processGTEvent(Event event) {}
 
-    public void processGTEventAll(GTEvent<?> event) {}
-
+    public void processGTEventAll(Event event) {}
 }

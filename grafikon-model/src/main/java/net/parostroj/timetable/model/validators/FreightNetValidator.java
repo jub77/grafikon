@@ -5,6 +5,7 @@ import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Validator for freight net.
@@ -20,28 +21,27 @@ public class FreightNetValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainEvent) {
-            TrainEvent tEvent = (TrainEvent) event;
-            if (event.getType() == GTEventType.ATTRIBUTE
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof Train) {
+            Train train = (Train) event.getSource();
+            if (event.getType() == Type.ATTRIBUTE
                     && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
-                if (!Boolean.TRUE.equals(tEvent.getAttributeChange().getNewValue())) {
-                    diagram.getFreightNet().checkTrain(tEvent.getSource());
+                if (!Boolean.TRUE.equals(event.getAttributeChange().getNewValue())) {
+                    diagram.getFreightNet().checkTrain(train);
                 }
                 return true;
             }
-            if (FreightHelper.isManaged(tEvent.getSource())) {
-                if (event.getType() == GTEventType.TIME_INTERVAL_ATTRIBUTE
+            if (FreightHelper.isManaged(train)) {
+                if (event.getType() == Event.Type.OBJECT_ATTRIBUTE && event.getObject() instanceof TimeInterval
                         && event.getAttributeChange().checkName(TimeInterval.ATTR_NOT_MANAGED_FREIGHT)) {
-                    diagram.getFreightNet().checkTrain(tEvent.getSource());
-                } else if (event.getType() == GTEventType.TIME_INTERVAL_LIST) {
-                    diagram.getFreightNet().checkTrain(tEvent.getSource());
+                    diagram.getFreightNet().checkTrain(train);
+                } else if (event.getType() == Event.Type.SPECIAL && event.getData() instanceof SpecialTrainTimeIntervalList) {
+                    diagram.getFreightNet().checkTrain(train);
                 }
                 return true;
             }
-        } else if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.TRAIN_REMOVED) {
-            TrainDiagramEvent tdEvent = (TrainDiagramEvent) event;
-            Train train = (Train) tdEvent.getObject();
+        } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
+            Train train = (Train) event.getObject();
             if (FreightHelper.isManaged(train)) {
                 diagram.getFreightNet().removeTrain(train);
                 return true;

@@ -10,50 +10,54 @@ import net.parostroj.timetable.model.events.*;
 public abstract class AbstractEventVisitor implements EventVisitor {
 
     @Override
-    public void visit(TrainDiagramEvent event) {
+    public void visitDiagramEvent(Event event) {
     }
 
     @Override
-    public void visit(NetEvent event) {
+    public void visitNetEvent(Event event) {
     }
 
     @Override
-    public void visit(NodeEvent event) {
+    public void visitNodeEvent(Event event) {
     }
 
     @Override
-    public void visit(LineEvent event) {
+    public void visitLineEvent(Event event) {
     }
 
     @Override
-    public void visit(TrainEvent event) {
+    public void visitTrainEvent(Event event) {
     }
 
     @Override
-    public void visit(TrainTypeEvent event) {
+    public void visitTrainTypeEvent(Event event) {
     }
 
     @Override
-    public void visit(TrainsCycleEvent event) {
+    public void visitTrainsCycleEvent(Event event) {
     }
 
     @Override
-    public void visit(TrainsCycleTypeEvent event) {
+    public void visitTrainsCycleTypeEvent(Event event) {
     }
 
     @Override
-    public void visit(OutputTemplateEvent event) {
+    public void visitTextItemEvent(Event event) {
     }
 
     @Override
-    public void visit(EngineClassEvent event) {
+    public void visitEngineClassEvent(Event event) {
     }
 
     @Override
-    public void visit(TextItemEvent event) {
+    public void visitOutputTemplateEvent(Event event) {
     }
 
     @Override
-    public void visit(FreightNetEvent event) {
+    public void visitFreightNetEvent(Event event) {
+    }
+
+    @Override
+    public void visitOtherEvent(Event event) {
     }
 }

@@ -13,7 +13,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, AttributesHolder, ObjectWithId, Visitable, LineAttributes, TrainDiagramPart {
+public class Line extends RouteSegmentImpl<LineTrack>implements RouteSegment, AttributesHolder, ObjectWithId, Visitable,
+        LineAttributes, TrainDiagramPart {
 
     /** Train diagram. */
     private final TrainDiagram diagram;
@@ -27,7 +28,6 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
     private final Node from;
     /** Ending point. */
     private final Node to;
-    private final GTListenerSupport<LineListener, LineEvent> listenerSupport;
 
     /**
      * creates track with specified length.
@@ -41,10 +41,8 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
      */
     Line(String id, TrainDiagram diagram, int length, Node from, Node to, Integer topSpeed) {
         super(id);
-        this.listenerSupport = new GTListenerSupport<LineListener, LineEvent>(
-                (listener, event) -> listener.lineChanged(event));
         this.attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new LineEvent(Line.this, change)));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(Line.this, change)));
         this.length = length;
         this.from = from;
         this.to = to;
@@ -77,7 +75,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
         if (length != this.length) {
             int oldLength = this.length;
             this.length = length;
-            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(ATTR_LENGTH, oldLength, length)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_LENGTH, oldLength, length)));
         }
     }
 
@@ -117,7 +115,7 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
         if (!ObjectsUtil.compareWithNull(topSpeed, this.topSpeed)) {
             Integer oldTopSpeed = this.topSpeed;
             this.topSpeed = topSpeed;
-            this.listenerSupport.fireEvent(new LineEvent(this, new AttributeChange(ATTR_SPEED, oldTopSpeed, topSpeed)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_SPEED, oldTopSpeed, topSpeed)));
         }
     }
 
@@ -190,33 +188,6 @@ public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, A
     @Override
     public Object removeAttribute(String key) {
         return attributes.remove(key);
-    }
-
-    public void addListener(LineListener listener) {
-        this.listenerSupport.addListener(listener);
-    }
-
-    public void removeListener(LineListener listener) {
-        this.listenerSupport.removeListener(listener);
-    }
-
-    @Override
-    protected void fireTimeIntervalEvent(TimeInterval interval, GTEventType eventType) {
-        this.listenerSupport.fireEvent(new LineEvent(this, eventType, interval));
-    }
-
-    @Override
-    protected void fireTrackAttributeChanged(Track track, AttributeChange change) {
-        this.listenerSupport.fireEvent(new LineEvent(this, change, (LineTrack) track));
-    }
-
-    @Override
-    protected void fireTrackEvent(Track track, GTEventType eventType, Integer from, Integer to) {
-        if (from == null && to == null) {
-            this.listenerSupport.fireEvent(new LineEvent(this, eventType, (LineTrack) track));
-        } else {
-            this.listenerSupport.fireEvent(new LineEvent(this, eventType, (LineTrack) track, from, to));
-        }
     }
 
     /**

@@ -7,9 +7,8 @@ import java.util.*;
 
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.EventProcessing;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.visitors.AbstractEventVisitor;
 
@@ -122,16 +121,20 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     }
 
     @Override
-    public void processEvent(GTEvent<?> event) {
+    public void processEvent(Event event) {
         AbstractEventVisitor visitor = new AbstractEventVisitor() {
             @Override
-            public void visit(TrainDiagramEvent event) {
+            public void visitDiagramEvent(Event event) {
                 switch (event.getType()) {
-                    case TRAIN_ADDED:
-                        newTrain((Train) event.getObject());
+                    case ADDED:
+                        if (event.getObject() instanceof Train) {
+                            newTrain((Train) event.getObject());
+                        }
                         break;
-                    case TRAIN_REMOVED:
-                        deleteTrain((Train) event.getObject());
+                    case REMOVED:
+                        if (event.getObject() instanceof Train) {
+                            deleteTrain((Train) event.getObject());
+                        }
                         break;
                     default:
                         break;
@@ -139,14 +142,14 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
             }
 
             @Override
-            public void visit(TrainEvent event) {
+            public void visitTrainEvent(Event event) {
                 switch (event.getType()) {
-                    case TIME_INTERVAL_LIST: case TECHNOLOGICAL:
-                        modifiedTrain(event.getSource());
+                    case SPECIAL:
+                        modifiedTrain((Train) event.getSource());
                         break;
                     case ATTRIBUTE:
-                        if (event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
-                            modifiedTrain(event.getSource());
+                        if (event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT, Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)) {
+                            modifiedTrain((Train) event.getSource());
                         }
                         break;
                     default:
@@ -154,6 +157,6 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
                 }
             }
         };
-        event.accept(visitor);
+        EventProcessing.visit(event, visitor);
     }
 }

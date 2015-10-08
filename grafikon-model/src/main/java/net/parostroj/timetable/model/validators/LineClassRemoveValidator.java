@@ -1,9 +1,8 @@
 package net.parostroj.timetable.model.validators;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.GTEvent;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.NetEvent;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * @author jub
@@ -17,9 +16,9 @@ public class LineClassRemoveValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof NetEvent && event.getType() == GTEventType.LINE_CLASS_REMOVED) {
-            LineClass lineClass = (LineClass) ((NetEvent) event).getObject();
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED && event.getObject() instanceof LineClass) {
+            LineClass lineClass = (LineClass) event.getObject();
             // remove item with this line class from weight tables
             for (EngineClass eClass : diagram.getEngineClasses()) {
                 for (WeightTableRow row : eClass.getWeightTable()) {

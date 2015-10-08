@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.dialogs.RouteSelectionDialog;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.output2.gt.GTDraw.Type;
 
@@ -407,7 +407,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     }
 
     @Override
-    protected void routesChanged(TrainDiagramEvent event) {
+    protected void routesChanged(Event event) {
         // changed list of routes
         this.createMenuForRoutes(diagram.getRoutes().toList());
 

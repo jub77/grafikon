@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.AbstractEventVisitor;
@@ -170,17 +171,17 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         graphicalTimetableView.setParameter(ManagedFreightGTDraw.HIGHLIGHT, selector);
         RegionCollectorAdapter<FNConnection> collector = new RegionCollectorAdapter<FNConnection>() {
             @Override
-            public void processEvent(GTEvent<?> event) {
+            public void processEvent(Event event) {
                 AbstractEventVisitor visitor = new AbstractEventVisitor() {
                     @Override
-                    public void visit(FreightNetEvent event) {
-                        if (event.getType() == GTEventType.FREIGHT_NET_CONNECTION_REMOVED &&
-                                getSelector().getSelected().contains(event.getConnection())) {
+                    public void visitFreightNetEvent(Event event) {
+                        if (event.getType() == Event.Type.ADDED && event.getObject() instanceof FNConnection &&
+                                getSelector().getSelected().contains(event.getObject())) {
                             getSelector().regionsSelected(Collections.<FNConnection>emptyList());
                         }
                     }
                 };
-                event.accept(visitor);
+                EventProcessing.visit(event, visitor);
             }
         };
         collector.setSelector(selector);

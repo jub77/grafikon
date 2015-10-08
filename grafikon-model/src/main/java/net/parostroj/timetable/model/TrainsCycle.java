@@ -23,7 +23,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainsCycleAttributes, TrainDiagramPart {
+public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<TrainsCycleItem>, Visitable, TrainsCycleAttributes, TrainDiagramPart, Observable {
 
     private final String id;
     private final TrainDiagram diagram;
@@ -32,7 +32,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private TrainsCycleType type;
     private final Attributes attributes;
     private final List<TrainsCycleItem> items;
-    private final GTListenerSupport<TrainsCycleListener, TrainsCycleEvent> listenerSupport;
+    private final ListenerSupport listenerSupport;
     private TrainsCycle next;
     private TrainsCycle previous;
 
@@ -52,10 +52,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         this.description = description;
         this.type = type;
         this.items = new LinkedList<TrainsCycleItem>();
-        listenerSupport = new GTListenerSupport<TrainsCycleListener, TrainsCycleEvent>(
-                (listener, event) -> listener.trainsCycleChanged(event));
+        listenerSupport = new ListenerSupport();
         attributes = new Attributes(
-                (attrs, change) -> listenerSupport.fireEvent(new TrainsCycleEvent(TrainsCycle.this, change)));
+                (attrs, change) -> listenerSupport.fireEvent(new Event(TrainsCycle.this, change)));
     }
 
     @Override
@@ -84,7 +83,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!ObjectsUtil.compareWithNull(description, this.description)) {
             String oldDescription = this.description;
             this.description = description;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_DESCRIPTION,
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESCRIPTION,
                     oldDescription, description)));
         }
     }
@@ -97,7 +96,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
             this.name = name;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_NAME, oldName, name)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
         }
     }
 
@@ -186,7 +185,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
 
     private static Consumer<TrainsCycle> getSendChangedSequence() {
         return tc -> {
-            tc.fireEvent(new TrainsCycleEvent(tc, GTEventType.CYCLE_SEQUENCE));
+            tc.fireEvent(new Event(tc, Event.Type.SPECIAL, Special.SEQUENCE));
         };
     }
 
@@ -242,7 +241,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         items.remove(oldIndex);
         int newIndex = this.addItemImpl(item);
         if (oldIndex != newIndex) {
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_MOVED, item, item));
+            this.listenerSupport.fireEvent(new Event(this, Event.Type.MOVED, item, ListData.createData(oldIndex, newIndex)));
         }
     }
 
@@ -297,7 +296,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public void addItem(TrainsCycleItem item) {
         addItemImpl(item);
         item.getTrain().addCycleItem(item);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_ADDED, null, item));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.ADDED, item));
     }
 
     private int addItemImpl(TrainsCycleItem item) {
@@ -315,13 +314,13 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public void removeItem(TrainsCycleItem item) {
         item.getTrain().removeCycleItem(item);
         items.remove(item);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, item));
     }
 
     public TrainsCycleItem removeItem(int index) {
         TrainsCycleItem item = items.remove(index);
         item.getTrain().removeCycleItem(item);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_REMOVED, item, null));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, item));
         return item;
     }
 
@@ -332,7 +331,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         Train t = newItem.getTrain();
         t.removeCycleItem(oldItem);
         t.addCycleItem(newItem);
-        this.listenerSupport.fireEvent(new TrainsCycleEvent(this, GTEventType.CYCLE_ITEM_UPDATED, oldItem, newItem));
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.REPLACED, newItem, ListData.createData(oldItem, newItem)));
         this.correctItem(newItem);
     }
 
@@ -368,7 +367,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         if (!ObjectsUtil.compareWithNull(type, this.type)) {
             TrainsCycleType oldType = this.type;
             this.type = type;
-            this.listenerSupport.fireEvent(new TrainsCycleEvent(this, new AttributeChange(ATTR_TYPE, oldType, type)));
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_TYPE, oldType, type)));
         }
     }
 
@@ -391,15 +390,17 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
     }
 
-    public void addListener(TrainsCycleListener listener) {
+    @Override
+    public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
-    public void removeListener(TrainsCycleListener listener) {
+    @Override
+    public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }
 
-    void fireEvent(TrainsCycleEvent event) {
+    void fireEvent(Event event) {
         this.listenerSupport.fireEvent(event);
     }
 

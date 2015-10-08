@@ -18,29 +18,27 @@ import org.jgrapht.graph.ListenableUndirectedGraph;
  *
  * @author jub
  */
-public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
+public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observable {
 
     private final String id;
     private final TrainDiagram diagram;
     private final ItemList<LineClass> lineClasses;
     private final ItemList<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
-    private final GTListenerNetImpl listener;
-    private final GTListenerSupport<NetListener, NetEvent> listenerSupport;
-    private final GTListenerSupport<AllEventListener, GTEvent<?>> listenerSupportAll;
+    private final Listener listener;
+    private final ListenerSupport listenerSupport;
+    private final ListenerSupport listenerSupportAll;
 
     /**
      * Constructor.
      */
     public Net(String id, TrainDiagram diagram) {
         netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
-        lineClasses = new ItemListNetEvent<LineClass>(GTEventType.LINE_CLASS_ADDED, GTEventType.LINE_CLASS_REMOVED, GTEventType.LINE_CLASS_MOVED);
-        regions = new ItemListNetEvent<Region>(GTEventType.REGION_ADDED, GTEventType.REGION_REMOVED, GTEventType.REGION_MOVED);
-        listenerSupport = new GTListenerSupport<NetListener, NetEvent>(
-                (listener, event) -> listener.netChanged(event));
-        listenerSupportAll = new GTListenerSupport<AllEventListener, GTEvent<?>>(
-                (listener, event) -> listener.changed(event));
-        listener = new GTListenerNetImpl(this);
+        lineClasses = new ItemListNetEvent<LineClass>();
+        regions = new ItemListNetEvent<Region>();
+        listenerSupport = new ListenerSupport();
+        listenerSupportAll = new ListenerSupport();
+        listener = event -> this.fireNestedEvent(event);
         this.id = id;
         this.diagram = diagram;
     }
@@ -65,13 +63,13 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     public void addNode(Node node) {
         netDelegate.addVertex(node);
-        this.fireEvent(new NetEvent(this, GTEventType.NODE_ADDED, node));
+        this.fireEvent(new Event(this, Event.Type.ADDED, node));
         node.addListener(listener);
     }
 
     public void removeNode(Node node) {
         netDelegate.removeVertex(node);
-        this.fireEvent(new NetEvent(this, GTEventType.NODE_REMOVED, node));
+        this.fireEvent(new Event(this, Event.Type.REMOVED, node));
         node.removeListener(listener);
     }
 
@@ -89,7 +87,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     public void addLine(Node from, Node to, Line line) {
         netDelegate.addEdge(from, to, line);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_ADDED, line));
+        this.fireEvent(new Event(this, Event.Type.ADDED, line));
         // adapt from and to straight
         Iterator<NodeTrack> fromS = this.straight(from).iterator();
         Iterator<NodeTrack> toS = this.straight(to).iterator();
@@ -116,7 +114,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     public void removeLine(Line line) {
         netDelegate.removeEdge(line);
-        this.fireEvent(new NetEvent(this, GTEventType.LINE_REMOVED, line));
+        this.fireEvent(new Event(this, Event.Type.REMOVED, line));
         line.removeListener(listener);
     }
 
@@ -189,27 +187,27 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
         return netDelegate;
     }
 
-    public void addListener(NetListener listener) {
+    public void addListener(Listener listener) {
         this.listenerSupport.addListener(listener);
     }
 
-    public void removeListener(NetListener listener) {
+    public void removeListener(Listener listener) {
         this.listenerSupport.removeListener(listener);
     }
 
-    public void addAllEventListener(AllEventListener listener) {
+    public void addAllEventListener(Listener listener) {
         this.listenerSupportAll.addListener(listener);
     }
 
-    public void removeAllEventListener(AllEventListener listener) {
+    public void removeAllEventListener(Listener listener) {
         this.listenerSupportAll.removeListener(listener);
     }
 
-    void fireNestedEvent(GTEvent<?> event) {
+    void fireNestedEvent(Event event) {
         this.listenerSupportAll.fireEvent(event);
     }
 
-    private void fireEvent(NetEvent event) {
+    private void fireEvent(Event event) {
         this.listenerSupport.fireEvent(event);
         this.listenerSupportAll.fireEvent(event);
     }
@@ -269,14 +267,13 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart {
 
     private class ItemListNetEvent<T> extends ItemList<T> {
 
-        public ItemListNetEvent(GTEventType add, GTEventType remove, GTEventType move) {
-            super(add, remove, move);
+        public ItemListNetEvent() {
+            super(true);
         }
 
         @Override
-        protected void fireEvent(ItemList.Type type, GTEventType eventType, T item,
-                int newIndex, int oldIndex) {
-            NetEvent event = new NetEvent(Net.this, eventType, item, oldIndex, newIndex);
+        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
+            Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
             Net.this.fireEvent(event);
         }
     }

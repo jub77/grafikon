@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.validators;
 
 import java.util.ArrayList;
 
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.events.*;
@@ -22,13 +23,14 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
     private boolean changing;
 
     @Override
-    public boolean validate(GTEvent<?> event) {
+    public boolean validate(Event event) {
         boolean validated = false;
-        if (event instanceof TrainsCycleEvent) {
+        if (event.getSource() instanceof TrainsCycle) {
             validated = handleTrainsCycleEvent(event);
         }
-        if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
-            TrainsCycle deleted = (TrainsCycle) ((TrainDiagramEvent) event).getObject();
+        if (event.getSource() instanceof TrainDiagram && event.getObject() instanceof TrainsCycle
+                && event.getType() == Event.Type.REMOVED) {
+            TrainsCycle deleted = (TrainsCycle) event.getObject();
             // handle sequence of circulations
             if (deleted.isPartOfSequence()) {
                 deleted.removeFromSequence();
@@ -38,14 +40,13 @@ public class TrainsCycleValidator implements TrainDiagramValidator {
         return validated;
     }
 
-    private boolean handleTrainsCycleEvent(GTEvent<?> event) {
+    private boolean handleTrainsCycleEvent(Event event) {
         boolean validated = false;
-        TrainsCycleEvent tcEvent = (TrainsCycleEvent) event;
-        TrainsCycle circulation = tcEvent.getSource();
-        boolean attribute = event.getType() == GTEventType.ATTRIBUTE;
-        if (attribute && tcEvent.getSource().isPartOfSequence()
+        TrainsCycle circulation = (TrainsCycle) event.getSource();
+        boolean attribute = event.getType() == Event.Type.ATTRIBUTE;
+        if (attribute && circulation.isPartOfSequence()
                 && event.getAttributeChange().checkName(CHECKED_ATTRIBUTES)) {
-            distributeAttributesInSequence(circulation, tcEvent.getAttributeChange());
+            distributeAttributesInSequence(circulation, event.getAttributeChange());
             validated = true;
         }
         if (attribute && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS)) {

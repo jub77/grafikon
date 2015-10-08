@@ -4,6 +4,7 @@ import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 
 /**
  * Group remove correction.
@@ -19,9 +20,10 @@ public class GroupRemoveValidator implements TrainDiagramValidator {
     }
 
     @Override
-    public boolean validate(GTEvent<?> event) {
-        if (event instanceof TrainDiagramEvent && event.getType() == GTEventType.GROUP_REMOVED) {
-            Group group = (Group) ((TrainDiagramEvent) event).getObject();
+    public boolean validate(Event event) {
+        if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED
+                && event.getObject() instanceof Group) {
+            Group group = (Group) event.getObject();
             // remove group from trains ...
             for (Train train : diagram.getTrains()) {
                 Group trainGroup = train.getAttributes().get(Train.ATTR_GROUP, Group.class);

@@ -15,6 +15,8 @@ import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.output2.gt.GTDraw.Refresh;
 import net.parostroj.timetable.utils.Tuple;
@@ -74,7 +76,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         addRegionCollector(TimeInterval.class, new TrainRegionCollector());
     }
 
-    private AllEventListener currentListener;
+    private Listener currentListener;
 
     private Integer startTime;
     private Integer endTime;
@@ -92,10 +94,12 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
             this.currentListener = new VisitEventListener(new AbstractEventVisitor() {
 
                 @Override
-                public void visit(TrainDiagramEvent event) {
+                public void visitDiagramEvent(Event event) {
                     switch (event.getType()) {
-                        case ROUTE_ADDED: case ROUTE_REMOVED:
-                            routesChanged(event);
+                        case ADDED: case REMOVED:
+                            if (event.getObject() instanceof Route) {
+                                routesChanged(event);
+                            }
                             break;
                         default:
                             break;
@@ -103,7 +107,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 }
             }) {
                 @Override
-                public void changed(GTEvent<?> event) {
+                public void changed(Event event) {
                     super.changed(event);
                     for (RegionCollector<?> collector : gtStorage.collectors()) {
                         collector.processEvent(event);
@@ -158,16 +162,16 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         return config;
     }
 
-    protected void routesChanged(TrainDiagramEvent event) {
+    protected void routesChanged(Event event) {
         // check current route
-        if (event.getType() == GTEventType.ROUTE_REMOVED && event.getObject().equals(this.getRoute())) {
+        if (event.getType() == Type.REMOVED && event.getObject() instanceof Route && event.getObject().equals(this.getRoute())) {
             if (!diagram.getRoutes().isEmpty()) {
                 this.setRoute(diagram.getRoutes().get(0));
             } else {
                 this.setRoute(null);
             }
         }
-        if (event.getType() == GTEventType.ROUTE_ADDED && this.getRoute() == null) {
+        if (event.getType() == Type.ADDED && event.getObject() instanceof Route && this.getRoute() == null) {
             this.setRoute((Route)event.getObject());
         }
     }

@@ -18,9 +18,9 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.events.GTEventType;
-import net.parostroj.timetable.model.events.TrainDiagramEvent;
-import net.parostroj.timetable.model.events.TrainDiagramListener;
+import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.Event.Type;
 
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
@@ -231,10 +231,12 @@ public class GTVButtonPanel extends JPanel {
         this.td = td;
         fill();
         if (td != null) {
-            td.addListener(new TrainDiagramListener() {
+            td.addListener(new Listener() {
+
                 @Override
-                public void trainDiagramChanged(TrainDiagramEvent event) {
-                    if (event.getType() == GTEventType.ROUTE_ADDED || event.getType() == GTEventType.ROUTE_REMOVED) {
+                public void changed(Event event) {
+                    if (event.getType() == Type.ADDED
+                            || event.getType() == Type.REMOVED && event.getObject() instanceof Route) {
                         fill();
                     }
                 }

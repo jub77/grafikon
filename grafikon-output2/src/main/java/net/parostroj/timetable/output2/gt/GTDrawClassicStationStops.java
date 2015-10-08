@@ -118,26 +118,28 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
     }
 
     @Override
-    public Refresh processEvent(GTEvent<?> event) {
+    public Refresh processEvent(Event event) {
         Refresh refresh = super.processEvent(event);
         GTDrawEventVisitor visitor = new GTDrawEventVisitor() {
             @Override
-            public void visit(TrainDiagramEvent event) {
-                if (event.getType() == GTEventType.TRAIN_REMOVED) {
+            public void visitDiagramEvent(Event event) {
+                if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof Train) {
                     nodeIntervalLists.clear();
                     locationMap.clear();
                 }
             }
 
             @Override
-            public void visit(TrainEvent event) {
-                if (event.getType() == GTEventType.TIME_INTERVAL_LIST || event.getType() == GTEventType.TECHNOLOGICAL) {
+            public void visitTrainEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE && event.getAttributeChange()
+                        .checkName(Train.ATTR_TECHNOLOGICAL_BEFORE, Train.ATTR_TECHNOLOGICAL_AFTER)
+                        || event.getType() == Event.Type.SPECIAL) {
                     nodeIntervalLists.clear();
                     locationMap.clear();
                 }
             }
         };
-        event.accept(visitor);
+        EventProcessing.visit(event, visitor);
         return refresh.update(visitor.getRefresh());
     }
 }

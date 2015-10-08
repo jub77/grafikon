@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.parostroj.timetable.model.events.TrainEvent;
+import net.parostroj.timetable.model.events.Event;
 
 /**
  * Time interval.
@@ -60,9 +60,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         this.speedLimit = speed;
         this.direction = direction;
         this.track = track;
-        this.attributes = new Attributes((attrs, change) -> train
-                .fireEvent(new TrainEvent(train, change,
-                        train.getTimeIntervalList().indexOf(TimeInterval.this))));
+        this.attributes = new Attributes((attrs, change) -> train.fireEvent(new Event(train, this, change)));
         this.id = id;
         this.addedTime = addedTime;
     }

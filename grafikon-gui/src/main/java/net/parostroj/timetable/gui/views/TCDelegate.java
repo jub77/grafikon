@@ -44,12 +44,12 @@ public abstract class TCDelegate implements ApplicationModelListener {
         this.model.addListener(this);
         this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
             @Override
-            public void processTrainsCycleEvent(TrainsCycleEvent event) {
+            public void processTrainsCycleEvent(Event event) {
                 if (event.getSource() == selected) {
-                    boolean sequenceChanged = event.getType() == GTEventType.CYCLE_SEQUENCE;
-                    boolean engineClassChanged = event.getType() == GTEventType.ATTRIBUTE
+                    boolean sequenceChanged = event.getType() == Event.Type.SPECIAL && event.getData() == Special.SEQUENCE;
+                    boolean engineClassChanged = event.getType() == Event.Type.ATTRIBUTE
                             && event.getAttributeChange().checkName(TrainsCycle.ATTR_ENGINE_CLASS);
-                    boolean itemMoved = event.getType() == GTEventType.CYCLE_ITEM_MOVED;
+                    boolean itemMoved = event.getType() == Event.Type.MOVED && event.getObject() instanceof TrainsCycleItem;
 
                     boolean changed = itemMoved || engineClassChanged || sequenceChanged;
                     if (changed) {
@@ -58,25 +58,25 @@ public abstract class TCDelegate implements ApplicationModelListener {
                 }
             }
             @Override
-            public void processTrainDiagramEvent(TrainDiagramEvent event) {
+            public void processTrainDiagramEvent(Event event) {
                 // process add/remove train
-                if (event.getType() == GTEventType.TRAIN_ADDED) {
+                if (event.getType() == Event.Type.ADDED && event.getObject() instanceof Train) {
                     fireEventImpl(Action.NEW_TRAIN, null, (Train) event.getObject());
-                } else if (event.getType() == GTEventType.TRAIN_REMOVED) {
+                } else if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof Train) {
                     fireEventImpl(Action.DELETED_TRAIN, null, (Train) event.getObject());
-                } else if (event.getType() == GTEventType.TRAINS_CYCLE_ADDED) {
+                } else if (event.getType() == Event.Type.ADDED && event.getObject() instanceof TrainsCycle) {
                     fireEventImpl(Action.NEW_CYCLE, (TrainsCycle) event.getObject(), null);
-                } else if (event.getType() == GTEventType.TRAINS_CYCLE_REMOVED) {
+                } else if (event.getType() == Event.Type.REMOVED && event.getObject() instanceof TrainsCycle) {
                     fireEventImpl(Action.DELETED_CYCLE, (TrainsCycle) event.getObject(), null);
                 }
             }
             @Override
-            public void processTrainEvent(TrainEvent event) {
-                if (event.getType() == GTEventType.ATTRIBUTE && event.getAttributeChange().checkName(Train.ATTR_NAME)) {
-                    fireEventImpl(Action.REFRESH_TRAIN_NAME, null, event.getSource());
+            public void processTrainEvent(Event event) {
+                if (event.getType() == Event.Type.ATTRIBUTE && event.getAttributeChange().checkName(Train.ATTR_NAME)) {
+                    fireEventImpl(Action.REFRESH_TRAIN_NAME, null, (Train) event.getSource());
                 }
             }
-        }, GTEvent.class);
+        }, Event.class);
         this.listeners = new HashSet<Listener>();
     }
 
