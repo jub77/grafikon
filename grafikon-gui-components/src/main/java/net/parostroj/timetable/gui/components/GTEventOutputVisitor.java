@@ -256,6 +256,9 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append('-').append(item.getToInterval().getOwnerAsNode().getAbbr()).append('\n');
                     str.append("    Train: ").append(item.getTrain().getName()).append('\n');
                 }
+                if (event.getData() != null) {
+                    str.append("    Special: ").append(event.getData().toString());
+                }
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
