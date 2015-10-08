@@ -161,7 +161,7 @@ public class TransformVisitor implements EventVisitor {
             case ADDED:
             case MOVED:
             case REMOVED:
-            case OBJECT_ATTRIBUTE:
+            case REPLACED:
                 Train t = event.getObject() instanceof TrainsCycleItem ? ((TrainsCycleItem) event.getObject()).getTrain() : null;
                 if (t != null) {
                     change.addDescription(new DiagramChangeDescription(desc, new Parameter(this.getObjectStr(t))));
