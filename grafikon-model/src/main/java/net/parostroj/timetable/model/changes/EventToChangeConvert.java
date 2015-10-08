@@ -61,7 +61,7 @@ class EventToChangeConvert {
         map.put(Event.Type.ADDED, "object_added");
         map.put(Event.Type.REMOVED, "object_removed");
         map.put(Event.Type.REPLACED, "object_replaced");
-
+        map.put(Event.Type.SPECIAL, "special");
         return map;
     }
 

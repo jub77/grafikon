@@ -169,7 +169,7 @@ public class TransformVisitor implements EventVisitor {
                 break;
             case SPECIAL:
                 if (event.getData() == Special.SEQUENCE) {
-                    change.addDescription(new DiagramChangeDescription(desc));
+                    change.addDescription(new DiagramChangeDescription(desc, new Parameter("sequence", true)));
                 }
             default:
                 break;
