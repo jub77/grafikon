@@ -41,4 +41,12 @@ public class EventProcessing {
             visitor.visitOtherEvent(event);
         }
     }
+
+    public static boolean isTypeAndObjectClass(Event event, Event.Type type, Class<?> objectType) {
+        return event.getType() == type && objectType.isInstance(event.getObject());
+    }
+
+    public static boolean isTypeAndSourceClass(Event event, Event.Type type, Class<?> sourceType) {
+        return event.getType() == type && sourceType.isInstance(event.getSource());
+    }
 }
