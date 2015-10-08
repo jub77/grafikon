@@ -46,6 +46,8 @@ class EventToChangeConvert {
     private static Map<Event.Type, DiagramChange.Action> getActions() {
         Map<Event.Type, DiagramChange.Action> map = new EnumMap<Event.Type, DiagramChange.Action>(Event.Type.class);
         map.put(Event.Type.ATTRIBUTE, DiagramChange.Action.MODIFIED);
+        map.put(Event.Type.OBJECT_ATTRIBUTE, DiagramChange.Action.MODIFIED);
+        map.put(Event.Type.SPECIAL, DiagramChange.Action.MODIFIED);
         map.put(Event.Type.ADDED, DiagramChange.Action.ADDED);
         map.put(Event.Type.REMOVED, DiagramChange.Action.REMOVED);
         map.put(Event.Type.REPLACED, DiagramChange.Action.MODIFIED);
