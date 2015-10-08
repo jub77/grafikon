@@ -251,7 +251,7 @@ public class TransformVisitor implements EventVisitor {
     }
 
     private DiagramChange.Type getChangeType(Event event) {
-        DiagramChange.Type type = event.getType().isList() ? converter.getType(event.getObject().getClass()) : null;
+        DiagramChange.Type type = event.getType().isList() ? converter.getType(event.getObject()) : null;
         return type;
     }
 
