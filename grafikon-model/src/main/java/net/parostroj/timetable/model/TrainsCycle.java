@@ -329,8 +329,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
             throw new IllegalArgumentException("Illegal argument.");
         this.items.set(this.items.indexOf(oldItem), newItem);
         Train t = newItem.getTrain();
-        t.removeCycleItem(oldItem);
-        t.addCycleItem(newItem);
+        t.replaceCycleItem(newItem, oldItem);
         this.listenerSupport.fireEvent(new Event(this, Event.Type.REPLACED, newItem, ListData.createData(oldItem, newItem)));
         this.correctItem(newItem);
     }

@@ -323,6 +323,16 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         this.checkRecalculateCycle(item.getCycle());
     }
 
+    protected void replaceCycleItem(TrainsCycleItem newItem, TrainsCycleItem oldItem) {
+        TrainsCycleType cycleType = oldItem.getCycle().getType();
+        this.cycles.remove(cycleType, oldItem);
+        _cachedCycles.remove(oldItem);
+        _cachedCycles.addCycleItem(timeIntervalList, cycles.get(cycleType), newItem, true);
+        _cachedCycles.add(timeIntervalList, newItem);
+        this.listenerSupport.fireEvent(new Event(this, Event.Type.REPLACED, newItem, ListData.createData(oldItem, newItem)));
+        this.checkRecalculateCycle(newItem.getCycle());
+    }
+
     private void checkRecalculateCycle(TrainsCycle cycle) {
         if (cycle.getType().getName().equals(TrainsCycleType.ENGINE_CYCLE) && cycle.getAttributes().containsKey(TrainsCycle.ATTR_ENGINE_CLASS)) {
             this.recalculate();
