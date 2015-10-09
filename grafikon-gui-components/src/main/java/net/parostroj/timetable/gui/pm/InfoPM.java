@@ -16,6 +16,10 @@ import org.beanfabrics.support.Operation;
  */
 public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
+    public interface RouteInfoListener {
+        void isRouteInfo(boolean routeInfo);
+    }
+
     final TextPM info = new TextPM();
     final TextPM routeNumbers = new TextPM();
     final TextPM routeNodes = new TextPM();
@@ -26,8 +30,14 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
     private WeakReference<TrainDiagram> diagramRef;
 
+    private RouteInfoListener routeInfoListener;
+
     public InfoPM() {
         PMManager.setup(this);
+    }
+
+    public void setRouteInfoListener(RouteInfoListener routeInfoListener) {
+        this.routeInfoListener = routeInfoListener;
     }
 
     public void init(TrainDiagram diagram) {
@@ -67,6 +77,9 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
         if (!isInfo) {
             routeNodes.setText(null);
             routeNumbers.setText(null);
+        }
+        if (routeInfoListener != null) {
+            routeInfoListener.isRouteInfo(isInfo);
         }
     }
 
