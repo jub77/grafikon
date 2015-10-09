@@ -286,7 +286,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         speedTextField.addCaretListener(new CaretListener() {
             @Override
             public void caretUpdate(CaretEvent e) {
-                newRowButton.setEnabled(ObjectsUtil.isEmpty(speedTextField.getText()));
+                newRowButton.setEnabled(!ObjectsUtil.isEmpty(speedTextField.getText()));
             }
         });
 
