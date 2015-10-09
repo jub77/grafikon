@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
+import java.util.function.Consumer;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -16,10 +17,6 @@ import org.beanfabrics.support.Operation;
  */
 public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
-    public interface RouteInfoListener {
-        void isRouteInfo(boolean routeInfo);
-    }
-
     final TextPM info = new TextPM();
     final TextPM routeNumbers = new TextPM();
     final TextPM routeNodes = new TextPM();
@@ -30,13 +27,13 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
 
     private WeakReference<TrainDiagram> diagramRef;
 
-    private RouteInfoListener routeInfoListener;
+    private Consumer<Boolean> routeInfoListener;
 
     public InfoPM() {
         PMManager.setup(this);
     }
 
-    public void setRouteInfoListener(RouteInfoListener routeInfoListener) {
+    public void setRouteInfoListener(Consumer<Boolean> routeInfoListener) {
         this.routeInfoListener = routeInfoListener;
     }
 
@@ -79,7 +76,7 @@ public class InfoPM extends AbstractPM implements IPM<TrainDiagram> {
             routeNumbers.setText(null);
         }
         if (routeInfoListener != null) {
-            routeInfoListener.isRouteInfo(isInfo);
+            routeInfoListener.accept(isInfo);
         }
     }
 
