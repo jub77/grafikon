@@ -9,27 +9,30 @@ public class FreightDstFilterImpl extends FreightDstFilter {
 
     private final FreightDstFilter parent;
     private final List<Node> lastNodes;
-    private boolean stop;
     private final Integer transitionLimit;
 
     protected FreightDstFilterImpl(FreightDstFilter parent, List<Node> lastNodes, Integer transitionLimit) {
+        if (parent == null) {
+            throw new IllegalArgumentException("parent cannot be null");
+        }
         this.parent = parent;
         this.lastNodes = lastNodes;
         this.transitionLimit = transitionLimit;
     }
 
     @Override
-    public boolean accepted(FreightDst dst, int level) {
+    public FilterResult accepted(FreightDst dst, int level) {
         if (transitionLimit != null && transitionLimit < level) {
-            return false;
+            return FilterResult.STOP_EXCLUDE;
         }
-        if (stop || (parent != null && !parent.accepted(dst, level + 1))) {
-            return false;
+        FilterResult parentResult = parent.accepted(dst, level + 1);
+        if (parentResult != FilterResult.OK) {
+            return parentResult;
         }
         if (lastNodes != null && dst.isNode() && lastNodes.contains(dst.getNode())) {
-            stop = true;
+            return FilterResult.STOP_INCLUDE;
         }
-        return true;
+        return FilterResult.OK;
     }
 
 }

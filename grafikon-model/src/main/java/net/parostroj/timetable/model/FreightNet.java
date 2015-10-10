@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 
 import static net.parostroj.timetable.actions.FreightHelper.*;
 
+import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
@@ -205,10 +206,16 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
             if (isFreight(i)) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
-                if (!filter.accepted(newDst, 0)) {
+                FilterResult filterResult = filter.accepted(newDst, 0);
+                if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
                 }
-                result.add(newDst);
+                if (filterResult != FilterResult.IGNORE) {
+                    result.add(newDst);
+                }
+                if (filterResult == FilterResult.STOP_INCLUDE) {
+                    break;
+                }
             }
             for (FNConnection conn : nextConns) {
                 if (i == conn.getFrom() && !used.contains(conn)) {
@@ -223,7 +230,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
         for (Node rtNode : rtNodes) {
             FreightDst regionDst = new FreightDst(rtNode, null);
-            if (filter.accepted(regionDst, 1)) {
+            FilterResult filterResult = filter.accepted(regionDst, 1);
+            if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
                 result.add(regionDst);
             }
         }

@@ -9,7 +9,7 @@ public class FreightDstFilterEmpty extends FreightDstFilter {
     }
 
     @Override
-    public boolean accepted(FreightDst dst, int level) {
-        return true;
+    public FilterResult accepted(FreightDst dst, int level) {
+        return FilterResult.OK;
     }
 }

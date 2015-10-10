@@ -9,6 +9,11 @@ import java.util.List;
  */
 public abstract class FreightDstFilter {
 
+    public enum FilterResult {
+        OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE
+    }
+
+
     public static FreightDstFilter createFilter() {
         return new FreightDstFilterEmpty();
     }
@@ -18,5 +23,5 @@ public abstract class FreightDstFilter {
         return new FreightDstFilterImpl(current, lastNodes, connection.get(FNConnection.ATTR_TRANSITION_LIMIT, Integer.class));
     }
 
-    public abstract boolean accepted(FreightDst dst, int level);
+    public abstract FilterResult accepted(FreightDst dst, int level);
 }
