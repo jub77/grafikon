@@ -14,7 +14,7 @@ public abstract class FreightDstFilter {
     }
 
     public static FreightDstFilter createFilter(FreightDstFilter current, FNConnection connection) {
-        List<?> lastNodes = connection.get(FNConnection.ATTR_LAST_NODES, List.class);
+        List<Node> lastNodes = connection.getAsList(FNConnection.ATTR_LAST_NODES, Node.class);
         return new FreightDstFilterImpl(current, lastNodes, connection.get(FNConnection.ATTR_TRANSITION_LIMIT, Integer.class));
     }
 

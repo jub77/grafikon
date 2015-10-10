@@ -8,11 +8,11 @@ import java.util.List;
 public class FreightDstFilterImpl extends FreightDstFilter {
 
     private final FreightDstFilter parent;
-    private final List<?> lastNodes;
+    private final List<Node> lastNodes;
     private boolean stop;
     private final Integer transitionLimit;
 
-    protected FreightDstFilterImpl(FreightDstFilter parent, List<?> lastNodes, Integer transitionLimit) {
+    protected FreightDstFilterImpl(FreightDstFilter parent, List<Node> lastNodes, Integer transitionLimit) {
         this.parent = parent;
         this.lastNodes = lastNodes;
         this.transitionLimit = transitionLimit;

@@ -128,10 +128,10 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
     private void updateValues(TrainDiagram diagram) {
         // last nodes
         selectionPanel.setListForSelection(Wrapper.getWrapperList(diagram.getNet().getNodes()));
-        List<?> lastNodes = connection.get(FNConnection.ATTR_LAST_NODES, List.class);
+        List<Node> lastNodes = connection.getAsList(FNConnection.ATTR_LAST_NODES, Node.class);
         if (lastNodes != null) {
-            for (Object node : lastNodes) {
-                selectionPanel.addSelected(Wrapper.getWrapper((Node) node));
+            for (Node node : lastNodes) {
+                selectionPanel.addSelected(Wrapper.getWrapper(node));
             }
         }
         // transition limit
