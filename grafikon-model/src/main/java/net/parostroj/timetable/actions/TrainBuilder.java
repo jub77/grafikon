@@ -40,9 +40,7 @@ public class TrainBuilder {
 
         // create copy of time intervals
         for (TimeInterval copiedInterval : copiedTrain.getTimeIntervalList()) {
-            TimeInterval interval = new TimeInterval(IdGenerator.getInstance().getId(), copiedInterval);
-            // redirect to a new train
-            interval.setTrain(train);
+            TimeInterval interval = new TimeInterval(IdGenerator.getInstance().getId(), copiedInterval, train);
 
             // add interval
             train.addInterval(interval);

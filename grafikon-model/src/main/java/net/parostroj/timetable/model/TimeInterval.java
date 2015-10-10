@@ -84,10 +84,11 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /**
      * creates copy of an interval.
      *
+     * @param id id of an interval
      * @param interval copied interval
      */
-    public TimeInterval(String id, TimeInterval interval) {
-        this(id, interval.getTrain(), interval.getOwner(), interval.getStart(),
+    public TimeInterval(String id, TimeInterval interval, Train train) {
+        this(id, train, interval.getOwner(), interval.getStart(),
                 interval.getEnd(), interval.getSpeedLimit(), interval.getDirection(),
                 interval.getTrack(), interval.getAddedTime());
         this.getAttributes().add(interval.getAttributes());
