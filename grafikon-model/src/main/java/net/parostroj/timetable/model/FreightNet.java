@@ -13,6 +13,7 @@ import java.util.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -203,16 +204,16 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private List<FreightDst> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
         List<FreightDst> result = new LinkedList<FreightDst>();
-        this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter);
+        this.getFreightToNodesImpl(fromInterval, Collections.<TimeInterval>emptyList(), result, new HashSet<FNConnection>(), filter, new FilterContext(fromInterval));
         return result;
     }
 
-    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter) {
+    private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
         for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
             if (isFreight(i)) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
-                FilterResult filterResult = filter.accepted(newDst, 0);
+                FilterResult filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
                 }
@@ -229,14 +230,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                     List<TimeInterval> newPath = new ArrayList<TimeInterval>(path.size() + 1);
                     newPath.addAll(path);
                     newPath.add(conn.getFrom());
-                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter));
+                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter), context);
                 }
             }
         }
         Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
         for (Node rtNode : rtNodes) {
             FreightDst regionDst = new FreightDst(rtNode, null);
-            FilterResult filterResult = filter.accepted(regionDst, 1);
+            FilterResult filterResult = filter.accepted(context, regionDst, 1);
             if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
                 result.add(regionDst);
             }

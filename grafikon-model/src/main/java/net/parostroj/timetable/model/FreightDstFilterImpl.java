@@ -21,11 +21,11 @@ public class FreightDstFilterImpl implements FreightDstFilter {
     }
 
     @Override
-    public FilterResult accepted(FreightDst dst, int level) {
+    public FilterResult accepted(FilterContext context, FreightDst dst, int level) {
         if (transitionLimit != null && transitionLimit < level) {
             return FilterResult.STOP_EXCLUDE;
         }
-        FilterResult parentResult = parent.accepted(dst, level + 1);
+        FilterResult parentResult = parent.accepted(context, dst, level + 1);
         if (parentResult != FilterResult.OK) {
             return parentResult;
         }

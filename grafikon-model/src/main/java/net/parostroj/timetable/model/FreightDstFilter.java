@@ -11,5 +11,18 @@ public interface FreightDstFilter {
         OK, STOP_INCLUDE, STOP_EXCLUDE, IGNORE
     }
 
-    FilterResult accepted(FreightDst dst, int level);
+    public static class FilterContext {
+
+        private final TimeInterval startInterval;
+
+        public FilterContext(TimeInterval startInterval) {
+            this.startInterval = startInterval;
+        }
+
+        public TimeInterval getStartInterval() {
+            return startInterval;
+        }
+    }
+
+    FilterResult accepted(FilterContext context, FreightDst dst, int level);
 }

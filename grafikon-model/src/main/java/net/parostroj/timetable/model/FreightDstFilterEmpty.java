@@ -9,7 +9,7 @@ public class FreightDstFilterEmpty implements FreightDstFilter {
     }
 
     @Override
-    public FilterResult accepted(FreightDst dst, int level) {
+    public FilterResult accepted(FilterContext context, FreightDst dst, int level) {
         return FilterResult.OK;
     }
 }
