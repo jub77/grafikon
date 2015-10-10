@@ -100,15 +100,6 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
 
         transLimitCheckBox = new JCheckBox((String) null);
         transLimitPanel.add(transLimitCheckBox);
-        transLimitCheckBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.DESELECTED) {
-                this.transLimitTextField.setEnabled(false);
-                this.transLimitTextField.setText("");
-            } else {
-                this.transLimitTextField.setEnabled(true);
-                this.transLimitTextField.setText("0");
-            };
-        });
 
         JLabel limitLabel = new JLabel(ResourceLoader.getString("edit.fnc.limit") + ": ");
         transLimitPanel.add(limitLabel);
@@ -118,6 +109,16 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
         transLimitPanel.add(transLimitTextField);
         transLimitTextField.setColumns(5);
         transLimitTextField.setEnabled(false);
+
+        transLimitCheckBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
+                this.transLimitTextField.setEnabled(false);
+                this.transLimitTextField.setText("");
+            } else {
+                this.transLimitTextField.setEnabled(true);
+                this.transLimitTextField.setText("0");
+            };
+        });
     }
 
     private void addSelectionPanel(FilterType filterType, JTabbedPane tabbedPane) {
