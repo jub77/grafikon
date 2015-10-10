@@ -1,11 +1,17 @@
 package net.parostroj.timetable.model;
 
+import static net.parostroj.timetable.actions.FreightHelper.getNodeIntervalsWithFreightOrConnection;
+import static net.parostroj.timetable.actions.FreightHelper.isFreight;
+import static net.parostroj.timetable.actions.FreightHelper.isFreightTo;
+import static net.parostroj.timetable.actions.FreightHelper.isManaged;
+import static net.parostroj.timetable.actions.FreightHelper.isNoTransitiveRegionStart;
+import static net.parostroj.timetable.actions.FreightHelper.isRegionTransferTrain;
+import static net.parostroj.timetable.actions.FreightHelper.isStartRegion;
+
 import java.util.*;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import static net.parostroj.timetable.actions.FreightHelper.*;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
@@ -182,7 +188,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilter.createFilter()));
+            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createFilter()));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;

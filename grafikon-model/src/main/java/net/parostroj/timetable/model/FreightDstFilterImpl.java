@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author jub
  */
-public class FreightDstFilterImpl extends FreightDstFilter {
+public class FreightDstFilterImpl implements FreightDstFilter {
 
     private final FreightDstFilter parent;
     private final List<Node> lastNodes;

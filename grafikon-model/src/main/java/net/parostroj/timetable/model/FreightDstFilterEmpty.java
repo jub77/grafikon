@@ -3,7 +3,7 @@ package net.parostroj.timetable.model;
 /**
  * @author jub
  */
-public class FreightDstFilterEmpty extends FreightDstFilter {
+public class FreightDstFilterEmpty implements FreightDstFilter {
 
     protected FreightDstFilterEmpty() {
     }
