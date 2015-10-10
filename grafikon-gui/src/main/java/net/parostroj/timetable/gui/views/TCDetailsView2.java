@@ -8,6 +8,7 @@ package net.parostroj.timetable.gui.views;
 import java.awt.GridLayout;
 
 import net.parostroj.timetable.gui.views.TCDelegate.Action;
+import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainsCycle;
 
@@ -51,7 +52,7 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
             nameTextField.setText("");
             descriptionTextField.setText("");
         } else {
-            nameTextField.setText(cycle.getName());
+            nameTextField.setText(this.getNameText(cycle));
             descriptionTextField.setText(delegate.getCycleDescription());
             nameTextField.setCaretPosition(0);
             descriptionTextField.setCaretPosition(0);
@@ -73,6 +74,11 @@ public class TCDetailsView2 extends javax.swing.JPanel implements TCDelegate.Lis
         descriptionTextField.setColumns(10);
         descriptionTextField.setEditable(false);
         add(descriptionTextField);
+    }
+
+    private String getNameText(TrainsCycle cycle) {
+        Company company = cycle.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
+        return company == null ? cycle.getName() : String.format("%s (%s)", cycle.getName(), company.getAbbr());
     }
 
     private javax.swing.JTextField descriptionTextField;
