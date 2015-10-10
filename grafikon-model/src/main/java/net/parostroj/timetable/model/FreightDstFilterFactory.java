@@ -2,6 +2,8 @@ package net.parostroj.timetable.model;
 
 import java.util.List;
 
+import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
+
 /**
  * Filter factory.
  *
@@ -9,8 +11,8 @@ import java.util.List;
  */
 public class FreightDstFilterFactory {
 
-    public static FreightDstFilter createFilter() {
-        return new FreightDstFilterEmpty();
+    public static FreightDstFilter createEmptyFilter() {
+        return (context, dst, limit) -> FilterResult.OK;
     }
 
     public static FreightDstFilter createFilter(FreightDstFilter current, FNConnection connection) {

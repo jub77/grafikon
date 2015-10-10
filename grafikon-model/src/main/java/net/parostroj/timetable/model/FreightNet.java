@@ -189,7 +189,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createFilter()));
+            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter()));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -199,7 +199,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        return this.getFreightToNodesImpl(fromInterval, new FreightDstFilterEmpty());
+        return this.getFreightToNodesImpl(fromInterval, FreightDstFilterFactory.createEmptyFilter());
     }
 
     private List<FreightDst> getFreightToNodesImpl(TimeInterval fromInterval, FreightDstFilter filter) {
