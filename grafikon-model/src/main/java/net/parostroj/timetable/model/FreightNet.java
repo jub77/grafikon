@@ -189,7 +189,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
         Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
-            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter()));
+            List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter(), true));
             result.put(conn.getTo().getTrain(), nodes);
         }
         return result;
@@ -230,7 +230,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                     List<TimeInterval> newPath = new ArrayList<TimeInterval>(path.size() + 1);
                     newPath.addAll(path);
                     newPath.add(conn.getFrom());
-                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter), context);
+                    this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
                 }
             }
         }

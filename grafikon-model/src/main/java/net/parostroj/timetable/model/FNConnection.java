@@ -35,8 +35,8 @@ public class FNConnection extends Attributes implements ObjectWithId, Visitable,
         return to;
     }
 
-    public FreightDstFilter getFreightDstFilter(FreightDstFilter current) {
-        FreightDstFilter filter = FreightDstFilterFactory.createFilter(current, this);
+    public FreightDstFilter getFreightDstFilter(FreightDstFilter current, boolean ignoreFrom) {
+        FreightDstFilter filter = FreightDstFilterFactory.createFilter(current, this, ignoreFrom);
         return filter;
     }
 

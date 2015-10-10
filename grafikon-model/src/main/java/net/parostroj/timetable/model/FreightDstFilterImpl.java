@@ -8,15 +8,36 @@ import java.util.List;
 public class FreightDstFilterImpl implements FreightDstFilter {
 
     private final FreightDstFilter parent;
-    private final List<Node> lastNodes;
-    private final Integer transitionLimit;
+    private List<Node> stopNodes;
+    private List<Node> stopNodesExclude;
+    private List<Node> fromNodes;
+    private List<Node> toNodes;
+    private Integer transitionLimit;
 
-    protected FreightDstFilterImpl(FreightDstFilter parent, List<Node> lastNodes, Integer transitionLimit) {
+    protected FreightDstFilterImpl(FreightDstFilter parent) {
         if (parent == null) {
             throw new IllegalArgumentException("parent cannot be null");
         }
         this.parent = parent;
-        this.lastNodes = lastNodes;
+    }
+
+    public void setStopNodes(List<Node> stopNodes) {
+        this.stopNodes = stopNodes;
+    }
+
+    public void setStopNodesExclude(List<Node> stopNodesExclude) {
+        this.stopNodesExclude = stopNodesExclude;
+    }
+
+    public void setToNodes(List<Node> toNodes) {
+        this.toNodes = toNodes;
+    }
+
+    public void setFromNodes(List<Node> fromNodes) {
+        this.fromNodes = fromNodes;
+    }
+
+    public void setTransitionLimit(Integer transitionLimit) {
         this.transitionLimit = transitionLimit;
     }
 
@@ -29,10 +50,27 @@ public class FreightDstFilterImpl implements FreightDstFilter {
         if (parentResult != FilterResult.OK) {
             return parentResult;
         }
-        if (lastNodes != null && dst.isNode() && lastNodes.contains(dst.getNode())) {
+        if (isInNodeList(dst, stopNodesExclude) || isNotInNodeList(context.getStartInterval(), fromNodes)) {
+            return FilterResult.STOP_EXCLUDE;
+        }
+        if (isInNodeList(dst, stopNodes)) {
             return FilterResult.STOP_INCLUDE;
+        }
+        if (isNotInNodeList(dst, toNodes)) {
+            return FilterResult.IGNORE;
         }
         return FilterResult.OK;
     }
 
+    private boolean isInNodeList(FreightDst dst, List<Node> nodes) {
+        return nodes != null && dst.isNode() && nodes.contains(dst.getNode());
+    }
+
+    private boolean isNotInNodeList(FreightDst dst, List<Node> nodes) {
+        return nodes != null && dst.isNode() && !nodes.contains(dst.getNode());
+    }
+
+    private boolean isNotInNodeList(TimeInterval interval, List<Node> nodes) {
+        return nodes != null && interval.isNodeOwner() && !nodes.contains(interval.getOwnerAsNode());
+    }
 }
