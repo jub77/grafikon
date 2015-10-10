@@ -37,7 +37,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
         InfoPM model = new InfoPM();
         provider.setPresentationModel(model);
         initComponents();
-        model.setRouteInfoListener(isRouteInfo -> tabbedPane.setEnabledAt(1, isRouteInfo));
+        model.addPropertyChangeListener("isRouteInfo", event -> tabbedPane.setEnabledAt(1, model.isRouteInfo()));
     }
 
     public void showDialog(TrainDiagram diagram) {
@@ -132,6 +132,7 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
 
         JPanel routePanel = new JPanel();
         tabbedPane.addTab(ResourceLoader.getString("info.routes.overwrite"), routePanel);
+        tabbedPane.setEnabledAt(1, false);
         GridBagLayout gbl_routePanel = new GridBagLayout();
         routePanel.setLayout(gbl_routePanel);
         JLabel label = new JLabel(ResourceLoader.getString("info.route.number"));
