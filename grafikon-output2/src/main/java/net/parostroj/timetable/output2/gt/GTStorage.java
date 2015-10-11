@@ -1,14 +1,12 @@
 package net.parostroj.timetable.output2.gt;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.google.common.base.Predicate;
 
 public class GTStorage {
 
-    private final Map<Class<?>, RegionCollector<?>> collectors = new HashMap<Class<?>, RegionCollector<?>>();
+    private final Map<Class<?>, RegionCollector<?>> collectors = new LinkedHashMap<Class<?>, RegionCollector<?>>();
     private final Map<Class<?>, Predicate<?>> filters = new HashMap<Class<?>, Predicate<?>>();
     private final Map<String, Object> parameters = new HashMap<String, Object>();
 

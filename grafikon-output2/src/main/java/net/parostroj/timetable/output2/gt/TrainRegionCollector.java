@@ -74,11 +74,17 @@ public class TrainRegionCollector extends RegionCollector<TimeInterval> {
     @Override
     public List<TimeInterval> getItemsForPoint(int x, int y, int radius) {
         Rectangle2D cursor = new Rectangle2D.Double(x - radius, y - radius, radius * 2, radius * 2);
-        List<TimeInterval> list = new LinkedList<TimeInterval>();
+        LinkedList<TimeInterval> list = new LinkedList<TimeInterval>();
         for (Train train : regions.keySet()) {
             for (Pair<Shape, TimeInterval> pair : regions.get(train)) {
-                if (pair.first.intersects(cursor) && !list.contains(pair.second))
-                    list.add(pair.second);
+                if (pair.first.intersects(cursor) && !list.contains(pair.second)) {
+                    TimeInterval interval = pair.second;
+                    if (interval.isNodeOwner()) {
+                        list.addFirst(interval);
+                    } else {
+                        list.add(interval);
+                    }
+                }
             }
         }
         return list;

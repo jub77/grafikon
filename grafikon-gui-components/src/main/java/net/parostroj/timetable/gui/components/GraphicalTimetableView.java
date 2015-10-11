@@ -8,6 +8,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
 import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
@@ -49,6 +50,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getEngineCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
+        public Collection<FreightDst> getFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -80,6 +82,16 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             @Override
             public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval) {
                 return interval.getTrain().getCycleItemsForInterval(diagram.getDriverCycleType(), interval);
+            }
+
+            @Override
+            public Collection<FreightDst> getFreight(TimeInterval interval) {
+                if (interval.isNodeOwner() && FreightHelper.isFreightFrom(interval)) {
+                    TrainDiagram diagram = interval.getTrain().getDiagram();
+                    return FreightHelper.convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+                } else {
+                    return Collections.emptyList();
+                }
             }
         });
         // tool tips
