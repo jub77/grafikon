@@ -139,7 +139,8 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 if (interval.isTechnological() && config.get(GTDrawSettings.Key.TECHNOLOGICAL_TIME) != Boolean.TRUE) {
                     continue;
                 }
-                if (!interval.isBoundary()) {
+                boolean boundary = interval.isBoundary();
+                if (!boundary) {
                     g.setStroke(getTrainStroke(interval.getTrain()));
                 } else if (interval.isTechnological()) {
                     g.setStroke(techTimeStroke);
@@ -148,7 +149,9 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
                 g.setColor(this.getIntervalColor(interval));
 
-                this.paintTrainInStationWithInterval(g, interval);
+                if (boundary || interval.getLength() > 0) {
+                    this.paintTrainInStationWithInterval(g, interval);
+                }
             }
         }
     }
