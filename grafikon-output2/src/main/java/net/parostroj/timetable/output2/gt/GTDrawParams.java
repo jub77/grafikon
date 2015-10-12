@@ -107,4 +107,12 @@ public class GTDrawParams {
     public void setVerticalOrientation(boolean vertical) {
         this.settings.set(Key.ORIENTATION, vertical ? GTOrientation.TOP_DOWN : GTOrientation.LEFT_RIGHT);
     }
+
+    public void setTrainEnds(boolean trainEnds) {
+        this.settings.set(Key.TRAIN_ENDS, trainEnds);
+    }
+
+    public void setTrainNames(boolean trainNames) {
+        this.settings.set(Key.TRAIN_NAMES, trainNames);
+    }
 }
