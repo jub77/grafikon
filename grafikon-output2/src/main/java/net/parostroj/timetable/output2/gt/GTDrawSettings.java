@@ -35,7 +35,8 @@ public class GTDrawSettings {
         INNER_SIZE(Boolean.class),
         TITLE_TEXT(String.class),
         BACKGROUND_COLOR(Color.class),
-        ORIENTATION(GTOrientation.class);
+        ORIENTATION(GTOrientation.class),
+        TRAIN_ENDS(Boolean.class);
 
         private final Class<?> valueClass;
 
@@ -120,7 +121,8 @@ public class GTDrawSettings {
             .set(Key.START_TIME, 0)
             .set(Key.END_TIME, TimeInterval.DAY)
             .set(Key.BACKGROUND_COLOR, Color.white)
-            .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT);
+            .set(Key.ORIENTATION, GTOrientation.LEFT_RIGHT)
+            .set(Key.TRAIN_ENDS, Boolean.TRUE);
         return settings;
     }
 

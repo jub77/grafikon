@@ -269,6 +269,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         preferencesMenu.addItem(ResourceLoader.getString("gt.extendedlines"), Key.EXTENDED_LINES); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.trainnames"), Key.TRAIN_NAMES); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.technological.time"), Key.TECHNOLOGICAL_TIME); // NOI18N
+        preferencesMenu.addItem(ResourceLoader.getString("gt.train.ends"), Key.TRAIN_ENDS); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.ignore.time.limits"), Key.IGNORE_TIME_LIMITS); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.scroll"), Key.TO_TRAIN_SCROLL); // NOI18N
         preferencesMenu.addItem(ResourceLoader.getString("gt.to.train.change.route"), Key.TO_TRAIN_CHANGE_ROUTE); // NOI18N
@@ -360,6 +361,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         this.setPreferencesValue(Key.IGNORE_TIME_LIMITS, settings);
         this.setPreferencesValue(Key.TO_TRAIN_SCROLL, settings);
         this.setPreferencesValue(Key.TO_TRAIN_CHANGE_ROUTE, settings);
+        this.setPreferencesValue(Key.TRAIN_ENDS, settings);
 
         orientationMenu.setSelectedItem(settings.get(Key.ORIENTATION, GTOrientation.class), true);
 

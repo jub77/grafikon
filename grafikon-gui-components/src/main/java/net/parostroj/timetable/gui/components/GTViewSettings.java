@@ -30,7 +30,8 @@ public class GTViewSettings {
         TO_TRAIN_SCROLL(Boolean.class, null),
         TO_TRAIN_CHANGE_ROUTE(Boolean.class, null),
         ORIENTATION(GTOrientation.class, GTDrawSettings.Key.ORIENTATION),
-        ORIENTATION_MENU(Boolean.class, null);
+        ORIENTATION_MENU(Boolean.class, null),
+        TRAIN_ENDS(Boolean.class, GTDrawSettings.Key.TRAIN_ENDS);
 
         private Class<?> valueClass;
         private GTDrawSettings.Key drawKey;
@@ -139,7 +140,7 @@ public class GTViewSettings {
     }
 
     public String getStorageString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", get(Key.TYPE), get(Key.VIEW_SIZE),
                 getOption(Key.TRAIN_NAMES).toString(),
                 getOption(Key.ARRIVAL_DEPARTURE_DIGITS).toString(),
                 getOption(Key.EXTENDED_LINES).toString(),
@@ -148,7 +149,8 @@ public class GTViewSettings {
                 get(Key.ZOOM).toString(),
                 getOption(Key.TO_TRAIN_SCROLL).toString(),
                 getOption(Key.TO_TRAIN_CHANGE_ROUTE).toString(),
-                get(Key.ORIENTATION)
+                get(Key.ORIENTATION),
+                getOption(Key.TRAIN_ENDS).toString()
             );
     }
 
@@ -174,6 +176,11 @@ public class GTViewSettings {
             }
             if (split.length > 10) {
                 settings.set(Key.ORIENTATION, GTOrientation.valueOf(split[10]));
+            }
+            if (split.length > 11) {
+                settings.setOption(Key.TRAIN_ENDS, Boolean.parseBoolean(split[11]));
+            } else {
+                settings.setOption(Key.TRAIN_ENDS, Boolean.TRUE);
             }
         }
         return settings;
