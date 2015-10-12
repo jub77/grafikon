@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import javax.swing.JTextField;
 
@@ -129,7 +130,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         private final Predicate<TimeInterval> nodeIntervalFilter = interval -> interval.isNodeOwner();
 
         private TimeInterval chooseInterval(List<TimeInterval> intervals) {
-            TimeInterval selected = SelectorUtils.select(intervals, lastInterval, nodeIntervalFilter);
+            TimeInterval selected = SelectorUtils.select(
+                    Iterables.filter(intervals, interval -> interval.isStop()),
+                    lastInterval,
+                    nodeIntervalFilter);
             lastInterval = selected;
             return selected;
         }
