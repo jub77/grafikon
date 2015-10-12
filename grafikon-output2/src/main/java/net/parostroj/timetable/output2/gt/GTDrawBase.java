@@ -220,12 +220,11 @@ abstract public class GTDrawBase implements GTDraw {
     protected abstract void paintStations(Graphics2D g);
 
     protected void paintTrains(Graphics2D g) {
-        for (RouteSegment part : route.getSegments()) {
-            if (part.asNode() != null) {
-                this.paintTrainsInStation(part.asNode(), g);
-            } else if (part.asLine() != null) {
-                this.paintTrainsOnLine(part.asLine(), g);
-            }
+        for (Line line : route.getLines()) {
+            this.paintTrainsOnLine(line, g);
+        }
+        for (Node node : route.getNodes()) {
+            this.paintTrainsInStation(node, g);
         }
     }
 
