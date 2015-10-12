@@ -36,19 +36,21 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
                 if (intervalFilter != null && !intervalFilter.apply(interval)) {
                     continue;
                 }
-                if (!this.isPlacedInterval(interval)) {
-                    continue;
-                }
-                g.setStroke(getTrainStroke(interval.getTrain()));
-                g.setColor(this.getIntervalColor(interval));
+                if (this.isPlacedInterval(interval)) {
+                    g.setStroke(getTrainStroke(interval.getTrain()));
+                    g.setColor(this.getIntervalColor(interval));
 
-                this.paintTrainInStationWithInterval(g, interval);
+                    this.paintTrainInStationWithInterval(g, interval);
+                }
             }
         }
     }
 
     private boolean isPlacedInterval(TimeInterval interval) {
-        return !interval.isTechnological() && !interval.isBoundary() && interval.isStop();
+        boolean showBoundary = config.getOption(GTDrawSettings.Key.TRAIN_ENDS);
+        boolean boundary = interval.isBoundary();
+        boolean inner = !interval.isTechnological() && interval.isInnerStop();
+        return inner || boundary && showBoundary;
     }
 
     @Override
