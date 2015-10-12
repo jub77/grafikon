@@ -71,9 +71,10 @@ public class TrainsCyclesPane extends javax.swing.JPanel implements StorableGuiD
         }
 
         @Override
-        public void regionsSelected(List<TimeInterval> intervals) {
-            selectorDelegate.regionsSelected(intervals);
+        public boolean regionsSelected(List<TimeInterval> intervals) {
+            boolean selected = selectorDelegate.regionsSelected(intervals);
             graphicalTimetableView.repaint();
+            return selected;
         }
 
         @Override

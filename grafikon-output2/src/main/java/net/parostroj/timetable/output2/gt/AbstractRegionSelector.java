@@ -12,8 +12,9 @@ public abstract class AbstractRegionSelector<T> implements RegionSelector<T> {
     }
 
     @Override
-    public void regionsSelected(List<T> regions) {
+    public boolean regionsSelected(List<T> regions) {
         this.selected = regions;
+        return !regions.isEmpty();
     }
 
     @Override

@@ -35,8 +35,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         private FNConnection selected = null;
 
         @Override
-        public void regionsSelected(List<FNConnection> regions) {
-            this.setSelected(SelectorUtils.select(regions, selected));
+        public boolean regionsSelected(List<FNConnection> regions) {
+            return this.setSelected(SelectorUtils.select(regions, selected));
         }
 
         @Override
@@ -65,7 +65,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             return Color.GREEN;
         }
 
-        public void setSelected(FNConnection conn) {
+        public boolean setSelected(FNConnection conn) {
             FNConnection current = selected;
             selected = conn;
             if (conn != current) {
@@ -74,6 +74,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             deleteButton.setEnabled(selected != null);
             editButton.setEnabled(selected != null);
             updateInfo();
+            return selected != null;
         }
     }
 
@@ -90,7 +91,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         }
 
         @Override
-        public void regionsSelected(List<TimeInterval> intervals) {
+        public boolean regionsSelected(List<TimeInterval> intervals) {
             TimeInterval interval = this.chooseInterval(intervals);
             boolean enabled = false;
             if (interval == null) {
@@ -116,6 +117,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             newButton.setEnabled(enabled);
             graphicalTimetableView.repaint();
             updateInfo();
+            return interval != null;
         }
 
         @Override

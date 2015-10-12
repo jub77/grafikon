@@ -55,7 +55,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
     }
 
     @Override
-    public void regionsSelected(List<TimeInterval> intervals) {
+    public boolean regionsSelected(List<TimeInterval> intervals) {
         selection = true;
         try {
             TimeInterval interval = SelectorUtils.select(intervals, selectedTimeInterval, SelectorUtils.createUniqueTrainIntervalFilter());
@@ -65,6 +65,7 @@ public class NormalHTS implements HighlightedTrains, RegionSelector<TimeInterval
             model.setSelectedTrain(selected);
             selectedTimeInterval = interval;
             model.getMediator().sendMessage(new IntervalSelectionMessage(interval));
+            return interval != null;
         } finally {
             selection = false;
         }

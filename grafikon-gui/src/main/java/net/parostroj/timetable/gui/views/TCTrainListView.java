@@ -174,7 +174,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private TimeInterval lastSelected;
 
     @Override
-    public void regionsSelected(List<TimeInterval> intervals) {
+    public boolean regionsSelected(List<TimeInterval> intervals) {
         TimeInterval interval = SelectorUtils.select(intervals, lastSelected, SelectorUtils.createUniqueTrainIntervalFilter());
         if (interval != null) {
             // select in left list
@@ -195,6 +195,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
         }
         lastSelected = interval;
+        return interval != null;
     }
 
     @Override

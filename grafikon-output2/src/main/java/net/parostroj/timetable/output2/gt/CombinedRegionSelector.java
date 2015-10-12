@@ -14,10 +14,15 @@ public class CombinedRegionSelector<T> implements RegionSelector<T> {
     }
 
     @Override
-    public void regionsSelected(List<T> regions) {
+    public boolean regionsSelected(List<T> regions) {
+        boolean selected = false;
         for (RegionSelector<T> selector : selectors) {
-            selector.regionsSelected(regions);
+            selected = selector.regionsSelected(regions);
+            if (selected) {
+                break;
+            }
         }
+        return selected;
     }
 
     @Override

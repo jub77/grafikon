@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface RegionSelector<T> {
 
-    void regionsSelected(List<T> regions);
+    boolean regionsSelected(List<T> regions);
 
     List<T> getSelected();
 
