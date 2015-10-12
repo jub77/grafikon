@@ -141,7 +141,8 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         if (collector == null) {
             return null;
         }
-        List<TimeInterval> intervals = collector.getItemsForPoint(event.getX(), event.getY(), SELECTION_RADIUS);
+
+        List<TimeInterval> intervals = collector.getItemsForPointRadiuses(event.getX(), event.getY(), 2, SELECTION_RADIUS);
 
         if (lastToolTipInterval == null) {
             if (!intervals.isEmpty()) {

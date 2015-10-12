@@ -21,6 +21,17 @@ public abstract class RegionCollector<T> {
 
     public abstract List<T> getItemsForPoint(int x, int y, int radius);
 
+    public List<T> getItemsForPointRadiuses(int x, int y, int... radiuses) {
+        List<T> selection = null;
+        for (int radius : radiuses) {
+            selection = getItemsForPoint(x, y, radius);
+            if (!selection.isEmpty()) {
+                break;
+            }
+        }
+        return selection;
+    }
+
     public abstract Rectangle getRectangleForItems(List<T> items);
 
     public void deselectItems() {
