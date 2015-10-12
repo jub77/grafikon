@@ -1,6 +1,8 @@
 package net.parostroj.timetable.output2.gt;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
@@ -16,6 +18,10 @@ import com.google.common.base.Predicate;
  */
 public class GTDrawClassicStationStops extends GTDrawClassic {
 
+    private static final float TRAIN_SS_STROKE_WIDTH = 1.3f * TRAIN_STROKE_WIDTH;
+
+    private final Stroke trainSsStroke;
+
     private final Map<Node, List<TimeIntervalList>> nodeIntervalLists;
     private final Map<TimeInterval, Integer> locationMap;
     private final int inStationGap;
@@ -27,6 +33,7 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
         locationMap = new HashMap<TimeInterval, Integer>();
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         inStationGap = (int) (TRAIN_STROKE_WIDTH * 1.75f * zoom);
+        trainSsStroke = new BasicStroke(zoom * TRAIN_SS_STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     }
 
     @Override
@@ -37,7 +44,11 @@ public class GTDrawClassicStationStops extends GTDrawClassic {
                     continue;
                 }
                 if (this.isPlacedInterval(interval)) {
-                    g.setStroke(getTrainStroke(interval.getTrain()));
+                    if (interval.getLength() > 0) {
+                        g.setStroke(getTrainStroke(interval.getTrain()));
+                    } else {
+                        g.setStroke(trainSsStroke);
+                    }
                     g.setColor(this.getIntervalColor(interval));
 
                     this.paintTrainInStationWithInterval(g, interval);
