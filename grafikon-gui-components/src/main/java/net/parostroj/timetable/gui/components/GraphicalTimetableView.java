@@ -51,6 +51,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         public Collection<TrainsCycleItem> getTrainUnitCycles(TimeInterval interval);
         public Collection<TrainsCycleItem> getDriverCycles(TimeInterval interval);
         public Collection<FreightDst> getFreight(TimeInterval interval);
+        public Map<Train, List<FreightDst>> getPassedFreight(TimeInterval interval);
     }
 
     private List<GTViewListener> listeners;
@@ -91,6 +92,21 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                     return FreightHelper.convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
                 } else {
                     return Collections.emptyList();
+                }
+            }
+
+            @Override
+            public Map<Train, List<FreightDst>> getPassedFreight(TimeInterval interval) {
+                if (interval.isNodeOwner()) {
+                    TrainDiagram diagram = interval.getTrain().getDiagram();
+                    Region region = interval.getOwnerAsNode().getAttribute(Node.ATTR_REGION, Region.class);
+                    Map<Train, List<FreightDst>> freight = diagram.getFreightNet().getFreightPassedInNode(interval);
+                    for (Map.Entry<Train, List<FreightDst>> entry : freight.entrySet()) {
+                        entry.setValue(FreightHelper.convertFreightDst(entry.getKey(), region, entry.getValue()));
+                    }
+                    return freight;
+                } else {
+                    return Collections.emptyMap();
                 }
             }
         });
