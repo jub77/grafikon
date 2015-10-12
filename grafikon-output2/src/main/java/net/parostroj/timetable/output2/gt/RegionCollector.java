@@ -40,14 +40,18 @@ public abstract class RegionCollector<T> {
         }
     }
 
-    public boolean selectItems(int x, int y, int radius) {
+    public boolean selectItemsRadiuses(int x, int y, int... radiuses) {
         if (this.selector != null) {
-            List<T> list = this.getItemsForPoint(x, y, radius);
+            List<T> list = this.getItemsForPointRadiuses(x, y, radiuses);
             this.selectImpl(list);
             return !list.isEmpty();
         } else {
             return false;
         }
+    }
+
+    public boolean selectItems(int x, int y, int radius) {
+        return this.selectItemsRadiuses(x, y, radius);
     }
 
     public void selectItems(List<T> items) {
