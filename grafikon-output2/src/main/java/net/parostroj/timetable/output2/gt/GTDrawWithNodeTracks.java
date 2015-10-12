@@ -140,6 +140,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                     continue;
                 }
                 boolean boundary = interval.isBoundary();
+                boolean showBoundary = config.getOption(GTDrawSettings.Key.TRAIN_ENDS);
                 if (!boundary) {
                     g.setStroke(getTrainStroke(interval.getTrain()));
                 } else if (interval.isTechnological()) {
@@ -149,7 +150,7 @@ public class GTDrawWithNodeTracks extends GTDrawBase {
                 }
                 g.setColor(this.getIntervalColor(interval));
 
-                if (boundary || interval.getLength() > 0) {
+                if (boundary && showBoundary || interval.getLength() > 0) {
                     this.paintTrainInStationWithInterval(g, interval);
                 }
             }
