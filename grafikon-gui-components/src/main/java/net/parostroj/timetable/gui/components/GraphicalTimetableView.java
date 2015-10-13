@@ -315,7 +315,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
                         }
                     } else {
                         if (!selected) {
-                            selected = collector.selectItems(evt.getX(), evt.getY(), SELECTION_RADIUS);
+                            selected = collector.selectItemsRadiuses(evt.getX(), evt.getY(), 2, SELECTION_RADIUS);
                         } else {
                             collector.deselectItems();
                         }
