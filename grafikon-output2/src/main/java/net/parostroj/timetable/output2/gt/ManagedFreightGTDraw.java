@@ -32,6 +32,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private final int arrow;
     private final int lineExtend;
 
+    private final boolean trainEnds;
+
     private final Stroke connectionStroke;
 
     private final Set<Node> routeNodes;
@@ -42,6 +44,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         this.collector = collector;
         this.highlight = storage.getParameter(HIGHLIGHT, Highlight.class);
         this.draw = draw;
+        this.trainEnds = config.getOption(GTDrawSettings.Key.TRAIN_ENDS);
         Float zoom = config.get(GTDrawSettings.Key.ZOOM, Float.class);
         arrow = (int) (zoom * 5);
         lineExtend = (int) (zoom * 16);
@@ -178,6 +181,9 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     }
 
     private boolean isWithLine(TimeInterval interval) {
+        if (trainEnds) {
+            return true;
+        }
         TimeInterval prevNodeInterval = interval.getTrainInterval(-2);
         TimeInterval nextNodeInterval = interval.getTrainInterval(2);
         if (prevNodeInterval != null) {
