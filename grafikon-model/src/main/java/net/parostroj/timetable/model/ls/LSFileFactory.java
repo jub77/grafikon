@@ -41,6 +41,7 @@ public class LSFileFactory {
                     cacheSave.put(fls.getSaveVersion(), fls.getClass());
                 }
             }
+            log.debug("Latest version: {}", instance.getLatestSaveVersion());
             initialized = true;
         }
         return instance;
