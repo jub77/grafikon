@@ -5,10 +5,10 @@ import net.parostroj.timetable.visitors.Visitable;
 
 /**
  * Line class
- * 
+ *
  * @author jub
  */
-public class LineClass implements ObjectWithId, Visitable {
+public class LineClass implements ObjectWithId, Visitable, ItemListObject {
 
     private final String id;
     private String name;
@@ -29,6 +29,14 @@ public class LineClass implements ObjectWithId, Visitable {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public void added() {
+    }
+
+    @Override
+    public void removed() {
     }
 
     @Override

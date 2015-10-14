@@ -11,18 +11,20 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart {
+public class Company implements ObjectWithId, AttributesHolder, CompanyAttributes, Visitable, TrainDiagramPart, ItemListObject {
 
     private final String id;
     private final TrainDiagram diagram;
 
     private final Attributes attributes;
 
+    private boolean events;
+
     Company(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
         this.attributes = new Attributes(
-                (attrs, change) -> diagram.fireEvent(new Event(diagram, Company.this, change)));
+                (attrs, change) -> { if (events) diagram.fireEvent(new Event(diagram, Company.this, change)); });
     }
 
     @Override
@@ -76,6 +78,16 @@ public class Company implements ObjectWithId, AttributesHolder, CompanyAttribute
 
     public void setLocale(Locale locale) {
         attributes.setRemove(ATTR_LOCALE, locale);
+    }
+
+    @Override
+    public void added() {
+        this.events = true;
+    }
+
+    @Override
+    public void removed() {
+        this.events = false;
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -72,8 +73,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass>(true, listener);
         this.textItems = new ItemListTrainDiagramEventWithListener<TextItem>(true, listener);
         this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate>(true, listener);
-        this.groups = new ItemListTrainDiagramEvent<Group>();
-        this.companies = new ItemListTrainDiagramEvent<Company>();
+        this.groups = new ItemListTrainDiagramEventObject<Group>();
+        this.companies = new ItemListTrainDiagramEventObject<Company>();
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
@@ -694,7 +695,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             super(false);
         }
 
-        public ItemListTrainDiagramEvent(boolean moveAllowed) {
+        protected ItemListTrainDiagramEvent(boolean moveAllowed) {
             super(moveAllowed);
         }
 
@@ -702,6 +703,24 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
             Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
             TrainDiagram.this.fireEvent(event);
+        }
+    }
+
+    private class ItemListTrainDiagramEventObject<T extends ItemListObject> extends ItemListTrainDiagramEvent<T> {
+
+        @Override
+        protected void fireEvent(Type type, T item, Integer newIndex, Integer oldIndex) {
+            super.fireEvent(type, item, newIndex, oldIndex);
+            switch (type) {
+                case ADDED:
+                    item.added();
+                    break;
+                case REMOVED:
+                    item.removed();
+                    break;
+                default: // nothing
+                    break;
+            }
         }
     }
 

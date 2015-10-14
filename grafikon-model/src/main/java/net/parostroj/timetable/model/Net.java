@@ -265,7 +265,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return object;
     }
 
-    private class ItemListNetEvent<T> extends ItemList<T> {
+    private class ItemListNetEvent<T extends ItemListObject> extends ItemList<T> {
 
         public ItemListNetEvent() {
             super(true);
@@ -275,6 +275,16 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
             Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
             Net.this.fireEvent(event);
+            switch (type) {
+                case ADDED:
+                    item.added();
+                    break;
+                case REMOVED:
+                    item.removed();
+                    break;
+                default: // nothing
+                    break;
+            }
         }
     }
 }

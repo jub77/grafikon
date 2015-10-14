@@ -4,7 +4,7 @@ import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
-public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAttributes, TrainDiagramPart {
+public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAttributes, TrainDiagramPart, ItemListObject {
 
     private final TrainDiagram diagram;
     /** ID. */
@@ -12,11 +12,14 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
     /** Attributes. */
     private final Attributes attributes;
 
+    private boolean events;
+
     Group(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
+        this.events = false;
         this.attributes = new Attributes(
-                (attrs, change) -> diagram.fireEvent(new Event(diagram, Group.this, change)));
+                (attrs, change) -> { if (events) diagram.fireEvent(new Event(diagram, Group.this, change)); });
     }
 
     @Override
@@ -60,6 +63,16 @@ public class Group implements ObjectWithId, Visitable, AttributesHolder, GroupAt
     @Override
     public Attributes getAttributes() {
         return attributes;
+    }
+
+    @Override
+    public void added() {
+        this.events = true;
+    }
+
+    @Override
+    public void removed() {
+        this.events = false;
     }
 
     @Override

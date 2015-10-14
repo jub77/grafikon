@@ -9,16 +9,18 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart {
+public class Region implements Visitable, ObjectWithId, AttributesHolder, RegionAttributes, TrainDiagramPart, ItemListObject {
 
     private final TrainDiagram diagram;
     private final String id;
     private final Attributes attributes;
 
+    private boolean events;
+
     Region(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.attributes = new Attributes((attrs, change) -> diagram.fireEvent(new Event(diagram, Region.this, change)));
+        this.attributes = new Attributes((attrs, change) -> {if (events) diagram.fireEvent(new Event(diagram, Region.this, change)); });
     }
 
     @Override
@@ -57,6 +59,16 @@ public class Region implements Visitable, ObjectWithId, AttributesHolder, Region
 
     public void setName(String name) {
         attributes.set(ATTR_NAME, name);
+    }
+
+    @Override
+    public void added() {
+        events = true;
+    }
+
+    @Override
+    public void removed() {
+        events = false;
     }
 
     @Override
