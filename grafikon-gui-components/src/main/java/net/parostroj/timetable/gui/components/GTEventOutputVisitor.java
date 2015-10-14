@@ -86,8 +86,10 @@ public class GTEventOutputVisitor implements EventVisitor {
                 }
                 if (event.getData() instanceof ListData) {
                     ListData data = (ListData) event.getData();
-                    if (data.getFromIndex() != null || data.getToIndex() != null) {
+                    if (data.getFromIndex() != null) {
                         str.append("    From index: ").append(Integer.toString(data.getFromIndex())).append('\n');
+                    }
+                    if (data.getToIndex() != null) {
                         str.append("    To index  : ").append(Integer.toString(data.getToIndex())).append('\n');
                     }
                 }
