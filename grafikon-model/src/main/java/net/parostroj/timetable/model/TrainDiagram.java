@@ -31,7 +31,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Cycles. */
     private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
-    private final ItemWithIdList<TimetableImage> images;
+    private final ItemWithIdSet<TimetableImage> images;
     /** Train types available. */
     private final ItemWithIdList<TrainType> trainTypes;
     /** Attributes. */
@@ -72,7 +72,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.routes = new ItemWithIdSetImpl<Route>((type, item) -> fireCollectionEvent(type, item, null, null));
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
-        this.images = new ItemListTrainDiagramEvent<TimetableImage>();
+        this.images = new ItemWithIdSetImpl<TimetableImage>((type, item) -> fireCollectionEvent(type, item, null, null));
         this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass>(true, listener);
         this.textItems = new ItemListTrainDiagramEventWithListener<TextItem>(true, listener);
         this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate>(true, listener);
@@ -313,7 +313,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return type.getCycles();
     }
 
-    public ItemWithIdList<TimetableImage> getImages() {
+    public ItemWithIdSet<TimetableImage> getImages() {
         return images;
     }
 
