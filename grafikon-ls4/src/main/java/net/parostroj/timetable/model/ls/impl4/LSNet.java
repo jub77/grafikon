@@ -40,7 +40,7 @@ public class LSNet {
             this.lineClasses.add(new LSLineClass(lineClass));
         }
         this.regions = new LinkedList<LSRegion>();
-        for (Region region : net.getRegions().toList()) {
+        for (Region region : net.getRegions()) {
             this.regions.add(new LSRegion(region));
         }
     }

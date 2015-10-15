@@ -162,7 +162,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         // add current regions
         this.regions = new WrapperListModel<>(false);
         this.regions.addWrapper(NONE_REGION);
-        for (Region region : node.getDiagram().getNet().getRegions().toList()) {
+        for (Region region : node.getDiagram().getNet().getRegions()) {
             this.regions.addWrapper(Wrapper.getWrapper(region));
         }
         this.regionComboBox.setModel(regions);
@@ -635,7 +635,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            // selected ... (SIGNAL is allowed only if there is only one track)
+            // selected ... (SIGNAL disables editing of length)
             boolean signal = types.getSelectedObject() == NodeType.SIGNAL;
             if (signal) {
                 // disable editing of length

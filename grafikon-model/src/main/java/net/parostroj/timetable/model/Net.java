@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -23,12 +24,12 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     private final String id;
     private final TrainDiagram diagram;
     private final ItemWithIdList<LineClass> lineClasses;
-    private final ItemWithIdList<Region> regions;
+    private final ItemWithIdSet<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
     private final Listener listener;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
-    private final List<ItemWithIdList<? extends ObjectWithId>> itemLists;
+    private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;
 
     /**
      * Constructor.
@@ -37,7 +38,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         this.itemLists = new LinkedList<>();
         this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         this.lineClasses = new ItemListNetEvent<LineClass>();
-        this.regions = new ItemListNetEvent<Region>();
+        this.regions = new ItemSetNetEvent<Region>();
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.listener = event -> this.fireNestedEvent(event);
@@ -129,7 +130,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return lineClasses;
     }
 
-    public ItemWithIdList<Region> getRegions() {
+    public ItemWithIdSet<Region> getRegions() {
         return regions;
     }
 
@@ -229,7 +230,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         for (LineClass lineClass : lineClasses) {
             lineClass.accept(visitor);
         }
-        for (Region region : regions.toList()) {
+        for (Region region : regions) {
             region.accept(visitor);
         }
         visitor.visitAfter(this);
@@ -240,7 +241,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
             return this;
         }
         ObjectWithId object;
-        for (ItemWithIdList<? extends ObjectWithId> itemList : itemLists) {
+        for (ItemWithIdIterable<? extends ObjectWithId> itemList : itemLists) {
             object = itemList.getById(id);
             if (object != null) {
                 return object;
@@ -263,6 +264,24 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         @Override
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
             Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
+            Net.this.fireEvent(event);
+            switch (type) {
+                case ADDED:
+                    item.added();
+                    break;
+                case REMOVED:
+                    item.removed();
+                    break;
+                default: // nothing
+                    break;
+            }
+        }
+    }
+
+    private class ItemSetNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdSetImpl<T> {
+        @Override
+        protected void fireEvent(Type type, T item) {
+            Event event = new Event(Net.this, type, item);
             Net.this.fireEvent(event);
             switch (type) {
                 case ADDED:

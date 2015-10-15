@@ -20,12 +20,12 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     @Override
     protected Collection<Region> getList() {
-        return element.getNet().getRegions().toList();
+        return element.getNet().getRegions().toCollection();
     }
 
     @Override
     protected void add(Region item, int index) {
-        element.getNet().getRegions().add(item, index);
+        element.getNet().getRegions().add(item);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     @Override
     protected void move(Region item, int oldIndex, int newIndex) {
-        element.getNet().getRegions().move(oldIndex, newIndex);
+        throw new IllegalStateException();
     }
 
     @Override

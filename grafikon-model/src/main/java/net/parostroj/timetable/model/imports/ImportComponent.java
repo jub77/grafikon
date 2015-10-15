@@ -49,7 +49,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getCompanies().toList());
                 break;
             case REGIONS:
-                map.addAll(diagram.getNet().getRegions().toList());
+                map.addAll(diagram.getNet().getRegions().toCollection());
                 break;
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
