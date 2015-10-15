@@ -132,8 +132,8 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                 }
             };
             this.diagram.addAllEventListener(this.currentListener);
-            if (diagram.getRoutes().size() > 0) {
-                this.setRoute(diagram.getRoutes().get(0));
+            if (!diagram.getRoutes().isEmpty()) {
+                this.setRoute(diagram.getRoutes().iterator().next());
             } else {
                 this.setRoute(null);
             }
@@ -166,7 +166,7 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
         // check current route
         if (event.getType() == Type.REMOVED && event.getObject() instanceof Route && event.getObject().equals(this.getRoute())) {
             if (!diagram.getRoutes().isEmpty()) {
-                this.setRoute(diagram.getRoutes().get(0));
+                this.setRoute(diagram.getRoutes().iterator().next());
             } else {
                 this.setRoute(null);
             }

@@ -25,7 +25,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Freight net. */
     private FreightNet freightNet;
     /** Predefined routes. */
-    private final ItemWithIdList<Route> routes;
+    private final ItemWithIdSet<Route> routes;
     /** Trains. */
     private final List<Train> trains;
     /** Cycles. */
@@ -60,7 +60,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ListenerSupport listenerSupportAll;
     private TimeConverter timeConverter;
 
-    private final List<ItemWithIdList<? extends ObjectWithId>> itemLists;
+    private final List<ItemWithIdIterable<? extends ObjectWithId>> itemLists;
 
     /**
      * Default constructor.
@@ -69,7 +69,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.id = id;
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
-        this.routes = new ItemListTrainDiagramEvent<Route>();
+        this.routes = new ItemWithIdSetImpl<Route>((type, item) -> fireCollectionEvent(type, item, null, null));
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
         this.images = new ItemListTrainDiagramEvent<TimetableImage>();
@@ -138,7 +138,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /**
      * @return predefined routes
      */
-    public ItemWithIdList<Route> getRoutes() {
+    public ItemWithIdSet<Route> getRoutes() {
         return routes;
     }
 
@@ -626,7 +626,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             return this;
         }
         ObjectWithId object;
-        for (ItemWithIdList<? extends ObjectWithId> itemList : itemLists) {
+        for (ItemWithIdIterable<? extends ObjectWithId> itemList : itemLists) {
             object = itemList.getById(id);
             if (object != null) {
                 return object;
@@ -646,6 +646,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
         object = getCycleTypeById(id);
         return object;
+    }
+
+    private void fireCollectionEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
+        Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
+        TrainDiagram.this.fireEvent(event);
     }
 
     private class ItemListTrainDiagramEvent<T extends ObjectWithId> extends ItemWithIdListImpl<T> {

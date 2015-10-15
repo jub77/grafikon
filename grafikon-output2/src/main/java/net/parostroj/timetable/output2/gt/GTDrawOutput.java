@@ -50,12 +50,12 @@ public class GTDrawOutput extends DrawOutput {
     private Collection<GTDrawParams> getParams(OutputParams params, TrainDiagram diagram) throws OutputException {
         Collection<?> gtParamList = params.getParamValue(GT_PARAMS, Collection.class);
         if (gtParamList == null || gtParamList.isEmpty()) {
-            List<Route> routes = diagram.getRoutes().toList();
+            Collection<Route> routes = diagram.getRoutes().toCollection();
             // create default values
             if (routes.isEmpty()) {
                 throw new OutputException("Routes missing");
             }
-            return Collections.singletonList(new GTDrawParams(routes.get(0)));
+            return Collections.singletonList(new GTDrawParams(routes.iterator().next()));
         } else {
             return ObjectsUtil.checkedCollection(gtParamList, GTDrawParams.class);
         }

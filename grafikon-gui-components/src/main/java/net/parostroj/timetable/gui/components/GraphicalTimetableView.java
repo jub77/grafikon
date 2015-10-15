@@ -163,13 +163,13 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         }
     }
 
-    private void createMenuForRoutes(List<Route> routes) {
+    private void createMenuForRoutes(Collection<Route> routesCollection) {
         // remove items
         routesMenu.removeAllItems();
         // remove rest
         routesMenu.removeAll();
         // sort routes
-        routes = new ArrayList<Route>(routes);
+        List<Route> routes = new ArrayList<Route>(routesCollection);
         Collections.sort(routes, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         int i = 0;
         for (Route lRoute : routes) {
@@ -206,7 +206,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         if (diagram == null) {
             // do nothing
         } else {
-            this.createMenuForRoutes(diagram.getRoutes().toList());
+            this.createMenuForRoutes(diagram.getRoutes().toCollection());
             this.setComponentPopupMenu(popupMenu);
         }
         this.fireDiagramChanged(diagram);
@@ -409,7 +409,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     @Override
     protected void routesChanged(Event event) {
         // changed list of routes
-        this.createMenuForRoutes(diagram.getRoutes().toList());
+        this.createMenuForRoutes(diagram.getRoutes().toCollection());
 
         super.routesChanged(event);
     }
