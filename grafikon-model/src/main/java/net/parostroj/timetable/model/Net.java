@@ -255,6 +255,21 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return object;
     }
 
+    private void fireCollectionEvent(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+        Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
+        Net.this.fireEvent(event);
+        switch (type) {
+            case ADDED:
+                item.added();
+                break;
+            case REMOVED:
+                item.removed();
+                break;
+            default: // nothing
+                break;
+        }
+    }
+
     private class ItemListNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdListImpl<T> {
 
         public ItemListNetEvent() {
@@ -263,36 +278,14 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
 
         @Override
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
-            Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
-            Net.this.fireEvent(event);
-            switch (type) {
-                case ADDED:
-                    item.added();
-                    break;
-                case REMOVED:
-                    item.removed();
-                    break;
-                default: // nothing
-                    break;
-            }
+            fireCollectionEvent(type, item, newIndex, oldIndex);
         }
     }
 
     private class ItemSetNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdSetImpl<T> {
         @Override
         protected void fireEvent(Type type, T item) {
-            Event event = new Event(Net.this, type, item);
-            Net.this.fireEvent(event);
-            switch (type) {
-                case ADDED:
-                    item.added();
-                    break;
-                case REMOVED:
-                    item.removed();
-                    break;
-                default: // nothing
-                    break;
-            }
+            fireCollectionEvent(type, item, null, null);
         }
     }
 }
