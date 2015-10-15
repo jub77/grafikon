@@ -18,7 +18,6 @@ class ItemListImpl<T> implements ItemList<T> {
         this(false);
     }
 
-
     @Override
     public void add(T item) {
         items.add(item);
