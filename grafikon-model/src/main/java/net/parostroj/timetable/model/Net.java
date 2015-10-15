@@ -3,7 +3,6 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -38,7 +37,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         this.itemLists = new LinkedList<>();
         this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         this.lineClasses = new ItemListNetEvent<LineClass>();
-        this.regions = new ItemSetNetEvent<Region>();
+        this.regions = new ItemWithIdSetImpl<Region>((type, item) -> fireCollectionEvent(type, item, null, null));
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.listener = event -> this.fireNestedEvent(event);
@@ -279,13 +278,6 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         @Override
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
             fireCollectionEvent(type, item, newIndex, oldIndex);
-        }
-    }
-
-    private class ItemSetNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdSetImpl<T> {
-        @Override
-        protected void fireEvent(Type type, T item) {
-            fireCollectionEvent(type, item, null, null);
         }
     }
 }

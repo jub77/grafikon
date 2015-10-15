@@ -6,10 +6,20 @@ import net.parostroj.timetable.model.events.Event;
 
 class ItemSetImpl<T> implements ItemSet<T> {
 
+    interface ItemSetEventCallback<E> {
+        void fire(Event.Type type, E item);
+    }
+
     private final List<T> items;
+    private final ItemSetEventCallback<T> eventCallback;
 
     protected ItemSetImpl() {
+        this(null);
+    }
+
+    protected ItemSetImpl(ItemSetEventCallback<T> eventCallback) {
         this.items = new ArrayList<>();
+        this.eventCallback = eventCallback;
     }
 
     @Override
@@ -40,7 +50,10 @@ class ItemSetImpl<T> implements ItemSet<T> {
         return items.size();
     }
 
-    protected void fireEvent(Event.Type type, T item) {
+    private void fireEvent(Event.Type type, T item) {
+        if (eventCallback != null) {
+            eventCallback.fire(type, item);
+        }
     }
 
     @Override
