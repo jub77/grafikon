@@ -375,7 +375,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         }
         template.getAttributes().merge(fromTemplate.getAttributes());
         template.setScript(fromTemplate.getScript());
-        template.getAttachments().mergeImmutable(fromTemplate.getAttachments().toList());
+        template.getAttachments().replaceAll(fromTemplate.getAttachments().toList());
     }
 
     private javax.swing.JPanel buttonPanel;

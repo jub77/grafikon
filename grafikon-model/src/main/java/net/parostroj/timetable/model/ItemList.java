@@ -24,7 +24,7 @@ public class ItemList<T> implements Iterable<T> {
         }
     }
 
-    public void mergeImmutable(Collection<? extends T> list) {
+    public void replaceAll(Collection<? extends T> list) {
         // add missing
         for (T item : list) {
             if (!items.contains(item)) {
