@@ -1,6 +1,9 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
+import java.util.function.Predicate;
+
+import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.model.events.Event;
 
@@ -112,6 +115,11 @@ class ItemListImpl<T> implements ItemList<T> {
     @Override
     public boolean isEmpty() {
         return items.isEmpty();
+    }
+
+    @Override
+    public T find(Predicate<T> predicate) {
+        return Iterables.tryFind(items, predicate::test).orNull();
     }
 
     protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {

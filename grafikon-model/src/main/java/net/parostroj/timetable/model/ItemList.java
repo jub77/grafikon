@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface ItemList<T> extends Iterable<T> {
 
@@ -31,6 +32,8 @@ public interface ItemList<T> extends Iterable<T> {
     int size();
 
     boolean isEmpty();
+
+    T find(Predicate<T> predicate);
 
     Iterator<T> iterator();
 
