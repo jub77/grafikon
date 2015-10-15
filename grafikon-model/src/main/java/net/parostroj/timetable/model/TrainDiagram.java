@@ -25,29 +25,29 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Freight net. */
     private FreightNet freightNet;
     /** Predefined routes. */
-    private final ItemList<Route> routes;
+    private final ItemListImpl<Route> routes;
     /** Trains. */
     private final List<Train> trains;
     /** Cycles. */
     private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
-    private final ItemList<TimetableImage> images;
+    private final ItemListImpl<TimetableImage> images;
     /** Train types available. */
-    private final ItemList<TrainType> trainTypes;
+    private final ItemListImpl<TrainType> trainTypes;
     /** Attributes. */
     private final Attributes attributes;
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
-    private final ItemList<EngineClass> engineClasses;
+    private final ItemListImpl<EngineClass> engineClasses;
     /** List of text items. */
-    private final ItemList<TextItem> textItems;
+    private final ItemListImpl<TextItem> textItems;
     /** List of output templates. */
-    private final ItemList<OutputTemplate> outputTemplates;
+    private final ItemListImpl<OutputTemplate> outputTemplates;
     /** Groups. */
-    private final ItemList<Group> groups;
+    private final ItemListImpl<Group> groups;
     /** Companies */
-    private final ItemList<Company> companies;
+    private final ItemListImpl<Company> companies;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
     /** Localization. */
@@ -689,7 +689,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return object;
     }
 
-    private class ItemListTrainDiagramEvent<T> extends ItemList<T> {
+    private class ItemListTrainDiagramEvent<T> extends ItemListImpl<T> {
 
         protected ItemListTrainDiagramEvent() {
             super(false);

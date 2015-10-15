@@ -21,7 +21,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private TextTemplate template;
     private Script script;
 
-    private final ItemList<Attachment> attachments;
+    private final ItemListImpl<Attachment> attachments;
 
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
@@ -32,7 +32,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(OutputTemplate.this, change)));
-        this.attachments = new ItemList<Attachment>(false) {
+        this.attachments = new ItemListImpl<Attachment>(false) {
             @Override
             protected void fireEvent(Event.Type type, Attachment item, Integer newIndex, Integer oldIndex) {
                 AttributeChange change = null;

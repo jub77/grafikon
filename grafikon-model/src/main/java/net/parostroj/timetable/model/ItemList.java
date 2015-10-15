@@ -1,116 +1,37 @@
 package net.parostroj.timetable.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-import net.parostroj.timetable.model.events.Event;
+public interface ItemList<T> extends Iterable<T> {
 
-public class ItemList<T> implements Iterable<T> {
+    void addAll(Iterable<? extends T> list);
 
-    private final List<T> items;
-    private final boolean moveAllowed;
+    void replaceAll(Collection<? extends T> list);
 
-    protected ItemList(boolean moveAllowed) {
-        this.items = new ArrayList<>();
-        this.moveAllowed = moveAllowed;
-    }
+    void add(T item);
 
-    protected ItemList() {
-        this(false);
-    }
+    void add(T item, int index);
 
-    public void addAll(Iterable<? extends T> list) {
-        for (T item : list) {
-            this.add(item);
-        }
-    }
+    void remove(T item);
 
-    public void replaceAll(Collection<? extends T> list) {
-        // add missing
-        for (T item : list) {
-            if (!items.contains(item)) {
-                this.add(item);
-            }
-        }
-        // remove deleted
-        for (T item : new ArrayList<>(items)) {
-            if (!list.contains(item)) {
-                this.remove(item);
-            }
-        }
-    }
+    void move(T item, int index);
 
-    public void add(T item) {
-        items.add(item);
-        this.fireEvent(Event.Type.ADDED, item, items.size() - 1, null);
-    }
+    void move(int oldIndex, int newIndex);
 
-    public void add(T item, int index) {
-        items.add(index, item);
-        this.fireEvent(Event.Type.ADDED, item, index, null);
-    }
+    List<T> toList();
 
-    public void remove(T item) {
-        int index = items.indexOf(item);
-        if (items.remove(item)) {
-            this.fireEvent(Event.Type.REMOVED, item, index, null);
-        }
-    }
+    T get(int index);
 
-    public void move(T item, int index) {
-        if (!moveAllowed) {
-            throw new IllegalStateException("Move not allowed");
-        }
-        int oldIndex = items.indexOf(item);
-        if (oldIndex == -1) {
-            throw new IllegalArgumentException("Item not in list");
-        }
-        this.move(oldIndex, index);
+    int indexOf(T item);
 
-    }
+    T[] toArray(T[] array);
 
-    public void move(int oldIndex, int newIndex) {
-        if (!moveAllowed) {
-            throw new IllegalStateException("Move not allowed");
-        }
-        T item = items.remove(oldIndex);
-        items.add(newIndex, item);
-        this.fireEvent(Event.Type.MOVED, item, newIndex, oldIndex);
-    }
+    int size();
 
-    public List<T> toList() {
-        return Collections.unmodifiableList(items);
-    }
+    boolean isEmpty();
 
-    public T get(int index) {
-        return items.get(index);
-    }
+    Iterator<T> iterator();
 
-    public int indexOf(T item) {
-        return items.indexOf(item);
-    }
-
-    public T[] toArray(T[] array) {
-        return items.toArray(array);
-    }
-
-    public int size() {
-        return items.size();
-    }
-
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return items.iterator();
-    }
-
-    @Override
-    public String toString() {
-        return items.toString();
-    }
 }

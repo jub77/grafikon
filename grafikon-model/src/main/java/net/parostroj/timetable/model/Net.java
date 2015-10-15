@@ -265,7 +265,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return object;
     }
 
-    private class ItemListNetEvent<T extends ItemListObject> extends ItemList<T> {
+    private class ItemListNetEvent<T extends ItemListObject> extends ItemListImpl<T> {
 
         public ItemListNetEvent() {
             super(true);
