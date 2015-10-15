@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.Iterables;
 
+import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.model.validators.*;
@@ -306,7 +307,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     private <T extends ObjectWithId> T getById(String id, Iterable<T> items) {
-        return Iterables.tryFind(items, item -> item.getId().equals(id)).orNull();
+        return Iterables.tryFind(items, ModelPredicates.matchId(id)).orNull();
     }
 
     private List<TrainsCycle> getCyclesIntern(TrainsCycleType type) {

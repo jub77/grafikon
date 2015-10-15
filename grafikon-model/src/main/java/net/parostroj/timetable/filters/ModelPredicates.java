@@ -27,6 +27,10 @@ public class ModelPredicates {
         return FreightHelper::isManaged;
     }
 
+    public static <T extends ObjectWithId> Predicate<T> matchId(final String id) {
+        return item -> item.getId().equals(id);
+    }
+
     public static <T extends AttributesHolder> Predicate<T> inGroup(final Group group) {
         return holder -> {
             Group foundGroup = holder.getAttributes().get(TrainAttributes.ATTR_GROUP, Group.class);
