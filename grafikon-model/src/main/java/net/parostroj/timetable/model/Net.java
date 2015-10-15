@@ -22,25 +22,28 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
 
     private final String id;
     private final TrainDiagram diagram;
-    private final ItemList<LineClass> lineClasses;
-    private final ItemList<Region> regions;
+    private final ItemWithIdList<LineClass> lineClasses;
+    private final ItemWithIdList<Region> regions;
     private final ListenableUndirectedGraph<Node, Line> netDelegate;
     private final Listener listener;
     private final ListenerSupport listenerSupport;
     private final ListenerSupport listenerSupportAll;
+    private final List<ItemWithIdList<? extends ObjectWithId>> itemLists;
 
     /**
      * Constructor.
      */
     public Net(String id, TrainDiagram diagram) {
-        netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
-        lineClasses = new ItemListNetEvent<LineClass>();
-        regions = new ItemListNetEvent<Region>();
-        listenerSupport = new ListenerSupport();
-        listenerSupportAll = new ListenerSupport();
-        listener = event -> this.fireNestedEvent(event);
+        this.itemLists = new LinkedList<>();
+        this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
+        this.lineClasses = new ItemListNetEvent<LineClass>();
+        this.regions = new ItemListNetEvent<Region>();
+        this.listenerSupport = new ListenerSupport();
+        this.listenerSupportAll = new ListenerSupport();
+        this.listener = event -> this.fireNestedEvent(event);
         this.id = id;
         this.diagram = diagram;
+        Collections.addAll(itemLists, lineClasses, regions);
     }
 
     @Override
@@ -122,11 +125,11 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return DijkstraShortestPath.findPathBetween(netDelegate, from, to);
     }
 
-    public ItemList<LineClass> getLineClasses() {
+    public ItemWithIdList<LineClass> getLineClasses() {
         return lineClasses;
     }
 
-    public ItemList<Region> getRegions() {
+    public ItemWithIdList<Region> getRegions() {
         return regions;
     }
 
@@ -161,23 +164,6 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         for (Line line : netDelegate.edgeSet()) {
             if (line.getId().equals(id)) {
                 return line;
-            }
-        }
-        return null;
-    }
-
-    public LineClass getLineClassById(String id) {
-        for (LineClass lineClass : getLineClasses()) {
-            if (lineClass.getId().equals(id))
-                return lineClass;
-        }
-        return null;
-    }
-
-    public Region getRegionById(String id) {
-        for (Region region : regions.toList()) {
-            if (region.getId().equals(id)) {
-                return region;
             }
         }
         return null;
@@ -250,22 +236,25 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     }
 
     public ObjectWithId getObjectById(String id) {
-        if (getId().equals(id))
+        if (getId().equals(id)) {
             return this;
-        ObjectWithId object = getLineById(id);
-        if (object != null)
+        }
+        ObjectWithId object;
+        for (ItemWithIdList<? extends ObjectWithId> itemList : itemLists) {
+            object = itemList.getById(id);
+            if (object != null) {
+                return object;
+            }
+        }
+        object = getLineById(id);
+        if (object != null) {
             return object;
-        object = getRegionById(id);
-        if (object != null)
-            return object;
+        }
         object = getNodeById(id);
-        if (object != null)
-            return object;
-        object = getLineClassById(id);
         return object;
     }
 
-    private class ItemListNetEvent<T extends ItemListObject> extends ItemListImpl<T> {
+    private class ItemListNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdListImpl<T> {
 
         public ItemListNetEvent() {
             super(true);

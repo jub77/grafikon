@@ -57,11 +57,11 @@ public class LSWeightTableRow {
         WeightTableRow row = engineClass.createWeightTableRow(speed);
         if (weights != null) {
             for (LSWeightLimit limit : weights) {
-                LineClass lineClass = net.getLineClassById(limit.getLineClass());
+                LineClass lineClass = net.getLineClasses().getById(limit.getLineClass());
                 if (lineClass == null) {
                     log.warn("Non-existent line class: {}", limit.getLineClass());
                 } else {
-                    row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());
+                    row.setWeightInfo(net.getLineClasses().getById(limit.getLineClass()), limit.getWeight());
                 }
             }
         }

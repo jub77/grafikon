@@ -123,7 +123,7 @@ public abstract class Import {
 
     protected Region getRegion(Region origRegion) {
         if (match == ImportMatch.ID) {
-            return diagram.getNet().getRegionById(origRegion.getId());
+            return diagram.getNet().getRegions().getById(origRegion.getId());
         } else {
             for (Region r : diagram.getNet().getRegions()) {
                 if (r.getName().equals(origRegion.getName()))
@@ -243,7 +243,7 @@ public abstract class Import {
 
     protected LineClass getLineClass(LineClass origLineClass) {
         if (match == ImportMatch.ID)
-            return diagram.getNet().getLineClassById(origLineClass.getId());
+            return diagram.getNet().getLineClasses().getById(origLineClass.getId());
         else {
             for (LineClass lineClass : diagram.getNet().getLineClasses()) {
                 if (lineClass.getName().equals(origLineClass.getName()))

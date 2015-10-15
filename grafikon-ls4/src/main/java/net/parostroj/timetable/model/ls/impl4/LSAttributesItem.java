@@ -196,7 +196,7 @@ public class LSAttributesItem {
             if (valueType.equals("model.engine.class")) {
                 return diagram.getEngineClasses().getById(value);
             } else if (valueType.equals("model.line.class")) {
-                return diagram.getNet().getLineClassById(value);
+                return diagram.getNet().getLineClasses().getById(value);
             } else if (valueType.equals("model.object")) {
                 return diagram.getObjectById(value);
             } else {

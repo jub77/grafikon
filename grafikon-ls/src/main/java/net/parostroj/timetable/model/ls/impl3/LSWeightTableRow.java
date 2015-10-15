@@ -12,7 +12,7 @@ import net.parostroj.timetable.model.WeightTableRow;
 
 /**
  * Storage for weight table row.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"speed", "weights"})
@@ -48,12 +48,12 @@ public class LSWeightTableRow {
     public void setWeights(List<LSWeightLimit> weights) {
         this.weights = weights;
     }
-    
+
     public WeightTableRow createWeightTableRow(Net net, EngineClass engineClass) {
         WeightTableRow row = engineClass.createWeightTableRow(speed);
         if (weights != null)
             for (LSWeightLimit limit : weights) {
-                row.setWeightInfo(net.getLineClassById(limit.getLineClass()), limit.getWeight());
+                row.setWeightInfo(net.getLineClasses().getById(limit.getLineClass()), limit.getWeight());
             }
         return row;
     }

@@ -110,7 +110,7 @@ public class LSAttributesItem {
             if (type.equals("model.engine.class")) {
                 return diagram.getEngineClasses().getById(value);
             } else if (type.equals("model.line.class")) {
-                return diagram.getNet().getLineClassById(value);
+                return diagram.getNet().getLineClasses().getById(value);
             } else {
                 log.warn("Not recognized model type: ", type);
                 return null;
