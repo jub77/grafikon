@@ -214,7 +214,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
 
     @Override
     public String toString() {
-        return "Net";
+        return String.format("Net[Nodes:%d,Lines:%s", getNodes().size(), getLines().size());
     }
 
     /**
