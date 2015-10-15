@@ -5,6 +5,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -88,90 +90,68 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getTrainTypes().getById(origType.getId());
         } else {
-            for (TrainType type : diagram.getTrainTypes()) {
-                if (type.getAbbr().equals(origType.getAbbr()) && type.getDesc().equals(origType.getDesc())) {
-                    return type;
-                }
-            }
+            return diagram.getTrainTypes().find(
+                    type -> type.getAbbr().equals(origType.getAbbr()) && type.getDesc().equals(origType.getDesc()));
         }
-        return null;
     }
 
     protected Group getGroup(Group origGroup) {
         if (match == ImportMatch.ID) {
             return diagram.getGroups().getById(origGroup.getId());
         } else {
-            for (Group g : diagram.getGroups()) {
-                if (g.getName().equals(origGroup.getName()))
-                    return g;
-            }
+            return diagram.getGroups().find(group -> group.getName().equals(origGroup.getName()));
         }
-        return null;
     }
 
     protected Company getCompany(Company origCompany) {
         if (match == ImportMatch.ID) {
             return diagram.getCompanies().getById(origCompany.getId());
         } else {
-            for (Company c : diagram.getCompanies()) {
-                if (c.getAbbr().equals(origCompany.getAbbr()))
-                    return c;
-            }
+            return diagram.getCompanies()
+                    .find(company -> company.getAbbr().equals(origCompany.getAbbr()));
         }
-        return null;
     }
 
     protected Region getRegion(Region origRegion) {
         if (match == ImportMatch.ID) {
             return diagram.getNet().getRegions().getById(origRegion.getId());
         } else {
-            for (Region r : diagram.getNet().getRegions()) {
-                if (r.getName().equals(origRegion.getName()))
-                    return r;
-            }
+            return diagram.getNet().getRegions()
+                    .find(region -> region.getName().equals(origRegion.getName()));
         }
-        return null;
     }
 
     protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
         if (match == ImportMatch.ID) {
             return diagram.getPenaltyTable().getTrainTypeCategoryById(origCategory.getId());
         } else {
-            for (TrainTypeCategory category : diagram.getPenaltyTable().getTrainTypeCategories()) {
-                if (category.getName().equals(origCategory.getName()))
-                    return category;
-            }
+            return Iterables.tryFind(diagram.getPenaltyTable().getTrainTypeCategories(),
+                    category -> category.getName().equals(origCategory.getName())).orNull();
         }
-        return null;
     }
 
     protected Train getTrain(Train origTrain) {
         if (match == ImportMatch.ID) {
             return diagram.getTrainById(origTrain.getId());
         } else {
-            for (Train train : diagram.getTrains()) {
-                // compare number and type
+            return Iterables.tryFind(diagram.getTrains(), train -> {
                 TrainType trainType = getTrainType(origTrain.getType());
-                if (train.getNumber().equals(origTrain.getNumber()) && ObjectsUtil.compareWithNull(train.getType(), trainType)) {
-                    return train;
-                }
-            }
+                return train.getNumber().equals(origTrain.getNumber())
+                        && ObjectsUtil.compareWithNull(train.getType(), trainType);
+            }).orNull();
         }
-        return null;
     }
 
     protected TrainsCycle getCycle(TrainsCycle origCycle) {
         if (match == ImportMatch.ID) {
             return diagram.getCycleById(origCycle.getId());
         } else {
-            for (TrainsCycle cycle : diagram.getCycles()) {
+            return Iterables.tryFind(diagram.getCycles(), cycle -> {
                 TrainsCycleType cycleType = getCycleType(origCycle.getType());
-                if (cycle.getName().equals(origCycle.getName()) && ObjectsUtil.compareWithNull(cycle.getType(), cycleType)) {
-                    return cycle;
-                }
-            }
+                return cycle.getName().equals(origCycle.getName())
+                        && ObjectsUtil.compareWithNull(cycle.getType(), cycleType);
+            }).orNull();
         }
-        return null;
     }
 
     protected TrainsCycleType getCycleType(TrainsCycleType origCycleType) {
@@ -182,13 +162,11 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getCycleTypeById(origCycleType.getId());
         } else {
-            for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
-                if (cycleType.getName().equals(origCycleType.getName())) {
-                    return cycleType;
-                }
-            }
+            return Iterables
+                    .tryFind(diagram.getCycleTypes(),
+                            cycleType -> cycleType.getName().equals(origCycleType.getName()))
+                    .orNull();
         }
-        return null;
     }
 
     protected Line getLine(Line origLine) {
@@ -205,13 +183,10 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getRoutes().getById(origRoute.getId());
         } else {
-            for (Route route : diagram.getRoutes()) {
-                if (route.getName().equals(origRoute.getName()) && route.isNetPart() == origRoute.isNetPart() &&
-                        route.isTrainRoute() == origRoute.isTrainRoute()) {
-                    return route;
-                }
-            }
-            return null;
+            return diagram.getRoutes()
+                    .find(route -> route.getName().equals(origRoute.getName())
+                            && route.isNetPart() == origRoute.isNetPart()
+                            && route.isTrainRoute() == origRoute.isTrainRoute());
         }
     }
 
@@ -219,12 +194,9 @@ public abstract class Import {
         if (match == ImportMatch.ID) {
             return diagram.getNet().getNodeById(origNode.getId());
         } else {
-            for (Node node : diagram.getNet().getNodes()) {
-                if (node.getName().equals(origNode.getName()))
-                    return node;
-            }
+            return Iterables.tryFind(diagram.getNet().getNodes(),
+                    node -> node.getName().equals(origNode.getName())).orNull();
         }
-        return null;
     }
 
     protected Track getTrack(RouteSegment seg, Track origTrack) {
@@ -245,11 +217,8 @@ public abstract class Import {
         if (match == ImportMatch.ID)
             return diagram.getNet().getLineClasses().getById(origLineClass.getId());
         else {
-            for (LineClass lineClass : diagram.getNet().getLineClasses()) {
-                if (lineClass.getName().equals(origLineClass.getName()))
-                    return lineClass;
-            }
-            return null;
+            return diagram.getNet().getLineClasses()
+                    .find(lineClass -> lineClass.getName().equals(origLineClass.getName()));
         }
     }
 
@@ -257,11 +226,8 @@ public abstract class Import {
         if (match == ImportMatch.ID)
             return diagram.getEngineClasses().getById(origEngineClass.getId());
         else {
-            for (EngineClass engineClass : diagram.getEngineClasses()) {
-                if (engineClass.getName().equals(origEngineClass.getName()))
-                    return engineClass;
-            }
-            return null;
+            return diagram.getEngineClasses()
+                    .find(engineClass -> engineClass.getName().equals(origEngineClass.getName()));
         }
     }
 
@@ -269,11 +235,8 @@ public abstract class Import {
         if (match == ImportMatch.ID)
             return diagram.getOutputTemplates().getById(origTemplate.getId());
         else {
-            for (OutputTemplate template : diagram.getOutputTemplates()) {
-                if (template.getName().equals(origTemplate.getName()))
-                    return template;
-            }
-            return null;
+            return diagram.getOutputTemplates()
+                    .find(template -> template.getName().equals(origTemplate.getName()));
         }
     }
 
