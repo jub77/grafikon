@@ -4,7 +4,6 @@ import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import javax.swing.JFileChooser;
 
@@ -38,13 +37,13 @@ public class EditAttachmentsDialog extends EditItemsDialog<Attachment, OutputTem
 
     @Override
     protected Collection<Attachment> getList() {
-        List<Attachment> list = element.getAttachments().toList();
-        return list;
+        return element.getAttachments().toCollection();
     }
 
     @Override
     protected void add(Attachment item, int index) {
-        element.getAttachments().add(item, index);
+        // ignore index
+        element.getAttachments().add(item);
     }
 
     @Override

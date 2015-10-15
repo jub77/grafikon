@@ -21,7 +21,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private TextTemplate template;
     private Script script;
 
-    private final ItemListImpl<Attachment> attachments;
+    private final ItemSet<Attachment> attachments;
 
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
@@ -32,23 +32,20 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(OutputTemplate.this, change)));
-        this.attachments = new ItemListImpl<Attachment>(false) {
-            @Override
-            protected void fireEvent(Event.Type type, Attachment item, Integer newIndex, Integer oldIndex) {
-                AttributeChange change = null;
-                switch (type) {
-                    case ADDED:
-                        change = new AttributeChange(ATTR_ATTACHMENT, null, item);
-                        break;
-                    case REMOVED:
-                        change = new AttributeChange(ATTR_ATTACHMENT, item, null);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported type: " + type);
-                }
-                listenerSupport.fireEvent(new Event(OutputTemplate.this, change));
+        this.attachments = new ItemSetImpl<Attachment>((type, item) -> {
+            AttributeChange change = null;
+            switch (type) {
+                case ADDED:
+                    change = new AttributeChange(ATTR_ATTACHMENT, null, item);
+                    break;
+                case REMOVED:
+                    change = new AttributeChange(ATTR_ATTACHMENT, item, null);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported type: " + type);
             }
-        };
+            listenerSupport.fireEvent(new Event(OutputTemplate.this, change));
+        });
     }
 
     @Override
@@ -102,7 +99,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         return script;
     }
 
-    public ItemList<Attachment> getAttachments() {
+    public ItemSet<Attachment> getAttachments() {
         return attachments;
     }
 
