@@ -86,7 +86,7 @@ public abstract class Import {
             return null;
         }
         if (match == ImportMatch.ID) {
-            return diagram.getTrainTypeById(origType.getId());
+            return diagram.getTrainTypes().getById(origType.getId());
         } else {
             for (TrainType type : diagram.getTrainTypes()) {
                 if (type.getAbbr().equals(origType.getAbbr()) && type.getDesc().equals(origType.getDesc())) {
@@ -99,7 +99,7 @@ public abstract class Import {
 
     protected Group getGroup(Group origGroup) {
         if (match == ImportMatch.ID) {
-            return diagram.getGroupById(origGroup.getId());
+            return diagram.getGroups().getById(origGroup.getId());
         } else {
             for (Group g : diagram.getGroups()) {
                 if (g.getName().equals(origGroup.getName()))
@@ -111,7 +111,7 @@ public abstract class Import {
 
     protected Company getCompany(Company origCompany) {
         if (match == ImportMatch.ID) {
-            return diagram.getCompanyById(origCompany.getId());
+            return diagram.getCompanies().getById(origCompany.getId());
         } else {
             for (Company c : diagram.getCompanies()) {
                 if (c.getAbbr().equals(origCompany.getAbbr()))
@@ -203,7 +203,7 @@ public abstract class Import {
 
     protected Route getRoute(Route origRoute) {
         if (match == ImportMatch.ID) {
-            return diagram.getRouteById(origRoute.getId());
+            return diagram.getRoutes().getById(origRoute.getId());
         } else {
             for (Route route : diagram.getRoutes()) {
                 if (route.getName().equals(origRoute.getName()) && route.isNetPart() == origRoute.isNetPart() &&
@@ -255,7 +255,7 @@ public abstract class Import {
 
     protected EngineClass getEngineClass(EngineClass origEngineClass) {
         if (match == ImportMatch.ID)
-            return diagram.getEngineClassById(origEngineClass.getId());
+            return diagram.getEngineClasses().getById(origEngineClass.getId());
         else {
             for (EngineClass engineClass : diagram.getEngineClasses()) {
                 if (engineClass.getName().equals(origEngineClass.getName()))
@@ -267,7 +267,7 @@ public abstract class Import {
 
     protected OutputTemplate getOutputTemplate(OutputTemplate origTemplate) {
         if (match == ImportMatch.ID)
-            return diagram.getOutputTemplateById(origTemplate.getId());
+            return diagram.getOutputTemplates().getById(origTemplate.getId());
         else {
             for (OutputTemplate template : diagram.getOutputTemplates()) {
                 if (template.getName().equals(origTemplate.getName()))

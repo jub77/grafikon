@@ -25,29 +25,29 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Freight net. */
     private FreightNet freightNet;
     /** Predefined routes. */
-    private final ItemListImpl<Route> routes;
+    private final ItemWithIdList<Route> routes;
     /** Trains. */
     private final List<Train> trains;
     /** Cycles. */
     private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
-    private final ItemListImpl<TimetableImage> images;
+    private final ItemWithIdList<TimetableImage> images;
     /** Train types available. */
-    private final ItemListImpl<TrainType> trainTypes;
+    private final ItemWithIdList<TrainType> trainTypes;
     /** Attributes. */
     private final Attributes attributes;
     /** Trains data. */
     private TrainsData trainsData;
     /** List of engine classes. */
-    private final ItemListImpl<EngineClass> engineClasses;
+    private final ItemWithIdList<EngineClass> engineClasses;
     /** List of text items. */
-    private final ItemListImpl<TextItem> textItems;
+    private final ItemWithIdList<TextItem> textItems;
     /** List of output templates. */
-    private final ItemListImpl<OutputTemplate> outputTemplates;
+    private final ItemWithIdList<OutputTemplate> outputTemplates;
     /** Groups. */
-    private final ItemListImpl<Group> groups;
+    private final ItemWithIdList<Group> groups;
     /** Companies */
-    private final ItemListImpl<Company> companies;
+    private final ItemWithIdList<Company> companies;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
     /** Localization. */
@@ -60,11 +60,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ListenerSupport listenerSupportAll;
     private TimeConverter timeConverter;
 
+    private final List<ItemWithIdList<? extends ObjectWithId>> itemLists;
+
     /**
      * Default constructor.
      */
     public TrainDiagram(String id, TrainsData data) {
         this.id = id;
+        this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
         this.routes = new ItemListTrainDiagramEvent<Route>();
         this.trains = new ArrayList<Train>();
@@ -102,6 +105,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new FreightNetValidator(this));
         this.validators.add(new RegionRemoveValidator(this));
         this.validators.add(new NodeValidator(this));
+        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates, groups, companies, trainTypes);
     }
 
     /**
@@ -134,12 +138,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /**
      * @return predefined routes
      */
-    public ItemList<Route> getRoutes() {
+    public ItemWithIdList<Route> getRoutes() {
         return routes;
-    }
-
-    public Route getRouteById(String id) {
-        return getById(id, routes);
     }
 
     /**
@@ -292,14 +292,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return getById(id, getCyclesIntern(type));
     }
 
-    public Group getGroupById(String id) {
-        return getById(id, groups);
-    }
-
-    public Company getCompanyById(String id) {
-        return getById(id, companies);
-    }
-
     public FreightNet getFreightNet() {
         return freightNet;
     }
@@ -321,16 +313,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return type.getCycles();
     }
 
-    public ItemList<TimetableImage> getImages() {
+    public ItemWithIdList<TimetableImage> getImages() {
         return images;
     }
 
-    public ItemList<TrainType> getTrainTypes() {
+    public ItemWithIdList<TrainType> getTrainTypes() {
         return trainTypes;
-    }
-
-    public TrainType getTrainTypeById(String id) {
-        return getById(id, trainTypes);
     }
 
     @Override
@@ -366,40 +354,24 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return this.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
     }
 
-    public ItemList<EngineClass> getEngineClasses() {
+    public ItemWithIdList<EngineClass> getEngineClasses() {
         return engineClasses;
     }
 
-    public ItemList<TextItem> getTextItems() {
+    public ItemWithIdList<TextItem> getTextItems() {
         return textItems;
     }
 
-    public ItemList<OutputTemplate> getOutputTemplates() {
+    public ItemWithIdList<OutputTemplate> getOutputTemplates() {
         return outputTemplates;
     }
 
-    public ItemList<Group> getGroups() {
+    public ItemWithIdList<Group> getGroups() {
         return groups;
     }
 
-    public ItemList<Company> getCompanies() {
+    public ItemWithIdList<Company> getCompanies() {
         return companies;
-    }
-
-    public EngineClass getEngineClassById(String id) {
-        return getById(id, engineClasses);
-    }
-
-    public TextItem getTextItemById(String id) {
-        return getById(id, textItems);
-    }
-
-    public OutputTemplate getOutputTemplateById(String id) {
-        return getById(id, outputTemplates);
-    }
-
-    public TimetableImage getImageById(String id) {
-        return getById(id, images);
     }
 
     public TrainsData getTrainsData() {
@@ -650,46 +622,33 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public ObjectWithId getObjectById(String id) {
-        if (getId().equals(id))
+        if (getId().equals(id)) {
             return this;
-        ObjectWithId object = getTrainById(id);
-        if (object != null)
+        }
+        ObjectWithId object;
+        for (ItemWithIdList<? extends ObjectWithId> itemList : itemLists) {
+            object = itemList.getById(id);
+            if (object != null) {
+                return object;
+            }
+        }
+        object = getTrainById(id);
+        if (object != null) {
             return object;
-        object = getTrainTypeById(id);
-        if (object != null)
-            return object;
+        }
         object = getNet().getObjectById(id);
-        if (object != null)
+        if (object != null) {
             return object;
+        }
         object = getCycleById(id);
-        if (object != null)
+        if (object != null) {
             return object;
+        }
         object = getCycleTypeById(id);
-        if (object != null)
-            return object;
-        object = getEngineClassById(id);
-        if (object != null)
-            return object;
-        object = getRouteById(id);
-        if (object != null)
-            return object;
-        object = getTextItemById(id);
-        if (object != null)
-            return object;
-        object = getOutputTemplateById(id);
-        if (object != null)
-            return object;
-        object = getImageById(id);
-        if (object != null)
-            return object;
-        object = getGroupById(id);
-        if (object !=null)
-            return object;
-        object = getCompanyById(id);
         return object;
     }
 
-    private class ItemListTrainDiagramEvent<T> extends ItemListImpl<T> {
+    private class ItemListTrainDiagramEvent<T extends ObjectWithId> extends ItemWithIdListImpl<T> {
 
         protected ItemListTrainDiagramEvent() {
             super(false);
@@ -706,7 +665,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    private class ItemListTrainDiagramEventObject<T extends ItemListObject> extends ItemListTrainDiagramEvent<T> {
+    private class ItemListTrainDiagramEventObject<T extends ItemListObject & ObjectWithId> extends ItemListTrainDiagramEvent<T> {
 
         @Override
         protected void fireEvent(Type type, T item, Integer newIndex, Integer oldIndex) {
@@ -724,7 +683,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    private class ItemListTrainDiagramEventWithListener<T extends Observable> extends ItemListTrainDiagramEvent<T> {
+    private class ItemListTrainDiagramEventWithListener<T extends Observable & ObjectWithId> extends ItemListTrainDiagramEvent<T> {
 
         private final Listener listener;
 

@@ -155,7 +155,7 @@ public class LSTrain {
         train.getAttributes().add(attributes.createAttributes());
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
-        train.setType(diagram.getTrainTypeById(type));
+        train.setType(diagram.getTrainTypes().getById(type));
         // build time interval list
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(diagram, train, start);
         for (Object routePart : getRoute()) {
