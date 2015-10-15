@@ -24,12 +24,13 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
 
     @Override
     protected Collection<Company> getList() {
-        return element.getCompanies().toList();
+        return element.getCompanies().toCollection();
     }
 
     @Override
     protected void add(Company item, int index) {
-        element.getCompanies().add(item, index);
+        // ignore index (no move allowed)
+        element.getCompanies().add(item);
     }
 
     @Override

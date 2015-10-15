@@ -56,7 +56,7 @@ public class GroupsComboBox extends JComboBox<Wrapper<Group>> {
             addItem(all);
         }
         addItem(none);
-        List<Group> groups = new ArrayList<Group>(diagram.getGroups().toList());
+        List<Group> groups = new ArrayList<Group>(diagram.getGroups().toCollection());
         this.sortGroups(groups);
         for (Group group : groups) {
             this.addItem(new Wrapper<Group>(group));

@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.model.events.Event.Type;
 import net.parostroj.timetable.model.validators.*;
 import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.visitors.TrainDiagramTraversalVisitor;
@@ -45,9 +44,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of output templates. */
     private final ItemWithIdList<OutputTemplate> outputTemplates;
     /** Groups. */
-    private final ItemWithIdList<Group> groups;
+    private final ItemWithIdSet<Group> groups;
     /** Companies */
-    private final ItemWithIdList<Company> companies;
+    private final ItemWithIdSet<Company> companies;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
     /** Localization. */
@@ -76,8 +75,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass>(true, listener);
         this.textItems = new ItemListTrainDiagramEventWithListener<TextItem>(true, listener);
         this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate>(true, listener);
-        this.groups = new ItemListTrainDiagramEventObject<Group>();
-        this.companies = new ItemListTrainDiagramEventObject<Company>();
+        this.groups = new ItemWithIdSetImpl<Group>((type, item) -> fireCollectionEventListObject(type, item, null, null));
+        this.companies = new ItemWithIdSetImpl<Company>((type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
@@ -366,11 +365,11 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return outputTemplates;
     }
 
-    public ItemWithIdList<Group> getGroups() {
+    public ItemWithIdSet<Group> getGroups() {
         return groups;
     }
 
-    public ItemWithIdList<Company> getCompanies() {
+    public ItemWithIdSet<Company> getCompanies() {
         return companies;
     }
 
@@ -653,11 +652,21 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         TrainDiagram.this.fireEvent(event);
     }
 
-    private class ItemListTrainDiagramEvent<T extends ObjectWithId> extends ItemWithIdListImpl<T> {
-
-        protected ItemListTrainDiagramEvent() {
-            super(false);
+    private void fireCollectionEventListObject(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+        fireCollectionEvent(type, item, newIndex, oldIndex);
+        switch (type) {
+            case ADDED:
+                item.added();
+                break;
+            case REMOVED:
+                item.removed();
+                break;
+            default: // nothing
+                break;
         }
+    }
+
+    private class ItemListTrainDiagramEvent<T extends ObjectWithId> extends ItemWithIdListImpl<T> {
 
         protected ItemListTrainDiagramEvent(boolean moveAllowed) {
             super(moveAllowed);
@@ -667,24 +676,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
             Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
             TrainDiagram.this.fireEvent(event);
-        }
-    }
-
-    private class ItemListTrainDiagramEventObject<T extends ItemListObject & ObjectWithId> extends ItemListTrainDiagramEvent<T> {
-
-        @Override
-        protected void fireEvent(Type type, T item, Integer newIndex, Integer oldIndex) {
-            super.fireEvent(type, item, newIndex, oldIndex);
-            switch (type) {
-                case ADDED:
-                    item.added();
-                    break;
-                case REMOVED:
-                    item.removed();
-                    break;
-                default: // nothing
-                    break;
-            }
         }
     }
 
