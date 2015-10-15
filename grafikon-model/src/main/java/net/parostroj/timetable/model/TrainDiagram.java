@@ -68,19 +68,27 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.id = id;
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
-        this.routes = new ItemWithIdSetImpl<Route>((type, item) -> fireCollectionEvent(type, item, null, null));
+        this.routes = new ItemWithIdSetImpl<Route>(
+                (type, item) -> fireCollectionEvent(type, item, null, null));
         this.trains = new ArrayList<Train>();
         this.cycles = new HashSet<TrainsCycleType>();
-        this.images = new ItemWithIdSetImpl<TimetableImage>((type, item) -> fireCollectionEvent(type, item, null, null));
-        this.engineClasses = new ItemListTrainDiagramEventWithListener<EngineClass>(true, listener);
-        this.textItems = new ItemListTrainDiagramEventWithListener<TextItem>(true, listener);
-        this.outputTemplates = new ItemListTrainDiagramEventWithListener<OutputTemplate>(true, listener);
-        this.groups = new ItemWithIdSetImpl<Group>((type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.companies = new ItemWithIdSetImpl<Company>((type, item) -> fireCollectionEventListObject(type, item, null, null));
+        this.images = new ItemWithIdSetImpl<TimetableImage>(
+                (type, item) -> fireCollectionEvent(type, item, null, null));
+        this.engineClasses = new ItemWithIdListImpl<EngineClass>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.textItems = new ItemWithIdListImpl<TextItem>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.outputTemplates = new ItemWithIdListImpl<OutputTemplate>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.groups = new ItemWithIdSetImpl<Group>(
+                (type, item) -> fireCollectionEventListObject(type, item, null, null));
+        this.companies = new ItemWithIdSetImpl<Company>(
+                (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
         this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
-        this.trainTypes = new ItemListTrainDiagramEventWithListener<TrainType>(true, listener);
+        this.trainTypes = new ItemWithIdListImpl<TrainType>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
         this.setTrainsData(data);
@@ -666,41 +674,17 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    private class ItemListTrainDiagramEvent<T extends ObjectWithId> extends ItemWithIdListImpl<T> {
-
-        protected ItemListTrainDiagramEvent(boolean moveAllowed) {
-            super(moveAllowed);
-        }
-
-        @Override
-        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
-            Event event = new Event(TrainDiagram.this, type, item, ListData.createData(oldIndex, newIndex));
-            TrainDiagram.this.fireEvent(event);
-        }
-    }
-
-    private class ItemListTrainDiagramEventWithListener<T extends Observable & ObjectWithId> extends ItemListTrainDiagramEvent<T> {
-
-        private final Listener listener;
-
-        protected ItemListTrainDiagramEventWithListener(boolean moveAllowed, Listener listener) {
-            super(moveAllowed);
-            this.listener = listener;
-        }
-
-        @Override
-        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
-            super.fireEvent(type, item, newIndex, oldIndex);
-            switch (type) {
-                case ADDED:
-                    item.addListener(listener);
-                    break;
-                case REMOVED:
-                    item.removeListener(listener);
-                    break;
-                default: // nothing
-                    break;
-            }
+    private void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
+        fireCollectionEvent(type, item, newIndex, oldIndex);
+        switch (type) {
+            case ADDED:
+                item.addListener(listener);
+                break;
+            case REMOVED:
+                item.removeListener(listener);
+                break;
+            default: // nothing
+                break;
         }
     }
 }

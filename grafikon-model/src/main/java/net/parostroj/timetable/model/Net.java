@@ -36,8 +36,10 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
     public Net(String id, TrainDiagram diagram) {
         this.itemLists = new LinkedList<>();
         this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
-        this.lineClasses = new ItemListNetEvent<LineClass>();
-        this.regions = new ItemWithIdSetImpl<Region>((type, item) -> fireCollectionEvent(type, item, null, null));
+        this.lineClasses = new ItemWithIdListImpl<LineClass>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEvent(type, item, newIndex, oldIndex));
+        this.regions = new ItemWithIdSetImpl<Region>(
+                (type, item) -> fireCollectionEvent(type, item, null, null));
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.listener = event -> this.fireNestedEvent(event);
@@ -266,18 +268,6 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
                 break;
             default: // nothing
                 break;
-        }
-    }
-
-    private class ItemListNetEvent<T extends ItemListObject & ObjectWithId> extends ItemWithIdListImpl<T> {
-
-        public ItemListNetEvent() {
-            super(true);
-        }
-
-        @Override
-        protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
-            fireCollectionEvent(type, item, newIndex, oldIndex);
         }
     }
 }

@@ -6,16 +6,20 @@ import net.parostroj.timetable.model.events.Event;
 
 class ItemListImpl<T> implements ItemList<T> {
 
-    private final List<T> items;
-    private final boolean moveAllowed;
-
-    protected ItemListImpl(boolean moveAllowed) {
-        this.items = new ArrayList<>();
-        this.moveAllowed = moveAllowed;
+    interface ItemListEventCallback<E> {
+        void fire(Event.Type type, E item, Integer newIndex, Integer oldIndex);
     }
 
+    private final List<T> items;
+    private final ItemListEventCallback<T> eventCallback;
+
     protected ItemListImpl() {
-        this(false);
+        this(null);
+    }
+
+    protected ItemListImpl(ItemListEventCallback<T> eventCallback) {
+        this.items = new ArrayList<>();
+        this.eventCallback = eventCallback;
     }
 
     @Override
@@ -40,9 +44,6 @@ class ItemListImpl<T> implements ItemList<T> {
 
     @Override
     public void move(T item, int index) {
-        if (!moveAllowed) {
-            throw new IllegalStateException("Move not allowed");
-        }
         int oldIndex = items.indexOf(item);
         if (oldIndex == -1) {
             throw new IllegalArgumentException("Item not in list");
@@ -53,9 +54,6 @@ class ItemListImpl<T> implements ItemList<T> {
 
     @Override
     public void move(int oldIndex, int newIndex) {
-        if (!moveAllowed) {
-            throw new IllegalStateException("Move not allowed");
-        }
         T item = items.remove(oldIndex);
         items.add(newIndex, item);
         this.fireEvent(Event.Type.MOVED, item, newIndex, oldIndex);
@@ -91,7 +89,10 @@ class ItemListImpl<T> implements ItemList<T> {
         return items.size();
     }
 
-    protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
+    private void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {
+        if (eventCallback != null) {
+            eventCallback.fire(type, item, newIndex, oldIndex);
+        }
     }
 
     @Override
