@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model;
 
 import java.util.*;
-import java.util.function.Predicate;
-
-import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.model.events.Event;
 
@@ -21,28 +18,6 @@ class ItemListImpl<T> implements ItemList<T> {
         this(false);
     }
 
-    @Override
-    public void addAll(Iterable<? extends T> list) {
-        for (T item : list) {
-            this.add(item);
-        }
-    }
-
-    @Override
-    public void replaceAll(Collection<? extends T> list) {
-        // add missing
-        for (T item : list) {
-            if (!items.contains(item)) {
-                this.add(item);
-            }
-        }
-        // remove deleted
-        for (T item : new ArrayList<>(items)) {
-            if (!list.contains(item)) {
-                this.remove(item);
-            }
-        }
-    }
 
     @Override
     public void add(T item) {
@@ -93,6 +68,11 @@ class ItemListImpl<T> implements ItemList<T> {
     }
 
     @Override
+    public Collection<T> toCollection() {
+        return this.toList();
+    }
+
+    @Override
     public T get(int index) {
         return items.get(index);
     }
@@ -103,23 +83,13 @@ class ItemListImpl<T> implements ItemList<T> {
     }
 
     @Override
-    public T[] toArray(T[] array) {
-        return items.toArray(array);
+    public boolean contains(T item) {
+        return items.contains(item);
     }
 
     @Override
     public int size() {
         return items.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    @Override
-    public T find(Predicate<T> predicate) {
-        return Iterables.tryFind(items, predicate::test).orNull();
     }
 
     protected void fireEvent(Event.Type type, T item, Integer newIndex, Integer oldIndex) {

@@ -7,7 +7,5 @@ package net.parostroj.timetable.model;
  *
  * @param <T> item of the list
  */
-public interface ItemWithIdList<T extends ObjectWithId> extends ItemList<T> {
-
-    T getById(String id);
+public interface ItemWithIdList<T extends ObjectWithId> extends ItemList<T>, ItemWithIdIterable<T> {
 }
