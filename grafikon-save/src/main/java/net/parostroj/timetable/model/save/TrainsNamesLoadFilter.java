@@ -24,7 +24,7 @@ public class TrainsNamesLoadFilter implements TrainDiagramFilter {
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
         if (version.getMajorVersion() <= 2 && version.getMinorVersion() < 1) {
-            Pair<TrainsData, List<TrainType>> defaultList = DefaultTrainTypeListSource.getDefaultTypeList();
+            Pair<TrainsDataDto, List<TrainType>> defaultList = DefaultTrainTypeListSource.getDefaultTypeList();
             // add train sort pattern ...
             if (diagram.getTrainsData().getTrainSortPattern() == null)
                 diagram.getTrainsData().setTrainSortPattern(defaultList.first.getTrainSortPattern());

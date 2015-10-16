@@ -8,7 +8,7 @@ import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train types.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "trains_data")
@@ -66,11 +66,11 @@ public class LSTrainsData {
     public void setRunningTimeScript(LSScript runningTimeScript) {
         this.runningTimeScript = runningTimeScript;
     }
-    
-    public TrainsData createTrainsData() throws LSException {
-        return new TrainsData(trainNameTemplate.createTextTemplate(),
-                trainCompleteNameTemplate.createTextTemplate(),
-                trainSortPattern.createSortPattern(),
-                runningTimeScript.createScript());
+
+    public void updateTrainsData(TrainsData trainsData) throws LSException {
+        trainsData.setTrainNameTemplate(trainNameTemplate.createTextTemplate());
+        trainsData.setTrainCompleteNameTemplate(trainCompleteNameTemplate.createTextTemplate());
+        trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
+        trainsData.setRunningTimeScript(runningTimeScript.createScript());
     }
 }

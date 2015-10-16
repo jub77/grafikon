@@ -24,7 +24,7 @@ public class LSTrainTypeList {
     private final Map<TrainType, LSTrainType> mapping;
     private final Map<String, TrainType> mappingByKey;
     private final List<TrainType> trainTypeList;
-    private TrainsData data;
+    private TrainsDataDto data;
     private String trainNameTemplate;
     private String trainCompleteNameTemplate;
     private LSSortPattern trainSortPattern;
@@ -54,7 +54,7 @@ public class LSTrainTypeList {
         return trainTypeList;
     }
 
-    public TrainsData getTrainsData() {
+    public TrainsDataDto getTrainsData() {
         if (data == null)
             createData();
         return data;
@@ -62,7 +62,7 @@ public class LSTrainTypeList {
 
     private void createData() {
         try {
-            data = new TrainsData(
+            data = new TrainsDataDto(
                 TextTemplate.createTextTemplate(trainNameTemplate != null ? trainNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}", TextTemplate.Language.MVEL),
                 TextTemplate.createTextTemplate(trainCompleteNameTemplate != null ? trainCompleteNameTemplate : "@{train.attributes['electric']?'E':''}@{train.attributes['diesel']?'M':''}@{type.abbr} @{train.number}@if{train.description != ''} @{train.description}@end{}", TextTemplate.Language.MVEL),
                 trainSortPattern != null ? trainSortPattern.getSortPattern() : null,

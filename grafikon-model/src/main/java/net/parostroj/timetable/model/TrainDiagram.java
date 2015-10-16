@@ -39,7 +39,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Attributes. */
     private final Attributes attributes;
     /** Trains data. */
-    private TrainsData trainsData;
+    private final TrainsData trainsData;
     /** List of engine classes. */
     private final ItemWithIdList<EngineClass> engineClasses;
     /** List of text items. */
@@ -69,7 +69,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /**
      * Default constructor.
      */
-    public TrainDiagram(String id, TrainsData data) {
+    public TrainDiagram(String id) {
         this.id = id;
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
@@ -96,7 +96,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
-        this.setTrainsData(data);
+        this.trainsData = new TrainsData(this);
         this.listenerSupport = new ListenerSupport();
         this.listenerSupportAll = new ListenerSupport();
         this.net.addAllEventListener(listener);
@@ -384,12 +384,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public TrainsData getTrainsData() {
         return trainsData;
-    }
-
-    public void setTrainsData(TrainsData trainsData) {
-        if (trainsData != null)
-            trainsData.setDiagram(this);
-        this.trainsData = trainsData;
     }
 
     public PenaltyTable getPenaltyTable() {

@@ -9,6 +9,7 @@ import java.util.UUID;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
+import net.parostroj.timetable.utils.IdGenerator;
 
 public class LSVisitorBuilder implements LSVisitor {
 
@@ -31,7 +32,8 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSTrainDiagram lsDiagram) {
         // create empty net
-        diagram = new TrainDiagram(UUID.randomUUID().toString(), trainTypeList.getTrainsData());
+        diagram = new TrainDiagram(IdGenerator.getInstance().getId());
+        trainTypeList.getTrainsData().copyValuesTo(diagram.getTrainsData());
         LSPenaltyTableHelper.fillPenaltyTable(diagram.getPenaltyTable());
         trainTypeList.updateMapping(diagram);
         for (TrainType type : trainTypeList.getTrainTypeList()) {

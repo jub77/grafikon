@@ -56,13 +56,12 @@ public class LSTrainsData {
         this.trainSortPattern = trainSortPattern;
     }
 
-    public TrainsData createTrainsData() throws LSException {
+    public void updateTrainsData(TrainsData trainsData) throws LSException {
         try {
-            return new TrainsData(
-                    TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL),
-                    TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL),
-                    trainSortPattern.createSortPattern(),
-                    Script.createScript(
+            trainsData.setTrainNameTemplate(TextTemplate.createTextTemplate(trainNameTemplate, TextTemplate.Language.MVEL));
+            trainsData.setTrainCompleteNameTemplate(TextTemplate.createTextTemplate(trainCompleteNameTemplate, TextTemplate.Language.MVEL));
+            trainsData.setTrainSortPattern(trainSortPattern.createSortPattern());
+            trainsData.setRunningTimeScript(Script.createScript(
                     "int time = (int) Math.floor((((double) length) * scale * timeScale * 3.6) / (speed * 1000));\n" +
                     "int penalty = 0;\n" +
                     "if (toSpeed < speed) {\n" +

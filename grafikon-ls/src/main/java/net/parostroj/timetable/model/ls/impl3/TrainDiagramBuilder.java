@@ -22,10 +22,10 @@ public class TrainDiagramBuilder {
 
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram) throws LSException {
         // trains data
-        TrainsData data = lsDiagram.getTrainsData().createTrainsData();
         // attributes
         Attributes attributes = lsDiagram.getAttributes().createAttributes();
-        this.diagram = new TrainDiagram(lsDiagram.getId(), data);
+        this.diagram = new TrainDiagram(lsDiagram.getId());
+        lsDiagram.getTrainsData().updateTrainsData(this.diagram.getTrainsData());
         this.diagram.getAttributes().add(attributes);
         // fill penalty table with predefined values
         LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getPenaltyTable());
@@ -48,8 +48,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrainsData(LSTrainsData lsData) throws LSException {
-        TrainsData data = lsData.createTrainsData();
-        this.diagram.setTrainsData(data);
+        lsData.updateTrainsData(this.diagram.getTrainsData());
     }
 
     public void setNet(LSNet lsNet) {

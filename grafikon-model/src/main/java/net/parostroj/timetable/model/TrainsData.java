@@ -19,11 +19,8 @@ public class TrainsData implements TrainDiagramPart {
 
     private TrainComparator trainComparator;
 
-    public TrainsData(TextTemplate trainNameTemplate, TextTemplate trainCompleteNameTemplate, SortPattern trainSortPattern, Script runningTimeScript) {
-        this.trainNameTemplate = trainNameTemplate;
-        this.trainSortPattern = trainSortPattern;
-        this.trainCompleteNameTemplate = trainCompleteNameTemplate;
-        this.runningTimeScript = runningTimeScript;
+    protected TrainsData(TrainDiagram diagram) {
+        this.diagram = diagram;
     }
 
     public TextTemplate getTrainNameTemplate() {

@@ -44,8 +44,11 @@ public class TrainDiagramFactory {
             }
             Script timeScript = Script.createScript(scriptCode, Language.GROOVY);
 
-            TrainsData data = new TrainsData(name, completeName, sPattern, timeScript);
-            TrainDiagram diagram = new TrainDiagram(IdGenerator.getInstance().getId(), data);
+            TrainDiagram diagram = new TrainDiagram(IdGenerator.getInstance().getId());
+            diagram.getTrainsData().setTrainNameTemplate(name);
+            diagram.getTrainsData().setTrainCompleteNameTemplate(completeName);
+            diagram.getTrainsData().setTrainSortPattern(sPattern);
+            diagram.getTrainsData().setRunningTimeScript(timeScript);
 
             diagram.setAttribute(TrainDiagram.ATTR_SCALE, Scale.getFromPredefined("H0"));
             diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, 5.0d);
