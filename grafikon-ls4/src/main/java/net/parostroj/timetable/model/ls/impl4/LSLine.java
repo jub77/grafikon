@@ -112,7 +112,7 @@ public class LSLine {
         if (speed != null && speed <= 0) {
             speed = null;
         }
-        Line line = diagram.createLine(id, length, fromNode, toNode, speed);
+        Line line = diagram.getPartFactory().createLine(id, length, fromNode, toNode, speed);
         line.getAttributes().add(attributes.createAttributes(diagram));
         // tracks
         if (this.tracks != null)

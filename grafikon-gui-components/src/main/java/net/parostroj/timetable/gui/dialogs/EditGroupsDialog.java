@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import net.parostroj.timetable.model.Group;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 
 /**
  * Dialog for editing groups.
@@ -45,7 +46,8 @@ public class EditGroupsDialog extends EditItemsDialog<Group, TrainDiagram> {
 
     @Override
     protected Group createNew(String name) {
-        Group newGroup = element.createGroup(element.createId());
+        TrainDiagramPartFactory factory = element.getPartFactory();
+        Group newGroup = factory.createGroup(factory.createId());
         newGroup.setName(name);
         return newGroup;
     }

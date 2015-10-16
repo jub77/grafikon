@@ -31,7 +31,7 @@ public class TrainBuilder {
      */
     public Train createTrain(String id, String number, int time, Train copiedTrain) {
         // create new train with the same data
-        Train train = copiedTrain.getDiagram().createTrain(id);
+        Train train = copiedTrain.getDiagram().getPartFactory().createTrain(id);
         train.setNumber(number);
         train.setType(copiedTrain.getType());
         train.setDescription(copiedTrain.getDescription());
@@ -107,7 +107,7 @@ public class TrainBuilder {
 
     public Train createReverseTrain(String id, String number, int time, Train copiedTrain) {
         // create train
-        Train train = copiedTrain.getDiagram().createTrain(id);
+        Train train = copiedTrain.getDiagram().getPartFactory().createTrain(id);
         train.setNumber(number);
         train.setType(copiedTrain.getType());
         train.setDescription(copiedTrain.getDescription());
@@ -157,7 +157,7 @@ public class TrainBuilder {
      */
     public Train createTrain(String id, String number, TrainType trainType, int topSpeed, Route route, int time,
             TrainDiagram diagram, int defaultStop) {
-        Train train = diagram.createTrain(id);
+        Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
         train.setAttribute(Train.ATTR_DIESEL, false);
         train.setAttribute(Train.ATTR_ELECTRIC, false);

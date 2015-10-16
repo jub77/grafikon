@@ -9,7 +9,6 @@ import java.util.UUID;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
-import net.parostroj.timetable.utils.IdGenerator;
 
 public class LSVisitorBuilder implements LSVisitor {
 
@@ -62,7 +61,7 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSNode lsNode) {
         NodeType type = NodeType.valueOf(lsNode.getNodeType());
-        Node node = diagram.createNode(lsNode.getUuid(), type, lsNode.getName(), lsNode.getAbbr());
+        Node node = diagram.getPartFactory().createNode(lsNode.getUuid(), type, lsNode.getName(), lsNode.getAbbr());
         if (lsNode.getAttributes() != null) {
             node.getAttributes().add(lsNode.getAttributes().convertToAttributes());
         }
@@ -101,7 +100,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSLine lsLine) {
         Node from = (Node) ids.get(lsLine.getSourceId());
         Node to = (Node) ids.get(lsLine.getTargetId());
-        Line line = diagram.createLine(lsLine.getUuid(), lsLine.getLength(), from, to, lsLine.getTopSpeed());
+        Line line = diagram.getPartFactory().createLine(lsLine.getUuid(), lsLine.getLength(), from, to, lsLine.getTopSpeed());
         ids.put(lsLine.getId(), line);
 
         if (lsLine.getAttributes() != null) {
@@ -130,7 +129,7 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSTrain lsTrain) {
         TrainType type = trainTypeList.getTrainType(lsTrain.getTrainType());
-        Train train = diagram.createTrain(lsTrain.getUuid());
+        Train train = diagram.getPartFactory().createTrain(lsTrain.getUuid());
         train.setNumber(lsTrain.getName());
         train.setType(type);
         ids.put(lsTrain.getId(), train);
@@ -211,7 +210,9 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSImage lsImage) {
-        TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), lsImage.getFilename(), lsImage.getImageWidth(), lsImage.getImageHeight());
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TimetableImage image = factory.createImage(factory.createId(), lsImage.getFilename(),
+                lsImage.getImageWidth(), lsImage.getImageHeight());
         diagram.getImages().add(image);
     }
 }

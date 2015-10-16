@@ -37,7 +37,7 @@ public class RegionImport extends Import {
         }
 
         // create new region
-        Region region = getDiagram().createRegion(this.getId(importedRegion));
+        Region region = getDiagram().getPartFactory().createRegion(this.getId(importedRegion));
         region.getAttributes().add(this.importAttributes(importedRegion.getAttributes()));
 
         // add to diagram

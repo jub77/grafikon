@@ -5,11 +5,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 
 /**
  * Storage for information about images.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "image")
@@ -63,9 +63,10 @@ public class LSImage {
     public void setImageWidth(int imageWidth) {
         this.imageWidth = imageWidth;
     }
-    
+
     public TimetableImage createTimetableImage(TrainDiagram diagram) {
-        TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), filename, imageWidth, imageHeight);
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TimetableImage image = factory.createImage(factory.createId(), filename, imageWidth, imageHeight);
         return image;
     }
 }

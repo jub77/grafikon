@@ -42,7 +42,7 @@ public class LSCompany {
     }
 
     public Company createCompany(TrainDiagram diagram) throws LSException {
-        Company company = diagram.createCompany(id);
+        Company company = diagram.getPartFactory().createCompany(id);
         company.getAttributes().add(attributes.createAttributes(diagram));
         return company;
     }

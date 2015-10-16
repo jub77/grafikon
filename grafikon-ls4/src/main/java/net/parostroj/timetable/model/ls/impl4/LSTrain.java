@@ -154,7 +154,7 @@ public class LSTrain {
     }
 
     public Train createTrain(TrainDiagram diagram) throws LSException {
-        Train train = diagram.createTrain(id);
+        Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
         train.getAttributes().add(attributes.createAttributes(diagram));
         train.setDescription(desc);

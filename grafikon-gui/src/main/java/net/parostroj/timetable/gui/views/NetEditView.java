@@ -100,9 +100,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 } else {
                     location = new Point(20, 20);
                 }
-                Node n = model.getDiagram().createNode(IdGenerator.getInstance().getId(), NodeType.STATION, result,
+                TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
+                Node n = factory.createNode(factory.createId(), NodeType.STATION, result,
                         result.substring(0, 1) + cnt);
-                NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), "1");
+                NodeTrack track = new NodeTrack(factory.createId(), "1");
                 track.setPlatform(true);
                 n.addTrack(track);
                 n.setLocation(new Location(location.x, location.y));
@@ -663,7 +664,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     mxCell cell = (mxCell) result;
                     Node srcNode = (Node) ((NodeCell) cell.getSource()).getValue();
                     Node dstNode = (Node) ((NodeCell) cell.getTarget()).getValue();
-                    Line l = model.getDiagram().createLine(IdGenerator.getInstance().getId(), 1000,
+                    TrainDiagramPartFactory factory = model.getDiagram().getPartFactory();
+                    Line l = factory.createLine(factory.createId(), 1000,
                             srcNode, dstNode, null);
                     LineTrack track = new LineTrack(IdGenerator.getInstance().getId(), "1");
                     l.addTrack(track);

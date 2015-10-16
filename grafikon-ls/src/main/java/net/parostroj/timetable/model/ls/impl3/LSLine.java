@@ -6,12 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.Line;
-import net.parostroj.timetable.model.LineTrack;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.Node;
-import net.parostroj.timetable.model.NodeTrack;
-import net.parostroj.timetable.model.TrainDiagram;
+
+import net.parostroj.timetable.model.*;
 
 /**
  * Class for storing lines.
@@ -108,7 +104,8 @@ public class LSLine {
         Net net = diagram.getNet();
         Node fromNode = net.getNodeById(getFrom());
         Node toNode = net.getNodeById(getTo());
-        Line line = diagram.createLine(id, length, fromNode, toNode, speed > 0 ? speed : null);
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        Line line = factory.createLine(id, length, fromNode, toNode, speed > 0 ? speed : null);
         line.getAttributes().add(attributes.createAttributes(diagram));
         // tracks
         for (LSLineTrack lsLineTrack : getTracks()) {

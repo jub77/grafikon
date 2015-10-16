@@ -9,7 +9,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Storage for information about images.
- * 
+ *
  * @author jub
  */
 @XmlRootElement(name = "image")
@@ -64,11 +64,11 @@ public class LSImage {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public TimetableImage createTimetableImage(TrainDiagram diagram) {
         String newId = this.id != null ? this.id : IdGenerator.getInstance().getId();
 
-        TimetableImage image = diagram.createImage(newId, filename, imageWidth, imageHeight);
+        TimetableImage image = diagram.getPartFactory().createImage(newId, filename, imageWidth, imageHeight);
         return image;
     }
 }

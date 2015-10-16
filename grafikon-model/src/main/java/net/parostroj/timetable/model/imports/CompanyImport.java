@@ -37,7 +37,7 @@ public class CompanyImport extends Import {
         }
 
         // create new company
-        Company company = getDiagram().createCompany(this.getId(importedCompany));
+        Company company = getDiagram().getPartFactory().createCompany(this.getId(importedCompany));
         company.getAttributes().add(this.importAttributes(importedCompany.getAttributes()));
 
         // add to diagram

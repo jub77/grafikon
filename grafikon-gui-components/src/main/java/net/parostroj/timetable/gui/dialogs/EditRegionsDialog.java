@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import net.parostroj.timetable.model.Region;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
@@ -45,7 +45,8 @@ public class EditRegionsDialog extends EditItemsDialog<Region, TrainDiagram> {
 
     @Override
     protected Region createNew(String name) {
-        Region newRegion = element.createRegion(IdGenerator.getInstance().getId());
+        TrainDiagramPartFactory factory = element.getPartFactory();
+        Region newRegion = factory.createRegion(factory.createId());
         newRegion.setName(name);
         return newRegion;
     }

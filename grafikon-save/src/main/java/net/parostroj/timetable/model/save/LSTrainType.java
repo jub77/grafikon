@@ -1,9 +1,6 @@
 package net.parostroj.timetable.model.save;
 
-import net.parostroj.timetable.model.GrafikonException;
-import net.parostroj.timetable.model.TrainType;
 import java.awt.Color;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +106,8 @@ public class LSTrainType {
     }
 
     public TrainType convertToTrainType(TrainDiagram diagram) {
-        TrainType type =diagram.createTrainType(UUID.randomUUID().toString());
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TrainType type =factory.createTrainType(factory.createId());
         type.setAbbr(this.abbr);
         type.setColor(Conversions.convertTextToColor(this.color));
         type.setDesc(this.desc);

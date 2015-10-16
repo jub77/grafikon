@@ -109,9 +109,9 @@ public class LSTrainType {
     public void setTrainCompleteNameTemplate(String trainCompleteNameTemplate) {
         this.trainCompleteNameTemplate = trainCompleteNameTemplate;
     }
-    
+
     public TrainType createTrainType(TrainDiagram diagram) throws LSException {
-        TrainType type = diagram.createTrainType(id);
+        TrainType type = diagram.getPartFactory().createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
         type.setDesc(desc);

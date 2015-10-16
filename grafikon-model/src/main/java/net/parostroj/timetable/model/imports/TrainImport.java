@@ -48,7 +48,7 @@ public class TrainImport extends Import {
             log.debug(message);
             return null;
         }
-        Train train = getDiagram().createTrain(this.getId(importedTrain));
+        Train train = getDiagram().getPartFactory().createTrain(this.getId(importedTrain));
         train.setNumber(importedTrain.getNumber());
         train.getAttributes().add(this.importAttributes(importedTrain.getAttributes()));
         train.setDescription(importedTrain.getDescription());

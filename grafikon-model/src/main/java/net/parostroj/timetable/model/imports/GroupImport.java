@@ -37,7 +37,7 @@ public class GroupImport extends Import {
         }
 
         // create new group
-        Group group = getDiagram().createGroup(this.getId(importedGroup));
+        Group group = getDiagram().getPartFactory().createGroup(this.getId(importedGroup));
         group.getAttributes().add(this.importAttributes(importedGroup.getAttributes()));
 
         // add to diagram

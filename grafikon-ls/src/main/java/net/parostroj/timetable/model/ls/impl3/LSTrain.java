@@ -150,7 +150,7 @@ public class LSTrain {
     }
 
     public Train createTrain(TrainDiagram diagram) {
-        Train train = diagram.createTrain(id);
+        Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
         train.getAttributes().add(attributes.createAttributes());
         train.setDescription(desc);

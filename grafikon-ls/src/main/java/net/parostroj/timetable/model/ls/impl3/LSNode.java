@@ -112,7 +112,7 @@ public class LSNode {
     }
 
     public Node createNode(TrainDiagram diagram) {
-        Node node = diagram.createNode(id, NodeType.fromString(type), name, abbr);
+        Node node = diagram.getPartFactory().createNode(id, NodeType.fromString(type), name, abbr);
         node.getAttributes().add(attributes.createAttributes());
         node.setLocation(new Location(x, y));
         // tracks

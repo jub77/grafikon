@@ -52,7 +52,7 @@ public class LSGroup {
     }
 
     public Group createGroup(TrainDiagram diagram) throws LSException {
-        Group group = diagram.createGroup(id);
+        Group group = diagram.getPartFactory().createGroup(id);
         // expected value -> null (for compatibility before version 4.18.2)
         group.setName(name);
         group.getAttributes().add(attributes.createAttributes(diagram));

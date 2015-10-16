@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import net.parostroj.timetable.model.Company;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
@@ -50,7 +51,8 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
 
     @Override
     protected Company createNew(String name) {
-        Company newCompany = element.createCompany(element.createId());
+        TrainDiagramPartFactory factory = element.getPartFactory();
+        Company newCompany = factory.createCompany(factory.createId());
         newCompany.setAbbr(name);
         return newCompany;
     }

@@ -19,7 +19,7 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.model.TrainDiagramPartFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -187,7 +187,8 @@ public class EditImagesDialog extends javax.swing.JDialog {
             try {
                 // get size of the image
                 BufferedImage img = ImageIO.read(chooser.getSelectedFile());
-                TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), fileName, img.getWidth(), img.getHeight());
+                TrainDiagramPartFactory factory = diagram.getPartFactory();
+                TimetableImage image = factory.createImage(factory.createId(), fileName, img.getWidth(), img.getHeight());
 
                 File tempFile = File.createTempFile("gt_", ".temp");
                 Files.asByteSource(chooser.getSelectedFile()).copyTo(Files.asByteSink(tempFile));
@@ -211,7 +212,8 @@ public class EditImagesDialog extends javax.swing.JDialog {
         String newName = (String) JOptionPane.showInputDialog(this, ResourceLoader.getString("images.edit.name"),
                 null, JOptionPane.QUESTION_MESSAGE, null, null, selected.getFilename());
         if (newName != null && !newName.equals(selected.getFilename())) {
-            TimetableImage newImage = diagram.createImage(IdGenerator.getInstance().getId(), newName, selected.getImageWidth(), selected.getImageHeight());
+            TrainDiagramPartFactory factory = diagram.getPartFactory();
+            TimetableImage newImage = factory.createImage(factory.createId(), newName, selected.getImageWidth(), selected.getImageHeight());
             if (checkExistence(newName, selected)) {
                 // show error message and return
                 JOptionPane.showMessageDialog(this,

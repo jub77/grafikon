@@ -524,7 +524,8 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             this.showErrorDialog("dialog.error.missingvalues");
             return;
         }
-        TrainType type = diagram.createTrainType(IdGenerator.getInstance().getId());
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TrainType type = factory.createTrainType(factory.createId());
         type.setAbbr(abbr);
         type.setDesc(desc);
         type.setPlatform(platformNeededCheckBox.isSelected());

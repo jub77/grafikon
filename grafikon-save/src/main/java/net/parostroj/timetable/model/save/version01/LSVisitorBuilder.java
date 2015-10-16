@@ -9,7 +9,6 @@ import java.util.UUID;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
 import net.parostroj.timetable.model.save.LSTrainTypeList;
-import net.parostroj.timetable.utils.IdGenerator;
 
 public class LSVisitorBuilder implements LSVisitor {
 
@@ -57,7 +56,7 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSNode lsNode) {
         NodeType type = NodeType.valueOf(lsNode.getNodeType());
-        Node node = diagram.createNode(this.createId(), type, lsNode.getName(), lsNode.getAbbr());
+        Node node = diagram.getPartFactory().createNode(this.createId(), type, lsNode.getName(), lsNode.getAbbr());
         node.setAttribute(Node.ATTR_INTERLOCKING_PLANT, lsNode.getInterlockingPlant());
         node.setLocation(new Location(lsNode.getX(), lsNode.getY()));
         ids.put(lsNode.getId(), node);
@@ -93,7 +92,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSLine lsLine) {
         Node from = (Node) ids.get(lsLine.getSourceId());
         Node to = (Node) ids.get(lsLine.getTargetId());
-        Line line = diagram.createLine(this.createId(), lsLine.getLength(), from, to, null);
+        Line line = diagram.getPartFactory().createLine(this.createId(), lsLine.getLength(), from, to, null);
         LineTrack lt = new LineTrack(this.createId(), "1");
         line.addTrack(lt);
         lt.setFromStraightTrack((NodeTrack) ids.get(lsLine.getSourceTrackId()));
@@ -110,7 +109,7 @@ public class LSVisitorBuilder implements LSVisitor {
     @Override
     public void visit(LSTrain lsTrain) {
         TrainType type = trainTypeList.getTrainType(lsTrain.getTrainType());
-        Train train = diagram.createTrain(this.createId());
+        Train train = diagram.getPartFactory().createTrain(this.createId());
         train.setNumber(lsTrain.getName());
         train.setType(type);
         ids.put(lsTrain.getId(), train);
@@ -193,7 +192,8 @@ public class LSVisitorBuilder implements LSVisitor {
 
     @Override
     public void visit(LSImage lsImage) {
-        TimetableImage image = diagram.createImage(IdGenerator.getInstance().getId(), lsImage.getFilename(), 0, 0);
+        TrainDiagramPartFactory factory = diagram.getPartFactory();
+        TimetableImage image = factory.createImage(factory.createId(), lsImage.getFilename(), 0, 0);
         diagram.getImages().add(image);
     }
 

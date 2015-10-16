@@ -55,6 +55,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Localization. */
     private final Localization localization;
 
+    private final TrainDiagramPartFactory partFactory;
+
     private final List<TrainDiagramValidator> validators;
     private final Listener listener;
     private final ChangesTrackerImpl changesTracker;
@@ -116,6 +118,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new RegionRemoveValidator(this));
         this.validators.add(new NodeValidator(this));
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates, groups, companies, trainTypes);
+        this.partFactory = new TrainDiagramPartFactory(this);
     }
 
     /**
@@ -466,113 +469,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.timeConverter = timeConverter;
     }
 
-    // -------------------------- creational methods ---------------------------
-
-    /**
-     * @return new (not used) id
-     */
-    public String createId() {
-        return IdGenerator.getInstance().getId();
-    }
-
-    /**
-     * creates new train.
-     *
-     * @param id train id
-     * @return a new train
-     */
-    public Train createTrain(String id) {
-        return new Train(id, this);
-    }
-
-    /**
-     * create new line.
-     *
-     * @param id line id
-     * @param length length
-     * @param from from node
-     * @param to to node
-     * @param topSpeed top speed
-     * @return a new line
-     */
-    public Line createLine(String id, int length, Node from, Node to, Integer topSpeed) {
-        return new Line(id, this, length, from, to, topSpeed);
-    }
-
-    /**
-     * create new node.
-     *
-     * @param id id
-     * @param type node type
-     * @param name name
-     * @param abbr abbreviation
-     * @return a new node
-     */
-    public Node createNode(String id, NodeType type, String name, String abbr) {
-        return new Node(id, this, type, name, abbr);
-    }
-
-    /**
-     * creates new train type.
-     *
-     * @param id id
-     * @return a new train type
-     */
-    public TrainType createTrainType(String id) {
-        return new TrainType(id, this);
-    }
-
-    /**
-     * creates new image.
-     *
-     * @param id id
-     * @param filename filename
-     * @param width width of the image in pixels
-     * @param height height of the image in pixels
-     * @return a new image
-     */
-    public TimetableImage createImage(String id, String filename, int width, int height) {
-        return new TimetableImage(id, filename, width, height);
-    }
-
-    /**
-     * creates group.
-     *
-     * @param id id
-     * @return new group
-     */
-    public Group createGroup(String id) {
-        return new Group(id, this);
-    }
-
-    /**
-     * Creates region.
-     *
-     * @param id id
-     * @return new region
-     */
-    public Region createRegion(String id) {
-        return new Region(id, this);
-    }
-
-    /**
-     * Creates company.
-     *
-     * @param id id
-     * @return new company
-     */
-    public Company createCompany(String id) {
-        return new Company(id, this);
-    }
-
-    /**
-     * Creates new cycle type.
-     *
-     * @param id id
-     * @return new cycle type
-     */
-    public TrainsCycleType createCycleType(String id) {
-        return new TrainsCycleType(id, this);
+    public TrainDiagramPartFactory getPartFactory() {
+        return partFactory;
     }
 
     /**
