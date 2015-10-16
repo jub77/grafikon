@@ -129,19 +129,27 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public void setNet(Net net) {
-        if (this.net != null) {
-            this.net.removeAllEventListener(listener);
+        if (net != this.net) {
+            if (this.net != null) {
+                this.net.removeAllEventListener(listener);
+            }
+            Net oldNet = this.net;
+            this.net = net;
+            this.net.addAllEventListener(listener);
+            this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_NET, oldNet, net)));
         }
-        this.net = net;
-        this.net.addAllEventListener(listener);
     }
 
     public void setFreightNet(FreightNet freightNet) {
-        if (this.freightNet != null) {
-            this.freightNet.removeListener(listener);
+        if (freightNet != this.freightNet) {
+            if (this.freightNet != null) {
+                this.freightNet.removeListener(listener);
+            }
+            FreightNet oldFreightNet = this.freightNet;
+            this.freightNet = freightNet;
+            this.freightNet.addListener(listener);
+            this.fireEvent(new Event(this, new AttributeChange(TrainDiagram.ATTR_FREIGHT_NET, oldFreightNet, freightNet)));
         }
-        this.freightNet = freightNet;
-        this.freightNet.addListener(listener);
     }
 
     public ChangesTracker getChangesTracker() {

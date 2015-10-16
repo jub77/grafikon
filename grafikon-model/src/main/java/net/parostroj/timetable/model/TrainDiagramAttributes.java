@@ -28,4 +28,6 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_INFO = "info";
     public static final String ATTR_RUNNING_SCRIPT = "running.script";
     public static final String ATTR_TRAIN_SORT_PATTERN = "train.sort.pattern";
+    public static final String ATTR_NET = "net";
+    public static final String ATTR_FREIGHT_NET = "freight.net";
 }
