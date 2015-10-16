@@ -33,6 +33,7 @@ class EventToChangeConvert {
         map.put(Route.class, DiagramChange.Type.ROUTE);
         map.put(TextItem.class, DiagramChange.Type.TEXT_ITEM);
         map.put(TrainsCycle.class, DiagramChange.Type.TRAINS_CYCLE);
+        map.put(TrainsCycleType.class, DiagramChange.Type.CYCLE_TYPE);
         map.put(Train.class, DiagramChange.Type.TRAIN);
         map.put(TrainType.class, DiagramChange.Type.TRAIN_TYPE);
         map.put(OutputTemplate.class, DiagramChange.Type.OUTPUT_TEMPLATE);
@@ -40,6 +41,9 @@ class EventToChangeConvert {
         map.put(Company.class, DiagramChange.Type.COMPANY);
         map.put(FreightNet.class, DiagramChange.Type.FREIGHT_NET);
         map.put(Region.class, DiagramChange.Type.REGION);
+        map.put(LineClass.class, DiagramChange.Type.LINE_CLASS);
+        map.put(Net.class, DiagramChange.Type.NET);
+        map.put(TrainDiagram.class, DiagramChange.Type.DIAGRAM);
         return map;
     }
 
