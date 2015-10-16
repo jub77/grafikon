@@ -29,7 +29,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Predefined routes. */
     private final ItemWithIdSet<Route> routes;
     /** Trains. */
-    private final List<Train> trains;
+    private final ItemWithIdSet<Train> trains;
     /** Cycles. */
     private final Set<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
@@ -75,7 +75,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.listener = event -> this.fireNestedEvent(event);
         this.routes = new ItemWithIdSetImpl<Route>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
-        this.trains = new ArrayList<Train>();
+        this.trains = new ItemWithIdSetImpl<Train>((type, item) -> {
+            if (type == Event.Type.ADDED) {
+                item.attach();
+            } else {
+                item.detach();
+            }
+            this.fireCollectionEventObservable(type, item, null, null);
+        });
         this.cycles = new HashSet<TrainsCycleType>();
         this.images = new ItemWithIdSetImpl<TimetableImage>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
@@ -166,22 +173,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /**
      * @return the trains
      */
-    public List<Train> getTrains() {
-        return Collections.unmodifiableList(this.trains);
-    }
-
-    public void addTrain(Train train) {
-        train.addListener(listener);
-        this.trains.add(train);
-        train.attach();
-        this.fireEvent(new Event(this, Event.Type.ADDED, train));
-    }
-
-    public void removeTrain(Train train) {
-        train.detach();
-        this.trains.remove(train);
-        train.removeListener(listener);
-        this.fireEvent(new Event(this, Event.Type.REMOVED, train));
+    public ItemWithIdSet<Train> getTrains() {
+        return this.trains;
     }
 
     public Train getTrainById(String id) {

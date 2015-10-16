@@ -84,7 +84,7 @@ public class ModelUtils {
             case DRIVER_CYCLE:
                 return diagram.getDriverCycles();
             case TRAIN:
-                return diagram.getTrains();
+                return new ArrayList<>(diagram.getTrains().toCollection());
             case ROUTE:
                 List<Route> routes = new LinkedList<Route>();
                 for (Route r : diagram.getRoutes()) {

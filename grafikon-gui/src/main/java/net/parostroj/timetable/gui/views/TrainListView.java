@@ -548,7 +548,7 @@ public class TrainListView extends javax.swing.JPanel implements TreeSelectionLi
                 Train newTrain = builder.createTrain(oldTrain, route);
                 model.setSelectedTrain(null);
                 this.deleteTrain(oldTrain, oldTrain.getDiagram());
-                model.getDiagram().addTrain(newTrain);
+                model.getDiagram().getTrains().add(newTrain);
                 model.setSelectedTrain(newTrain);
             } catch (Exception e) {
                 log.warn("Error changing route of the train.", e);

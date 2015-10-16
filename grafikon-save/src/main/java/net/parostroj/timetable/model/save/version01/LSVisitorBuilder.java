@@ -86,7 +86,7 @@ public class LSVisitorBuilder implements LSVisitor {
      */
     public TrainDiagram getTrainDiagram() {
         for (Train t : trains) {
-            diagram.addTrain(t);
+            diagram.getTrains().add(t);
         }
         return diagram;
     }

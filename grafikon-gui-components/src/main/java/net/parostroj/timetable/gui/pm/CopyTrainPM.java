@@ -49,7 +49,7 @@ public class CopyTrainPM extends AbstractPM implements IPM<Train> {
                     builder.createReverseTrain(IdGenerator.getInstance().getId(), name, time, train) :
                     builder.createTrain(IdGenerator.getInstance().getId(), name, time, train);
             // add train to diagram
-            diagram.addTrain(newTrain);
+            diagram.getTrains().add(newTrain);
         }
     }
 

@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -583,7 +582,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         return width;
     }
 
-    private boolean existsTrainWithType(TrainType type, List<Train> trains) {
+    private boolean existsTrainWithType(TrainType type, Iterable<Train> trains) {
         for (Train t : trains) {
             if (type.equals(t.getType()))
                 return true;

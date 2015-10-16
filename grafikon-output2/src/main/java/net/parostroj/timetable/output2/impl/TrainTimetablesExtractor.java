@@ -254,6 +254,7 @@ public class TrainTimetablesExtractor {
     }
 
     private Pair<Boolean, List<String>> getTrapezoidTrains(TimeInterval interval) {
+        TrainComparator comparator = diagram.getTrainsData().getTrainComparator();
         Node node = interval.getOwnerAsNode();
         TimeInterval toBeChecked = interval;
         Train train = interval.getTrain();
@@ -271,9 +272,8 @@ public class TrainTimetablesExtractor {
                     first = false;
                     break;
                 } else if (interval.getStart() == checked.getStart()) {
-                    // train nearer the begining is first
-                    List<Train> tl = diagram.getTrains();
-                    if (tl.indexOf(interval.getTrain()) > tl.indexOf(checked.getTrain())) {
+                    // using train comparator
+                    if (comparator.compare(interval.getTrain(), checked.getTrain()) >= 0) {
                         first = false;
                         break;
                     }

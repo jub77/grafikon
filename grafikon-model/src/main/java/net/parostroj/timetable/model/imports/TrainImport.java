@@ -79,7 +79,7 @@ public class TrainImport extends Import {
         train.setTimeBefore(importedTrain.getTimeBefore());
         train.setTimeAfter(importedTrain.getTimeAfter());
 
-        this.getDiagram().addTrain(train);
+        this.getDiagram().getTrains().add(train);
         this.addImportedObject(train);
         log.trace("Successfully imported train: " + train);
         return train;

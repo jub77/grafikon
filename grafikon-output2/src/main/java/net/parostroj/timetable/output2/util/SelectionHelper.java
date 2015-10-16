@@ -72,7 +72,7 @@ public class SelectionHelper {
         } else {
             ElementSort<Train> s = new ElementSort<Train>(
                     new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
-            return s.sort(diagram.getTrains());
+            return s.sort(diagram.getTrains().toCollection());
         }
     }
 

@@ -82,7 +82,7 @@ public class CreateTrainCommand extends Command {
         train.setAttribute(Train.ATTR_MANAGED_FREIGHT, managedFreight);
 
         // add train to diagram
-        model.getDiagram().addTrain(train);
+        model.getDiagram().getTrains().add(train);
     }
 
     @Override

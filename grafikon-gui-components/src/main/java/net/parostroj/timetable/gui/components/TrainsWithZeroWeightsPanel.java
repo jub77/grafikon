@@ -1,7 +1,5 @@
 package net.parostroj.timetable.gui.components;
 
-import java.util.List;
-
 import javax.swing.event.ListSelectionListener;
 
 import net.parostroj.timetable.actions.TrainsHelper;
@@ -55,7 +53,7 @@ public class TrainsWithZeroWeightsPanel extends javax.swing.JPanel {
         }
     }
 
-    public void updateAllTrains(List<Train> trains) {
+    public void updateAllTrains(Iterable<Train> trains) {
         listModel.clear();
         if (trains != null) {
             for (Train train : trains) {

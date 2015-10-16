@@ -26,7 +26,7 @@ public class TrainTreeHandler {
         this.treeModel = new DefaultTreeModel(this.createNode(structure.get(0), null));
     }
 
-    public void addTrains(Collection<Train> trains) {
+    public void addTrains(Iterable<Train> trains) {
         for (Train train : trains) {
             this.addTrain(train);
         }

@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.gui.wrappers.TrainWrapperDelegate;
@@ -58,7 +57,7 @@ public class TrainsWithConflictsPanel extends javax.swing.JPanel {
         }
     }
 
-    public void updateAllTrains(List<Train> trains) {
+    public void updateAllTrains(Iterable<Train> trains) {
         listModel.clear();
         if (trains != null) {
             for (Train train : trains) {

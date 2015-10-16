@@ -29,7 +29,7 @@ public class DeleteTrainCommand extends Command {
             }
         }
 
-        diagram.removeTrain(train); // remove from list of trains
+        diagram.getTrains().remove(train); // remove from list of trains
     }
 
     private void removeTrainFromCycles(List<TrainsCycleItem> items, ApplicationModel model) {

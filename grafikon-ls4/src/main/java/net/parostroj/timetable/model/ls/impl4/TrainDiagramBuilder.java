@@ -160,9 +160,9 @@ public class TrainDiagramBuilder {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
         if ((foundTrain = diagram.getTrainById(train.getId())) != null) {
-            diagram.removeTrain(foundTrain);
+            diagram.getTrains().remove(foundTrain);
         }
-        diagram.addTrain(train);
+        diagram.getTrains().add(train);
     }
 
     public void setEngineClass(LSEngineClass lsEngineClass) {
