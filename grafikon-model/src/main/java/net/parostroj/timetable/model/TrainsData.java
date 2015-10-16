@@ -58,7 +58,7 @@ public class TrainsData implements TrainDiagramPart {
         SortPattern oldValue = this.trainSortPattern;
         this.trainSortPattern = trainSortPattern;
         this.trainComparator = null;
-        this.diagram.fireEvent(new Event(diagram, new AttributeChange("train.sort.pattern", oldValue, this.trainSortPattern)));
+        this.diagram.fireEvent(new Event(diagram, new AttributeChange(TrainDiagram.ATTR_TRAIN_SORT_PATTERN, oldValue, this.trainSortPattern)));
     }
 
     public Script getRunningTimeScript() {
@@ -68,7 +68,7 @@ public class TrainsData implements TrainDiagramPart {
     public void setRunningTimeScript(Script runningTimeScript) {
         Script oldValue = this.runningTimeScript;
         this.runningTimeScript = runningTimeScript;
-        this.diagram.fireEvent(new Event(diagram, new AttributeChange("running.script", oldValue, this.runningTimeScript)));
+        this.diagram.fireEvent(new Event(diagram, new AttributeChange(TrainDiagram.ATTR_RUNNING_SCRIPT, oldValue, this.runningTimeScript)));
     }
 
     void setDiagram(TrainDiagram diagram) {
