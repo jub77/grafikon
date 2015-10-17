@@ -40,7 +40,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         itemsModel.setObjectListener(new WrapperListModel.ObjectListener<TextItem>() {
             @Override
             public void added(TextItem object, int index) {
-                diagram.getTextItems().add(object, index);
+                diagram.getTextItems().add(index, object);
             }
 
             @Override

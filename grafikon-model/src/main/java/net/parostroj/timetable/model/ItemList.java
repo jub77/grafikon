@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ItemList<T> extends ItemSet<T> {
 
-    void add(T item, int index);
+    void add(int index, T item);
 
     void move(T item, int index);
 

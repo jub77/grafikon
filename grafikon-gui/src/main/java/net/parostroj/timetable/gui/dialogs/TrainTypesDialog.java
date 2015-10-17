@@ -73,7 +73,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         typesModel.setObjectListener(new ObjectListener<TrainType>() {
             @Override
             public void added(TrainType object, int index) {
-                diagram.getTrainTypes().add(object, index);
+                diagram.getTrainTypes().add(index, object);
             }
 
             @Override

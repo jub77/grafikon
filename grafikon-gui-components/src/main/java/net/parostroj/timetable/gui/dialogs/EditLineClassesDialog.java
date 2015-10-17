@@ -19,7 +19,7 @@ public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagr
 
     @Override
     protected void add(LineClass item, int index) {
-        element.getNet().getLineClasses().add(item, index);
+        element.getNet().getLineClasses().add(index, item);
     }
 
     @Override

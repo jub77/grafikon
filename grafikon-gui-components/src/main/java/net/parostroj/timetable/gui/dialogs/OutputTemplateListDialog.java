@@ -68,7 +68,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
         templatesModel.setObjectListener(new WrapperListModel.ObjectListener<OutputTemplate>() {
             @Override
             public void added(OutputTemplate object, int index) {
-                outputTemplates.add(object, index);
+                outputTemplates.add(index, object);
             }
 
             @Override

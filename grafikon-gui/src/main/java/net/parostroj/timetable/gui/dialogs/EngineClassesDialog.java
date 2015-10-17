@@ -159,7 +159,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
-                diagram.getEngineClasses().add(object, index);
+                diagram.getEngineClasses().add(index, object);
             }
 
             @Override

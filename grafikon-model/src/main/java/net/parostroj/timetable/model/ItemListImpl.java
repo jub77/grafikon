@@ -29,7 +29,7 @@ class ItemListImpl<T> implements ItemList<T> {
     }
 
     @Override
-    public void add(T item, int index) {
+    public void add(int index, T item) {
         items.add(index, item);
         this.fireEvent(Event.Type.ADDED, item, index, null);
     }
