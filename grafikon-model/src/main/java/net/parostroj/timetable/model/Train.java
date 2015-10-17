@@ -296,11 +296,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return Collections.unmodifiableList(cycles.get(type));
     }
 
-    public List<TrainsCycleItem> getCycles(String typeName) {
-        TrainsCycleType type = diagram.getCycleType(typeName);
-        return this.getCycles(type);
-    }
-
     /**
      * @param item train cycle item to be added
      */

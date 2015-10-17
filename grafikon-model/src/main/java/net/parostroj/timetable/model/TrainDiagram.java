@@ -217,13 +217,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    public TrainsCycleType getCycleType(String typeName) {
-        if (!TrainsCycleType.isDefaultType(typeName)) {
-            throw new IllegalArgumentException("Only default types allowed");
-        }
-        return this.getCycleTypeByNameImpl(typeName);
-    }
-
     public TrainsCycle getCycleById(String id) {
         for (TrainsCycleType type : cycleTypes) {
             TrainsCycle found = type.getCycles().getById(id);
