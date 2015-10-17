@@ -111,7 +111,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (!TrainsCycleType.isDefaultType(name)) {
             TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
             type.setName(name);
-            diagram.addCyclesType(type);
+            diagram.getCycleTypes().add(type);
         }
         newNameTextField.setText("");
     }
@@ -119,7 +119,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test if empty
         if (diagram.getCycles(delegate.getType()).isEmpty()) {
-            diagram.removeCyclesType(delegate.getType());
+            diagram.getCycleTypes().remove(delegate.getType());
         }
     }
 

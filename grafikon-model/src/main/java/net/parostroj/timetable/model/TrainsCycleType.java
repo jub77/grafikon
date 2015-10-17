@@ -107,7 +107,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return attributes.remove(key);
     }
 
-    List<TrainsCycle> getCycles() {
+    public List<TrainsCycle> getCycles() {
         return cycles;
     }
 

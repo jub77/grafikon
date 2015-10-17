@@ -33,7 +33,7 @@ public class TrainDiagramBuilder {
         trackChanges = lsDiagram.isChangesTracking();
         // circulation types
         for (LSTrainsCycleType cType : lsDiagram.getCycleTypes()) {
-            this.diagram.addCyclesType(cType.createTrainsCycleType(diagram));
+            this.diagram.getCycleTypes().add(cType.createTrainsCycleType(diagram));
         }
         // groups
         for (LSGroup lsGroup : lsDiagram.getGroups()) {
@@ -45,13 +45,13 @@ public class TrainDiagramBuilder {
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE));
         }
     }
 

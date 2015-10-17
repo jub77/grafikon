@@ -47,13 +47,13 @@ public class AfterLoadCheck {
 
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE, diagram));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE, diagram));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE, diagram));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE, diagram));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.addCyclesType(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE, diagram));
+            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE, diagram));
         }
     }
 

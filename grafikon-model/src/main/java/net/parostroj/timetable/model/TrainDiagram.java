@@ -31,7 +31,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Trains. */
     private final ItemWithIdSet<Train> trains;
     /** Cycles. */
-    private final Set<TrainsCycleType> cycles;
+    private final ItemWithIdSet<TrainsCycleType> cycles;
     /** List of images for trains timetable. */
     private final ItemWithIdSet<TimetableImage> images;
     /** Train types available. */
@@ -83,7 +83,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             }
             this.fireCollectionEventObservable(type, item, null, null);
         });
-        this.cycles = new HashSet<TrainsCycleType>();
+        this.cycles = new ItemWithIdSetImpl<TrainsCycleType>(
+                (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.images = new ItemWithIdSetImpl<TimetableImage>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.engineClasses = new ItemWithIdListImpl<EngineClass>(
@@ -124,7 +125,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new FreightNetValidator(this));
         this.validators.add(new RegionRemoveValidator(this));
         this.validators.add(new NodeValidator(this));
-        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates, groups, companies, trainTypes, trains);
+        this.validators.add(new TrainCycleTypeRemoveValidator(this));
+        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
+                groups, companies, trainTypes, trains, cycles);
         this.partFactory = new TrainDiagramPartFactory(this);
     }
 
@@ -194,8 +197,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return result;
     }
 
-    public Collection<TrainsCycleType> getCycleTypes() {
-        return Collections.unmodifiableCollection(cycles);
+    public ItemWithIdSet<TrainsCycleType> getCycleTypes() {
+        return cycles;
     }
 
     public List<TrainsCycle> getEngineCycles() {
@@ -233,27 +236,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             }
         }
         return null;
-    }
-
-    public void addCyclesType(TrainsCycleType type) {
-        if (!cycles.contains(type)) {
-            type.addListener(listener);
-            cycles.add(type);
-            this.fireEvent(new Event(this, Event.Type.ADDED, type));
-        }
-    }
-
-    public void removeCyclesType(TrainsCycleType type) {
-        if (cycles.contains(type)) {
-            // remove all cycles ...
-            List<TrainsCycle> copy = new ArrayList<TrainsCycle>(type.getCycles());
-            for (TrainsCycle cycle : copy) {
-                this.removeCycle(cycle);
-            }
-            cycles.remove(type);
-            type.removeListener(listener);
-            this.fireEvent(new Event(this, Event.Type.REMOVED, type));
-        }
     }
 
     public List<TrainsCycle> getCycles(TrainsCycleType type) {
@@ -531,10 +513,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             return object;
         }
         object = getCycleById(id);
-        if (object != null) {
-            return object;
-        }
-        object = getCycleTypeById(id);
         return object;
     }
 
