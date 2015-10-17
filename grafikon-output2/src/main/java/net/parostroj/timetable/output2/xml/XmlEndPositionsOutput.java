@@ -35,8 +35,8 @@ class XmlEndPositionsOutput extends OutputWithCharset {
         try {
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
-            List<Position> engines = pe.getEndPositions(diagram.getEngineCycles(), null);
-            List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles(), null);
+            List<Position> engines = pe.getEndPositions(diagram.getEngineCycleType().getCycles().toCollection(), null);
+            List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycleType().getCycles().toCollection(), null);
 
             EndPositions ep = new EndPositions();
             ep.setEnginesPositions(engines);

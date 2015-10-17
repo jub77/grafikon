@@ -1,8 +1,6 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import net.parostroj.timetable.actions.ElementSort;
@@ -35,20 +33,20 @@ public class PositionsExtractor {
         return getPositionsCustom(this::getEndPositions, startingTime);
     }
 
-    private List<Cycles> getPositionsCustom(BiFunction<List<TrainsCycle>, Integer, List<Position>> function, Integer startingTime) {
+    private List<Cycles> getPositionsCustom(BiFunction<Collection<TrainsCycle>, Integer, List<Position>> function, Integer startingTime) {
         List<Cycles> cyclesList = new ArrayList<Cycles>();
         for (TrainsCycleType type : diagram.getCycleTypes()) {
             if (!type.isDefaultType()) {
                 Cycles cycles = new Cycles();
                 cycles.setName(type.getName());
-                cycles.setPositions(function.apply(diagram.getCycles(type), startingTime));
+                cycles.setPositions(function.apply(type.getCycles().toCollection(), startingTime));
                 cyclesList.add(cycles);
             }
         }
         return cyclesList;
     }
 
-    public List<Position> getStartPositions(List<TrainsCycle> cycles, Integer startingTime) {
+    public List<Position> getStartPositions(Collection<TrainsCycle> cycles, Integer startingTime) {
         List<Position> result = new LinkedList<Position>();
         for (Pair<TrainsCycleItem, TimeInterval> cycleItem : this.getItemStarts(cycles, startingTime)) {
             TrainsCycleItem start = cycleItem.first;
@@ -67,7 +65,7 @@ public class PositionsExtractor {
     /**
      * Does not support starting time.
      */
-    public List<Position> getEndPositions(List<TrainsCycle> cycles, Integer startingTime) {
+    public List<Position> getEndPositions(Collection<TrainsCycle> cycles, Integer startingTime) {
         List<Position> result = new LinkedList<Position>();
         for (TrainsCycle cycle : this.sortTrainsCycleList(cycles)) {
             if (!cycle.isEmpty()) {
@@ -83,7 +81,7 @@ public class PositionsExtractor {
         return result;
     }
 
-    private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(List<TrainsCycle> cycles, Integer startingTime) {
+    private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(Collection<TrainsCycle> cycles, Integer startingTime) {
         List<Pair<TrainsCycleItem, TimeInterval>> itemStarts = new ArrayList<>();
         for (TrainsCycle cycle : sortTrainsCycleList(cycles)) {
             List<TrainsCycleItem> items = cycle.getItems();
@@ -118,7 +116,7 @@ public class PositionsExtractor {
         return itemStarts;
     }
 
-    private List<TrainsCycle> sortTrainsCycleList(List<TrainsCycle> list) {
+    private List<TrainsCycle> sortTrainsCycleList(Collection<TrainsCycle> list) {
         ElementSort<TrainsCycle> sort = new ElementSort<>(new TrainsCycleComparator());
         return sort.sort(list);
     }

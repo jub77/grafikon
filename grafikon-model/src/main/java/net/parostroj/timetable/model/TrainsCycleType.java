@@ -40,14 +40,20 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     private String name;
     private String description;
     private final Attributes attributes;
-    private final List<TrainsCycle> cycles;
+    private final ItemWithIdSet<TrainsCycle> cycles;
 
     private final ListenerSupport listenerSupport;
 
     public TrainsCycleType(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        this.cycles = new LinkedList<TrainsCycle>();
+        this.cycles = new ItemWithIdSetImpl<TrainsCycle>(
+                (type, item) -> {
+                    if (type == Event.Type.REMOVED) {
+                        item.clear();
+                    }
+                    diagram.fireCollectionEventObservable(type, item, null, null);
+                });
         listenerSupport = new ListenerSupport();
         attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(TrainsCycleType.this, change)));
@@ -107,7 +113,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return attributes.remove(key);
     }
 
-    public List<TrainsCycle> getCycles() {
+    public ItemWithIdSet<TrainsCycle> getCycles() {
         return cycles;
     }
 

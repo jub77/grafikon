@@ -158,7 +158,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         cyclesList.clearSelection();
         if (delegate.getTrainDiagram() != null && delegate.getType() != null) {
             // set list
-            for (TrainsCycle cycle : delegate.getTrainDiagram().getCycles(delegate.getType())) {
+            for (TrainsCycle cycle : delegate.getType().getCycles()) {
                 cycles.addWrapper(Wrapper.getWrapper(cycle));
             }
         }
@@ -202,7 +202,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
         for (TrainsCycle cycle : toBeDeleted) {
             if (cycle != null) {
                 // remove from diagram
-                delegate.getTrainDiagram().removeCycle(cycle);
+                cycle.getType().getCycles().remove(cycle);
                 // fire event
                 delegate.fireEvent(TCDelegate.Action.DELETED_CYCLE, cycle);
             }
@@ -216,7 +216,7 @@ public class TCListView extends javax.swing.JPanel implements TCDelegate.Listene
             TrainsCycle cycle = new TrainsCycle(IdGenerator.getInstance().getId(), trainDiagram,
                     newNameTextField.getText(), null,
                     delegate.getType());
-            trainDiagram.addCycle(cycle);
+            cycle.getType().getCycles().add(cycle);
 
             // clear field
             newNameTextField.setText("");

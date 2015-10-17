@@ -23,7 +23,7 @@ public class CompanyRemoveValidator implements TrainDiagramValidator {
             Company removedCompany = (Company) event.getObject();
             // remove company from circulations...
             for (TrainsCycleType type : diagram.getCycleTypes()) {
-                for (TrainsCycle circulation : diagram.getCycles(type)) {
+                for (TrainsCycle circulation : type.getCycles()) {
                     Company company = circulation.getAttribute(TrainsCycle.ATTR_COMPANY, Company.class);
                     if (company == removedCompany) {
                         circulation.removeAttribute(TrainsCycle.ATTR_COMPANY);

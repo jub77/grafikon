@@ -13,7 +13,6 @@ import net.parostroj.timetable.gui.components.ElementSelectionPanel;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel.ObjectListener;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleType;
 
@@ -70,10 +69,9 @@ public class CirculationSequenceDialog extends JDialog {
 
     private void fillFree() {
         elementSelectionPanel.clear();
-        TrainDiagram diagram = circulation.getDiagram();
         TrainsCycleType type = circulation.getType();
         // left - not selected part
-        for (TrainsCycle cc : diagram.getCycles(type)) {
+        for (TrainsCycle cc : type.getCycles()) {
             if (cc != circulation && !cc.isPartOfSequence()) {
                 elementSelectionPanel.getNotSelected().addWrapper(Wrapper.getWrapper(cc));
             }

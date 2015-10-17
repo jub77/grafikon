@@ -100,7 +100,7 @@ public class CirculationView extends javax.swing.JPanel implements SaveImageActi
 
 
     private List<TrainsCycle> getCirculations() {
-        List<Wrapper<TrainsCycle>> wrappers = Wrapper.getWrapperList(diagram.getCycles(type));
+        List<Wrapper<TrainsCycle>> wrappers = Wrapper.getWrapperList(type.getCycles());
         Collections.sort(wrappers);
         List<TrainsCycle> circulations = this.extract(wrappers);
         return circulations;

@@ -144,9 +144,9 @@ public class StatusBar extends javax.swing.JPanel implements ApplicationModelLis
         if (diagram == null) {
             updateLeft("");
         } else {
-            int drivers = diagram.getDriverCycles().size();
-            int engines = diagram.getEngineCycles().size();
-            int trainUnits = diagram.getTrainUnitCycles().size();
+            int drivers = diagram.getDriverCycleType().getCycles().size();
+            int engines = diagram.getEngineCycleType().getCycles().size();
+            int trainUnits = diagram.getTrainUnitCycleType().getCycles().size();
             String text = String.format("%s: %d, %s: %d, %s: %d",
                     ResourceLoader.getString("sbar.engines"), engines,
                     ResourceLoader.getString("sbar.train.units"), trainUnits,

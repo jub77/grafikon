@@ -24,6 +24,8 @@ import net.parostroj.timetable.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Helper methods for handling model.
  *
@@ -78,11 +80,11 @@ public class ModelUtils {
             case LINE:
                 return new ArrayList<Line>(diagram.getNet().getLines());
             case TRAIN_UNIT_CYCLE:
-                return diagram.getTrainUnitCycles();
+                return ImmutableList.copyOf(diagram.getTrainUnitCycleType().getCycles());
             case ENGINE_CYCLE:
-                return diagram.getEngineCycles();
+                return ImmutableList.copyOf(diagram.getEngineCycleType().getCycles());
             case DRIVER_CYCLE:
-                return diagram.getDriverCycles();
+                return ImmutableList.copyOf(diagram.getDriverCycleType().getCycles());
             case TRAIN:
                 return new ArrayList<>(diagram.getTrains().toCollection());
             case ROUTE:
@@ -97,7 +99,7 @@ public class ModelUtils {
                 List<TrainsCycle> cycles = new LinkedList<TrainsCycle>();
                 for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
                     if (!cycleType.isDefaultType()) {
-                        cycles.addAll(diagram.getCycles(cycleType));
+                        cycles.addAll(cycleType.getCycles().toCollection());
                     }
                 }
                 return cycles;

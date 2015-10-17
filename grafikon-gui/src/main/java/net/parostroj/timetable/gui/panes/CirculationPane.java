@@ -118,7 +118,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test if empty
-        if (diagram.getCycles(delegate.getType()).isEmpty()) {
+        if (delegate.getType().getCycles().isEmpty()) {
             diagram.getCycleTypes().remove(delegate.getType());
         }
     }

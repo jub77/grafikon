@@ -190,7 +190,7 @@ public class LSVisitorBuilder implements LSVisitor {
             }
         }
 
-        diagram.addCycle(cycle);
+        cycle.getType().getCycles().add(cycle);
     }
 
     @Override

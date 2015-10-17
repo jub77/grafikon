@@ -183,17 +183,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     public Collection<TrainsCycle> getCycles() {
         List<TrainsCycle> result = new ArrayList<TrainsCycle>();
         for (TrainsCycleType type : cycleTypes) {
-            result.addAll(type.getCycles());
+            result.addAll(type.getCycles().toCollection());
         }
         return result;
     }
 
     public ItemWithIdSet<TrainsCycleType> getCycleTypes() {
         return cycleTypes;
-    }
-
-    public List<TrainsCycle> getEngineCycles() {
-        return this.getCycles(this.getEngineCycleType());
     }
 
     public TrainsCycleType getEngineCycleType() {
@@ -204,20 +200,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return this.getCycleTypeByNameImpl(TrainsCycleType.TRAIN_UNIT_CYCLE);
     }
 
-    public List<TrainsCycle> getTrainUnitCycles() {
-        return this.getCycles(this.getTrainUnitCycleType());
-    }
-
     public TrainsCycleType getDriverCycleType() {
         return this.getCycleTypeByNameImpl(TrainsCycleType.DRIVER_CYCLE);
     }
 
     public TrainsCycleType getDefaultCycleType(String typeName) {
         return this.getCycleTypeByNameImpl(typeName);
-    }
-
-    public List<TrainsCycle> getDriverCycles() {
-        return this.getCycles(this.getDriverCycleType());
     }
 
     private TrainsCycleType getCycleTypeByNameImpl(String typeName) {
@@ -229,15 +217,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    public List<TrainsCycle> getCycles(TrainsCycleType type) {
-        return Collections.unmodifiableList(type.getCycles());
-    }
-
-    public List<TrainsCycle> getCycles(String typeName) {
-        TrainsCycleType type = this.getCycleType(typeName);
-        return type != null ? this.getCycles(type) : Collections.<TrainsCycle>emptyList();
-    }
-
     public TrainsCycleType getCycleType(String typeName) {
         if (!TrainsCycleType.isDefaultType(typeName)) {
             throw new IllegalArgumentException("Only default types allowed");
@@ -245,24 +224,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return this.getCycleTypeByNameImpl(typeName);
     }
 
-    public void addCycle(TrainsCycle cycle) {
-        cycle.addListener(listener);
-        cycle.getType().getCycles().add(cycle);
-        this.fireEvent(new Event(this, Event.Type.ADDED, cycle));
-    }
-
-    public void removeCycle(TrainsCycle cycle) {
-        cycle.clear();
-        cycle.getType().getCycles().remove(cycle);
-        cycle.removeListener(listener);
-        this.fireEvent(new Event(this, Event.Type.REMOVED, cycle));
-    }
-
     public TrainsCycle getCycleById(String id) {
         for (TrainsCycleType type : cycleTypes) {
-            TrainsCycle found = getById(id, type.getCycles());
-            if (found != null)
+            TrainsCycle found = type.getCycles().getById(id);
+            if (found != null) {
                 return found;
+            }
         }
         return null;
     }
@@ -523,7 +490,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
     }
 
-    private void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
+    protected void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
         fireCollectionEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:

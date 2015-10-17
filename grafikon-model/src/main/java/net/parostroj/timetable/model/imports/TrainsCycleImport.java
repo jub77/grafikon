@@ -66,7 +66,7 @@ public class TrainsCycleImport extends Import {
             cycle.addItem(cycleItem);
         }
 
-        this.getDiagram().addCycle(cycle);
+        cycle.getType().getCycles().add(cycle);
         this.addImportedObject(cycle);
         log.trace("Successfully imported circulation: " + cycle);
         return cycle;

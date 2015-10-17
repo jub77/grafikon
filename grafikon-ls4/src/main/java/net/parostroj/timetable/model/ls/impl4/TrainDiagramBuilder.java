@@ -178,9 +178,9 @@ public class TrainDiagramBuilder {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
         if ((foundCycle = diagram.getCycleById(cycle.getId())) != null) {
-            diagram.removeCycle(foundCycle);
+            foundCycle.getType().getCycles().remove(foundCycle);
         }
-        diagram.addCycle(cycle);
+        cycle.getType().getCycles().add(cycle);
         // map of sequences
         if (lsTrainsCycle.getNext() != null) {
             circulationSequenceMap.put(lsTrainsCycle.getId(), lsTrainsCycle.getNext());

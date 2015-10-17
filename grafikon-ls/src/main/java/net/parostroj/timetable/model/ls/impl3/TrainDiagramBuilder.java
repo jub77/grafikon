@@ -114,9 +114,9 @@ public class TrainDiagramBuilder {
         TrainsCycle cycle = lsTrainsCycle.createTrainsCycle(diagram);
         TrainsCycle foundCycle = null;
         if ((foundCycle = diagram.getCycleByIdAndType(cycle.getId(), cycle.getType())) != null) {
-            diagram.removeCycle(foundCycle);
+            foundCycle.getType().getCycles().remove(foundCycle);
         }
-        diagram.addCycle(cycle);
+        cycle.getType().getCycles().add(cycle);
     }
 
     public void addImage(LSImage lsImage) {

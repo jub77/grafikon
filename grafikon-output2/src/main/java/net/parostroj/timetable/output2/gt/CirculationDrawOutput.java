@@ -35,7 +35,7 @@ public class CirculationDrawOutput extends DrawOutput {
         Collection<?> cdParamList = params.getParamValue(CD_PARAMS, Collection.class);
         if (cdParamList == null || cdParamList.isEmpty()) {
             // create default values
-            return Collections.singletonList(new CirculationDrawParams(diagram.getDriverCycles()));
+            return Collections.singletonList(new CirculationDrawParams(diagram.getDriverCycleType().getCycles().toCollection()));
         } else {
             return ObjectsUtil.checkedCollection(cdParamList, CirculationDrawParams.class);
         }

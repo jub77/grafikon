@@ -97,13 +97,13 @@ public class SelectionHelper {
 
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {
         if (type != null) {
-            return diagram.getCycles(type);
+            return new ArrayList<>(type.getCycles().toCollection());
         } else {
             // collect all non-default
             List<TrainsCycle> result = new LinkedList<TrainsCycle>();
             for (TrainsCycleType aType : diagram.getCycleTypes()) {
                 if (!TrainsCycleType.isDefaultType(aType))
-                    result.addAll(diagram.getCycles(aType));
+                    result.addAll(aType.getCycles().toCollection());
             }
             return result;
         }

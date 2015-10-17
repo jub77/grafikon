@@ -114,7 +114,7 @@ public class OutputAction extends AbstractAction {
                 return false;
             }
         } else if (outputType == OutputType.TRAINS_BY_DRIVER_CYCLES) {
-            selection = model.getDiagram().getDriverCycles();
+            selection = model.getDiagram().getDriverCycleType().getCycles().toCollection();
         }
         return true;
     }
@@ -170,7 +170,7 @@ public class OutputAction extends AbstractAction {
             oFile = new File(outputFile, ResourceLoader.getString("out.ep") + "." + suffix);
             eOutputs.add(new ExecutableOutput(output, this.createParams(output, oFile, null, OutputType.ENDS)));
             // tt by dc
-            Collection<TrainsCycle> cycles = model.getDiagram().getDriverCycles();
+            Collection<TrainsCycle> cycles = model.getDiagram().getDriverCycleType().getCycles().toCollection();
             output = of.createOutput("trains");
             for (TrainsCycle cycle : cycles) {
                 OutputParams params = this.createParams(output, createUniqueOutputFile(cycle, outputFile, OutputType.TRAINS_BY_DRIVER_CYCLES), cycle, OutputType.TRAINS_BY_DRIVER_CYCLES);

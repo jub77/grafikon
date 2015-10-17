@@ -17,8 +17,8 @@ public class EndsTemplateBinding extends GroovyTemplateBinding {
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
-        List<Position> engines = pe.getEndPositions(diagram.getEngineCycles(), null);
-        List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycles(), null);
+        List<Position> engines = pe.getEndPositions(diagram.getEngineCycleType().getCycles().toCollection(), null);
+        List<Position> trainUnits = pe.getEndPositions(diagram.getTrainUnitCycleType().getCycles().toCollection(), null);
         List<Cycles> customCycles = pe.getEndPositionsCustom(null);
 
         // call template
