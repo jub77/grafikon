@@ -25,7 +25,7 @@ public class EditCompaniesDialog extends EditItemsDialog<Company, TrainDiagram> 
 
     @Override
     protected Collection<Company> getList() {
-        return element.getCompanies().toCollection();
+        return element.getCompanies();
     }
 
     @Override

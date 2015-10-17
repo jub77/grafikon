@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.Event;
 
-class ItemListImpl<T> implements ItemList<T> {
+class ItemListImpl<T> extends AbstractList<T> implements ItemList<T> {
 
     interface ItemListEventCallback<E> {
         void fire(Event.Type type, E item, Integer newIndex, Integer oldIndex);
@@ -23,33 +23,18 @@ class ItemListImpl<T> implements ItemList<T> {
     }
 
     @Override
-    public void add(T item) {
-        items.add(item);
-        this.fireEvent(Event.Type.ADDED, item, items.size() - 1, null);
-    }
-
-    @Override
     public void add(int index, T item) {
         items.add(index, item);
         this.fireEvent(Event.Type.ADDED, item, index, null);
     }
 
     @Override
-    public void remove(T item) {
-        int index = items.indexOf(item);
-        if (items.remove(item)) {
-            this.fireEvent(Event.Type.REMOVED, item, index, null);
+    public T remove(int index) {
+        T removed = items.remove(index);
+        if (removed != null) {
+            this.fireEvent(Event.Type.REMOVED, removed, index, null);
         }
-    }
-
-    @Override
-    public void move(T item, int index) {
-        int oldIndex = items.indexOf(item);
-        if (oldIndex == -1) {
-            throw new IllegalArgumentException("Item not in list");
-        }
-        this.move(oldIndex, index);
-
+        return removed;
     }
 
     @Override
@@ -60,28 +45,8 @@ class ItemListImpl<T> implements ItemList<T> {
     }
 
     @Override
-    public List<T> toList() {
-        return Collections.unmodifiableList(items);
-    }
-
-    @Override
-    public Collection<T> toCollection() {
-        return this.toList();
-    }
-
-    @Override
     public T get(int index) {
         return items.get(index);
-    }
-
-    @Override
-    public int indexOf(T item) {
-        return items.indexOf(item);
-    }
-
-    @Override
-    public boolean contains(T item) {
-        return items.contains(item);
     }
 
     @Override
@@ -97,7 +62,18 @@ class ItemListImpl<T> implements ItemList<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return items.iterator();
+        final Iterator<T> iter = items.iterator();
+        return new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public T next() {
+                return iter.next();
+            }
+        };
     }
 
     @Override

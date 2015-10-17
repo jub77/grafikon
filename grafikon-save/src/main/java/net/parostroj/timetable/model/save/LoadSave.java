@@ -115,7 +115,7 @@ public class LoadSave implements FileLoadSave {
             this.createMetadata().store(zipOutput, null);
 
             // save train types
-            LSTrainTypeList trainTypeList = new LSTrainTypeList(diagram.getTrainTypes().toList(), diagram.getTrainsData());
+            LSTrainTypeList trainTypeList = new LSTrainTypeList(diagram.getTrainTypes(), diagram.getTrainsData());
             zipOutput.putNextEntry(new ZipEntry(TRAIN_TYPES_NAME));
             LSTrainTypeSerializer tts = LSTrainTypeSerializer.getLSTrainTypeSerializer(LSSerializer.getLatestVersion());
             tts.save(new OutputStreamWriter(zipOutput, "utf-8"), trainTypeList);

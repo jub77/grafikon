@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.parostroj.timetable.model.events.Event;
 
-class ItemSetImpl<T> implements ItemSet<T> {
+class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
 
     interface ItemSetEventCallback<E> {
         void fire(Event.Type type, E item);
@@ -23,26 +23,20 @@ class ItemSetImpl<T> implements ItemSet<T> {
     }
 
     @Override
-    public void add(T item) {
+    public boolean add(T item) {
         items.add(item);
         this.fireEvent(Event.Type.ADDED, item);
+        return true;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void remove(T item) {
-        if (items.remove(item)) {
-            this.fireEvent(Event.Type.REMOVED, item);
+    public boolean remove(Object item) {
+        boolean removed = items.remove(item);
+        if (removed) {
+            this.fireEvent(Event.Type.REMOVED, (T)item);
         }
-    }
-
-    @Override
-    public Collection<T> toCollection() {
-        return Collections.unmodifiableCollection(items);
-    }
-
-    @Override
-    public boolean contains(T item) {
-        return items.contains(item);
+        return removed;
     }
 
     @Override
@@ -58,7 +52,18 @@ class ItemSetImpl<T> implements ItemSet<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return items.iterator();
+        final Iterator<T> iter = items.iterator();
+        return new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public T next() {
+                return iter.next();
+            }
+        };
     }
 
     @Override

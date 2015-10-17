@@ -37,7 +37,7 @@ public class EditAttachmentsDialog extends EditItemsDialog<Attachment, OutputTem
 
     @Override
     protected Collection<Attachment> getList() {
-        return element.getAttachments().toCollection();
+        return element.getAttachments();
     }
 
     @Override

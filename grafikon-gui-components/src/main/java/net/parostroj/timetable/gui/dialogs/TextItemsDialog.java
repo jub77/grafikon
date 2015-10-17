@@ -69,7 +69,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
 
     public void showDialog(TrainDiagram diagram) {
         this.diagram = diagram;
-        itemsModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getTextItems().toList()));
+        itemsModel.setListOfWrappers(Wrapper.getWrapperList(diagram.getTextItems()));
         this.setVisible(true);
     }
 

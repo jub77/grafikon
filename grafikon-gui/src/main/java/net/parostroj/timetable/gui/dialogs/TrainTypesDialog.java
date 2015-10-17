@@ -69,7 +69,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // fill train type jlist
-        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(diagram.getTrainTypes().toList()), null, false);
+        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(diagram.getTrainTypes()), null, false);
         typesModel.setObjectListener(new ObjectListener<TrainType>() {
             @Override
             public void added(TrainType object, int index) {

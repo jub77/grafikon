@@ -39,7 +39,7 @@ public class PositionsExtractor {
             if (!type.isDefaultType()) {
                 Cycles cycles = new Cycles();
                 cycles.setName(type.getName());
-                cycles.setPositions(function.apply(type.getCycles().toCollection(), startingTime));
+                cycles.setPositions(function.apply(type.getCycles(), startingTime));
                 cyclesList.add(cycles);
             }
         }

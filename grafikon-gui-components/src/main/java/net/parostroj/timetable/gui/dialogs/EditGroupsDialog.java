@@ -20,7 +20,7 @@ public class EditGroupsDialog extends EditItemsDialog<Group, TrainDiagram> {
 
     @Override
     protected Collection<Group> getList() {
-        return element.getGroups().toCollection();
+        return element.getGroups();
     }
 
     @Override

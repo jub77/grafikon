@@ -20,8 +20,8 @@ public class StartsTemplateBinding extends GroovyTemplateBinding {
         Integer startTime = params.getParamValue("start.time", Integer.class);
         // extract positions
         PositionsExtractor pe = new PositionsExtractor(diagram);
-        List<Position> engines = pe.getStartPositions(diagram.getEngineCycleType().getCycles().toCollection(), startTime);
-        List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycleType().getCycles().toCollection(), startTime);
+        List<Position> engines = pe.getStartPositions(diagram.getEngineCycleType().getCycles(), startTime);
+        List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycleType().getCycles(), startTime);
         List<Cycles> customCycles = pe.getStartPositionsCustom(startTime);
 
         // call template

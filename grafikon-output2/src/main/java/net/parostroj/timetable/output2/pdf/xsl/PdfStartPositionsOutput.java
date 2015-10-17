@@ -30,8 +30,8 @@ class PdfStartPositionsOutput extends PdfOutput {
         try {
             // extract positions
             PositionsExtractor pe = new PositionsExtractor(diagram);
-            List<Position> engines = pe.getStartPositions(diagram.getEngineCycleType().getCycles().toCollection(), null);
-            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycleType().getCycles().toCollection(), null);
+            List<Position> engines = pe.getStartPositions(diagram.getEngineCycleType().getCycles(), null);
+            List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycleType().getCycles(), null);
 
             // call template
             StartPositions sp = new StartPositions();

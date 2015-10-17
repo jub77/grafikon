@@ -72,7 +72,7 @@ public class SelectionHelper {
         } else {
             ElementSort<Train> s = new ElementSort<Train>(
                     new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
-            return s.sort(diagram.getTrains().toCollection());
+            return s.sort(diagram.getTrains());
         }
     }
 
@@ -97,13 +97,13 @@ public class SelectionHelper {
 
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {
         if (type != null) {
-            return new ArrayList<>(type.getCycles().toCollection());
+            return new ArrayList<>(type.getCycles());
         } else {
             // collect all non-default
             List<TrainsCycle> result = new LinkedList<TrainsCycle>();
             for (TrainsCycleType aType : diagram.getCycleTypes()) {
                 if (!TrainsCycleType.isDefaultType(aType))
-                    result.addAll(aType.getCycles().toCollection());
+                    result.addAll(aType.getCycles());
             }
             return result;
         }

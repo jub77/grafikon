@@ -86,7 +86,7 @@ public class ModelUtils {
             case DRIVER_CYCLE:
                 return ImmutableList.copyOf(diagram.getDriverCycleType().getCycles());
             case TRAIN:
-                return new ArrayList<>(diagram.getTrains().toCollection());
+                return new ArrayList<>(diagram.getTrains());
             case ROUTE:
                 List<Route> routes = new LinkedList<Route>();
                 for (Route r : diagram.getRoutes()) {
@@ -99,7 +99,7 @@ public class ModelUtils {
                 List<TrainsCycle> cycles = new LinkedList<TrainsCycle>();
                 for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
                     if (!cycleType.isDefaultType()) {
-                        cycles.addAll(cycleType.getCycles().toCollection());
+                        cycles.addAll(cycleType.getCycles());
                     }
                 }
                 return cycles;

@@ -46,31 +46,31 @@ public enum ImportComponent {
         Set<ObjectWithId> map = new LinkedHashSet<ObjectWithId>();
         switch (this) {
             case COMPANIES:
-                map.addAll(diagram.getCompanies().toCollection());
+                map.addAll(diagram.getCompanies());
                 break;
             case REGIONS:
-                map.addAll(diagram.getNet().getRegions().toCollection());
+                map.addAll(diagram.getNet().getRegions());
                 break;
             case NODES:
                 map.addAll(diagram.getNet().getNodes());
                 break;
             case GROUPS:
-                map.addAll(diagram.getGroups().toCollection());
+                map.addAll(diagram.getGroups());
                 break;
             case TRAINS:
-                map.addAll(diagram.getTrains().toCollection());
+                map.addAll(diagram.getTrains());
                 break;
             case TRAIN_TYPES:
-                map.addAll(diagram.getTrainTypes().toList());
+                map.addAll(diagram.getTrainTypes());
                 break;
             case LINE_CLASSES:
-                map.addAll(diagram.getNet().getLineClasses().toList());
+                map.addAll(diagram.getNet().getLineClasses());
                 break;
             case ENGINE_CLASSES:
-                map.addAll(diagram.getEngineClasses().toList());
+                map.addAll(diagram.getEngineClasses());
                 break;
             case OUTPUT_TEMPLATES:
-                map.addAll(diagram.getOutputTemplates().toList());
+                map.addAll(diagram.getOutputTemplates());
                 break;
             case TRAINS_CYCLES:
                 map.addAll(diagram.getCycles());
@@ -86,7 +86,7 @@ public enum ImportComponent {
                 map.addAll(diagram.getNet().getLines());
                 break;
             case ROUTES:
-                map.addAll(diagram.getRoutes().toCollection());
+                map.addAll(diagram.getRoutes());
                 break;
         }
         return map;

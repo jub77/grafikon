@@ -1,18 +1,23 @@
 package net.parostroj.timetable.model;
 
 import java.util.List;
+import java.util.function.Predicate;
 
-public interface ItemList<T> extends ItemSet<T> {
+import com.google.common.collect.Iterables;
 
-    void add(int index, T item);
+public interface ItemList<T> extends List<T> {
 
-    void move(T item, int index);
+    default void move(T item, int index) {
+        int oldIndex = this.indexOf(item);
+        if (oldIndex == -1) {
+            throw new IllegalArgumentException("Item not in list");
+        }
+        this.move(oldIndex, index);
+    }
 
     void move(int oldIndex, int newIndex);
 
-    List<T> toList();
-
-    T get(int index);
-
-    int indexOf(T item);
+    default T find(Predicate<T> predicate) {
+        return Iterables.tryFind(this, predicate::test).orNull();
+    }
 }

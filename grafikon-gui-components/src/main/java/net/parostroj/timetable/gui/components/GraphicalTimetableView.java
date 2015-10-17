@@ -206,7 +206,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
         if (diagram == null) {
             // do nothing
         } else {
-            this.createMenuForRoutes(diagram.getRoutes().toCollection());
+            this.createMenuForRoutes(diagram.getRoutes());
             this.setComponentPopupMenu(popupMenu);
         }
         this.fireDiagramChanged(diagram);
@@ -409,7 +409,7 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
     @Override
     protected void routesChanged(Event event) {
         // changed list of routes
-        this.createMenuForRoutes(diagram.getRoutes().toCollection());
+        this.createMenuForRoutes(diagram.getRoutes());
 
         super.routesChanged(event);
     }

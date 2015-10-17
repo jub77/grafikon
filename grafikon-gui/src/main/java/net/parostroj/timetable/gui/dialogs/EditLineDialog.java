@@ -92,7 +92,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         controlledCheckBox.setSelected(Boolean.TRUE.equals(line.getAttribute(Line.ATTR_CONTROLLED, Boolean.class)));
 
         // update line class combo box
-        List<LineClass> classes = line.getDiagram().getNet().getLineClasses().toList();
+        List<LineClass> classes = line.getDiagram().getNet().getLineClasses();
         lineClassComboBox.removeAllItems();
         lineClassComboBox.addItem(noneLineClass);
         for (LineClass clazz : classes) {

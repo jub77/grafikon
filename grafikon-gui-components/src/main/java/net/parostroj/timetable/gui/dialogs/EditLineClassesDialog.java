@@ -14,7 +14,7 @@ public class EditLineClassesDialog extends EditItemsDialog<LineClass, TrainDiagr
 
     @Override
     protected Collection<LineClass> getList() {
-        return element.getNet().getLineClasses().toList();
+        return element.getNet().getLineClasses();
     }
 
     @Override
