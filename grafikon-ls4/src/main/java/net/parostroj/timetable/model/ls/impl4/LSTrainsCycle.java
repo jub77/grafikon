@@ -106,7 +106,7 @@ public class LSTrainsCycle {
     }
 
     public TrainsCycle createTrainsCycle(TrainDiagram diagram) throws LSException {
-        TrainsCycleType cycleType = diagram.getCycleTypeById(type);
+        TrainsCycleType cycleType = diagram.getCycleTypes().getById(type);
         if (cycleType == null) {
             // fallback to name
             for (TrainsCycleType t : diagram.getCycleTypes()) {

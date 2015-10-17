@@ -160,7 +160,7 @@ public abstract class Import {
             return diagram.getDefaultCycleType(origCycleType.getName());
         }
         if (match == ImportMatch.ID) {
-            return diagram.getCycleTypeById(origCycleType.getId());
+            return diagram.getCycleTypes().getById(origCycleType.getId());
         } else {
             return Iterables
                     .tryFind(diagram.getCycleTypes(),

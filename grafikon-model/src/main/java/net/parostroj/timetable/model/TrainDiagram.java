@@ -234,10 +234,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return null;
     }
 
-    public TrainsCycleType getCycleTypeById(String id) {
-        return this.getById(id, cycleTypes);
-    }
-
     public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
         return getById(id, type.getCycles());
     }
