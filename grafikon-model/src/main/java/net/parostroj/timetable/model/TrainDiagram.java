@@ -30,8 +30,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ItemWithIdSet<Route> routes;
     /** Trains. */
     private final ItemWithIdSet<Train> trains;
-    /** Cycles. */
-    private final ItemWithIdSet<TrainsCycleType> cycles;
+    /** Cycle types. */
+    private final ItemWithIdSet<TrainsCycleType> cycleTypes;
     /** List of images for trains timetable. */
     private final ItemWithIdSet<TimetableImage> images;
     /** Train types available. */
@@ -83,7 +83,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             }
             this.fireCollectionEventObservable(type, item, null, null);
         });
-        this.cycles = new ItemWithIdSetImpl<TrainsCycleType>(
+        this.cycleTypes = new ItemWithIdSetImpl<TrainsCycleType>(
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.images = new ItemWithIdSetImpl<TimetableImage>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
@@ -127,7 +127,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new NodeValidator(this));
         this.validators.add(new TrainCycleTypeRemoveValidator(this));
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
-                groups, companies, trainTypes, trains, cycles);
+                groups, companies, trainTypes, trains, cycleTypes);
         this.partFactory = new TrainDiagramPartFactory(this);
     }
 
@@ -182,14 +182,14 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public Collection<TrainsCycle> getCycles() {
         List<TrainsCycle> result = new ArrayList<TrainsCycle>();
-        for (TrainsCycleType type : cycles) {
+        for (TrainsCycleType type : cycleTypes) {
             result.addAll(type.getCycles());
         }
         return result;
     }
 
     public ItemWithIdSet<TrainsCycleType> getCycleTypes() {
-        return cycles;
+        return cycleTypes;
     }
 
     public List<TrainsCycle> getEngineCycles() {
@@ -221,7 +221,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     private TrainsCycleType getCycleTypeByNameImpl(String typeName) {
-        for (TrainsCycleType type : cycles) {
+        for (TrainsCycleType type : cycleTypes) {
             if (typeName.equals(type.getName())) {
                 return type;
             }
@@ -259,7 +259,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycle getCycleById(String id) {
-        for (TrainsCycleType type : cycles) {
+        for (TrainsCycleType type : cycleTypes) {
             TrainsCycle found = getById(id, type.getCycles());
             if (found != null)
                 return found;
@@ -268,7 +268,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycleType getCycleTypeById(String id) {
-        return this.getById(id, cycles);
+        return this.getById(id, cycleTypes);
     }
 
     public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
@@ -286,7 +286,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private List<TrainsCycle> getCyclesIntern(TrainsCycleType type) {
         if (type == null)
             throw new IllegalArgumentException("Type cannot be null");
-        if (!cycles.contains(type))
+        if (!cycleTypes.contains(type))
             throw new IllegalArgumentException("Unknown type: " + type);
         return type.getCycles();
     }
@@ -473,7 +473,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         for(Train train : trains) {
             train.accept(visitor);
         }
-        for (TrainsCycleType type : cycles) {
+        for (TrainsCycleType type : cycleTypes) {
             type.accept(visitor);
         }
         for (TimetableImage image : images) {
