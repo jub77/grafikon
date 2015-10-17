@@ -54,6 +54,9 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
     public Iterator<T> iterator() {
         final Iterator<T> iter = items.iterator();
         return new Iterator<T>() {
+
+            private T last;
+
             @Override
             public boolean hasNext() {
                 return iter.hasNext();
@@ -61,7 +64,14 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
 
             @Override
             public T next() {
-                return iter.next();
+                last = iter.next();
+                return last;
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+                fireEvent(Event.Type.REMOVED, last);
             }
         };
     }

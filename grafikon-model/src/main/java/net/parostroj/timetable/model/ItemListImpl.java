@@ -64,6 +64,10 @@ class ItemListImpl<T> extends AbstractList<T> implements ItemList<T> {
     public Iterator<T> iterator() {
         final Iterator<T> iter = items.iterator();
         return new Iterator<T>() {
+
+            private T last;
+            private int index = -1;
+
             @Override
             public boolean hasNext() {
                 return iter.hasNext();
@@ -71,7 +75,15 @@ class ItemListImpl<T> extends AbstractList<T> implements ItemList<T> {
 
             @Override
             public T next() {
-                return iter.next();
+                last = iter.next();
+                index++;
+                return last;
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+                fireEvent(Event.Type.REMOVED, last, index, null);
             }
         };
     }
