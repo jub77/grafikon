@@ -95,7 +95,7 @@ public class TrainDiagramBuilder {
     public void setTrain(LSTrain lsTrain) {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
-        if ((foundTrain = diagram.getTrainById(train.getId())) != null) {
+        if ((foundTrain = diagram.getTrains().getById(train.getId())) != null) {
             diagram.getTrains().remove(foundTrain);
         }
         diagram.getTrains().add(train);

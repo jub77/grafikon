@@ -124,7 +124,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new FreightNetValidator(this));
         this.validators.add(new RegionRemoveValidator(this));
         this.validators.add(new NodeValidator(this));
-        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates, groups, companies, trainTypes);
+        Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates, groups, companies, trainTypes, trains);
         this.partFactory = new TrainDiagramPartFactory(this);
     }
 
@@ -175,10 +175,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      */
     public ItemWithIdSet<Train> getTrains() {
         return this.trains;
-    }
-
-    public Train getTrainById(String id) {
-        return getById(id, trains);
     }
 
     public Train getTrainByNumber(String number) {
@@ -529,10 +525,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             if (object != null) {
                 return object;
             }
-        }
-        object = getTrainById(id);
-        if (object != null) {
-            return object;
         }
         object = getNet().getObjectById(id);
         if (object != null) {

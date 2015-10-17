@@ -66,7 +66,7 @@ public class LSTrainsCycleItem {
     }
 
     public TrainsCycleItem createTrainsCycleItem(TrainsCycle cycle, TrainDiagram diagram) {
-        Train modelTrain = diagram.getTrainById(train);
+        Train modelTrain = diagram.getTrains().getById(train);
         TrainsCycleItem item = new TrainsCycleItem(cycle, modelTrain,
                 comment, modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));
         return item;

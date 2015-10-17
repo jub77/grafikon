@@ -107,8 +107,8 @@ public class TrainDiagramBuilder {
         FreightNet net = lsFreightNet.createFreightNet(diagram);
         this.diagram.setFreightNet(net);
         for (LSFreightConnection lsConnection : lsFreightNet.getConnections()) {
-            Train from = diagram.getTrainById(lsConnection.getTrainFrom());
-            Train to = diagram.getTrainById(lsConnection.getTrainTo());
+            Train from = diagram.getTrains().getById(lsConnection.getTrainFrom());
+            Train to = diagram.getTrains().getById(lsConnection.getTrainTo());
             TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
             TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
             FNConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
@@ -159,7 +159,7 @@ public class TrainDiagramBuilder {
     public void setTrain(LSTrain lsTrain) throws LSException {
         Train train = lsTrain.createTrain(diagram);
         Train foundTrain = null;
-        if ((foundTrain = diagram.getTrainById(train.getId())) != null) {
+        if ((foundTrain = diagram.getTrains().getById(train.getId())) != null) {
             diagram.getTrains().remove(foundTrain);
         }
         diagram.getTrains().add(train);

@@ -132,7 +132,7 @@ public abstract class Import {
 
     protected Train getTrain(Train origTrain) {
         if (match == ImportMatch.ID) {
-            return diagram.getTrainById(origTrain.getId());
+            return diagram.getTrains().getById(origTrain.getId());
         } else {
             return Iterables.tryFind(diagram.getTrains(), train -> {
                 TrainType trainType = getTrainType(origTrain.getType());
