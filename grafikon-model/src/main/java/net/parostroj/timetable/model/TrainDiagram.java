@@ -365,7 +365,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public void setPenaltyTable(PenaltyTable penaltyTable) {
-        this.penaltyTable = penaltyTable;
+        if (this.penaltyTable != penaltyTable) {
+            PenaltyTable oldPenaltyTable = this.penaltyTable;
+            this.penaltyTable = penaltyTable;
+            this.fireEvent(new Event(this,
+                    new AttributeChange(TrainDiagram.ATTR_PENALTY_TABLE, oldPenaltyTable, penaltyTable)));
+        }
     }
 
     @Override
