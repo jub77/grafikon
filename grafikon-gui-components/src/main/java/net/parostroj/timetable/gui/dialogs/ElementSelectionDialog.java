@@ -31,12 +31,12 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     /**
      * shows dialog and returns list of selected elements.
      *
-     * @see #selectElements(List, List)
+     * @see #selectElements(Collection, Collection)
      *
      * @param list list of elements
      * @return list of selected elements
      */
-    public List<T> selectElements(List<? extends T> list) {
+    public List<T> selectElements(Collection<? extends T> list) {
         return this.selectElements(list, null);
     }
 
