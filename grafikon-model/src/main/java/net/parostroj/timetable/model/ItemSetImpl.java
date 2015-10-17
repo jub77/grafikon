@@ -10,7 +10,7 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
         void fire(Event.Type type, E item);
     }
 
-    private final List<T> items;
+    private final Set<T> items;
     private final ItemSetEventCallback<T> eventCallback;
 
     protected ItemSetImpl() {
@@ -18,15 +18,17 @@ class ItemSetImpl<T> extends AbstractSet<T> implements ItemSet<T> {
     }
 
     protected ItemSetImpl(ItemSetEventCallback<T> eventCallback) {
-        this.items = new ArrayList<>();
+        this.items = new HashSet<>();
         this.eventCallback = eventCallback;
     }
 
     @Override
     public boolean add(T item) {
-        items.add(item);
-        this.fireEvent(Event.Type.ADDED, item);
-        return true;
+        boolean added = items.add(item);
+        if (added) {
+            this.fireEvent(Event.Type.ADDED, item);
+        }
+        return added;
     }
 
     @SuppressWarnings("unchecked")
