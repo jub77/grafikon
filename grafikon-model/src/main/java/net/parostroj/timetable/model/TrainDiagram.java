@@ -230,7 +230,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public List<TrainsCycle> getCycles(TrainsCycleType type) {
-        return Collections.unmodifiableList(this.getCyclesIntern(type));
+        return Collections.unmodifiableList(type.getCycles());
     }
 
     public List<TrainsCycle> getCycles(String typeName) {
@@ -247,13 +247,13 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public void addCycle(TrainsCycle cycle) {
         cycle.addListener(listener);
-        this.getCyclesIntern(cycle.getType()).add(cycle);
+        cycle.getType().getCycles().add(cycle);
         this.fireEvent(new Event(this, Event.Type.ADDED, cycle));
     }
 
     public void removeCycle(TrainsCycle cycle) {
         cycle.clear();
-        this.getCyclesIntern(cycle.getType()).remove(cycle);
+        cycle.getType().getCycles().remove(cycle);
         cycle.removeListener(listener);
         this.fireEvent(new Event(this, Event.Type.REMOVED, cycle));
     }
@@ -272,7 +272,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycle getCycleByIdAndType(String id, TrainsCycleType type) {
-        return getById(id, getCyclesIntern(type));
+        return getById(id, type.getCycles());
     }
 
     public FreightNet getFreightNet() {
@@ -281,14 +281,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     private <T extends ObjectWithId> T getById(String id, Iterable<T> items) {
         return Iterables.tryFind(items, ModelPredicates.matchId(id)).orNull();
-    }
-
-    private List<TrainsCycle> getCyclesIntern(TrainsCycleType type) {
-        if (type == null)
-            throw new IllegalArgumentException("Type cannot be null");
-        if (!cycleTypes.contains(type))
-            throw new IllegalArgumentException("Unknown type: " + type);
-        return type.getCycles();
     }
 
     public ItemWithIdSet<TimetableImage> getImages() {
