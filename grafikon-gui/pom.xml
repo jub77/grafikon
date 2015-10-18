@@ -56,9 +56,5 @@
             <groupId>org.ini4j</groupId>
             <artifactId>ini4j</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.beanfabrics</groupId>
-            <artifactId>beanfabrics-swing</artifactId>
-        </dependency>
     </dependencies>
 </project>
