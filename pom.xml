@@ -18,7 +18,6 @@
         <jgraph.version>3.3.1.1</jgraph.version>
         <jgrapht.version>0.9.1</jgrapht.version>
         <mvel2.version>2.2.6.Final</mvel2.version>
-        <jersey.version>1.18.3</jersey.version>
         <slf4j.version>1.7.12</slf4j.version>
         <commons.io.version>1.3.1</commons.io.version>
         <fop.version>2.0</fop.version>
@@ -141,11 +140,6 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fifesoft</groupId>
@@ -293,11 +287,6 @@
             </dependency>
             <dependency>
                 <groupId>net.parostroj</groupId>
-                <artifactId>grafikon-net</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.parostroj</groupId>
                 <artifactId>grafikon-output2</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -339,7 +328,6 @@
         <module>grafikon-templates</module>
         <module>grafikon-output2</module>
         <module>grafikon-gui-components</module>
-        <module>grafikon-net</module>
         <module>grafikon-gui</module>
         <module>grafikon-start</module>
         <module>grafikon-assembly</module>

@@ -31,7 +31,6 @@
         <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-net-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-ls4-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-model-${grafikon.jnlp.version}.jar" download="eager"/>
         <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
@@ -42,8 +41,6 @@
         <jar href="jgrapht-core-${jgrapht.version}.jar" download="eager"/>
         <jar href="jgraphx-${jgraph.version}.jar" download="eager"/>
         <jar href="mvel2-${mvel2.version}.jar" download="eager"/>
-        <jar href="jersey-client-${jersey.version}.jar" download="eager"/>
-        <jar href="jersey-core-${jersey.version}.jar" download="eager"/>
         <jar href="slf4j-api-${slf4j.version}.jar" download="eager"/>
         <jar href="slf4j-jdk14-${slf4j.version}.jar" download="eager"/>
         <jar href="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" download="eager"/>

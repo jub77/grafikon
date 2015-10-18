@@ -16,10 +16,6 @@
         </dependency>
         <dependency>
             <groupId>net.parostroj</groupId>
-            <artifactId>grafikon-net</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.parostroj</groupId>
             <artifactId>grafikon-output2</artifactId>
         </dependency>
         <dependency>
