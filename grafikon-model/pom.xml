@@ -9,6 +9,10 @@
     <artifactId>grafikon-model</artifactId>
     <packaging>jar</packaging>
     <name>grafikon-model</name>
+    
+    <properties>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
 
     <build>
         <resources>
@@ -45,6 +49,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 </project>
