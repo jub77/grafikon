@@ -112,22 +112,27 @@ public class GraphicalTimetableViewDraw extends javax.swing.JPanel implements Sc
                     for (RegionCollector<?> collector : gtStorage.collectors()) {
                         collector.processEvent(event);
                     }
+                    Refresh refresh = Refresh.NONE;
                     if (draw != null) {
-                        Refresh refresh = draw.processEvent(event);
-                        switch (refresh) {
-                            case REPAINT:
-                                repaint();
-                                break;
-                            case RECREATE:
-                                recreateDraw();
-                                break;
-                            case RECREATE_WITH_TIME:
-                                recreateDraw();
-                                break;
-                            default:
-                                // nothing
-                                break;
-                        }
+                        refresh = draw.processEvent(event);
+                    }
+                    if (event.getType() == Event.Type.ATTRIBUTE && event.getSource() instanceof TrainDiagram && event
+                            .getAttributeChange().checkName(TrainDiagram.ATTR_TO_TIME, TrainDiagram.ATTR_FROM_TIME)) {
+                        refresh = refresh.update(Refresh.RECREATE_WITH_TIME);
+                    }
+                    switch (refresh) {
+                        case REPAINT:
+                            repaint();
+                            break;
+                        case RECREATE:
+                            recreateDraw();
+                            break;
+                        case RECREATE_WITH_TIME:
+                            recreateDraw();
+                            break;
+                        default:
+                            // nothing
+                            break;
                     }
                 }
             };

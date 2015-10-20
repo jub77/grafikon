@@ -697,8 +697,8 @@ abstract public class GTDrawBase implements GTDraw {
                         }
                         break;
                     case ATTRIBUTE:
-                        String name = event.getAttributeChange().getName();
-                        if (TrainDiagram.ATTR_FROM_TIME.equals(name) || TrainDiagram.ATTR_TO_TIME.equals(name)) {
+                        if (event.getAttributeChange().checkName(TrainDiagram.ATTR_FROM_TIME,
+                                TrainDiagram.ATTR_TO_TIME)) {
                             setRefresh(Refresh.RECREATE_WITH_TIME);
                         }
                         break;
