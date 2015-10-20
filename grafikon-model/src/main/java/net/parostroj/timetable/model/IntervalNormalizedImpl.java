@@ -14,12 +14,13 @@ final public class IntervalNormalizedImpl extends IntervalImpl {
 
     IntervalNormalizedImpl(int start, int end) {
         super(start, end);
-        if (!TimeUtil.isNormalizedTime(start))
-            throw new IllegalArgumentException("Start is not normalized.");
+        if (!TimeUtil.isNormalizedTime(start)) {
+            throw new IllegalArgumentException("Start is not normalized");
+        }
         // over midnight
         if (TimeUtil.isNormalizedTime(start) && !TimeUtil.isNormalizedTime(end)) {
             // limited implementation of interval - it doesn't support a lot of methods
-            overMidnight = new IntervalImpl(start - TimeInterval.DAY, end - TimeInterval.DAY);
+            overMidnight = new IntervalNonNormalizedImpl(start - TimeInterval.DAY, end - TimeInterval.DAY, this);
         } else {
             overMidnight = null;
         }
@@ -67,7 +68,7 @@ final public class IntervalNormalizedImpl extends IntervalImpl {
         } else if (this.isOverThreshold(threshold)) {
             int s = start < threshold ? start + TimeInterval.DAY : start - TimeInterval.DAY;
             int e = s + this.getLength();
-            return new IntervalImpl(s, e);
+            return new IntervalNonNormalizedImpl(s, e, this);
         } else {
             return null;
         }

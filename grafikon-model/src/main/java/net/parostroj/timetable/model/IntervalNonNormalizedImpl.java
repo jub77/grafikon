@@ -13,11 +13,23 @@ final public class IntervalNonNormalizedImpl extends IntervalImpl {
 
     IntervalNonNormalizedImpl(int start, int end) {
         super(start, end);
-        if (TimeUtil.isNormalizedTime(start))
-            throw new IllegalArgumentException("Start is normalized.");
+        if (TimeUtil.isNormalizedTime(start)) {
+            throw new IllegalArgumentException("Start is normalized");
+        }
         int normalizedStart = TimeUtil.normalizeTime(start);
         int computedEnd = normalizedStart + getLength();
         normalized = IntervalFactory.createInterval(normalizedStart, computedEnd);
+    }
+
+    IntervalNonNormalizedImpl(int start, int end, Interval normalized) {
+        super(start, end);
+        if (TimeUtil.isNormalizedTime(start)) {
+            throw new IllegalArgumentException("Start is not normalized");
+        }
+        if (!normalized.isNormalized()) {
+            throw new IllegalArgumentException("Normalized variant is not normalized");
+        }
+        this.normalized = normalized;
     }
 
     @Override
@@ -48,5 +60,15 @@ final public class IntervalNonNormalizedImpl extends IntervalImpl {
     @Override
     public Interval getNonNormalizedIntervalOverMidnight() {
         return normalized.getNonNormalizedIntervalOverMidnight();
+    }
+
+    @Override
+    public Interval getComplementatyIntervalOverThreshold(int threshold) {
+        return normalized.getComplementatyIntervalOverThreshold(threshold);
+    }
+
+    @Override
+    public boolean isOverThreshold(int threshold) {
+        return normalized.isOverThreshold(threshold);
     }
 }

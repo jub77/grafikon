@@ -5,9 +5,7 @@ package net.parostroj.timetable.model;
  *
  * @author jub
  */
-public class IntervalImpl implements Interval {
-
-    private static final String NOT_SUPPORTED = "Operation not supported.";
+public abstract class IntervalImpl implements Interval {
 
     protected final int start;
     protected final int end;
@@ -28,14 +26,10 @@ public class IntervalImpl implements Interval {
     }
 
     @Override
-    public int getNormalizedStart() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract int getNormalizedStart();
 
     @Override
-    public int getNormalizedEnd() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract int getNormalizedEnd();
 
     @Override
     public int getLength() {
@@ -43,24 +37,16 @@ public class IntervalImpl implements Interval {
     }
 
     @Override
-    public Interval normalize() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract Interval normalize();
 
     @Override
-    public boolean isNormalized() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract boolean isNormalized();
 
     @Override
-    public boolean isOverMidnight() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract boolean isOverMidnight();
 
     @Override
-    public boolean isOverThreshold(int threshold) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract boolean isOverThreshold(int threshold);
 
     @Override
     public int compareOpen(Interval o) {
@@ -133,14 +119,10 @@ public class IntervalImpl implements Interval {
     }
 
     @Override
-    public Interval getNonNormalizedIntervalOverMidnight() {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract Interval getNonNormalizedIntervalOverMidnight();
 
     @Override
-    public Interval getComplementatyIntervalOverThreshold(int threshold) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+    public abstract Interval getComplementatyIntervalOverThreshold(int threshold);
 
     @Override
     public int hashCode() {
