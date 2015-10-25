@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.actions.TrainsHelper;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
@@ -64,6 +65,30 @@ public class LoadFilter {
                 diagram.getAttributes().setRemove(TrainDiagram.ATTR_EDIT_SPEED_UNIT, object);
             }
         }
+        if (version.compareTo(new ModelVersion(4, 18, 3)) <= 0) {
+            // adjust complete name templates
+            TextTemplate template = diagram.getTrainsData().getTrainCompleteNameTemplate();
+            diagram.getTrainsData().setTrainCompleteNameTemplate(this.adjustDescription(template));
+            for (TrainType type : diagram.getTrainTypes()) {
+                template = type.getTrainCompleteNameTemplate();
+                if (template != null) {
+                    type.setTrainCompleteNameTemplate(this.adjustDescription(template));
+                }
+            }
+        }
+    }
+
+    private TextTemplate adjustDescription(TextTemplate template) {
+        if (template.getLanguage() == Language.GROOVY) {
+            if (template.getTemplate().contains("description != ''")) {
+                try {
+                    template = TextTemplate.createTextTemplate(template.getTemplate().replace("description != ''", "description"), Language.GROOVY);
+                } catch (GrafikonException e) {
+                    log.error("Error creating template", e);
+                }
+            }
+        }
+        return template;
     }
 
     private TextTemplate convert(String routeInfo) throws GrafikonException {
