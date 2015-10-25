@@ -502,9 +502,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
             train.setNumber(newNumber);
         }
         String newDescription = ObjectsUtil.checkAndTrim(descriptionTextField.getText());
-        if (newDescription != null) {
-            train.setDescription(newDescription);
+        if (newDescription == null) {
+            newDescription = "";
         }
+        train.setDescription(newDescription);
         Group sGroup = groupsComboBox.getGroupSelection().getGroup();
         train.getAttributes().setRemove(Train.ATTR_GROUP, sGroup);
 
