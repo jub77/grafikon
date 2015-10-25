@@ -80,13 +80,11 @@ public class LoadFilter {
     }
 
     private TextTemplate adjustDescription(TextTemplate template) {
-        if (template.getLanguage() == Language.GROOVY) {
-            if (template.getTemplate().contains("description != ''")) {
-                try {
-                    template = TextTemplate.createTextTemplate(template.getTemplate().replace("description != ''", "description"), Language.GROOVY);
-                } catch (GrafikonException e) {
-                    log.error("Error creating template", e);
-                }
+        if (template.getLanguage() == Language.GROOVY && template.getTemplate().contains("description != ''")) {
+            try {
+                template = TextTemplate.createTextTemplate(template.getTemplate().replace("description != ''", "description"), Language.GROOVY);
+            } catch (GrafikonException e) {
+                log.error("Error creating template", e);
             }
         }
         return template;
