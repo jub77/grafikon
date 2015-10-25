@@ -210,10 +210,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
 
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
+        FilterResult filterResult = FilterResult.OK;
         for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
             if (isFreight(i)) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
-                FilterResult filterResult = filter.accepted(context, newDst, 0);
+                filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
                 }
@@ -234,12 +235,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder {
                 }
             }
         }
-        Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
-        for (Node rtNode : rtNodes) {
-            FreightDst regionDst = new FreightDst(rtNode, null);
-            FilterResult filterResult = filter.accepted(context, regionDst, 1);
-            if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
-                result.add(regionDst);
+        if (filterResult == FilterResult.OK) {
+            Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
+            for (Node rtNode : rtNodes) {
+                FreightDst regionDst = new FreightDst(rtNode, null);
+                filterResult = filter.accepted(context, regionDst, 1);
+                if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
+                    result.add(regionDst);
+                }
             }
         }
     }
