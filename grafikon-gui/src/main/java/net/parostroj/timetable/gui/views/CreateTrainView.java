@@ -25,6 +25,7 @@ import net.parostroj.timetable.gui.components.GroupsComboBox;
 import net.parostroj.timetable.gui.dialogs.ThroughNodesDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import javax.swing.JCheckBox;
@@ -331,13 +332,13 @@ public class CreateTrainView extends javax.swing.JPanel {
         // create command ...
         TrainType tType = (TrainType) typeComboBox.getSelectedItem();
         CreateTrainCommand createCommand = new CreateTrainCommand(
-                nameTextField.getText(),
+                ObjectsUtil.checkAndTrim(nameTextField.getText()),
                 tType != NO_TYPE ? tType : null,
                         Integer.valueOf(speedTextField.getText()),
                         route,
                         start,
                         (stopTextField.getText().equals("") ? 0 : Integer.valueOf(stopTextField.getText()) * 60),
-                        commentTextField.getText(),
+                        ObjectsUtil.checkAndTrim(commentTextField.getText()),
                         dieselCheckBox.isSelected(),
                         electricCheckBox.isSelected(), true, group, managedFreightCheckBox.isSelected());
         this.createTrainCommand = createCommand;
