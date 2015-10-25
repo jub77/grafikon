@@ -21,6 +21,7 @@ public class LoadFilter {
     private static final Logger log = LoggerFactory.getLogger(LoadFilter.class);
 
     public void checkDiagram(TrainDiagram diagram, ModelVersion version) {
+        log.debug("Loaded version: {}", version);
         if (version.compareTo(new ModelVersion(4, 2)) <= 0) {
             // fix weight info
             for (Train train : diagram.getTrains()) {
