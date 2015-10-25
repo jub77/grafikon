@@ -79,7 +79,9 @@ public class CreateTrainCommand extends Command {
         if (group != null) {
             train.setAttribute(Train.ATTR_GROUP, group);
         }
-        train.setAttribute(Train.ATTR_MANAGED_FREIGHT, managedFreight);
+        if (managedFreight) {
+            train.setAttribute(Train.ATTR_MANAGED_FREIGHT, managedFreight);
+        }
 
         // add train to diagram
         model.getDiagram().getTrains().add(train);
