@@ -599,7 +599,10 @@ public class EditNodeDialog extends javax.swing.JDialog {
         String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, "");
         if (name != null && !name.equals("")) {
             NodeTrack track = new NodeTrack(IdGenerator.getInstance().getId(), name);
-            track.setPlatform(true);
+            NodeType nodeType = this.types.getSelectedObject();
+            if (nodeType.isPassenger()) {
+                track.setPlatform(true);
+            }
             ((TrackModel) trackList.getModel()).addElement(new EditTrack(track));
         }
     }
@@ -630,23 +633,15 @@ public class EditNodeDialog extends javax.swing.JDialog {
         }
     }
 
-    private Wrapper<?> lastSelectedType;
-
     private void typeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             // selected ... (SIGNAL is allowed only if there is only one track)
-            if (types.getSelectedObject() == NodeType.SIGNAL) {
-                if (trackList.getModel().getSize() != 1) {
-                    typeComboBox.setSelectedItem(lastSelectedType);
-                }
-            }
-
             boolean signal = types.getSelectedObject() == NodeType.SIGNAL;
-            newTrackButton.setEnabled(!signal);
-            renameTrackButton.setEnabled(!signal);
-            deleteTrackButton.setEnabled(!signal);
-        } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
-            lastSelectedType = (Wrapper<?>) evt.getItem();
+            if (signal) {
+                // disable editing of length
+                this.lengthCheckBox.setSelected(false);
+            }
+            this.lengthCheckBox.setEnabled(!signal);
         }
     }
 
