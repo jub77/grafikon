@@ -55,4 +55,8 @@ public enum NodeType {
     public boolean isStop() {
         return this == STOP || this == STOP_WITH_FREIGHT;
     }
+
+    public boolean isPassenger() {
+        return this == STATION || this == STATION_BRANCH || this == STOP;
+    }
 }
