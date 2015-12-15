@@ -1,5 +1,9 @@
 package net.parostroj.timetable.model.validators;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.*;
 
@@ -23,7 +27,8 @@ public class NodeValidator implements TrainDiagramValidator {
                 Node node = (Node) event.getSource();
                 return checkNodeControl(node);
             } else if (event.getAttributeChange().checkName(Node.ATTR_LENGTH, Node.ATTR_NOT_STRAIGHT_SPEED, Node.ATTR_SPEED)) {
-                for (TimeInterval i : (Node) event.getSource()) {
+                List<TimeInterval> intervals = Lists.newArrayList((Node) event.getSource());
+                for (TimeInterval i : intervals) {
                     i.getTrain().recalculate();
                 }
             }
