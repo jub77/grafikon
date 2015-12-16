@@ -145,7 +145,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append('\n');
                 }
                 if (event.getObject() instanceof Track)
-                    str.append("    Track: ").append(((Train) event.getObject()).getNumber()).append('\n');
+                    str.append("    Track: ").append(((Track) event.getObject()).getNumber()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
             }
