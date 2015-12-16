@@ -75,7 +75,7 @@ class TrainTableModel extends AbstractTableModel {
         // do not alow edit signals
         if (rowIndex % 2 == 0) {
             Node node = interval.getOwnerAsNode();
-            if (node.getType() == NodeType.SIGNAL) {
+            if (node.getType() == NodeType.SIGNAL && columnIndex != TrainTableColumn.PLATFORM.getIndex()) {
                 return false;
             }
             if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.getIndex()) {
@@ -139,7 +139,7 @@ class TrainTableModel extends AbstractTableModel {
             // platform
             case PLATFORM:
                 if (interval.isNodeOwner()) {
-                    if (interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
+                    if (interval.getOwnerAsNode().getTracks().size() > 1) {
                         retValue = interval.getTrack();
                     }
                 } else if (interval.isLineOwner()) {
