@@ -348,21 +348,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return attributes;
     }
 
-    @Override
-    public <T> T getAttribute(String key, Class<T> clazz) {
-        return attributes.get(key, clazz);
-    }
-
-    @Override
-    public Object removeAttribute(String key) {
-        return attributes.remove(key);
-    }
-
-    @Override
-    public void setAttribute(String key, Object value) {
-        attributes.set(key, value);
-    }
-
     /**
      * @return <code>true</code> if there are overlapping intervals for the train
      */

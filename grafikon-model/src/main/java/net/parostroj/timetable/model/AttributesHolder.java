@@ -7,11 +7,17 @@ package net.parostroj.timetable.model;
  */
 public interface AttributesHolder {
 
-    public <T> T getAttribute(String key, Class<T> clazz);
+    default <T> T getAttribute(String key, Class<T> clazz) {
+        return getAttributes().get(key, clazz);
+    }
 
-    public void setAttribute(String key, Object value);
+    default void setAttribute(String key, Object value) {
+        getAttributes().set(key, value);
+    }
 
-    public Object removeAttribute(String key);
+    default Object removeAttribute(String key) {
+        return getAttributes().remove(key);
+    }
 
-    public Attributes getAttributes();
+    Attributes getAttributes();
 }
