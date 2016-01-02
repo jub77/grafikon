@@ -24,6 +24,9 @@ public class LSAttributesItem {
 
     private static final Logger log = LoggerFactory.getLogger(LSAttributesItem.class);
 
+    private static final String SET_KEY = "set";
+    private static final String LIST_KEY = "list";
+
     private String key;
     private List<LSAttributesValue> values;
     private String type;
@@ -39,7 +42,7 @@ public class LSAttributesItem {
         this.key = key;
         this.category = category;
         if (value instanceof Set || value instanceof List) {
-            type = value instanceof Set ? "set" : "list";
+            type = value instanceof Set ? SET_KEY : LIST_KEY;
             for (Object item : (Collection<?>) value) {
                 LSAttributesValue cValue = extractSimpleValue(key, item);
                 this.getValues().add(cValue);
@@ -125,9 +128,9 @@ public class LSAttributesItem {
     }
 
     public Object convertValue(TrainDiagram diagram) throws LSException {
-        if ("set".equals(type) || "list".equals(type)) {
+        if (SET_KEY.equals(type) || LIST_KEY.equals(type)) {
             Collection<Object> result = null;
-            if (type.equals("set")) {
+            if (type.equals(SET_KEY)) {
                 result = new HashSet<Object>();
             } else {
                 result = new ArrayList<Object>();
