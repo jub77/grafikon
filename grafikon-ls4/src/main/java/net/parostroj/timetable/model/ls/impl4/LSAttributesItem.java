@@ -27,6 +27,10 @@ public class LSAttributesItem {
     private static final String SET_KEY = "set";
     private static final String LIST_KEY = "list";
 
+    private static final String ENGINE_CLASS_KEY = "model.engine.class";
+    private static final String LINE_CLASS_KEY = "model.line.class";
+    private static final String MODEL_OBJECT_KEY = "model.object";
+
     private String key;
     private List<LSAttributesValue> values;
     private String type;
@@ -196,11 +200,11 @@ public class LSAttributesItem {
             log.warn("Cannot convert model value without diagram.");
             return null;
         } else {
-            if (valueType.equals("model.engine.class")) {
+            if (valueType.equals(ENGINE_CLASS_KEY)) {
                 return diagram.getEngineClasses().getById(value);
-            } else if (valueType.equals("model.line.class")) {
+            } else if (valueType.equals(LINE_CLASS_KEY)) {
                 return diagram.getNet().getLineClasses().getById(value);
-            } else if (valueType.equals("model.object")) {
+            } else if (valueType.equals(MODEL_OBJECT_KEY)) {
                 return diagram.getObjectById(value);
             } else {
                 log.warn("Not recognized model type: {}", valueType);
@@ -213,13 +217,13 @@ public class LSAttributesItem {
         String lKey = null;
         String lValue = null;
         if (object instanceof EngineClass) {
-            lKey = "model.engine.class";
+            lKey = ENGINE_CLASS_KEY;
             lValue = object.getId();
         } else if (object instanceof LineClass) {
-            lKey = "model.line.class";
+            lKey = LINE_CLASS_KEY;
             lValue = object.getId();
         } else {
-            lKey = "model.object";
+            lKey = MODEL_OBJECT_KEY;
             lValue = object.getId();
         }
         return new Pair<String, String>(lKey, lValue);
