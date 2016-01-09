@@ -90,10 +90,9 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Build>${grafikon.version.build}</Implementation-Build>
+                            <Build-Id>${grafikon.version.build}</Build-Id>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
                             <Permissions>all-permissions</Permissions>
                         </manifestEntries>
