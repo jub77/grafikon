@@ -6,6 +6,10 @@
     <version>1.2</version>
     <packaging>pom</packaging>
     <name>grafikon</name>
+    
+    <scm>
+        <connection>scm:git:https://github.com/jub77/grafikon.git</connection>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
