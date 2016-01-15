@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.parostroj</groupId>
     <artifactId>grafikon</artifactId>
-    <version>1.2</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>grafikon</name>
-    
+
     <scm>
         <connection>scm:git:https://github.com/jub77/grafikon.git</connection>
     </scm>
@@ -14,8 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.test.skip>true</maven.test.skip>
-        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 
         <batik.version>1.8</batik.version>
         <groovy.version>2.4.4</groovy.version>
@@ -34,36 +33,73 @@
         <guava.version>18.0</guava.version>
         <beanfabrics.version>1.4.2</beanfabrics.version>
         <xml-apis.version>1.3.04</xml-apis.version>
-        <grafikon.jnlp.version>${project.version}</grafikon.jnlp.version>
+        <grafikon.jnlp.version>1.2</grafikon.jnlp.version>
     </properties>
 
     <profiles>
         <profile>
-            <id>development</id>
+            <id>git</id>
+            <activation>
+                <file>
+                    <exists>../.git</exists>
+                </file>
+            </activation>
+            <properties>
+                <grafikon.version.short>${project.version}</grafikon.version.short>
+                <grafikon.version>${project.version}-${grafikon.timestamp}</grafikon.version>
+                <grafikon.build>${git.commit.id.describe}-${maven.build.timestamp}</grafikon.build>
+                <grafikon.timestamp>${git.commit.time}</grafikon.timestamp>
+                <grafikon.id>${git.commit.id.describe}</grafikon.id>
+                <grafikon.version.complete>${grafikon.version}+${grafikon.id}</grafikon.version.complete>
+                <grafikon.user.name>${git.build.user.name}</grafikon.user.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <grafikon.version>dev-${project.version}</grafikon.version>
-                <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}</grafikon.version.build>
-            </properties>
-        </profile>
-        <profile>
-            <id>versioned</id>
-            <activation>
-                <property>
-                    <name>versioned</name>
-                </property>
-            </activation>
-            <properties>
+                <grafikon.version.short>${project.version}</grafikon.version.short>
                 <grafikon.version>${project.version}</grafikon.version>
-                <grafikon.version.build>${grafikon.version}-${maven.build.timestamp}</grafikon.version.build>
+                <grafikon.build>${maven.build.timestamp}</grafikon.build>
+                <grafikon.timestamp>noscm</grafikon.timestamp>
+                <grafikon.id>noscm</grafikon.id>
+                <grafikon.version.complete>${grafikon.version}-noscm</grafikon.version.complete>
+                <grafikon.user.name>${user.name}</grafikon.user.name>
             </properties>
         </profile>
     </profiles>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>revision</goal>
+                         </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>false</verbose>
+                    <runOnlyOnce>true</runOnlyOnce>
+                    <skipPoms>false</skipPoms>
+                    <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <injectAllReactorProjects>true</injectAllReactorProjects>
+                    <dateFormat>yyyyMMddHHmm</dateFormat>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+                    <gitDescribe>
+                        <abbrev>12</abbrev>
+                        <dirty>#</dirty>
+                    </gitDescribe>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -88,12 +124,12 @@
                 <version>2.6</version>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
+                        <manifest />
                         <manifestEntries>
-                            <Build-Id>${grafikon.version.build}</Build-Id>
+                            <Implementation-Version>${grafikon.version.complete}</Implementation-Version>
+                            <Build-Id>${grafikon.build}</Build-Id>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Built-By>${grafikon.user.name}</Built-By>
                             <Permissions>all-permissions</Permissions>
                         </manifestEntries>
                     </archive>

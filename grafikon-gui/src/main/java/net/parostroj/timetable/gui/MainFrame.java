@@ -75,7 +75,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
-        log.debug("Version: {}", getVersion(true));
+        log.debug("Version: {}", getVersion(VersionInfo.Type.FULL));
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -105,11 +105,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s\n%s", getVersion(false), txt);
+        return String.format("%s\n%s", getVersion(VersionInfo.Type.SHORT), txt);
     }
 
-    private String getVersion(boolean complete) {
-        return complete ? versionInfo.getFullVersion() : versionInfo.getVersion();
+    private String getVersion(VersionInfo.Type type) {
+    	return versionInfo.getVersion(type);
     }
 
     public MainFrame() {
@@ -286,7 +286,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = getVersion(false);
+        String version = getVersion(VersionInfo.Type.NORMAL);
         if (version != null) {
             title += " (" + version + ")";
         }
@@ -708,7 +708,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot create FileLoadSave", e);
         }
         AboutDialog dialog = new AboutDialog(this, true,
-                String.format(aboutBundle.getString("text"), getVersion(true), fls == null ? "-" : fls.getSaveVersion()),
+                String.format(aboutBundle.getString("text"), getVersion(VersionInfo.Type.FULL), fls == null ? "-" : fls.getSaveVersion()),
                 getClass().getResource(aboutBundle.getString("image")), true);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);

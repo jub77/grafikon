@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/${project.version}" href="grafikon-libraries.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/${grafikon.jnlp.version}" href="grafikon-libraries.jnlp">
     <information>
-        <title>Grafikon ${project.version} libraries</title>
+        <title>Grafikon ${grafikon.jnlp.version} libraries</title>
         <vendor>jub</vendor>
         <homepage href="https://github.com/jub77/grafikon"/>
     </information>
@@ -28,14 +28,14 @@
         <jar href="batik-xml-${batik.version}.jar" download="eager"/>
         <jar href="commons-io-${commons.io.version}.jar" download="eager"/>
         <jar href="fop-${fop.version}.jar" download="eager"/>
-        <jar href="grafikon-gui-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-gui-components-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-ls-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-ls4-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-model-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-output2-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-save-${grafikon.jnlp.version}.jar" download="eager"/>
-        <jar href="grafikon-templates-${grafikon.jnlp.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-gui-components-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-ls-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-ls4-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-model-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-output2-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-save-${project.version}.jar" download="eager"/>
+        <jar href="grafikon-templates-${project.version}.jar" download="eager"/>
         <jar href="groovy-all-${groovy.version}.jar" download="eager"/>
         <jar href="jcl-over-slf4j-${slf4j.version}.jar" download="eager"/>
         <jar href="jgrapht-core-${jgrapht.version}.jar" download="eager"/>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.parostroj</groupId>
         <artifactId>grafikon</artifactId>
-        <version>1.2</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>grafikon-ls</artifactId>
     <packaging>jar</packaging>

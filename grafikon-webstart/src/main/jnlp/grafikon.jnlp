@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/${project.version}" href="grafikon.jnlp">
+<jnlp spec="1.0+" codebase="http://jub.parostroj.net/grafikon/${grafikon.jnlp.version}" href="grafikon.jnlp">
     <information>
-        <title>Grafikon ${project.version}</title>
+        <title>Grafikon ${grafikon.jnlp.version}</title>
         <vendor>jub</vendor>
-        <description>Grafikon ${project.version}</description>
-        <description kind="short">Grafikon ${project.version}</description>
+        <description>Grafikon ${grafikon.jnlp.version}</description>
+        <description kind="short">Grafikon ${grafikon.jnlp.version}</description>
         <homepage href="https://github.com/jub77/grafikon"/>
         <icon href="grafikon.gif"/>
         <icon href="splashscreen.png" kind="splash"/>
