@@ -105,7 +105,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s\n%s", getVersion(VersionInfo.Type.SHORT), txt);
+        return String.format("%s\n%s", getVersion(VersionInfo.Type.NORMAL), txt);
     }
 
     private String getVersion(VersionInfo.Type type) {
