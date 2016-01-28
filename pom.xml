@@ -48,7 +48,7 @@
             <properties>
                 <grafikon.version.short>${grafikon.version.base}</grafikon.version.short>
                 <grafikon.version>${grafikon.version.base}-${grafikon.timestamp}</grafikon.version>
-                <grafikon.build>${git.commit.id.describe}-${maven.build.timestamp}</grafikon.build>
+                <grafikon.build>${git.commit.id.describe}-${git.build.time}</grafikon.build>
                 <grafikon.timestamp>${git.commit.time}</grafikon.timestamp>
                 <grafikon.id>${git.commit.id.describe}</grafikon.id>
                 <grafikon.version.complete>${grafikon.version}+${grafikon.id}</grafikon.version.complete>
@@ -87,7 +87,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <verbose>true</verbose>
+                    <verbose>false</verbose>
                     <runOnlyOnce>true</runOnlyOnce>
                     <skipPoms>false</skipPoms>
                     <commitIdGenerationMode>full</commitIdGenerationMode>
