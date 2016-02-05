@@ -5,7 +5,10 @@ Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo
 1. download one of the releases (zip file - [releases](https://github.com/jub77/grafikon/releases))
 2. unpack it
 3. check if you have installed java
-4. start Grafikon using `java -jar grafikon.jar` on command line
+4. start Grafikon 
+    * using `java -jar grafikon.jar` from command line
+    * or double click on `grafikon.jar`
+    * or use `grafikon.cmd` (`grafikon.sh`)
 
 ## Online start (Webstart)
 ### Release

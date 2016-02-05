@@ -32,5 +32,9 @@
                 <include>*.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${pom.basedir}/src/main/scripts</directory>
+            <outputDirectory>.</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>
