@@ -42,6 +42,10 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-dom</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
 </project>
 
