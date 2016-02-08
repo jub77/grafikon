@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import com.google.common.collect.Iterables;
 
-import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TextList;
 
 /**
@@ -75,7 +74,7 @@ public class FreightDst {
             if (cs != null && !cs.isEmpty()) {
                 colorsStr = new StringBuilder();
                 TextList o = new TextList(colorsStr, "[", "]", ",");
-                o.addItems(Iterables.filter(cs, FreightColor.class), FreightHelper.colorToString(locale));
+                o.addItems(Iterables.filter(cs, FreightColor.class), color -> color.getName(locale));
                 o.finish();
             }
             if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {

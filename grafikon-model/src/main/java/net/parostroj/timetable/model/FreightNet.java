@@ -1,21 +1,15 @@
 package net.parostroj.timetable.model;
 
-import static net.parostroj.timetable.actions.FreightHelper.getNodeIntervalsWithFreightOrConnection;
-import static net.parostroj.timetable.actions.FreightHelper.isFreight;
-import static net.parostroj.timetable.actions.FreightHelper.isFreightTo;
-import static net.parostroj.timetable.actions.FreightHelper.isManaged;
-import static net.parostroj.timetable.actions.FreightHelper.isNoTransitiveRegionStart;
-import static net.parostroj.timetable.actions.FreightHelper.isRegionTransferTrain;
-import static net.parostroj.timetable.actions.FreightHelper.isStartRegion;
-
 import java.util.*;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ReferenceHolder;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -36,8 +30,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private final Set<FNConnection> connections = new HashSet<FNConnection>();
     private final Multimap<Node, FNConnection> nodeMap = HashMultimap.create();
 
+    private FreightConverter converter;
+
     public FreightNet(String id) {
         this.id = id;
+        this.converter = new FreightConverter();
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
             Event event = null;
@@ -112,14 +109,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
         for (FNConnection conn : connections) {
             TimeInterval fromInterval = conn.getFrom();
-            if (!isManaged(fromInterval.getTrain()) || !fromInterval.isStop()) {
+            if (!fromInterval.getTrain().isManagedFreight() || !fromInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
         connections = this.get(train, toMap);
         for (FNConnection conn : connections) {
             TimeInterval toInterval = conn.getTo();
-            if (!isManaged(toInterval.getTrain()) || !toInterval.isStop()) {
+            if (!toInterval.getTrain().isManagedFreight() || !toInterval.isStop()) {
                 toBeDeleted.add(conn);
             }
         }
@@ -167,6 +164,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return this.attributes;
     }
 
+    public FreightConverter getConverter() {
+		return converter;
+	}
+
     public Map<Train, List<FreightDst>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
@@ -196,8 +197,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
         List<FNConnection> nextConns = getNextTrains(fromInterval);
         FilterResult filterResult = FilterResult.OK;
-        for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval, this)) {
-            if (isFreight(i)) {
+        for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
+            if (i.isFreight()) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
                 filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
@@ -234,14 +235,16 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     private Collection<Node> getRegionTransferNodes(TimeInterval fromInterval) {
         Train train = fromInterval.getTrain();
-        if (isFreightTo(train.getLastInterval()) && !isStartRegion(train.getFirstInterval()) &&
-                isStartRegion(train.getLastInterval()) && !isNoTransitiveRegionStart(train.getLastInterval())) {
+        if (train.getLastInterval().isFreightTo()
+        		&& !train.getFirstInterval().getOwnerAsNode().isStartRegion()
+        		&& train.getLastInterval().getOwnerAsNode().isStartRegion()
+        		&& !train.isNoTransitiveRegionStart()) {
             Set<Node> result = new HashSet<Node>();
             Node tNode = train.getEndNode();
             for (NodeTrack track : tNode.getTracks()) {
                 for (TimeInterval interval : track.getTimeIntervalList()) {
                     Train tTrain = interval.getTrain();
-                    if (tNode == tTrain.getStartNode() && isRegionTransferTrain(tTrain)) {
+                    if (tNode == tTrain.getStartNode() && train.isRegionTransfer()) {
                         result.add(tTrain.getLastInterval().getOwnerAsNode());
                     }
                 }
@@ -289,6 +292,18 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     private Collection<FNConnection> get(Train train, Multimap<Train, FNConnection> map) {
         return map.get(train);
+    }
+
+    private Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from) {
+        final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
+        return Iterables.filter(i, (TimeInterval interval) -> {
+            if (after.get()) {
+                return interval.isFreightTo() || interval.isFreightConnection();
+            } else {
+                after.set(interval == from);
+                return false;
+            }
+        });
     }
 
     @Override

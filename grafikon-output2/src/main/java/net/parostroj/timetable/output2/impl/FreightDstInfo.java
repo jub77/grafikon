@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.collect.Iterables;
 
-import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.actions.TextList;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -79,7 +78,7 @@ public class FreightDstInfo {
             if (colors != null && !colors.isEmpty()) {
                 colorsStr = new StringBuilder();
                 TextList o = new TextList(colorsStr, "[", "]", ",");
-                o.addItems(Iterables.filter(colors, FreightColor.class), FreightHelper.colorToString(locale));
+                o.addItems(Iterables.filter(colors, FreightColor.class), color -> color.getName(locale));
                 o.finish();
             }
             if (!Boolean.TRUE.equals(hidden) || colorsStr == null) {

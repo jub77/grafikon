@@ -1,6 +1,5 @@
 package net.parostroj.timetable.filters;
 
-import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.model.*;
 
 import java.util.Set;
@@ -24,7 +23,7 @@ public class ModelPredicates {
     }
 
     public static Predicate<Train> managedTrain() {
-        return FreightHelper::isManaged;
+        return train -> train.isManagedFreight();
     }
 
     public static <T extends ObjectWithId> Predicate<T> matchId(final String id) {

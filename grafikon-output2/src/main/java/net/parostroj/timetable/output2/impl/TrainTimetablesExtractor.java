@@ -227,8 +227,8 @@ public class TrainTimetablesExtractor {
             row.setRoutePositionOut(routePositionOut);
 
             // freight
-            if (nodeI.isFirst() && FreightHelper.isFreight(nodeI)) {
-                List<FreightDst> freightDests = FreightHelper.convertFreightDst(nodeI, diagram.getFreightNet().getFreightToNodes(nodeI));
+            if (nodeI.isFirst() && nodeI.isFreight()) {
+                List<FreightDst> freightDests = diagram.getFreightNet().getConverter().convertFreightDst(nodeI, diagram.getFreightNet().getFreightToNodes(nodeI));
                 if (!freightDests.isEmpty()) {
                     ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
                     for (FreightDst dst : freightDests) {

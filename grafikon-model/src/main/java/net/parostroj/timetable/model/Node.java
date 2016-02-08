@@ -180,15 +180,23 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
     }
 
     public Integer getNotStraightSpeed() {
-        return this.getAttribute(Node.ATTR_NOT_STRAIGHT_SPEED, Integer.class);
+        return this.getAttribute(ATTR_NOT_STRAIGHT_SPEED, Integer.class);
     }
 
     public Integer getSpeed() {
-        return this.getAttribute(Node.ATTR_SPEED, Integer.class);
+        return this.getAttribute(ATTR_SPEED, Integer.class);
     }
 
     public Integer getLength() {
-        return this.getAttribute(Node.ATTR_LENGTH, Integer.class);
+        return this.getAttribute(ATTR_LENGTH, Integer.class);
+    }
+
+    public boolean isStartRegion() {
+        return this.getAttributeAsBool(ATTR_REGION_START);
+    }
+
+    public Region getRegion() {
+    	return this.getAttribute(ATTR_REGION, Region.class);
     }
 
     /**

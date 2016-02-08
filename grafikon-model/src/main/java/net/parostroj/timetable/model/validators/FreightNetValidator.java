@@ -1,6 +1,5 @@
 package net.parostroj.timetable.model.validators;
 
-import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -31,7 +30,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
                 }
                 return true;
             }
-            if (FreightHelper.isManaged(train)) {
+            if (train.isManagedFreight()) {
                 if (event.getType() == Event.Type.OBJECT_ATTRIBUTE && event.getObject() instanceof TimeInterval
                         && event.getAttributeChange().checkName(TimeInterval.ATTR_NOT_MANAGED_FREIGHT)) {
                     diagram.getFreightNet().checkTrain(train);
@@ -42,7 +41,7 @@ public class FreightNetValidator implements TrainDiagramValidator {
             }
         } else if (event.getSource() instanceof TrainDiagram && event.getType() == Type.REMOVED && event.getObject() instanceof Train) {
             Train train = (Train) event.getObject();
-            if (FreightHelper.isManaged(train)) {
+            if (train.isManagedFreight()) {
                 diagram.getFreightNet().removeTrain(train);
                 return true;
             }

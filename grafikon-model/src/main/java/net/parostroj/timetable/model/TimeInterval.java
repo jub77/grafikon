@@ -559,4 +559,28 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     public boolean isAttached() {
         return train.isAttached();
     }
+
+    public boolean isNotManagedFreight() {
+    	return this.getAttributeAsBool(ATTR_NOT_MANAGED_FREIGHT);
+    }
+
+    public boolean isFreightFrom() {
+        return isFreightCommon() && (this.isFirst() || this.isInnerStop());
+    }
+
+    public boolean isFreightTo() {
+        return isFreightCommon() && (this.isLast() || this.isInnerStop());
+    }
+
+    public boolean isFreight() {
+        return isFreightCommon() && this.isStop();
+    }
+
+    public boolean isFreightConnection() {
+        return !getTrain().getDiagram().getFreightNet().getTrainsFrom(this).isEmpty();
+    }
+
+    private boolean isFreightCommon() {
+        return this.getTrain().isManagedFreight() && !this.isNotManagedFreight();
+    }
 }

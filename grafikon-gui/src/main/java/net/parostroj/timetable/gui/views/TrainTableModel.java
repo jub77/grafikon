@@ -79,7 +79,7 @@ class TrainTableModel extends AbstractTableModel {
                 return false;
             }
             if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.getIndex()) {
-                if (!FreightHelper.isManaged(train) || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
+                if (!train.isManagedFreight() || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
                     return false;
                 }
             }
@@ -90,6 +90,7 @@ class TrainTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         TimeInterval interval = train.getTimeIntervalList().get(rowIndex);
+        TrainDiagram diagram = train.getDiagram();
         Object retValue = null;
         TrainTableColumn column = TrainTableColumn.getColumn(columnIndex);
         switch (column) {
@@ -178,7 +179,7 @@ class TrainTableModel extends AbstractTableModel {
                         && interval.getOwnerAsNode().getType() != NodeType.SIGNAL) {
                     int stop = interval.getLength() / 60;
                     // celculate with time scale ...
-                    Double timeScale = model.getDiagram().getAttributes().get(TrainDiagram.ATTR_TIME_SCALE, Double.class);
+                    Double timeScale = diagram.getAttributes().get(TrainDiagram.ATTR_TIME_SCALE, Double.class);
                     retValue = stop / timeScale;
                 }
                 break;
@@ -203,28 +204,29 @@ class TrainTableModel extends AbstractTableModel {
             case MANAGED_FREIGHT:
                 // managed freight
                 retValue = false;
-                if (FreightHelper.isManaged(train) && interval.isNodeOwner()) {
+                if (train.isManagedFreight() && interval.isNodeOwner()) {
                     retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
                 }
                 break;
             case FREIGHT_TO_STATIONS:
                 FreightNet freightNet = train.getDiagram().getFreightNet();
-                if (rowIndex % 2 == 0 && (FreightHelper.isFreight(interval) || FreightHelper.isConnection(interval, freightNet))) {
+                if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
                     Region region = interval.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
+                    FreightConverter converter = model.getDiagram().getFreightNet().getConverter();
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
-                        List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, entry.getValue());
-                        result.append('(').append(FreightHelper.freightDstListToString(mList));
+                        List<FreightDst> mList = converter.convertFreightDst(train, region, entry.getValue());
+                        result.append('(').append(diagram.getFreightNet().getConverter().freightDstListToString(mList));
                         result.append(" > ").append(entry.getKey().getName()).append(')');
                     }
-                    if (FreightHelper.isFreightFrom(interval)) {
+                    if (interval.isFreightFrom()) {
                         List<FreightDst> cargoDst = freightNet.getFreightToNodes(interval);
-                        List<FreightDst> mList = FreightHelper.convertFreightDst(train, region, cargoDst);
+                        List<FreightDst> mList = converter.convertFreightDst(train, region, cargoDst);
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
-                        result.append(FreightHelper.freightDstListToString(mList));
+                        result.append(diagram.getFreightNet().getConverter().freightDstListToString(mList));
                     }
                     retValue = result.toString();
                 }

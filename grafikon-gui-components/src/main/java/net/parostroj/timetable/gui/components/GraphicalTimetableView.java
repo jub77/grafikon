@@ -8,7 +8,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import net.parostroj.timetable.actions.FreightHelper;
 import net.parostroj.timetable.gui.components.GTViewSettings.Key;
 import net.parostroj.timetable.gui.dialogs.EditRoutesDialog;
 import net.parostroj.timetable.gui.dialogs.GTViewZoomDialog;
@@ -87,9 +86,9 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
 
             @Override
             public Collection<FreightDst> getFreight(TimeInterval interval) {
-                if (interval.isNodeOwner() && FreightHelper.isFreightFrom(interval)) {
+                if (interval.isNodeOwner() && interval.isFreightFrom()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    return FreightHelper.convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+                    return diagram.getFreightNet().getConverter().convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
                 } else {
                     return Collections.emptyList();
                 }
@@ -99,10 +98,10 @@ public class GraphicalTimetableView extends GraphicalTimetableViewDraw  {
             public Map<Train, List<FreightDst>> getPassedFreight(TimeInterval interval) {
                 if (interval.isNodeOwner()) {
                     TrainDiagram diagram = interval.getTrain().getDiagram();
-                    Region region = interval.getOwnerAsNode().getAttribute(Node.ATTR_REGION, Region.class);
+                    Region region = interval.getOwnerAsNode().getRegion();
                     Map<Train, List<FreightDst>> freight = diagram.getFreightNet().getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<FreightDst>> entry : freight.entrySet()) {
-                        entry.setValue(FreightHelper.convertFreightDst(entry.getKey(), region, entry.getValue()));
+                        entry.setValue(diagram.getFreightNet().getConverter().convertFreightDst(entry.getKey(), region, entry.getValue()));
                     }
                     return freight;
                 } else {

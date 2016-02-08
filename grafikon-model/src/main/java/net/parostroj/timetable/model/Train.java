@@ -1057,6 +1057,20 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return this.getAttributes().getBool(ATTR_EMPTY);
     }
 
+    public boolean isManagedFreight() {
+        return this.getAttributeAsBool(Train.ATTR_MANAGED_FREIGHT);
+    }
+
+    public boolean isNoTransitiveRegionStart() {
+    	return this.getAttributeAsBool(ATTR_NO_TRANSITIVE_REGION_START);
+    }
+
+    public boolean isRegionTransfer() {
+        return this.getFirstInterval().isFreightFrom() && this.getLastInterval().isFreightTo()
+                && this.getFirstInterval().getOwnerAsNode().isStartRegion()
+                && this.getLastInterval().getOwnerAsNode().isStartRegion();
+    }
+
     @Override
     public Iterator<TimeInterval> iterator() {
         return timeIntervalList.iterator();

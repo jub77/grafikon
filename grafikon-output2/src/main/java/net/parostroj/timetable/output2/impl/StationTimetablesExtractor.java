@@ -3,7 +3,6 @@ package net.parostroj.timetable.output2.impl;
 import java.util.*;
 import java.util.function.BiFunction;
 
-import static net.parostroj.timetable.actions.FreightHelper.*;
 import static net.parostroj.timetable.actions.TrainsHelper.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
@@ -113,8 +112,8 @@ public class StationTimetablesExtractor {
                 this.addCycles(interval, type, row.getCycle(), nextF, previousF);
             }
         }
-        if (isFreight(interval)) {
-            List<FreightDst> freightDests = convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+        if (interval.isFreight()) {
+            List<FreightDst> freightDests = diagram.getFreightNet().getConverter().convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
                 for (FreightDst dst : freightDests) {
@@ -123,14 +122,14 @@ public class StationTimetablesExtractor {
                 row.setFreightTo(fl);
             }
         }
-        if (isConnection(interval, diagram.getFreightNet())) {
+        if (interval.isFreightConnection()) {
             Map<Train, List<FreightDst>> passedCargoDst = diagram.getFreightNet().getFreightPassedInNode(interval);
             if (!passedCargoDst.isEmpty()) {
                 List<FreightToTrain> fttl = new ArrayList<FreightToTrain>();
                 for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
-                    List<FreightDst> mList = convertFreightDst(interval, entry.getValue());
+                    List<FreightDst> mList = diagram.getFreightNet().getConverter().convertFreightDst(interval, entry.getValue());
                     List<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(mList.size());
                     for (FreightDst dst : mList) {
                         fl.add(FreightDstInfo.convert(dst));
