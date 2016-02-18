@@ -2,7 +2,7 @@
 Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo etc).
 
 ## Examples
-Examples of gtm files with timetables can be found here: [gtm_examples.zip] (http://jub.parostroj.net/grafikon/gtm_examples.zip)
+Examples of gtm files with timetables can be found here: [gtm_examples.zip](http://jub.parostroj.net/grafikon/gtm_examples.zip)
 
 ## Offline start
 1. download one of the releases (zip file - [releases](https://github.com/jub77/grafikon/releases))
