@@ -49,9 +49,9 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
      * @return list of selected elements
      */
     public List<T> selectElements(Collection<? extends T> list, Collection<? extends T> selected) {
-        elementSelectionPanel.setListForSelection(Wrapper.getWrapperList(list));
+        elementSelectionPanel.setListForSelection(this.wrapElements(list));
         if (selected != null) {
-            elementSelectionPanel.addSelected(Wrapper.getWrapperList(selected));
+            elementSelectionPanel.addSelected(this.wrapElements(selected));
         }
         setVisible(true);
         if (ok)
@@ -78,6 +78,7 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
@@ -85,6 +86,7 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
@@ -127,6 +129,10 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         ok = false;
         setVisible(false);
+    }
+
+    protected List<Wrapper<T>> wrapElements(Iterable<? extends T> elements) {
+        return Wrapper.getWrapperList(elements);
     }
 
     private javax.swing.JButton cancelButton;
