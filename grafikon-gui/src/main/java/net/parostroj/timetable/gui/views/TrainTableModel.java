@@ -75,10 +75,10 @@ class TrainTableModel extends AbstractTableModel {
         // do not alow edit signals
         if (rowIndex % 2 == 0) {
             Node node = interval.getOwnerAsNode();
-            if (node.getType() == NodeType.SIGNAL && columnIndex != TrainTableColumn.PLATFORM.getIndex()) {
+            if (node.getType() == NodeType.SIGNAL && columnIndex != TrainTableColumn.PLATFORM.ordinal()) {
                 return false;
             }
-            if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.getIndex()) {
+            if (columnIndex == TrainTableColumn.MANAGED_FREIGHT.ordinal()) {
                 if (!train.isManagedFreight() || (interval.getLength() == 0 && rowIndex != 0 && rowIndex != lastRow)) {
                     return false;
                 }

@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.text.DecimalFormatSymbols;
 import java.util.Enumeration;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -43,7 +42,6 @@ public enum TrainTableColumn {
             MANAGED_FREIGHT("train.table.managed.freight", 30, 30, 30, "o", Boolean.class, false, null),
             FREIGHT_TO_STATIONS("train.table.freight.to.stations", 50, Integer.MAX_VALUE, 150, "w", String.class, false, null);
 
-    private int index;
     private String key;
     private int minWidth;
     private int prefWidth;
@@ -58,10 +56,6 @@ public enum TrainTableColumn {
     private boolean oneTrack;
     private TableCellEditor editor;
     private boolean time;
-
-    private static class Counter {
-        static AtomicInteger CNT = new AtomicInteger(0);
-    }
 
     private static class TimeCellRenderer implements TableCellRenderer {
 
@@ -126,7 +120,6 @@ public enum TrainTableColumn {
 
     private TrainTableColumn(String key, int minWidth, int maxWidth, int prefWidth, String forbidden, Class<?> clazz,
             boolean rightAling, TableCellEditor editor) {
-        this.index = Counter.CNT.getAndIncrement();
         this.key = key;
         this.minWidth = minWidth;
         this.maxWidth = maxWidth;
@@ -160,10 +153,6 @@ public enum TrainTableColumn {
                     break;
             }
         }
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public String getKey() {
@@ -213,7 +202,7 @@ public enum TrainTableColumn {
     }
 
     public TableColumn createTableColumn() {
-        TableColumn tableColumn = new TableColumn(this.getIndex(), this.getPrefWidth());
+        TableColumn tableColumn = new TableColumn(this.ordinal(), this.getPrefWidth());
         tableColumn.setMinWidth(this.getMinWidth());
         tableColumn.setMaxWidth(this.getMaxWidth());
         if (this.isRightAling()) {
@@ -232,11 +221,7 @@ public enum TrainTableColumn {
     }
 
     public static TrainTableColumn getColumn(int index) {
-        for (TrainTableColumn column : values()) {
-            if (column.getIndex() == index)
-                return column;
-        }
-        return null;
+        return values()[index];
     }
 
     public static int getIndex(TableColumnModel model, TrainTableColumn column) {
@@ -244,7 +229,7 @@ public enum TrainTableColumn {
         int i = 0;
         while (e.hasMoreElements()) {
             TableColumn tc = e.nextElement();
-            if (tc.getModelIndex() == column.getIndex())
+            if (tc.getModelIndex() == column.ordinal())
                 return i;
             i++;
         }
