@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
@@ -65,14 +67,15 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         } else if (mxCell.getValue() instanceof Node) {
             Node node = (Node) mxCell.getValue();
             Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
-            Region region = node.getAttribute(Node.ATTR_REGION, Region.class);
+            List<Region> regions = node.getRegions();
             value = node.getName();
             String description = null;
             if (company != null) {
                 description = company.getAbbr();
             }
-            if (region != null) {
-                description = description == null ? region.getName() : description + "," + region.getName();
+            if (!regions.isEmpty()) {
+                String regionsStr = regions.stream().map(region -> region.getName()).collect(Collectors.joining(","));
+				description = description == null ? regionsStr : description + "," + regionsStr;
             }
             if (description != null) {
                 value = String.format("%s%n(%s)", value, description);

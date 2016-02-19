@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.validators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -24,7 +25,7 @@ public class NodeValidator implements TrainDiagramValidator {
     @Override
     public boolean validate(Event event) {
         if (event.getSource() instanceof Node && event.getType() == Type.ATTRIBUTE) {
-            if (event.getAttributeChange().checkName(Node.ATTR_REGION_START)) {
+            if (event.getAttributeChange().checkName(Node.ATTR_CENTER_OF_REGIONS)) {
                 Node node = (Node) event.getSource();
                 return checkNodeControl(node);
             } else if (event.getAttributeChange().checkName(Node.ATTR_LENGTH, Node.ATTR_NOT_STRAIGHT_SPEED, Node.ATTR_SPEED)) {
@@ -40,20 +41,31 @@ public class NodeValidator implements TrainDiagramValidator {
         return false;
     }
 
-    private boolean checkNodeControl(Node node) {
-        if (node.getAttributes().getBool(Node.ATTR_REGION_START)) {
-            Region region = node.getAttribute(Node.ATTR_REGION, Region.class);
-            // look through all nodes for another region start in the same region
-            for (Node tn : diagram.getNet().getNodes()) {
-                if (tn != node && tn.getAttribute(Node.ATTR_REGION, Region.class) == region) {
-                    // ensure that there is no region start
-                    tn.getAttributes().setBool(Node.ATTR_REGION_START, false);
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
+    private boolean inCheckNodeControl;
 
+    private boolean checkNodeControl(Node node) {
+    	if (!inCheckNodeControl) {
+	    	try {
+	    		inCheckNodeControl = true;
+				List<Region> regions = node.getCenterRegions();
+				if (!regions.isEmpty()) {
+					for (Region region : regions) {
+						// look through all nodes for another region start in the same region
+						for (Node tn : diagram.getNet().getNodes()) {
+							if (tn != node && tn.getCenterRegions().contains(region)) {
+								// ensure that there is no region start
+								List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
+								newList.remove(region);
+								tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
+							}
+						}
+					}
+					return true;
+				}
+			} finally {
+				inCheckNodeControl = false;
+			}
+    	}
+    	return false;
+    }
 }

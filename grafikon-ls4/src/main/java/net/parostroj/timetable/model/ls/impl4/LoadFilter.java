@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +78,19 @@ public class LoadFilter {
                     type.setTrainCompleteNameTemplate(this.adjustDescription(template));
                 }
             }
+        }
+        if (version.compareTo(new ModelVersion(4, 18, 4)) <= 0) {
+        	// multiple regions allowed per node (even centers)
+        	for (Node node : diagram.getNet().getNodes()) {
+        		Region region = (Region) node.removeAttribute("region");
+        		if (region != null) {
+        			Boolean regionCenter = (Boolean) node.removeAttribute("region.start");
+        			node.setAttribute(Node.ATTR_REGIONS, Collections.singletonList(region));
+        			if (regionCenter != null && regionCenter) {
+        				node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, Collections.singletonList(region));
+        			}
+        		}
+        	}
         }
     }
 

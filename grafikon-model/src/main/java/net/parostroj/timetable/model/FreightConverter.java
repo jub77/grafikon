@@ -16,7 +16,8 @@ import net.parostroj.timetable.actions.TextList;
 public class FreightConverter {
 
 	public List<FreightDst> convertFreightDst(TimeInterval from, List<FreightDst> list) {
-        Region region = from.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
+		List<Region> regions = from.getOwnerAsNode().getRegions();
+        Region region = regions.isEmpty() ? null : regions.get(0);
         return convertFreightDst(from.getTrain(), region, list);
     }
 
@@ -40,7 +41,7 @@ public class FreightConverter {
                 visited.add(dst);
                 result.add(dst);
             }
-            if (dst.getNode().isStartRegion() && nRegion != null) {
+            if (!dst.getNode().getCenterRegions().isEmpty() && nRegion != null) {
                 addRegion(result, used, nRegion);
             }
         }

@@ -351,11 +351,23 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         }
                         break;
                     case OBJECT_ATTRIBUTE:
-                        updateNodeForObjectAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGION, event);
+                        updateNodeForObjectListAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGIONS, event);
                         updateNodeForObjectAttribute(Company.class, Company.ATTR_ABBR, Node.ATTR_COMPANY, event);
                         break;
                     default:
                         break;
+                }
+            }
+
+            private <T> void updateNodeForObjectListAttribute(Class<T> objectClass, String objectAttribute, String nodeAttribute, Event event) {
+                if (objectClass.isInstance(event.getObject()) && event.getAttributeChange().checkName(objectAttribute)) {
+                    T object = objectClass.cast(event.getObject());
+                    for (Node node : ((TrainDiagram) event.getSource()).getNet().getNodes()) {
+                        Collection<T> attribute = node.getAttributeAsCollection(nodeAttribute, objectClass);
+                        if (attribute.contains(object)) {
+                            updateNode(node);
+                        }
+                    }
                 }
             }
 

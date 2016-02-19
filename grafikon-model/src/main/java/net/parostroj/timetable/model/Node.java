@@ -191,12 +191,12 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         return this.getAttribute(ATTR_LENGTH, Integer.class);
     }
 
-    public boolean isStartRegion() {
-        return this.getAttributeAsBool(ATTR_REGION_START);
+    public List<Region> getCenterRegions() {
+    	return this.getAttributeAsList(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptyList());
     }
 
-    public Region getRegion() {
-    	return this.getAttribute(ATTR_REGION, Region.class);
+    public List<Region> getRegions() {
+    	return this.getAttributeAsList(ATTR_REGIONS, Region.class, Collections.emptyList());
     }
 
     /**

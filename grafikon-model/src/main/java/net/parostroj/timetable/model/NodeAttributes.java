@@ -18,8 +18,8 @@ public interface NodeAttributes {
     public static final String ATTR_ABBR = "abbr";
     public static final String ATTR_LOCATION = "location";
     public static final String ATTR_FREIGHT_COLORS = "freight.colors";
-    public static final String ATTR_REGION = "region";
-    public static final String ATTR_REGION_START = "region.start";
+    public static final String ATTR_REGIONS = "regions";
+    public static final String ATTR_CENTER_OF_REGIONS = "center.regions";
     public static final String ATTR_NOT_STRAIGHT_SPEED = "not.straight.speed";
     public static final String ATTR_SPEED = "speed";
     public static final String ATTR_COMPANY = "company";

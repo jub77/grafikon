@@ -42,7 +42,8 @@ public class FreightDst {
     }
 
     public Region getRegion() {
-        return region != null ? region : node.getAttributes().get(Node.ATTR_REGION, Region.class);
+    	List<Region> regions = node.getRegions();
+        return region != null ? region : (regions.isEmpty() ? null : regions.get(0));
     }
 
     public Train getTrain() {

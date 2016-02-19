@@ -109,19 +109,22 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lengthCheckBox = new javax.swing.JCheckBox();
         lengthPanel.add(lengthCheckBox, BorderLayout.EAST);
         lengthCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 lengthCheckBoxItemStateChanged(evt);
             }
         });
         nsSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
         nsSpeedCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 nsSpeedCheckBoxItemStateChanged(evt);
             }
         });
         sSpeedEditBox.setUnits(Arrays.asList(SpeedUnit.values()));
         sSpeedCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 sSpeedCheckBoxItemStateChanged(evt);
             }
         });
@@ -156,7 +159,7 @@ public class EditNodeDialog extends javax.swing.JDialog {
         signalsCheckBox.setSelected(Node.IP_NEW_SIGNALS.equals(node.getAttribute(Node.ATTR_INTERLOCKING_PLANT, String.class)));
         controlCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_CONTROL_STATION));
         trapezoidCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_TRAPEZOID_SIGN));
-        regionStartCheckBox.setSelected(node.getAttributes().getBool(Node.ATTR_REGION_START));
+        regionStartCheckBox.setSelected(!node.getCenterRegions().isEmpty());
         updateColors();
 
         // add current regions
@@ -168,7 +171,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         this.regionComboBox.setModel(regions);
 
         // select region ...
-        Region region = node.getAttributes().get(Node.ATTR_REGION, Region.class);
+        List<Region> regions = node.getRegions();
+        Region region = regions.isEmpty() ? null : regions.get(0);
         regionComboBox.setSelectedItem(region == null ? NONE_REGION : Wrapper.getWrapper(region));
 
         // set node length
@@ -241,7 +245,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         node.getAttributes().setBool(Node.ATTR_CONTROL_STATION, controlCheckBox.isSelected());
         node.getAttributes().setBool(Node.ATTR_TRAPEZOID_SIGN, trapezoidCheckBox.isSelected());
-        node.getAttributes().setBool(Node.ATTR_REGION_START, regionStartCheckBox.isSelected());
 
         // length
         this.getBoxValue(lengthEditBox, lengthCheckBox, LengthUnit.MM, Node.ATTR_LENGTH);
@@ -273,10 +276,15 @@ public class EditNodeDialog extends javax.swing.JDialog {
         node.getAttributes().setRemove(Node.ATTR_FREIGHT_COLORS, colors);
 
         // region
-        node.getAttributes().setRemove(Node.ATTR_REGION, regions.getSelectedObject());
+        Region region = regions.getSelectedObject();
+        List<Region> regions = region == null ? null : Collections.singletonList(region);
+        node.setRemoveAttribute(Node.ATTR_REGIONS, regions);
 
         // company
         node.getAttributes().setRemove(Node.ATTR_COMPANY, companies.getSelectedObject());
+
+        // center of regions
+        node.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, regionStartCheckBox.isSelected() ? regions : null);
     }
 
     private void getBoxValue(ValueWithUnitEditBox box, javax.swing.JCheckBox check, Unit unit, String attribute) {
@@ -333,40 +341,46 @@ public class EditNodeDialog extends javax.swing.JDialog {
         companyLabel.setText(ResourceLoader.getString("ne.company") + ":"); // NOI18N
 
         typeComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 typeComboBoxItemStateChanged(evt);
             }
         });
 
         trackList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         trackList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+            @Override
+			public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 trackListValueChanged(evt);
             }
         });
         scrollPane.setViewportView(trackList);
 
         newTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newTrackButtonActionPerformed(evt);
             }
         });
 
         renameTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 renameTrackButtonActionPerformed(evt);
             }
         });
 
         deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteTrackButtonActionPerformed(evt);
             }
         });
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 writeValuesBack();
                 setVisible(false);
             }
@@ -374,7 +388,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setVisible(false);
             }
         });
@@ -382,7 +397,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         platformCheckBox.setText(ResourceLoader.getString("ne.platform")); // NOI18N
         platformCheckBox.setEnabled(false);
         platformCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 platformCheckBoxItemStateChanged(evt);
             }
         });
@@ -390,7 +406,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         lineEndCheckBox.setText(ResourceLoader.getString("ne.line.end")); // NOI18N
         lineEndCheckBox.setEnabled(false);
         lineEndCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 lineEndCheckBoxItemStateChanged(evt);
             }
         });
@@ -419,7 +436,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
         straightCheckBox.setText(ResourceLoader.getString("ne.straight")); // NOI18N
         straightCheckBox.setEnabled(false);
         straightCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+            @Override
+			public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 straightCheckBoxItemStateChanged(evt);
             }
         });

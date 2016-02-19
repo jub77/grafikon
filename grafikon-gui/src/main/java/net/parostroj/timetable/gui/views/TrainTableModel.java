@@ -213,7 +213,8 @@ class TrainTableModel extends AbstractTableModel {
                 if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
-                    Region region = interval.getOwnerAsNode().getAttributes().get(Node.ATTR_REGION, Region.class);
+                    List<Region> regions = interval.getOwnerAsNode().getCenterRegions();
+                    Region region = regions.isEmpty() ? null : regions.get(0);
                     FreightConverter converter = model.getDiagram().getFreightNet().getConverter();
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                         List<FreightDst> mList = converter.convertFreightDst(train, region, entry.getValue());

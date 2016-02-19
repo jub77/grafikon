@@ -1,7 +1,13 @@
 package net.parostroj.timetable.model.validators;
 
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.parostroj.timetable.model.Net;
+import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.Region;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Event.Type;
 
 /**
@@ -23,12 +29,19 @@ public class RegionRemoveValidator implements TrainDiagramValidator {
             Region region = (Region) event.getObject();
             // remove region from all nodes where it appears
             for (Node node : diagram.getNet().getNodes()) {
-                if (region == node.getAttributes().get(Node.ATTR_REGION, Region.class)) {
-                    node.getAttributes().remove(Node.ATTR_REGION);
-                }
+            	if (node.getRegions().contains(region)) {
+            		node.setRemoveAttribute(Node.ATTR_REGIONS, this.removeRegion(node.getRegions(), region));
+            		node.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, this.removeRegion(node.getCenterRegions(), region));
+            	}
             }
             return true;
         }
         return false;
+    }
+
+    private List<Region> removeRegion(List<Region> regions, Region toBeRemoved) {
+    	List<Region> newList = new ArrayList<>(regions);
+    	newList.remove(toBeRemoved);
+    	return newList.isEmpty() ? null : newList;
     }
 }

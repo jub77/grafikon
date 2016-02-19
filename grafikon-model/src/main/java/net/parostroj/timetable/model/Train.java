@@ -1067,8 +1067,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
 
     public boolean isRegionTransfer() {
         return this.getFirstInterval().isFreightFrom() && this.getLastInterval().isFreightTo()
-                && this.getFirstInterval().getOwnerAsNode().isStartRegion()
-                && this.getLastInterval().getOwnerAsNode().isStartRegion();
+                && !this.getFirstInterval().getOwnerAsNode().getCenterRegions().isEmpty()
+                && !this.getLastInterval().getOwnerAsNode().getCenterRegions().isEmpty();
     }
 
     @Override
