@@ -2,8 +2,10 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
@@ -25,10 +27,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private final AttributesListener defaultAttributesListener;
     private final ListenerSupport listenerSupport;
 
-    private final Multimap<Train, FNConnection> fromMap = HashMultimap.create();
-    private final Multimap<Train, FNConnection> toMap = HashMultimap.create();
-    private final Set<FNConnection> connections = new HashSet<FNConnection>();
-    private final Multimap<Node, FNConnection> nodeMap = HashMultimap.create();
+    private final ListMultimap<TimeInterval, FNConnection> fromMap = ArrayListMultimap.create();
+    private final ListMultimap<TimeInterval, FNConnection> toMap = ArrayListMultimap.create();
+    private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
+    private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
     private FreightConverter converter;
 
@@ -62,16 +64,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     public Collection<FNConnection> getConnections() {
-        return Collections.unmodifiableCollection(connections);
-    }
-
-    public Collection<FNConnection> getConnections(Node node) {
-        return Collections.unmodifiableCollection(nodeMap.get(node));
+        return Collections.unmodifiableCollection(fromMap.values());
     }
 
     public FNConnection getConnection(TimeInterval from, TimeInterval to) {
-        for (FNConnection i : connections) {
-            if (i.getFrom() == from && i.getTo() == to) {
+    	List<FNConnection> connectionList = fromMap.get(from);
+        for (FNConnection i : connectionList) {
+            if (i.getTo() == to) {
                 return i;
             }
         }
@@ -79,33 +78,33 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     private void addConnectionImpl(FNConnection conn) {
-        connections.add(conn);
-        nodeMap.put(conn.getFrom().getOwnerAsNode(), conn);
-        this.addConn(fromMap, conn, conn.getFrom().getTrain());
-        this.addConn(toMap, conn, conn.getTo().getTrain());
+        this.addConn(fromMap, conn, conn.getFrom());
+        this.addConn(toMap, conn, conn.getTo());
+        this.fromTrainMap.put(conn.getFrom().getTrain(), conn);
+        this.toTrainMap.put(conn.getTo().getTrain(), conn);
         this.fireEvent(new Event(this, Event.Type.ADDED, conn));
     }
 
     private void removeConnectionImpl(FNConnection conn) {
-        boolean removed = connections.remove(conn);
+        boolean removed = this.removeConn(fromMap, conn, conn.getFrom());
         if (removed) {
-            nodeMap.remove(conn.getFrom().getOwnerAsNode(), conn);
-            this.removeConn(fromMap, conn, conn.getFrom().getTrain());
-            this.removeConn(toMap, conn, conn.getTo().getTrain());
+            this.removeConn(toMap, conn, conn.getTo());
+            this.fromTrainMap.remove(conn.getFrom().getTrain(), conn);
+            this.toTrainMap.remove(conn.getTo().getTrain(), conn);
             this.fireEvent(new Event(this, Event.Type.REMOVED, conn));
         }
     }
 
-    private void addConn(Multimap<Train, FNConnection> map, FNConnection conn, Train train) {
-        map.put(train, conn);
+    private void addConn(Multimap<TimeInterval, FNConnection> map, FNConnection conn, TimeInterval interval) {
+        map.put(interval, conn);
     }
 
-    private void removeConn(Multimap<Train, FNConnection> map, FNConnection conn, Train train) {
-        map.remove(train, conn);
+    private boolean removeConn(Multimap<TimeInterval, FNConnection> map, FNConnection conn, TimeInterval interval) {
+        return map.remove(interval, conn);
     }
 
     public void checkTrain(Train train) {
-        Collection<FNConnection> connections = this.get(train, fromMap);
+        Collection<FNConnection> connections = fromTrainMap.get(train);
         List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
         for (FNConnection conn : connections) {
             TimeInterval fromInterval = conn.getFrom();
@@ -113,7 +112,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
                 toBeDeleted.add(conn);
             }
         }
-        connections = this.get(train, toMap);
+        connections = toTrainMap.get(train);
         for (FNConnection conn : connections) {
             TimeInterval toInterval = conn.getTo();
             if (!toInterval.getTrain().isManagedFreight() || !toInterval.isStop()) {
@@ -126,9 +125,9 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     public void removeTrain(Train train) {
-        List<FNConnection> toBeDeleted = new ArrayList<FNConnection>();
-        toBeDeleted.addAll(this.get(train, fromMap));
-        toBeDeleted.addAll(this.get(train, toMap));
+        Set<FNConnection> toBeDeleted = new HashSet<>();
+        toBeDeleted.addAll(fromTrainMap.get(train));
+        toBeDeleted.addAll(toTrainMap.get(train));
         for (FNConnection conn : toBeDeleted) {
             this.removeConnection(conn);
         }
@@ -257,41 +256,27 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     public List<FNConnection> getNextTrains(TimeInterval fromInterval) {
         List<FNConnection> result = new LinkedList<FNConnection>();
-        int index = fromInterval.getTrain().getIndexOfInterval(fromInterval);
-        Collection<FNConnection> connections = this.get(fromInterval.getTrain(), fromMap);
-        for (FNConnection conn : connections) {
-            int indexConn = conn.getFrom().getTrain().getIndexOfInterval(conn.getFrom());
-            if (indexConn > index) {
-                result.add(conn);
-            }
-        }
+        Train train = fromInterval.getTrain();
+		int index = train.getIndexOfInterval(fromInterval);
+		TimeIntervalList intervalList = train.getIntervalList();
+		for (TimeInterval interval : intervalList.subList(index + 1, intervalList.size())) {
+			Collection<FNConnection> connections = fromMap.get(interval);
+			for (FNConnection conn : connections) {
+				int indexConn = conn.getFrom().getTrain().getIndexOfInterval(conn.getFrom());
+				if (indexConn > index) {
+					result.add(conn);
+				}
+			}
+		}
         return result;
     }
 
     public List<FNConnection> getTrainsFrom(TimeInterval fromInterval) {
-        List<FNConnection> result = new LinkedList<FNConnection>();
-        Collection<FNConnection> connections = this.get(fromInterval.getTrain(), fromMap);
-        for (FNConnection conn : connections) {
-            if (fromInterval == conn.getFrom()) {
-                result.add(conn);
-            }
-        }
-        return result;
+    	return fromMap.get(fromInterval);
     }
 
     public List<FNConnection> getTrainsTo(TimeInterval toInterval) {
-        List<FNConnection> result = new LinkedList<FNConnection>();
-        Collection<FNConnection> connections = this.get(toInterval.getTrain(), toMap);
-        for (FNConnection conn : connections) {
-            if (toInterval == conn.getTo()) {
-                result.add(conn);
-            }
-        }
-        return result;
-    }
-
-    private Collection<FNConnection> get(Train train, Multimap<Train, FNConnection> map) {
-        return map.get(train);
+    	return toMap.get(toInterval);
     }
 
     private Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from) {
@@ -308,6 +293,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     @Override
     public String toString() {
-        return String.format("FreightNet[connections=%d]", connections.size());
+        return String.format("FreightNet[connections=%d]", fromMap.size());
     }
 }

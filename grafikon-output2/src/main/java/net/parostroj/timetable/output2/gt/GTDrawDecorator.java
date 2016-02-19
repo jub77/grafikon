@@ -59,6 +59,16 @@ public abstract class GTDrawDecorator implements GTDraw {
     }
 
     @Override
+    public void addListener(Listener listener) {
+    	draw.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+    	draw.removeListener(listener);
+    }
+
+    @Override
     public GTDrawSettings getSettings() {
         return draw.getSettings();
     }

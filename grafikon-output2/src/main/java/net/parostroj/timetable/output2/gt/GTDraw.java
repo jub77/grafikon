@@ -2,11 +2,17 @@ package net.parostroj.timetable.output2.gt;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 
 public interface GTDraw {
+
+	interface Listener {
+		void trainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+		void trainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line);
+	}
 
     public String TRAIN_COLOR_CHOOSER = "gt.chooser";
     public String HIGHLIGHTED_TRAINS = "gt.highlight";
@@ -44,4 +50,8 @@ public interface GTDraw {
     Refresh processEvent(Event event);
 
     GTDrawSettings getSettings();
+
+    void addListener(Listener listener);
+
+    void removeListener(Listener listener);
 }
