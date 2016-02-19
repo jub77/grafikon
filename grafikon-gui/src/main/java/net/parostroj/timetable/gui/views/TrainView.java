@@ -6,7 +6,6 @@
 package net.parostroj.timetable.gui.views;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.util.*;
 
@@ -17,6 +16,8 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
+import net.parostroj.timetable.gui.wrappers.BasicWrapperDelegate;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
@@ -29,6 +30,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.*;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
@@ -55,11 +58,48 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     public void editColumns() {
-        ColumnsDialog dialog = new ColumnsDialog((Frame)this.getTopLevelAncestor(), true);
+        ElementSelectionDialog<TrainTableColumn> dialog = new ElementSelectionDialog<TrainTableColumn>(
+                GuiComponentUtils.getWindow(this), true) {
+            @Override
+            protected List<Wrapper<TrainTableColumn>> wrapElements(Iterable<? extends TrainTableColumn> elements) {
+                return Lists.newArrayList(Iterables.transform(elements,
+                        item -> new Wrapper<>(item, new BasicWrapperDelegate<TrainTableColumn>() {
+                    @Override
+                    public String toString(TrainTableColumn column) {
+                        return ResourceLoader.getString(column.getKey());
+                    }
+                })));
+            }
+        };
         dialog.setLocationRelativeTo(trainTableScrollPane);
-        dialog.updateColumns(trainTable);
-        dialog.setVisible(true);
+        Set<TrainTableColumn> current = this.getCurrentColumns();
+        List<TrainTableColumn> selected = dialog.selectElements(
+                Arrays.asList(TrainTableColumn.values()),
+                current);
+        if (selected != null) {
+            this.updateColumns(new HashSet<>(selected), current);
+        }
         dialog.dispose();
+    }
+
+    private Set<TrainTableColumn> getCurrentColumns() {
+        Set<TrainTableColumn> columns = new HashSet<>();
+        Iterator<TableColumn> i = Iterators.forEnumeration(trainTable.getColumnModel().getColumns());
+        while (i.hasNext()) {
+            columns.add(TrainTableColumn.getColumn(i.next().getModelIndex()));
+        }
+        return columns;
+    }
+
+    private void updateColumns(Set<TrainTableColumn> selected, Set<TrainTableColumn> current) {
+        for (TrainTableColumn column : TrainTableColumn.values()) {
+            if (selected.contains(column) && !current.contains(column)) {
+                trainTable.addColumn(column.createTableColumn());
+            } else if (!selected.contains(column) && current.contains(column)) {
+                int index = TrainTableColumn.getIndex(trainTable.getColumnModel(), column);
+                trainTable.removeColumn(trainTable.getColumnModel().getColumn(index));
+            }
+        }
     }
 
     public void resizeColumns() {
@@ -101,6 +141,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         this.model.addListener(this);
         ((TrainTableModel) trainTable.getModel()).setModel(model);
         model.getMediator().addColleague(new Colleague() {
+            @Override
             public void receiveMessage(Object message) {
                 IntervalSelectionMessage ism = (IntervalSelectionMessage) message;
                 if (ism.getInterval() != null) {
