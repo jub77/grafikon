@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,8 +43,12 @@ public class FreightDst {
     }
 
     public Region getRegion() {
-    	List<Region> regions = node.getRegions();
-        return region != null ? region : (regions.isEmpty() ? null : regions.get(0));
+        if (region != null) {
+            return region;
+        } else {
+            List<Region> regions = node != null ? node.getRegions() : Collections.emptyList();
+            return regions.isEmpty() ? null : regions.get(0);
+        }
     }
 
     public Train getTrain() {
