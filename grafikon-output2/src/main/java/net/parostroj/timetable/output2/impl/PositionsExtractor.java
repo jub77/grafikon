@@ -97,7 +97,7 @@ public class PositionsExtractor {
                     TimeInterval end = item.getToInterval();
                     while (start != end && !stop) {
                         if (start.isNodeOwner()) {
-                            if (startingTime < start.getEnd()) {
+                            if (startingTime < item.getNormalizedStartTime()) {
                                 itemStart = new Pair<TrainsCycleItem, TimeInterval>(item, start);
                                 stop = true;
                             }

@@ -146,7 +146,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
                         item.first.getToInterval().getOwnerAsNode().getName(),
                         item.second.getTrain().getName(),
                         item.second.getFromInterval().getOwnerAsNode().getName()));
-            } else if (item.first.getEndTime() >= item.second.getStartTime()) {
+            } else if (item.first.getNormalizedEndTime() >= item.second.getNormalizedStartTime()) {
                 addNewLineIfNotEmpty(result);
                 TimeConverter c = item.first.getTrain().getDiagram().getTimeConverter();
                 result.append(String.format(ResourceLoader.getString("ec.problem.time"),

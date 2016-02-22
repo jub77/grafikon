@@ -10,6 +10,7 @@ import java.util.List;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.utils.TimeUtil;
 
 /**
  * Train cycle item.
@@ -133,8 +134,32 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     }
 
     public int getEndTime() {
-        // TODO normalized ??
         return this.getToInterval().getStart();
+    }
+
+    /**
+     * @return normalized startTime in case start and end are not normalized
+     */
+    public int getNormalizedStartTime() {
+        int startTime = this.getStartTime();
+        if (!TimeUtil.isNormalizedTime(startTime)) {
+            return TimeUtil.normalizeTime(startTime);
+        } else {
+            return startTime;
+        }
+    }
+
+    /**
+     * @return normalized endTime in case start and end are not normalized
+     */
+    public int getNormalizedEndTime() {
+        int startTime = this.getStartTime();
+        int endTime = this.getEndTime();
+        if (!TimeUtil.isNormalizedTime(startTime)) {
+            return TimeUtil.normalizeTime(endTime);
+        } else {
+            return endTime;
+        }
     }
 
     public TrainsCycleItem getNextItem() {
