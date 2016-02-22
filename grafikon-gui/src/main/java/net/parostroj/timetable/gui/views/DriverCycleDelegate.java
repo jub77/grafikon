@@ -44,7 +44,7 @@ public class DriverCycleDelegate extends TCDelegate {
                     result.append('\n');
                 }
                 // get time difference
-                int difference = item.second.getStartTime() - item.first.getEndTime();
+                int difference = item.second.getNormalizedStartTime() - item.first.getNormalizedEndTime();
                 Integer okDifference = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
                 String template = ResourceLoader.getString("ec.move.nodes");
                 if (okDifference != null) {
@@ -56,7 +56,7 @@ public class DriverCycleDelegate extends TCDelegate {
                 }
                 result.append(String.format(template,item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
             }
-            if (item.first.getEndTime() >= item.second.getStartTime()) {
+            if (item.first.getEndTime() >= item.second.getNormalizedStartTime()) {
                 if (result.length() != 0) {
                     result.append('\n');
                 }

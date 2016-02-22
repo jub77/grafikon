@@ -2,7 +2,7 @@
 <%
     FORMATTER = org.joda.time.format.ISODateTimeFormat.hourMinuteSecond()
     PRINT_FORMATTER = new org.joda.time.format.DateTimeFormatterBuilder().appendHourOfDay(1).appendLiteral(':').appendMinuteOfHour(2).toFormatter()
-    
+
     def convertTime(time) {
         def parsed = FORMATTER.parseLocalTime(time)
         def result = PRINT_FORMATTER.print(parsed)
@@ -35,7 +35,8 @@
 <block font-size="4mm" font-weight="bold" space-after="0.5mm">${title}</block>
 <% } %>
 
-<% def printPositions(positions) { %>
+<% def printPositions(positions) {
+     if (!positions) return %>
 <block font-size="3mm" space-after="3mm">
 <table ${border()} border-collapse="collapse" table-layout="fixed" width="100%" font-family="SansCondensed">
   <table-column column-width="2cm" ${border()} />
@@ -64,6 +65,6 @@
       <table-cell ${padding()}><block>${position.trainName}</block></table-cell>
     </table-row>
 <% } %>
-    
+
 <% def padding() {"padding=\".4mm .8mm .3mm 0.8mm\""} %>
 <% def border() {"border=\"solid .3mm\""} %>

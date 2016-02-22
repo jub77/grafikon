@@ -218,7 +218,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         }
         while (i.hasNext()) {
             TrainsCycleItem current = i.next();
-            if (last.getToInterval().getOwner() != current.getFromInterval().getOwner() || last.getEndTime() >= current.getStartTime()) {
+            if (last.getToInterval().getOwner() != current.getFromInterval().getOwner() || last.getNormalizedEndTime() >= current.getNormalizedStartTime()) {
                 if (conflicts == null) {
                     conflicts = new LinkedList<Tuple<TrainsCycleItem>>();
                 }
@@ -303,7 +303,7 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     private int addItemImpl(TrainsCycleItem item) {
         int index = 0;
         for (TrainsCycleItem currentItem : items) {
-            if (currentItem.getStartTime() > item.getStartTime()) {
+            if (currentItem.getNormalizedStartTime() > item.getNormalizedStartTime()) {
                 break;
             }
             index++;
