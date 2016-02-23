@@ -16,8 +16,6 @@ import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.dialogs.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.IntervalSelectionMessage;
-import net.parostroj.timetable.gui.wrappers.BasicWrapperDelegate;
-import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.Colleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.TextTemplate;
@@ -58,27 +56,13 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     }
 
     public void editColumns() {
-        ElementSelectionDialog<TrainTableColumn> dialog = new ElementSelectionDialog<TrainTableColumn>(
-                GuiComponentUtils.getWindow(this), true) {
-            @Override
-            protected List<Wrapper<TrainTableColumn>> wrapElements(Iterable<? extends TrainTableColumn> elements) {
-                return Lists.newArrayList(Iterables.transform(elements,
-                        item -> new Wrapper<>(item, new BasicWrapperDelegate<TrainTableColumn>() {
-                    @Override
-                    public String toString(TrainTableColumn column) {
-                        return ResourceLoader.getString(column.getKey());
-                    }
-                })));
-            }
-        };
+        ColumnSelectionDialog dialog = new ColumnSelectionDialog(
+                GuiComponentUtils.getWindow(this),
+                true,
+                Arrays.asList(TrainTableColumn.values()));
+
         dialog.setLocationRelativeTo(trainTableScrollPane);
-        Set<TrainTableColumn> current = this.getCurrentColumns();
-        List<TrainTableColumn> selected = dialog.selectElements(
-                Arrays.asList(TrainTableColumn.values()),
-                current);
-        if (selected != null) {
-            this.updateColumns(new HashSet<>(selected), current);
-        }
+        dialog.selectColumns(trainTable, this.getCurrentColumns());
         dialog.dispose();
     }
 
@@ -89,17 +73,6 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             columns.add(TrainTableColumn.getColumn(i.next().getModelIndex()));
         }
         return columns;
-    }
-
-    private void updateColumns(Set<TrainTableColumn> selected, Set<TrainTableColumn> current) {
-        for (TrainTableColumn column : TrainTableColumn.values()) {
-            if (selected.contains(column) && !current.contains(column)) {
-                trainTable.addColumn(column.createTableColumn());
-            } else if (!selected.contains(column) && current.contains(column)) {
-                int index = TrainTableColumn.getIndex(trainTable.getColumnModel(), column);
-                trainTable.removeColumn(trainTable.getColumnModel().getColumn(index));
-            }
-        }
     }
 
     public void resizeColumns() {
