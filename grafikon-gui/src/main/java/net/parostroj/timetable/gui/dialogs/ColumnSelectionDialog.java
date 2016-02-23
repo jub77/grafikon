@@ -25,10 +25,10 @@ public class ColumnSelectionDialog extends JDialog {
     private ItemListener itemListener;
     private Map<TrainTableColumn, SelectionCheckBox> map;
 
-    public ColumnSelectionDialog(Window owner, boolean modal, Collection<? extends TrainTableColumn> columns) {
+    public ColumnSelectionDialog(Window owner, boolean modal) {
         super(owner, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
 
-        this.lines = columns.size();
+        this.lines = TrainTableColumn.values().length;
         this.map = new EnumMap<>(TrainTableColumn.class);
 
         JScrollPane scrollPane = new JScrollPane() {
@@ -45,7 +45,7 @@ public class ColumnSelectionDialog extends JDialog {
         JPanel list = new JPanel();
         scrollPane.setViewportView(list);
 
-        this.initialize(list, columns);
+        this.initialize(list);
         this.pack();
     }
 
@@ -77,13 +77,13 @@ public class ColumnSelectionDialog extends JDialog {
         }
     }
 
-    private void initialize(JPanel list, Collection<? extends TrainTableColumn> columns) {
+    private void initialize(JPanel list) {
         ItemListener listener = e -> { if (itemListener != null) itemListener.itemStateChanged(e); };
         Color color = UIManager.getColor("List.background");
         BoxLayout layout = new BoxLayout(list, BoxLayout.Y_AXIS);
         list.setLayout(layout);
         list.setBackground(color);
-        for (TrainTableColumn column : columns) {
+        for (TrainTableColumn column : TrainTableColumn.values()) {
             SelectionCheckBox checkBox = new SelectionCheckBox(ResourceLoader.getString(column.getKey()), column);
             checkBox.setBackground(color);
             checkBox.addItemListener(listener);
@@ -101,5 +101,35 @@ public class ColumnSelectionDialog extends JDialog {
             super(text);
             this.column = column;
         }
+    }
+
+    private static class SelectionCheckBoxMenuItem extends JCheckBoxMenuItem {
+
+        TrainTableColumn column;
+
+        public SelectionCheckBoxMenuItem(String text, TrainTableColumn column) {
+            super(text);
+            this.column = column;
+        }
+    }
+
+    public static JPopupMenu createPopupMenu(JTable table, Collection<? extends TrainTableColumn> columns) {
+        JPopupMenu menu = new JPopupMenu();
+        ItemListener listener = e -> {
+            SelectionCheckBoxMenuItem chb = (SelectionCheckBoxMenuItem) e.getItemSelectable();
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                table.addColumn(chb.column.createTableColumn());
+            } else {
+                int index = TrainTableColumn.getIndex(table.getColumnModel(), chb.column);
+                table.removeColumn(table.getColumnModel().getColumn(index));
+            }
+        };
+        for (TrainTableColumn column : TrainTableColumn.values()) {
+            JCheckBoxMenuItem item = new SelectionCheckBoxMenuItem(ResourceLoader.getString(column.getKey()), column);
+            item.setSelected(columns.contains(column));
+            item.addItemListener(listener);
+            menu.add(item);
+        }
+        return menu;
     }
 }

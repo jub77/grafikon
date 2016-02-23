@@ -58,8 +58,7 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
     public void editColumns() {
         ColumnSelectionDialog dialog = new ColumnSelectionDialog(
                 GuiComponentUtils.getWindow(this),
-                true,
-                Arrays.asList(TrainTableColumn.values()));
+                true);
 
         dialog.setLocationRelativeTo(trainTableScrollPane);
         dialog.selectColumns(trainTable, this.getCurrentColumns());
@@ -231,7 +230,12 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
         trainTable.setAutoCreateColumnsFromModel(false);
         trainTable.setModel(new TrainTableModel(model,train));
         trainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel());
+        ToolTipHeader header = new ToolTipHeader(trainTable.getColumnModel()) {
+            @Override
+            public javax.swing.JPopupMenu getComponentPopupMenu() {
+                return ColumnSelectionDialog.createPopupMenu(trainTable, getCurrentColumns());
+            }
+        };
         header.setToolTipText("text");
         trainTable.setTableHeader(header);
         trainTableScrollPane.setViewportView(trainTable);
