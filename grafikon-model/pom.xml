@@ -9,7 +9,7 @@
     <artifactId>grafikon-model</artifactId>
     <packaging>jar</packaging>
     <name>grafikon-model</name>
-    
+
     <properties>
         <maven.test.skip>false</maven.test.skip>
     </properties>
@@ -45,10 +45,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
