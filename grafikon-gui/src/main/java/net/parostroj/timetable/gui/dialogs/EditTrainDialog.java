@@ -80,7 +80,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
             electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
             managedFreightCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT));
-            noTransitiveRegionStartCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_NO_TRANSITIVE_CENTRE_OF_REGION));
+            noTransitiveRegionStartCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_NO_TRANSITIVE_CENTER_OF_REGION));
             showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
             emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
             optionalCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_OPTIONAL));
@@ -563,7 +563,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         // managed freight
         train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
-        train.getAttributes().setBool(Train.ATTR_NO_TRANSITIVE_CENTRE_OF_REGION, noTransitiveRegionStartCheckBox.isSelected());
+        train.getAttributes().setBool(Train.ATTR_NO_TRANSITIVE_CENTER_OF_REGION, noTransitiveRegionStartCheckBox.isSelected());
 
         this.setVisible(false);
     }
