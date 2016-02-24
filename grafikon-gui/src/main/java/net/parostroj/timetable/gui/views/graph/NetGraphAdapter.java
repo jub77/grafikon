@@ -56,6 +56,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         super(graphT);
         appModel = model;
         this.refresh();
+        this.setHtmlLabels(true);
     }
 
     @Override
@@ -68,13 +69,17 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
             Node node = (Node) mxCell.getValue();
             Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
             List<Region> regions = node.getRegions();
+            List<Region> centerRegions = node.getCenterRegions();
             value = node.getName();
             String description = null;
             if (company != null) {
                 description = company.getAbbr();
             }
             if (!regions.isEmpty()) {
-                String regionsStr = regions.stream().map(region -> region.getName()).collect(Collectors.joining(","));
+                String regionsStr = regions.stream()
+                        .map(region -> centerRegions.contains(region) ?
+                                String.format("<b>%s</b>", region.getName()) : region.getName())
+                        .collect(Collectors.joining(","));
 				description = description == null ? regionsStr : description + "," + regionsStr;
             }
             if (description != null) {
