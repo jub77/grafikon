@@ -1062,7 +1062,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     public boolean isNoTransitiveRegionStart() {
-    	return this.getAttributeAsBool(ATTR_NO_TRANSITIVE_REGION_START);
+    	return this.getAttributeAsBool(ATTR_NO_TRANSITIVE_CENTRE_OF_REGION);
     }
 
     public boolean isRegionTransfer() {
