@@ -45,6 +45,7 @@ public class StationTimetable {
         this.type = type;
     }
 
+    @XmlElement(name = "region")
     public List<RegionInfo> getRegions() {
         return regions;
     }
