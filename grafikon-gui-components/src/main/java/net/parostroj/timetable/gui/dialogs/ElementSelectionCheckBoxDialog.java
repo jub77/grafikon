@@ -39,7 +39,7 @@ public class ElementSelectionCheckBoxDialog<T> extends javax.swing.JDialog {
      * @param list list of elements
      * @return list of selected elements
      */
-    public Set<T> selectElements(Collection<? extends T> list) {
+    public Collection<T> selectElements(Collection<? extends T> list) {
         return this.selectElements(list, null);
     }
 
@@ -51,11 +51,14 @@ public class ElementSelectionCheckBoxDialog<T> extends javax.swing.JDialog {
      * @param selected already selected elements
      * @return list of selected elements
      */
-    public Set<T> selectElements(Collection<? extends T> list, Collection<? extends T> selected) {
+    public Collection<T> selectElements(Collection<? extends T> list, Collection<? extends T> selected) {
+        return this.selectElements(list, selected, null);
+    }
+
+    public Collection<T> selectElements(Collection<? extends T> list, Collection<? extends T> selected, Collection<? extends T> locked) {
         elementSelectionPanel.setListForSelection(this.wrapElements(list));
-        if (selected != null) {
-            elementSelectionPanel.setSelected(selected);
-        }
+        elementSelectionPanel.setSelected(selected == null ? Collections.emptyList() : selected);
+        elementSelectionPanel.setLocked(locked == null ? Collections.emptyList() : locked);
         setVisible(true);
         if (ok) {
             return elementSelectionPanel.getSelected();

@@ -84,11 +84,20 @@ public class ElementSelectionCheckBoxPanel<T> extends JPanel {
         }
     }
 
-    public Set<T> getSelected() {
+    public void setLocked(Collection<? extends T> locked) {
+        for (JCheckBox comp : itemMap.values()) {
+            comp.setEnabled(true);
+        }
+        for (T item : locked) {
+            itemMap.get(item).setEnabled(false);
+        }
+    }
+
+    public Collection<T> getSelected() {
         return itemMap.entrySet().stream()
                 .filter(entry -> entry.getValue().isSelected())
                 .map(entry -> entry.getKey())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public void setListener(ElementSelectionListener<T> listener) {
