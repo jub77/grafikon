@@ -223,10 +223,12 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         if (filterResult == FilterResult.OK) {
             Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
             for (Node rtNode : rtNodes) {
-                FreightDst regionDst = new FreightDst(rtNode, null);
-                filterResult = filter.accepted(context, regionDst, 1);
-                if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
-                    result.add(regionDst);
+                for (Region region : rtNode.getCenterRegions()) {
+                    FreightDst regionDst = new FreightDst(region, null);
+                    filterResult = filter.accepted(context, regionDst, 1);
+                    if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
+                        result.add(regionDst);
+                    }
                 }
             }
         }
@@ -243,7 +245,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
             for (NodeTrack track : tNode.getTracks()) {
                 for (TimeInterval interval : track.getTimeIntervalList()) {
                     Train tTrain = interval.getTrain();
-                    if (tNode == tTrain.getStartNode() && train.isRegionTransfer()) {
+                    if (tNode == tTrain.getStartNode() && tTrain.isRegionTransfer()) {
                         result.add(tTrain.getLastInterval().getOwnerAsNode());
                     }
                 }
