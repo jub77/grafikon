@@ -114,7 +114,7 @@ public class StationTimetablesExtractor {
             }
         }
         if (interval.isFreight()) {
-            List<FreightDst> freightDests = diagram.getFreightNet().getConverter().convertFreightDst(interval, diagram.getFreightNet().getFreightToNodes(interval));
+            List<FreightDst> freightDests = diagram.getFreightNet().getFreightToNodes(interval);
             if (!freightDests.isEmpty()) {
                 ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
                 for (FreightDst dst : freightDests) {
@@ -130,7 +130,7 @@ public class StationTimetablesExtractor {
                 for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                     FreightToTrain ftt = new FreightToTrain();
                     ftt.setTrain(entry.getKey().getName());
-                    List<FreightDst> mList = diagram.getFreightNet().getConverter().convertFreightDst(interval, entry.getValue());
+                    List<FreightDst> mList = entry.getValue();
                     List<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(mList.size());
                     for (FreightDst dst : mList) {
                         fl.add(FreightDstInfo.convert(dst));

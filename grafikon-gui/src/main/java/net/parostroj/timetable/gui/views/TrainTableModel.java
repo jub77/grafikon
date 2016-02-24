@@ -27,13 +27,11 @@ class TrainTableModel extends AbstractTableModel {
     /** Train. */
     private Train train;
     private int lastRow;
-    private ApplicationModel model;
     private boolean editBlock;
     private TimeConverter converter;
 
     public TrainTableModel(ApplicationModel model, Train train) {
         this.setTrain(train);
-        this.model = model;
     }
 
     public Train getTrain() {
@@ -213,17 +211,14 @@ class TrainTableModel extends AbstractTableModel {
                 if (rowIndex % 2 == 0 && (interval.isFreight() || interval.isFreightConnection())) {
                     StringBuilder result = new StringBuilder();
                     Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
-                    List<Region> regions = interval.getOwnerAsNode().getCenterRegions();
-                    Region region = regions.isEmpty() ? null : regions.get(0);
-                    FreightConverter converter = model.getDiagram().getFreightNet().getConverter();
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
-                        List<FreightDst> mList = converter.convertFreightDst(train, region, entry.getValue());
+                        List<FreightDst> mList = entry.getValue();
                         result.append('(').append(diagram.getFreightNet().getConverter().freightDstListToString(mList));
                         result.append(" > ").append(entry.getKey().getName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
                         List<FreightDst> cargoDst = freightNet.getFreightToNodes(interval);
-                        List<FreightDst> mList = converter.convertFreightDst(train, region, cargoDst);
+                        List<FreightDst> mList = cargoDst;
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
@@ -380,6 +375,5 @@ class TrainTableModel extends AbstractTableModel {
     }
 
     public void setModel(ApplicationModel model) {
-        this.model = model;
     }
 }
