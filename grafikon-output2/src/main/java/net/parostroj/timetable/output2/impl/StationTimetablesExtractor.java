@@ -2,6 +2,7 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static net.parostroj.timetable.actions.TrainsHelper.*;
 import net.parostroj.timetable.model.*;
@@ -36,13 +37,14 @@ public class StationTimetablesExtractor {
             StationTimetable timetable = new StationTimetable(node.getName());
             timetable.setType(node.getType());
 
-            // region + company
+            // regions + company
             List<Region> regions = node.getRegions();
-            Region region = regions.isEmpty() ? null : regions.get(0);
-            Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
-            if (region != null) {
-                timetable.setRegion(RegionInfo.convert(region));
+            if (!regions.isEmpty()) {
+                timetable.setRegions(regions.stream()
+                        .map(region -> RegionInfo.convert(region))
+                        .collect(Collectors.toList()));
             }
+            Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
             if (company != null) {
                 timetable.setCompany(CompanyInfo.convert(company));
             }

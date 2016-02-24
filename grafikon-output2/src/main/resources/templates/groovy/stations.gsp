@@ -46,7 +46,9 @@
     
     def getLocale(station) {
         def loc = locale
-        loc = station.region?.locale ?: loc
+        for (region in station.regions) {
+            loc = region.locale ?: loc
+        }
         loc = station.company?.locale ?: loc
         return loc
     }
