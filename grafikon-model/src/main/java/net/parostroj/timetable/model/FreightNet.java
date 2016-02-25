@@ -2,16 +2,12 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.ReferenceHolder;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -205,9 +201,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
-        List<FNConnection> nextConns = getNextTrains(fromInterval);
         FilterResult filterResult = FilterResult.OK;
-        for (TimeInterval i : getNodeIntervalsWithFreightOrConnection(fromInterval.getTrain().getTimeIntervalList(), fromInterval)) {
+        Iterable<TimeInterval> freightTimeIntervals = Iterables.filter(
+                fromInterval.getTrain().getNodeIntervals(),
+                new AdvanceFilterFreightOrConnection(fromInterval));
+        boolean regionsTransitive = !fromInterval.getTrain().isNoTransitiveCenterOfRegion();
+        boolean regionTransfer = fromInterval.getTrain().isRegionTransfer();
+        for (TimeInterval i : freightTimeIntervals) {
             if (i.isFreight()) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
                 filterResult = filter.accepted(context, newDst, 0);
@@ -221,8 +221,8 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
                     break;
                 }
             }
-            for (FNConnection conn : nextConns) {
-                if (i == conn.getFrom() && !used.contains(conn)) {
+            for (FNConnection conn : this.getTrainsFrom(i)) {
+                if (!used.contains(conn)) {
                     used.add(conn);
                     List<TimeInterval> newPath = new ArrayList<TimeInterval>(path.size() + 1);
                     newPath.addAll(path);
@@ -230,58 +230,22 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
                     this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
                 }
             }
-        }
-        if (filterResult == FilterResult.OK) {
-            Collection<Node> rtNodes = getRegionTransferNodes(fromInterval);
-            for (Node rtNode : rtNodes) {
-                for (Region region : rtNode.getCenterRegions()) {
-                    FreightDst regionDst = new FreightDst(region, null);
-                    filterResult = filter.accepted(context, regionDst, 1);
-                    if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
-                        result.add(regionDst);
+            Node node = i.getOwnerAsNode();
+            if (!regionTransfer && regionsTransitive && !node.getCenterRegions().isEmpty()) {
+                for (TimeInterval interval : node) {
+                    Train train = interval.getTrain();
+                    if (node == train.getStartNode() && train.isRegionTransfer()) {
+                        for (Region region : train.getEndNode().getCenterRegions()) {
+                            FreightDst regionDst = new FreightDst(region, null);
+                            filterResult = filter.accepted(context, regionDst, 1);
+                            if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
+                                result.add(regionDst);
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-
-    private Collection<Node> getRegionTransferNodes(TimeInterval fromInterval) {
-        Train train = fromInterval.getTrain();
-        if (train.getLastInterval().isFreightTo()
-        		&& train.getFirstInterval().getOwnerAsNode().getCenterRegions().isEmpty()
-        		&& !train.getLastInterval().getOwnerAsNode().getCenterRegions().isEmpty()
-        		&& !train.isNoTransitiveRegionStart()) {
-            Set<Node> result = new HashSet<Node>();
-            Node tNode = train.getEndNode();
-            for (NodeTrack track : tNode.getTracks()) {
-                for (TimeInterval interval : track.getTimeIntervalList()) {
-                    Train tTrain = interval.getTrain();
-                    if (tNode == tTrain.getStartNode() && tTrain.isRegionTransfer()) {
-                        result.add(tTrain.getLastInterval().getOwnerAsNode());
-                    }
-                }
-            }
-            return result;
-        } else {
-            return Collections.emptySet();
-        }
-    }
-
-    public List<FNConnection> getNextTrains(TimeInterval fromInterval) {
-        List<FNConnection> result = new LinkedList<FNConnection>();
-        Train train = fromInterval.getTrain();
-		int index = train.getIndexOfInterval(fromInterval);
-		TimeIntervalList intervalList = train.getIntervalList();
-		for (TimeInterval interval : intervalList.subList(index + 1, intervalList.size())) {
-			Collection<FNConnection> connections = fromMap.get(interval);
-			for (FNConnection conn : connections) {
-				int indexConn = conn.getFrom().getTrain().getIndexOfInterval(conn.getFrom());
-				if (indexConn > index) {
-					result.add(conn);
-				}
-			}
-		}
-        return result;
     }
 
     public List<FNConnection> getTrainsFrom(TimeInterval fromInterval) {
@@ -292,20 +256,28 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     	return toMap.get(toInterval);
     }
 
-    private Iterable<TimeInterval> getNodeIntervalsWithFreightOrConnection(Iterable<TimeInterval> i, final TimeInterval from) {
-        final ReferenceHolder<Boolean> after = new ReferenceHolder<Boolean>(false);
-        return Iterables.filter(i, (TimeInterval interval) -> {
-            if (after.get()) {
-                return interval.isFreightTo() || interval.isFreightConnection();
-            } else {
-                after.set(interval == from);
-                return false;
-            }
-        });
-    }
-
     @Override
     public String toString() {
         return String.format("FreightNet[connections=%d]", fromMap.size());
+    }
+
+    private static class AdvanceFilterFreightOrConnection implements Predicate<TimeInterval> {
+
+        private final TimeInterval lastSkipped;
+        private boolean skip = true;
+
+        public AdvanceFilterFreightOrConnection(TimeInterval lastSkipped) {
+            this.lastSkipped = lastSkipped;
+        }
+
+        @Override
+        public boolean apply(TimeInterval interval) {
+            if (skip) {
+                skip = interval != lastSkipped;
+                return false;
+            } else {
+                return interval.isFreightTo() || interval.isFreightConnection();
+            }
+        }
     }
 }
