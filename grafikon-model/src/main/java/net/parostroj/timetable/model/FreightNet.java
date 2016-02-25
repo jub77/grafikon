@@ -2,7 +2,6 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
@@ -202,12 +201,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     private void getFreightToNodesImpl(TimeInterval fromInterval, List<TimeInterval> path, List<FreightDst> result, Set<FNConnection> used, FreightDstFilter filter, FilterContext context) {
         FilterResult filterResult = FilterResult.OK;
-        Iterable<TimeInterval> freightTimeIntervals = Iterables.filter(
-                fromInterval.getTrain().getNodeIntervals(),
-                new AdvanceFilterFreightOrConnection(fromInterval));
+        Iterator<TimeInterval> intervals = fromInterval.getTrain().iterator();
+        Iterators.find(intervals, interval -> interval == fromInterval);
+        intervals = Iterators.filter(intervals,
+                interval -> interval.isNodeOwner() && (interval.isFreightTo() || interval.isFreightConnection()));
         boolean regionsTransitive = !fromInterval.getTrain().isNoTransitiveCenterOfRegion();
         boolean regionTransfer = fromInterval.getTrain().isRegionTransfer();
-        for (TimeInterval i : freightTimeIntervals) {
+        while (intervals.hasNext()) {
+            TimeInterval i = intervals.next();
             if (i.isFreight()) {
                 FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
                 filterResult = filter.accepted(context, newDst, 0);
@@ -259,25 +260,5 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     @Override
     public String toString() {
         return String.format("FreightNet[connections=%d]", fromMap.size());
-    }
-
-    private static class AdvanceFilterFreightOrConnection implements Predicate<TimeInterval> {
-
-        private final TimeInterval lastSkipped;
-        private boolean skip = true;
-
-        public AdvanceFilterFreightOrConnection(TimeInterval lastSkipped) {
-            this.lastSkipped = lastSkipped;
-        }
-
-        @Override
-        public boolean apply(TimeInterval interval) {
-            if (skip) {
-                skip = interval != lastSkipped;
-                return false;
-            } else {
-                return interval.isFreightTo() || interval.isFreightConnection();
-            }
-        }
     }
 }
