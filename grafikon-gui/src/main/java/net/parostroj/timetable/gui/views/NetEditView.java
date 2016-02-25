@@ -364,7 +364,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                     T object = objectClass.cast(event.getObject());
                     for (Node node : ((TrainDiagram) event.getSource()).getNet().getNodes()) {
                         Collection<T> attribute = node.getAttributeAsCollection(nodeAttribute, objectClass);
-                        if (attribute.contains(object)) {
+                        if (attribute != null && attribute.contains(object)) {
                             updateNode(node);
                         }
                     }
