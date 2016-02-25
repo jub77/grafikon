@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.panes;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,6 +73,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             }
             deleteButton.setEnabled(selected != null);
             editButton.setEnabled(selected != null);
+            upButton.setEnabled(checkEnabledMoveConnection(selected, 1));
+            downButton.setEnabled(checkEnabledMoveConnection(selected, -1));
             updateInfo();
             return selected != null;
         }
@@ -156,6 +156,8 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
     private final JButton newButton;
     private final JButton deleteButton;
     private final JButton editButton;
+    private final JButton upButton;
+    private final JButton downButton;
     private final JTextField infoTextField;
 
     private ApplicationModel model;
@@ -193,39 +195,44 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         newButton.setEnabled(false);
-        newButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FreightNet fn = model.getDiagram().getFreightNet();
-                if (fn.getConnection(connection.first, connection.second) == null) {
-                    fn.addConnection(connection.first, connection.second);
-                }
-                connection.first = null;
-                connection.second = null;
-                graphicalTimetableView.repaint();
-                newButton.setEnabled(false);
-                updateInfo();
+        newButton.addActionListener(e -> {
+            FreightNet fn = model.getDiagram().getFreightNet();
+            if (fn.getConnection(connection.first, connection.second) == null) {
+                fn.addConnection(connection.first, connection.second);
             }
+            connection.first = null;
+            connection.second = null;
+            graphicalTimetableView.repaint();
+            newButton.setEnabled(false);
+            updateInfo();
         });
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         deleteButton.setEnabled(false);
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FNConnection toBeDeleted = selector.getSelectedConnection();
-                selector.setSelected(null);
-                model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
-            }
+        deleteButton.addActionListener(e -> {
+            FNConnection toBeDeleted = selector.getSelectedConnection();
+            selector.setSelected(null);
+            model.getDiagram().getFreightNet().removeConnection(toBeDeleted);
         });
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
         editButton.setEnabled(false);
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditFNConnetionDialog dialog = new EditFNConnetionDialog(GuiComponentUtils.getWindow(FreightNetPane2.this), true);
-                dialog.edit(FreightNetPane2.this, selector.selected, model.getDiagram());
-            }
+        editButton.addActionListener(e -> {
+            EditFNConnetionDialog dialog = new EditFNConnetionDialog(
+                    GuiComponentUtils.getWindow(FreightNetPane2.this),
+                    true);
+            dialog.edit(FreightNetPane2.this, selector.selected, model.getDiagram());
         });
+
+        upButton = GuiComponentUtils.createButton(GuiIcon.ARROW_UP, 2);
+        upButton.setEnabled(false);
+        upButton.addActionListener(e -> {
+            moveConnection(1);
+        });
+        downButton = GuiComponentUtils.createButton(GuiIcon.ARROW_DOWN, 2);
+        downButton.setEnabled(false);
+        downButton.addActionListener(e -> {
+            moveConnection(-1);
+        });
+
         buttonPanel.add(newButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(editButton);
@@ -234,6 +241,10 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         infoTextField = new JTextField();
         infoTextField.setEditable(false);
         buttonPanel.add(infoTextField);
+
+        buttonPanel.add(upButton);
+        buttonPanel.add(downButton);
+
         infoTextField.setColumns(35);
     }
 
@@ -258,6 +269,27 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
             graphicalTimetableView.setSettings(graphicalTimetableView.getSettings().merge(gtvs));
         }
         return section;
+    }
+
+    private void moveConnection(int change) {
+        FNConnection conn = selector.getSelectedConnection();
+        FreightNet net = model.getDiagram().getFreightNet();
+        int currentIndex = net.getTrainsFrom(conn.getFrom()).indexOf(conn);
+        net.moveConnection(conn, currentIndex + change);
+        graphicalTimetableView.repaint();
+        upButton.setEnabled(checkEnabledMoveConnection(conn, 1));
+        downButton.setEnabled(checkEnabledMoveConnection(conn, -1));
+    }
+
+    private boolean checkEnabledMoveConnection(FNConnection conn, int indexChange) {
+        if (conn == null) {
+            return false;
+        }
+        FreightNet net = model.get().getFreightNet();
+        List<FNConnection> conns = net.getTrainsFrom(conn.getFrom());
+        int currentIndex = conns.indexOf(conn);
+        int newIndex = currentIndex + indexChange;
+        return newIndex >=0 && newIndex < conns.size();
     }
 
     private boolean checkEnabled() {
@@ -293,6 +325,7 @@ public class FreightNetPane2 extends JPanel implements StorableGuiData {
         graphicalTimetableView.setParameter(GTDraw.HIGHLIGHTED_TRAINS, hts);
         graphicalTimetableView.setRegionSelector(hts, TimeInterval.class);
         model.addListener(new ApplicationModelListener() {
+            @Override
             public void modelChanged(ApplicationModelEvent event) {
                 if (event.getType() == ApplicationModelEventType.SET_DIAGRAM_CHANGED) {
                     graphicalTimetableView.setTrainDiagram(event.getModel().getDiagram());

@@ -19,6 +19,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 			Stroke s = g.getStroke();
 			// get connections and paint (if exist)
 			Collection<FNConnection> fromConnections = freightNet.getTrainsFrom(timeInterval);
+			fromConnections = reorderConnections(timeInterval, fromConnections);
 			if (!fromConnections.isEmpty()) {
 				g.setStroke(connectionStroke);
 				for (FNConnection connection : fromConnections) {
@@ -36,7 +37,20 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 			g.setStroke(s);
 		}
 
-		@Override
+		/**
+		 * Reverses connections depending on the order in which are needed (first node is in inverse order).
+		 */
+		private Collection<FNConnection> reorderConnections(TimeInterval timeInterval, Collection<FNConnection> fromConnections) {
+	        if (timeInterval.getOwnerAsNode() == firstNode) {
+	            List<FNConnection> connections = new ArrayList<>(fromConnections);
+	            Collections.reverse(connections);
+	            return connections;
+	        } else {
+	            return fromConnections;
+	        }
+        }
+
+        @Override
 		public void trainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line) {
 			// not interested in lines
 		}

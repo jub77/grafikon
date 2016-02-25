@@ -63,6 +63,13 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         this.removeConnectionImpl(conn);
     }
 
+    public void moveConnection(FNConnection conn, int index) {
+        int currentIndex = fromMap.get(conn.getFrom()).indexOf(conn);
+        if (currentIndex != -1) {
+            this.moveConnectionImpl(conn, currentIndex, index);
+        }
+    }
+
     public Collection<FNConnection> getConnections() {
         return Collections.unmodifiableCollection(fromMap.values());
     }
@@ -78,29 +85,33 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     }
 
     private void addConnectionImpl(FNConnection conn) {
-        this.addConn(fromMap, conn, conn.getFrom());
-        this.addConn(toMap, conn, conn.getTo());
+        this.fromMap.put(conn.getFrom(), conn);
+        this.toMap.put(conn.getTo(), conn);
         this.fromTrainMap.put(conn.getFrom().getTrain(), conn);
         this.toTrainMap.put(conn.getTo().getTrain(), conn);
         this.fireEvent(new Event(this, Event.Type.ADDED, conn));
     }
 
     private void removeConnectionImpl(FNConnection conn) {
-        boolean removed = this.removeConn(fromMap, conn, conn.getFrom());
+        boolean removed = this.fromMap.remove(conn.getFrom(), conn);
         if (removed) {
-            this.removeConn(toMap, conn, conn.getTo());
+            this.toMap.remove(conn.getTo(), conn);
             this.fromTrainMap.remove(conn.getFrom().getTrain(), conn);
             this.toTrainMap.remove(conn.getTo().getTrain(), conn);
             this.fireEvent(new Event(this, Event.Type.REMOVED, conn));
         }
     }
 
-    private void addConn(Multimap<TimeInterval, FNConnection> map, FNConnection conn, TimeInterval interval) {
-        map.put(interval, conn);
-    }
-
-    private boolean removeConn(Multimap<TimeInterval, FNConnection> map, FNConnection conn, TimeInterval interval) {
-        return map.remove(interval, conn);
+    private void moveConnectionImpl(FNConnection conn, int indexFrom, int indexTo) {
+        List<FNConnection> connList = this.fromMap.get(conn.getFrom());
+        if (indexTo < 0 || indexTo >= connList.size()) {
+            throw new IllegalArgumentException(String.format("Connection moved to illegal place: %d (size %d)", indexTo, connList.size()));
+        }
+        FNConnection removedConn = connList.remove(indexFrom);
+        if (removedConn != null) {
+            connList.add(indexTo, conn);
+            this.fireEvent(new Event(this, Event.Type.MOVED, conn, ListData.createData(indexFrom, indexTo)));
+        }
     }
 
     public void checkTrain(Train train) {
@@ -171,7 +182,7 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
         }
-        Map<Train, List<FreightDst>> result = new HashMap<Train, List<FreightDst>>();
+        Map<Train, List<FreightDst>> result = new LinkedHashMap<Train, List<FreightDst>>();
         List<FNConnection> connections = this.getTrainsFrom(fromInterval);
         for (FNConnection conn : connections) {
             List<FreightDst> nodes = this.getFreightToNodesImpl(conn.getTo(), conn.getFreightDstFilter(FreightDstFilterFactory.createEmptyFilter(), true));
