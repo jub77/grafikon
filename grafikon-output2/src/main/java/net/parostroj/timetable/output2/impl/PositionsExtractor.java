@@ -1,11 +1,23 @@
 package net.parostroj.timetable.output2.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiFunction;
+
+import com.google.common.collect.Iterables;
 
 import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.actions.TrainsCycleComparator;
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.filters.ModelPredicates;
+import net.parostroj.timetable.model.Interval;
+import net.parostroj.timetable.model.IntervalFactory;
+import net.parostroj.timetable.model.TimeInterval;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -82,35 +94,35 @@ public class PositionsExtractor {
     }
 
     private List<Pair<TrainsCycleItem, TimeInterval>> getItemStarts(Collection<TrainsCycle> cycles, Integer startingTime) {
+        startingTime = startingTime == null ? 0 : startingTime;
         List<Pair<TrainsCycleItem, TimeInterval>> itemStarts = new ArrayList<>();
         for (TrainsCycle cycle : sortTrainsCycleList(cycles)) {
-            List<TrainsCycleItem> items = cycle.getItems();
-            Pair<TrainsCycleItem, TimeInterval> itemStart = null;
-            if (items.size() > 0) {
-                itemStart = new Pair<TrainsCycleItem, TimeInterval>(items.get(0),
-                        items.get(0).getFromInterval());
-            }
-            if (startingTime != null) {
-                boolean stop = false;
-                for (TrainsCycleItem item : items) {
-                    TimeInterval start = item.getFromInterval();
-                    TimeInterval end = item.getToInterval();
-                    while (start != end && !stop) {
-                        if (start.isNodeOwner()) {
-                            if (startingTime < item.getNormalizedStartTime()) {
-                                itemStart = new Pair<TrainsCycleItem, TimeInterval>(item, start);
-                                stop = true;
-                            }
+            TrainsCycleItem sItem = null;
+            boolean added = false;
+            for (TrainsCycleItem item : cycle) {
+                Interval nInterval = IntervalFactory.createInterval(item.getStartTime(), item.getEndTime()).normalize();
+                if (nInterval.isOverThreshold(startingTime)) {
+                    // go through intervals ...
+                    int lStartTime = startingTime + (startingTime < item.getStartTime() ? TimeInterval.DAY : 0);
+                    for (TimeInterval interval : Iterables.filter(item.getIntervals(), ModelPredicates::nodeInterval)) {
+                        if (interval.isStop() && !interval.isLast() && interval.getEnd() >= lStartTime) {
+                            itemStarts.add(new Pair<>(item, interval));
+                            added = true;
+                            break;
                         }
-                        start = start.getNextTrainInterval();
-                    }
-                    if (stop) {
-                        break;
                     }
                 }
+                if (sItem == null && nInterval.getStart() > startingTime) {
+                    sItem = item;
+                }
             }
-            if (itemStart != null) {
-                itemStarts.add(itemStart);
+            if (!added) {
+                if (sItem == null) {
+                    sItem = cycle.getFirstItem();
+                }
+                if (sItem != null) {
+                    itemStarts.add(new Pair<>(sItem, sItem.getFromInterval()));
+                }
             }
         }
         return itemStarts;

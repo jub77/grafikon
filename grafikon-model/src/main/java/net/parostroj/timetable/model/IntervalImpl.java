@@ -148,4 +148,9 @@ public abstract class IntervalImpl implements Interval {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%d,%d)", getStart(), getEnd());
+    }
 }
