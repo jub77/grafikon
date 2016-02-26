@@ -12,49 +12,51 @@ import net.parostroj.timetable.output2.gt.DrawUtils.FontInfo;
 
 public class ManagedFreightGTDraw extends GTDrawDecorator {
 
-	private class MFListener implements GTDraw.Listener {
-		@Override
-		public void trainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line) {
-			Color c = g.getColor();
-			Stroke s = g.getStroke();
-			// get connections and paint (if exist)
-			Collection<FNConnection> fromConnections = freightNet.getTrainsFrom(timeInterval);
-			fromConnections = reorderConnections(timeInterval, fromConnections);
-			if (!fromConnections.isEmpty()) {
-				g.setStroke(connectionStroke);
-				for (FNConnection connection : fromConnections) {
-					drawConnection(g, connection, timeInterval, interval, line, true);
-				}
-			}
-			Collection<FNConnection> toConnections = freightNet.getTrainsTo(timeInterval);
-			if (!toConnections.isEmpty()) {
-				g.setStroke(connectionStroke);
-				for (FNConnection connection : toConnections) {
-					drawConnection(g, connection, timeInterval, interval, line, false);
-				}
-			}
-			g.setColor(c);
-			g.setStroke(s);
-		}
+    private class MFListener implements GTDraw.Listener {
+        @Override
+        public void trainInStation(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line) {
+            Color c = g.getColor();
+            Stroke s = g.getStroke();
+            // get connections and paint (if exist)
+            Collection<FNConnection> fromConnections = freightNet.getTrainsFrom(timeInterval);
+            fromConnections = reorderConnections(timeInterval, fromConnections);
+            if (!fromConnections.isEmpty()) {
+                g.setStroke(connectionStroke);
+                for (FNConnection connection : fromConnections) {
+                    drawConnection(g, connection, timeInterval, interval, line, true);
+                }
+            }
+            Collection<FNConnection> toConnections = freightNet.getTrainsTo(timeInterval);
+            if (!toConnections.isEmpty()) {
+                g.setStroke(connectionStroke);
+                for (FNConnection connection : toConnections) {
+                    drawConnection(g, connection, timeInterval, interval, line, false);
+                }
+            }
+            g.setColor(c);
+            g.setStroke(s);
+        }
 
-		/**
-		 * Reverses connections depending on the order in which are needed (first node is in inverse order).
-		 */
-		private Collection<FNConnection> reorderConnections(TimeInterval timeInterval, Collection<FNConnection> fromConnections) {
-	        if (timeInterval.getOwnerAsNode() == firstNode) {
-	            List<FNConnection> connections = new ArrayList<>(fromConnections);
-	            Collections.reverse(connections);
-	            return connections;
-	        } else {
-	            return fromConnections;
-	        }
+        /**
+         * Reverses connections depending on the order in which are needed
+         * (first node is in inverse order).
+         */
+        private Collection<FNConnection> reorderConnections(TimeInterval timeInterval,
+                Collection<FNConnection> fromConnections) {
+            if (timeInterval.getOwnerAsNode() == firstNode) {
+                List<FNConnection> connections = new ArrayList<>(fromConnections);
+                Collections.reverse(connections);
+                return connections;
+            } else {
+                return fromConnections;
+            }
         }
 
         @Override
-		public void trainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line) {
-			// not interested in lines
-		}
-	}
+        public void trainOnLine(Graphics2D g, TimeInterval timeInterval, Interval interval, Line2D line) {
+            // not interested in lines
+        }
+    }
 
     private static final Color CONNECTION_COLOR = Color.RED;
     private static final float CONNECTION_STROKE_WIDTH = 1.5f;
@@ -82,7 +84,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private final Node firstNode;
     private final FreightNet freightNet;
 
-    public ManagedFreightGTDraw(GTDrawSettings config, GTDraw draw, RegionCollector<FNConnection> collector, GTStorage storage) {
+    public ManagedFreightGTDraw(GTDrawSettings config, GTDraw draw, RegionCollector<FNConnection> collector,
+            GTStorage storage) {
         super(draw);
         draw.addListener(new MFListener());
         this.written = new ArrayList<Rectangle>();
@@ -104,18 +107,19 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
     @Override
     public void draw(Graphics2D g) {
-    	this.initFontInfo(g);
-    	// initialize drawing managed freigth
-    	this.written.clear();
-    	if (collector != null) {
-    		collector.clear();
-    	}
+        this.initFontInfo(g);
+        // initialize drawing managed freigth
+        this.written.clear();
+        if (collector != null) {
+            collector.clear();
+        }
         // paint diagram
         super.draw(g);
         this.initFontInfo(g);
     }
 
-    private void drawConnection(Graphics2D g, FNConnection conn, TimeInterval interval, Interval i, Line2D line, boolean from) {
+    private void drawConnection(Graphics2D g, FNConnection conn, TimeInterval interval, Interval i, Line2D line,
+            boolean from) {
         if (highlight != null) {
             if (conn == highlight.getSelectedConnection()) {
                 g.setColor(highlight.getColor());
@@ -126,11 +130,11 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
         int dir = conn.getFrom().getOwnerAsNode() == firstNode ? -1 : 1;
         Point location = getLocation(interval, line, dir, from);
         if (location != null) {
-        	String text = this.createText(conn);
-        	Rectangle bounds = g.getFont().getStringBounds(text, g.getFontRenderContext()).getBounds();
-        	int width = bounds.width;
-        	paintText(conn, text, g, new Rectangle(bounds), location, width, dir);
-        	paintLine(conn, g, location, width, from, dir);
+            String text = this.createText(conn);
+            Rectangle bounds = g.getFont().getStringBounds(text, g.getFontRenderContext()).getBounds();
+            int width = bounds.width;
+            paintText(conn, text, g, new Rectangle(bounds), location, width, dir);
+            paintLine(conn, g, location, width, from, dir);
         }
     }
 
@@ -148,7 +152,7 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
     private void paintText(FNConnection conn, String text, Graphics2D g, Rectangle rectangle, Point point, int width, int dir) {
         rectangle.setLocation(point.x - (width / 2), point.y - fontInfo.height + fontInfo.descent);
         while (collisions(rectangle)) {
-            int dy = - rectangle.height * dir;
+            int dy = -rectangle.height * dir;
             rectangle.translate(0, dy);
             point.y += dy;
         }
@@ -227,8 +231,8 @@ public class ManagedFreightGTDraw extends GTDrawDecorator {
 
             @Override
             public void visitTrainEvent(Event event) {
-                if (event.getType() == Event.Type.ATTRIBUTE &&
-                        event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
+                if (event.getType() == Event.Type.ATTRIBUTE
+                        && event.getAttributeChange().checkName(Train.ATTR_MANAGED_FREIGHT)) {
                     setRefresh(Refresh.REPAINT);
                 }
             }
