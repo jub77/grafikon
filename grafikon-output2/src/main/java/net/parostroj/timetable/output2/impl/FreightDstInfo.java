@@ -119,7 +119,9 @@ public class FreightDstInfo {
                 info.setHidden(true);
             }
         }
-        info.setRegions(dst.getRegions().stream().map(reg -> reg.getName()).collect(Collectors.toList()));
+        if (dst.isCenter()) {
+            info.setRegions(dst.getRegions().stream().map(reg -> reg.getName()).collect(Collectors.toList()));
+        }
         return info;
     }
 }

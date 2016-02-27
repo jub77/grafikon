@@ -81,6 +81,9 @@ class TrainTableModel extends AbstractTableModel {
                     return false;
                 }
             }
+            if (columnIndex == TrainTableColumn.REGION_CENTER_TRANSFER.ordinal() && rowIndex != 0) {
+                return interval.getOwnerAsNode().isCenterOfRegions();
+            }
         }
         return TrainTableColumn.getColumn(columnIndex).isAllowedToEdit(rowIndex, lastRow, interval);
     }
@@ -204,6 +207,15 @@ class TrainTableModel extends AbstractTableModel {
                 retValue = false;
                 if (train.isManagedFreight() && interval.isNodeOwner()) {
                     retValue = (interval.getLength() > 0 || rowIndex == 0 || rowIndex == lastRow) && !interval.getAttributes().getBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT);
+                }
+                break;
+            case REGION_CENTER_TRANSFER:
+                // transfer in region center
+                retValue = false;
+                if (interval.isNodeOwner()) {
+                    if (interval.getOwnerAsNode().isCenterOfRegions() && !interval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER) && rowIndex != 0) {
+                        retValue = true;
+                    }
                 }
                 break;
             case FREIGHT_TO_STATIONS:
@@ -366,6 +378,10 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             case MANAGED_FREIGHT:
                 interval.getAttributes().setBool(TimeInterval.ATTR_NOT_MANAGED_FREIGHT, !((Boolean) aValue));
+                this.fireTableRowsUpdated(0, lastRow);
+                break;
+            case REGION_CENTER_TRANSFER:
+                interval.setAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER, !((Boolean) aValue));
                 this.fireTableRowsUpdated(0, lastRow);
                 break;
             default:
