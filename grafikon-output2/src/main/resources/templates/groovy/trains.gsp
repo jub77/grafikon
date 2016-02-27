@@ -755,11 +755,20 @@
         symbol += "*"
       }
       if (freight && row.freightDest != null) {
-        list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
+        list << [fSymbol, convertFreight(row.freightDest)]
         fSymbol += "&dagger;"
       }
     }
     return list
+  }
+
+  def convertFreight(freightDest) {
+      return freightDest.collect{i -> convertFreightDest(i)}.join(', ')
+  }
+  
+  def convertFreightDest(i) {
+      def str = "${i.toString(locale, true)}${i.center ? '(' + i.regions.join(', ') + ')' : ''}"
+      return i.center ? "<b>${str}</b>" : str
   }
 
   def show_title(page) {

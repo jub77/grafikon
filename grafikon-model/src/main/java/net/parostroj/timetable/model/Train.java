@@ -1065,14 +1065,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     	return this.getAttributeAsBool(ATTR_NO_TRANSITIVE_CENTER_OF_REGION);
     }
 
-    public boolean isRegionTransfer() {
-        boolean freightFromTo = this.getFirstInterval().isFreightFrom() && this.getLastInterval().isFreightTo();
-        boolean regionTransfer = freightFromTo
-                && !this.getFirstInterval().getOwnerAsNode().getCenterRegions().isEmpty()
-                && !this.getLastInterval().getOwnerAsNode().getCenterRegions().isEmpty();
-        return regionTransfer;
-    }
-
     @Override
     public Iterator<TimeInterval> iterator() {
         return timeIntervalList.iterator();

@@ -108,10 +108,10 @@
       note_parts << translator.translate(row.comment, loc)
     }
     if (row.freightTo != null) {
-      note_parts << "<inline font-style=\"italic\">${row.freightTo.collect{i -> i.toString(loc, true)}.join(', ')}</inline> ${trainRight()}"
+      note_parts << "<inline font-style=\"italic\">${convert_freight(row.freightTo)}</inline> ${trainRight()}"
     }
     if (row.freightToTrain != null) {
-      note_parts << "<inline font-style=\"italic\">${row.freightToTrain.collect{i -> '(' + rarr() + ' ' + i.train + ': ' + (i.freightTo.collect{j -> j.toString(loc, true)}.join(', ')) + ')'}.join(', ')}</inline>"
+      note_parts << "<inline font-style=\"italic\">${row.freightToTrain.collect{i -> '(' + rarr() + ' ' + i.train + ': ' + (convert_freight(i.freightTo)) + ')'}.join(', ')}</inline>"
     }
     if (row.freightFromTrain != null) {
       note_parts << "<inline font-style=\"italic\">(${row.freightFromTrain.collect{i -> i + ' ' + rarr()}.join(', ')})</inline>"
@@ -122,6 +122,15 @@
     }
 
     return create_note_str(note_parts)
+  }
+  
+  def convert_freight(freightDest) {
+      return freightDest.collect{i -> convert_freight_dest(i)}.join(', ')
+  }
+  
+  def convert_freight_dest(i) {
+      def str = "${i.toString(locale, true)}${i.center ? '(' + i.regions.join(', ') + ')' : ''}"
+      return i.center ? highlight(str) : str
   }
 
   def create_note_str(note_parts) {

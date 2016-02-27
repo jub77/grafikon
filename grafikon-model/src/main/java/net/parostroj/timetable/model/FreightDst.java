@@ -15,25 +15,16 @@ import net.parostroj.timetable.actions.TextList;
 public class FreightDst {
 
     private final Node node;
-    private final Region region;
-    private final Train train;
+    private final TimeInterval timeInterval;
     private final List<TimeInterval> path;
 
-    public FreightDst(Region region, Train train) {
-        this.region = region;
-        this.node = null;
-        this.train = train;
-        this.path = null;
+    public FreightDst(Node node, TimeInterval timeInterval) {
+        this(node, timeInterval, null);
     }
 
-    public FreightDst(Node node, Train train) {
-        this(node, train, null);
-    }
-
-    public FreightDst(Node node, Train train, List<TimeInterval> path) {
-        this.region = null;
+    public FreightDst(Node node, TimeInterval timeInterval, List<TimeInterval> path) {
         this.node = node;
-        this.train = train;
+        this.timeInterval = timeInterval;
         this.path = path;
     }
 
@@ -41,20 +32,24 @@ public class FreightDst {
         return node;
     }
 
-    public Region getRegion() {
-        return region;
+    public List<Region> getRegions() {
+        return node.getCenterRegions();
     }
 
     public Train getTrain() {
-        return train;
+        return timeInterval.getTrain();
+    }
+
+    public TimeInterval getTimeInterval() {
+        return timeInterval;
     }
 
     public List<TimeInterval> getPath() {
         return path;
     }
 
-    public boolean isNode() {
-        return this.node != null;
+    public boolean isCenter() {
+        return !this.node.getCenterRegions().isEmpty();
     }
 
     @Override
@@ -67,26 +62,27 @@ public class FreightDst {
     }
 
     public String toString(Locale locale, boolean abbreviation) {
-        StringBuilder freighStr = new StringBuilder();
-        if (node != null) {
-            StringBuilder colorsStr = null;
-            List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
-            if (cs != null && !cs.isEmpty()) {
-                colorsStr = new StringBuilder();
-                TextList o = new TextList(colorsStr, "[", "]", ",");
-                o.addItems(Iterables.filter(cs, FreightColor.class), color -> color.getName(locale));
-                o.finish();
-            }
-            if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {
-                freighStr.append(abbreviation ? node.getAbbr() : node.getName());
-            }
-            if (colorsStr != null) {
-                freighStr.append(colorsStr.toString());
-            }
-        } else {
-            freighStr.append(region.getName());
+        StringBuilder freightStr = new StringBuilder();
+        StringBuilder colorsStr = null;
+        List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
+        if (cs != null && !cs.isEmpty()) {
+            colorsStr = new StringBuilder();
+            TextList o = new TextList(colorsStr, "[", "]", ",");
+            o.addItems(Iterables.filter(cs, FreightColor.class), color -> color.getName(locale));
+            o.finish();
         }
-        return freighStr.toString();
+        if (node.getType() != NodeType.STATION_HIDDEN || colorsStr == null) {
+            freightStr.append(abbreviation ? node.getAbbr() : node.getName());
+        }
+        if (colorsStr != null) {
+            freightStr.append(colorsStr.toString());
+        }
+        if (!node.getCenterRegions().isEmpty()) {
+            TextList o = new TextList(freightStr, "(", ")", ",");
+            o.addItems(node.getCenterRegions());
+            o.finish();
+        }
+        return freightStr.toString();
     }
 
     @Override
@@ -94,7 +90,6 @@ public class FreightDst {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((node == null) ? 0 : node.hashCode());
-        result = prime * result + ((region == null) ? 0 : region.hashCode());
         return result;
     }
 
@@ -111,11 +106,6 @@ public class FreightDst {
             if (other.node != null)
                 return false;
         } else if (!node.equals(other.node))
-            return false;
-        if (region == null) {
-            if (other.region != null)
-                return false;
-        } else if (!region.equals(other.region))
             return false;
         return true;
     }

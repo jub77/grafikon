@@ -205,12 +205,10 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         Iterators.find(intervals, interval -> interval == fromInterval);
         intervals = Iterators.filter(intervals,
                 interval -> interval.isNodeOwner() && (interval.isFreightTo() || interval.isFreightConnection()));
-        boolean regionsTransitive = !fromInterval.getTrain().isNoTransitiveCenterOfRegion();
-        boolean regionTransfer = fromInterval.getTrain().isRegionTransfer();
         while (intervals.hasNext()) {
             TimeInterval i = intervals.next();
             if (i.isFreight()) {
-                FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i.getTrain(), path);
+                FreightDst newDst = new FreightDst(i.getOwnerAsNode(), i, path);
                 filterResult = filter.accepted(context, newDst, 0);
                 if (filterResult == FilterResult.STOP_EXCLUDE) {
                     break;
@@ -229,21 +227,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
                     newPath.addAll(path);
                     newPath.add(conn.getFrom());
                     this.getFreightToNodesImpl(conn.getTo(), newPath, result, used, conn.getFreightDstFilter(filter, false), context);
-                }
-            }
-            Node node = i.getOwnerAsNode();
-            if (!regionTransfer && regionsTransitive && !node.getCenterRegions().isEmpty()) {
-                for (TimeInterval interval : node) {
-                    Train train = interval.getTrain();
-                    if (node == train.getStartNode() && train.isRegionTransfer()) {
-                        for (Region region : train.getEndNode().getCenterRegions()) {
-                            FreightDst regionDst = new FreightDst(region, null);
-                            filterResult = filter.accepted(context, regionDst, 1);
-                            if (filterResult == FilterResult.OK || filterResult == FilterResult.STOP_INCLUDE) {
-                                result.add(regionDst);
-                            }
-                        }
-                    }
                 }
             }
         }

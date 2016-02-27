@@ -471,13 +471,23 @@ def printTimetableFooter() {
         symbol += "*"
       }
       if (freight && row.freightDest != null) {
-        if (isIn) list << [fSymbol, row.freightDest.collect{i -> i.toString(locale, true)}.join(', ')]
+        if (isIn) list << [fSymbol, convertFreight(row.freightDest)]
         fSymbol += DAGGER
       }
       cnt++
     }
     return list
   }
+  
+  def convertFreight(freightDest) {
+      return freightDest.collect{i -> convertFreightDest(i)}.join(', ')
+  }
+  
+  def convertFreightDest(i) {
+      def str = "${i.toString(locale, true)}${i.center ? '(' + i.regions.join(', ') + ')' : ''}"
+      return i.center ? "<inline font-weight=\"bold\">${str}</inline>" : str
+  }
+
 %>
 <!-- ================ Train + circulation holder ================ -->
 <%

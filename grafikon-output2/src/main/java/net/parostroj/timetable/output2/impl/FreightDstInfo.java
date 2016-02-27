@@ -2,9 +2,11 @@ package net.parostroj.timetable.output2.impl;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -19,12 +21,12 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  *
  * @author jub
  */
-@XmlType(propOrder = {"name", "abbr", "region", "colors"})
+@XmlType(propOrder = {"name", "abbr", "regions", "colors"})
 public class FreightDstInfo {
 
     private String name;
     private String abbr;
-    private String region;
+    private List<String> regions;
     private List<FreightColor> colors;
     private Boolean hidden;
 
@@ -53,12 +55,13 @@ public class FreightDstInfo {
         this.abbr = abbr;
     }
 
-    public String getRegion() {
-        return region;
+    @XmlElement(name = "region")
+    public List<String> getRegions() {
+        return regions;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setRegions(List<String> regions) {
+        this.regions = regions;
     }
 
     @XmlJavaTypeAdapter(FreightColorAdapter.class)
@@ -71,26 +74,38 @@ public class FreightDstInfo {
         this.colors = colors;
     }
 
+    @XmlTransient
+    public boolean isCenter() {
+        return regions != null && !regions.isEmpty();
+    }
+
     public String toString(Locale locale, boolean abbreviation) {
-        StringBuilder freighStr = new StringBuilder();
-        if (name != null) {
-            StringBuilder colorsStr = null;
-            if (colors != null && !colors.isEmpty()) {
-                colorsStr = new StringBuilder();
-                TextList o = new TextList(colorsStr, "[", "]", ",");
-                o.addItems(Iterables.filter(colors, FreightColor.class), color -> color.getName(locale));
-                o.finish();
-            }
-            if (!Boolean.TRUE.equals(hidden) || colorsStr == null) {
-                freighStr.append(abbreviation ? abbr : name);
-            }
-            if (colorsStr != null) {
-                freighStr.append(colorsStr.toString());
-            }
-        } else {
-            freighStr.append(region);
+        StringBuilder freightStr = new StringBuilder();
+        StringBuilder colorsStr = null;
+        if (colors != null && !colors.isEmpty()) {
+            colorsStr = new StringBuilder();
+            TextList o = new TextList(colorsStr, "[", "]", ",");
+            o.addItems(Iterables.filter(colors, FreightColor.class), color -> color.getName(locale));
+            o.finish();
         }
-        return freighStr.toString();
+        if (!Boolean.TRUE.equals(hidden) || colorsStr == null) {
+            freightStr.append(abbreviation ? abbr : name);
+        }
+        if (colorsStr != null) {
+            freightStr.append(colorsStr.toString());
+        }
+        return freightStr.toString();
+    }
+
+    public String toRegionsString(Locale locale) {
+        if (!isCenter()) {
+            return "";
+        }
+        StringBuilder regionsStr = new StringBuilder();
+        TextList o = new TextList(regionsStr, ",");
+        o.addItems(this.regions);
+        o.finish();
+        return regionsStr.toString();
     }
 
     public static FreightDstInfo convert(FreightDst dst) {
@@ -104,9 +119,7 @@ public class FreightDstInfo {
                 info.setHidden(true);
             }
         }
-        if (dst.getRegion() != null) {
-            info.setRegion(dst.getRegion().getName());
-        }
+        info.setRegions(dst.getRegions().stream().map(reg -> reg.getName()).collect(Collectors.toList()));
         return info;
     }
 }
