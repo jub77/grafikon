@@ -25,14 +25,16 @@ public class RegionRemoveValidator implements TrainDiagramValidator {
 
     @Override
     public boolean validate(Event event) {
-        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED && event.getObject() instanceof Region) {
+        if (event.getSource() instanceof Net && event.getType() == Type.REMOVED
+                && event.getObject() instanceof Region) {
             Region region = (Region) event.getObject();
             // remove region from all nodes where it appears
             for (Node node : diagram.getNet().getNodes()) {
-            	if (node.getRegions().contains(region)) {
-            		node.setRemoveAttribute(Node.ATTR_REGIONS, this.removeRegion(node.getRegions(), region));
-            		node.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, this.removeRegion(node.getCenterRegions(), region));
-            	}
+                if (node.getRegions().contains(region)) {
+                    node.setRemoveAttribute(Node.ATTR_REGIONS, this.removeRegion(node.getRegions(), region));
+                    node.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS,
+                            this.removeRegion(node.getCenterRegions(), region));
+                }
             }
             return true;
         }

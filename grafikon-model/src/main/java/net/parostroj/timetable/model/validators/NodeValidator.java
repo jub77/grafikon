@@ -44,28 +44,29 @@ public class NodeValidator implements TrainDiagramValidator {
     private boolean inCheckNodeControl;
 
     private boolean checkNodeControl(Node node) {
-    	if (!inCheckNodeControl) {
-	    	try {
-	    		inCheckNodeControl = true;
-				List<Region> regions = node.getCenterRegions();
-				if (!regions.isEmpty()) {
-					for (Region region : regions) {
-						// look through all nodes for another region start in the same region
-						for (Node tn : diagram.getNet().getNodes()) {
-							if (tn != node && tn.getCenterRegions().contains(region)) {
-								// ensure that there is no region start
-								List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
-								newList.remove(region);
-								tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
-							}
-						}
-					}
-					return true;
-				}
-			} finally {
-				inCheckNodeControl = false;
-			}
-    	}
-    	return false;
+        if (!inCheckNodeControl) {
+            try {
+                inCheckNodeControl = true;
+                List<Region> regions = node.getCenterRegions();
+                if (!regions.isEmpty()) {
+                    for (Region region : regions) {
+                        // look through all nodes for another region start in
+                        // the same region
+                        for (Node tn : diagram.getNet().getNodes()) {
+                            if (tn != node && tn.getCenterRegions().contains(region)) {
+                                // ensure that there is no region start
+                                List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
+                                newList.remove(region);
+                                tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
+                            }
+                        }
+                    }
+                    return true;
+                }
+            } finally {
+                inCheckNodeControl = false;
+            }
+        }
+        return false;
     }
 }

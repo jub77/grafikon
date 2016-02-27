@@ -14,4 +14,5 @@ public interface TimeIntervalAttributes {
     public static final String ATTR_SHUNT = "shunt";
     public static final String ATTR_OCCUPIED = "occupied";
     public static final String ATTR_NOT_MANAGED_FREIGHT = "not.managed.freight";
+    public static final String ATTR_NO_REGION_CENTER_TRANSFER = "no.region.center.transfer";
 }

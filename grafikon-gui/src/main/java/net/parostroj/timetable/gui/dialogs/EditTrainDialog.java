@@ -80,7 +80,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
             dieselCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_DIESEL));
             electricCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_ELECTRIC));
             managedFreightCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_MANAGED_FREIGHT));
-            noTransitiveRegionStartCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_NO_TRANSITIVE_CENTER_OF_REGION));
             showLengthCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_SHOW_STATION_LENGTH));
             emptyCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_EMPTY));
             optionalCheckBox.setSelected(train.getAttributes().getBool(Train.ATTR_OPTIONAL));
@@ -159,6 +158,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
@@ -166,6 +166,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
@@ -348,6 +349,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeEditPanel.add(fromNodeButton, gbc_fromNodeButton);
 
         fromNodeButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fromNodeButtonActionPerformed(evt);
             }
@@ -363,6 +365,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeEditPanel.add(toNodeButton, gbc_toNodeButton);
 
         toNodeButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 toNodeButtonActionPerformed(evt);
             }
@@ -385,6 +388,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         insertButton.setText("^");
         insertButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 insertButtonActionPerformed(evt);
             }
@@ -457,26 +461,15 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_managedFreightCheckBox.gridy = 2;
         optionsPanel.add(managedFreightCheckBox, gbc_managedFreightCheckBox);
 
-        noTransitiveRegionStartCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.no.transitive.region.start")); // NOI18N
-        GridBagConstraints gbc_checkBox = new GridBagConstraints();
-        noTransitiveRegionStartCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        noTransitiveRegionStartCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        gbc_checkBox.weightx = 1.0;
-        gbc_checkBox.anchor = GridBagConstraints.WEST;
-        gbc_checkBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_checkBox.gridx = 1;
-        gbc_checkBox.gridy = 2;
-        optionsPanel.add(noTransitiveRegionStartCheckBox, gbc_checkBox);
-
         optionalCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.train.optional.train")); //NOI18N
-        gbc_checkBox = new GridBagConstraints();
+        GridBagConstraints gbc_checkBox = new GridBagConstraints();
         optionalCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         optionalCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         gbc_checkBox.weightx = 1.0;
         gbc_checkBox.anchor = GridBagConstraints.WEST;
         gbc_checkBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_checkBox.gridx = 0;
-        gbc_checkBox.gridy = 3;
+        gbc_checkBox.gridx = 1;
+        gbc_checkBox.gridy = 2;
         optionsPanel.add(optionalCheckBox, gbc_checkBox);
 
         getContentPane().setLayout(layout);
@@ -563,7 +556,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
 
         // managed freight
         train.getAttributes().setBool(Train.ATTR_MANAGED_FREIGHT, managedFreightCheckBox.isSelected());
-        train.getAttributes().setBool(Train.ATTR_NO_TRANSITIVE_CENTER_OF_REGION, noTransitiveRegionStartCheckBox.isSelected());
 
         this.setVisible(false);
     }
@@ -589,7 +581,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox electricCheckBox;
     private javax.swing.JCheckBox emptyCheckBox;
     private javax.swing.JCheckBox optionalCheckBox;
-    private javax.swing.JCheckBox noTransitiveRegionStartCheckBox;
     private javax.swing.JButton fromNodeButton;
     private javax.swing.JButton insertButton;
     private javax.swing.JTextField numberTextField;

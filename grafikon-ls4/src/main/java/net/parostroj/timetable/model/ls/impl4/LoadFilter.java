@@ -80,17 +80,30 @@ public class LoadFilter {
             }
         }
         if (version.compareTo(new ModelVersion(4, 18, 4)) <= 0) {
-        	// multiple regions allowed per node (even centers)
-        	for (Node node : diagram.getNet().getNodes()) {
-        		Region region = (Region) node.removeAttribute("region");
-        		if (region != null) {
-        			Boolean regionCenter = (Boolean) node.removeAttribute("region.start");
-        			node.setAttribute(Node.ATTR_REGIONS, Collections.singletonList(region));
-        			if (regionCenter != null && regionCenter) {
-        				node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, Collections.singletonList(region));
-        			}
-        		}
-        	}
+            // multiple regions allowed per node (even centers)
+            for (Node node : diagram.getNet().getNodes()) {
+                Region region = (Region) node.removeAttribute("region");
+                if (region != null) {
+                    Boolean regionCenter = (Boolean) node.removeAttribute("region.start");
+                    node.setAttribute(Node.ATTR_REGIONS, Collections.singletonList(region));
+                    if (regionCenter != null && regionCenter) {
+                        node.setAttribute(Node.ATTR_CENTER_OF_REGIONS, Collections.singletonList(region));
+                    }
+                }
+            }
+        }
+        if (version.compareTo(new ModelVersion(4, 19, 0)) <= 0) {
+            // not passing cargo in center (move to time interval from train)
+            for (Train train : diagram.getTrains()) {
+                if (train.getAttributeAsBool("no.transitive.region.start")) {
+                    for (TimeInterval interval : train.getNodeIntervals()) {
+                        if (interval.isFirst()) continue;
+                        if (interval.getOwnerAsNode().isCenterOfRegions()) {
+                            interval.setAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER, true);
+                        }
+                    }
+                }
+            }
         }
     }
 

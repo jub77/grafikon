@@ -1061,10 +1061,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return this.getAttributeAsBool(Train.ATTR_MANAGED_FREIGHT);
     }
 
-    public boolean isNoTransitiveCenterOfRegion() {
-    	return this.getAttributeAsBool(ATTR_NO_TRANSITIVE_CENTER_OF_REGION);
-    }
-
     @Override
     public Iterator<TimeInterval> iterator() {
         return timeIntervalList.iterator();

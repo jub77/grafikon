@@ -49,7 +49,7 @@ public class FreightDst {
     }
 
     public boolean isCenter() {
-        return !this.node.getCenterRegions().isEmpty();
+        return node.isCenterOfRegions();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class FreightDst {
         if (colorsStr != null) {
             freightStr.append(colorsStr.toString());
         }
-        if (!node.getCenterRegions().isEmpty()) {
+        if (node.isCenterOfRegions()) {
             TextList o = new TextList(freightStr, "(", ")", ",");
             o.addItems(node.getCenterRegions());
             o.finish();
