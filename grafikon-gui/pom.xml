@@ -34,7 +34,7 @@
             <artifactId>grafikon-gui-components</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.monkeysintown</groupId>
+            <groupId>org.tinyjee.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
         </dependency>
         <dependency>
