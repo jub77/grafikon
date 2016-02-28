@@ -44,29 +44,40 @@ public class NodeValidator implements TrainDiagramValidator {
     private boolean inCheckNodeControl;
 
     private boolean checkNodeControl(Node node) {
+        boolean applied = false;
         if (!inCheckNodeControl) {
             try {
                 inCheckNodeControl = true;
-                List<Region> regions = node.getCenterRegions();
-                if (!regions.isEmpty()) {
-                    for (Region region : regions) {
-                        // look through all nodes for another region start in
-                        // the same region
-                        for (Node tn : diagram.getNet().getNodes()) {
-                            if (tn != node && tn.getCenterRegions().contains(region)) {
-                                // ensure that there is no region start
-                                List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
-                                newList.remove(region);
-                                tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
-                            }
-                        }
-                    }
-                    return true;
-                }
+                applied = checkImpl(node);
             } finally {
                 inCheckNodeControl = false;
             }
         }
-        return false;
+        return applied;
+    }
+
+    private boolean checkImpl(Node node) {
+        boolean applied = false;
+        List<Region> regions = node.getCenterRegions();
+        if (!regions.isEmpty()) {
+            for (Region region : regions) {
+                // look through all nodes for another region start in
+                // the same region
+                for (Node tn : diagram.getNet().getNodes()) {
+                    if (tn != node && tn.getCenterRegions().contains(region)) {
+                        // ensure that there is no region start
+                        List<Region> newList = new ArrayList<Region>(tn.getCenterRegions());
+                        newList.remove(region);
+                        tn.setRemoveAttribute(Node.ATTR_CENTER_OF_REGIONS, newList.isEmpty() ? null : newList);
+                    }
+                }
+            }
+            applied = true;
+        } else {
+            for (TimeInterval interval : node) {
+                interval.removeAttribute(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER);
+            }
+        }
+        return applied;
     }
 }
