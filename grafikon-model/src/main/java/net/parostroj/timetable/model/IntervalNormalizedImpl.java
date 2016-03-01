@@ -52,7 +52,9 @@ final public class IntervalNormalizedImpl extends IntervalImpl {
 
     @Override
     public boolean isOverThreshold(int threshold) {
-        return threshold == 0 ? this.isOverMidnight() : start < threshold || end >= threshold + TimeInterval.DAY;
+        return threshold == 0 ? this.isOverMidnight()
+                : (start < threshold && end >= threshold)
+                        || (start < threshold + TimeInterval.DAY && end >= threshold + TimeInterval.DAY);
     }
 
     @Override
