@@ -334,16 +334,20 @@ public class TrainView extends javax.swing.JPanel implements ApplicationModelLis
             for (String cStr : splitted) {
                 try {
                     String[] ss = cStr.split(",");
-                    TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
-                    if (column != null) {
-                        TableColumn ac = column.createTableColumn();
-                        if (ss.length > 1) {
-                            int wInt = Integer.parseInt(ss[1]);
-                            if (wInt != 0) {
-                                ac.setPreferredWidth(wInt);
+                    try {
+                        TrainTableColumn column = TrainTableColumn.valueOf(ss[0]);
+                        if (column != null) {
+                            TableColumn ac = column.createTableColumn();
+                            if (ss.length > 1) {
+                                int wInt = Integer.parseInt(ss[1]);
+                                if (wInt != 0) {
+                                    ac.setPreferredWidth(wInt);
+                                }
                             }
+                            shownColumns.add(ac);
                         }
-                        shownColumns.add(ac);
+                    } catch (Exception e) {
+                        log.warn("Error adding column to train view: {}", ss[0]);
                     }
                 } catch (NumberFormatException e) {
                     log.warn("Cannot load columns order for train view: {}", cStr);
