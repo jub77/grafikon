@@ -42,6 +42,7 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.*;
 import com.mxgraph.swing.util.mxGraphActions;
@@ -324,7 +325,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
             @Override
             public void processNodeEvent(Event event) {
                 if (event.getType() == Event.Type.ATTRIBUTE) {
-                    updateNode((Node) event.getSource());
+                    Node node = (Node) event.getSource();
+                    updateNode(node);
+                    if (event.getAttributeChange().checkName(Node.ATTR_LOCATION)) {
+                        updateNodeLocation(node);
+                    }
                 }
             }
 
@@ -532,8 +537,15 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     }
 
     private void updateNodeLocation(Node node) {
-        mxCell cell = graph.getVertexToCellMap().get(node);
-        graph.moveCells(new Object[] { cell }, node.getLocation().getX(), node.getLocation().getY());
+        if (moveBlock) return;
+        moveBlock = true;
+        try {
+            mxCell cell = graph.getVertexToCellMap().get(node);
+            mxGeometry geometry = cell.getGeometry();
+            graph.moveCells(new Object[] { cell }, node.getLocation().getX() - geometry.getX(), node.getLocation().getY() - geometry.getY());
+        } finally {
+            moveBlock = false;
+        }
     }
 
     private void updateLine(Line line) {
@@ -723,10 +735,19 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
                         int x = (int) (mxCell.getGeometry().getX());
                         int y = (int) (mxCell.getGeometry().getY());
-                        node.setLocation(new Location(x, y));
+
+                        if (moveBlock) continue;
+                        moveBlock = true;
+                        try {
+                            node.setLocation(new Location(x, y));
+                        } finally {
+                            moveBlock = false;
+                        }
                     }
                 }
             }
         }
     }
+
+    private boolean moveBlock = false;
 }

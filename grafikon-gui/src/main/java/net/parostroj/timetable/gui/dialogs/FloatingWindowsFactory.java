@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionListener;
 import net.parostroj.timetable.gui.*;
 import net.parostroj.timetable.gui.components.*;
 import net.parostroj.timetable.gui.utils.NormalHTS;
+import net.parostroj.timetable.gui.views.NetEditView;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.mediator.AbstractColleague;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
@@ -322,6 +323,15 @@ public class FloatingWindowsFactory {
         return dialog;
     }
 
+    private static FloatingWindow createNetView(Frame frame, Mediator mediator, ApplicationModel model) {
+        NetEditView netEditView = new NetEditView();
+        netEditView.setModel(model);
+        FloatingFrame dialog = new FloatingFrame(frame, netEditView, "dialog.netview.title", "net.view") {
+
+        };
+        return dialog;
+    }
+
     private static FloatingWindow createCirculationViewDialog(Frame frame, Mediator mediator, ApplicationModel model) {
         final CirculationViewPanel panel = new CirculationViewPanel();
         mediator.addColleague(new ApplicationGTEventColleague() {
@@ -434,6 +444,7 @@ public class FloatingWindowsFactory {
         list.add(createGTViewDialog(frame, mediator, model));
         list.add(createCirculationViewDialog(frame, mediator, model));
         list.add(createTimeIntervalsTrainsChanged(frame, mediator, model));
+        list.add(createNetView(frame, mediator, model));
         return list;
     }
 }
