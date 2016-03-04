@@ -358,6 +358,6 @@ public class GTEventOutputVisitor implements EventVisitor {
         if (change.getNewValue() == null)
             return categoryStr + change.getName() + " (removed)";
         else
-            return categoryStr + change.getName();
+            return categoryStr + change.getName() + " (" + change.getNewValue() + ")";
     }
 }
