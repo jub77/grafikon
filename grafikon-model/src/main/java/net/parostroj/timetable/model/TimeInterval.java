@@ -13,6 +13,9 @@ import net.parostroj.timetable.model.events.Event;
 public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, ObjectWithId {
 
     public static final int DAY = 24 * 3600;
+    public static final int HOUR = 3600;
+    public static final int MINUTE = 60;
+    public static final int SECUNDA = 1;
 
     private final String id;
     /** Interval. */
@@ -562,6 +565,18 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
 
     public boolean isNotManagedFreight() {
     	return this.getAttributeAsBool(ATTR_NOT_MANAGED_FREIGHT);
+    }
+
+    public boolean isNoRegionCenterTransfer() {
+        return this.getAttributeAsBool(ATTR_NO_REGION_CENTER_TRANSFER);
+    }
+
+    /**
+     * @return if the node is center of regions and there is not
+     *         <code>ATTR_NO_REGION_CENTER_TRANSFER</code> attribute present
+     */
+    public boolean isRegionCenterTransfer() {
+        return this.isFreightTo() && this.getOwnerAsNode().isCenterOfRegions() && !this.isNoRegionCenterTransfer();
     }
 
     public boolean isFreightFrom() {
