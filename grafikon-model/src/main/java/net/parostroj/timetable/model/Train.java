@@ -790,6 +790,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return list of intervals
      */
     public List<TimeInterval> getIntervals(TimeInterval from, TimeInterval to) {
+        if (from == null) from = this.getFirstInterval();
+        if (to == null) to = this.getLastInterval();
         int fromIndex = timeIntervalList.indexOf(from);
         int toIndex = timeIntervalList.indexOf(to);
         if (fromIndex == -1 || toIndex == -1) {
