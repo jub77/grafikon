@@ -85,6 +85,8 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private JPanel rightPanel;
     private JPanel buttonPanel;
 
+    private JTextArea textArea;
+
     private int cnt = 0;
 
     public class NewNodeAction extends AbstractAction {
@@ -305,11 +307,12 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         // add net edit model to net view
         netEditModel = new NetSelectionModel();
         netEditModel.addNetSelectionListener(this);
+        netEditModel.addNetSelectionListener(new NetItemInfo(textArea));
     }
 
     private void initializeDialogs() {
         // initialize dialogs
-        editNodeDialog = new EditNodeDialog((Frame) this.getTopLevelAncestor());
+        editNodeDialog = new EditNodeDialog((Frame) this.getTopLevelAncestor(), true);
         editLineDialog = new EditLineDialog((Frame) this.getTopLevelAncestor(), true);
     }
 
@@ -528,7 +531,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
         JScrollPane taScrollPane = new JScrollPane();
         taScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        JTextArea textArea = new JTextArea();
+        textArea = new JTextArea();
         taScrollPane.setViewportView(textArea);
         // font the same as label
         textArea.setFont(UIManager.getFont("Label.font"));

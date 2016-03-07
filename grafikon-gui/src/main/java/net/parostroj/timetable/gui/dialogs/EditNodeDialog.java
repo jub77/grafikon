@@ -91,8 +91,8 @@ public class EditNodeDialog extends javax.swing.JDialog {
     private final WrapperListModel<NodeType> types;
 
     /** Creates new form EditNodeDialog */
-    public EditNodeDialog(java.awt.Frame parent) {
-        super(parent);
+    public EditNodeDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
 
         types = new WrapperListModel<NodeType>(false);
@@ -345,7 +345,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
         companyComboBox = new javax.swing.JComboBox<Wrapper<Company>>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setModal(true);
         setResizable(false);
 
         jLabel1.setText(ResourceLoader.getString("ne.name")); // NOI18N
