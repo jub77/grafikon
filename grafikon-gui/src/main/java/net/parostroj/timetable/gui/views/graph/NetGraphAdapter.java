@@ -66,25 +66,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         if (mxCell.getValue() instanceof Line) {
             value = this.convertLine((Line) mxCell.getValue());
         } else if (mxCell.getValue() instanceof Node) {
-            Node node = (Node) mxCell.getValue();
-            Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
-            List<Region> regions = node.getRegions();
-            List<Region> centerRegions = node.getCenterRegions();
-            value = node.getName();
-            String description = null;
-            if (company != null) {
-                description = company.getAbbr();
-            }
-            if (!regions.isEmpty()) {
-                String regionsStr = regions.stream()
-                        .map(region -> centerRegions.contains(region) ?
-                                String.format("<b>%s</b>", region.getName()) : region.getName())
-                        .collect(Collectors.joining(","));
-				description = description == null ? regionsStr : description + "," + regionsStr;
-            }
-            if (description != null) {
-                value = String.format("%s%n(%s)", value, description);
-            }
+            value = this.convertNode((Node) mxCell.getValue());
         } else {
             value = "";
         }
@@ -94,6 +76,29 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     @Override
     public boolean isAutoSizeCell(Object cell) {
         return true;
+    }
+
+    private String convertNode(Node node) {
+        String value;
+        Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
+        List<Region> regions = node.getRegions();
+        List<Region> centerRegions = node.getCenterRegions();
+        value = node.getName();
+        String description = null;
+        if (company != null) {
+            description = company.getAbbr();
+        }
+        if (!regions.isEmpty()) {
+            String regionsStr = regions.stream()
+                    .map(region -> centerRegions.contains(region) ?
+                            String.format("<b>%s</b>", region.getName()) : region.getName())
+                    .collect(Collectors.joining(","));
+        	description = description == null ? regionsStr : description + "," + regionsStr;
+        }
+        if (description != null) {
+            value = String.format("%s%n(%s)", value, description);
+        }
+        return value;
     }
 
     private String convertLine(Line line) {
