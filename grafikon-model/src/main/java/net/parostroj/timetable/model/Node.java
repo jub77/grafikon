@@ -191,6 +191,10 @@ public class Node extends RouteSegmentImpl<NodeTrack> implements RouteSegment, A
         return this.getAttribute(ATTR_LENGTH, Integer.class);
     }
 
+    public Company getCompany() {
+        return this.getAttribute(ATTR_COMPANY, Company.class);
+    }
+
     public List<Region> getCenterRegions() {
     	return this.getAttributeAsList(ATTR_CENTER_OF_REGIONS, Region.class, Collections.emptyList());
     }
