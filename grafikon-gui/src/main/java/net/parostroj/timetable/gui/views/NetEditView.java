@@ -52,8 +52,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxCellState;
 
-import javax.swing.border.EmptyBorder;
-
 /**
  * View for editing net.
  *
@@ -81,8 +79,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private mxGraphOutline graphOutline;
     private NodeInsertHandler insertHandler;
     private mxRubberband selectionHandler;
-    private JPanel panel;
     private final Collection<JComponent> controls = new ArrayList<JComponent>();
+
+    private JPanel outlinePanel;
+    private JPanel rightPanel;
+    private JPanel buttonPanel;
 
     private int cnt = 0;
 
@@ -416,12 +417,21 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        panel = new JPanel();
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(panel, BorderLayout.SOUTH);
         panel.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel();
+        rightPanel = new JPanel();
+        rightPanel.setLayout(new BorderLayout());
+        panel.add(rightPanel, BorderLayout.CENTER);
+
+        outlinePanel = new JPanel();
+        outlinePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        outlinePanel.setLayout(new BorderLayout());
+        rightPanel.add(outlinePanel, BorderLayout.WEST);
+
+        buttonPanel = new JPanel();
         panel.add(BorderLayout.WEST, buttonPanel);
         GridBagLayout layoutButtonPanel = new GridBagLayout();
         buttonPanel.setLayout(layoutButtonPanel);
@@ -515,6 +525,17 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc_4.gridx = 1;
         gbc_4.gridy = 2;
         buttonPanel.add(zoomOut, gbc_4);
+
+        JScrollPane taScrollPane = new JScrollPane();
+        taScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JTextArea textArea = new JTextArea();
+        taScrollPane.setViewportView(textArea);
+        // font the same as label
+        textArea.setFont(UIManager.getFont("Label.font"));
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        rightPanel.add(taScrollPane, BorderLayout.CENTER);
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     @Override
@@ -564,7 +585,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         boolean isNet = net != null;
         if (graphComponent != null) {
             this.remove(graphComponent);
-            this.panel.remove(graphOutline);
+            this.outlinePanel.remove(graphOutline);
         }
         for (JComponent c : controls) {
             c.setEnabled(isNet);
@@ -594,7 +615,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         graphComponent.setDragEnabled(false);
         graphComponent.getViewport().setOpaque(true);
         graphComponent.getViewport().setBackground(Color.WHITE);
-        graphComponent.setPageBackgroundColor(panel.getBackground());
+        graphComponent.setPageBackgroundColor(outlinePanel.getBackground());
         graphComponent.getConnectionHandler().setHandleEnabled(false);
         graphComponent.getConnectionHandler().setEnabled(false);
 
@@ -702,7 +723,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         });
 
         graphOutline = graphComponent.createOutline();
-        panel.add(BorderLayout.CENTER, graphOutline);
+        outlinePanel.add(BorderLayout.CENTER, graphOutline);
 
         graph.addListener(mxEvent.CELLS_MOVED, this);
         graph.getModel().beginUpdate();
@@ -713,7 +734,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         } finally {
             graph.getModel().endUpdate();
         }
-        panel.validate();
+        Dimension size = buttonPanel.getSize();
+        size.width = size.width * 2;
+        graphOutline.setPreferredSize(size);
+        rightPanel.validate();
         validate();
     }
 
