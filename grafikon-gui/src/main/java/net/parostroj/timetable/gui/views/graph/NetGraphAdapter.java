@@ -1,15 +1,8 @@
 package net.parostroj.timetable.gui.views.graph;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.model.units.SpeedUnit;
-import net.parostroj.timetable.model.units.UnitUtil;
 
 import org.jgrapht.ListenableGraph;
 import org.slf4j.Logger;
@@ -25,6 +18,10 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.utils.NetItemConversionUtil;
+import net.parostroj.timetable.model.*;
+
 /**
  * Specific adapter for graph with nodes and lines.
  *
@@ -35,6 +32,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
     private static final Logger log = LoggerFactory.getLogger(NetGraphAdapter.class);
 
     private final ApplicationModel appModel;
+    private final NetItemConversionUtil conv;
 
     static {
         try {
@@ -54,6 +52,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
     public NetGraphAdapter(ListenableGraph<Node, Line> graphT, ApplicationModel model) {
         super(graphT);
+        conv = new NetItemConversionUtil();
         appModel = model;
         this.refresh();
         this.setHtmlLabels(true);
@@ -80,7 +79,7 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
 
     private String convertNode(Node node) {
         String value;
-        Company company = node.getAttribute(Node.ATTR_COMPANY, Company.class);
+        Company company = node.getCompany();
         List<Region> regions = node.getRegions();
         List<Region> centerRegions = node.getCenterRegions();
         value = node.getName();
@@ -105,39 +104,16 @@ public class NetGraphAdapter extends JGraphTAdapter<Node, Line> {
         if (appModel == null) {
             return line.toString();
         }
-        StringBuilder result = new StringBuilder();
-        collectRoutes(line, result);
+        StringBuilder result = new StringBuilder(conv.collectRoutesString(line));
         if (result.length() != 0) {
             result.append('\n');
         }
-        LengthUnit lengthUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, LengthUnit.class, appModel.getProgramSettings().getLengthUnit());
-        BigDecimal cValue = lengthUnit.convertFrom(new BigDecimal(line.getLength()), LengthUnit.MM);
-        result.append(UnitUtil.convertToString("#0.###", cValue)).append(lengthUnit.getUnitsOfString());
+        result.append(conv.getLineLengthString(line, appModel.getProgramSettings().getLengthUnit()));
         Integer topSpeed = line.getTopSpeed();
         if (topSpeed != null) {
-            SpeedUnit speedUnit = line.getDiagram().getAttributes().get(TrainDiagram.ATTR_EDIT_SPEED_UNIT, SpeedUnit.class, appModel.getProgramSettings().getSpeedUnit());
-            BigDecimal sValue = speedUnit.convertFrom(new BigDecimal(topSpeed), SpeedUnit.KMPH);
-            result.append('(').append(UnitUtil.convertToString("#0", sValue)).append(speedUnit.getUnitsOfString()).append(')');
+            result.append('(').append(conv.getLineSpeedString(line, appModel.getProgramSettings().getSpeedUnit())).append(')');
         }
         return result.toString();
-    }
-
-    private void collectRoutes(Line line, StringBuilder builder) {
-        TrainDiagram diagram = line.getDiagram();
-        boolean added = false;
-        for (Route route : diagram.getRoutes()) {
-            if (route.isNetPart()) {
-                for (RouteSegment seg : route.getSegments()) {
-                    if (seg.asLine() != null && seg.asLine() == line) {
-                        if (added) {
-                            builder.append(',');
-                        }
-                        added = true;
-                        builder.append(route.getName());
-                    }
-                }
-            }
-        }
     }
 
     @Override

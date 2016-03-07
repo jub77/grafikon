@@ -86,7 +86,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
     private JPanel rightPanel;
     private JPanel buttonPanel;
 
-    private JTextArea textArea;
+    private JLabel textArea;
 
     private int cnt = 0;
 
@@ -530,15 +530,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         gbc_4.gridy = 2;
         buttonPanel.add(zoomOut, gbc_4);
 
-        JScrollPane taScrollPane = new JScrollPane();
-        taScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        textArea = new JTextArea();
-        taScrollPane.setViewportView(textArea);
+        textArea = new JLabel();
+        textArea.setVerticalAlignment(SwingConstants.TOP);
         // font the same as label
-        textArea.setFont(UIManager.getFont("Label.font"));
-        textArea.setEditable(false);
-        textArea.setLineWrap(true);
-        rightPanel.add(taScrollPane, BorderLayout.CENTER);
+        rightPanel.add(textArea, BorderLayout.CENTER);
         rightPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
