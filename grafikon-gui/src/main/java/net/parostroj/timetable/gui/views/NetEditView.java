@@ -25,6 +25,7 @@ import net.parostroj.timetable.gui.dialogs.EditNodeDialog;
 import net.parostroj.timetable.gui.dialogs.SaveImageDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
+import net.parostroj.timetable.gui.utils.NetItemInfo;
 import net.parostroj.timetable.gui.views.graph.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
