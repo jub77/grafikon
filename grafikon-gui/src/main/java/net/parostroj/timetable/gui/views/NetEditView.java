@@ -360,6 +360,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                         updateNodeForObjectListAttribute(Region.class, Region.ATTR_NAME, Node.ATTR_REGIONS, event);
                         updateNodeForObjectAttribute(Company.class, Company.ATTR_ABBR, Node.ATTR_COMPANY, event);
                         break;
+                    case ATTRIBUTE:
+                        if (event.getAttributeChange().checkName(TrainDiagram.ATTR_EDIT_LENGTH_UNIT, TrainDiagram.ATTR_EDIT_SPEED_UNIT)) {
+                            updateAll();
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -550,6 +555,10 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
 
     private void updateNode(Node node) {
         graph.cellLabelChanged(graph.getVertexToCellMap().get(node), node, true);
+    }
+
+    private void updateAll() {
+        graph.refresh();
     }
 
     private void updateNodeLocation(Node node) {
