@@ -1,16 +1,18 @@
 package net.parostroj.timetable.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+
+import com.google.common.collect.FluentIterable;
 
 import net.parostroj.timetable.actions.TextList;
 import net.parostroj.timetable.utils.Tuple;
@@ -30,8 +32,8 @@ public class FreightConverter {
         return builder.toString();
     }
 
-    public void computeRegionGraph(TrainDiagram diagram) {
-        SimpleDirectedWeightedGraph<Node, GEdge> graph = new SimpleDirectedWeightedGraph<>(GEdge.class);
+    public DirectedGraph<Node,RegionFreightConnection> getRegionGraph(TrainDiagram diagram) {
+        SimpleDirectedWeightedGraph<Node, RegionFreightConnection> graph = new SimpleDirectedWeightedGraph<>(RegionFreightConnection.class);
         diagram.getNet().getNodes().stream().filter(node -> node.isCenterOfRegions())
                 .forEach(node -> graph.addVertex(node));
         for (Node node : graph.vertexSet()) {
@@ -42,34 +44,58 @@ public class FreightConverter {
                     .forEach(connection -> {
                         Node n1 = connection.first.getOwnerAsNode();
                         Node n2 = connection.second.getOwnerAsNode();
-                        GEdge edge = graph.getEdge(n1, n2);
+                        RegionFreightConnection edge = graph.getEdge(n1, n2);
                         if (edge == null) {
-                            edge = new GEdge(connection);
+                            edge = new RegionFreightConnection(connection);
                             graph.addEdge(n1, n2, edge);
                         } else {
                             edge.connections.add(connection);
                         }
                     });
         }
-
-        Stream<Tuple<Node>> map = graph.vertexSet().stream().flatMap(v -> graph.vertexSet().stream().filter(v2 -> v2 != v).map(v3 -> new Tuple<>(v, v3)));
-        List<Tuple<Node>> ll = map.collect(Collectors.toList());
-        System.out.println(ll);
-        for (Tuple<Node> t : ll) {
-            DijkstraShortestPath<Node, GEdge> d = new DijkstraShortestPath<Node, FreightConverter.GEdge>(graph, t.first, t.second);
-            System.out.println("P: " + t + " > "+ d.getPath());
-        }
+        return graph;
     }
 
-    public static class GEdge extends DefaultWeightedEdge {
+    public Map<Tuple<Node>, List<Node>> getRegionConnectionNodes(TrainDiagram diagram) {
+        return this.computeRegionConnectionsImpl(this.getRegionGraph(diagram),
+                        path -> FluentIterable.from(path.getEdgeList())
+                                .filter(conn -> conn.getTarget() != path.getEndVertex())
+                                .transform(conn -> conn.getTarget()).toList());
+    }
+
+    public Map<Tuple<Node>, List<RegionFreightConnection>> getRegionConnectionEdges(TrainDiagram diagram) {
+        return this.computeRegionConnectionsImpl(this.getRegionGraph(diagram),
+                path -> path.getEdgeList());
+    }
+
+    protected <T> Map<Tuple<Node>, T> computeRegionConnectionsImpl(
+            DirectedGraph<Node, RegionFreightConnection> graph,
+            Function<GraphPath<Node, RegionFreightConnection>, T> conversion) {
+        Map<Tuple<Node>, T> connections = new HashMap<>();
+        this.getAllConnectionVariants(graph).forEach(tuple -> {
+                    DijkstraShortestPath<Node, RegionFreightConnection> path = new DijkstraShortestPath<>(graph,
+                            tuple.first, tuple.second);
+                    if (path.getPath() != null) {
+                        connections.put(tuple, conversion.apply(path.getPath()));
+                    }
+                });
+        return connections;
+    }
+
+    private Stream<Tuple<Node>> getAllConnectionVariants(DirectedGraph<Node, RegionFreightConnection> graph) {
+        return graph.vertexSet().stream().flatMap(nodeFrom -> graph.vertexSet().stream().filter(node -> node != nodeFrom)
+                .map(nodeTo -> new Tuple<>(nodeFrom, nodeTo)));
+    }
+
+    public static class RegionFreightConnection extends DefaultWeightedEdge {
 
         protected final Collection<Tuple<TimeInterval>> connections;
 
-        public GEdge() {
+        public RegionFreightConnection() {
             this.connections = Collections.emptyList();
         }
 
-        public GEdge(Tuple<TimeInterval> connection) {
+        public RegionFreightConnection(Tuple<TimeInterval> connection) {
             this.connections = new ArrayList<>();
             this.connections.add(connection);
         }
@@ -77,6 +103,16 @@ public class FreightConverter {
         @Override
         public double getWeight() {
             return this.computeWeight();
+        }
+
+        @Override
+        protected Node getTarget() {
+            return (Node) super.getTarget();
+        }
+
+        @Override
+        protected Node getSource() {
+            return (Node) super.getSource();
         }
 
         /*
