@@ -308,7 +308,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
         // add net edit model to net view
         netEditModel = new NetSelectionModel();
         netEditModel.addNetSelectionListener(this);
-        netEditModel.addNetSelectionListener(new NetItemInfo(textArea));
+        netEditModel.addNetSelectionListener(new NetItemInfo(textArea, () -> model != null ? model.getProgramSettings() : null));
     }
 
     private void initializeDialogs() {
