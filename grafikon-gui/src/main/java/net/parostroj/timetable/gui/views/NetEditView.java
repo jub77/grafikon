@@ -148,15 +148,13 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 Node selectedNode = netEditModel.getSelectedNode();
                 if (!selectedNode.isEmpty() || !model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()
                         || CheckingUtils.checkRoutesForNode(selectedNode, model.getDiagram().getRoutes())) {
-                    if (!selectedNode.isEmpty())
-                        JOptionPane.showMessageDialog(comp, ResourceLoader.getString("nl.error.notempty"),
-                                ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
-                    else if (!model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty())
-                        JOptionPane.showMessageDialog(comp, ResourceLoader.getString("nl.error.linesexist"),
-                                ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
-                    else
-                        JOptionPane.showMessageDialog(comp, ResourceLoader.getString("ne.error.routepart"),
-                                ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
+                    if (!selectedNode.isEmpty()) {
+                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
+                    } else if (!model.getDiagram().getNet().getLinesOf(selectedNode).isEmpty()) {
+                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.linesexist"), comp);
+                    } else {
+                        GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+                    }
                 } else {
                     model.getDiagram().getNet().removeNode(selectedNode);
                 }
@@ -166,12 +164,11 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 Line selectedLine = netEditModel.getSelectedLine();
                 if (!selectedLine.isEmpty()
                         || CheckingUtils.checkRoutesForLine(selectedLine, model.getDiagram().getRoutes())) {
-                    if (!selectedLine.isEmpty())
-                        JOptionPane.showMessageDialog(comp, ResourceLoader.getString("nl.error.notempty"),
-                                ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
-                    else
-                        JOptionPane.showMessageDialog(comp, ResourceLoader.getString("ne.error.routepart"),
-                                ResourceLoader.getString("nl.error.title"), JOptionPane.ERROR_MESSAGE);
+                    if (!selectedLine.isEmpty()) {
+                        GuiComponentUtils.showError(ResourceLoader.getString("nl.error.notempty"), comp);
+                    } else {
+                        GuiComponentUtils.showError(ResourceLoader.getString("ne.error.routepart"), comp);
+                    }
                 } else {
                     model.getDiagram().getNet().removeLine(selectedLine);
                 }
@@ -259,8 +256,7 @@ public class NetEditView extends javax.swing.JPanel implements NetSelectionModel
                 @Override
                 protected void eventDispatchActionAfter() {
                     if (error) {
-                        JOptionPane.showMessageDialog(NetEditView.this, ResourceLoader.getString("save.image.error"),
-                                ResourceLoader.getString("save.image.error.text"), JOptionPane.ERROR_MESSAGE);
+                        GuiComponentUtils.showError(ResourceLoader.getString("save.image.error.text"), NetEditView.this);
                     }
                 }
             };

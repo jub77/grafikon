@@ -13,7 +13,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import net.parostroj.timetable.actions.ElementSort;
@@ -287,20 +286,17 @@ public class CreateTrainView extends javax.swing.JPanel {
             if (speed < 1)
                 throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainspeedmissing"),
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            GuiComponentUtils.showError(ResourceLoader.getString("create.train.trainspeedmissing"), this.getParent());
             return;
         }
 
         if (nameTextField.getText() == null || nameTextField.getText().trim().equals("")) {
-            JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("create.train.trainnamemissing"),
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            GuiComponentUtils.showError(ResourceLoader.getString("create.train.trainnamemissing"), this.getParent());
             return;
         }
 
         if (fromComboBox.getSelectedItem() == null || toComboBox.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this.getParent(), "",
-                    ResourceLoader.getString("create.train.error"), JOptionPane.ERROR_MESSAGE);
+            GuiComponentUtils.showError("", this.getParent());
             return;
         }
 
