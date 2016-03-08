@@ -71,6 +71,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
      */
     public TrainDiagram(String id) {
         this.id = id;
+        this.partFactory = new TrainDiagramPartFactory(this);
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
         this.routes = new ItemWithIdSetImpl<Route>(
@@ -110,7 +111,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.net.addAllEventListener(listener);
         this.changesTracker = new ChangesTrackerImpl();
         this.addAllEventListener(changesTracker);
-        this.freightNet = new FreightNet(IdGenerator.getInstance().getId());
+        this.freightNet = partFactory.createFreightNet(IdGenerator.getInstance().getId());
         this.freightNet.addListener(listener);
         this.validators = new ArrayList<TrainDiagramValidator>();
         this.validators.add(new TrainNamesValidator(this));
@@ -128,7 +129,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new TrainCycleTypeRemoveValidator(this));
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
                 groups, companies, trainTypes, trains, cycleTypes);
-        this.partFactory = new TrainDiagramPartFactory(this);
     }
 
     /**

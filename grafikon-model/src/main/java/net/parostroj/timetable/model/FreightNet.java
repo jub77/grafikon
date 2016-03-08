@@ -15,9 +15,10 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Observable {
+public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Observable, TrainDiagramPart {
 
     private final String id;
+    private final TrainDiagram diagram;
     private final Attributes attributes;
     private final AttributesListener defaultAttributesListener;
     private final ListenerSupport listenerSupport;
@@ -29,8 +30,9 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     private FreightConverter converter;
 
-    public FreightNet(String id) {
+    FreightNet(String id, TrainDiagram diagram) {
         this.id = id;
+        this.diagram = diagram;
         this.converter = new FreightConverter();
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
@@ -157,6 +159,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public TrainDiagram getDiagram() {
+        return diagram;
     }
 
     @Override

@@ -116,4 +116,14 @@ public class TrainDiagramPartFactory {
     public TrainsCycleType createCycleType(String id) {
         return new TrainsCycleType(id, diagram);
     }
+
+    /**
+     * Creates new freight net.
+     *
+     * @param id id
+     * @return new freight net
+     */
+    public FreightNet createFreightNet(String id) {
+        return new FreightNet(id, diagram);
+    }
 }
