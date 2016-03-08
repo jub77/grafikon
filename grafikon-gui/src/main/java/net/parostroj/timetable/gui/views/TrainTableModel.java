@@ -225,7 +225,7 @@ class TrainTableModel extends AbstractTableModel {
                     Map<Train, List<FreightDst>> passedCargoDst = freightNet.getFreightPassedInNode(interval);
                     for (Map.Entry<Train, List<FreightDst>> entry : passedCargoDst.entrySet()) {
                         List<FreightDst> mList = entry.getValue();
-                        result.append('(').append(diagram.getFreightNet().getConverter().freightDstListToString(mList));
+                        result.append('(').append(diagram.getFreightNet().freightDstListToString(mList));
                         result.append(" > ").append(entry.getKey().getName()).append(')');
                     }
                     if (interval.isFreightFrom()) {
@@ -234,7 +234,7 @@ class TrainTableModel extends AbstractTableModel {
                         if (!cargoDst.isEmpty() && result.length() > 0) {
                             result.append(' ');
                         }
-                        result.append(diagram.getFreightNet().getConverter().freightDstListToString(mList));
+                        result.append(diagram.getFreightNet().freightDstListToString(mList));
                     }
                     retValue = result.toString();
                 }

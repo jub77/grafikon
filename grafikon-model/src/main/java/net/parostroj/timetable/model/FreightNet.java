@@ -7,6 +7,7 @@ import com.google.common.collect.*;
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -28,12 +29,14 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     private final Multimap<Train, FNConnection> fromTrainMap = HashMultimap.create();
     private final Multimap<Train, FNConnection> toTrainMap = HashMultimap.create();
 
-    private FreightConverter converter;
+    private final FreightConverter converter;
+    private final FreightRegionGraphDelegate regionConnections;
 
     FreightNet(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
         this.converter = new FreightConverter();
+        this.regionConnections = new FreightRegionGraphDelegate(diagram);
         this.listenerSupport = new ListenerSupport();
         this.defaultAttributesListener = (attributes, change) -> {
             Event event = null;
@@ -176,10 +179,6 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
         return this.attributes;
     }
 
-    public FreightConverter getConverter() {
-		return converter;
-	}
-
     public Map<Train, List<FreightDst>> getFreightPassedInNode(TimeInterval fromInterval) {
         if (!fromInterval.isNodeOwner()) {
             throw new IllegalArgumentException("Only node intervals allowed.");
@@ -245,6 +244,18 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
 
     public List<FNConnection> getTrainsTo(TimeInterval toInterval) {
     	return toMap.get(toInterval);
+    }
+
+    public Map<Tuple<Node>, List<Node>> getRegionConnectionNodes() {
+        return regionConnections.getRegionConnectionNodes();
+    }
+
+    public Map<Tuple<Node>, List<RegionConnection>> getRegionConnectionEdges() {
+        return regionConnections.getRegionConnectionEdges();
+    }
+
+    public String freightDstListToString(Collection<FreightDst> list) {
+        return converter.freightDstListToString(list);
     }
 
     @Override
