@@ -164,12 +164,12 @@ public class TrainBuilder {
         train.setType(trainType);
         train.setTopSpeed(topSpeed);
 
-        List<Pair<RouteSegment, Integer>> data = this.createDataForRoute(route);
+        List<Pair<RouteSegment<?>, Integer>> data = this.createDataForRoute(route);
         this.adjustSpeedsAndStops(data, train, topSpeed, defaultStop);
 
         Node lastNode = null;
 
-        for (Pair<RouteSegment, Integer> pair : data) {
+        for (Pair<RouteSegment<?>, Integer> pair : data) {
             TimeInterval interval = null;
             if (pair.first instanceof Node) {
                 // handle node
@@ -197,18 +197,18 @@ public class TrainBuilder {
         return train;
     }
 
-    private List<Pair<RouteSegment, Integer>> createDataForRoute(Route route) {
-        List<Pair<RouteSegment, Integer>> data = new ArrayList<Pair<RouteSegment, Integer>>(route.getSegments().size());
-        for (RouteSegment segment : route.getSegments()) {
-            data.add(new Pair<RouteSegment, Integer>(segment, null));
+    private List<Pair<RouteSegment<?>, Integer>> createDataForRoute(Route route) {
+        List<Pair<RouteSegment<?>, Integer>> data = new ArrayList<>(route.getSegments().size());
+        for (RouteSegment<?> segment : route.getSegments()) {
+            data.add(new Pair<RouteSegment<?>, Integer>(segment, null));
         }
         return data;
     }
 
-    private void adjustSpeedsAndStops(List<Pair<RouteSegment, Integer>> data, Train train, int speed, int defaultStop) {
+    private void adjustSpeedsAndStops(List<Pair<RouteSegment<?>, Integer>> data, Train train, int speed, int defaultStop) {
         int size = data.size();
         int i = 0;
-        for (Pair<RouteSegment,Integer> pair : data) {
+        for (Pair<RouteSegment<?>,Integer> pair : data) {
             i++;
             if (pair.first instanceof Node) {
                 // node

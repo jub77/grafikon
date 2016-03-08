@@ -23,7 +23,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /** Train. */
     private Train train;
     /** Owner. */
-    private RouteSegment owner;
+    private RouteSegment<? extends Track> owner;
     /** Track. */
     private Track track;
     /** Speed. */
@@ -56,7 +56,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param track track
      * @param addedTime added time
      */
-    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Integer speed, TimeIntervalDirection direction, Track track, int addedTime) {
+    public TimeInterval(String id, Train train, RouteSegment<? extends Track> owner, int start, int end, Integer speed, TimeIntervalDirection direction, Track track, int addedTime) {
         this.setTrain(train);
         this.setOwner(owner);
         this.interval = IntervalFactory.createInterval(start, end);
@@ -78,7 +78,7 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
      * @param end end time
      * @param track track
      */
-    public TimeInterval(String id, Train train, RouteSegment owner, int start, int end, Track track) {
+    public TimeInterval(String id, Train train, RouteSegment<? extends Track> owner, int start, int end, Track track) {
         this(id, train, owner, start, end, null, null, track, 0);
     }
 
@@ -361,14 +361,14 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
     /**
      * @return owner of this time interval
      */
-    public RouteSegment getOwner() {
+    public RouteSegment<? extends Track> getOwner() {
         return owner;
     }
 
     /**
      * @param owner new owner to be set
      */
-    public void setOwner(RouteSegment owner) {
+    public void setOwner(RouteSegment<? extends Track> owner) {
         this.owner = owner;
     }
 

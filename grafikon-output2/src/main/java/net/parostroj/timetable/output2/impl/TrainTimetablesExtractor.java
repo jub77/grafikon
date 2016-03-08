@@ -319,8 +319,8 @@ public class TrainTimetablesExtractor {
         return position;
     }
 
-    private boolean checkRoute(Line line, List<RouteSegment> segments) {
-        for (RouteSegment seg : segments) {
+    private boolean checkRoute(Line line, List<RouteSegment<?>> segments) {
+        for (RouteSegment<?> seg : segments) {
             // sequence line - node
             if (seg.asLine() != null && seg.asLine() == line)
                 return true;
@@ -341,7 +341,7 @@ public class TrainTimetablesExtractor {
         if (foundRoute != null) {
             // compute distance
             long length = 0;
-            for (RouteSegment seg : foundRoute.getSegments()) {
+            for (RouteSegment<?> seg : foundRoute.getSegments()) {
                 if (seg.asNode() == pair.second)
                     break;
                 else if (seg.asLine() != null)

@@ -13,7 +13,7 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment, AttributesHolder, ObjectWithId, Visitable,
+public class Line extends RouteSegmentImpl<LineTrack> implements RouteSegment<LineTrack>, AttributesHolder, ObjectWithId, Visitable,
         LineAttributes, TrainDiagramPart {
 
     /** Train diagram. */

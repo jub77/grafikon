@@ -81,6 +81,7 @@ public class CreateRouteDialog extends JDialog {
             gbc_btnNewButton.gridx = 1;
             gbc_btnNewButton.gridy = 2;
             throughButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     ThroughNodesDialog dialog = getThroughDialog();
                     dialog.setNodes(throughNodes, availableNodes);
@@ -100,6 +101,7 @@ public class CreateRouteDialog extends JDialog {
                 JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
                 buttonPane.add(okButton);
                 okButton.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         selected = true;
                         setVisible(false);
@@ -110,6 +112,7 @@ public class CreateRouteDialog extends JDialog {
             {
                 JButton cancelButton = new JButton(ResourceLoader.getString("button.cancel"));
                 cancelButton.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         selected = false;
                         setVisible(false);
@@ -128,7 +131,7 @@ public class CreateRouteDialog extends JDialog {
         return tnDialog;
     }
 
-    private void setValues(TrainDiagram diagram, List<? extends RouteSegment> route) {
+    private void setValues(TrainDiagram diagram, List<? extends RouteSegment<?>> route) {
         ElementSort<Node> sort = new ElementSort<Node>(new NodeComparator());
         availableNodes = sort.sort(diagram.getNet().getNodes());
         fromComboBox.removeAllItems();
@@ -142,7 +145,7 @@ public class CreateRouteDialog extends JDialog {
             fromComboBox.setSelectedItem(Wrapper.getWrapper(route.get(0)));
             toComboBox.setSelectedItem(Wrapper.getWrapper(route.get(route.size() - 1)));
             for (int i = 1; i < route.size() - 1; i++) {
-                RouteSegment segment = route.get(i);
+                RouteSegment<?> segment = route.get(i);
                 if (segment.isNode()) {
                     throughNodes.add(segment.asNode());
                 }
@@ -159,7 +162,7 @@ public class CreateRouteDialog extends JDialog {
         return result;
     }
 
-    public List<Node> showDialog(TrainDiagram diagram, List<? extends RouteSegment> route) {
+    public List<Node> showDialog(TrainDiagram diagram, List<? extends RouteSegment<?>> route) {
         this.setValues(diagram, route);
         this.pack();
         this.setVisible(true);

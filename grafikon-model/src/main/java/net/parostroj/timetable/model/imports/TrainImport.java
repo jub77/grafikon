@@ -57,14 +57,14 @@ public class TrainImport extends Import {
 
         TrainIntervalsBuilder builder = new TrainIntervalsBuilder(this.getDiagram(), train, importedTrain.getStartTime());
         // create route (new)
-        List<Triplet<RouteSegment, Track, TimeInterval>> route = createNewRoute(importedTrain);
+        List<Triplet<RouteSegment<?>, Track, TimeInterval>> route = createNewRoute(importedTrain);
         if (route == null) {
             String message = "error creating route for train";
             this.addError(importedTrain, message);
             log.debug("{}: {}", message, importedTrain);
             return null;
         }
-        for (Triplet<RouteSegment, Track, TimeInterval> seg : route) {
+        for (Triplet<RouteSegment<?>, Track, TimeInterval> seg : route) {
             if (seg.first instanceof Node) {
                 // node
                 Node node = (Node)seg.first;
@@ -85,11 +85,11 @@ public class TrainImport extends Import {
         return train;
     }
 
-    private List<Triplet<RouteSegment, Track, TimeInterval>> createNewRoute(Train train) {
+    private List<Triplet<RouteSegment<?>, Track, TimeInterval>> createNewRoute(Train train) {
         Node previousNode = null;
         Track previousLineTrack = null;
         TimeInterval previousLineInterval = null;
-        List<Triplet<RouteSegment, Track, TimeInterval>> segments = new LinkedList<Triplet<RouteSegment, Track, TimeInterval>>();
+        List<Triplet<RouteSegment<?>, Track, TimeInterval>> segments = new LinkedList<>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             if (interval.isNodeOwner()) {
                 Node node = this.getNode(interval.getOwnerAsNode());
@@ -106,10 +106,10 @@ public class TrainImport extends Import {
                         log.trace("Cannot find line or track: " + previousNode + ", " + node);
                         return null;
                     }
-                    segments.add(new Triplet<RouteSegment, Track, TimeInterval>(line, lineTrack, previousLineInterval));
+                    segments.add(new Triplet<>(line, lineTrack, previousLineInterval));
                 }
                 // add node
-                segments.add(new Triplet<RouteSegment, Track, TimeInterval>(node, nodeTrack, interval));
+                segments.add(new Triplet<>(node, nodeTrack, interval));
                 previousNode = node;
             } else {
                 previousLineTrack = interval.getTrack();

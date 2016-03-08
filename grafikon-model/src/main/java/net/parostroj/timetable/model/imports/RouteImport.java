@@ -40,7 +40,7 @@ public class RouteImport extends Import {
         }
 
         // create route
-        RouteSegment[] segments = getSegments(importedRoute);
+        RouteSegment<?>[] segments = getSegments(importedRoute);
         if (segments == null) {
             String message = "nodes missing";
             this.addError(importedRoute, message);
@@ -59,9 +59,9 @@ public class RouteImport extends Import {
         return route;
     }
 
-    public RouteSegment[] getSegments(Route oRoute) {
-        List<RouteSegment> result = new LinkedList<RouteSegment>();
-        for (RouteSegment oSeg : oRoute.getSegments()) {
+    public RouteSegment<?>[] getSegments(Route oRoute) {
+        List<RouteSegment<?>> result = new LinkedList<>();
+        for (RouteSegment<?> oSeg : oRoute.getSegments()) {
             if (oSeg.isLine()) {
                 result.add(this.getLine(oSeg.asLine()));
             } else if (oSeg.isNode()) {

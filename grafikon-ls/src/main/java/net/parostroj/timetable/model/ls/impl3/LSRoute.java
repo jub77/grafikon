@@ -34,7 +34,7 @@ public class LSRoute {
         this.name = route.getName();
         this.netPart = route.isNetPart();
         this.segments = new LinkedList<String>();
-        for (RouteSegment segment : route.getSegments()) {
+        for (RouteSegment<?> segment : route.getSegments()) {
             this.segments.add(segment.getId());
         }
     }
@@ -84,7 +84,7 @@ public class LSRoute {
         // create segments
         boolean node = true;
         for (String segment : getSegments()) {
-            RouteSegment routeSegment = null;
+            RouteSegment<?> routeSegment = null;
             if (node) {
                 routeSegment = net.getNodeById(segment);
             } else {

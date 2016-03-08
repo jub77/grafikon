@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author jub
  */
-public interface RouteSegment extends ObjectWithId, Iterable<TimeInterval> {
+public interface RouteSegment<T extends Track> extends ObjectWithId, Iterable<TimeInterval> {
 
     public Line asLine();
 
@@ -28,14 +28,14 @@ public interface RouteSegment extends ObjectWithId, Iterable<TimeInterval> {
 
     public void updateTimeInterval(TimeInterval interval);
 
-    public List<? extends Track> getTracks();
+    public List<T> getTracks();
 
     public boolean isEmpty();
 
     @Override
     public String getId();
 
-    public Track getTrackById(String id);
+    public T getTrackById(String id);
 
-    public Track getTrackByNumber(String name);
+    public T getTrackByNumber(String name);
 }

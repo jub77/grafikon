@@ -180,7 +180,7 @@ abstract public class GTDrawBase implements GTDraw {
 		boolean snWidthFixed = config.isOption(GTDrawSettings.Key.STATION_NAME_WIDTH_FIXED);
 		if (!snWidthFixed) {
 			int max = 0;
-			for (RouteSegment seg : getRoute().getSegments()) {
+			for (RouteSegment<?> seg : getRoute().getSegments()) {
 				if (seg.isNode()) {
 					Node n = seg.asNode();
 					String name = TransformUtil.transformStation(n).trim();
@@ -779,13 +779,13 @@ abstract public class GTDrawBase implements GTDraw {
 				switch (event.getType()) {
 				case OBJECT_ATTRIBUTE:
 					if (event.getObject() instanceof Track && route != null
-							&& route.contains((RouteSegment) event.getSource())) {
+							&& route.contains((RouteSegment<?>) event.getSource())) {
 						setRefresh(Refresh.RECREATE);
 					}
 					break;
 				case ATTRIBUTE:
 					if (event.getAttributeChange().checkName(Line.ATTR_LENGTH)) {
-						if (route != null && route.contains((RouteSegment) event.getSource())) {
+						if (route != null && route.contains((RouteSegment<?>) event.getSource())) {
 							setRefresh(Refresh.RECREATE);
 						}
 					}

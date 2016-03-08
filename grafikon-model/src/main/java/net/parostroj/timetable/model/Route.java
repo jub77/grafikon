@@ -13,12 +13,12 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, TrainDiagramPart {
+public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment<? extends Track>>, TrainDiagramPart {
 
     private final TrainDiagram diagram;
     private final String id;
     /** Route parts. */
-    private List<RouteSegment> segments;
+    private List<RouteSegment<? extends Track>> segments;
     private String name;
     private boolean netPart;
     private boolean trainRoute;
@@ -29,7 +29,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
     public Route(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
-        segments = new LinkedList<RouteSegment>();
+        segments = new LinkedList<>();
     }
 
     /**
@@ -45,20 +45,22 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
      */
     public Route(String id, Route route) {
         this(id, route.diagram, route.name);
-        segments = new LinkedList<RouteSegment>(route.segments);
+        segments = new LinkedList<>(route.segments);
     }
 
-    public Route(String id, TrainDiagram diagram, RouteSegment... segments) {
+    @SafeVarargs
+    public Route(String id, TrainDiagram diagram, RouteSegment<? extends Track>... segments) {
         this(id, diagram);
-        this.segments = new LinkedList<RouteSegment>(Arrays.asList(segments));
+        this.segments = new LinkedList<>(Arrays.asList(segments));
     }
 
-    public Route(String id, TrainDiagram diagram, String name, RouteSegment... segments) {
+    @SafeVarargs
+    public Route(String id, TrainDiagram diagram, String name, RouteSegment<? extends Track>... segments) {
         this(id, diagram, segments);
         this.name = name;
     }
 
-    public List<RouteSegment> getSegments() {
+    public List<RouteSegment<? extends Track>> getSegments() {
         return segments;
     }
 
@@ -100,7 +102,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
      * @param segment checked segment
      * @return if the route contains given segment
      */
-    public boolean contains(RouteSegment segment) {
+    public boolean contains(RouteSegment<? extends Track> segment) {
         return segments.contains(segment);
     }
 
@@ -110,11 +112,11 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
      * @param route route to be added
      */
     public void add(Route route) {
-        List<RouteSegment> addSegments = route.getSegments();
+        List<RouteSegment<?>> addSegments = route.getSegments();
         if ((segments.size() > 0) && (addSegments.get(0) != segments.get(segments.size() - 1))) {
             throw new IllegalArgumentException("Route to be added doesn't start with appropriate node.");
         }
-        ListIterator<RouteSegment> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
+        ListIterator<RouteSegment<?>> i = addSegments.listIterator((segments.isEmpty()) ? 0 : 1);
         while (i.hasNext()) {
             segments.add(i.next());
         }
@@ -127,7 +129,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
      */
     public boolean checkDuplicateNodes() {
         Set<Node> dNodes = new HashSet<Node>();
-        for (RouteSegment segment : segments) {
+        for (RouteSegment<?> segment : segments) {
             if (segment instanceof Node) {
                 Node node = (Node) segment;
                 if (dNodes.contains(node)) {
@@ -176,7 +178,7 @@ public class Route implements ObjectWithId, Visitable, Iterable<RouteSegment>, T
     }
 
     @Override
-    public Iterator<RouteSegment> iterator() {
+    public Iterator<RouteSegment<? extends Track>> iterator() {
         return segments.iterator();
     }
 

@@ -51,14 +51,14 @@ public class GTDrawClassic extends GTDrawBase {
         stations = new LinkedList<Node>();
 
         int completeLength = 0;
-        for (RouteSegment segment : route.getSegments()) {
+        for (RouteSegment<?> segment : route.getSegments()) {
             if (segment.asLine() != null) {
                 completeLength = completeLength + segment.asLine().getLength();
             }
         }
 
         int incrementalLength = 0;
-        for (RouteSegment segment : route.getSegments()) {
+        for (RouteSegment<?> segment : route.getSegments()) {
             if (segment.asLine() != null) {
                 incrementalLength = incrementalLength + segment.asLine().getLength();
             }

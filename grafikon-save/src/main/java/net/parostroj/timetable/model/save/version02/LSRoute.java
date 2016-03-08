@@ -1,6 +1,6 @@
 /*
  * LSRoute.java
- * 
+ *
  * Created on 8.9.2007, 11:53:31
  */
 
@@ -12,23 +12,23 @@ import net.parostroj.timetable.model.RouteSegment;
 
 /**
  * L/S class for Route.
- * 
+ *
  * @author jub
  */
 public class LSRoute {
-    
+
     private String name;
-    
+
     private String uuid;
-    
+
     private boolean netPart;
 
     private int[] ids;
-    
+
     public LSRoute(Route route, LSTransformationData data) {
         ids = new int[route.getSegments().size()];
         int i = 0;
-        for (RouteSegment segment : route.getSegments()) {
+        for (RouteSegment<?> segment : route.getSegments()) {
             int id = data.getIdForObject(segment);
             ids[i++] = id;
         }
@@ -36,7 +36,7 @@ public class LSRoute {
         uuid = route.getId();
         netPart = route.isNetPart();
     }
-    
+
     public LSRoute() {}
 
     public int[] getIds() {

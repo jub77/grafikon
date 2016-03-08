@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.events.*;
  *
  * @author jub
  */
-abstract class RouteSegmentImpl<T extends Track> implements RouteSegment, Observable {
+abstract class RouteSegmentImpl<T extends Track> implements RouteSegment<T>, Observable {
 
     /** Id of an object. */
     private final String id;
