@@ -6,18 +6,26 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
+
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.TextTemplate.Language;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 /**
  * Edit box for text template (text area).
@@ -26,6 +34,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
  */
 public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
+    private static final String SEARCH_ACTION = "search";
     private static final Map<Language, String> HIGHLIGHT;
 
     static {
@@ -142,11 +151,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
         panel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        languageComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                languageComboBoxItemStateChanged(evt);
-            }
-        });
+        languageComboBox.addItemListener(e -> languageComboBoxItemStateChanged(e));
         panel.add(languageComboBox);
 
         add(panel, java.awt.BorderLayout.PAGE_END);
@@ -158,6 +163,35 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
         scrollPane.setViewportView(templateTextArea);
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
+
+        templateTextArea.getInputMap().put(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK), SEARCH_ACTION);
+        templateTextArea.getActionMap().put(SEARCH_ACTION, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchDialog dialog = getSearchDialog();
+                if (!dialog.isVisible()) {
+                    dialog.setVisible(true);
+                }
+                if (!dialog.isFocused()) {
+                    dialog.requestFocus();
+                }
+            }
+        });
+    }
+
+    protected SearchDialog getSearchDialog() {
+        if (searchDialog == null) {
+            searchDialog = new SearchDialog(GuiComponentUtils.getWindow(TextTemplateEditBox2.this), false);
+            Point location = templateTextArea.getLocationOnScreen();
+            location.translate(10, 10);
+            searchDialog.setLocation(location);
+            searchDialog.setSearchFunction(text -> {
+                SearchContext context = new SearchContext();
+                context.setSearchFor(text);
+                SearchEngine.find(templateTextArea, context);
+            });
+        }
+        return searchDialog;
     }
 
     private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
@@ -170,4 +204,6 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     private org.fife.ui.rtextarea.RTextScrollPane scrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea templateTextArea;
     private javax.swing.JPanel panel;
+
+    private SearchDialog searchDialog;
 }
