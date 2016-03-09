@@ -103,12 +103,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 
         controlPanel.setLayout(new java.awt.BorderLayout());
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
@@ -117,6 +118,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
@@ -202,6 +204,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
         verifyButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verifyButtonActionPerformed(evt);
             }
@@ -247,6 +250,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
         scriptCheckBox = new javax.swing.JCheckBox();
         scriptCheckBox.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean isScript = scriptCheckBox.isSelected();
                 scriptEditBox.setEnabled(isScript);
@@ -264,6 +268,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             }
         });
         scriptEditBox.addComponentToEditBox(scriptCheckBox);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                template = null;
+            }
+        });
 
         pack();
     }
