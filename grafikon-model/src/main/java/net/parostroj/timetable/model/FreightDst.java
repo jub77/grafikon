@@ -49,7 +49,8 @@ public class FreightDst {
     }
 
     public boolean isCenter() {
-        return node.isCenterOfRegions() && !timeInterval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER);
+        boolean noCenter = timeInterval != null && timeInterval.getAttributeAsBool(TimeInterval.ATTR_NO_REGION_CENTER_TRANSFER);
+        return node.isCenterOfRegions() && !noCenter;
     }
 
     @Override
@@ -62,6 +63,10 @@ public class FreightDst {
     }
 
     public String toString(Locale locale, boolean abbreviation) {
+        return this.toString(locale, abbreviation, true);
+    }
+
+    public String toString(Locale locale, boolean abbreviation, boolean center) {
         StringBuilder freightStr = new StringBuilder();
         StringBuilder colorsStr = null;
         List<?> cs = (List<?>) node.getAttributes().get(Node.ATTR_FREIGHT_COLORS);
@@ -77,7 +82,7 @@ public class FreightDst {
         if (colorsStr != null) {
             freightStr.append(colorsStr.toString());
         }
-        if (this.isCenter()) {
+        if (this.isCenter() && center) {
             TextList o = new TextList(freightStr, "(", ")", ",");
             o.addItems(node.getCenterRegions());
             o.finish();
