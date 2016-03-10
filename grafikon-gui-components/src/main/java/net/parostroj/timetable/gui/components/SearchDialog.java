@@ -20,9 +20,13 @@ public class SearchDialog extends JDialog {
 
     private static final int DEFAULT_TEXT_FIELD_WIDTH = 25;
 
+    public interface SearchData {
+        String getText();
+    }
+
     private JTextField searchTextField;
 
-    private Consumer<String> searchFunction;
+    private Consumer<SearchData> searchFunction;
 
     public SearchDialog(Window window, boolean modal) {
         super(window, ResourceLoader.getString("search.title"), modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
@@ -38,9 +42,14 @@ public class SearchDialog extends JDialog {
         JButton searchButton = new JButton(ResourceLoader.getString("search.button"));
         ActionListener searchAction = e -> {
             if (searchFunction != null) {
-                String text = searchTextField.getText();
+                final String text = searchTextField.getText();
                 if (text != null) {
-                    searchFunction.accept(text);
+                    searchFunction.accept(new SearchData() {
+                        @Override
+                        public String getText() {
+                            return text;
+                        }
+                    });
                 }
             }
         };
@@ -55,7 +64,7 @@ public class SearchDialog extends JDialog {
         this.pack();
     }
 
-    public void setSearchFunction(Consumer<String> searchFunction) {
+    public void setSearchFunction(Consumer<SearchData> searchFunction) {
         this.searchFunction = searchFunction;
     }
 

@@ -185,9 +185,9 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
             Point location = templateTextArea.getLocationOnScreen();
             location.translate(10, 10);
             searchDialog.setLocation(location);
-            searchDialog.setSearchFunction(text -> {
+            searchDialog.setSearchFunction(data -> {
                 SearchContext context = new SearchContext();
-                context.setSearchFor(text);
+                context.setSearchFor(data.getText());
                 SearchEngine.find(templateTextArea, context);
             });
         }
