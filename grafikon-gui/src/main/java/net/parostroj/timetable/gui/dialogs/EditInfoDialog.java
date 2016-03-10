@@ -53,7 +53,6 @@ public class EditInfoDialog extends javax.swing.JDialog implements View<InfoPM> 
 
         ActionListener closeListener = evt -> setVisible(false);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("info.title")); // NOI18N
         getContentPane().setLayout(new java.awt.GridBagLayout());
 

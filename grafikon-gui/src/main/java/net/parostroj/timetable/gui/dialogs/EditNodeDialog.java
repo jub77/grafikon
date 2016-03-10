@@ -8,8 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.util.*;
@@ -344,7 +342,6 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         companyComboBox = new javax.swing.JComboBox<Wrapper<Company>>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setText(ResourceLoader.getString("ne.name")); // NOI18N
@@ -359,106 +356,55 @@ public class EditNodeDialog extends javax.swing.JDialog {
 
         companyLabel.setText(ResourceLoader.getString("ne.company") + ":"); // NOI18N
 
-        typeComboBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                typeComboBoxItemStateChanged(evt);
-            }
-        });
+        typeComboBox.addItemListener(evt -> typeComboBoxItemStateChanged(evt));
 
         trackList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        trackList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            @Override
-			public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                trackListValueChanged(evt);
-            }
-        });
+        trackList.addListSelectionListener(evt -> trackListValueChanged(evt));
         scrollPane.setViewportView(trackList);
 
-        newTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newTrackButtonActionPerformed(evt);
-            }
-        });
+        newTrackButton.addActionListener(evt -> newTrackButtonActionPerformed(evt));
 
-        renameTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                renameTrackButtonActionPerformed(evt);
-            }
-        });
+        renameTrackButton.addActionListener(evt -> renameTrackButtonActionPerformed(evt));
 
-        deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteTrackButtonActionPerformed(evt);
-            }
-        });
+        deleteTrackButton.addActionListener(evt -> deleteTrackButtonActionPerformed(evt));
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                writeValuesBack();
-                setVisible(false);
-            }
+        okButton.addActionListener(evt -> {
+            writeValuesBack();
+            setVisible(false);
         });
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(evt -> setVisible(false));
 
         platformCheckBox.setText(ResourceLoader.getString("ne.platform")); // NOI18N
         platformCheckBox.setEnabled(false);
-        platformCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                platformCheckBoxItemStateChanged(evt);
-            }
-        });
+        platformCheckBox.addItemListener(evt -> platformCheckBoxItemStateChanged(evt));
 
         lineEndCheckBox.setText(ResourceLoader.getString("ne.line.end")); // NOI18N
         lineEndCheckBox.setEnabled(false);
-        lineEndCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                lineEndCheckBoxItemStateChanged(evt);
-            }
-        });
+        lineEndCheckBox.addItemListener(evt -> lineEndCheckBoxItemStateChanged(evt));
 
         jLabel4.setText(ResourceLoader.getString("ne.length")); // NOI18N
 
         javax.swing.JPanel panel = new javax.swing.JPanel();
 
         colorsButton = new javax.swing.JButton(ResourceLoader.getString("ne.colors"));
-        colorsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FreightColorsDialog dialog = new FreightColorsDialog(EditNodeDialog.this);
-                dialog.setLocationRelativeTo(EditNodeDialog.this);
-                List<FreightColor> result = dialog.showDialog(colors);
-                if (result != null) {
-                    colors = result;
-                }
-                dialog.dispose();
+        colorsButton.addActionListener(e -> {
+            FreightColorsDialog dialog = new FreightColorsDialog(EditNodeDialog.this);
+            dialog.setLocationRelativeTo(EditNodeDialog.this);
+            List<FreightColor> result = dialog.showDialog(colors);
+            if (result != null) {
+                colors = result;
             }
+            dialog.dispose();
         });
 
         lengthPanel = new javax.swing.JPanel();
 
         straightCheckBox.setText(ResourceLoader.getString("ne.straight")); // NOI18N
         straightCheckBox.setEnabled(false);
-        straightCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            @Override
-			public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                straightCheckBoxItemStateChanged(evt);
-            }
-        });
+        straightCheckBox.addItemListener(evt -> straightCheckBoxItemStateChanged(evt));
 
         javax.swing.JLabel label = new javax.swing.JLabel();
         label.setText(ResourceLoader.getString("ne.not.straight.speed")); // NOI18N

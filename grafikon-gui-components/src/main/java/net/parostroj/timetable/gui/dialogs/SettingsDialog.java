@@ -234,7 +234,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(ResourceLoader.getString("modelinfo")); // NOI18N
         getContentPane().setLayout(new java.awt.GridBagLayout());
 

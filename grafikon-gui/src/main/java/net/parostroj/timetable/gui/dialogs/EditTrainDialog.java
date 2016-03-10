@@ -135,7 +135,6 @@ public class EditTrainDialog extends javax.swing.JDialog {
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("edit.train")); // NOI18N
 
         typeLabel.setText(ResourceLoader.getString("create.train.type")); // NOI18N
@@ -157,20 +156,10 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeLabel.setText(ResourceLoader.getString("edit.train.route")); // NOI18N
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
 
         groupsComboBox = new GroupsComboBox(false);
 
@@ -285,12 +274,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         weightLimitPanel.setLayout(gbl_weightLimitPanel);
 
         weightLimitCheckBox = new JCheckBox();
-        weightLimitCheckBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                weightLimitEditBox.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            }
-        });
+        weightLimitCheckBox.addItemListener(e -> weightLimitEditBox.setEnabled(e.getStateChange() == ItemEvent.SELECTED));
         GridBagConstraints gbc_weightLimitCheckBox = new GridBagConstraints();
         gbc_weightLimitCheckBox.anchor = GridBagConstraints.WEST;
         gbc_weightLimitCheckBox.gridx = 1;
@@ -337,7 +321,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_routeInsertLabel.gridy = 0;
         routeEditPanel.add(routeInsertLabel, gbc_routeInsertLabel);
 
-                routeInsertLabel.setText(ResourceLoader.getString("edit.train.insert.node"));
+        routeInsertLabel.setText(ResourceLoader.getString("edit.train.insert.node"));
         fromNodeButton = new javax.swing.JButton();
         GridBagConstraints gbc_fromNodeButton = new GridBagConstraints();
         gbc_fromNodeButton.weightx = 1.0;
@@ -348,12 +332,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_fromNodeButton.gridy = 0;
         routeEditPanel.add(fromNodeButton, gbc_fromNodeButton);
 
-        fromNodeButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fromNodeButtonActionPerformed(evt);
-            }
-        });
+        fromNodeButton.addActionListener(evt -> fromNodeButtonActionPerformed(evt));
         toNodeButton = new javax.swing.JButton();
         GridBagConstraints gbc_toNodeButton = new GridBagConstraints();
         gbc_toNodeButton.weightx = 1.0;
@@ -364,12 +343,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         gbc_toNodeButton.gridy = 0;
         routeEditPanel.add(toNodeButton, gbc_toNodeButton);
 
-        toNodeButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toNodeButtonActionPerformed(evt);
-            }
-        });
+        toNodeButton.addActionListener(evt -> toNodeButtonActionPerformed(evt));
         stationsComboBox = new javax.swing.JComboBox<Node>();
         GridBagConstraints gbc_stationsComboBox = new GridBagConstraints();
         gbc_stationsComboBox.weightx = 1.0;
@@ -387,12 +361,7 @@ public class EditTrainDialog extends javax.swing.JDialog {
         routeEditPanel.add(insertButton, gbc_insertButton);
 
         insertButton.setText("^");
-        insertButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insertButtonActionPerformed(evt);
-            }
-        });
+        insertButton.addActionListener(evt -> insertButtonActionPerformed(evt));
         GridBagLayout gbl_optionsPanel = new GridBagLayout();
         gbl_optionsPanel.columnWeights = new double[]{0.0, 0.0};
         gbl_optionsPanel.rowWeights = new double[]{0.0, 0.0, 0.0};

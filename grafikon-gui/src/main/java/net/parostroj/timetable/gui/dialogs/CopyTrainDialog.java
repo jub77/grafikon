@@ -48,8 +48,6 @@ public class CopyTrainDialog extends javax.swing.JDialog {
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel(ResourceLoader.getString("copy.train.name")); // NOI18N
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel(ResourceLoader.getString("copy.train.time")); // NOI18N
 
