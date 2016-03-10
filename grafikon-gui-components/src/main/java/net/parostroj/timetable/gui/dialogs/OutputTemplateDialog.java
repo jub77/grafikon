@@ -46,6 +46,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateDialog.class);
 
     private OutputTemplate template;
+    private OutputTemplate resultTemplate;
 
     private final JFileChooser attachmentChooser;
     private final Consumer<Collection<OutputTemplate>> templateWriter;
@@ -61,6 +62,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
 
     public void showDialog(OutputTemplate template) {
         this.template = template;
+        this.resultTemplate = null;
         this.updateValues(null);
         this.setVisible(true);
     }
@@ -74,7 +76,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     }
 
     public OutputTemplate getTemplate() {
-        return template;
+        return resultTemplate;
     }
 
     private void updateValues(Boolean defaultTemplate) {
@@ -269,13 +271,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         });
         scriptEditBox.addComponentToEditBox(scriptCheckBox);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                template = null;
-            }
-        });
-
         pack();
     }
 
@@ -293,6 +288,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             this.setVisible(false);
+            this.resultTemplate = this.template;
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
@@ -323,7 +319,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.template = null;
         this.setVisible(false);
     }
 
