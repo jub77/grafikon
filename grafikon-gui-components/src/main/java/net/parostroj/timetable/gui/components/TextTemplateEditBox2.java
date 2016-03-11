@@ -182,7 +182,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     protected SearchDialog getSearchDialog() {
         if (searchDialog == null) {
             searchDialog = new SearchDialog(GuiComponentUtils.getWindow(TextTemplateEditBox2.this), false);
-            Point location = templateTextArea.getLocationOnScreen();
+            Point location = scrollPane.getLocationOnScreen();
             location.translate(10, 10);
             searchDialog.setLocation(location);
             searchDialog.setSearchFunction(data -> {
