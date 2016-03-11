@@ -76,7 +76,6 @@ public class AboutDialog extends javax.swing.JDialog {
         textArea = new javax.swing.JTextArea();
         imageLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("aboutdialog.title")); // NOI18N
 
         textPanel.setLayout(new java.awt.BorderLayout());
@@ -84,11 +83,7 @@ public class AboutDialog extends javax.swing.JDialog {
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> this.setVisible(false));
         buttonPanel.add(okButton);
 
         textPanel.add(buttonPanel, java.awt.BorderLayout.PAGE_END);
@@ -110,11 +105,6 @@ public class AboutDialog extends javax.swing.JDialog {
         getContentPane().add(imageLabel, java.awt.BorderLayout.LINE_START);
 
         pack();
-    }
-
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // close dialog
-        this.setVisible(false);
     }
 
     private javax.swing.JLabel imageLabel;
