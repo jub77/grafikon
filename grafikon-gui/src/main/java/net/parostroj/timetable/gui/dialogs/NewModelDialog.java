@@ -58,7 +58,6 @@ public class NewModelDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         BnComboBox templatesComboBox = new BnComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("newmodel")); // NOI18N
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());

@@ -53,7 +53,6 @@ public class ProgramSettingsDialog extends javax.swing.JDialog {
         BnButton okButton = new BnButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(ResourceLoader.getString("program.settings.title")); // NOI18N
         setResizable(false);
 
