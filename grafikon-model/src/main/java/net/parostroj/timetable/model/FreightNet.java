@@ -1,13 +1,29 @@
 package net.parostroj.timetable.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 
 import net.parostroj.timetable.model.FreightDstFilter.FilterContext;
 import net.parostroj.timetable.model.FreightDstFilter.FilterResult;
-import net.parostroj.timetable.model.events.*;
-import net.parostroj.timetable.utils.Tuple;
+import net.parostroj.timetable.model.events.AttributesListener;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.ListData;
+import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.ListenerSupport;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -246,11 +262,11 @@ public class FreightNet implements Visitable, ObjectWithId, AttributesHolder, Ob
     	return toMap.get(toInterval);
     }
 
-    public Map<Tuple<Node>, List<Node>> getRegionConnectionNodes() {
+    public Map<NodeConnection, List<Node>> getRegionConnectionNodes() {
         return regionConnections.getRegionConnectionNodes();
     }
 
-    public Map<Tuple<Node>, List<RegionConnection>> getRegionConnectionEdges() {
+    public Map<NodeConnection, List<RegionConnection>> getRegionConnectionEdges() {
         return regionConnections.getRegionConnectionEdges();
     }
 
