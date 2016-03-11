@@ -22,8 +22,6 @@ public class ElementSelectionCheckBoxDialog<T> extends javax.swing.JDialog {
 
     public ElementSelectionCheckBoxDialog(Window parent, boolean modal) {
         super(parent, modal ? DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
         initComponents();
     }
 
@@ -59,6 +57,7 @@ public class ElementSelectionCheckBoxDialog<T> extends javax.swing.JDialog {
         elementSelectionPanel.setListForSelection(this.wrapElements(list));
         elementSelectionPanel.setSelected(selected == null ? Collections.emptyList() : selected);
         elementSelectionPanel.setLocked(locked == null ? Collections.emptyList() : locked);
+        ok = false;
         setVisible(true);
         if (ok) {
             return elementSelectionPanel.getSelected();

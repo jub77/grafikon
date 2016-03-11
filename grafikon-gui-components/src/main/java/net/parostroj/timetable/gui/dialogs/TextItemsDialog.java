@@ -110,6 +110,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmm"));
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 itemListValueChanged(evt);
             }
@@ -135,6 +136,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(typeComboBox);
 
         createButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createButtonActionPerformed(evt);
             }
@@ -142,6 +144,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(createButton);
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
@@ -149,6 +152,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(deleteButton);
 
         editButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
             }
@@ -156,6 +160,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(editButton);
 
         upButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
@@ -163,6 +168,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         handlePanel.add(upButton);
 
         downButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
             }
@@ -229,7 +235,7 @@ public class TextItemsDialog extends javax.swing.JDialog {
         TextItemDialog dialog = new TextItemDialog(this, true);
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(new TextItemModel(selectedItem.getTemplate(), selectedItem.getAttributes().getBool(TextItem.ATTR_TRAIN_TIMETABLE_INFO)));
-        TextItemModel newItemModel = dialog.getModel();
+        TextItemModel newItemModel = dialog.getResultModel();
         if (newItemModel != null) {
             selectedItem.setTemplate(newItemModel.template);
             selectedItem.getAttributes().setBool(TextItemAttributes.ATTR_TRAIN_TIMETABLE_INFO, newItemModel.trainTimetableInfo);

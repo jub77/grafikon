@@ -41,6 +41,7 @@ public class TextItemDialog extends javax.swing.JDialog {
     private static final Logger log = LoggerFactory.getLogger(TextItemDialog.class);
 
     private TextItemModel itemModel;
+    private TextItemModel resultItemModel;
 
     public TextItemDialog(Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
@@ -50,6 +51,7 @@ public class TextItemDialog extends javax.swing.JDialog {
 
     public void showDialog(TextItemModel template) {
         this.itemModel = template;
+        this.resultItemModel = null;
         this.updateValues();
         this.setVisible(true);
     }
@@ -58,8 +60,8 @@ public class TextItemDialog extends javax.swing.JDialog {
         textTemplateEditBox.setTemplateLanguages(Arrays.asList(Language.PLAIN, Language.GROOVY));
     }
 
-    public TextItemModel getModel() {
-        return itemModel;
+    public TextItemModel getResultModel() {
+        return resultItemModel;
     }
 
     private void updateValues() {
@@ -72,8 +74,6 @@ public class TextItemDialog extends javax.swing.JDialog {
         textTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox2();
         javax.swing.JPanel controlPanel = new javax.swing.JPanel();
         javax.swing.JPanel verifyPanel = new javax.swing.JPanel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         textTemplateEditBox.setTemplateFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textTemplateEditBox.setColumns(80);
@@ -90,11 +90,7 @@ public class TextItemDialog extends javax.swing.JDialog {
 
         trainTimetableInfoCheckBox = new JCheckBox(ResourceLoader.getString("text.item.train.timetable.info")); // NOI18N
         verifyPanel.add(trainTimetableInfoCheckBox);
-        verifyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                verifyButtonActionPerformed(evt);
-            }
-        });
+        verifyButton.addActionListener(evt -> verifyButtonActionPerformed(evt));
 
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
 
@@ -108,16 +104,8 @@ public class TextItemDialog extends javax.swing.JDialog {
         buttonPanel.add(cancelButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
 
         pack();
     }
@@ -125,7 +113,7 @@ public class TextItemDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             TextTemplate template = this.convertToTemplate();
-            this.itemModel = new TextItemModel(template, trainTimetableInfoCheckBox.isSelected());
+            this.resultItemModel = new TextItemModel(template, trainTimetableInfoCheckBox.isSelected());
             this.setVisible(false);
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
@@ -134,7 +122,6 @@ public class TextItemDialog extends javax.swing.JDialog {
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.itemModel = null;
         this.setVisible(false);
     }
 

@@ -10,8 +10,6 @@ import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.ResourceLoader;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * Change dialog for TCItem.

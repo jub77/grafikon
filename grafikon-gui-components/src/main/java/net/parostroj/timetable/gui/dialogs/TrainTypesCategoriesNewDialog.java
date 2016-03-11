@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -39,23 +37,17 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         okCancelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
         JButton button = new JButton(ResourceLoader.getString("button.ok"));
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (createResult()) {
-                    setVisible(false);
-                } else {
-                    GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), TrainTypesCategoriesNewDialog.this);
-                }
+        button.addActionListener(e -> {
+            if (createResult()) {
+                setVisible(false);
+            } else {
+                GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), TrainTypesCategoriesNewDialog.this);
             }
         });
         okCancelPanel.add(button);
 
         JButton cancelButton = new JButton(ResourceLoader.getString("button.cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(e -> setVisible(false));
         okCancelPanel.add(cancelButton);
 
         JPanel panel = new JPanel();
@@ -118,8 +110,6 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         gbc_keyTextField.gridx = 1;
         gbc_keyTextField.gridy = 2;
         panel.add(keyTextField, gbc_keyTextField);
-
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         pack();
     }
