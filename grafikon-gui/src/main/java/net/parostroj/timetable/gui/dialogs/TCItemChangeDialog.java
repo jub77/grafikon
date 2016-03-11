@@ -26,7 +26,6 @@ public class TCItemChangeDialog extends JDialog {
     private final JTextField commentTextField;
 
     public TCItemChangeDialog() {
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setModal(true);
 
         JPanel panel = new JPanel();
@@ -39,20 +38,14 @@ public class TCItemChangeDialog extends JDialog {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         JButton buttonOk = new JButton(ResourceLoader.getString("button.ok"));
-        buttonOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ok = true;
-                setVisible(false);
-            }
+        buttonOk.addActionListener(e -> {
+            ok = true;
+            setVisible(false);
         });
         buttonPanel.add(buttonOk);
 
         JButton buttonCancel = new JButton(ResourceLoader.getString("button.cancel"));
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        buttonCancel.addActionListener(e -> setVisible(false));
         buttonPanel.add(buttonCancel);
         panel.setLayout(new GridBagLayout());
 

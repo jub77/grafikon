@@ -35,6 +35,7 @@ public class SelectNodesDialog extends javax.swing.JDialog {
             nodesComboBox.addItem(node);
         }
         nodesComboBox.setSelectedIndex(0);
+        this.selectedNode = null;
         this.pack();
     }
 
@@ -50,7 +51,6 @@ public class SelectNodesDialog extends javax.swing.JDialog {
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         nodesPanel.setLayout(new BorderLayout(0, 0));
 
         nodesPanel.add(nodesComboBox, BorderLayout.NORTH);
@@ -60,20 +60,16 @@ public class SelectNodesDialog extends javax.swing.JDialog {
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectedNode = (Node)nodesComboBox.getSelectedItem();
-                setVisible(false);
-            }
+        okButton.addActionListener(evt -> {
+            selectedNode = (Node)nodesComboBox.getSelectedItem();
+            setVisible(false);
         });
         buttonsPanel.add(okButton);
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectedNode = null;
-                setVisible(false);
-            }
+        cancelButton.addActionListener(evt -> {
+            selectedNode = null;
+            setVisible(false);
         });
         buttonsPanel.add(cancelButton);
 

@@ -71,7 +71,6 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
         setResizable(false);
 
@@ -84,18 +83,12 @@ public class TCDetailsViewDialogEngineClass extends javax.swing.JDialog {
         descTextField.setColumns(15);
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-                attributesPanel.stopEditing();
-            }
+        cancelButton.addActionListener(evt -> {
+            setVisible(false);
+            attributesPanel.stopEditing();
         });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
