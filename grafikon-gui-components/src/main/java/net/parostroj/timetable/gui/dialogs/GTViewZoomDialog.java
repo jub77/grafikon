@@ -1,8 +1,6 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -22,8 +20,6 @@ public class GTViewZoomDialog extends JDialog {
 
     public GTViewZoomDialog(Window owner, boolean modal) {
         super(owner, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-
         JPanel panel = new JPanel();
         getContentPane().add(panel, BorderLayout.CENTER);
         panel.setLayout(new BorderLayout(0, 0));
@@ -50,20 +46,14 @@ public class GTViewZoomDialog extends JDialog {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ok = true;
-                setVisible(false);
-            }
+        okButton.addActionListener(e -> {
+            ok = true;
+            setVisible(false);
         });
         buttonPanel.add(okButton);
 
         JButton cancelButton = new JButton(ResourceLoader.getString("button.cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(e -> setVisible(false));
         buttonPanel.add(cancelButton);
         pack();
         setResizable(false);

@@ -62,7 +62,6 @@ public class EditFNConnetionDialog extends javax.swing.JDialog {
     public EditFNConnetionDialog(Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         getContentPane().setLayout(new BorderLayout(0, 0));
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         JPanel panel = new JPanel();
         getContentPane().add(panel, BorderLayout.SOUTH);

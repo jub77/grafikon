@@ -3,8 +3,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.swing.JButton;
@@ -26,7 +24,6 @@ public class FreightColorsDialog extends JDialog {
         super(owner, ModalityType.APPLICATION_MODAL);
 
         getContentPane().setLayout(new BorderLayout());
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -34,19 +31,11 @@ public class FreightColorsDialog extends JDialog {
         JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
         JButton cancelButton = new JButton(ResourceLoader.getString("button.cancel"));
 
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ok = true;
-                setVisible(false);
-            }
+        okButton.addActionListener(e -> {
+            ok = true;
+            setVisible(false);
         });
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(e -> setVisible(false));
 
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);

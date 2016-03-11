@@ -1,17 +1,8 @@
 package net.parostroj.timetable.gui.dialogs;
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
-
-import javax.swing.JButton;
-
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 
@@ -31,8 +22,6 @@ public class ScriptOutputDialog extends javax.swing.JDialog {
     public ScriptOutputDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
         JPanel panel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
         flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -40,12 +29,7 @@ public class ScriptOutputDialog extends javax.swing.JDialog {
 
         JButton okButton = new JButton(ResourceLoader.getString("button.ok"));
         panel.add(okButton);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        okButton.addActionListener(e -> setVisible(false));
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
