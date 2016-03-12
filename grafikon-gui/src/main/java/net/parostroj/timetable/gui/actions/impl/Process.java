@@ -7,6 +7,6 @@ import net.parostroj.timetable.model.ObjectWithId;
  *
  * @author jub
  */
-public interface Process<T extends ObjectWithId>{
+public interface Process<T extends ObjectWithId> {
     void apply(T item);
 }

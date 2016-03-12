@@ -148,7 +148,8 @@ public class ImportAction extends AbstractAction {
                         Set<ObjectWithId> set = map.get(comp);
                         list.addAll(set);
                         imports.put(comp, Import.getInstance(comp, importDialog.getDiagram(),
-                                importDialog.getLibraryDiagram(), importDialog.getImportMatch()));
+                                importDialog.getLibraryDiagram(), importDialog.getImportMatch(),
+                                importDialog.getImportOverwrite()));
                     }
                     size = list.size();
                     if (size == 0) {
@@ -156,29 +157,25 @@ public class ImportAction extends AbstractAction {
                     }
                     if (trainImport && groupDialog.isRemoveExistingTrains()) {
                         // remove existing trains in group
-                        Process<ObjectWithId> deleteProcess = new Process<ObjectWithId>() {
-                            public void apply(ObjectWithId item) {
-                                DeleteTrainCommand dc = new DeleteTrainCommand((Train) item);
-                                try {
-                                    model.applyCommand(dc);
-                                } catch (CommandException e) {
-                                    log.error(e.getMessage(), e);
-                                }
+                        Process<ObjectWithId> deleteProcess = item -> {
+                            DeleteTrainCommand dc = new DeleteTrainCommand((Train) item);
+                            try {
+                                model.applyCommand(dc);
+                            } catch (CommandException e) {
+                                log.error(e.getMessage(), e);
                             }
                         };
                         Iterable<Train> filteredTrains = Iterables.filter(model.getDiagram().getTrains(), ModelPredicates.inGroup(groupDialog.getSelectedTo()));
                         processItems(filteredTrains, deleteProcess);
                     }
                     // import new objects
-                    Process<ObjectWithId> importProcess = new Process<ObjectWithId>() {
-                        public void apply(ObjectWithId item) {
-                            Import i = imports.get(ImportComponent.getByComponentClass(item.getClass()));
-                            if (i != null) {
-                                ObjectWithId imported = i.importObject(item);
-                                processImportedObject(imported);
-                            } else {
-                                log.warn("No import for class {}", item.getClass().getName());
-                            }
+                    Process<ObjectWithId> importProcess = item -> {
+                        Import i = imports.get(ImportComponent.getByComponentClass(item.getClass()));
+                        if (i != null) {
+                            ObjectWithId imported = i.importObject(item);
+                            processImportedObject(imported);
+                        } else {
+                            log.warn("No import for class {}", item.getClass().getName());
                         }
                     };
                     processItems(list, importProcess);

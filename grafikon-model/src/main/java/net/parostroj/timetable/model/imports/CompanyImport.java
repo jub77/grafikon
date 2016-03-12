@@ -16,8 +16,8 @@ public class CompanyImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(CompanyImport.class);
 
-    public CompanyImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
-        super(diagram, libraryDiagram, match);
+    public CompanyImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
+        super(diagram, libraryDiagram, match, overwrite);
     }
 
     @Override

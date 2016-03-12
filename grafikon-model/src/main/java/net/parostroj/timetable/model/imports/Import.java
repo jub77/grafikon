@@ -42,11 +42,14 @@ public abstract class Import {
     private final TrainDiagram diagram;
     private final TrainDiagram libraryDiagram;
 
+    protected final boolean overwrite;
+
     private List<ImportError> errors;
     private Set<ObjectWithId> importedObjects;
 
-    public Import(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
+    public Import(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
         this.match = match;
+        this.overwrite = overwrite;
         this.diagram = diagram;
         this.libraryDiagram = libraryDiagram;
         this.errors = new LinkedList<ImportError>();
@@ -309,34 +312,34 @@ public abstract class Import {
     protected abstract ObjectWithId importObjectImpl(ObjectWithId o);
 
     public static Import getInstance(ImportComponent components, TrainDiagram diagram,
-            TrainDiagram library, ImportMatch match) {
+            TrainDiagram library, ImportMatch match, boolean overwrite) {
         switch (components) {
             case COMPANIES:
-                return new CompanyImport(diagram, library, match);
+                return new CompanyImport(diagram, library, match, overwrite);
             case REGIONS:
-                return new RegionImport(diagram, library, match);
+                return new RegionImport(diagram, library, match, overwrite);
             case NODES:
-                return new NodeImport(diagram, library, match);
+                return new NodeImport(diagram, library, match, overwrite);
             case GROUPS:
-                return new GroupImport(diagram, library, match);
+                return new GroupImport(diagram, library, match, overwrite);
             case TRAINS:
-                return new TrainImport(diagram, library, match);
+                return new TrainImport(diagram, library, match, overwrite);
             case TRAIN_TYPES:
-                return new TrainTypeImport(diagram, library, match);
+                return new TrainTypeImport(diagram, library, match, overwrite);
             case LINE_CLASSES:
-                return new LineClassImport(diagram, library, match);
+                return new LineClassImport(diagram, library, match, overwrite);
             case ENGINE_CLASSES:
-                return new EngineClassImport(diagram, library, match);
+                return new EngineClassImport(diagram, library, match, overwrite);
             case OUTPUT_TEMPLATES:
-                return new OutputTemplateImport(diagram, library, match);
+                return new OutputTemplateImport(diagram, library, match, overwrite);
             case TRAINS_CYCLES:
-                return new TrainsCycleImport(diagram, library, match);
+                return new TrainsCycleImport(diagram, library, match, overwrite);
             case TRAINS_CYCLE_TYPES:
-                return new TrainsCycleTypeImport(diagram, library, match);
+                return new TrainsCycleTypeImport(diagram, library, match, overwrite);
             case LINES:
-                return new LineImport(diagram, library, match);
+                return new LineImport(diagram, library, match, overwrite);
             case ROUTES:
-                return new RouteImport(diagram, library, match);
+                return new RouteImport(diagram, library, match, overwrite);
         }
         return null;
     }

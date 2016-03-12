@@ -16,8 +16,8 @@ public class RegionImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(RegionImport.class);
 
-    public RegionImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
-        super(diagram, libraryDiagram, match);
+    public RegionImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
+        super(diagram, libraryDiagram, match, overwrite);
     }
 
     @Override

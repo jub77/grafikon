@@ -20,8 +20,8 @@ public class EngineClassImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(EngineClassImport.class);
 
-    public EngineClassImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
-        super(diagram, libraryDiagram, match);
+    public EngineClassImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
+        super(diagram, libraryDiagram, match, overwrite);
     }
 
     @Override
@@ -34,10 +34,14 @@ public class EngineClassImport extends Import {
         // check existence
         EngineClass checkedEngineClass = this.getEngineClass(importedEngineClass);
         if (checkedEngineClass != null) {
-            String message = "engine class already exists";
-            this.addError(importedEngineClass, message);
-            log.debug("{}: {}", message, checkedEngineClass);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getEngineClasses().remove(checkedEngineClass);
+            } else {
+                String message = "engine class already exists";
+                this.addError(importedEngineClass, message);
+                log.debug("{}: {}", message, checkedEngineClass);
+                return null;
+            }
         }
 
         // create new engine class

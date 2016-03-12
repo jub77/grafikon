@@ -9,8 +9,8 @@ public class OutputTemplateImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateImport.class);
 
-    public OutputTemplateImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match) {
-        super(diagram, libraryDiagram, match);
+    public OutputTemplateImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
+        super(diagram, libraryDiagram, match, overwrite);
     }
 
     @Override
@@ -23,10 +23,14 @@ public class OutputTemplateImport extends Import {
         // check existence
         OutputTemplate checkedOutputTemplate = this.getOutputTemplate(importedOutputTemplate);
         if (checkedOutputTemplate != null) {
-            String message = "output template already exists";
-            this.addError(importedOutputTemplate, message);
-            log.debug("{}: {}", message, checkedOutputTemplate);
-            return null;
+            if (overwrite) {
+                this.getDiagram().getOutputTemplates().remove(checkedOutputTemplate);
+            } else {
+                String message = "output template already exists";
+                this.addError(importedOutputTemplate, message);
+                log.debug("{}: {}", message, checkedOutputTemplate);
+                return null;
+            }
         }
 
         // create new output template
