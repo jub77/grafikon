@@ -155,11 +155,11 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, false);
+        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, true);
         listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
-                diagram.getEngineClasses().add(index, object);
+                diagram.getEngineClasses().add(object);
             }
 
             @Override
@@ -169,7 +169,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
             @Override
             public void moved(EngineClass object, int fromIndex, int toIndex) {
-                diagram.getEngineClasses().move(fromIndex, toIndex);
+                // set is without move
             }
         });
         engineClassesList.setModel(listModel);
@@ -181,8 +181,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         boolean enabled = !engineClassesList.isSelectionEmpty();
         weightTable.setEnabled(enabled);
         speedTextField.setEnabled(enabled);
-        upButton.setEnabled(enabled);
-        downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
         copyEnable(ObjectsUtil.checkAndTrim(nameTextField.getText()), enabled);
         speedTextField.setText("");
@@ -216,8 +214,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 2);
         copyButton.setEnabled(false);
-        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
-        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 2);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
         weightTable = new javax.swing.JTable();
         newRowButton = GuiComponentUtils.createButton(GuiIcon.ADD, 0);
@@ -227,42 +223,14 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
         engineClassesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        engineClassesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                engineClassesListValueChanged(evt);
-            }
-        });
+        engineClassesList.addListSelectionListener(evt -> engineClassesListValueChanged(evt));
         scrollPane1.setViewportView(engineClassesList);
 
-        newButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
-            }
-        });
+        newButton.addActionListener(evt -> newButtonActionPerformed(evt));
 
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
-        copyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyButtonActionPerformed(evt);
-            }
-        });
-
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
-
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
+        copyButton.addActionListener(evt -> copyButtonActionPerformed(evt));
 
         scrollPane2.setPreferredSize(new java.awt.Dimension(0, 200));
 
@@ -270,25 +238,12 @@ public class EngineClassesDialog extends javax.swing.JDialog {
         weightTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPane2.setViewportView(weightTable);
 
-        newRowButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newRowButtonActionPerformed(evt);
-            }
-        });
+        newRowButton.addActionListener(evt -> newRowButtonActionPerformed(evt));
 
-        deleteRowButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteRowButtonActionPerformed(evt);
-            }
-        });
+        deleteRowButton.addActionListener(evt -> deleteRowButtonActionPerformed(evt));
 
         speedTextField.setColumns(5);
-        speedTextField.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent e) {
-                newRowButton.setEnabled(!ObjectsUtil.isEmpty(speedTextField.getText()));
-            }
-        });
+        speedTextField.addCaretListener(e -> newRowButton.setEnabled(!ObjectsUtil.isEmpty(speedTextField.getText())));
 
         jLabel1.setText(ResourceLoader.getString("editengingeclasses.speed") + ":"); // NOI18N
 
@@ -305,8 +260,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(copyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(downButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(upButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(newButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(nameTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -332,11 +285,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(copyButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(upButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(downButton))
+                        .addComponent(copyButton))
                     .addComponent(scrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
@@ -359,6 +308,9 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
             listModel.addWrapper(Wrapper.getWrapper(clazz));
             nameTextField.setText("");
+            int index = listModel.getIndexOfObject(clazz);
+            engineClassesList.setSelectedIndex(index);
+            engineClassesList.ensureIndexIsVisible(index);
         }
     }
 
@@ -369,32 +321,6 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             if (selected >= listModel.getSize()) {
                 selected--;
             }
-            engineClassesList.setSelectedIndex(selected);
-        }
-    }
-
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // move selected engine class up
-        if (!engineClassesList.isSelectionEmpty()) {
-            int selected = engineClassesList.getSelectedIndex();
-            selected -= 1;
-            if (selected < 0) {
-                return;
-            }
-            listModel.moveIndexUp(selected + 1);
-            engineClassesList.setSelectedIndex(selected);
-        }
-    }
-
-    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // move selected engine class down
-        if (!engineClassesList.isSelectionEmpty()) {
-            int selected = engineClassesList.getSelectedIndex();
-            selected += 1;
-            if (selected >= listModel.getSize()) {
-                return;
-            }
-            listModel.moveIndexDown(selected - 1);
             engineClassesList.setSelectedIndex(selected);
         }
     }
@@ -448,10 +374,11 @@ public class EngineClassesDialog extends javax.swing.JDialog {
                     }
                     clazz.addWeightTableRow(newRow);
                 }
-                listModel.addWrapper(Wrapper.getWrapper(clazz), selected + 1);
+                listModel.addWrapper(Wrapper.getWrapper(clazz));
                 nameTextField.setText("");
-                engineClassesList.setSelectedIndex(selected + 1);
-                engineClassesList.ensureIndexIsVisible(selected + 1);
+                int index = listModel.getIndexOfObject(clazz);
+                engineClassesList.setSelectedIndex(index);
+                engineClassesList.ensureIndexIsVisible(index);
             }
         }
     }
@@ -459,12 +386,10 @@ public class EngineClassesDialog extends javax.swing.JDialog {
     private javax.swing.JButton copyButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteRowButton;
-    private javax.swing.JButton downButton;
     private javax.swing.JList<Wrapper<EngineClass>> engineClassesList;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newRowButton;
     private javax.swing.JTextField speedTextField;
-    private javax.swing.JButton upButton;
     private javax.swing.JTable weightTable;
 }

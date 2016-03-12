@@ -41,7 +41,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Trains data. */
     private final TrainsData trainsData;
     /** List of engine classes. */
-    private final ItemWithIdList<EngineClass> engineClasses;
+    private final ItemWithIdSet<EngineClass> engineClasses;
     /** List of text items. */
     private final ItemWithIdList<TextItem> textItems;
     /** List of output templates. */
@@ -88,8 +88,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.images = new ItemWithIdSetImpl<TimetableImage>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
-        this.engineClasses = new ItemWithIdListImpl<EngineClass>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.engineClasses = new ItemWithIdSetImpl<EngineClass>(
+                (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.textItems = new ItemWithIdListImpl<TextItem>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.outputTemplates = new ItemWithIdListImpl<OutputTemplate>(
@@ -265,7 +265,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return this.getAttribute(TrainDiagram.ATTR_SCALE, Scale.class);
     }
 
-    public ItemWithIdList<EngineClass> getEngineClasses() {
+    public ItemWithIdSet<EngineClass> getEngineClasses() {
         return engineClasses;
     }
 
