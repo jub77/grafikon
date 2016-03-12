@@ -102,6 +102,8 @@ public class ImportDialog extends javax.swing.JDialog {
         javax.swing.JLabel matchLabel = new javax.swing.JLabel();
         matchComboBox = new javax.swing.JComboBox<Wrapper<ImportMatch>>();
 
+        overwriteCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("import.overwrite"));
+
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -149,7 +151,8 @@ public class ImportDialog extends javax.swing.JDialog {
                     .addComponent(okButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cancelButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(matchLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(matchComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(matchComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(overwriteCheckBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -165,7 +168,9 @@ public class ImportDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(matchLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(matchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(matchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(overwriteCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(componentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -260,6 +265,10 @@ public class ImportDialog extends javax.swing.JDialog {
         return w != null ? (ImportMatch) w.getElement() : null;
     }
 
+    public boolean getImportOverwrite() {
+        return overwriteCheckBox.isSelected();
+    }
+
     public Map<ImportComponent, Set<ObjectWithId>> getSelectedItems() {
         return selectedItems;
     }
@@ -281,6 +290,7 @@ public class ImportDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<Wrapper<ImportComponent>> componentComboBox;
     private javax.swing.JList<Wrapper<ObjectWithId>> componentsList;
     private javax.swing.JComboBox<Wrapper<ImportMatch>> matchComboBox;
+    private javax.swing.JCheckBox overwriteCheckBox;
     private javax.swing.JButton okButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JList<Wrapper<ObjectWithId>> selectedComponentsList;
