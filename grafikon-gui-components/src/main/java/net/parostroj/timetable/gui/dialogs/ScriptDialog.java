@@ -1,19 +1,21 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.gui.GuiContext;
+import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for editing scripts.
  *
  * @author jub
  */
-public class ScriptDialog extends javax.swing.JDialog {
+public class ScriptDialog extends javax.swing.JDialog implements GuiContextComponent {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
 
@@ -23,6 +25,11 @@ public class ScriptDialog extends javax.swing.JDialog {
     public ScriptDialog(java.awt.Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
+    }
+
+    @Override
+    public void registerContext(GuiContext context) {
+        context.registerWindow("script.dialog", this);
     }
 
     public Script getScript() throws GrafikonException {

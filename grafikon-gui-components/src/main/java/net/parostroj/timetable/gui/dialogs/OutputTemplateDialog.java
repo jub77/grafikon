@@ -22,6 +22,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.parostroj.timetable.gui.GuiContext;
+import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
 
 import java.awt.Font;
@@ -35,7 +37,7 @@ import javax.swing.JButton;
  *
  * @author jub
  */
-public class OutputTemplateDialog extends javax.swing.JDialog {
+public class OutputTemplateDialog extends javax.swing.JDialog implements GuiContextComponent {
 
     private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
     private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw",
@@ -58,6 +60,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog {
         this.templateWriter = templateWriter;
         initComponents();
         init();
+    }
+
+    @Override
+    public void registerContext(GuiContext context) {
+        context.registerWindow("output.template", this);
     }
 
     public void showDialog(OutputTemplate template) {

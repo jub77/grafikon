@@ -751,6 +751,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // output templates list dialog
         OutputTemplateListDialog dialog = new OutputTemplateListDialog(this, true);
         dialog.setLocationRelativeTo(this);
+        dialog.registerContext(model.getGuiContext());
         OutputSettings settings = model.getOutputSettings();
         FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
         dialog.showDialog(model.getDiagram(), chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),

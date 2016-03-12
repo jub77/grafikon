@@ -10,6 +10,8 @@ import java.util.Collection;
 
 import javax.swing.JFileChooser;
 
+import net.parostroj.timetable.gui.GuiContext;
+import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.JTextAreaGrey;
@@ -37,7 +39,7 @@ import javax.swing.ScrollPaneConstants;
  *
  * @author jub
  */
-public class OutputTemplateListDialog extends javax.swing.JDialog {
+public class OutputTemplateListDialog extends javax.swing.JDialog implements GuiContextComponent {
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialog.class);
 
@@ -47,13 +49,20 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private JFileChooser chooser;
     private JFileChooser attachmentsChooser;
     private Settings settings;
-    private final WindowLocationSize editSizeLocation = new WindowLocationSize();
+
+    private GuiContext context;
 
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+
+    @Override
+    public void registerContext(GuiContext context) {
+        context.registerWindow("output.template.list", this);
+        this.context = context;
     }
 
     public void showDialog(final TrainDiagram diagram, JFileChooser chooser, JFileChooser attachmentsChooser, Settings settings) {
@@ -307,12 +316,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
         OutputTemplateDialog dialog = new OutputTemplateDialog(this, true, attachmentsChooser, this::outputButtonAction);
         dialog.setLocationRelativeTo(this);
+        dialog.registerContext(context);
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         dialog.setTitle(template.getName());
-        this.editSizeLocation.apply(dialog);
         dialog.showDialog(this.copyTemplate(template));
-        this.editSizeLocation.read(dialog);
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
             // update description

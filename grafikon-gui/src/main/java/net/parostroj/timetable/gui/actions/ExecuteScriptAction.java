@@ -18,7 +18,6 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.ScriptDialog;
 import net.parostroj.timetable.gui.dialogs.ScriptOutputDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.gui.utils.WindowLocationSize;
 import net.parostroj.timetable.model.GrafikonException;
 import net.parostroj.timetable.model.Script;
 import net.parostroj.timetable.model.Script.Language;
@@ -42,11 +41,9 @@ public class ExecuteScriptAction extends AbstractAction {
 
     private final ApplicationModel model;
     private Script lastScript;
-    private final WindowLocationSize scriptLocSize;
 
     public ExecuteScriptAction(ApplicationModel model) {
         this.model = model;
-        this.scriptLocSize = new WindowLocationSize();
     }
 
     @Override
@@ -95,9 +92,8 @@ public class ExecuteScriptAction extends AbstractAction {
         }
         dialog.setScript(lastScript);
         dialog.setLocationRelativeTo(parent);
-        this.scriptLocSize.apply(dialog);
+        dialog.registerContext(model.getGuiContext());
         dialog.setVisible(true);
-        this.scriptLocSize.read(dialog);
         // selected script
         Script selectedScript = dialog.getSelectedScript();
         if (selectedScript != null) {

@@ -58,10 +58,13 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<String> lookAndFeel;
 
+    final GuiContextImpl guiContext;
+
     /**
      * Default constructor.
      */
     public ApplicationModel() {
+        guiContext = new GuiContextImpl();
         languageLoader = LanguageLoader.getInstance();
         listeners = new HashSet<ApplicationModelListener>();
         mediator = new Mediator();
@@ -90,6 +93,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
             map.put(laf.getClassName(), laf.getName());
         }
         return map;
+    }
+
+    public GuiContext getGuiContext() {
+        return guiContext;
     }
 
     /**
@@ -246,11 +253,13 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         for (File file : this.lastOpenedFiles) {
             section.add("last.opened", file.getAbsolutePath());
         }
+        guiContext.saveToPreferences(prefs);
         return section;
     }
 
     @Override
     public Ini.Section loadFromPreferences(Ini prefs) {
+        guiContext.loadFromPreferences(prefs);
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
