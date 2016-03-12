@@ -93,7 +93,7 @@ public enum ImportComponent {
     }
 
     public boolean sorted() {
-        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES;
+        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES || this == ENGINE_CLASSES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {
