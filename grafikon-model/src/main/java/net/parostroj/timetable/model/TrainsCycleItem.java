@@ -178,6 +178,10 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
         return getCycle().getPreviousItemCyclic(this);
     }
 
+    public Integer getSetupTime() {
+        return getAttribute(ATTR__SETUP_TIME, Integer.class);
+    }
+
     @Override
     public Attributes getAttributes() {
         return attributes;
