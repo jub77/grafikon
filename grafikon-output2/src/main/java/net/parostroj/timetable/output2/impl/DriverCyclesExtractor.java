@@ -74,6 +74,14 @@ public class DriverCyclesExtractor {
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
         String comment = ObjectsUtil.checkAndTrim(item.getComment());
         row.setComment(comment);
+        Integer setupTime = item.getSetupTime();
+        if (setupTime != null) {
+            row.setSetupTime(c.convertIntToXml(setupTime));
+        }
+        // technological time (if the start equals to item start)
+        if (item.getFrom() == null && item.getTrain().getTimeIntervalBefore() != null) {
+            row.setTechnologicalTime(c.convertIntToXml(item.getTrain().getTimeBefore()));
+        }
         return row;
     }
 }

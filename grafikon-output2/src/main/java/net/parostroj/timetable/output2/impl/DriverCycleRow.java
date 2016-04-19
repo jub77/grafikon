@@ -7,7 +7,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"trainName", "fromTime", "fromAbbr", "from", "toTime", "toAbbr", "to", "comment"})
+@XmlType(propOrder = { "trainName", "fromTime", "fromAbbr", "from", "toTime", "toAbbr", "to", "comment", "setupTime",
+        "technologicalTime" })
 public class DriverCycleRow {
 
     private String trainName;
@@ -18,6 +19,8 @@ public class DriverCycleRow {
     private String toAbbr;
     private String to;
     private String comment;
+    private String setupTime;
+    private String technologicalTime;
 
     public String getFromAbbr() {
         return fromAbbr;
@@ -81,5 +84,21 @@ public class DriverCycleRow {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getSetupTime() {
+        return setupTime;
+    }
+
+    public void setSetupTime(String setupTime) {
+        this.setupTime = setupTime;
+    }
+
+    public String getTechnologicalTime() {
+        return technologicalTime;
+    }
+
+    public void setTechnologicalTime(String technologicalTime) {
+        this.technologicalTime = technologicalTime;
     }
 }
