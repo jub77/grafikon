@@ -179,7 +179,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     }
 
     public Integer getSetupTime() {
-        return getAttribute(ATTR__SETUP_TIME, Integer.class);
+        return getAttribute(ATTR_SETUP_TIME, Integer.class);
     }
 
     @Override

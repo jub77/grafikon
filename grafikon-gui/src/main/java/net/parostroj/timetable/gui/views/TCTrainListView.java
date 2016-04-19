@@ -450,14 +450,16 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             // check if the comment changed ...
             String commentText = ObjectsUtil.checkAndTrim(changeDialog.getComment());
             item.setComment(commentText);
-            item.setRemoveAttribute(TrainsCycleItem.ATTR__SETUP_TIME, changeDialog.getSetupTime());
+            Integer setupTime = changeDialog.getSetupTime();
+            boolean setupTimeChanged = !ObjectsUtil.compareWithNull(setupTime, item.getSetupTime());
+            item.setRemoveAttribute(TrainsCycleItem.ATTR_SETUP_TIME, setupTime);
             TimeInterval from = changeDialog.getFrom();
             TimeInterval to = changeDialog.getTo();
             // new trains cycle item
             boolean oldCovered = train.isCovered(delegate.getType());
             if (from != item.getFromInterval() || to != item.getToInterval()) {
                 TrainsCycleItem newItem = new TrainsCycleItem(item.getCycle(), train, item.getComment(), from, to);
-                newItem.setRemoveAttribute(TrainsCycleItem.ATTR__SETUP_TIME, item.getSetupTime());
+                newItem.setRemoveAttribute(TrainsCycleItem.ATTR_SETUP_TIME, item.getSetupTime());
                 newItem.getAttributes().add(item.getAttributes());
                 if (train.testAddCycle(newItem, item, overlappingEnabled)) {
                     TrainsCycle cycle = item.getCycle();
@@ -473,6 +475,10 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 } else {
                     this.updateSelectedTrainsCycleItem(item);
                 }
+            } else if (setupTimeChanged) {
+                cTrains.refreshIndex(cTrainsList.getSelectedIndex());
+                this.updateSelectedTrainsCycleItem(item);
+                this.updateErrors();
             }
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }

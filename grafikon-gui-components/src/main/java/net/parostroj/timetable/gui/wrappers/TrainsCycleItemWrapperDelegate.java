@@ -30,7 +30,7 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsC
         TimeConverter c = item.getTrain().getDiagram().getTimeConverter();
         String str = String.format("%s (%s[%s],%s[%s])", item.getTrain().getName(),
                         item.getFromInterval().getOwnerAsNode().getName(),
-                        c.convertIntToText(item.getStartTime()),
+                        this.getStartTime(c, item),
                         item.getToInterval().getOwnerAsNode().getName(),
                         c.convertIntToText(item.getEndTime()));
         String comment = ObjectsUtil.checkAndTrim(item.getComment());
@@ -38,5 +38,12 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsC
             str = String.format("%s - %s", str, comment);
         }
         return str;
+    }
+
+    private String getStartTime(TimeConverter c, TrainsCycleItem item) {
+        Integer setupTime = item.getSetupTime();
+        String startTimeStr = c.convertIntToText(item.getStartTime());
+        return setupTime == null ? startTimeStr
+                : String.format("<%s>%s", c.convertIntToMinutesText(setupTime), startTimeStr);
     }
 }
