@@ -78,6 +78,8 @@ public class DriverCyclesExtractor {
         // technological time (if the start equals to item start)
         if (item.getFrom() == null && item.getTrain().getTimeIntervalBefore() != null) {
             row.setTechnologicalTime(item.getTrain().getTimeBefore());
+        } else if (item.getFrom() != null) {
+            row.setTechnologicalTime(item.getFrom().getLength());
         }
         return row;
     }
