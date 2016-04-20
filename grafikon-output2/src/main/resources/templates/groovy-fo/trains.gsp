@@ -16,6 +16,12 @@
 
   limited = settings['timetable.limit.to.circulation'] && trains.cycle
   tiHolder = TrainsItemsHolder.create(trains, limited)
+  showTitleStart = settings['timetable.title.start']
+  useSetupTime = settings['timetable.setup.time']
+  useTechnologicalTime = settings['timetable.technological.time']
+  if (settings.containsKey('timetable.title.page')) {
+      title_page = settings['timetable.title.page']
+  }
 %>
 
 <root xmlns="http://www.w3.org/1999/XSL/Format">
@@ -95,7 +101,8 @@ def printTitlePage() {
   <block linefeed-treatment="preserve" text-align="center" font-weight="bold" space-after="7mm">${getRoutePaths(trains)}</block>
   <% if (trains.validity) { %><block font-weight="bold" text-align="center" space-after="15mm">${localization.translate("validity_from", locale)} ${trains.validity}</block><% } %>
   <% if (trains.cycle) { %><block font-weight="bold" text-align="center" space-after="3mm" font-size="5mm">${localization.translate("cycle", locale)}: ${trains.cycle.name}</block><% } %>
-  <% if (trains.cycle && trains.cycle.description) { %><block text-align="center">${trains.cycle.description}</block><% } %>
+  <% if (trains.cycle && trains.cycle.description) { %><block text-align="center" space-after="4mm">${trains.cycle.description}</block><% } %>
+  <% if (showTitleStart && trains.cycle && tiHolder.items) { %><block text-align="center" font-size="4.75mm">${getStartTimeComment(tiHolder.items[0].item, locale)}</block><% } %>
 </flow>
 </page-sequence>
 <%
@@ -112,13 +119,14 @@ if (trains.cycle) { %>
   <table-column column-width="23%" />
   <table-column column-width="12%" />
   <table-column column-width="19%" />
-  <table-column column-width="46%" />
+  <table-column column-width="38.7%" />
+  <table-column column-width="7.3%" />
   <table-header font-size="3mm">
     <table-row border-top="solid .2mm" border-bottom="solid .2mm">
       <table-cell><block>${localization.translate("column_train", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_departure", locale)}</block></table-cell>
       <table-cell><block>${localization.translate("column_from_to", locale)}</block></table-cell>
-      <table-cell><block text-align-last="justify"><inline>${localization.translate("column_note", locale)}</inline><leader leader-pattern="space" /><inline>${localization.translate("index_page", locale)}</inline></block></table-cell>
+      <table-cell number-columns-spanned="2"><block text-align-last="justify"><inline>${localization.translate("column_note", locale)}</inline><leader leader-pattern="space" /><inline>${localization.translate("index_page", locale)}</inline></block></table-cell>
     </table-row>
   </table-header>
   <table-body>
@@ -139,7 +147,8 @@ if (trains.cycle) { %>
       <table-cell><block>${item.trainName}</block></table-cell>
       <table-cell margin-right="2mm"><block text-align="right" font-weight="bold">${convertTime(item.fromTime)}</block></table-cell>
       <table-cell><block>${item.fromAbbr} - ${item.toAbbr}</block></table-cell>
-      <table-cell><block text-align-last="justify"><inline>${getComment(item.comment, locale)}</inline><leader leader-pattern="space" /><inline><page-number-citation ref-id="${iHolder.trainHolder.refId}"/></inline></block></table-cell>
+      <table-cell><block><inline font-size="3.5mm" vertical-align="middle">${getItemComment(item, locale)}</inline></block></table-cell>
+      <table-cell><block text-align="right"><page-number-citation ref-id="${iHolder.trainHolder.refId}"/></block></table-cell>
     </table-row>
 <%
     index++
@@ -163,10 +172,16 @@ def printTimetables() {
   def index = 0
   for (tHolder in tiHolder.trains) {
     def train = tHolder.train
+    def iHolder = tiHolder.items ? tiHolder.items[index] : null
 %>
 <block-container keep-together.within-page="always" space-before.minimum="1mm" space-before.optimum="5mm" space-before.maximum="7mm">
   <block text-align="center" id="${tHolder.refId}" font-weight="bold" font-size="5mm">${train.completeName}</block>
   <% if (settings['timetable.show.circulation'] && trains.cycle) { %><block text-align="center" font-size="3.5mm" font-weight="bold">${trains.cycle.name}</block><% } %>
+  <% if (iHolder) {
+       def setupComment = getSetupTimeComment(iHolder.item, locale) 
+       if(setupComment) { %><block text-align="center" font-size="3.5mm" space-after=".75mm">${setupComment}</block><% }
+     }
+  %>
   <block-container font-size="3mm">
   <!-- ======== Route info ========= -->
   <% if (train.routeInfo) { %><block text-align="center" space-after=".8mm">${train.routeInfo.collect{it.part}.join(' - ')}</block><% } %>
@@ -430,11 +445,38 @@ def printTimetableFooter() {
     return str
   }
 
-  def getComment(comment, loc) {
+  def getItemComment(item, loc) {
+    def comment = item.comment
     if (comment) {
       comment = translator.translate(comment, loc)
     }
+    def setupComment = getSetupTimeComment(item, loc)
+    if (setupComment) {
+      comment = comment ? "${comment}, ${setupComment}" : setupComment
+    }
     return comment ?: ""
+  }
+
+  def getSetupTimeComment(item, loc) {
+    def setupTime = getSetupTime(item)
+    return setupTime ? getStartTimeComment(item, setupTime, loc) : null
+  }
+
+  def getStartTimeComment(item, loc) {
+    return getStartTimeComment(item, getSetupTime(item), loc)
+  }
+
+  def getStartTimeComment(item, setupTime, loc) {
+    def time = Time.parse(item.fromTime)
+    if (setupTime) time = time.minusSeconds(setupTime)
+    return localization.translate("circulation_start", loc) + ": " + PRINT_FORMATTER.print(time)
+  }
+
+  def getSetupTime(item) {
+    def time = null
+    if (useTechnologicalTime && item.technologicalTime) time = item.technologicalTime
+    if (useSetupTime && item.setupTime) time = item.setupTime
+    return time
   }
 
   def convertTime(time) {
