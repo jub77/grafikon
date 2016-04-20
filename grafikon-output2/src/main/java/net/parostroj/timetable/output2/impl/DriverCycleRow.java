@@ -19,8 +19,8 @@ public class DriverCycleRow {
     private String toAbbr;
     private String to;
     private String comment;
-    private String setupTime;
-    private String technologicalTime;
+    private Integer setupTime;
+    private Integer technologicalTime;
 
     public String getFromAbbr() {
         return fromAbbr;
@@ -86,19 +86,19 @@ public class DriverCycleRow {
         this.comment = comment;
     }
 
-    public String getSetupTime() {
+    public Integer getSetupTime() {
         return setupTime;
     }
 
-    public void setSetupTime(String setupTime) {
+    public void setSetupTime(Integer setupTime) {
         this.setupTime = setupTime;
     }
 
-    public String getTechnologicalTime() {
+    public Integer getTechnologicalTime() {
         return technologicalTime;
     }
 
-    public void setTechnologicalTime(String technologicalTime) {
+    public void setTechnologicalTime(Integer technologicalTime) {
         this.technologicalTime = technologicalTime;
     }
 }
