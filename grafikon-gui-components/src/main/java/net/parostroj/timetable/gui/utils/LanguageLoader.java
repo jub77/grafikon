@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class LanguageLoader {
 
     public enum LanguagesType {
-        GUI("locales.gui"), OUTPUT("locales.output");
+        GUI("locales.gui");
 
         private String key;
 
