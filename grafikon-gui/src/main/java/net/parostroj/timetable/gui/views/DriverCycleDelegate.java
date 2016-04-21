@@ -18,7 +18,6 @@ import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.ResourceLoader;
-import net.parostroj.timetable.utils.Tuple;
 
 /**
  * Implementation of the interface for driver cycle.
@@ -37,14 +36,16 @@ public class DriverCycleDelegate extends TCDelegate {
     public String getTrainCycleErrors(TrainsCycle cycle) {
         TrainDiagram diagram = model.getDiagram();
         StringBuilder result = new StringBuilder();
-        List<Tuple<TrainsCycleItem>> conflicts = cycle.checkConflicts();
-        for (Tuple<TrainsCycleItem> item : conflicts) {
-            if (item.first.getToInterval().getOwnerAsNode() != item.second.getFromInterval().getOwnerAsNode()) {
+        List<TrainsCycle.Conflict> conflicts = cycle.checkConflicts();
+        for (TrainsCycle.Conflict item : conflicts) {
+            TrainsCycleItem fromItem = item.getFrom();
+            TrainsCycleItem toItem = item.getTo();
+            if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {
                 if (result.length() != 0) {
                     result.append('\n');
                 }
                 // get time difference
-                int difference = item.second.getNormalizedStartTime() - item.first.getNormalizedEndTime();
+                int difference = toItem.getNormalizedStartTime() - fromItem.getNormalizedEndTime();
                 Integer okDifference = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
                 String template = ResourceLoader.getString("ec.move.nodes");
                 if (okDifference != null) {
@@ -54,14 +55,14 @@ public class DriverCycleDelegate extends TCDelegate {
                         template = ResourceLoader.getString("ec.move.nodes.time.problem");
                     }
                 }
-                result.append(String.format(template,item.first.getTrain().getName(),item.first.getToInterval().getOwnerAsNode().getName(),item.second.getTrain().getName(),item.second.getFromInterval().getOwnerAsNode().getName()));
+                result.append(String.format(template,fromItem.getTrain().getName(),fromItem.getToInterval().getOwnerAsNode().getName(),toItem.getTrain().getName(),toItem.getFromInterval().getOwnerAsNode().getName()));
             }
-            if (item.first.getNormalizedEndTime() >= item.second.getNormalizedStartTime()) {
+            if (fromItem.getNormalizedEndTime() >= toItem.getNormalizedStartTime()) {
                 if (result.length() != 0) {
                     result.append('\n');
                 }
                 TimeConverter c = diagram.getTimeConverter();
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"),item.first.getTrain().getName(),c.convertIntToText(item.first.getEndTime()),item.second.getTrain().getName(), c.convertIntToText(item.second.getStartTime())));
+                result.append(String.format(ResourceLoader.getString("ec.problem.time"),fromItem.getTrain().getName(),c.convertIntToText(fromItem.getEndTime()),toItem.getTrain().getName(), c.convertIntToText(toItem.getStartTime())));
             }
         }
         return result.toString();

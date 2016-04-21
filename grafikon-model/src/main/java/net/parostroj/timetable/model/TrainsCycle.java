@@ -14,7 +14,6 @@ import com.google.common.collect.Collections2;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TransformUtil;
-import net.parostroj.timetable.utils.Tuple;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -208,8 +207,8 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         return hash;
     }
 
-    public List<Tuple<TrainsCycleItem>> checkConflicts() {
-        List<Tuple<TrainsCycleItem>> conflicts = null;
+    public List<Conflict> checkConflicts() {
+        List<Conflict> conflicts = new LinkedList<Conflict>();
         Iterator<TrainsCycleItem> i = items.iterator();
         TrainsCycleItem last = null;
         if (i.hasNext()) {
@@ -218,15 +217,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
         while (i.hasNext()) {
             TrainsCycleItem current = i.next();
             if (last.getToInterval().getOwner() != current.getFromInterval().getOwner() || last.getNormalizedEndTime() >= current.getNormalizedStartTime()) {
-                if (conflicts == null) {
-                    conflicts = new LinkedList<Tuple<TrainsCycleItem>>();
-                }
-                conflicts.add(new Tuple<TrainsCycleItem>(last, current));
+                conflicts.add(new Conflict(last, current, ConflictType.UNDEFINED));
             }
             last = current;
-        }
-        if (conflicts == null) {
-            conflicts = Collections.emptyList();
         }
         return conflicts;
     }
@@ -396,5 +389,33 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static class Conflict {
+        private final TrainsCycleItem from;
+        private final TrainsCycleItem to;
+        private final ConflictType type;
+
+        public Conflict(TrainsCycleItem from, TrainsCycleItem to, ConflictType type) {
+            this.from = from;
+            this.to = to;
+            this.type = type;
+        }
+
+        public TrainsCycleItem getFrom() {
+            return from;
+        }
+
+        public TrainsCycleItem getTo() {
+            return to;
+        }
+
+        public ConflictType getType() {
+            return type;
+        }
+    }
+
+    public enum ConflictType {
+        UNDEFINED
     }
 }
