@@ -5,10 +5,13 @@
  */
 package net.parostroj.timetable.model;
 
-import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.CollectionUtils;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 
@@ -39,30 +42,13 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     }
 
     public boolean containsInterval(TimeInterval interval) {
-        boolean in = false;
-        for (TimeInterval currentInterval : train.getTimeIntervalList()) {
-            if (getFromInterval() == currentInterval)
-                in = true;
-            if (in && interval == currentInterval)
-                return true;
-            if (getToInterval() == currentInterval)
-                in = false;
-        }
-        return false;
+        return Iterators.contains(CollectionUtils.closedIntervalIterator(train.getTimeIntervalList().iterator(),
+                getFromInterval(), getToInterval()), interval);
     }
 
     public List<TimeInterval> getIntervals() {
-        List<TimeInterval> intervals = new LinkedList<TimeInterval>();
-        boolean in = false;
-        for (TimeInterval currentInterval : train.getTimeIntervalList()) {
-            if (getFromInterval() == currentInterval)
-                in = true;
-            if (in)
-                intervals.add(currentInterval);
-            if (getToInterval() == currentInterval)
-                in = false;
-        }
-        return intervals;
+        return Lists.newArrayList(CollectionUtils.closedIntervalIterator(train.getTimeIntervalList().iterator(),
+                getFromInterval(), getToInterval()));
     }
 
     public String getComment() {
@@ -103,22 +89,14 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
      * @return always returns from time interval (if not specified then firt interval of the train)
      */
     public TimeInterval getFromInterval() {
-        if (from != null) {
-            return from;
-        } else {
-            return train.getFirstInterval();
-        }
+        return from != null ? from : train.getFirstInterval();
     }
 
     /**
      * @return always returns to interval (if not specified then last interval of the train)
      */
     public TimeInterval getToInterval() {
-        if (to != null) {
-            return to;
-        } else {
-            return train.getLastInterval();
-        }
+        return to != null ? to : train.getLastInterval();
     }
 
     public Node getFromNode() {
@@ -142,11 +120,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
      */
     public int getNormalizedStartTime() {
         int startTime = this.getStartTime();
-        if (!TimeUtil.isNormalizedTime(startTime)) {
-            return TimeUtil.normalizeTime(startTime);
-        } else {
-            return startTime;
-        }
+        return !TimeUtil.isNormalizedTime(startTime) ? TimeUtil.normalizeTime(startTime) : startTime;
     }
 
     /**
@@ -155,11 +129,7 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
     public int getNormalizedEndTime() {
         int startTime = this.getStartTime();
         int endTime = this.getEndTime();
-        if (!TimeUtil.isNormalizedTime(startTime)) {
-            return TimeUtil.normalizeTime(endTime);
-        } else {
-            return endTime;
-        }
+        return !TimeUtil.isNormalizedTime(startTime) ? TimeUtil.normalizeTime(endTime) : endTime;
     }
 
     public TrainsCycleItem getNextItem() {
