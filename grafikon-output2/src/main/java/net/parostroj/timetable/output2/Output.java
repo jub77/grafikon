@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface Output {
 
-    public static final String LOCALIZATION_BUNDLE = "texts/html_texts";
+    public static final String LOCALIZATION_BUNDLE = "texts/output";
 
     public static final String PARAM_TRAIN_DIAGRAM = "diagram";
     public static final String PARAM_OUTPUT_STREAM = "output.stream";
