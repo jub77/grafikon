@@ -170,7 +170,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
         }
     }
 
-    private void addNewLineIfNotEmpty(StringBuilder result) {
+    protected void addNewLineIfNotEmpty(StringBuilder result) {
         if (result.length() != 0) {
             result.append('\n');
         }

@@ -41,28 +41,29 @@ public class DriverCycleDelegate extends TCDelegate {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
             if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {
-                if (result.length() != 0) {
-                    result.append('\n');
-                }
+                addNewLineIfNotEmpty(result);
                 // get time difference
                 int difference = toItem.getNormalizedStartTime() - fromItem.getNormalizedEndTime();
                 Integer okDifference = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
                 String template = ResourceLoader.getString("ec.move.nodes");
                 if (okDifference != null) {
                     // computed difference in model seconds
-                    int computedDiff = (int)(okDifference.intValue() * diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue() * 60);
+                    int computedDiff = (int) (okDifference.intValue()
+                            * diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue() * 60);
                     if (difference < computedDiff) {
                         template = ResourceLoader.getString("ec.move.nodes.time.problem");
                     }
                 }
-                result.append(String.format(template,fromItem.getTrain().getName(),fromItem.getToInterval().getOwnerAsNode().getName(),toItem.getTrain().getName(),toItem.getFromInterval().getOwnerAsNode().getName()));
+                result.append(String.format(template, fromItem.getTrain().getName(),
+                        fromItem.getToInterval().getOwnerAsNode().getName(), toItem.getTrain().getName(),
+                        toItem.getFromInterval().getOwnerAsNode().getName()));
             }
             if (fromItem.getNormalizedEndTime() >= toItem.getNormalizedStartTime()) {
-                if (result.length() != 0) {
-                    result.append('\n');
-                }
+                addNewLineIfNotEmpty(result);
                 TimeConverter c = diagram.getTimeConverter();
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"),fromItem.getTrain().getName(),c.convertIntToText(fromItem.getEndTime()),toItem.getTrain().getName(), c.convertIntToText(toItem.getStartTime())));
+                result.append(String.format(ResourceLoader.getString("ec.problem.time"), fromItem.getTrain().getName(),
+                        c.convertIntToText(fromItem.getEndTime()), toItem.getTrain().getName(),
+                        c.convertIntToText(toItem.getStartTime())));
             }
         }
         return result.toString();
