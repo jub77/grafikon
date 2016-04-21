@@ -25,7 +25,7 @@ public class ResourceLoader {
      */
     public static String getString(String key) {
         try {
-            return ResourceBundle.getBundle("net.parostroj.timetable.gui.components_texts").getString(key);
+            return ResourceBundle.getBundle("net.parostroj.timetable.gui.components").getString(key);
         } catch (MissingResourceException e) {
             log.warn("Error getting text for key: {}", key);
             return "MISSING STRING FOR KEY: " + key;
