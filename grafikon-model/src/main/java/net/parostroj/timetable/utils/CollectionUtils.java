@@ -1,9 +1,12 @@
 package net.parostroj.timetable.utils;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 
@@ -94,5 +97,47 @@ public final class CollectionUtils {
             }
         }
         return new OpenIterator();
+    }
+
+    /**
+     * Returns iterable with sliding window of original iterable.
+     *
+     * @param iterable list
+     * @param count window size
+     * @return list with window
+     */
+    public static <T> Iterable<List<T>> slidingWindow(final Iterable<T> iterable, final int count) {
+        return () -> slidingWindow(iterable.iterator(), count);
+    }
+
+    /**
+     * Returns iterator with sliding window.
+     *
+     * @param iterator source iterator
+     * @param count window size
+     * @return iterator with window
+     */
+    public static <T> Iterator<List<T>> slidingWindow(final Iterator<T> iterator, final int count) {
+        return new AbstractIterator<List<T>>() {
+
+            private LinkedList<T> window = new LinkedList<>();
+            private int cnt = 0;
+
+            @Override
+            protected List<T> computeNext() {
+                if (!window.isEmpty()) {
+                    window.removeFirst();
+                    cnt--;
+                }
+                if (!iterator.hasNext()) {
+                    return endOfData();
+                }
+                while (iterator.hasNext() && cnt < count) {
+                    window.add(iterator.next());
+                    cnt++;
+                }
+                return ImmutableList.copyOf(window);
+            }
+        };
     }
 }
