@@ -66,7 +66,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
     private TCDelegate delegate;
     private Predicate<Train> filter;
     private boolean overlappingEnabled;
-    private final TCItemChangeDialog changeDialog;
+
+    private TCItemChangeDialog tciChangeDialog;
 
     private final WrapperListModel<Train> allTrains;
     private final WrapperListModel<TrainsCycleItem> cTrains;
@@ -77,7 +78,6 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         cTrains = new WrapperListModel<TrainsCycleItem>(false);
         allTrainsList.setModel(allTrains);
         cTrainsList.setModel(cTrains);
-        changeDialog = new TCItemChangeDialog();
     }
 
     public void setModel(TCDelegate delegate) {
@@ -445,6 +445,7 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
         if (cTrainsList.getSelectedIndex() != -1) {
             TrainsCycleItem item = cTrains.getIndex(cTrainsList.getSelectedIndex()).getElement();
             Train train = item.getTrain();
+            TCItemChangeDialog changeDialog = this.getChangeDialog();
             if (!changeDialog.showDialog(this, item))
                 return;
             // check if the comment changed ...
@@ -482,6 +483,13 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
             }
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
+    }
+
+    private TCItemChangeDialog getChangeDialog() {
+        if (tciChangeDialog == null) {
+            tciChangeDialog = new TCItemChangeDialog(true);
+        }
+        return tciChangeDialog;
     }
 
     private void ecTrainsListValueChanged(javax.swing.event.ListSelectionEvent evt) {

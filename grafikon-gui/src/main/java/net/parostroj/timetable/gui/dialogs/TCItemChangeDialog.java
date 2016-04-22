@@ -39,7 +39,7 @@ public class TCItemChangeDialog extends JDialog {
     private final JTextField commentTextField;
     private JTextField setupTimeTextField;
 
-    public TCItemChangeDialog() {
+    public TCItemChangeDialog(boolean setupTime) {
         setModal(true);
 
         JPanel panel = new JPanel();
@@ -117,24 +117,26 @@ public class TCItemChangeDialog extends JDialog {
         panel.add(commentTextField, gbc_noteTextField);
         commentTextField.setColumns(50);
 
-        JLabel setupTimeLabel = new JLabel(ResourceLoader.getString("ec.list.setup.time"));
-        GridBagConstraints gbc_setupTimeLabel = new GridBagConstraints();
-        gbc_setupTimeLabel.anchor = GridBagConstraints.WEST;
-        gbc_setupTimeLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_setupTimeLabel.gridx = 0;
-        gbc_setupTimeLabel.gridy = 2;
-        panel.add(setupTimeLabel, gbc_setupTimeLabel);
+        if (setupTime) {
+            JLabel setupTimeLabel = new JLabel(ResourceLoader.getString("ec.list.setup.time"));
+            GridBagConstraints gbc_setupTimeLabel = new GridBagConstraints();
+            gbc_setupTimeLabel.anchor = GridBagConstraints.WEST;
+            gbc_setupTimeLabel.insets = new Insets(0, 0, 5, 5);
+            gbc_setupTimeLabel.gridx = 0;
+            gbc_setupTimeLabel.gridy = 2;
+            panel.add(setupTimeLabel, gbc_setupTimeLabel);
 
-        setupTimeTextField = new JTextField();
-        GridBagConstraints gbc_setupTimeTextField = new GridBagConstraints();
-        gbc_setupTimeTextField.weightx = 1.0;
-        gbc_setupTimeTextField.gridwidth = 3;
-        gbc_setupTimeTextField.insets = new Insets(0, 0, 5, 0);
-        gbc_setupTimeTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_setupTimeTextField.gridx = 1;
-        gbc_setupTimeTextField.gridy = 2;
-        panel.add(setupTimeTextField, gbc_setupTimeTextField);
-        setupTimeTextField.setColumns(10);
+            setupTimeTextField = new JTextField();
+            GridBagConstraints gbc_setupTimeTextField = new GridBagConstraints();
+            gbc_setupTimeTextField.weightx = 1.0;
+            gbc_setupTimeTextField.gridwidth = 3;
+            gbc_setupTimeTextField.insets = new Insets(0, 0, 5, 0);
+            gbc_setupTimeTextField.fill = GridBagConstraints.HORIZONTAL;
+            gbc_setupTimeTextField.gridx = 1;
+            gbc_setupTimeTextField.gridy = 2;
+            panel.add(setupTimeTextField, gbc_setupTimeTextField);
+            setupTimeTextField.setColumns(10);
+        }
     }
 
     public boolean showDialog(Component component, TrainsCycleItem tcItem) {
@@ -151,7 +153,9 @@ public class TCItemChangeDialog extends JDialog {
         this.updateFromTo(item.getTrain().getTimeIntervalList(), item.getFromInterval(), item.getToInterval());
         commentTextField.setText(item.getComment());
         Integer setupTime = item.getSetupTime();
-        setupTimeTextField.setText(setupTime == null ? null : Integer.toString(setupTime / TimeInterval.MINUTE));
+        if (setupTimeTextField != null) {
+            setupTimeTextField.setText(setupTime == null ? null : Integer.toString(setupTime / TimeInterval.MINUTE));
+        }
     }
 
     private void updateFromTo(List<TimeInterval> intervals, TimeInterval from, TimeInterval to) {
@@ -181,6 +185,7 @@ public class TCItemChangeDialog extends JDialog {
     }
 
     public Integer getSetupTime() {
+        if (setupTimeTextField == null) return null;
         String setupTimeStr = ObjectsUtil.checkAndTrim(setupTimeTextField.getText());
         if (setupTimeStr != null) {
             try {
