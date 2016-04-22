@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import net.parostroj.timetable.actions.TrainsCycleChecker;
+import net.parostroj.timetable.actions.TrainsCycleChecker.Conflict;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
@@ -37,8 +39,14 @@ public abstract class TCDelegate implements ApplicationModelListener {
     private TrainsCycle selected;
     private final Set<TCDelegate.Listener> listeners;
     protected ApplicationModel model;
+    protected TrainsCycleChecker checker;
 
     public TCDelegate(ApplicationModel model) {
+        this(model, new TrainsCycleChecker());
+    }
+
+    public TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
+        this.checker = checker;
         this.model = model;
         this.model.addListener(this);
         this.model.getMediator().addColleague(new GTEventsReceiverColleague() {
@@ -136,8 +144,8 @@ public abstract class TCDelegate implements ApplicationModelListener {
     }
 
     private void checkConflicts(TrainsCycle cycle, StringBuilder result) {
-        List<TrainsCycle.Conflict> conflicts = cycle.checkConflicts();
-        for (TrainsCycle.Conflict item : conflicts) {
+        List<Conflict> conflicts = checker.checkConflicts(cycle);
+        for (Conflict item : conflicts) {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
             if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {

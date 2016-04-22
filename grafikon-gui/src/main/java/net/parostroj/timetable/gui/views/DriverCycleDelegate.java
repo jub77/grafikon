@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import net.parostroj.timetable.actions.TrainsCycleChecker;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -29,15 +30,15 @@ public class DriverCycleDelegate extends TCDelegate {
     private TCDetailsViewDialog editDialog;
 
     public DriverCycleDelegate(ApplicationModel model) {
-        super(model);
+        super(model, new TrainsCycleChecker());
     }
 
     @Override
     public String getTrainCycleErrors(TrainsCycle cycle) {
         TrainDiagram diagram = model.getDiagram();
         StringBuilder result = new StringBuilder();
-        List<TrainsCycle.Conflict> conflicts = cycle.checkConflicts();
-        for (TrainsCycle.Conflict item : conflicts) {
+        List<TrainsCycleChecker.Conflict> conflicts = checker.checkConflicts(cycle);
+        for (TrainsCycleChecker.Conflict item : conflicts) {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
             if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {
