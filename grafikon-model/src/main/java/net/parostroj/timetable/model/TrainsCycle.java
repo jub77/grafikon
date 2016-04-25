@@ -244,7 +244,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public TrainsCycleItem getNextItemCyclic(TrainsCycleItem item) {
         TrainsCycleItem nextItem = getNextItem(item);
         if (nextItem == null) {
-            nextItem = getNext().getFirstItem();
+            TrainsCycle nextCycle = getNext();
+            while (nextCycle.isEmpty()) nextCycle = nextCycle.getNext();
+            nextItem = nextCycle.getFirstItem();
         }
         return nextItem;
     }
@@ -264,7 +266,9 @@ public class TrainsCycle implements AttributesHolder, ObjectWithId, Iterable<Tra
     public TrainsCycleItem getPreviousItemCyclic(TrainsCycleItem item) {
         TrainsCycleItem previousItem = getPreviousItem(item);
         if (previousItem == null) {
-            previousItem = getPrevious().getLastItem();
+            TrainsCycle previousCycle = getPrevious();
+            while (previousCycle.isEmpty()) previousCycle = previousCycle.getPrevious();
+            previousItem = previousCycle.getLastItem();
         }
         return previousItem;
     }
