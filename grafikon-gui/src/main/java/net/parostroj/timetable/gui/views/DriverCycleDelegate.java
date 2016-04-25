@@ -5,11 +5,14 @@
  */
 package net.parostroj.timetable.gui.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
 
 import net.parostroj.timetable.actions.TrainsCycleChecker;
+import net.parostroj.timetable.actions.TrainsCycleChecker.ConflictType;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.dialogs.TCDetailsViewDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -30,44 +33,61 @@ public class DriverCycleDelegate extends TCDelegate {
     private TCDetailsViewDialog editDialog;
 
     public DriverCycleDelegate(ApplicationModel model) {
-        super(model, new TrainsCycleChecker());
+        super(model, new TrainsCycleChecker(ConflictType.NODE, ConflictType.TIME, ConflictType.SETUP_TIME, ConflictType.TRANSITION_TIME));
     }
 
     @Override
     public String getTrainCycleErrors(TrainsCycle cycle) {
         TrainDiagram diagram = model.getDiagram();
+        TimeConverter c = diagram.getTimeConverter();
         StringBuilder result = new StringBuilder();
         List<TrainsCycleChecker.Conflict> conflicts = checker.checkConflicts(cycle);
         for (TrainsCycleChecker.Conflict item : conflicts) {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
-            if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {
-                addNewLineIfNotEmpty(result);
-                // get time difference
-                int difference = toItem.getNormalizedStartTime() - fromItem.getNormalizedEndTime();
-                Integer okDifference = diagram.getAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, Integer.class);
-                String template = ResourceLoader.getString("ec.move.nodes");
-                if (okDifference != null) {
-                    // computed difference in model seconds
-                    int computedDiff = (int) (okDifference.intValue()
-                            * diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).doubleValue() * 60);
-                    if (difference < computedDiff) {
-                        template = ResourceLoader.getString("ec.move.nodes.time.problem");
-                    }
+            for (ConflictType conflictType : this.colapseTimeConflictTypes(item.getType())) {
+                switch (conflictType) {
+                case NODE:
+                    addNewLineIfNotEmpty(result);
+                    formatTemplateNode(result, fromItem, toItem, ResourceLoader.getString("ec.move.nodes"));
+                    break;
+                case TRANSITION_TIME:
+                    addNewLineIfNotEmpty(result);
+                    formatTemplateNode(result, fromItem, toItem, ResourceLoader.getString("ec.move.nodes.time.problem"));
+                    break;
+                case TIME: case SETUP_TIME:
+                    addNewLineIfNotEmpty(result);
+                    formatTemplateTime(result, fromItem, toItem, c, ResourceLoader.getString("ec.problem.time"));
+                    break;
                 }
-                result.append(String.format(template, fromItem.getTrain().getName(),
-                        fromItem.getToInterval().getOwnerAsNode().getName(), toItem.getTrain().getName(),
-                        toItem.getFromInterval().getOwnerAsNode().getName()));
-            }
-            if (fromItem.getNormalizedEndTime() >= toItem.getNormalizedStartTime()) {
-                addNewLineIfNotEmpty(result);
-                TimeConverter c = diagram.getTimeConverter();
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"), fromItem.getTrain().getName(),
-                        c.convertIntToText(fromItem.getEndTime()), toItem.getTrain().getName(),
-                        c.convertIntToText(toItem.getStartTime())));
             }
         }
         return result.toString();
+    }
+
+    private Collection<ConflictType> colapseTimeConflictTypes(Collection<ConflictType> types) {
+        Collection<ConflictType> result = new ArrayList<>(types);
+        if (result.contains(ConflictType.TIME)) {
+            result.remove(ConflictType.SETUP_TIME);
+            result.remove(ConflictType.TRANSITION_TIME);
+        }
+        if (result.contains(ConflictType.SETUP_TIME)) {
+            result.remove(ConflictType.TRANSITION_TIME);
+        }
+        return result;
+    }
+
+    private void formatTemplateTime(StringBuilder result, TrainsCycleItem fromItem, TrainsCycleItem toItem, TimeConverter c,
+            String template) {
+        result.append(String.format(template, fromItem.getTrain().getName(),
+                c.convertIntToText(fromItem.getEndTime()), toItem.getTrain().getName(),
+                c.convertIntToText(toItem.getStartTime())));
+    }
+
+    private void formatTemplateNode(StringBuilder result, TrainsCycleItem fromItem, TrainsCycleItem toItem, String template) {
+        result.append(String.format(template, fromItem.getTrain().getName(),
+                fromItem.getToInterval().getOwnerAsNode().getName(), toItem.getTrain().getName(),
+                toItem.getFromInterval().getOwnerAsNode().getName()));
     }
 
     @Override

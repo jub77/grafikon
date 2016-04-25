@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 
 import net.parostroj.timetable.actions.TrainsCycleChecker;
 import net.parostroj.timetable.actions.TrainsCycleChecker.Conflict;
+import net.parostroj.timetable.actions.TrainsCycleChecker.ConflictType;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
@@ -42,7 +43,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
     protected TrainsCycleChecker checker;
 
     public TCDelegate(ApplicationModel model) {
-        this(model, new TrainsCycleChecker());
+        this(model, new TrainsCycleChecker(ConflictType.NODE, ConflictType.TIME));
     }
 
     public TCDelegate(ApplicationModel model, TrainsCycleChecker checker) {
@@ -126,7 +127,6 @@ public abstract class TCDelegate implements ApplicationModelListener {
     public String getTrainCycleErrors(TrainsCycle cycle) {
         StringBuilder result = new StringBuilder();
         checkConflicts(cycle, result);
-        checkStartEnd(cycle, result);
         addListIfSequence(cycle, result);
         return result.toString();
     }
@@ -148,32 +148,32 @@ public abstract class TCDelegate implements ApplicationModelListener {
         for (Conflict item : conflicts) {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
-            if (fromItem.getToInterval().getOwnerAsNode() != toItem.getFromInterval().getOwnerAsNode()) {
-                addNewLineIfNotEmpty(result);
-                result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),
-                        fromItem.getTrain().getName(),
-                        fromItem.getToInterval().getOwnerAsNode().getName(),
-                        toItem.getTrain().getName(),
-                        toItem.getFromInterval().getOwnerAsNode().getName()));
-            } else if (fromItem.getNormalizedEndTime() >= toItem.getNormalizedStartTime()) {
-                addNewLineIfNotEmpty(result);
-                TimeConverter c = fromItem.getTrain().getDiagram().getTimeConverter();
-                result.append(String.format(ResourceLoader.getString("ec.problem.time"),
-                        fromItem.getTrain().getName(),
-                        c.convertIntToText(fromItem.getEndTime()),
-                        toItem.getTrain().getName(),
-                        c.convertIntToText(toItem.getStartTime())));
-            }
-        }
-    }
-
-    private void checkStartEnd(TrainsCycle cycle, StringBuilder result) {
-        if (!cycle.isEmpty()) {
-            boolean startMatch = cycle.getFirstItem().getFromNode() == cycle.getPrevious().getLastItem().getToNode();
-            boolean endMatch = cycle.getLastItem().getToNode() == cycle.getNext().getFirstItem().getFromNode();
-            if (!startMatch || !endMatch) {
-                addNewLineIfNotEmpty(result);
-                result.append(ResourceLoader.getString("ec.problem.startend"));
+            for (ConflictType conflictType : item.getType()) {
+                switch (conflictType) {
+                case NODE:
+                    addNewLineIfNotEmpty(result);
+                    result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),
+                            fromItem.getTrain().getName(),
+                            fromItem.getToInterval().getOwnerAsNode().getName(),
+                            toItem.getTrain().getName(),
+                            toItem.getFromInterval().getOwnerAsNode().getName()));
+                    if (fromItem == cycle.getLastItem() || toItem == cycle.getFirstItem()) {
+                        addNewLineIfNotEmpty(result);
+                        result.append(ResourceLoader.getString("ec.problem.startend"));
+                    }
+                    break;
+                case TIME:
+                    addNewLineIfNotEmpty(result);
+                    TimeConverter c = fromItem.getTrain().getDiagram().getTimeConverter();
+                    result.append(String.format(ResourceLoader.getString("ec.problem.time"),
+                            fromItem.getTrain().getName(),
+                            c.convertIntToText(fromItem.getEndTime()),
+                            toItem.getTrain().getName(),
+                            c.convertIntToText(toItem.getStartTime())));
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }
