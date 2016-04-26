@@ -4,7 +4,7 @@ Timetables for model railway. Useful for meets with modules (like FREMO, Free-mo
 ## Examples
 Examples of gtm files with timetables can be found here: [gtm_examples.zip](http://jub.parostroj.net/grafikon/gtm_examples.zip)
 
-## Offline start
+## Archive download
 1. download one of the releases (zip file - [releases](https://github.com/jub77/grafikon/releases))
 2. unpack it
 3. check if you have installed java
@@ -13,7 +13,7 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
     * or double click on `grafikon.jar`
     * or use `grafikon.cmd` (`grafikon.sh`)
 
-## Online start (Webstart)
+## Webstart
 ### Release
 http://jub.parostroj.net/grafikon/1.1/grafikon.jnlp
 ### Development
