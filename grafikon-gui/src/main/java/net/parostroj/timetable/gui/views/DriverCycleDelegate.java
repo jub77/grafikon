@@ -49,15 +49,15 @@ public class DriverCycleDelegate extends TCDelegate {
                 switch (conflictType) {
                 case NODE:
                     addNewLineIfNotEmpty(result);
-                    formatTemplateNode(result, fromItem, toItem, ResourceLoader.getString("ec.move.nodes"));
+                    result.append(String.format("%s %s", ResourceLoader.getString("ec.move.nodes"), formatItems(fromItem, toItem, c)));
                     break;
                 case TRANSITION_TIME:
                     addNewLineIfNotEmpty(result);
-                    formatTemplateNode(result, fromItem, toItem, ResourceLoader.getString("ec.move.nodes.time.problem"));
+                    result.append(String.format("%s %s", ResourceLoader.getString("ec.move.nodes.time.problem"), formatItems(fromItem, toItem, c)));
                     break;
                 case TIME: case SETUP_TIME:
                     addNewLineIfNotEmpty(result);
-                    formatTemplateTime(result, fromItem, toItem, c, ResourceLoader.getString("ec.problem.time"));
+                    result.append(String.format("%s %s", ResourceLoader.getString("ec.problem.time"), formatItems(fromItem, toItem, c)));
                     break;
                 }
             }
@@ -75,19 +75,6 @@ public class DriverCycleDelegate extends TCDelegate {
             result.remove(ConflictType.TRANSITION_TIME);
         }
         return result;
-    }
-
-    private void formatTemplateTime(StringBuilder result, TrainsCycleItem fromItem, TrainsCycleItem toItem, TimeConverter c,
-            String template) {
-        result.append(String.format(template, fromItem.getTrain().getName(),
-                c.convertIntToText(fromItem.getEndTime()), toItem.getTrain().getName(),
-                c.convertIntToText(toItem.getStartTime())));
-    }
-
-    private void formatTemplateNode(StringBuilder result, TrainsCycleItem fromItem, TrainsCycleItem toItem, String template) {
-        result.append(String.format(template, fromItem.getTrain().getName(),
-                fromItem.getToInterval().getOwnerAsNode().getName(), toItem.getTrain().getName(),
-                toItem.getFromInterval().getOwnerAsNode().getName()));
     }
 
     @Override

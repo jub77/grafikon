@@ -18,8 +18,14 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelListener;
 import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.model.TimeConverter;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainsCycle;
+import net.parostroj.timetable.model.TrainsCycleItem;
+import net.parostroj.timetable.model.TrainsCycleType;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.Special;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -145,6 +151,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
 
     private void checkConflicts(TrainsCycle cycle, StringBuilder result) {
         List<Conflict> conflicts = checker.checkConflicts(cycle);
+        TimeConverter c = cycle.getDiagram().getTimeConverter();
         for (Conflict item : conflicts) {
             TrainsCycleItem fromItem = item.getFrom();
             TrainsCycleItem toItem = item.getTo();
@@ -152,30 +159,40 @@ public abstract class TCDelegate implements ApplicationModelListener {
                 switch (conflictType) {
                 case NODE:
                     addNewLineIfNotEmpty(result);
-                    result.append(String.format(ResourceLoader.getString("ec.problem.nodes"),
-                            fromItem.getTrain().getName(),
-                            fromItem.getToInterval().getOwnerAsNode().getName(),
-                            toItem.getTrain().getName(),
-                            toItem.getFromInterval().getOwnerAsNode().getName()));
-                    if (!cycle.isPartOfSequence() && fromItem == cycle.getLastItem() || toItem == cycle.getFirstItem()) {
+                    result.append(String.format("%s %s", ResourceLoader.getString("ec.problem.nodes"),
+                            formatItems(fromItem, toItem, c)));
+                    if (!cycle.isPartOfSequence() && fromItem == cycle.getLastItem()
+                            && toItem == cycle.getFirstItem()) {
                         addNewLineIfNotEmpty(result);
                         result.append(ResourceLoader.getString("ec.problem.startend"));
                     }
                     break;
                 case TIME:
                     addNewLineIfNotEmpty(result);
-                    TimeConverter c = fromItem.getTrain().getDiagram().getTimeConverter();
-                    result.append(String.format(ResourceLoader.getString("ec.problem.time"),
-                            fromItem.getTrain().getName(),
-                            c.convertIntToText(fromItem.getEndTime()),
-                            toItem.getTrain().getName(),
-                            c.convertIntToText(toItem.getStartTime())));
+                    result.append(String.format("%s %s", ResourceLoader.getString("ec.problem.time"),
+                            formatItems(fromItem, toItem, c)));
                     break;
                 default:
                     break;
                 }
             }
         }
+    }
+
+    protected String formatItems(TrainsCycleItem from, TrainsCycleItem to, TimeConverter c) {
+        String text = String.format("%s (%s[%s]), %s (%s[%s])",
+                from.getTrain().getName(),
+                from.getToInterval().getOwnerAsNode().getName(),
+                c.convertIntToText(from.getEndTime()),
+                to.getTrain().getName(),
+                to.getFromInterval().getOwnerAsNode().getName(),
+                c.convertIntToText(to.getStartTime())
+            );
+        if (from.getCycle() != to.getCycle()) {
+            // add information about circulation
+            text = String.format("%s, %s -> %s", text, from.getCycle().getName(), to.getCycle().getName());
+        }
+        return text;
     }
 
     protected void addNewLineIfNotEmpty(StringBuilder result) {
