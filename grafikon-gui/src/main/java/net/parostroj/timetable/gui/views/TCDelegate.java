@@ -157,7 +157,7 @@ public abstract class TCDelegate implements ApplicationModelListener {
                             fromItem.getToInterval().getOwnerAsNode().getName(),
                             toItem.getTrain().getName(),
                             toItem.getFromInterval().getOwnerAsNode().getName()));
-                    if (fromItem == cycle.getLastItem() || toItem == cycle.getFirstItem()) {
+                    if (!cycle.isPartOfSequence() && fromItem == cycle.getLastItem() || toItem == cycle.getFirstItem()) {
                         addNewLineIfNotEmpty(result);
                         result.append(ResourceLoader.getString("ec.problem.startend"));
                     }
