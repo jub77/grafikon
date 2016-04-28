@@ -28,7 +28,7 @@ public class LSLocalization {
     public LSLocalization(Localization localization) {
         locales = new ArrayList<String>();
         for (Locale locale : localization.getLocales()) {
-            locales.add(locale.toString());
+            locales.add(locale.toLanguageTag());
         }
         items = new ArrayList<LSLocalizationItem>();
         for (String key : localization.getKeys()) {
