@@ -371,6 +371,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.timeConverter = timeConverter;
     }
 
+    public Collection<Locale> getLocales() {
+        return getAttributeAsCollection(ATTR_LOCALES, Locale.class, Collections.emptyList());
+    }
+
     public TrainDiagramPartFactory getPartFactory() {
         return partFactory;
     }

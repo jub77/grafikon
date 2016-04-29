@@ -31,4 +31,5 @@ public interface TrainDiagramAttributes {
     public static final String ATTR_NET = "net";
     public static final String ATTR_FREIGHT_NET = "freight.net";
     public static final String ATTR_PENALTY_TABLE = "penalty.table";
+    public static final String ATTR_LOCALES = "locales";
 }

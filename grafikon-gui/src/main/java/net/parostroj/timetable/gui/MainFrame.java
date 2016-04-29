@@ -400,6 +400,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         this.addMenuItemWithListener(diagramMenu, "menu.file.weighttables", evt -> weightTablesMenuItemActionPerformed(evt), true); // NOI18N
         this.addMenuItemWithListener(diagramMenu, "menu.file.penaltytable", evt -> penaltyTableMenuItemActionPerformed(evt), true); // NOI18N
         this.addMenuItemWithListener(diagramMenu, "menu.file.localization", evt -> localizationMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItemWithListener(diagramMenu, "localization.languages", evt -> languagesMenuItemActionPerformed(evt), true); // NOI18N
 
         this.addMenuItem(diagramMenu, "menu.groups", new EditGroupsAction(model), null);
         this.addMenuItemWithListener(diagramMenu, "menu.companies", evt -> companiesMenuItemActionPerformed(evt), true); // NOI18N
@@ -695,6 +696,18 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.setLocationRelativeTo(this);
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
+    }
+
+    private void languagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        ElementSelectionDialog<Locale> dialog = new ElementSelectionDialog<Locale>(GuiComponentUtils
+                .getWindow(this), true);
+        dialog.setLocationRelativeTo(this);
+
+        Collection<Locale> currentLocales = model.get().getLocales();
+        List<Locale> newSelection = dialog.selectElements(model.getLanguageLoader().getAvailableLocales(), currentLocales);
+        if (newSelection != null) {
+            model.get().setAttribute(TrainDiagram.ATTR_LOCALES, newSelection);
+        }
     }
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
