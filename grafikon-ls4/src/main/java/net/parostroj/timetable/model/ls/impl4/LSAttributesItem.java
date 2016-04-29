@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.WeightUnit;
@@ -19,17 +20,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-@XmlType(propOrder = {"key", "values", "type", "category"})
+@XmlType(propOrder = {"key", "type", "values", "category"})
 public class LSAttributesItem {
 
     private static final Logger log = LoggerFactory.getLogger(LSAttributesItem.class);
 
     private static final String SET_KEY = "set";
     private static final String LIST_KEY = "list";
+    private static final String LOCALIZED_STRING_KEY = "localized.string";
 
     private static final String ENGINE_CLASS_KEY = "model.engine.class";
     private static final String LINE_CLASS_KEY = "model.line.class";
     private static final String MODEL_OBJECT_KEY = "model.object";
+
 
     private String key;
     private List<LSAttributesValue> values;
@@ -50,6 +53,13 @@ public class LSAttributesItem {
             for (Object item : (Collection<?>) value) {
                 LSAttributesValue cValue = extractSimpleValue(key, item);
                 this.getValues().add(cValue);
+            }
+        } else if (value instanceof LocalizedString) {
+            type = LOCALIZED_STRING_KEY;
+            LocalizedString localizedString = (LocalizedString) value;
+            this.getValues().add(extractSimpleValue(key, localizedString.getDefaultString()));
+            for (StringWithLocale stringWithLocale : localizedString.getLocalizedStrings()) {
+                this.getValues().add(extractSimpleValue(key, stringWithLocale));
             }
         } else {
             LSAttributesValue cValue = extractSimpleValue(key, value);
@@ -89,6 +99,11 @@ public class LSAttributesItem {
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             cValue = new LSAttributesValue(pair.second, pair.first);
+        } else if (value instanceof StringWithLocale) {
+            StringWithLocale stringWithLocale = (StringWithLocale) value;
+            cValue = new LSAttributesValue(
+                    stringWithLocale.getString(),
+                    "string." + stringWithLocale.getLocale().toLanguageTag());
         } else {
             log.warn("Cannot convert value to string: {}", key);
         }
@@ -143,6 +158,17 @@ public class LSAttributesItem {
                 result.add(convertSimpleValue(diagram, value.getValue(), value.getType()));
             }
             return result;
+        } else if (LOCALIZED_STRING_KEY.equals(type)) {
+            LocalizedString.Builder builder = LocalizedString.newBuilder();
+            for (LSAttributesValue value : getValues()) {
+                Object lString = convertSimpleValue(diagram, value.getValue(), value.getType());
+                if (lString instanceof String) {
+                    builder.setDefaultString((String) lString);
+                } else if (lString instanceof StringWithLocale) {
+                    builder.addStringWithLocale((StringWithLocale) lString);
+                }
+            }
+            return builder.build();
         } else {
             LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
             return value == null ? null : convertSimpleValue(diagram, value.getValue(), value.getType() == null ? type : value.getType());
@@ -178,11 +204,18 @@ public class LSAttributesItem {
             return this.convertTextTemplate(value, valueType);
         } else if (valueType.startsWith("model.")) {
             return this.convertModelValue(diagram, value, valueType);
+        } else if (valueType.startsWith("string.")) {
+            return this.convertToStringWithLocale(value, valueType);
         } else {
             // it didn't recognize the type
             log.warn("Not recognized type: {}", valueType);
             return null;
         }
+    }
+
+    private Object convertToStringWithLocale(String value, String valueType) {
+        String languageTag = valueType.substring("string.".length());
+        return LocalizedString.newStringWithLocale(value, Locale.forLanguageTag(languageTag));
     }
 
     private Object convertTextTemplate(String value, String valueType) throws LSException {
