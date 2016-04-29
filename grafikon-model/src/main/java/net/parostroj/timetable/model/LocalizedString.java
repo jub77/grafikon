@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Localized string. It contains default text for not recognized locale
@@ -58,6 +59,12 @@ public class LocalizedString {
     public String translate(Locale locale) {
         String translatedString = this.getLocalizedString(locale);
         return translatedString == null ? defaultString : translatedString;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("localized:%s[%s]", defaultString,
+                String.join(",", Iterables.transform(localizedStrings, item -> item.getLocale().toLanguageTag())));
     }
 
     /**
