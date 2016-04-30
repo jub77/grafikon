@@ -132,7 +132,7 @@ public class LSOutputTemplate {
             for (LSAttachment attachment : attachments) {
                 if (attachment.getRef() != null) {
                     if (flsAttachments == null) {
-                        throw new NullPointerException("Attachment loader cannot be null");
+                        throw new LSException("Attachment loader cannot be null");
                     }
                     flsAttachments.addForLoad(attachment, outputTemplate);
                 } else {
