@@ -1,13 +1,28 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
-import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.Route;
+import net.parostroj.timetable.model.TextItem;
+import net.parostroj.timetable.model.TimetableImage;
+import net.parostroj.timetable.model.Train;
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
@@ -38,7 +53,6 @@ public class FileLoadSaveImpl implements FileLoadSave {
     private static final String DATA_IMAGES = "images/";
     private static final String DATA_ATTACHMENTS = "attachments/";
     private static final String DATA_CHANGES = "changes/";
-    private final LSSerializer lss;
     private static final List<ModelVersion> VERSIONS;
 
     static {
@@ -76,8 +90,12 @@ public class FileLoadSaveImpl implements FileLoadSave {
         METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
     }
 
+    private final LSSerializer lss;
+    private final Map<String, Object> properties;
+
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
+        properties = new HashMap<>();
     }
 
     @Override
@@ -273,5 +291,15 @@ public class FileLoadSaveImpl implements FileLoadSave {
     @Override
     public ModelVersion getSaveVersion() {
         return METADATA_MODEL_VERSION;
+    }
+
+    @Override
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
     }
 }

@@ -192,4 +192,14 @@ public class FileLoadSaveImpl implements FileLoadSave {
     public ModelVersion getSaveVersion() {
         return null;
     }
+
+    @Override
+    public Object getProperty(String key) {
+        return null;
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        // no properties available
+    }
 }

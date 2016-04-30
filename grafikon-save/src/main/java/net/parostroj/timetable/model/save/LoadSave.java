@@ -177,4 +177,15 @@ public class LoadSave implements FileLoadSave {
     public ModelVersion getSaveVersion() {
         return null;
     }
+
+    @Override
+    public Object getProperty(String key) {
+        // no properties available
+        return null;
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        // no properties available
+    }
 }
