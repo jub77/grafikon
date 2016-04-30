@@ -113,6 +113,10 @@ public class LSOutputTemplate {
         this.attributes = attributes;
     }
 
+    public OutputTemplate createOutputTemplate(TrainDiagram diagram) throws LSException {
+        return this.createOutputTemplate(diagram, null);
+    }
+
     public OutputTemplate createOutputTemplate(TrainDiagram diagram, FileLoadSaveAttachments flsAttachments) throws LSException {
         OutputTemplate outputTemplate = new OutputTemplate(id, diagram);
         outputTemplate.setName(name);
@@ -127,6 +131,9 @@ public class LSOutputTemplate {
         if (attachments != null) {
             for (LSAttachment attachment : attachments) {
                 if (attachment.getRef() != null) {
+                    if (flsAttachments == null) {
+                        throw new NullPointerException("Attachment loader cannot be null");
+                    }
                     flsAttachments.addForLoad(attachment, outputTemplate);
                 } else {
                     // process inline data
