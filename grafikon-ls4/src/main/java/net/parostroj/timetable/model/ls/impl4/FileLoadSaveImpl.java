@@ -248,7 +248,10 @@ public class FileLoadSaveImpl implements FileLoadSave {
             cnt = 0;
             // save output templates
             for (OutputTemplate template : diagram.getOutputTemplates()) {
-                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), new LSOutputTemplate(template, attachments));
+                LSOutputTemplate lsOutputTemplate = Boolean.TRUE.equals(properties.get("inline.output.template.attachments")) ?
+                        new LSOutputTemplate(template) :
+                        new LSOutputTemplate(template, attachments);
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUT_TEMPLATES, "xml", cnt++), lsOutputTemplate);
             }
             cnt = 0;
             // save diagram change sets

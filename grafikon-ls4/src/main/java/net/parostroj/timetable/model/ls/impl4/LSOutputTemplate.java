@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +32,26 @@ public class LSOutputTemplate {
     public LSOutputTemplate() {
     }
 
+    public LSOutputTemplate(OutputTemplate template) {
+        this(template, (attachment, attachments) -> {
+            LSAttachment lsAttachment = new LSAttachment(attachment.getName(), attachment.getType().name());
+            switch (attachment.getType()) {
+                case BINARY: lsAttachment.setBinaryData(attachment.getBinary()); break;
+                case TEXT: lsAttachment.setTextData(attachment.getText()); break;
+            }
+            attachments.add(lsAttachment);
+        });
+    }
+
     public LSOutputTemplate(OutputTemplate template, FileLoadSaveAttachments flsAttachments) {
+        this(template, (attachment, attachments) -> {
+            String reference = flsAttachments.createReference(attachment);
+            LSAttachment lsAttachment = new LSAttachment(attachment.getName(), attachment.getType().name(), reference);
+            attachments.add(lsAttachment);
+        });
+    }
+
+    private LSOutputTemplate(OutputTemplate template, BiConsumer<Attachment, List<LSAttachment>> attachmentConverter) {
         this.id = template.getId();
         this.name = template.getName();
         this.template = new LSTextTemplate(template.getTemplate());
@@ -40,9 +60,7 @@ public class LSOutputTemplate {
         // attachments
         this.attachments = new ArrayList<>();
         for (Attachment attachment : template.getAttachments()) {
-            String reference = flsAttachments.createReference(attachment);
-            LSAttachment lsAttachment = new LSAttachment(attachment.getName(), attachment.getType().name(), reference);
-            this.attachments.add(lsAttachment);
+            attachmentConverter.accept(attachment, this.attachments);
         }
     }
 
@@ -108,7 +126,18 @@ public class LSOutputTemplate {
         // process attachments
         if (attachments != null) {
             for (LSAttachment attachment : attachments) {
-                flsAttachments.addForLoad(attachment, outputTemplate);
+                if (attachment.getRef() != null) {
+                    flsAttachments.addForLoad(attachment, outputTemplate);
+                } else {
+                    // process inline data
+                    if (attachment.getBinaryData() != null) {
+                        outputTemplate.getAttachments()
+                                .add(new Attachment(attachment.getName(), attachment.getBinaryData()));
+                    } else if (attachment.getTextData() != null) {
+                        outputTemplate.getAttachments()
+                                .add(new Attachment(attachment.getName(), attachment.getTextData()));
+                    }
+                }
             }
         }
         return outputTemplate;

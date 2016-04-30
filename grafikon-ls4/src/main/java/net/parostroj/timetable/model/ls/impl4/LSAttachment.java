@@ -14,13 +14,19 @@ public class LSAttachment {
     private String name;
     private String type;
     private String ref;
+    private byte[] binaryData;
+    private String textData;
 
     public LSAttachment() {
     }
 
-    public LSAttachment(String name, String type, String ref) {
+    public LSAttachment(String name, String type) {
         this.name = name;
         this.type = type;
+    }
+
+    public LSAttachment(String name, String type, String ref) {
+        this(name, type);
         this.ref = ref;
     }
 
@@ -51,8 +57,24 @@ public class LSAttachment {
         this.ref = ref;
     }
 
+    public byte[] getBinaryData() {
+        return binaryData;
+    }
+
+    public void setBinaryData(byte[] binaryData) {
+        this.binaryData = binaryData;
+    }
+
+    public String getTextData() {
+        return textData;
+    }
+
+    public void setTextData(String textData) {
+        this.textData = textData;
+    }
+
     @Override
     public String toString() {
-        return String.format("<%s,%s,%s>", name, type, ref);
+        return ref != null ? String.format("<%s,%s,%s>", name, type, ref) : String.format("<%s,%s>", name, type);
     }
 }
