@@ -1,11 +1,15 @@
 package net.parostroj.timetable.gui.pm;
 
-import java.util.*;
-
-import net.parostroj.timetable.gui.wrappers.WrapperConversion;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.beanfabrics.model.Options;
 import org.beanfabrics.model.TextPM;
+
+import net.parostroj.timetable.gui.wrappers.WrapperConversion;
 
 /**
  * Class representing options for e.g. combo box selection.
@@ -106,5 +110,48 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
             throw new IllegalArgumentException("Uneven number of arguments in collections");
         }
         return conversionMap;
+    }
+
+    public static class Builder<T> {
+        private Map<T, String> map;
+        private String nullValue;
+        private WrapperConversion<T> conversion;
+
+        private Builder() {
+            map = new HashMap<>();
+        }
+
+        public Builder<T> add(T value, String text) {
+            map.put(value, text);
+            return this;
+        }
+
+        public Builder<T> add(T value) {
+            if (conversion == null) throw new IllegalStateException("Conversion missing");
+            map.put(value, conversion.toString(value));
+            return this;
+        }
+
+        public Builder<T> setConversion(WrapperConversion<T> conversion) {
+            this.conversion = conversion;
+            return this;
+        }
+
+        public Builder<T> setNullValue(String nullValue) {
+            this.nullValue = nullValue;
+            return this;
+        }
+
+        public EnumeratedValuesPM<T> build() {
+            if (nullValue == null) {
+                return new EnumeratedValuesPM<>(map);
+            } else {
+                return new EnumeratedValuesPM<>(map, nullValue);
+            }
+        }
+    }
+
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
     }
 }
