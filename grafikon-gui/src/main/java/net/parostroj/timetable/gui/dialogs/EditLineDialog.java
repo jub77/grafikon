@@ -246,6 +246,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         jLabel1.setText(ResourceLoader.getString("editline.length")); // NOI18N
 
         unlimitedSpeedCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 unlimitedSpeedCheckBoxActionPerformed(evt);
             }
@@ -256,12 +257,14 @@ public class EditLineDialog extends javax.swing.JDialog {
         jLabel3.setText(ResourceLoader.getString("editline.direct.from")); // NOI18N
 
         fromDirectTrackComboBox.addItemListener(new java.awt.event.ItemListener() {
+            @Override
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fromDirectTrackComboBoxItemStateChanged(evt);
             }
         });
 
         toDirectTrackComboBox.addItemListener(new java.awt.event.ItemListener() {
+            @Override
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 toDirectTrackComboBoxItemStateChanged(evt);
             }
@@ -271,6 +274,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
@@ -278,6 +282,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
@@ -285,6 +290,7 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         trackList.setVisibleRowCount(4);
         trackList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 trackListValueChanged(evt);
             }
@@ -292,12 +298,14 @@ public class EditLineDialog extends javax.swing.JDialog {
         scrollPane.setViewportView(trackList);
 
         newTrackButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newTrackButtonActionPerformed(evt);
             }
         });
 
         deleteTrackButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteTrackButtonActionPerformed(evt);
             }
@@ -308,6 +316,7 @@ public class EditLineDialog extends javax.swing.JDialog {
         jLabel6.setText(ResourceLoader.getString("editline.type.controlled") + ": "); // NOI18N
 
         lineClassComboBox.addItemListener(new java.awt.event.ItemListener() {
+            @Override
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 lineClassChanged(evt);
             }
@@ -319,10 +328,10 @@ public class EditLineDialog extends javax.swing.JDialog {
 
         fromToLabel.setText(" ");
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gt_texts"); // NOI18N
-        jLabel9.setText(bundle.getString("editline.lineclass.back")); // NOI18N
+        jLabel9.setText(ResourceLoader.getString("editline.lineclass.back")); // NOI18N
 
         lineClassBackComboBox.addItemListener(new java.awt.event.ItemListener() {
+            @Override
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 lineClassChanged(evt);
             }
