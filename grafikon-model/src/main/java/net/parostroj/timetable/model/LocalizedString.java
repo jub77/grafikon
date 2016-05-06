@@ -2,15 +2,18 @@ package net.parostroj.timetable.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * Localized string. It contains default text for not recognized locale
- * and collection of text and locale pairs.
+ * Localized string. It contains default text for not recognized locale and collection of text and
+ * locale pairs.
  *
  * @author jub
  */
@@ -36,6 +39,13 @@ public class LocalizedString {
      */
     public Collection<StringWithLocale> getLocalizedStrings() {
         return localizedStrings;
+    }
+
+    /**
+     * @return collection of locales of this string
+     */
+    public Collection<Locale> getLocales() {
+        return FluentIterable.from(localizedStrings).transform(str -> str.getLocale()).toList();
     }
 
     /**
@@ -148,7 +158,8 @@ public class LocalizedString {
             if (defaultString == null) {
                 throw new IllegalStateException("Default string missing");
             }
-            return new LocalizedString(defaultString, ImmutableList.copyOf(strings));
+            return new LocalizedString(defaultString,
+                    ImmutableList.copyOf(strings != null ? strings : Collections.emptyList()));
         }
     }
 
