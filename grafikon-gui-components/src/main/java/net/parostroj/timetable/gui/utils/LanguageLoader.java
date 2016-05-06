@@ -99,11 +99,11 @@ public class LanguageLoader {
         return availableLocales;
     }
 
-    public Map<Locale, String> createMap(List<Locale> locales) {
+    public Map<Locale, String> createMap(Collection<Locale> locales) {
         return EnumeratedValuesPM.createValueMap(locales, l -> l.getDisplayName(l));
     }
 
-    public Map<Locale, String> createMap(List<Locale> locales, String system) {
+    public Map<Locale, String> createMap(Collection<Locale> locales, String system) {
         return EnumeratedValuesPM.createValueMapWithNull(locales, l -> l == null ? system : l.getDisplayName(l));
     }
 
