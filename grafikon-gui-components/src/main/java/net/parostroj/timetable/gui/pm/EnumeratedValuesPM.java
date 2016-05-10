@@ -23,7 +23,9 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
     public EnumeratedValuesPM(Options<E> options) {
         this.setOptions(options);
         this.setRestrictedToOptions(true);
-        this.setText(this.getOptionsImpl().getValue(0));
+        if (!options.isEmpty()) {
+            this.setText(this.getOptionsImpl().getValue(0));
+        }
     }
 
     public EnumeratedValuesPM(Map<E, String> valueMap) {
@@ -51,7 +53,8 @@ public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM
 
     @Override
     public E getValue() {
-        return this.getOptionsImpl().getKey(this.getText());
+        Options<E> options = this.getOptionsImpl();
+        return options.containsValue(this.getText()) ? options.getKey(this.getText()) : null;
     }
 
     @Override
