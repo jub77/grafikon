@@ -72,6 +72,10 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return name;
     }
 
+    public LocalizedString getDisplayName() {
+        return this.getAttribute(ATTR_DISPLAY_NAME, LocalizedString.class);
+    }
+
     public void setName(String name) {
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
@@ -114,7 +118,8 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
                     TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
             text = bundle.getString(name);
         } else {
-            text = (description != null) ? description : name;
+            LocalizedString displayName = getDisplayName();
+            text = displayName != null ? displayName.translate(locale) : name;
         }
         return text;
     }
