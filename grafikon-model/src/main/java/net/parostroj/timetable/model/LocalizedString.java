@@ -72,7 +72,7 @@ public class LocalizedString {
 
     @Override
     public String toString() {
-        return String.format("localized:%s[%s]", defaultString,
+        return String.format("i18n:%s[%s]", defaultString,
                 String.join(",", Iterables.transform(localizedStrings, item -> item.getLocale().toLanguageTag())));
     }
 
@@ -167,8 +167,12 @@ public class LocalizedString {
     }
 
     public static Builder newBuilder(LocalizedString localizedString) {
-        return new Builder().setDefaultString(localizedString.getDefaultString())
-                .addAllStringWithLocale(localizedString.getLocalizedStrings());
+        Builder builder = new Builder();
+        if (localizedString != null) {
+            builder.setDefaultString(localizedString.getDefaultString())
+                    .addAllStringWithLocale(localizedString.getLocalizedStrings());
+        }
+        return builder;
     }
 
     public static Builder newBuilder(String defaultString) {

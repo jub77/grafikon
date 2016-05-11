@@ -571,6 +571,10 @@ public class TimeInterval implements TimeIntervalAttributes, AttributesHolder, O
         return this.getAttributeAsBool(ATTR_NO_REGION_CENTER_TRANSFER);
     }
 
+    public LocalizedString getComment() {
+        return this.getAttribute(ATTR_COMMENT, LocalizedString.class);
+    }
+
     /**
      * @return if the node is center of regions and there is not
      *         <code>ATTR_NO_REGION_CENTER_TRANSFER</code> attribute present

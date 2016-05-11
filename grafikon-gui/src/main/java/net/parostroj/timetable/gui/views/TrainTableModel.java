@@ -164,7 +164,8 @@ class TrainTableModel extends AbstractTableModel {
                 break;
             // comment
             case COMMENT:
-                retValue = interval.getAttribute(TimeInterval.ATTR_COMMENT, Object.class);
+                LocalizedString lComment = interval.getComment();
+                retValue = lComment == null ? null : lComment.getDefaultString();
                 break;
             case OCCUPIED_ENTRY:
                 retValue = interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED);
@@ -345,7 +346,11 @@ class TrainTableModel extends AbstractTableModel {
             case COMMENT:
                 // comment
                 String commentStr = ObjectsUtil.checkAndTrim((String) aValue);
-                interval.getAttributes().setRemove(TimeInterval.ATTR_COMMENT, commentStr);
+                LocalizedString lComment = null;
+                if (commentStr != null) {
+                    lComment = LocalizedString.newBuilder(interval.getComment()).setDefaultString(commentStr).build();
+                }
+                interval.getAttributes().setRemove(TimeInterval.ATTR_COMMENT, lComment);
                 break;
             case OCCUPIED_ENTRY:
                 // entry of the occupied track

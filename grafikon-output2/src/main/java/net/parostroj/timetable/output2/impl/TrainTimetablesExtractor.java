@@ -171,7 +171,8 @@ public class TrainTimetablesExtractor {
 
             // comment
             if (nodeI.getAttributes().getBool(TimeInterval.ATTR_COMMENT_SHOWN)) {
-                String comment = nodeI.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
+                LocalizedString lComment = nodeI.getComment();
+                String comment = lComment == null ? null : lComment.getDefaultString();
                 row.setComment(ObjectsUtil.checkAndTrim(comment));
             }
             // check line end

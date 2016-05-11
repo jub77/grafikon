@@ -105,6 +105,10 @@ public class LoadFilter {
                 }
             }
         }
+        if (version.compareTo(new ModelVersion(4, 19, 2)) <= 0) {
+            // convert some texts to localized strings
+            this.convertToLocalizedStrings(diagram);
+        }
     }
 
     private TextTemplate adjustDescription(TextTemplate template) {
@@ -142,5 +146,17 @@ public class LoadFilter {
             }
         }
         return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.MVEL);
+    }
+
+    private void convertToLocalizedStrings(TrainDiagram diagram) {
+        // (1) convert comments
+        for (Train train : diagram.getTrains()) {
+            for (TimeInterval interval : train) {
+                String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
+                if (comment != null) {
+                    interval.setAttribute(TimeInterval.ATTR_COMMENT, LocalizedString.newBuilder(comment).build());
+                }
+            }
+        }
     }
 }
