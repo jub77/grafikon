@@ -78,7 +78,8 @@ public class TrainUnitCyclesExtractor {
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
-        String comment = ObjectsUtil.checkAndTrim(item.getComment());
+        LocalizedString lComment = item.getComment();
+        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
         row.setComment(comment);
         this.getCustomCyclesItem(row.getCycle(), item);
         return row;

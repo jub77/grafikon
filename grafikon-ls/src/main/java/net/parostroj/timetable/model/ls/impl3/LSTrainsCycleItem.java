@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycle;
@@ -24,7 +26,6 @@ public class LSTrainsCycleItem {
 
     public LSTrainsCycleItem(TrainsCycleItem item) {
         this.train = item.getTrain().getId();
-        this.comment = item.getComment();
         if (item.getFrom() != null) {
             this.from = item.getFrom().getId();
         }
@@ -68,7 +69,7 @@ public class LSTrainsCycleItem {
     public TrainsCycleItem createTrainsCycleItem(TrainsCycle cycle, TrainDiagram diagram) {
         Train modelTrain = diagram.getTrains().getById(train);
         TrainsCycleItem item = new TrainsCycleItem(cycle, modelTrain,
-                comment, modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));
+                LocalizedString.fromString(comment), modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));
         return item;
     }
 }

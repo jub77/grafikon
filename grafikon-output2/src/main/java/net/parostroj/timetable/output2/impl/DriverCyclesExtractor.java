@@ -72,7 +72,8 @@ public class DriverCyclesExtractor {
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
-        String comment = ObjectsUtil.checkAndTrim(item.getComment());
+        LocalizedString lComment = item.getComment();
+        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
         row.setComment(comment);
         row.setSetupTime(item.getSetupTime());
         // technological time (if the start equals to item start)

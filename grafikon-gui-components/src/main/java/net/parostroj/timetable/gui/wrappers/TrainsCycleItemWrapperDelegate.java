@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.wrappers;
 
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TimeConverter;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -33,7 +34,8 @@ public class TrainsCycleItemWrapperDelegate extends BasicWrapperDelegate<TrainsC
                         this.getStartTime(c, item),
                         item.getToInterval().getOwnerAsNode().getName(),
                         c.convertIntToText(item.getEndTime()));
-        String comment = ObjectsUtil.checkAndTrim(item.getComment());
+        LocalizedString lComment = item.getComment();
+        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
         if (showComment && comment != null) {
             str = String.format("%s - %s", str, comment);
         }

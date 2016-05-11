@@ -179,6 +179,14 @@ public class LocalizedString {
         return new Builder().setDefaultString(defaultString);
     }
 
+    public static LocalizedString fromString(String text) {
+        if (text == null) {
+            return null;
+        } else {
+            return newBuilder(text).build();
+        }
+    }
+
     public static StringWithLocale newStringWithLocale(String string, Locale locale) {
         return new StringWithLocaleImpl(string, locale);
     }

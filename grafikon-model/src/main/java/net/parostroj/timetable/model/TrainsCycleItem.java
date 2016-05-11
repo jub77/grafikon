@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.CollectionUtils;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 
 /**
@@ -23,22 +22,21 @@ import net.parostroj.timetable.utils.TimeUtil;
 public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHolder {
 
     private final Train train;
-    private String comment;
     private final TrainsCycle cycle;
     private final TimeInterval from;
     private final TimeInterval to;
 
     private final Attributes attributes;
 
-    public TrainsCycleItem(TrainsCycle cycle, Train train, String comment, TimeInterval from, TimeInterval to) {
+    public TrainsCycleItem(TrainsCycle cycle, Train train, LocalizedString comment, TimeInterval from, TimeInterval to) {
         this.cycle = cycle;
         this.train = train;
-        this.comment = comment;
         this.from = (train.getFirstInterval() != from) ? from : null;
         this.to = (train.getLastInterval() != to) ? to : null;
         this.attributes = new Attributes((attrs, change) -> {
             getCycle().fireEvent(new Event(getCycle(), TrainsCycleItem.this, change));
         });
+        this.attributes.setRemove(ATTR_COMMENT, comment);
     }
 
     public boolean containsInterval(TimeInterval interval) {
@@ -51,16 +49,8 @@ public class TrainsCycleItem implements TrainsCycleItemAttributes, AttributesHol
                 getFromInterval(), getToInterval()));
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        if (!ObjectsUtil.compareWithNull(comment, this.comment)) {
-            String oldComment = this.comment;
-            this.comment = comment;
-            getCycle().fireEvent(new Event(getCycle(), this, new AttributeChange(ATTR_COMMENT, oldComment, comment)));
-        }
+    public LocalizedString getComment() {
+        return this.getAttribute(ATTR_COMMENT, LocalizedString.class);
     }
 
     public Train getTrain() {

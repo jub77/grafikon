@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.utils.ObjectsUtil;
@@ -151,7 +152,8 @@ public class TCItemChangeDialog extends JDialog {
 
     private void updateValues(TrainsCycleItem item) {
         this.updateFromTo(item.getTrain().getTimeIntervalList(), item.getFromInterval(), item.getToInterval());
-        commentTextField.setText(item.getComment());
+        LocalizedString lComment = item.getComment();
+        commentTextField.setText(lComment == null ? null : lComment.getDefaultString());
         Integer setupTime = item.getSetupTime();
         if (setupTimeTextField != null) {
             setupTimeTextField.setText(setupTime == null ? null : Integer.toString(setupTime / TimeInterval.MINUTE));

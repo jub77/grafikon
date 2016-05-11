@@ -34,7 +34,7 @@ public class LSTrainsCycle {
         items = new LSTrainsCycleItem[trainsCycle.getItems().size()];
         int i = 0;
         for (TrainsCycleItem item : trainsCycle) {
-            items[i++] = new LSTrainsCycleItem(data.getIdForObject(item.getTrain()),item.getComment());
+            items[i++] = new LSTrainsCycleItem(data.getIdForObject(item.getTrain()), null);
         }
         this.type = type;
     }

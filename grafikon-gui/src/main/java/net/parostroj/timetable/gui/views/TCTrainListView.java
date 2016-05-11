@@ -450,7 +450,11 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 return;
             // check if the comment changed ...
             String commentText = ObjectsUtil.checkAndTrim(changeDialog.getComment());
-            item.setComment(commentText);
+            LocalizedString lComment = null;
+            if (commentText != null) {
+                lComment = LocalizedString.newBuilder(item.getComment()).setDefaultString(commentText).build();
+            }
+            item.setRemoveAttribute(TrainsCycleItem.ATTR_COMMENT, lComment);
             Integer setupTime = changeDialog.getSetupTime();
             boolean setupTimeChanged = !ObjectsUtil.compareWithNull(setupTime, item.getSetupTime());
             item.setRemoveAttribute(TrainsCycleItem.ATTR_SETUP_TIME, setupTime);

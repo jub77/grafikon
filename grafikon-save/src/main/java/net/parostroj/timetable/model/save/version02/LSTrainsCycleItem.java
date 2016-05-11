@@ -1,6 +1,6 @@
 /*
  * LSTrainsCycleItem.java
- * 
+ *
  * Created on 15.9.2007, 20:58:51
  */
 package net.parostroj.timetable.model.save.version02;
@@ -9,17 +9,17 @@ import net.parostroj.timetable.model.TrainsCycleItem;
 
 /**
  * Cycle item.
- * 
+ *
  * @author jub
  */
 public class LSTrainsCycleItem {
-    
+
     private int trainId;
-    
+
     private String comment;
-    
+
     private Integer sourceId;
-    
+
     private Integer targetId;
 
     public LSTrainsCycleItem() {
@@ -27,7 +27,6 @@ public class LSTrainsCycleItem {
 
     public LSTrainsCycleItem(TrainsCycleItem item, LSTransformationData data) {
         this.trainId = data.getIdForObject(item.getTrain());
-        this.comment = item.getComment();
         if (item.getFrom() != null)
             this.sourceId = data.getIdForObject(item.getFrom());
         if (item.getTo() != null)
