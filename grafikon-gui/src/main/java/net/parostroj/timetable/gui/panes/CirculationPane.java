@@ -111,6 +111,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         if (!TrainsCycleType.isDefaultType(name)) {
             TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
             type.setName(name);
+            type.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.fromString(name));
             diagram.getCycleTypes().add(type);
         }
         newNameTextField.setText("");
