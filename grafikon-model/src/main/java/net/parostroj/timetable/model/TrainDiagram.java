@@ -52,8 +52,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ItemWithIdSet<Company> companies;
     /** Penalty table. */
     private PenaltyTable penaltyTable;
-    /** Localization. */
-    private final Localization localization;
 
     private final TrainDiagramPartFactory partFactory;
 
@@ -99,7 +97,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.companies = new ItemWithIdSetImpl<Company>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
-        this.localization = new Localization();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new ItemWithIdListImpl<TrainType>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
@@ -291,10 +288,6 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
 
     public PenaltyTable getPenaltyTable() {
         return penaltyTable;
-    }
-
-    public Localization getLocalization() {
-        return localization;
     }
 
     public void setPenaltyTable(PenaltyTable penaltyTable) {

@@ -692,10 +692,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void localizationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        LocalizationDialog dialog = new LocalizationDialog(this, true, model.getLanguageLoader());
-        dialog.setLocationRelativeTo(this);
-        dialog.showDialog(model.getDiagram());
-        dialog.dispose();
+        // TODO implementation
     }
 
     private void languagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {

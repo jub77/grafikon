@@ -115,15 +115,16 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
             text = bundle.getString(name);
         } else {
             text = (description != null) ? description : name;
-            text = diagram.getLocalization().translate(text, locale);
         }
         return text;
     }
 
+    @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
 
+    @Override
     public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }

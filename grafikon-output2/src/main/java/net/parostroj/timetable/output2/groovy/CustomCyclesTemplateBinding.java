@@ -27,6 +27,5 @@ public class CustomCyclesTemplateBinding extends GroovyTemplateBinding {
         map.put("cycles", cycles);
         ResourceHelper.addTextsToMap(map, KEY_PREFIX, locale, LOCALIZATION_BUNDLE);
         map.put(LOCALIZATION, ResourceHelper.getBundleTranslator(LOCALIZATION_BUNDLE, KEY_PREFIX));
-        map.put(TRANSLATOR, ResourceHelper.getTranslator(diagram));
     }
 }

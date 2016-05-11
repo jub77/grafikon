@@ -35,7 +35,7 @@ public class LSSerializer {
                 LSTrainType.class, LSTrain.class, LSTrainsCycle.class,
                 LSImage.class, LSTrainsData.class, LSEngineClass.class,
                 LSPenaltyTable.class, LSTextItem.class, LSDiagramChangeSet.class,
-                LSOutputTemplate.class, LSFreightNet.class, LSLocalization.class
+                LSOutputTemplate.class, LSFreightNet.class
             });
         }
         return context_i;

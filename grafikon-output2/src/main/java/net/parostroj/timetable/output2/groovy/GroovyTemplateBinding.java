@@ -13,7 +13,6 @@ import net.parostroj.timetable.output2.*;
 public abstract class GroovyTemplateBinding {
 
     public static final String LOCALIZATION_BUNDLE = "texts/output";
-    public static final String TRANSLATOR = "translator";
     public static final String LOCALIZATION = "localization";
 
     private static final Logger templateLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Template");

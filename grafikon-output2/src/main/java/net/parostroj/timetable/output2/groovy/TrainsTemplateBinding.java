@@ -37,6 +37,5 @@ public class TrainsTemplateBinding extends GroovyTemplateBinding {
         ResourceHelper.addTextsToMap(map, KEY_PREFIXES[0], locale, LOCALIZATION_BUNDLE);
         ResourceHelper.addTextsToMap(map, KEY_PREFIXES[1], locale, LOCALIZATION_BUNDLE);
         map.put(LOCALIZATION, ResourceHelper.getBundleTranslator(LOCALIZATION_BUNDLE, KEY_PREFIXES));
-        map.put(TRANSLATOR, ResourceHelper.getTranslator(diagram));
     }
 }

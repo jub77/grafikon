@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.Translator;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 
@@ -58,10 +57,6 @@ public class ResourceHelper {
                 map.put(key.substring(prefixLength), bundle.getString(key));
             }
         }
-    }
-
-    public static Translator getTranslator(TrainDiagram diagram) {
-        return (text, locale) -> diagram.getLocalization().translate(text, locale);
     }
 
     public static Translator getBundleTranslator(String bundleName, String... prefixes) {
