@@ -484,6 +484,8 @@ public class TCTrainListView extends javax.swing.JPanel implements TCDelegate.Li
                 cTrains.refreshIndex(cTrainsList.getSelectedIndex());
                 this.updateSelectedTrainsCycleItem(item);
                 this.updateErrors();
+            } else {
+                cTrains.refreshIndex(cTrainsList.getSelectedIndex());
             }
             delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, delegate.getSelectedCycle());
         }
