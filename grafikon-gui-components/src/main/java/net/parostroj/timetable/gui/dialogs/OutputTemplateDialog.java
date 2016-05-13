@@ -138,27 +138,26 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
 
         getContentPane().add(controlPanel, java.awt.BorderLayout.SOUTH);
 
-        JPanel attachmentPanel = new JPanel();
-        controlPanel.add(attachmentPanel, BorderLayout.WEST);
+        JPanel leftPanel = new JPanel();
+        controlPanel.add(leftPanel, BorderLayout.WEST);
 
-        attachmentsButton = new JButton(ResourceLoader.getString("ot.button.attachments")); // NOI18N
-        attachmentPanel.add(attachmentsButton);
+        JButton attachmentsButton = new JButton(ResourceLoader.getString("ot.button.attachments")); // NOI18N
+        leftPanel.add(attachmentsButton);
         attachmentsButton.addActionListener(evt -> {
             EditAttachmentsDialog dialog = new EditAttachmentsDialog(GuiComponentUtils.getWindow(this), true, attachmentChooser);
             dialog.setLocationRelativeTo(this);
             dialog.showDialog(template);
-        });;
+        });
 
-        writeTemplateOutputButton = new JButton(ResourceLoader.getString("ot.button.output")); // NOI18N
-        attachmentPanel.add(writeTemplateOutputButton);
+        JButton writeTemplateOutputButton = new JButton(ResourceLoader.getString("ot.button.output")); // NOI18N
+        leftPanel.add(writeTemplateOutputButton);
         writeTemplateOutputButton.setEnabled(this.templateWriter != null);
-        writeTemplateOutputButton.addActionListener(
-            evt -> {
-                OutputTemplate tempTemplate = this.createTempOutputTemplate();
-                if (tempTemplate != null) {
-                    templateWriter.accept(Collections.singletonList(tempTemplate));
-                }
-            });
+        writeTemplateOutputButton.addActionListener(evt -> {
+            OutputTemplate tempTemplate = this.createTempOutputTemplate();
+            if (tempTemplate != null) {
+                templateWriter.accept(Collections.singletonList(tempTemplate));
+            }
+        });
 
         tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -355,6 +354,4 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private javax.swing.JTabbedPane tabbedPane;
     private ScriptEditBox scriptEditBox;
     private JTextArea descriptionTextArea;
-    private JButton attachmentsButton;
-    private JButton writeTemplateOutputButton;
 }
