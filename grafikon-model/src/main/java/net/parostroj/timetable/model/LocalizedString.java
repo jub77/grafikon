@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,6 +77,19 @@ public class LocalizedString {
                 String.join(",", Iterables.transform(localizedStrings, item -> item.getLocale().toLanguageTag())));
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof LocalizedString)) return false;
+        LocalizedString ls = (LocalizedString) obj;
+        if (!defaultString.equals(ls.defaultString)) return false;
+        Iterator<StringWithLocale> i = localizedStrings.iterator();
+        Iterator<StringWithLocale> li = ls.localizedStrings.iterator();
+        while (i.hasNext() && li.hasNext()) {
+            if (!i.next().equals(li.next())) return false;
+        }
+        return !i.hasNext() && !li.hasNext();
+    }
+
     /**
      * Text and locale pair.
      */
@@ -102,6 +116,13 @@ public class LocalizedString {
         @Override
         public Locale getLocale() {
             return locale;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof StringWithLocale)) return false;
+            StringWithLocale str = (StringWithLocale) obj;
+            return locale.equals(str.getLocale()) && string.equals(str.getString());
         }
     }
 
@@ -157,8 +178,18 @@ public class LocalizedString {
             if (defaultString == null) {
                 throw new IllegalStateException("Default string missing");
             }
+            // sort by language
             return new LocalizedString(defaultString,
-                    ImmutableList.copyOf(strings != null ? strings : Collections.emptyList()));
+                    ImmutableList.copyOf(getSortedStrings()));
+        }
+
+        private Collection<StringWithLocale> getSortedStrings() {
+            if (strings == null) {
+                return Collections.emptyList();
+            } else {
+                Collections.sort(strings, (s1, s2) -> s1.getLocale().toLanguageTag().compareTo(s2.getLocale().toLanguageTag()));
+                return strings;
+            }
         }
     }
 
