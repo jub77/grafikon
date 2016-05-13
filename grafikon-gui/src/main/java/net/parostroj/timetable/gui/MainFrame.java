@@ -694,6 +694,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void localizationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         EditI18nDialog dialog = new EditI18nDialog(this, true);
         dialog.setLocationRelativeTo(this);
+        dialog.registerContext(model.getGuiContext());
         dialog.showDialog(model.getDiagram());
         dialog.dispose();
     }
