@@ -31,7 +31,7 @@ public class EditLocalizedStringListPanel extends JPanel {
         JScrollPane scrolPane = new JScrollPane();
         scrolPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrolPane.setViewportView(list);
-        this.add(scrolPane, BorderLayout.EAST);
+        this.add(scrolPane, BorderLayout.WEST);
         setPrototypeWidth(list);
     }
 

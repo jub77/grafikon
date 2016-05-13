@@ -21,7 +21,7 @@ public class EditLocalizedStringPanel extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
 
         BnTable table = new BnTable();
-        table.addColumn(new BnColumn(new Path("locale"), ResourceLoader.getString("localization.column.locale")));
+        table.addColumn(new BnColumn(new Path("locale"), ResourceLoader.getString("localization.column.locale"), 110, true));
         table.addColumn(new BnColumn(new Path("string"), ResourceLoader.getString("localization.column.text")));
         table.setModelProvider(provider);
         table.setPath(Path.concat(basePath, new Path("strings")));
