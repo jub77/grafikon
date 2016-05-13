@@ -47,8 +47,7 @@ public class LocalizedStringListPM extends AbstractPM {
             @Override
             public void elementsSelected(ElementsSelectedEvent evt) {
                 LStringPM at = list.getAt(evt.getBeginIndex());
-                EditResult result = selected.init(type.getNewOrEdited(at.localizedStringRef), type.getLocales());
-                type.addOrUpdateEdited(at.localizedStringRef, result);
+                selectString(at);
             }
 
             @Override
@@ -60,11 +59,25 @@ public class LocalizedStringListPM extends AbstractPM {
     }
 
     public void init(LocalizationType type) {
+        this.init(type, null);
+    }
+
+    public void init(LocalizationType type, Reference<LocalizedString> selected) {
         this.type = type;
         list.clear();
         for (Reference<LocalizedString> stringRef : type.getStrings()) {
-            list.add(new LStringPM(stringRef));
+            LStringPM lStringPM = new LStringPM(stringRef);
+            list.add(lStringPM);
+            if (selected != null && selected.equals(stringRef)) {
+                list.getSelection().add(lStringPM);
+            }
         }
         list.revalidateElements();
     }
+
+    private void selectString(LStringPM at) {
+        EditResult result = selected.init(type.getNewOrEdited(at.localizedStringRef), type.getLocales());
+        type.addOrUpdateEdited(at.localizedStringRef, result);
+    }
 }
+

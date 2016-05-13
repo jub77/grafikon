@@ -91,4 +91,8 @@ public class LocalizedStringPM extends AbstractPM {
         strings.sortBy(Arrays.asList(new SortKey(true, new Path("locale"))));
         return currentResult;
     }
+
+    public EditResult getCurrentEdit() {
+        return this.currentResult;
+    }
 }

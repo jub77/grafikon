@@ -21,7 +21,7 @@ public class LocalizationPM extends AbstractPM {
         types.addPropertyChangeListener("text", evt -> {
             LocalizationType item = types.getValue();
             if (item != null) {
-                selected.init(item);
+                selected.init(item, item.getStrings().isEmpty() ? null : item.getStrings().iterator().next());
             }
         });
         PMManager.setup(this);
