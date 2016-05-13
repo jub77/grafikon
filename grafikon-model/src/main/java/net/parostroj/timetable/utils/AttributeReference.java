@@ -1,5 +1,7 @@
 package net.parostroj.timetable.utils;
 
+import com.google.common.base.Objects;
+
 import net.parostroj.timetable.model.AttributesHolder;
 
 /**
@@ -53,5 +55,12 @@ public class AttributeReference<T> implements Reference<T> {
 
     public boolean remove() {
         return holder.getAttributes().remove(name, category) != null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AttributeReference)) return false;
+        AttributeReference<?> ref = (AttributeReference<?>) obj;
+        return Objects.equal(category, ref.category) && Objects.equal(name, ref.name) && holder.equals(ref.holder);
     }
 }
