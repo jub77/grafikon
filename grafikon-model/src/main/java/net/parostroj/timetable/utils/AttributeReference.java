@@ -50,4 +50,8 @@ public class AttributeReference<T> implements Reference<T> {
     public T get() {
         return holder.getAttributes().get(name, category, clazz);
     }
+
+    public boolean remove() {
+        return holder.getAttributes().remove(name, category) != null;
+    }
 }
