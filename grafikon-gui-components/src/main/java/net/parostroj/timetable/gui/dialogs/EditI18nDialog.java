@@ -3,9 +3,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -22,15 +19,11 @@ import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.EditLocalizedStringListPanel;
 import net.parostroj.timetable.gui.pm.LocalizationContext;
 import net.parostroj.timetable.gui.pm.LocalizationPM;
-import net.parostroj.timetable.gui.pm.LocalizationType;
+import net.parostroj.timetable.gui.pm.LocalizationTypeFactory;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.TrainsCycleItem;
-import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.AttributeReference;
-import net.parostroj.timetable.utils.Reference;
 
 public class EditI18nDialog extends JDialog implements GuiContextComponent {
 
@@ -80,53 +73,16 @@ public class EditI18nDialog extends JDialog implements GuiContextComponent {
         context.registerWindow("localization.all", this);
     }
 
-    private LocalizationPM createPM(TrainDiagram diagram) {
-        LocalizationContext context = new LocalizationContext(createTypes(diagram));
-        LocalizationPM localization = new LocalizationPM();
+    private LocalizationPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram) {
+        LocalizationContext<AttributeReference<LocalizedString>> context = createLocalizationContext(diagram);
+        LocalizationPM<AttributeReference<LocalizedString>> localization = new LocalizationPM<>();
         localization.init(context);
         return localization;
     }
 
-    private Collection<LocalizationType> createTypes(TrainDiagram diagram) {
-        Collection<LocalizationType> types = new ArrayList<>();
-        types.add(new LocalizationType(
-                ResourceLoader.getString("localization.type.train.comments"),
-                diagram.getTrains().stream().flatMap(train -> train.getTimeIntervalList().stream())
-                        .filter(interval -> interval.getComment() != null)
-                        .map(interval -> new AttributeReference<>(interval, TimeInterval.ATTR_COMMENT, LocalizedString.class))
-                        .collect(Collectors.toList()),
-                ref -> getTimeIntervalDesc(ref),
-                diagram.getLocales()));
-        types.add(new LocalizationType(
-                ResourceLoader.getString("localization.type.circulation.item.comments"),
-                diagram.getCycles().stream().flatMap(cycle -> cycle.getItems().stream())
-                        .filter(cycle -> cycle.getComment() != null)
-                        .map(cycle -> new AttributeReference<>(cycle, TrainsCycleItem.ATTR_COMMENT, LocalizedString.class))
-                        .collect(Collectors.toList()),
-                ref -> getCirculationItemDesc(ref),
-                diagram.getLocales()));
-        types.add(new LocalizationType(
-                ResourceLoader.getString("localization.type.circulation.type.names"),
-                diagram.getCycleTypes().stream()
-                        .filter(type -> !type.isDefaultType() && type.getDisplayName() != null)
-                        .map(type -> new AttributeReference<>(type, TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.class))
-                        .collect(Collectors.toList()),
-                ref -> ref.get().getDefaultString(),
-                diagram.getLocales()));
-        return types;
-    }
-
-    private static String getCirculationItemDesc(Reference<LocalizedString> ref) {
-        TrainsCycleItem circulationItem = (TrainsCycleItem) ((AttributeReference<?>) ref).getHolder();
-        String circDesc = circulationItem.getCycle().getDisplayDescription();
-        String trainDesc = circulationItem.getTrain().getName();
-        return String.format("%s (%s: %s)", trainDesc, circulationItem.getCycle().getName(), circDesc);
-    }
-
-    private static String getTimeIntervalDesc(Reference<LocalizedString> ref) {
-        TimeInterval interval = (TimeInterval) ((AttributeReference<?>) ref).getHolder();
-        String trainDesc = interval.getTrain().getName();
-        String nodeDesc = interval.getOwnerAsNode().getName();
-        return String.format("%s (%s)", trainDesc, nodeDesc);
+    private LocalizationContext<AttributeReference<LocalizedString>> createLocalizationContext(TrainDiagram diagram) {
+        LocalizationContext<AttributeReference<LocalizedString>> context = new LocalizationContext<>(
+                LocalizationTypeFactory.createInstance().createTypes(diagram));
+        return context;
     }
 }

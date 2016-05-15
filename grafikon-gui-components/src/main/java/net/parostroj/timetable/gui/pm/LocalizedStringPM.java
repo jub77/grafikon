@@ -25,7 +25,7 @@ import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
  */
 public class LocalizedStringPM extends AbstractPM {
 
-    private class EditResultImpl implements EditResult {
+    private class EditResultImpl implements LolizationEditResult {
 
         private LocalizedString builtResult;
 
@@ -62,7 +62,7 @@ public class LocalizedStringPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public EditResult init(LocalizedString string, Collection<Locale> availableLocales) {
+    public LolizationEditResult init(LocalizedString string, Collection<Locale> availableLocales) {
         if (currentResult != null) {
             currentResult.finishBuild();
             currentResult = null;
@@ -92,7 +92,7 @@ public class LocalizedStringPM extends AbstractPM {
         return currentResult;
     }
 
-    public EditResult getCurrentEdit() {
+    public LolizationEditResult getCurrentEdit() {
         return this.currentResult;
     }
 }

@@ -13,13 +13,13 @@ import org.beanfabrics.support.Operation;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.Reference;
 
-public class LocalizedStringListPM extends AbstractPM {
+public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends AbstractPM {
 
     private final class LStringPM extends TextPM {
 
-        private Reference<LocalizedString> localizedStringRef;
+        private T localizedStringRef;
 
-        public LStringPM(Reference<LocalizedString> lStringRef) {
+        public LStringPM(T lStringRef) {
             this.localizedStringRef = lStringRef;
         }
 
@@ -42,7 +42,7 @@ public class LocalizedStringListPM extends AbstractPM {
 
     final OperationPM ok;
 
-    private LocalizationType type;
+    private LocalizationType<T> type;
 
     public LocalizedStringListPM() {
         list = new ListPM<>();
@@ -52,7 +52,7 @@ public class LocalizedStringListPM extends AbstractPM {
             @Override
             public void elementsSelected(ElementsSelectedEvent evt) {
                 LStringPM at = list.getAt(evt.getBeginIndex());
-                selectString(at);
+                selectStringImpl(at.localizedStringRef);
             }
 
             @Override
@@ -63,26 +63,63 @@ public class LocalizedStringListPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public void init(LocalizationType type) {
+    public void init(LocalizationType<T> type) {
         this.init(type, null);
     }
 
-    public void init(LocalizationType type, Reference<LocalizedString> selected) {
+    public void init(LocalizationType<T> type, T preSelected) {
         this.type = type;
         list.clear();
-        for (Reference<LocalizedString> stringRef : type.getStrings()) {
-            LStringPM lStringPM = new LStringPM(stringRef);
-            list.add(lStringPM);
-            if (selected != null && selected.equals(stringRef)) {
+        for (T stringRef : type.getStrings()) {
+            LStringPM lStringPM = addReferenceImpl(stringRef);
+            if (preSelected != null && preSelected.equals(stringRef)) {
                 list.getSelection().add(lStringPM);
             }
         }
         list.revalidateElements();
     }
 
-    private void selectString(LStringPM at) {
-        EditResult result = selected.init(type.getNewOrEdited(at.localizedStringRef), type.getLocales());
-        type.addOrUpdateEdited(at.localizedStringRef, result);
+    private LStringPM addReferenceImpl(T stringRef) {
+        LStringPM lStringPM = new LStringPM(stringRef);
+        list.add(lStringPM);
+        return lStringPM;
+    }
+
+    private void selectStringImpl(T ref) {
+        LolizationEditResult result = selected.init(type.getNewOrEditedString(ref), type.getLocales());
+        type.addOrUpdateEdited(ref, result);
+    }
+
+    public void selectReference(T ref) {
+        list.getSelection().clear();
+        for (LStringPM pm : list) {
+            if (pm.localizedStringRef.equals(ref)) {
+                list.getSelection().add(pm);
+                break;
+            }
+        }
+    }
+
+    public T getSelectedReference() {
+        LStringPM at = list.getAt(list.getSelection().getMinIndex());
+        return at.localizedStringRef;
+    }
+
+    public void addReference(T ref) {
+        this.addReferenceImpl(ref);
+    }
+
+    public void removeReference(T ref) {
+        LStringPM pm = null;
+        for (LStringPM item : list) {
+            if (item.localizedStringRef.equals(ref)) {
+                pm = item;
+                break;
+            }
+        }
+        if (pm != null) {
+            list.remove(pm);
+        }
     }
 
     @Operation(path = "ok")

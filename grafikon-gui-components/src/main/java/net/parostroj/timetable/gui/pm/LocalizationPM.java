@@ -6,20 +6,23 @@ import org.beanfabrics.model.Options;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.support.Operation;
 
-public class LocalizationPM extends AbstractPM {
+import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.utils.Reference;
 
-    final IEnumeratedValuesPM<LocalizationType> types;
-    final LocalizedStringListPM selected;
+public class LocalizationPM<T extends Reference<LocalizedString>> extends AbstractPM {
+
+    final IEnumeratedValuesPM<LocalizationType<T>> types;
+    final LocalizedStringListPM<T> selected;
 
     final OperationPM ok;
-    private LocalizationContext context;
+    private LocalizationContext<T> context;
 
     public LocalizationPM() {
         ok = new OperationPM();
         types = new EnumeratedValuesPM<>(new Options<>());
-        selected = new LocalizedStringListPM();
+        selected = new LocalizedStringListPM<>();
         types.addPropertyChangeListener("text", evt -> {
-            LocalizationType item = types.getValue();
+            LocalizationType<T> item = types.getValue();
             if (item != null) {
                 selected.init(item, item.getStrings().isEmpty() ? null : item.getStrings().iterator().next());
             }
@@ -27,9 +30,9 @@ public class LocalizationPM extends AbstractPM {
         PMManager.setup(this);
     }
 
-    public void init(LocalizationContext context) {
+    public void init(LocalizationContext<T> context) {
         this.context = context;
-        for (LocalizationType type : context) {
+        for (LocalizationType<T> type : context) {
             types.addValue(type, type.getDescription());
         }
         types.setText(types.getOptions().getValues()[0]);

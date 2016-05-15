@@ -6,6 +6,7 @@ import java.awt.Window;
 
 import javax.swing.*;
 
+import org.beanfabrics.swing.BnButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,10 @@ import org.slf4j.LoggerFactory;
 public class GuiComponentUtils {
 
     private static final Logger log = LoggerFactory.getLogger(GuiComponentUtils.class);
+
+    public static BnButton createBnButton(GuiIcon icon, int margin) {
+        return createButton(new BnButton(), icon, margin);
+    }
 
     /**
      * creates button with margin and icon.

@@ -8,16 +8,16 @@ import net.parostroj.timetable.gui.wrappers.WrapperConversion;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.Reference;
 
-public class LocalizationType {
+public class LocalizationType<T extends Reference<LocalizedString>> {
 
     private String description;
-    private Collection<? extends Reference<LocalizedString>> strings;
-    private WrapperConversion<Reference<LocalizedString>> conversion;
+    private Collection<? extends T> strings;
+    private WrapperConversion<T> conversion;
     private Collection<EditedLocalizedString> allEdited;
     private Collection<Locale> locales;
 
-    public LocalizationType(String desciption, Collection<? extends Reference<LocalizedString>> strings,
-            WrapperConversion<Reference<LocalizedString>> conversion, Collection<Locale> locales) {
+    public LocalizationType(String desciption, Collection<? extends T> strings,
+            WrapperConversion<T> conversion, Collection<Locale> locales) {
         this.description = desciption;
         this.strings = strings;
         this.conversion = conversion;
@@ -29,11 +29,11 @@ public class LocalizationType {
         return description;
     }
 
-    public Collection<? extends Reference<LocalizedString>> getStrings() {
+    public Collection<? extends T> getStrings() {
         return strings;
     }
 
-    public WrapperConversion<Reference<LocalizedString>> getConversion() {
+    public WrapperConversion<T> getConversion() {
         return conversion;
     }
 
@@ -41,11 +41,20 @@ public class LocalizationType {
         return locales;
     }
 
-    public Collection<EditedLocalizedString> getEdited() {
+    public Collection<EditedLocalizedString> getAllEdited() {
         return allEdited;
     }
 
-    public LocalizedString getNewOrEdited(Reference<LocalizedString> ref) {
+    public EditedLocalizedString removeEdited(T ref) {
+        for (EditedLocalizedString edited : allEdited) {
+            if (edited.getReference() == ref) {
+                return edited;
+            }
+        }
+        return null;
+    }
+
+    public LocalizedString getNewOrEditedString(T ref) {
         // check existing
         for (EditedLocalizedString edited : allEdited) {
             if (edited.getReference() == ref) {
@@ -55,14 +64,16 @@ public class LocalizationType {
         return ref.get();
     }
 
-    public void addOrUpdateEdited(Reference<LocalizedString> ref, EditResult result) {
+    public EditedLocalizedString addOrUpdateEdited(T ref, LolizationEditResult result) {
         for (EditedLocalizedString edited : allEdited) {
             if (edited.getReference() == ref) {
                 edited.updateEdited(result);
-                return;
+                return edited;
             }
         }
-        allEdited.add(new EditedLocalizedString(ref, result));
+        EditedLocalizedString newEdited = new EditedLocalizedString(ref, result);
+        allEdited.add(newEdited);
+        return newEdited;
     }
 
     public void writeBack() {

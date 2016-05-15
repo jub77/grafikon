@@ -6,9 +6,9 @@ import net.parostroj.timetable.utils.Reference;
 public class EditedLocalizedString {
 
     private final Reference<LocalizedString> reference;
-    private EditResult editResult;
+    private LolizationEditResult editResult;
 
-    public EditedLocalizedString(Reference<LocalizedString> reference, EditResult editResult) {
+    public EditedLocalizedString(Reference<LocalizedString> reference, LolizationEditResult editResult) {
         this.reference = reference;
         this.editResult = editResult;
     }
@@ -17,11 +17,11 @@ public class EditedLocalizedString {
         return reference;
     }
 
-    public EditResult getEdited() {
+    public LolizationEditResult getEdited() {
         return editResult;
     }
 
-    void updateEdited(EditResult edited) {
+    void updateEdited(LolizationEditResult edited) {
         this.editResult = edited;
     }
 

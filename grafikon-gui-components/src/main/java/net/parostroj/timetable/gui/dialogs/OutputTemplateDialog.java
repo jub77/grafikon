@@ -19,11 +19,14 @@ import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
+import net.parostroj.timetable.gui.components.EditLocalizedStringListPanel;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
 
 import java.awt.Font;
@@ -276,6 +279,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             }
         });
         scriptEditBox.addComponentToEditBox(scriptCheckBox);
+
+        EditLocalizedStringListPanel localizePanel = new EditLocalizedStringListPanel(new Path("this"), new ModelProvider(), 5);
+        localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, localizePanel, null); // NOI18N
 
         pack();
     }

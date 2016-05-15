@@ -1,28 +1,32 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class LocalizationContext implements Iterable<LocalizationType> {
+import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.utils.Reference;
 
-    private final Collection<LocalizationType> localizationTypes;
+public class LocalizationContext<T extends Reference<LocalizedString>> implements Iterable<LocalizationType<T>> {
 
-    public LocalizationContext(Collection<LocalizationType> localizationTypes) {
-        this.localizationTypes = localizationTypes;
+    private final Collection<LocalizationType<T>> localizationTypes;
+
+    public LocalizationContext(Collection<? extends LocalizationType<T>> localizationTypes) {
+        this.localizationTypes = new ArrayList<LocalizationType<T>>(localizationTypes);
     }
 
-    public Collection<LocalizationType> getLocalizationTypes() {
+    public Collection<LocalizationType<T>> getLocalizationTypes() {
         return localizationTypes;
     }
 
     public void writeBack() {
-        for (LocalizationType type : localizationTypes) {
+        for (LocalizationType<T> type : localizationTypes) {
             type.writeBack();
         }
     }
 
     @Override
-    public Iterator<LocalizationType> iterator() {
+    public Iterator<LocalizationType<T>> iterator() {
         return localizationTypes.iterator();
     }
 }
