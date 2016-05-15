@@ -14,20 +14,40 @@ public interface AttributesHolder {
         return getAttributes().get(name, clazz);
     }
 
+    default <T> T getAttribute(String category, String name, Class<T> clazz) {
+        return getAttributes().get(category, name, clazz);
+    }
+
     default <T> T getAttribute(String name, Class<T> clazz, T defaultValue) {
         return getAttributes().get(name, clazz, defaultValue);
+    }
+
+    default <T> T getAttribute(String category, String name, Class<T> clazz, T defaultValue) {
+        return getAttributes().get(category, name, clazz, defaultValue);
     }
 
     default void setAttribute(String name, Object value) {
         getAttributes().set(name, value);
     }
 
+    default void setAttribute(String category, String name, Object value) {
+        getAttributes().set(category, name, value);
+    }
+
     default void setRemoveAttribute(String name, Object value) {
         getAttributes().setRemove(name, value);
     }
 
+    default void setRemoveAttribute(String category, String name, Object value) {
+        getAttributes().setRemove(category, name, value);
+    }
+
     default Object removeAttribute(String name) {
         return getAttributes().remove(name);
+    }
+
+    default Object removeAttribute(String category, String name) {
+        return getAttributes().remove(category, name);
     }
 
     default <T> Collection<T> getAttributeAsCollection(String name, Class<T> clazz) {
@@ -50,8 +70,16 @@ public interface AttributesHolder {
         return getAttributes().getBool(name);
     }
 
+    default boolean getAttributeAsBool(String category, String name) {
+        return getAttributes().getBool(category, name);
+    }
+
     default void setAttributeAsBool(String name, boolean value) {
         getAttributes().setBool(name, value);
+    }
+
+    default void setAttributeAsBool(String category, String name, boolean value) {
+        getAttributes().setBool(category, name, value);
     }
 
     Attributes getAttributes();
