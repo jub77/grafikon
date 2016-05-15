@@ -53,70 +53,70 @@ public class Attributes implements Map<String, Object> {
     }
 
     public void setRemove(String name, Object value) {
-        this.setRemove(name, value, null);
+        this.setRemove(null, name, value);
     }
 
-    public void setRemove(String name, Object value, String category) {
+    public void setRemove(String category, String name, Object value) {
         if (value == null) {
-            this.remove(name, category);
+            this.remove(category, name);
         } else {
-            this.set(name, value, category);
+            this.set(category, name, value);
         }
     }
 
     public void set(String name, Object value) {
-        this.set(name, value, null);
+        this.set(null, name, value);
     }
 
-    public void set(String name, Object value, String category) {
+    public void set(String category, String name, Object value) {
         Map<String, Object> map = this.getMapForCategory(category);
         Object oldValue = map.get(name);
         if (!ObjectsUtil.compareWithNull(oldValue, value)) {
             map.put(name, value);
-            this.fireChange(name, oldValue, value, category);
+            this.fireChange(category, name, oldValue, value);
         }
     }
 
     public boolean getBool(String name) {
-        return this.getBool(name, null);
+        return this.getBool(null, name);
     }
 
-    public boolean getBool(String name, String category) {
-        Boolean value = this.get(name, category, Boolean.class);
+    public boolean getBool(String category, String name) {
+        Boolean value = this.get(category, name, Boolean.class);
         return Boolean.TRUE.equals(value);
     }
 
     public void setBool(String name, boolean value) {
-        this.setBool(name, null, value);
+        this.setBool(null, name, value);
     }
 
-    public void setBool(String name, String category, boolean value) {
+    public void setBool(String category, String name, boolean value) {
         if (value) {
-            this.set(name, Boolean.TRUE, category);
+            this.set(category, name, Boolean.TRUE);
         } else {
-            this.remove(name, category);
+            this.remove(category, name);
         }
     }
 
     public Object get(String name) {
-        return this.get(name, (String) null);
+        return this.get((String) null, name);
     }
 
-    public <T> T get(String name, String category, Class<T> clazz) {
-        return clazz.cast(this.get(name, category));
+    public <T> T get(String category, String name, Class<T> clazz) {
+        return clazz.cast(this.get(category, name));
     }
 
     public <T> T get(String name, Class<T> clazz) {
         return clazz.cast(this.get(name));
     }
 
-    public <T> T get(String name, String category, Class<T> clazz, T defaultValue) {
-        T value = this.get(name, category, clazz);
+    public <T> T get(String category, String name, Class<T> clazz, T defaultValue) {
+        T value = this.get(category, name, clazz);
         return value == null ? defaultValue : value;
     }
 
     public <T> T get(String name, Class<T> clazz, T defaultValue) {
-        return this.get(name, null, clazz, defaultValue);
+        return this.get(null, name, clazz, defaultValue);
     }
 
     public <T> Collection<T> getAsCollection(String name, Class<T> clazz) {
@@ -124,7 +124,7 @@ public class Attributes implements Map<String, Object> {
     }
 
     public <T> Collection<T> getAsCollection(String name, Class<T> clazz, Collection<T> defaultValue) {
-        Object object = this.get(name, null, Object.class, defaultValue);
+        Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof List)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
@@ -136,14 +136,14 @@ public class Attributes implements Map<String, Object> {
     }
 
     public <T> List<T> getAsList(String name, Class<T> clazz, List<T> defaultValue) {
-        Object object = this.get(name, null, Object.class, defaultValue);
+        Object object = this.get(null, name, Object.class, defaultValue);
         if (object != null && !(object instanceof List)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
         return ObjectsUtil.checkedList((List<?>) object, clazz);
     }
 
-    public Object get(String name, String category) {
+    public Object get(String category, String name) {
         if (this.mapExistsForCategory(category)) {
             return this.getMapForCategory(category).get(name);
         } else {
@@ -152,17 +152,17 @@ public class Attributes implements Map<String, Object> {
     }
 
     public Object remove(String name) {
-        return this.remove(name, null);
+        return this.remove(null, name);
     }
 
-    public Object remove(String name, String category) {
+    public Object remove(String category, String name) {
         if (!this.mapExistsForCategory(category)) {
             return null;
         } else {
             Map<String, Object> map = this.getMapForCategory(category);
             Object o = map.remove(name);
             if (o != null) {
-                this.fireChange(name, o, null, category);
+                this.fireChange(category, name, o, null);
             }
             return o;
         }
@@ -177,7 +177,7 @@ public class Attributes implements Map<String, Object> {
         if (this.mapExistsForCategory(category)) {
             Set<String> keys = new HashSet<String>(this.getMapForCategory(category).keySet());
             for (String key : keys) {
-                this.remove(key, category);
+                this.remove(category, key);
             }
         }
     }
@@ -214,7 +214,7 @@ public class Attributes implements Map<String, Object> {
         listeners.clear();
     }
 
-    protected void fireChange(String name, Object oldV, Object newV, String category) {
+    protected void fireChange(String category, String name, Object oldV, Object newV) {
         AttributeChange change = new AttributeChange(name, oldV, newV, category);
         this.fireChange(change);
     }
@@ -269,13 +269,13 @@ public class Attributes implements Map<String, Object> {
         for (String name : fromMap.keySet()) {
             if ((fromMap.get(name) != null && !fromMap.get(name).equals(toMap.get(name)))
                     || (fromMap.get(name) == null && toMap.get(name) != null)) {
-                this.set(name, fromMap.get(name), category);
+                this.set(category, name, fromMap.get(name));
             }
         }
         // remove deleted
         for (String name : new LinkedList<String>(toMap.keySet())) {
             if (!fromMap.containsKey(name)) {
-                this.remove(name, category);
+                this.remove(category, name);
             }
         }
     }
@@ -290,7 +290,7 @@ public class Attributes implements Map<String, Object> {
     public void add(Attributes from, String category) {
         Map<String, Object> fromMap = from.getAttributesMap(category);
         for (String name : fromMap.keySet()) {
-            this.set(name, fromMap.get(name), category);
+            this.set(category, name, fromMap.get(name));
         }
     }
 

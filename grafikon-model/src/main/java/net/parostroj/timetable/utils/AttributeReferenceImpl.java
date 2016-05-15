@@ -49,17 +49,17 @@ class AttributeReferenceImpl<T> implements AttributeReference<T> {
 
     @Override
     public void set(T value) {
-        holder.getAttributes().set(name, value, category);
+        holder.getAttributes().set(category, name, value);
     }
 
     @Override
     public T get() {
-        return holder.getAttributes().get(name, category, clazz);
+        return holder.getAttributes().get(category, name, clazz);
     }
 
     @Override
     public T remove() {
-        return clazz.cast(holder.getAttributes().remove(name, category));
+        return clazz.cast(holder.getAttributes().remove(category, name));
     }
 
     @Override

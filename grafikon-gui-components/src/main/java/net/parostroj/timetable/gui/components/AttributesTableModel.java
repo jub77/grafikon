@@ -69,15 +69,15 @@ public class AttributesTableModel extends AbstractTableModel {
             case 0:
                 return name;
             case 1:
-                return attributes.get(name, category);
+                return attributes.get(category, name);
             default:
-                return attributes.get(name, category).getClass().getSimpleName();
+                return attributes.get(category, name).getClass().getSimpleName();
         }
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        this.attributes.set(userNames.get(rowIndex), value, category);
+        this.attributes.set(category, userNames.get(rowIndex), value);
     }
 
     public Attributes getAttributes() {

@@ -38,7 +38,7 @@ public class LocalizationTypeFactory {
                 diagram.getLocales()) {
                     @Override
                     protected AttributeReference<LocalizedString> createImpl(String key) {
-                        holder.getAttributes().set(key, LocalizedString.fromString(""), category);
+                        holder.getAttributes().set(category, key, LocalizedString.fromString(""));
                         return AttributeReference.create(holder, category, key, LocalizedString.class);
                     }
         };

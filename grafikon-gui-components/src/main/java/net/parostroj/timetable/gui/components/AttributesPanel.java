@@ -153,7 +153,7 @@ public class AttributesPanel extends javax.swing.JPanel {
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (this.attributesTableModel != null) {
             Type type = (Type) typeComboBox.getSelectedItem();
-            this.attributesTableModel.getAttributes().set(nameTextField.getText(), type.value, category);
+            this.attributesTableModel.getAttributes().set(category, nameTextField.getText(), type.value);
         }
         nameTextField.setText("");
     }
@@ -162,7 +162,7 @@ public class AttributesPanel extends javax.swing.JPanel {
         int row = attributesTable.getSelectedRow();
         if (row != -1) {
             String name = attributesTableModel.getUserNames().get(row);
-            attributesTableModel.getAttributes().remove(name, category);
+            attributesTableModel.getAttributes().remove(category, name);
         }
     }
 
