@@ -61,7 +61,11 @@ public class LocalizationType<T extends Reference<LocalizedString>> {
                 return edited.getEdited().get();
             }
         }
-        return ref.get();
+        LocalizedString string = ref.get();
+        if (string == null) {
+            string = LocalizedString.fromString("");
+        }
+        return string;
     }
 
     public EditedLocalizedString addOrUpdateEdited(T ref, LolizationEditResult result) {
