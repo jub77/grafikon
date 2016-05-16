@@ -242,7 +242,7 @@ public class TransformVisitor implements EventVisitor {
             case OBJECT_ATTRIBUTE:
                 aC = event.getAttributeChange();
                 change.addDescription(new DiagramChangeDescription(desc,
-                        new Parameter(aC.getName(), true)));
+                        new Parameter(aC.getName(), aC.getCategory() == null)));
                 break;
             default:
                 break;
