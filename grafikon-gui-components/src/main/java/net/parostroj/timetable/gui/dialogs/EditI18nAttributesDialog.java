@@ -20,9 +20,9 @@ import net.parostroj.timetable.gui.pm.ARLocalizationType;
 import net.parostroj.timetable.gui.pm.ARLocalizedStringListPM;
 import net.parostroj.timetable.gui.pm.LocalizationTypeFactory;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.LocalizedString;
+import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.AttributeReference;
 
@@ -72,7 +72,7 @@ public class EditI18nAttributesDialog extends JDialog implements GuiContextCompo
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram,
             AttributesHolder holder) {
         ARLocalizationType<AttributeReference<LocalizedString>> type = LocalizationTypeFactory.createInstance()
-                .createEditFromAttributeHolder(diagram, holder, Attributes.I18N_CATEGORY);
+                .createEditFromAttributeHolder(diagram, holder, OutputTemplate.CATEGORY_I18N);
         ARLocalizedStringListPM<AttributeReference<LocalizedString>> pm = new ARLocalizedStringListPM<>();
         pm.init(type);
         return pm;

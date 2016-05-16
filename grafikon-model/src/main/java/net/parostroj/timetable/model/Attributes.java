@@ -14,7 +14,6 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 public class Attributes implements Map<String, Object> {
 
     public static final String USER_CATEGORY = "user";
-    public static final String I18N_CATEGORY = "localization";
 
     private final Set<AttributesListener> listeners = new HashSet<AttributesListener>();
     private final Map<String, Object> values;
