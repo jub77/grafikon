@@ -313,17 +313,14 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             this.setVisible(false);
 
             // localization
-            PresentationModel pm = this.i18nProvider.getPresentationModel();
-            if (pm != null) {
-                ((ARLocalizedStringListPM<?>) pm).ok();
-            }
+            writeBackLocalization();
 
             // setup
             setupPanel.stopEditing();
 
             this.resultTemplate = this.template;
         } catch (GrafikonException e) {
-            LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
         }
     }
@@ -341,11 +338,21 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputTemplate.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
             outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
+            writeBackLocalization();
+            outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_I18N);
+            outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETUP);
             return outputTemplate;
         } catch (GrafikonException e) {
-            LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
             return null;
+        }
+    }
+
+    private void writeBackLocalization() {
+        PresentationModel pm = this.i18nProvider.getPresentationModel();
+        if (pm != null) {
+            ((ARLocalizedStringListPM<?>) pm).ok();
         }
     }
 
@@ -359,7 +366,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             this.convertToTemplate();
             GuiComponentUtils.showInformation(ResourceLoader.getString("ot.verification.ok"), this);
         } catch (GrafikonException e) {
-            LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
         }
     }
