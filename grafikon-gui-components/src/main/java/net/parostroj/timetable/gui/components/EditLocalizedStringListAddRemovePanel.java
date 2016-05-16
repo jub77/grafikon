@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 
@@ -11,7 +12,6 @@ import org.beanfabrics.swing.BnTextField;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
 
 public class EditLocalizedStringListAddRemovePanel extends JPanel {
 
@@ -25,17 +25,20 @@ public class EditLocalizedStringListAddRemovePanel extends JPanel {
         this.add(localized, BorderLayout.CENTER);
 
         JPanel addPanel = new JPanel();
+        FlowLayout flowLayout = (FlowLayout) addPanel.getLayout();
+        flowLayout.setAlignment(FlowLayout.LEFT);
+        flowLayout.setVgap(0);
+
+        BnTextField textField = new BnTextField();
+        textField.setModelProvider(provider);
+        textField.setPath(new Path("newKey"));
+        textField.setColumns(15);
+        addPanel.add(textField);
 
         BnButton addButton = GuiComponentUtils.createBnButton(GuiIcon.ADD, 2);
         addButton.setModelProvider(provider);
         addButton.setPath(new Path("add"));
         addPanel.add(addButton);
-
-        BnTextField textField = new BnTextField();
-        textField.setModelProvider(provider);
-        textField.setPath(new Path("newKey"));
-        textField.setColumns(30);
-        addPanel.add(textField);
 
         BnButton removeButton = GuiComponentUtils.createBnButton(GuiIcon.REMOVE, 2);
         removeButton.setModelProvider(provider);
