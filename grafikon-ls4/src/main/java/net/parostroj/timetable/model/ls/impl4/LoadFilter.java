@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -108,6 +111,8 @@ public class LoadFilter {
         if (version.compareTo(new ModelVersion(4, 19, 2)) <= 0) {
             // convert some texts to localized strings
             this.convertToLocalizedStrings(diagram);
+            // filter out output templates with default.template
+            removeDefaultTemplatesExceptDrawAndXml(diagram);
         }
     }
 
@@ -163,6 +168,22 @@ public class LoadFilter {
             if (!circulationType.isDefaultType() && circulationType.getDisplayName() == null) {
                 circulationType.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME,
                         LocalizedString.fromString(circulationType.getName()));
+            }
+        }
+    }
+
+    private void removeDefaultTemplatesExceptDrawAndXml(TrainDiagram diagram) {
+        Collection<String> noTemplateTypes = Arrays.asList("draw", "xml");
+        for (OutputTemplate template : new ArrayList<>(diagram.getOutputTemplates())) {
+            Boolean defaultTemplate = template.getAttributeAsBool("default.template");
+            if (defaultTemplate && !template.getOutput().equals("draw")) {
+                log.warn("Skipping output template {} because of default.template feature", template.getName());
+                diagram.getOutputTemplates().remove(template);
+            } else {
+                template.removeAttribute("default.template");
+                if (noTemplateTypes.contains(template.getOutput())) {
+                    template.setTemplate(null);
+                }
             }
         }
     }

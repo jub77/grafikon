@@ -26,6 +26,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 
 import java.awt.BorderLayout;
@@ -355,8 +356,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private OutputTemplate copyTemplate(OutputTemplate template) {
         OutputTemplate copy = new OutputTemplate(template.getId(), template.getDiagram());
         try {
-            copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
-                    template.getTemplate().getLanguage()));
+            if (template.getTemplate() != null) {
+                copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
+                        template.getTemplate().getLanguage()));
+            }
             copy.getAttachments().addAll(template.getAttachments());
         } catch (GrafikonException e) {
             log.error("Error creating copy of template.", e);
@@ -378,7 +381,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         if (!template.getName().equals(fromTemplate.getName())) {
             template.setName(fromTemplate.getName());
         }
-        if (!template.getTemplate().equals(fromTemplate.getTemplate())) {
+        if (!Objects.equal(template.getTemplate(), fromTemplate.getTemplate())) {
             template.setTemplate(fromTemplate.getTemplate());
         }
         template.getAttributes().merge(fromTemplate.getAttributes());

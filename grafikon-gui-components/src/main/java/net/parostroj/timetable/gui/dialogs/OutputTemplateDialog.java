@@ -49,7 +49,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
 
     private static final String DEFAULT_OUTPUT_SCRIPT = "outputs.add(\"output.html\",[:],\"utf-8\")";
     private static final List<String> OUTPUTS = Collections.unmodifiableList(Arrays.asList("groovy", "draw",
-            "pdf.groovy"));
+            "pdf.groovy", "xml"));
     private static final Collection<String> OUTPUTS_WITH_TEMPLATE = Collections.unmodifiableCollection(Arrays.asList(
             "groovy", "pdf.groovy"));
 
@@ -81,7 +81,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     public void showDialog(OutputTemplate template) {
         this.template = template;
         this.resultTemplate = null;
-        this.updateValues(null);
+        this.updateValues(false);
         this.setVisible(true);
     }
 
@@ -97,14 +97,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         return resultTemplate;
     }
 
-    private void updateValues(Boolean defaultTemplate) {
-        if (defaultTemplate == null) {
-            defaultTemplate = this.template.getAttributes().get(OutputTemplate.ATTR_DEFAULT_TEMPLATE, Boolean.class);
-            this.defaultTemplateCheckbox.setSelected(defaultTemplate == Boolean.TRUE);
-        }
+    private void updateValues(boolean noTemplate) {
         boolean isScript = this.template.getScript() != null;
-        textTemplateEditBox.setEnabled(defaultTemplate != Boolean.TRUE);
-        textTemplateEditBox.setTemplate(defaultTemplate == Boolean.TRUE ? null : this.template.getTemplate());
+        textTemplateEditBox.setEnabled(!noTemplate);
+        textTemplateEditBox.setTemplate(noTemplate ? null : this.template.getTemplate());
         extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                 String.class) : null);
         outputComboBox.setSelectedItem(this.template.getOutput());
@@ -214,11 +210,12 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
                     for (String type : OutputFactory.newInstance(output).getOutputTypes()) {
                         outputTypeComboBox.addItem(type);
                     }
-                    if (OUTPUTS_WITH_TEMPLATE.contains(output)) {
-                        defaultTemplateCheckbox.setEnabled(true);
-                    } else {
-                        defaultTemplateCheckbox.setSelected(true);
-                        defaultTemplateCheckbox.setEnabled(false);
+                    if (template != null) {
+                        if (OUTPUTS_WITH_TEMPLATE.contains(output)) {
+                            updateValues(false);
+                        } else {
+                            updateValues(true);
+                        }
                     }
                 }
             }
@@ -227,8 +224,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         verifyPanel.add(outputComboBox);
         verifyPanel.add(outputTypeComboBox);
 
-        defaultTemplateCheckbox = new javax.swing.JCheckBox(ResourceLoader.getString("ot.checkbox.default.template"));
-        verifyPanel.add(defaultTemplateCheckbox);
         verifyButton = new javax.swing.JButton();
 
         verifyButton.setText(ResourceLoader.getString("ot.button.verify")); // NOI18N
@@ -246,12 +241,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         extensionTextField = new javax.swing.JTextField();
         verifyPanel.add(extensionTextField);
         extensionTextField.setColumns(10);
-        defaultTemplateCheckbox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                updateValues(defaultTemplateCheckbox.isSelected());
-            }
-        });
 
         javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.script"), null, scriptPanel, null); // NOI18N
@@ -318,8 +307,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                     ObjectsUtil.checkAndTrim(extensionTextField.getText()));
-            this.template.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE,
-                    defaultTemplateCheckbox.isSelected());
             this.template.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
@@ -351,8 +338,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputTemplate.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
             outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                     ObjectsUtil.checkAndTrim(extensionTextField.getText()));
-            outputTemplate.getAttributes().setBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE,
-                    defaultTemplateCheckbox.isSelected());
             outputTemplate.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
             outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
@@ -380,7 +365,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     }
 
     private TextTemplate convertToTemplate() throws GrafikonException {
-        return textTemplateEditBox.getTemplate();
+        return textTemplateEditBox.isEnabled() ? textTemplateEditBox.getTemplate() : null;
     }
 
     private javax.swing.JButton cancelButton;
@@ -388,7 +373,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private javax.swing.JComboBox<String> outputTypeComboBox;
     private net.parostroj.timetable.gui.components.TextTemplateEditBox2 textTemplateEditBox;
     private javax.swing.JButton verifyButton;
-    private javax.swing.JCheckBox defaultTemplateCheckbox;
     private javax.swing.JTextField extensionTextField;
     private javax.swing.JCheckBox scriptCheckBox;
     private javax.swing.JComboBox<String> outputComboBox;

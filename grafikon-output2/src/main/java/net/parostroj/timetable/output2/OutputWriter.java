@@ -198,7 +198,7 @@ public class OutputWriter {
         OutputFactory factory = OutputFactory.newInstance(template.getOutput());
         factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
-        TextTemplate textTemplate = template.getAttributes().getBool(OutputTemplate.ATTR_DEFAULT_TEMPLATE) ? null : template.getTemplate();
+        TextTemplate textTemplate = template.getTemplate();
         OutputResources resources = new TemplateOutputResources(template);
         List<OutputSettings> outputNames = this.createOutputs(template);
         if (outputNames == null) {
