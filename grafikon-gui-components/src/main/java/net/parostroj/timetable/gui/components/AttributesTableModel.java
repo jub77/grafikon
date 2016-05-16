@@ -33,10 +33,10 @@ public class AttributesTableModel extends AbstractTableModel {
                 name = ResourceLoader.getString("attributes.name");
                 break;
             case 1:
-                name = ResourceLoader.getString("attributes.value");
+                name = ResourceLoader.getString("attributes.type");
                 break;
             case 2:
-                name = ResourceLoader.getString("attributes.type");
+                name = ResourceLoader.getString("attributes.value");
                 break;
         }
         return name;
@@ -49,7 +49,7 @@ public class AttributesTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 1;
+        return columnIndex == 2;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AttributesTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0:
                 return name;
-            case 1:
+            case 2:
                 return attributes.get(category, name);
             default:
                 return attributes.get(category, name).getClass().getSimpleName();

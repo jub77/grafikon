@@ -8,6 +8,8 @@ package net.parostroj.timetable.gui.components;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -17,6 +19,8 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import java.awt.FlowLayout;
@@ -81,9 +85,16 @@ public class AttributesPanel extends javax.swing.JPanel {
             public javax.swing.table.TableCellRenderer getCellRenderer(int row, int column) {
                 editingClass = null;
                 int modelColumn = convertColumnIndexToModel(column);
-                if (modelColumn == 1) {
+                if (modelColumn == 2) {
                     Class<?> rowClass = getModel().getValueAt(row, modelColumn).getClass();
-                    return getDefaultRenderer(rowClass);
+                    if (Number.class.isAssignableFrom(rowClass)) {
+                        rowClass = String.class;
+                    }
+                    TableCellRenderer renderer = getDefaultRenderer(rowClass);
+                    if (rowClass == Boolean.class) {
+                        ((JCheckBox) renderer).setHorizontalAlignment(JCheckBox.LEFT);
+                    }
+                    return renderer;
                 } else {
                     return super.getCellRenderer(row, column);
                 }
@@ -93,9 +104,17 @@ public class AttributesPanel extends javax.swing.JPanel {
             public javax.swing.table.TableCellEditor getCellEditor(int row, int column) {
                 editingClass = null;
                 int modelColumn = convertColumnIndexToModel(column);
-                if (modelColumn == 1) {
+                if (modelColumn == 2) {
                     editingClass = getModel().getValueAt(row, modelColumn).getClass();
-                    return getDefaultEditor(editingClass);
+                    Class<?> rowClass = editingClass;
+                    if (Number.class.isAssignableFrom(rowClass)) {
+                        rowClass = String.class;
+                    }
+                    TableCellEditor editor = getDefaultEditor(rowClass);
+                    if (editingClass == Boolean.class) {
+                        ((JCheckBox) ((DefaultCellEditor) editor).getComponent()).setHorizontalAlignment(JCheckBox.LEFT);
+                    }
+                    return editor;
                 } else {
                     return super.getCellEditor(row, column);
                 }
@@ -206,6 +225,9 @@ public class AttributesPanel extends javax.swing.JPanel {
         TableColumn nameColumn = attributesTable.getColumnModel().getColumn(0);
         nameColumn.setMaxWidth(200);
         nameColumn.setPreferredWidth(100);
+        TableColumn typeColumn = attributesTable.getColumnModel().getColumn(1);
+        typeColumn.setMaxWidth(100);
+        typeColumn.setPreferredWidth(100);
     }
 
     public Attributes getAttributes() {
