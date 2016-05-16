@@ -158,5 +158,12 @@ public class LoadFilter {
                 }
             }
         }
+        // (2) add display name property to circulation types
+        for (TrainsCycleType circulationType : diagram.getCycleTypes()) {
+            if (!circulationType.isDefaultType() && circulationType.getDisplayName() == null) {
+                circulationType.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME,
+                        LocalizedString.fromString(circulationType.getName()));
+            }
+        }
     }
 }
