@@ -15,7 +15,11 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JComboBox;
+
+import java.awt.FlowLayout;
 
 /**
  * Panel with table with attributes.
@@ -114,7 +118,10 @@ public class AttributesPanel extends javax.swing.JPanel {
 
         add(scrollPane, java.awt.BorderLayout.CENTER);
 
-        buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        FlowLayout fl_buttonsPanel = new FlowLayout(FlowLayout.LEFT);
+        fl_buttonsPanel.setVgap(0);
+        fl_buttonsPanel.setHgap(0);
+        buttonsPanel.setLayout(fl_buttonsPanel);
 
         nameTextField.setColumns(20);
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
@@ -125,8 +132,10 @@ public class AttributesPanel extends javax.swing.JPanel {
             }
         });
         buttonsPanel.add(nameTextField);
+        buttonsPanel.add(Box.createHorizontalStrut(5));
 
         removeButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeButtonActionPerformed(evt);
             }
@@ -137,15 +146,20 @@ public class AttributesPanel extends javax.swing.JPanel {
             typeComboBox.addItem(t);
         }
         buttonsPanel.add(typeComboBox);
+        buttonsPanel.add(Box.createHorizontalStrut(5));
         addButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
 
         addButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
             }
         });
         buttonsPanel.add(addButton);
+        buttonsPanel.add(Box.createHorizontalStrut(5));
         buttonsPanel.add(removeButton);
+
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
         add(buttonsPanel, java.awt.BorderLayout.PAGE_END);
     }
