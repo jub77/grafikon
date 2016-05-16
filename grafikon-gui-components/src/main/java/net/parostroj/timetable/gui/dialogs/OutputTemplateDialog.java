@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
+import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.components.EditLocalizedStringListAddRemovePanel;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
 import net.parostroj.timetable.gui.pm.ARLocalizedStringListPM;
@@ -263,7 +264,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         EditLocalizedStringListAddRemovePanel localizePanel = new EditLocalizedStringListAddRemovePanel(
                 new Path("this"), i18nProvider, 5);
         localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        tabbedPane.addTab(ResourceLoader.getString("localization.texts"), null, localizePanel, null); // NOI18N
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.localization"), null, localizePanel, null); // NOI18N
+
+        AttributesPanel setupPanel = new AttributesPanel();
+        setupPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.setup"), null, setupPanel, null);
 
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
