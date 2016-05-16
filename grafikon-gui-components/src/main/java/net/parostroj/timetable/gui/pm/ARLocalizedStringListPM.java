@@ -18,6 +18,7 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
 
     final OperationPM add;
     final OperationPM remove;
+    final OperationPM ok;
 
     private boolean nonEmpty;
     private boolean selected;
@@ -27,6 +28,7 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         localized = new LocalizedStringListPM<>();
         add = new OperationPM();
         remove = new OperationPM();
+        ok = new OperationPM();
         newKey = new TextPM();
 
         PMManager.setup(this);
@@ -55,6 +57,12 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         T ref = localized.getSelectedReference();
         type.addToRemove(ref);
         localized.removeReference(ref);
+        return true;
+    }
+
+    @Operation(path = { "ok" })
+    public boolean ok() {
+        type.writeBack();
         return true;
     }
 

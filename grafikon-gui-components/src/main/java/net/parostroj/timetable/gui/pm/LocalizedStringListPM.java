@@ -5,10 +5,8 @@ import org.beanfabrics.event.ElementsSelectedEvent;
 import org.beanfabrics.event.ListAdapter;
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.ListPM;
-import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.model.TextPM;
-import org.beanfabrics.support.Operation;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.Reference;
@@ -40,13 +38,10 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
     final ListPM<LStringPM> list;
     final LocalizedStringPM selected;
 
-    final OperationPM ok;
-
     private LocalizationType<T> type;
 
     public LocalizedStringListPM() {
         list = new ListPM<>();
-        ok = new OperationPM();
         selected = new LocalizedStringPM();
         list.addListListener(new ListAdapter() {
             @Override
@@ -120,11 +115,5 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         if (pm != null) {
             list.remove(pm);
         }
-    }
-
-    @Operation(path = "ok")
-    public boolean writeBack() {
-        type.writeBack();
-        return true;
     }
 }

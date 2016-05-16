@@ -42,12 +42,6 @@ public class EditLocalizedStringListAddRemovePanel extends JPanel {
         removeButton.setPath(new Path("remove"));
         addPanel.add(removeButton);
 
-        BnButton okButton = new BnButton();
-        okButton.setModelProvider(provider);
-        okButton.setPath(new Path("localized.ok"));
-        okButton.setText(ResourceLoader.getString("button.ok"));
-        addPanel.add(okButton);
-
         this.add(addPanel, BorderLayout.SOUTH);
     }
 }
