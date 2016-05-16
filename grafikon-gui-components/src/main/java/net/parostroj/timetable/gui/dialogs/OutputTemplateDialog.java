@@ -116,6 +116,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         descriptionTextArea.setText(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
         // localization
         i18nProvider.setPresentationModel(this.createPM(template.getDiagram(), template));
+        // setup
+        setupPanel.startEditing(template.getAttributes(), OutputTemplate.CATEGORY_SETUP);
     }
 
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
@@ -266,7 +268,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.localization"), null, localizePanel, null); // NOI18N
 
-        AttributesPanel setupPanel = new AttributesPanel();
+        setupPanel = new AttributesPanel();
         setupPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.setup"), null, setupPanel, null);
 
@@ -329,6 +331,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
                 ((ARLocalizedStringListPM<?>) pm).ok();
             }
 
+            // setup
+            setupPanel.stopEditing();
+
             this.resultTemplate = this.template;
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
@@ -360,6 +365,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        setupPanel.stopEditing();
         this.setVisible(false);
     }
 
@@ -389,4 +395,5 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private javax.swing.JTabbedPane tabbedPane;
     private ScriptEditBox scriptEditBox;
     private JTextArea descriptionTextArea;
+    private AttributesPanel setupPanel;
 }
