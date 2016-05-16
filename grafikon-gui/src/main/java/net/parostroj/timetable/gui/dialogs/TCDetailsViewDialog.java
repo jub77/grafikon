@@ -27,7 +27,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
     public TCDetailsViewDialog(java.awt.Window parent, boolean modal) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         initComponents();
-        attributesPanel.setCategory(Attributes.USER_CATEGORY);
+        attributesPanel.setCategory(TrainsCycle.CATEGORY_USER);
     }
 
     public void updateValues(TCDelegate delegate) {
@@ -145,7 +145,7 @@ public class TCDetailsViewDialog extends javax.swing.JDialog {
         delegate.fireEvent(TCDelegate.Action.MODIFIED_CYCLE, cycle);
 
         this.setVisible(false);
-        cycle.getAttributes().merge(attributesPanel.stopEditing(), Attributes.USER_CATEGORY);
+        cycle.getAttributes().merge(attributesPanel.stopEditing(), TrainsCycle.CATEGORY_USER);
     }
 
     private net.parostroj.timetable.gui.components.AttributesPanel attributesPanel;

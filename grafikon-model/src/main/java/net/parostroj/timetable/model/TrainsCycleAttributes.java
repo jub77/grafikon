@@ -12,4 +12,6 @@ public interface TrainsCycleAttributes {
     public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_COMPANY = "company";
+
+    public static final String CATEGORY_USER = "user";
 }
