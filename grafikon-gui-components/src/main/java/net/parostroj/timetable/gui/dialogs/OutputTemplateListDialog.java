@@ -353,7 +353,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private OutputTemplate copyTemplate(OutputTemplate template) {
-        OutputTemplate copy = new OutputTemplate(template.getId(), null);
+        OutputTemplate copy = new OutputTemplate(template.getId(), template.getDiagram());
         try {
             copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
                     template.getTemplate().getLanguage()));

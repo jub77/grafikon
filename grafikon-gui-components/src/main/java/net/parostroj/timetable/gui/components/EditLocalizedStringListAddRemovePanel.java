@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.components;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.Box;
 import javax.swing.JPanel;
 
 import org.beanfabrics.IModelProvider;
@@ -26,6 +27,7 @@ public class EditLocalizedStringListAddRemovePanel extends JPanel {
 
         JPanel addPanel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) addPanel.getLayout();
+        flowLayout.setHgap(0);
         flowLayout.setAlignment(FlowLayout.LEFT);
         flowLayout.setVgap(0);
 
@@ -35,10 +37,14 @@ public class EditLocalizedStringListAddRemovePanel extends JPanel {
         textField.setColumns(15);
         addPanel.add(textField);
 
+        addPanel.add(Box.createHorizontalStrut(gap));
+
         BnButton addButton = GuiComponentUtils.createBnButton(GuiIcon.ADD, 2);
         addButton.setModelProvider(provider);
         addButton.setPath(new Path("add"));
         addPanel.add(addButton);
+
+        addPanel.add(Box.createHorizontalStrut(gap));
 
         BnButton removeButton = GuiComponentUtils.createBnButton(GuiIcon.REMOVE, 2);
         removeButton.setModelProvider(provider);

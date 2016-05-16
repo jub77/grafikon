@@ -17,17 +17,21 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
+import net.parostroj.timetable.utils.AttributeReference;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
+import org.beanfabrics.model.PresentationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
-import net.parostroj.timetable.gui.components.EditLocalizedStringListPanel;
+import net.parostroj.timetable.gui.components.EditLocalizedStringListAddRemovePanel;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
+import net.parostroj.timetable.gui.pm.ARLocalizedStringListPM;
+import net.parostroj.timetable.gui.pm.LocalizationTypeFactory;
 
 import java.awt.Font;
 
@@ -53,6 +57,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private OutputTemplate template;
     private OutputTemplate resultTemplate;
 
+    private final ModelProvider i18nProvider;
+
     private final JFileChooser attachmentChooser;
     private final Consumer<Collection<OutputTemplate>> templateWriter;
 
@@ -61,6 +67,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         this.attachmentChooser = attachmentChooser;
         this.templateWriter = templateWriter;
+        this.i18nProvider = new ModelProvider();
         initComponents();
         init();
     }
@@ -106,6 +113,14 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         scriptEditBox.setScript(template.getScript());
         scriptEditBox.setEnabled(isScript);
         descriptionTextArea.setText(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
+        // localization
+        i18nProvider.setPresentationModel(this.createPM(template.getDiagram(), template));
+    }
+
+    private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
+        ARLocalizedStringListPM<AttributeReference<LocalizedString>> pm = new ARLocalizedStringListPM<>();
+        pm.init(LocalizationTypeFactory.createInstance().createEditFromAttributeHolder(diagram, holder, Attributes.I18N_CATEGORY));
+        return pm;
     }
 
     private void initComponents() {
@@ -245,10 +260,15 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         scriptEditBox.setRows(15);
         scriptEditBox.setColumns(60);
 
+        EditLocalizedStringListAddRemovePanel localizePanel = new EditLocalizedStringListAddRemovePanel(
+                new Path("this"), i18nProvider, 5);
+        localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        tabbedPane.addTab(ResourceLoader.getString("localization.texts"), null, localizePanel, null); // NOI18N
+
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, descriptionPanel, null); // NOI18N
         descriptionPanel.setLayout(new BorderLayout(0, 0));
+        tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, descriptionPanel, null); // NOI18N
 
         JScrollPane descriptionScrollPane = new JScrollPane();
         descriptionPanel.add(descriptionScrollPane);
@@ -280,10 +300,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         });
         scriptEditBox.addComponentToEditBox(scriptCheckBox);
 
-        EditLocalizedStringListPanel localizePanel = new EditLocalizedStringListPanel(new Path("this"), new ModelProvider(), 5);
-        localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, localizePanel, null); // NOI18N
-
         pack();
     }
 
@@ -301,6 +317,13 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             this.setVisible(false);
+
+            // localization
+            PresentationModel pm = this.i18nProvider.getPresentationModel();
+            if (pm != null) {
+                ((ARLocalizedStringListPM<?>) pm).ok();
+            }
+
             this.resultTemplate = this.template;
         } catch (GrafikonException e) {
             LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
