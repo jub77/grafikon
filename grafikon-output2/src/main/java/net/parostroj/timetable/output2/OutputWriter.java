@@ -137,6 +137,7 @@ public class OutputWriter {
             binding.put("template", template);
             binding.put("log", scriptLog);
             binding.put("settings", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
+            binding.put("localization", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
@@ -179,11 +180,13 @@ public class OutputWriter {
                     this.getFile(null, template.getName(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
-                    textTemplate, type, null, null, resources, null);
+                    textTemplate, type, null,
+                    this.updateContext(template, new HashMap<>()), resources, null);
         } else {
             for(OutputSettings outputName : outputNames) {
                 this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate,
-                        type, outputName.params, outputName.context, resources, outputName.encoding);
+                        type, outputName.params,
+                        this.updateContext(template, outputName.context), resources, outputName.encoding);
             }
         }
     }
@@ -191,6 +194,7 @@ public class OutputWriter {
     private void generateOutput(Output output, File outpuFile, TextTemplate textTemplate, String type,
             Map<String, Object> parameters, Map<String, Object> context, OutputResources resources, String encoding) throws OutputException {
         OutputParams params = settings.createParams();
+
         if (textTemplate != null) {
             params.setParam(Output.PARAM_TEXT_TEMPLATE, textTemplate);
         }
@@ -199,9 +203,7 @@ public class OutputWriter {
         }
         params.setParam(Output.PARAM_TRAIN_DIAGRAM, diagram);
         params.setParam(Output.PARAM_OUTPUT_FILE, outpuFile);
-        if (context != null) {
-            params.setParam(Output.PARAM_CONTEXT, context);
-        }
+        params.setParam(Output.PARAM_CONTEXT, context);
         if (encoding != null) {
             params.setParam(Output.PARAM_OUTPUT_ENCODING, encoding);
         }
@@ -211,6 +213,12 @@ public class OutputWriter {
             }
         }
         output.write(params);
+    }
+
+    private Map<String, Object> updateContext(OutputTemplate outputTemplate, Map<String, Object> context) {
+        context.put("settings", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
+        context.put("localization", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
+        return context;
     }
 
     private File getFile(String directory, String name) {

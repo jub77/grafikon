@@ -13,9 +13,6 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 public abstract class GroovyTemplateBinding {
 
-    public static final String CONTEXT_SETTINGS = "settings";
-    public static final String CONTEXT_LOCALIZATION = "localization";
-
     private static final Logger templateLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Template");
 
     public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
@@ -35,10 +32,6 @@ public abstract class GroovyTemplateBinding {
             for (Map.Entry<?, ?> entry : context.entrySet()) {
                 binding.put((String) entry.getKey(), entry.getValue());
             }
-        }
-        // if context didn't contain settings - create empty map
-        if (!binding.containsKey(CONTEXT_SETTINGS)) {
-            binding.put(CONTEXT_SETTINGS, Collections.emptyMap());
         }
     }
 
