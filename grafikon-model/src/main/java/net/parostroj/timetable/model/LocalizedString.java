@@ -53,7 +53,7 @@ public class LocalizedString {
      * @return text for given locale or <code>null</null> if the locale is not present
      */
     public String getLocalizedString(final Locale locale) {
-        Locale languageLocale = checkOnlyLanguage(locale);
+        Locale languageLocale = getOnlyLanguageLocale(locale);
         for (StringWithLocale localizedString : localizedStrings) {
             if (languageLocale.equals(localizedString.getLocale())) {
                 return localizedString.getString();
@@ -171,7 +171,7 @@ public class LocalizedString {
             if (strings == null) {
                 strings = new ArrayList<>();
             }
-            strings.add(new StringWithLocaleImpl(string, checkOnlyLanguage(locale)));
+            strings.add(new StringWithLocaleImpl(string, getOnlyLanguageLocale(locale)));
         }
 
         public LocalizedString build() {
@@ -222,7 +222,7 @@ public class LocalizedString {
         return new StringWithLocaleImpl(string, locale);
     }
 
-    private static Locale checkOnlyLanguage(Locale locale) {
+    public static Locale getOnlyLanguageLocale(Locale locale) {
         if (locale.getCountry() == null) {
             return locale;
         } else {

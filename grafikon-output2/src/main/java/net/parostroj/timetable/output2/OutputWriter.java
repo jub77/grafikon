@@ -77,7 +77,8 @@ public class OutputWriter {
         }
 
         public Locale getLocale() {
-            return locale;
+            Locale returnedLocale = locale != null ? locale : Locale.getDefault();
+            return LocalizedString.getOnlyLanguageLocale(returnedLocale);
         }
 
         public OutputParams createParams() {
@@ -138,6 +139,7 @@ public class OutputWriter {
             binding.put("log", scriptLog);
             binding.put("settings", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
             binding.put("localization", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
+            binding.put("locale", settings.getLocale());
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
@@ -181,7 +183,7 @@ public class OutputWriter {
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
                     textTemplate, type, null,
-                    this.updateContext(template, new HashMap<>()), resources, null);
+                    this.updateContext(template, null), resources, null);
         } else {
             for(OutputSettings outputName : outputNames) {
                 this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate,
@@ -216,6 +218,7 @@ public class OutputWriter {
     }
 
     private Map<String, Object> updateContext(OutputTemplate outputTemplate, Map<String, Object> context) {
+        if (context == null) context = new HashMap<>();
         context.put("settings", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
         context.put("localization", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
         return context;
