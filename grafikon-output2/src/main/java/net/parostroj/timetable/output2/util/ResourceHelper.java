@@ -3,12 +3,6 @@ package net.parostroj.timetable.output2.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import net.parostroj.timetable.output2.Translator;
-import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,30 +41,5 @@ public class ResourceHelper {
             return classLoader.getResourceAsStream(resource);
         else
             return ClassLoader.getSystemResourceAsStream(resource);
-    }
-
-    public static void addTextsToMap(Map<String, Object> map, String prefix, Locale locale, String bundleName) {
-        ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
-        int prefixLength = prefix.length();
-        for (String key : bundle.keySet()) {
-            if (key.startsWith(prefix)) {
-                map.put(key.substring(prefixLength), bundle.getString(key));
-            }
-        }
-    }
-
-    public static Translator getBundleTranslator(String bundleName, String... prefixes) {
-        return (key, locale) -> {
-            ResourceBundle bundle = ResourceBundleUtil.getBundle(bundleName, ResourceHelper.class.getClassLoader(), locale, Locale.ENGLISH);
-            String text = null;
-            for (String prefix : prefixes) {
-                String pKey = prefix + key;
-                if (bundle.containsKey(pKey)) {
-                    text = bundle.getString(pKey);
-                    break;
-                }
-            }
-            return text == null ? bundle.getString(key) : text;
-        };
     }
 }
