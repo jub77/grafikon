@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 public abstract class GroovyTemplateBinding {
 
@@ -51,16 +52,16 @@ public abstract class GroovyTemplateBinding {
 
     public void postProcess(TrainDiagram diagram, OutputParams params, Map<String, Object> binding) throws OutputException {
         // write images if possible
-        Set<?> images = (Set<?>) binding.get("images");
+        Collection<String> images = ObjectsUtil.checkedCollection((Collection<?>) binding.get("images"), String.class);
         if (images != null && params.paramExist(Output.PARAM_OUTPUT_FILE)) {
             File file = params.getParamValue(Output.PARAM_OUTPUT_FILE, File.class);
             file = file.getParentFile();
             // for all images ...
             ImageSaver saver = new ImageSaver(diagram);
-            for (Object image : images) {
+            OutputResources resources = params.getParamValue(Output.PARAM_RESOURCES, OutputResources.class);
+            for (String image : images) {
                 try {
-                    saver.saveImage((String) image, file,
-                            params.getParamValue(Output.PARAM_RESOURCES, OutputResources.class));
+                    saver.saveImage(image, file, resources);
                 } catch (IOException e) {
                     throw new OutputException("Error saving image: " + image, e);
                 }

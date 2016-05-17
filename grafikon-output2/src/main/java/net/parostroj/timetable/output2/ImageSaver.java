@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
 
 import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.TrainDiagram;
@@ -23,18 +22,7 @@ public class ImageSaver {
 
     private static final Logger log = LoggerFactory.getLogger(ImageSaver.class);
 
-    private static final Set<String> PREDEFINED_IMAGES;
-
     private final TrainDiagram diagram;
-
-    static {
-        Set<String> images = new HashSet<String>();
-        images.add("signal.gif");
-        images.add("control_station.gif");
-        images.add("trapezoid_sign.gif");
-        images.add("arrow_seq.svg");
-        PREDEFINED_IMAGES = Collections.unmodifiableSet(images);
-    }
 
     public ImageSaver(TrainDiagram diagram) {
         this.diagram = diagram;
@@ -42,13 +30,9 @@ public class ImageSaver {
 
     public void saveImage(String image, File directory, OutputResources resources) throws IOException {
         URL resLocation = null;
-        if (PREDEFINED_IMAGES.contains(image)) {
-            resLocation = ImageSaver.class.getResource("/images/" + image);
-        } else {
-            for (TimetableImage i : diagram.getImages()) {
-                if (i.getFilename().equals(image)) {
-                    resLocation = i.getImageFile().toURI().toURL();
-                }
+        for (TimetableImage i : diagram.getImages()) {
+            if (i.getFilename().equals(image)) {
+                resLocation = i.getImageFile().toURI().toURL();
             }
         }
         if (resLocation != null) {
