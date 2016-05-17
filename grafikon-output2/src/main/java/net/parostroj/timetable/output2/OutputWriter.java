@@ -231,6 +231,7 @@ public class OutputWriter {
             case "draw": extension = "svg"; break;
             case "groovy": extension = "html"; break;
             case "pdf.groovy": extension = "pdf"; break;
+            case "xml": extension = "xml"; break;
             default: extension = "unknown"; break;
         }
         return extension;
