@@ -52,7 +52,7 @@ public class PdfTransformer {
             // base uri is empty
             URI baseURI = new URI("");
             FopConfParser parser = new FopConfParser(
-                    ResourceHelper.getStream("templates/pdf/fop-cfg.xml", this.getClass().getClassLoader()),
+                    ResourceHelper.getStream("fop/fop-cfg.xml", this.getClass().getClassLoader()),
                     EnvironmentalProfileFactory.createRestrictedIO(baseURI, this.convertResolver(resolver)));
             FopFactory fopFactory = parser.getFopFactoryBuilder().build();
             fopFactory.getFontManager().disableFontCache();
