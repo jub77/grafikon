@@ -136,7 +136,7 @@ public class OutputWriter {
             binding.put("diagram", diagram);
             binding.put("template", template);
             binding.put("log", scriptLog);
-            binding.put("settings", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETUP));
+            binding.put("settings", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {

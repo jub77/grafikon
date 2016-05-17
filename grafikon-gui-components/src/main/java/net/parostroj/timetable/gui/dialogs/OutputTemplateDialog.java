@@ -113,7 +113,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         // localization
         i18nProvider.setPresentationModel(this.createPM(template.getDiagram(), template));
         // setup
-        setupPanel.startEditing(template.getAttributes(), OutputTemplate.CATEGORY_SETUP);
+        setupPanel.startEditing(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
     }
 
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
@@ -340,7 +340,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
                     ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             writeBackLocalization();
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_I18N);
-            outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETUP);
+            outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
             return outputTemplate;
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
