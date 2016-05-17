@@ -14,7 +14,6 @@ public interface Output {
     public static final String PARAM_TRAIN_DIAGRAM = "diagram";
     public static final String PARAM_OUTPUT_STREAM = "output.stream";
     public static final String PARAM_OUTPUT_FILE = "output.file";
-    public static final String PARAM_TEMPLATE = "template";
     public static final String PARAM_TEXT_TEMPLATE = "text.template";
     public static final String PARAM_CONTEXT = "context";
     public static final String PARAM_SETTINGS = "settings";

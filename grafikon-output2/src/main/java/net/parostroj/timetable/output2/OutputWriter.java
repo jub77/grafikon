@@ -66,9 +66,6 @@ public class OutputWriter {
 
     public static class Settings {
 
-        private final boolean title;
-        private final boolean twoSided;
-        private final boolean techTimes;
         private final Locale locale;
 
         public Settings() {
@@ -76,26 +73,7 @@ public class OutputWriter {
         }
 
         public Settings(Locale locale) {
-            this(true, true, false, locale);
-        }
-
-        public Settings(boolean title, boolean twoSided, boolean techTimes, Locale locale) {
-            this.title = title;
-            this.twoSided = twoSided;
-            this.techTimes = techTimes;
             this.locale = locale;
-        }
-
-        public boolean isTitle() {
-            return title;
-        }
-
-        public boolean isTwoSided() {
-            return twoSided;
-        }
-
-        public boolean isTechTimes() {
-            return techTimes;
         }
 
         public Locale getLocale() {
@@ -104,13 +82,6 @@ public class OutputWriter {
 
         public OutputParams createParams() {
             OutputParams params = new OutputParams();
-            if (title) {
-                params.setParam("title.page", true);
-            }
-            params.setParam("page.sort", twoSided ? "two_sides" : "one_side");
-            if (techTimes) {
-                params.setParam("tech.time", true);
-            }
             return params;
         }
     }

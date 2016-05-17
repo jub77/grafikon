@@ -26,7 +26,6 @@ import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
-import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
@@ -47,7 +46,6 @@ import net.parostroj.timetable.utils.VersionInfo;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
-import org.beanfabrics.swing.BnCheckBoxMenuItem;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,7 +309,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void initComponents() {
-        outputTypeButtonGroup = new javax.swing.ButtonGroup();
         javax.swing.JTabbedPane tabbedPane = new javax.swing.JTabbedPane();
         trainsPane = new net.parostroj.timetable.gui.panes.TrainsPane();
         engineCyclesPane = new net.parostroj.timetable.gui.panes.TrainsCyclesPane();
@@ -328,7 +325,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenu diagramMenu = new javax.swing.JMenu();
         javax.swing.JMenu actionMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem oLanguageMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenu outputTypeMenu = new javax.swing.JMenu();
         javax.swing.JMenu viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
         scriptsMenu = new javax.swing.JMenu();
@@ -435,32 +431,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         actionMenu.add(new javax.swing.JSeparator());
 
-        this.addMenuItem(actionMenu, "menu.action.all.html", outputAction, "all"); // NOI18N
-
-        actionMenu.add(new javax.swing.JSeparator());
-
         oLanguageMenuItem.setText(ResourceLoader.getString("menu.language.output") + "..."); // NOI18N
 
         actionMenu.add(oLanguageMenuItem);
-
-        outputTypeMenu.setText(ResourceLoader.getString("menu.output.type")); // NOI18N
-
-        JRadioButtonMenuItem htmlRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.html", evt -> outputTypeActionPerformed(evt), "html", true); // NOI18N
-        outputTypeButtonGroup.add(htmlRItem);
-
-        JRadioButtonMenuItem xmlRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.xml", evt -> outputTypeActionPerformed(evt), "xml", false); // NOI18N
-        outputTypeButtonGroup.add(xmlRItem);
-
-        JRadioButtonMenuItem pdfRItem = this.addRadioMenuItem(outputTypeMenu, "menu.output.type.pdf", evt -> outputTypeActionPerformed(evt), "pdf", false); // NOI18N
-        outputTypeButtonGroup.add(pdfRItem);
-
-        actionMenu.add(outputTypeMenu);
-
-        addBnCheckMenuItem(actionMenu, "outputSettingsPM.generateTitlePage", "menu.action.traintimetables.generate.titlepage");
-        addBnCheckMenuItem(actionMenu, "outputSettingsPM.doubleSidedPrint", "menu.action.traintimetables.two.sides.print");
-        addBnCheckMenuItem(actionMenu, "outputSettingsPM.showTechTimes", "menu.action.traintimetables.show.tech.time");
-
-        actionMenu.add(new javax.swing.JSeparator());
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", evt -> ouputTemplatesMenuItemActionPerformed(evt), true); // NOI18N
 
@@ -552,31 +525,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         lafBGroup.setPath(new Path("lookAndFeel"));
     }
 
-    private BnCheckBoxMenuItem addBnCheckMenuItem(javax.swing.JMenu actionMenu, String pathStr, String key) {
-        BnCheckBoxMenuItem menuItem = new BnCheckBoxMenuItem(provider, new Path(pathStr));
-        menuItem.setText(ResourceLoader.getString(key)); // NOI18N
-        actionMenu.add(menuItem);
-        return menuItem;
-    }
-
     private JCheckBoxMenuItem addCheckMenuItem(JMenu menu, String textKey, ActionListener action, String actionCommand, boolean selected) {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem();
         item.setSelected(selected);
         item.setText(ResourceLoader.getString(textKey));
         item.setActionCommand(actionCommand);
         item.addActionListener(action);
-        menu.add(item);
-        return item;
-    }
-
-    private JRadioButtonMenuItem addRadioMenuItem(JMenu menu, String textKey, ActionListener action, String actionCommand, boolean selected) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-        item.setSelected(selected);
-        item.setText(ResourceLoader.getString(textKey));
-        item.setActionCommand(actionCommand);
-        if (action != null) {
-            item.addActionListener(action);
-        }
         menu.add(item);
         return item;
     }
@@ -729,12 +683,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.dispose();
     }
 
-    private void outputTypeActionPerformed(java.awt.event.ActionEvent evt) {
-        // get output type
-        OutputCategory type = OutputCategory.fromString(evt.getActionCommand());
-        model.setOutputCategory(type);
-    }
-
     private void editRoutesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         EditRoutesDialog editRoutesDialog = new EditRoutesDialog(this, true);
         editRoutesDialog.setLocationRelativeTo(this);
@@ -770,7 +718,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
         dialog.showDialog(model.getDiagram(), chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
                 chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES),
-                new Settings(settings.isGenerateTitlePageTT(), settings.isTwoSidedPrint(), settings.isStShowTechTime(), settings.getLocale()));
+                new Settings(settings.getLocale()));
         dialog.dispose();
     }
 
@@ -808,8 +756,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         section.put("locale.program", locale != null ? locale.toLanguageTag() : null);
         section.put("locale.output", model.getOutputSettings().getLocale() != null ? model.getOutputSettings().getLocale().toLanguageTag() : null);
 
-        // save output type
-        section.put("output.type", outputTypeButtonGroup.getSelection().getActionCommand());
 
         // save look and feel
         section.put("look.and.feel", model.lookAndFeel.getValue());
@@ -835,17 +781,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             if (section.containsKey("position")) {
                 // set position
                 GuiUtils.setPosition(section.get("position"), this);
-            }
-        }
-
-        // load output type
-        String aC = section.get("output.type", "html");
-        for (Enumeration<AbstractButton> e = outputTypeButtonGroup.getElements(); e.hasMoreElements();) {
-            AbstractButton button = e.nextElement();
-            if (button.getActionCommand().equals(aC)) {
-                button.setSelected(true);
-                model.setOutputCategory(OutputCategory.fromString(button.getActionCommand()));
-                break;
             }
         }
 
@@ -894,6 +829,5 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu scriptsMenu;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
-    private javax.swing.ButtonGroup outputTypeButtonGroup;
     private net.parostroj.timetable.gui.StatusBar statusBar;
 }

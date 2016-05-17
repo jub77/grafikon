@@ -17,7 +17,6 @@ import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.data.ProgramSettings;
 import net.parostroj.timetable.gui.pm.EnumeratedValuesPM;
 import net.parostroj.timetable.gui.pm.IEnumeratedValuesPM;
-import net.parostroj.timetable.gui.pm.OutputSettingsPM;
 import net.parostroj.timetable.gui.utils.LanguageLoader;
 import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.mediator.Mediator;
@@ -54,7 +53,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final ScriptsLoader guiPsLoader;
     private final LanguageLoader languageLoader;
 
-    final OutputSettingsPM outputSettingsPM;
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<String> lookAndFeel;
 
@@ -79,7 +77,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
         List<Locale> guiLocales = languageLoader.getLocales(LanguagesType.GUI);
         final Map<Locale, String> localeMap = languageLoader.createMap(guiLocales, "system");
-        outputSettingsPM = new OutputSettingsPM();
         locale = new EnumeratedValuesPM<Locale>(localeMap);
         final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
         lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap);
@@ -244,9 +241,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         section.put("output.templates", getSerializedOutputTemplates());
         section.put("user.name", programSettings.getUserName());
-        section.put("generate.tt.title.page", outputSettings.isGenerateTitlePageTT());
-        section.put("two.sided.print", outputSettings.isTwoSidedPrint());
-        section.put("st.show.tech.time", outputSettings.isStShowTechTime());
         section.put("unit", programSettings.getLengthUnit() != null ? programSettings.getLengthUnit().getKey() : null);
         section.put("unit.speed", programSettings.getSpeedUnit() != null ? programSettings.getSpeedUnit().getKey() : null);
         section.remove("last.opened");
@@ -263,9 +257,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
         Ini.Section section = AppPreferences.getSection(prefs, "model");
         deserializeOutputTemplates(section.get("output.templates", ""));
         programSettings.setUserName(section.get("user.name"));
-        outputSettings.setGenerateTitlePageTT(section.get("generate.tt.title.page", Boolean.class, true));
-        outputSettings.setTwoSidedPrint(section.get("two.sided.print", Boolean.class, true));
-        outputSettings.setStShowTechTime(section.get("st.show.tech.time", Boolean.class, false));
         LengthUnit lengthUnit = LengthUnit.getByKey(section.get("unit", "mm"));
         SpeedUnit speedUnit = SpeedUnit.getByKey(section.get("unit.speed", "kmph"));
         programSettings.setLengthUnit(lengthUnit != null ? lengthUnit : LengthUnit.MM);
@@ -279,7 +270,6 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
                 }
             }
         }
-        outputSettingsPM.init(outputSettings);
         return section;
     }
 
