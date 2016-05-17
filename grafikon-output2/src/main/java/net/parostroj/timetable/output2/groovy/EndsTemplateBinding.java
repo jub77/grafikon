@@ -7,11 +7,8 @@ import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.impl.Cycles;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
-import net.parostroj.timetable.output2.util.ResourceHelper;
 
 public class EndsTemplateBinding extends GroovyTemplateBinding {
-
-    private static final String KEY_PREFIX = "end_positions_";
 
     @Override
     protected void addSpecific(OutputParams params, Map<String, Object> map, TrainDiagram diagram, Locale locale) {
@@ -25,7 +22,5 @@ public class EndsTemplateBinding extends GroovyTemplateBinding {
         map.put("engines", engines);
         map.put("train_units", trainUnits);
         map.put("custom_cycles", customCycles);
-        ResourceHelper.addTextsToMap(map, KEY_PREFIX, locale, LOCALIZATION_BUNDLE);
-        map.put(LOCALIZATION, ResourceHelper.getBundleTranslator(LOCALIZATION_BUNDLE, KEY_PREFIX));
     }
 }

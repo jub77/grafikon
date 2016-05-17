@@ -32,11 +32,11 @@ public class OutputWriter {
 
     public static class OutputSettings {
 
-        public String name;
-        public Map<String, Object> context;
-        public String encoding;
-        public Map<String, Object> params;
-        public String directory;
+        String name;
+        String encoding;
+        String directory;
+        Map<String, Object> context;
+        Map<String, Object> params;
 
         public OutputSettings setName(String name) {
             this.name = name;

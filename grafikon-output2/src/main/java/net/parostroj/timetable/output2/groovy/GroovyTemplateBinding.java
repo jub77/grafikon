@@ -12,34 +12,33 @@ import net.parostroj.timetable.output2.*;
 
 public abstract class GroovyTemplateBinding {
 
-    public static final String LOCALIZATION_BUNDLE = "texts/output";
-    public static final String LOCALIZATION = "localization";
+    public static final String CONTEXT_SETTINGS = "settings";
+    public static final String CONTEXT_LOCALIZATION = "localization";
 
     private static final Logger templateLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Template");
 
+    public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
+        Map<String, Object> binding = new HashMap<>();
+        this.addSpecific(params, binding, diagram, locale);
+        binding.put("diagram", diagram);
+        binding.put("images", new HashSet<String>());
+        binding.put("log", templateLog);
+        this.addContext(params, binding);
+        this.addLocale(locale, binding);
+        return binding;
+    }
+
     protected void addContext(OutputParams params, Map<String, Object> binding) {
-        binding.put("diagram", params.getParam(Output.PARAM_TRAIN_DIAGRAM).getValue());
         if (params.paramExistWithValue(Output.PARAM_CONTEXT)) {
             Map<?, ?> context = params.get(Output.PARAM_CONTEXT).getValue(Map.class);
             for (Map.Entry<?, ?> entry : context.entrySet()) {
                 binding.put((String) entry.getKey(), entry.getValue());
             }
         }
-        if (params.paramExistWithValue(Output.PARAM_SETTINGS)) {
-            binding.put("settings", params.getParamValue(Output.PARAM_SETTINGS, Object.class));
-        } else {
-            binding.put("settings", Collections.emptyMap());
+        // if context didn't contain settings - create empty map
+        if (!binding.containsKey(CONTEXT_SETTINGS)) {
+            binding.put(CONTEXT_SETTINGS, Collections.emptyMap());
         }
-    }
-
-    public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
-        Map<String, Object> binding = new HashMap<>();
-        this.addSpecific(params, binding, diagram, locale);
-        binding.put("images", new HashSet<String>());
-        binding.put("log", templateLog);
-        this.addContext(params, binding);
-        this.addLocale(locale, binding);
-        return binding;
     }
 
     protected void addLocale(Locale locale, Map<String, Object> map) {
