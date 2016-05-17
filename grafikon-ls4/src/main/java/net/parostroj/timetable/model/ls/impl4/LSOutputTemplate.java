@@ -54,7 +54,9 @@ public class LSOutputTemplate {
     private LSOutputTemplate(OutputTemplate template, BiConsumer<Attachment, List<LSAttachment>> attachmentConverter) {
         this.id = template.getId();
         this.name = template.getName();
-        this.template = new LSTextTemplate(template.getTemplate());
+        if (template.getTemplate() != null) {
+            this.template = new LSTextTemplate(template.getTemplate());
+        }
         this.attributes = new LSAttributes(template.getAttributes());
         this.script = template.getScript() != null ? new LSScript(template.getScript()) : null;
         // attachments
