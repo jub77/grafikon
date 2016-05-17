@@ -25,7 +25,6 @@ public class GPdfOutputFactory extends OutputFactory {
 
     private static final String TYPE = "pdf.groovy";
     private static final List<String> OUTPUT_TYPES;
-    private static final String TEMPLATE_BASE_LOCATION = "templates/groovy-fo/";
 
     static {
         OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList(
@@ -43,7 +42,7 @@ public class GPdfOutputFactory extends OutputFactory {
     private final PdfTransformer transformer;
 
     public GPdfOutputFactory() {
-        factory = new GroovyTemplateFactory(TEMPLATE_BASE_LOCATION);
+        factory = new GroovyTemplateFactory();
         transformer = new PdfTransformer(TransformerFactory.newInstance());
     }
 

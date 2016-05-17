@@ -19,7 +19,6 @@ public class GspOutputFactory extends OutputFactory {
 
     private static final String TYPE = "groovy";
     private static final List<String> OUTPUT_TYPES;
-    private static final String TEMPLATE_BASE_LOCATION = "templates/groovy/";
 
     static {
         OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList(
@@ -37,7 +36,7 @@ public class GspOutputFactory extends OutputFactory {
     private final GroovyTemplateFactory factory;
 
     public GspOutputFactory() {
-        factory = new GroovyTemplateFactory(TEMPLATE_BASE_LOCATION);
+        factory = new GroovyTemplateFactory();
     }
 
     private Charset getCharset() {

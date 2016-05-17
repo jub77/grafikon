@@ -1,10 +1,6 @@
 package net.parostroj.timetable.output2.groovy;
 
-import groovy.text.SimpleTemplateEngine;
-import groovy.text.Template;
-import groovy.text.TemplateEngine;
-
-import java.io.*;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
@@ -18,21 +14,10 @@ import net.parostroj.timetable.output2.template.TemplateWriter;
 
 public class GroovyTemplate {
 
-    private final Template templateGString;
     private final GroovyTemplateBinding binding;
 
-    public GroovyTemplate(Reader reader, GroovyTemplateBinding binding) throws OutputException {
+    public GroovyTemplate(GroovyTemplateBinding binding) throws OutputException {
         this.binding = binding;
-        if (reader != null) {
-            TemplateEngine engine = new SimpleTemplateEngine();
-            try {
-                this.templateGString = engine.createTemplate(reader);
-            } catch (Exception e) {
-                throw new OutputException("Error loading template", e);
-            }
-        } else {
-            this.templateGString = null;
-        }
     }
 
     private TextTemplate getTextTemplate(OutputParams params) {
@@ -45,14 +30,10 @@ public class GroovyTemplate {
             TextTemplate textTemplate = getTextTemplate(params);
             if (textTemplate != null) {
                 textTemplate.evaluate(output, map, outputEncoding.name());
-            } else if (templateGString != null) {
-                templateGString.make(map).writeTo(new OutputStreamWriter(output, outputEncoding));
             } else {
-                throw new OutputException("No default template");
+                throw new OutputException("Template missing");
             }
             binding.postProcess(diagram, params, map);
-        } catch (UnsupportedEncodingException e) {
-            throw new OutputException("Error creating writer", e);
         } catch (OutputException e) {
             throw e;
         } catch (Exception e) {
