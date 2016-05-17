@@ -64,7 +64,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private ApplicationModel model;
     private FloatingWindowsList floatingDialogsList;
-    private OutputAction outputAction;
     private ExecuteScriptAction executeScriptAction;
 
     private Map<File, JMenuItem> lastOpened;
@@ -143,7 +142,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot load preferences.", e);
         }
 
-        outputAction = new OutputAction(model, this);
         executeScriptAction = new ExecuteScriptAction(model);
 
         initComponents();
@@ -404,32 +402,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         menuBar.add(diagramMenu);
 
         actionMenu.setText(ResourceLoader.getString("menu.outputs")); // NOI18N
-
-        this.addMenuItem(actionMenu, "menu.action.traintimetableslist", outputAction, "trains"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.nodetimetableslist", outputAction, "stations"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.eclist", outputAction, "engine_cycles"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.tuclist", outputAction, "train_unit_cycles"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.acion.dclist", outputAction, "driver_cycles"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.acion.splist", outputAction, "starts"); // NOI18N
-
-        actionMenu.add(new javax.swing.JSeparator());
-
-        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbydc", outputAction, "trains_by_driver_cycles"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbytimefiltered", outputAction, "trains_select_station"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.acion.eplist", outputAction, "ends"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.acion.cclist", outputAction, "custom_cycles"); // NOI18N
-
-        actionMenu.add(new javax.swing.JSeparator());
-
-        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbydc.select", outputAction, "trains_select_driver_cycles"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.traintimetableslistbyroutes.select", outputAction, "trains_select_routes"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.nodetimetableslist.select", outputAction, "stations_select"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.eclist.select", outputAction, "engine_cycles_select"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.tuclist.select", outputAction, "train_unit_cycles_select"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.acion.dclist.select", outputAction, "driver_cycles_select"); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.cclist.select", outputAction, "custom_cycles_select"); // NOI18N
-
-        actionMenu.add(new javax.swing.JSeparator());
 
         oLanguageMenuItem.setText(ResourceLoader.getString("menu.language.output") + "..."); // NOI18N
 
