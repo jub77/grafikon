@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.LocalizedString;
 
 /**
  * @author jub
@@ -11,14 +14,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = {"name", "positions"})
 public class Cycles {
 
-    private String name;
+    private LocalizedString name;
     private List<Position> positions;
 
-    public String getName() {
+    public LocalizedString getName() {
         return name;
     }
 
-    public void setName(String name) {
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
+    public void setName(LocalizedString name) {
         this.name = name;
     }
 

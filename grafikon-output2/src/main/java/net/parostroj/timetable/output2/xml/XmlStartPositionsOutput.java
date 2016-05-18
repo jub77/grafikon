@@ -16,6 +16,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputException;
 import net.parostroj.timetable.output2.OutputParams;
 import net.parostroj.timetable.output2.OutputWithCharset;
+import net.parostroj.timetable.output2.impl.Cycles;
 import net.parostroj.timetable.output2.impl.Position;
 import net.parostroj.timetable.output2.impl.PositionsExtractor;
 
@@ -37,10 +38,12 @@ class XmlStartPositionsOutput extends OutputWithCharset {
             PositionsExtractor pe = new PositionsExtractor(diagram);
             List<Position> engines = pe.getStartPositions(diagram.getEngineCycleType().getCycles(), null);
             List<Position> trainUnits = pe.getStartPositions(diagram.getTrainUnitCycleType().getCycles(), null);
+            List<Cycles> customCycles = pe.getStartPositionsCustom(null);
 
             StartPositions sp = new StartPositions();
             sp.setEnginesPositions(engines);
             sp.setTrainUnitsPositions(trainUnits);
+            sp.setCustomCycles(customCycles);
 
             JAXBContext context = JAXBContext.newInstance(StartPositions.class);
             Marshaller m = context.createMarshaller();

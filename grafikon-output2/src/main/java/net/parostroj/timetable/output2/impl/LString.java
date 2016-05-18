@@ -25,11 +25,11 @@ public class LString {
         }
     }
 
+    @XmlElement(name = "default")
     public String getDefaultString() {
         return defaultString;
     }
 
-    @XmlElement(name = "default")
     public void setDefaultString(String defaultString) {
         this.defaultString = defaultString;
     }
