@@ -129,6 +129,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         name = ObjectsUtil.checkAndTrim(name);
         if (name != null) {
             type.setName(name);
+            type.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.fromString(name));
             ((CPModel) typesComboBox.getModel()).refreshSelected();
         }
     }
