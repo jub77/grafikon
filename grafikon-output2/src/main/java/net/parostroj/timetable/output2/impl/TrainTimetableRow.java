@@ -4,6 +4,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.LocalizedString;
 
 /**
  * One row of train timetable.
@@ -27,7 +30,7 @@ public class TrainTimetableRow {
     private Integer speed;
     private Integer setSpeed;
     private Boolean controlStation;
-    private String comment;
+    private LocalizedString comment;
     private Boolean shunt;
     private Boolean occupied;
     private Boolean lineEnd;
@@ -105,11 +108,12 @@ public class TrainTimetableRow {
         this.controlStation = controlStation;
     }
 
-    public String getComment() {
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
+    public LocalizedString getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public void setComment(LocalizedString comment) {
         this.comment = comment;
     }
 
