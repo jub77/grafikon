@@ -8,6 +8,8 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import com.google.common.collect.FluentIterable;
+
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
@@ -76,6 +78,21 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return this.getAttribute(ATTR_DISPLAY_NAME, LocalizedString.class);
     }
 
+    public LocalizedString getLocalizedName() {
+        if (isDefaultType()) {
+            return LocalizedString.newBuilder(getDescriptionText())
+                    .addAllStringWithLocale(FluentIterable.from(getDiagram().getLocales())
+                            .transform(
+                                    locale -> LocalizedString.newStringWithLocale(getDescriptionText(locale), locale))
+                            .toList())
+                    .build();
+        } else {
+            LocalizedString result = getDisplayName();
+            if (result == null) result = LocalizedString.fromString(getName());
+            return result;
+        }
+    }
+
     public void setName(String name) {
         if (!ObjectsUtil.compareWithNull(name, this.name)) {
             String oldName = this.name;
@@ -112,7 +129,7 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
 
     public String getDescriptionText(Locale locale) {
         String text = null;
-        if (isDefaultType(name)) {
+        if (isDefaultType()) {
             ResourceBundle bundle = ResourceBundleUtil.getBundle(
                     "net.parostroj.timetable.model.cycle_type_texts",
                     TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
