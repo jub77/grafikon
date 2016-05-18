@@ -1,6 +1,9 @@
 package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.LocalizedString;
 
 /**
  * Information about custom cycle for train unit output.
@@ -10,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "type", "name", "fromAbbr", "toAbbr" })
 public class TrainUnitCustomCycle {
 
-    private String type;
+    private LocalizedString type;
     private String name;
     private String fromAbbr;
     private String toAbbr;
@@ -18,7 +21,7 @@ public class TrainUnitCustomCycle {
     public TrainUnitCustomCycle() {
     }
 
-    public TrainUnitCustomCycle(String type, String name, String fromAbbr, String toAbbr) {
+    public TrainUnitCustomCycle(LocalizedString type, String name, String fromAbbr, String toAbbr) {
         super();
         this.type = type;
         this.name = name;
@@ -26,11 +29,12 @@ public class TrainUnitCustomCycle {
         this.toAbbr = toAbbr;
     }
 
-    public String getType() {
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
+    public LocalizedString getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(LocalizedString type) {
         this.type = type;
     }
 

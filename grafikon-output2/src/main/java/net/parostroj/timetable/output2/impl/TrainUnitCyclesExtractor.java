@@ -90,7 +90,7 @@ public class TrainUnitCyclesExtractor {
             if (!TrainsCycleType.isDefaultType(type)) {
                 List<TrainsCycleItem> items = train.getCycles(type);
                 for (TrainsCycleItem item : items) {
-                    String typeName = item.getCycle().getType().getName();
+                    LocalizedString typeName = item.getCycle().getType().getLocalizedName();
                     if (item.getFrom() == tuItem.getFrom() && item.getTo() == tuItem.getTo()) {
                         // the cover the same interval
                         list.add(new TrainUnitCustomCycle(typeName,

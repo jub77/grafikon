@@ -1,6 +1,7 @@
 package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
 
@@ -80,6 +81,7 @@ public class DriverCycleRow {
         this.to = to;
     }
 
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
     public LocalizedString getComment() {
         return comment;
     }

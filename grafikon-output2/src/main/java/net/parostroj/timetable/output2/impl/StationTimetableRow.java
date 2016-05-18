@@ -3,6 +3,7 @@ package net.parostroj.timetable.output2.impl;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.LocalizedString;
 
@@ -128,6 +129,7 @@ public class StationTimetableRow {
         this.occupied = occupied;
     }
 
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
     public LocalizedString getComment() {
         return comment;
     }
