@@ -6,7 +6,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Extracts information for train unit cycles.
@@ -78,9 +77,7 @@ public class TrainUnitCyclesExtractor {
         row.setToTime(c.convertIntToXml(item.getEndTime()));
         row.setFromAbbr(item.getFromInterval().getOwnerAsNode().getAbbr());
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
-        LocalizedString lComment = item.getComment();
-        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
-        row.setComment(comment);
+        row.setComment(item.getComment());
         this.getCustomCyclesItem(row.getCycle(), item);
         return row;
     }

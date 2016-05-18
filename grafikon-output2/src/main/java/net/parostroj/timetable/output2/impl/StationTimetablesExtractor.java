@@ -151,9 +151,7 @@ public class StationTimetablesExtractor {
             }
             row.setFreightFromTrain(nt);
         }
-        LocalizedString lComment = interval.getComment();
-        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
-        row.setComment(comment);
+        row.setComment(interval.getComment());
         row.setOccupied(interval.getAttributes().getBool(TimeInterval.ATTR_OCCUPIED));
     }
 

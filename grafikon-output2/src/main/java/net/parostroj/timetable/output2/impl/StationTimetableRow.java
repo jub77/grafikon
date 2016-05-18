@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.LocalizedString;
+
 /**
  * Row for station timetable.
  *
@@ -23,7 +25,7 @@ public class StationTimetableRow {
     private String track;
     private boolean technologicalTime;
     private boolean occupied;
-    private String comment;
+    private LocalizedString comment;
     private List<FreightDstInfo> freightTo;
     private List<String> freightFromTrain;
     private List<FreightToTrain> freightToTrain;
@@ -126,11 +128,11 @@ public class StationTimetableRow {
         this.occupied = occupied;
     }
 
-    public String getComment() {
+    public LocalizedString getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public void setComment(LocalizedString comment) {
         this.comment = comment;
     }
 

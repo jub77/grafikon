@@ -3,7 +3,6 @@ package net.parostroj.timetable.output2.impl;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Extracts information for driver cycles.
@@ -72,9 +71,7 @@ public class DriverCyclesExtractor {
         row.setToAbbr(item.getToInterval().getOwnerAsNode().getAbbr());
         row.setFrom(item.getFromInterval().getOwnerAsNode().getName());
         row.setTo(item.getToInterval().getOwnerAsNode().getName());
-        LocalizedString lComment = item.getComment();
-        String comment = ObjectsUtil.checkAndTrim(lComment == null ? null : lComment.getDefaultString());
-        row.setComment(comment);
+        row.setComment(item.getComment());
         row.setSetupTime(item.getSetupTime());
         // technological time (if the start equals to item start)
         if (item.getFrom() == null && item.getTrain().getTimeIntervalBefore() != null) {

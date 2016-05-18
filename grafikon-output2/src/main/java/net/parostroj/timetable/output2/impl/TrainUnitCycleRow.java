@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.LocalizedString;
+
 /**
  * Train unit cycle row.
  *
@@ -18,14 +20,14 @@ public class TrainUnitCycleRow {
     private String fromAbbr;
     private String toTime;
     private String toAbbr;
-    private String comment;
+    private LocalizedString comment;
     private List<TrainUnitCustomCycle> cycle;
 
-    public String getComment() {
+    public LocalizedString getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public void setComment(LocalizedString comment) {
         this.comment = comment;
     }
 

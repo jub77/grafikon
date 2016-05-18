@@ -2,6 +2,8 @@ package net.parostroj.timetable.output2.impl;
 
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.LocalizedString;
+
 /**
  * Driver cycle row.
  *
@@ -18,7 +20,7 @@ public class DriverCycleRow {
     private String toTime;
     private String toAbbr;
     private String to;
-    private String comment;
+    private LocalizedString comment;
     private Integer setupTime;
     private Integer technologicalTime;
 
@@ -78,11 +80,11 @@ public class DriverCycleRow {
         this.to = to;
     }
 
-    public String getComment() {
+    public LocalizedString getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public void setComment(LocalizedString comment) {
         this.comment = comment;
     }
 
