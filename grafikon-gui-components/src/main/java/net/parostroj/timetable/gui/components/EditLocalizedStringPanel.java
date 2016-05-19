@@ -28,14 +28,10 @@ public class EditLocalizedStringPanel extends JPanel {
         table.setSortable(true);
         scrollPane.setViewportView(table);
 
-        JPanel panel = new JPanel();
-        this.add(panel, BorderLayout.NORTH);
-        panel.setLayout(new BorderLayout(0, 0));
-
         BnTextField field = new BnTextField();
         field.setBackground(null);
         field.setModelProvider(provider);
         field.setPath(Path.concat(basePath, new Path("string")));
-        panel.add(field, BorderLayout.NORTH);
+        this.add(field, BorderLayout.NORTH);
     }
 }
