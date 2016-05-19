@@ -5,9 +5,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.groovy.GroovyTemplateFactory;
@@ -25,6 +29,8 @@ public class GPdfOutputFactory extends OutputFactory {
 
     private static final String TYPE = "pdf.groovy";
     private static final List<String> OUTPUT_TYPES;
+
+    private static final Logger log = LoggerFactory.getLogger(GPdfOutputFactory.class);
 
     static {
         OUTPUT_TYPES = Collections.unmodifiableList(Arrays.asList(
@@ -86,7 +92,11 @@ public class GPdfOutputFactory extends OutputFactory {
         final OutputResources resources = this.getOutputResources(params);
         return (href, base) -> {
             InputStream is = resources != null ? resources.getStream(href) : null;
-            return is == null ? null : new StreamSource(is);
+            Source streamSource = is == null ? null : new StreamSource(is);
+            if (streamSource == null) {
+                log.warn("Resource missing: {}", href);
+            }
+            return streamSource;
         };
     }
 
