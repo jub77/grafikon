@@ -123,6 +123,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
 
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
         ARLocalizedStringListPM<AttributeReference<LocalizedString>> pm = new ARLocalizedStringListPM<>();
+        pm.setSorted(true);
         pm.init(LocalizationTypeFactory.createInstance().createEditFromAttributeHolder(diagram, holder, OutputTemplate.CATEGORY_I18N));
         return pm;
     }

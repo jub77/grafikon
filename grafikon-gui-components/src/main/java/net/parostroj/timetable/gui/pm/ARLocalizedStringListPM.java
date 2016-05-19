@@ -93,4 +93,8 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
     public boolean canRemove() {
         return selected;
     }
+
+    public void setSorted(boolean sorted) {
+        localized.setSorted(sorted);
+    }
 }

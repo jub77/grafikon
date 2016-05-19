@@ -1,5 +1,9 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.text.CollationKey;
+import java.text.Collator;
+
+import org.beanfabrics.Path;
 import org.beanfabrics.event.ElementsDeselectedEvent;
 import org.beanfabrics.event.ElementsSelectedEvent;
 import org.beanfabrics.event.ListAdapter;
@@ -33,12 +37,36 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         public boolean isEditable() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return getText();
+        }
+
+        @Override
+        public Comparable<?> getComparable() {
+            class DynamicTextComparable implements Comparable<DynamicTextComparable> {
+
+                private CollationKey key;
+
+                public DynamicTextComparable() {
+                    key = Collator.getInstance().getCollationKey(getText());
+                }
+
+                @Override
+                public int compareTo(DynamicTextComparable o) {
+                    return key.compareTo(o.key);
+                }
+            }
+            return new DynamicTextComparable();
+        }
     }
 
     final ListPM<LStringPM> list;
     final LocalizedStringPM selected;
 
     private LocalizationType<T> type;
+    private boolean sorted;
 
     public LocalizedStringListPM() {
         list = new ListPM<>();
@@ -62,6 +90,14 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         this.init(type, null);
     }
 
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
+    }
+
+    public boolean isSorted() {
+        return sorted;
+    }
+
     public void init(LocalizationType<T> type, T preSelected) {
         this.type = type;
         list.clear();
@@ -72,12 +108,19 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
             }
         }
         list.revalidateElements();
+        this.sortList();
     }
 
     private LStringPM addReferenceImpl(T stringRef) {
         LStringPM lStringPM = new LStringPM(stringRef);
         list.add(lStringPM);
         return lStringPM;
+    }
+
+    private void sortList() {
+        if (sorted) {
+            list.sortBy(true, new Path("this"));
+        }
     }
 
     private void selectStringImpl(T ref) {
@@ -102,6 +145,7 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
 
     public void addReference(T ref) {
         this.addReferenceImpl(ref);
+        this.sortList();
     }
 
     public void removeReference(T ref) {
