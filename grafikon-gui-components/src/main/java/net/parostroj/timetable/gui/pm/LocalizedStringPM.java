@@ -95,4 +95,9 @@ public class LocalizedStringPM extends AbstractPM {
     public LolizationEditResult getCurrentEdit() {
         return this.currentResult;
     }
+
+    public ITextPM getSelected() {
+        StringWithLocalePM selected = strings.getSelection().getFirst();
+        return selected != null ? selected.string : null;
+    }
 }
