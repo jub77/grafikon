@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.template.TemplateOutputResources;
+import net.parostroj.timetable.output2.util.WrapperLogMap;
 
 /**
  * Instance writes output of templates to disk.
@@ -219,8 +220,8 @@ public class OutputWriter {
 
     private Map<String, Object> updateContext(OutputTemplate outputTemplate, Map<String, Object> context) {
         if (context == null) context = new HashMap<>();
-        context.put("settings", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
-        context.put("localization", outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
+        context.put("settings", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
+        context.put("localization", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
         return context;
     }
 
