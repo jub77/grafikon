@@ -13,7 +13,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 public abstract class GroovyTemplateBinding {
 
-    private static final Logger templateLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Template");
+    private static final Logger templateLog = LoggerFactory.getLogger(OutputWriter.OUTPUT_TEMPLATE_LOG_NAME);
 
     public Map<String, Object> get(TrainDiagram diagram, OutputParams params, Locale locale) {
         Map<String, Object> binding = new HashMap<>();

@@ -17,6 +17,9 @@ import net.parostroj.timetable.output2.util.WrapperLogMap;
  */
 public class OutputWriter {
 
+    public static final String OUTPUT_TEMPLATE_LOG_NAME = "net.parostroj.timetable.output2.Template";
+    public static final String OUTPUT_SCRIPT_LOG_NAME = "net.parostroj.timetable.output2.Script";
+
     public interface ProcessListener {
 
         public void processed(OutputTemplate template);
@@ -88,7 +91,8 @@ public class OutputWriter {
         }
     }
 
-    private static final Logger scriptLog = LoggerFactory.getLogger("net.parostroj.timetable.output2.Script");
+    private static final Logger scriptLog = LoggerFactory.getLogger(OUTPUT_SCRIPT_LOG_NAME);
+    private static final Logger templateLog = LoggerFactory.getLogger(OUTPUT_TEMPLATE_LOG_NAME);
 
     private OutputTemplate errorTemplate;
 
@@ -138,8 +142,8 @@ public class OutputWriter {
             binding.put("diagram", diagram);
             binding.put("template", template);
             binding.put("log", scriptLog);
-            binding.put("settings", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS));
-            binding.put("localization", template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N));
+            binding.put("settings", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
+            binding.put("localization", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
             binding.put("locale", settings.getLocale());
             binding.put("outputs", new OutputCollector() {
                 @Override
@@ -220,8 +224,8 @@ public class OutputWriter {
 
     private Map<String, Object> updateContext(OutputTemplate outputTemplate, Map<String, Object> context) {
         if (context == null) context = new HashMap<>();
-        context.put("settings", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
-        context.put("localization", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
+        context.put("settings", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), templateLog, "settings"));
+        context.put("localization", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), templateLog, "localization"));
         return context;
     }
 
