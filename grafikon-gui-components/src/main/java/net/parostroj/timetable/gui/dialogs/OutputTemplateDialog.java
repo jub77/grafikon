@@ -30,9 +30,11 @@ import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.components.EditLocalizedStringListAddRemovePanel;
+import net.parostroj.timetable.gui.components.EditLocalizedStringMultilinePanel;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
 import net.parostroj.timetable.gui.pm.ARLocalizedStringListPM;
 import net.parostroj.timetable.gui.pm.LocalizationTypeFactory;
+import net.parostroj.timetable.gui.pm.LocalizedStringPM;
 
 import java.awt.Font;
 
@@ -109,7 +111,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         extensionTextField.setEnabled(!isScript);
         scriptEditBox.setScript(template.getScript());
         scriptEditBox.setEnabled(isScript);
-        descriptionTextArea.setText(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
+        LocalizedString description = template.getDescription();
+        LocalizedStringPM pm = new LocalizedStringPM();
+        pm.init(description != null ? description : LocalizedString.fromString(""), template.getDiagram().getLocales());
+        descriptionTextArea.setPresentationModel(pm);
         // localization
         i18nProvider.setPresentationModel(this.createPM(template.getDiagram(), template));
         // setup
@@ -269,8 +274,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         JScrollPane descriptionScrollPane = new JScrollPane();
         descriptionPanel.add(descriptionScrollPane);
 
-        descriptionTextArea = new JTextArea();
-        descriptionTextArea.setLineWrap(true);
+        descriptionTextArea = new EditLocalizedStringMultilinePanel(5, 5);
         // same font as script area
         descriptionTextArea.setFont(scriptEditBox.getScriptFont());
         descriptionScrollPane.setViewportView(descriptionTextArea);
@@ -308,8 +312,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                     ObjectsUtil.checkAndTrim(extensionTextField.getText()));
             this.template.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
-            this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
-                    ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
+            LocalizedString description = descriptionTextArea.getPresentationModel().getCurrentEdit().get();
+            description = description.getDefaultString().trim().isEmpty() ? null : description;
+            this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION, description);
             this.setVisible(false);
 
             // localization
@@ -341,8 +346,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                     ObjectsUtil.checkAndTrim(extensionTextField.getText()));
             outputTemplate.setScript(scriptCheckBox.isSelected() ? scriptEditBox.getScript() : null);
-            outputTemplate.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION,
-                    ObjectsUtil.checkAndTrim(descriptionTextArea.getText()));
             writeBackLocalization();
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_I18N);
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
@@ -391,6 +394,6 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private javax.swing.JComboBox<String> outputComboBox;
     private javax.swing.JTabbedPane tabbedPane;
     private ScriptEditBox scriptEditBox;
-    private JTextArea descriptionTextArea;
+    private EditLocalizedStringMultilinePanel descriptionTextArea;
     private AttributesPanel setupPanel;
 }

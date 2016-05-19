@@ -108,6 +108,10 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         return output != null ? output : DEFAULT_OUTPUT;
     }
 
+    public LocalizedString getDescription() {
+        return this.getAttribute(ATTR_DESCRIPTION, LocalizedString.class);
+    }
+
     @Override
     public Attributes getAttributes() {
         return attributes;
@@ -118,6 +122,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
      *
      * @param listener listener
      */
+    @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
@@ -127,6 +132,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
      *
      * @param listener listener
      */
+    @Override
     public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }

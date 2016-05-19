@@ -7,6 +7,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 
@@ -117,17 +118,19 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
         // description
         if (selectedCount == 1) {
-            String description = templatesModel.getIndex(templateList.getSelectedIndex()).getElement()
-                    .getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
-            updateDescription(description);
+            updateDescription(templatesModel.getIndex(templateList.getSelectedIndex()).getElement().getDescription());
         } else {
-            updateDescription("");
+            updateDescription(null);
         }
     }
 
-    private void updateDescription(String description) {
-        descriptionTextArea.setText(description);
-        descriptionTextArea.moveCaretPosition(0);
+    private void updateDescription(LocalizedString description) {
+        if (description == null) {
+            descriptionTextArea.setText("");
+        } else {
+            descriptionTextArea.setText(description.translate(Locale.getDefault()));
+            descriptionTextArea.moveCaretPosition(0);
+        }
     }
 
     private void initComponents() {
@@ -325,7 +328,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
             // update description
-            updateDescription(template.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class));
+            updateDescription(template.getDescription());
         }
     }
 

@@ -159,7 +159,7 @@ public class LoadFilter {
             for (TimeInterval interval : train) {
                 String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
                 if (comment != null) {
-                    interval.setAttribute(TimeInterval.ATTR_COMMENT, LocalizedString.newBuilder(comment).build());
+                    interval.setAttribute(TimeInterval.ATTR_COMMENT, LocalizedString.fromString(comment));
                 }
             }
         }
@@ -168,6 +168,13 @@ public class LoadFilter {
             if (!circulationType.isDefaultType() && circulationType.getDisplayName() == null) {
                 circulationType.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME,
                         LocalizedString.fromString(circulationType.getName()));
+            }
+        }
+        // (3) descriptions of output templates
+        for (OutputTemplate ot : diagram.getOutputTemplates()) {
+            String desc = ot.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
+            if (desc != null) {
+                ot.setAttribute(OutputTemplate.ATTR_DESCRIPTION, LocalizedString.fromString(desc));
             }
         }
     }
