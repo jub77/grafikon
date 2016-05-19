@@ -325,6 +325,11 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         }
     }
 
+    /**
+     * Creates output template for testing generation of an output.
+     *
+     * @return template
+     */
     private OutputTemplate createTempOutputTemplate() {
         try {
             TextTemplate textTemplate = this.convertToTemplate();
@@ -341,6 +346,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             writeBackLocalization();
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_I18N);
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
+            outputTemplate.getAttachments().addAll(template.getAttachments());
             return outputTemplate;
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
