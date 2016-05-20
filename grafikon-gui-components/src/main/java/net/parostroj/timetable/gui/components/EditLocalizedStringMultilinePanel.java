@@ -20,6 +20,7 @@ import org.beanfabrics.swing.list.BnList;
 import org.beanfabrics.swing.list.CellConfig;
 
 import net.parostroj.timetable.gui.pm.LocalizedStringPM;
+import javax.swing.ListSelectionModel;
 
 public class EditLocalizedStringMultilinePanel extends JPanel implements View<LocalizedStringPM>, ModelSubscriber {
 
@@ -63,6 +64,7 @@ public class EditLocalizedStringMultilinePanel extends JPanel implements View<Lo
         panel.add(listScrollPane, BorderLayout.WEST);
 
         BnList list = new BnList();
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listScrollPane.setViewportView(list);
         list.setModelProvider(localModelProvider);
         Path stringsPath = new Path("strings");
