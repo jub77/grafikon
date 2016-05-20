@@ -21,6 +21,7 @@ public class LocalizationPM<T extends Reference<LocalizedString>> extends Abstra
         ok = new OperationPM();
         types = new EnumeratedValuesPM<>(new Options<>());
         selected = new LocalizedStringListPM<>();
+        selected.setSorted(true);
         types.addPropertyChangeListener("text", evt -> {
             LocalizationType<T> item = types.getValue();
             if (item != null) {
