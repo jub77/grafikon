@@ -259,7 +259,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         scriptEditBox.setColumns(60);
 
         EditLocalizedStringListAddRemovePanel localizePanel = new EditLocalizedStringListAddRemovePanel(
-                new Path("this"), i18nProvider, 5);
+                new Path("this"), i18nProvider, 5, false);
         localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.localization"), null, localizePanel, null); // NOI18N
 

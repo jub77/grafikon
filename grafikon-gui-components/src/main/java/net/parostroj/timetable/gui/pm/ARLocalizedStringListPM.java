@@ -20,6 +20,9 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
     final OperationPM remove;
     final OperationPM ok;
 
+    final OperationPM moveUp;
+    final OperationPM moveDown;
+
     private boolean nonEmpty;
     private boolean selected;
     private ARLocalizationType<T> type;
@@ -29,6 +32,8 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         add = new OperationPM();
         remove = new OperationPM();
         ok = new OperationPM();
+        moveUp = new OperationPM();
+        moveDown = new OperationPM();
         newKey = new TextPM();
 
         PMManager.setup(this);
@@ -60,13 +65,27 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         return true;
     }
 
+    @Operation(path = { "moveUp" })
+    public boolean moveUp() {
+        int selectedIndex = localized.list.getSelection().getMaxIndex();
+        localized.list.swap(selectedIndex, selectedIndex - 1);
+        return true;
+    }
+
+    @Operation(path = { "moveDown" })
+    public boolean moveDown() {
+        int selectedIndex = localized.list.getSelection().getMinIndex();
+        localized.list.swap(selectedIndex, selectedIndex + 1);
+        return true;
+    }
+
     @Operation(path = { "ok" })
     public boolean ok() {
         type.writeBack();
         return true;
     }
 
-    @OnChange(path = {"localized.list"})
+    @OnChange(path = { "localized.list" })
     public void changedList() {
         boolean oldSelected = selected;
         selected = !localized.list.getSelection().isEmpty();
@@ -89,9 +108,19 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         return nonEmpty;
     }
 
-    @Validation(path = {"remove"})
+    @Validation(path = { "remove" })
     public boolean canRemove() {
         return selected;
+    }
+
+    @Validation(path = { "moveUp" })
+    public boolean canMoveUp() {
+        return selected && !localized.isSorted() && localized.list.getSelection().getMinIndex() > 0;
+    }
+
+    @Validation(path = { "moveDown" })
+    public boolean canMoveDown() {
+        return selected && !localized.isSorted() && localized.list.size() - 1 > localized.list.getSelection().getMaxIndex() ;
     }
 
     public void setSorted(boolean sorted) {

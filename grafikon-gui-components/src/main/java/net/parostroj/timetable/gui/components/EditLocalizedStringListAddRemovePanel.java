@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.utils.GuiIcon;
 
 public class EditLocalizedStringListAddRemovePanel extends JPanel {
 
-    public EditLocalizedStringListAddRemovePanel(Path basePath, IModelProvider provider, int gap) {
+    public EditLocalizedStringListAddRemovePanel(Path basePath, IModelProvider provider, int gap, boolean move) {
         setLayout(new BorderLayout(gap, gap));
 
         JPanel localized = new EditLocalizedStringListPanel(
@@ -50,6 +50,22 @@ public class EditLocalizedStringListAddRemovePanel extends JPanel {
         removeButton.setModelProvider(provider);
         removeButton.setPath(new Path("remove"));
         addPanel.add(removeButton);
+
+        if (move) {
+            addPanel.add(Box.createHorizontalStrut(gap));
+
+            BnButton up = GuiComponentUtils.createBnButton(GuiIcon.GO_UP, 2);
+            up.setModelProvider(provider);
+            up.setPath(new Path("moveUp"));
+            addPanel.add(up);
+
+            addPanel.add(Box.createHorizontalStrut(gap));
+
+            BnButton down = GuiComponentUtils.createBnButton(GuiIcon.GO_DOWN, 2);
+            down.setModelProvider(provider);
+            down.setPath(new Path("moveDown"));
+            addPanel.add(down);
+        }
 
         this.add(addPanel, BorderLayout.SOUTH);
     }

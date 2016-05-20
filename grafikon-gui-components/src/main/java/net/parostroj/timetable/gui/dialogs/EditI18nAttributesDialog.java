@@ -37,7 +37,7 @@ public class EditI18nAttributesDialog extends JDialog implements GuiContextCompo
         contentPanel.setLayout(new BorderLayout(5, 5));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        contentPanel.add(new EditLocalizedStringListAddRemovePanel(new Path("this"), provider, 5), BorderLayout.CENTER);
+        contentPanel.add(new EditLocalizedStringListAddRemovePanel(new Path("this"), provider, 5, false), BorderLayout.CENTER);
 
         JPanel panel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
@@ -74,6 +74,7 @@ public class EditI18nAttributesDialog extends JDialog implements GuiContextCompo
         ARLocalizationType<AttributeReference<LocalizedString>> type = LocalizationTypeFactory.createInstance()
                 .createEditFromAttributeHolder(diagram, holder, OutputTemplate.CATEGORY_I18N);
         ARLocalizedStringListPM<AttributeReference<LocalizedString>> pm = new ARLocalizedStringListPM<>();
+        pm.setSorted(true);
         pm.init(type);
         return pm;
     }
