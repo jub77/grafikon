@@ -1,6 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 
 import javax.swing.*;
 
@@ -19,8 +20,8 @@ public class ScriptOutputDialog extends javax.swing.JDialog {
         textArea.setText(text);
     }
 
-    public ScriptOutputDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ScriptOutputDialog(Window parent, boolean modal) {
+        super(parent, modal ? JDialog.DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
 
         JPanel panel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();

@@ -1,5 +1,12 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Window;
+import java.util.function.BiConsumer;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +26,18 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
 
     private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
 
-    private Script selectedScript;
+    private BiConsumer<Script, Window> executor;
+    private int counter;
 
-    /** Creates new form ScriptDialog */
     public ScriptDialog(java.awt.Window parent, boolean modal) {
-        super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
+        super(parent, modal ? JDialog.DEFAULT_MODALITY_TYPE : ModalityType.MODELESS);
         initComponents();
+    }
+
+    public void showDialog(Script script, BiConsumer<Script, Window> executor) {
+        this.executor = executor;
+        this.setScript(script);
+        this.setVisible(true);
     }
 
     @Override
@@ -36,7 +49,7 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
         return scriptEditBox.getScript();
     }
 
-    public void setScript(Script script) {
+    private void setScript(Script script) {
         scriptEditBox.setScript(script);
     }
 
@@ -45,15 +58,11 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
         scriptEditBox.setRows(rows);
     }
 
-    public Script getSelectedScript() {
-        return selectedScript;
-    }
-
     private void initComponents() {
         scriptEditBox = new net.parostroj.timetable.gui.components.ScriptEditBox();
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton executeButton = new javax.swing.JButton();
+        javax.swing.JButton closeButton = new javax.swing.JButton();
 
         setTitle(ResourceLoader.getString("script.editing")); // NOI18N
 
@@ -64,38 +73,50 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
 
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
-        buttonPanel.add(okButton);
+        executeButton.setText(ResourceLoader.getString("button.execute")); // NOI18N
+        executeButton.addActionListener(evt -> executeButtonActionPerformed(evt));
+        buttonPanel.add(executeButton);
 
-        cancelButton.setText(ResourceLoader.getString("button.cancel")); // NOI18N
-        cancelButton.addActionListener(e -> this.setVisible(false));
-        buttonPanel.add(cancelButton);
+        closeButton.setText(ResourceLoader.getString("button.close")); // NOI18N
+        closeButton.addActionListener(e -> this.setVisible(false));
+        buttonPanel.add(closeButton);
 
-        getContentPane().add(buttonPanel, java.awt.BorderLayout.PAGE_END);
+        statusBar = new javax.swing.JTextField();
+        statusBar.setEditable(false);
+
+        javax.swing.JPanel statusBarEnc = new javax.swing.JPanel();
+        statusBarEnc.setLayout(new BorderLayout());
+        statusBarEnc.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        statusBarEnc.add(statusBar, BorderLayout.CENTER);
+
+        javax.swing.JPanel statusBarPanel = new javax.swing.JPanel();
+        statusBarPanel.setLayout(new java.awt.BorderLayout());
+        statusBarPanel.add(statusBarEnc, BorderLayout.CENTER);
+        statusBarPanel.add(buttonPanel, BorderLayout.EAST);
+
+        getContentPane().add(statusBarPanel, java.awt.BorderLayout.PAGE_END);
 
         pack();
     }
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void executeButtonActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            selectedScript = this.getScript();
-            this.setVisible(false);
+            statusBar.setText("");
+            counter++;
+            Script script = this.getScript();
+            if (executor != null) {
+                long time = System.currentTimeMillis();
+                executor.accept(script, this);
+                statusBar.setText(String.format("%d (%dms)", counter, System.currentTimeMillis() - time));
+            }
         } catch (GrafikonException e) {
+            statusBar.setText(String.format("%d", counter));
             log.error("Error creating script.", e);
             String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             GuiComponentUtils.showError(message, this);
         }
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        if (b)
-            selectedScript = null;
-        super.setVisible(b);
-    }
-
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton okButton;
     private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
+    private javax.swing.JTextField statusBar;
 }

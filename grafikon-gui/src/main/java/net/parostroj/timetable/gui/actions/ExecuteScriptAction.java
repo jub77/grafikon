@@ -3,11 +3,13 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.swing.AbstractAction;
 
@@ -90,13 +92,13 @@ public class ExecuteScriptAction extends AbstractAction {
         if (lastScript == null) {
             loadScriptFromPreferences();
         }
-        dialog.setScript(lastScript);
         dialog.setLocationRelativeTo(parent);
         dialog.registerContext(model.getGuiContext());
-        dialog.setVisible(true);
-        // selected script
-        Script selectedScript = dialog.getSelectedScript();
-        if (selectedScript != null) {
+        dialog.showDialog(lastScript, createExecutor());
+    }
+
+    private BiConsumer<Script, Window> createExecutor() {
+        return (selectedScript, parent) -> {
             lastScript = selectedScript;
             // binding
             Map<String, Object> binding = new HashMap<String, Object>();
@@ -118,7 +120,7 @@ public class ExecuteScriptAction extends AbstractAction {
                 String outString = output.toString();
                 if (!outString.isEmpty()) {
                     // show in a window
-                    ScriptOutputDialog outputDialog = new ScriptOutputDialog((Frame) parent, true);
+                    ScriptOutputDialog outputDialog = new ScriptOutputDialog(parent, true);
                     outputDialog.setText(outString);
                     outputDialog.setLocationRelativeTo(parent);
                     outputDialog.setVisible(true);
@@ -128,7 +130,7 @@ public class ExecuteScriptAction extends AbstractAction {
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 GuiComponentUtils.showError(message, parent);
             }
-        }
+        };
     }
 
     private void loadScriptFromPreferences() {
