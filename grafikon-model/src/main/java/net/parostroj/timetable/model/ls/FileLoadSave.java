@@ -13,19 +13,21 @@ import net.parostroj.timetable.model.TrainDiagram;
  */
 public interface FileLoadSave {
 
-    public TrainDiagram load(File file) throws LSException;
+    TrainDiagram load(File file) throws LSException;
 
-    public TrainDiagram load(ZipInputStream is) throws LSException;
+    TrainDiagram load(ZipInputStream is) throws LSException;
 
-    public void save(TrainDiagram diagram, File file) throws LSException;
+    void save(TrainDiagram diagram, File file) throws LSException;
 
-    public void save(TrainDiagram diagram, ZipOutputStream os) throws LSException;
+    void save(TrainDiagram diagram, ZipOutputStream os) throws LSException;
 
-    public List<ModelVersion> getLoadVersions();
+    List<ModelVersion> getLoadVersions();
 
-    public ModelVersion getSaveVersion();
+    ModelVersion getSaveVersion();
 
-    public Object getProperty(String key);
+    Object getProperty(String key);
 
-    public void setProperty(String key, Object value);
+    void setProperty(String key, Object value);
+
+    LibraryLoadSave getLibraryLoadSave();
 }

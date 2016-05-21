@@ -9,6 +9,7 @@ import java.util.zip.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.FileLoadSave;
 import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LibraryLoadSave;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
@@ -201,5 +202,11 @@ public class FileLoadSaveImpl implements FileLoadSave {
     @Override
     public void setProperty(String key, Object value) {
         // no properties available
+    }
+
+    @Override
+    public LibraryLoadSave getLibraryLoadSave() {
+        // no library support
+        return null;
     }
 }

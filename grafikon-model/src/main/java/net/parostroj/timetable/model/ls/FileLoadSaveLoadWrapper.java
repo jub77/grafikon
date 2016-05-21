@@ -11,7 +11,7 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public class FileLoadSaveLoadWrapper implements FileLoadSave {
+class FileLoadSaveLoadWrapper implements FileLoadSave {
 
     private final FileLoadSave impl;
 
@@ -57,5 +57,11 @@ public class FileLoadSaveLoadWrapper implements FileLoadSave {
     @Override
     public void setProperty(String key, Object value) {
         impl.setProperty(key, value);
+    }
+
+    @Override
+    public LibraryLoadSave getLibraryLoadSave() {
+        LibraryLoadSave lls = impl.getLibraryLoadSave();
+        return lls == null ? null : new LibraryLoadSaveWrapper(lls);
     }
 }
