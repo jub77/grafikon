@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import javax.swing.AbstractAction;
 
@@ -97,7 +97,7 @@ public class ExecuteScriptAction extends AbstractAction {
         dialog.showDialog(lastScript, createExecutor());
     }
 
-    private BiConsumer<Script, Window> createExecutor() {
+    private BiFunction<Script, Window, Object> createExecutor() {
         return (selectedScript, parent) -> {
             lastScript = selectedScript;
             // binding
@@ -107,11 +107,12 @@ public class ExecuteScriptAction extends AbstractAction {
             binding.put("output", new PrintWriter(output));
             binding.put("parent", parent);
             try {
+                Object result = null;
                 parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 long time = System.currentTimeMillis();
                 // execute
                 try {
-                    selectedScript.evaluateWithException(binding);
+                    result = selectedScript.evaluateWithException(binding);
                     saveScriptToPreferences();
                 } finally {
                     parent.setCursor(Cursor.getDefaultCursor());
@@ -125,10 +126,12 @@ public class ExecuteScriptAction extends AbstractAction {
                     outputDialog.setLocationRelativeTo(parent);
                     outputDialog.setVisible(true);
                 }
+                return result;
             } catch (Exception ex) {
                 log.warn("Script error: {}: {}", ex.getClass().getName(), ex.getMessage());
                 String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
                 GuiComponentUtils.showError(message, parent);
+                return null;
             }
         };
     }

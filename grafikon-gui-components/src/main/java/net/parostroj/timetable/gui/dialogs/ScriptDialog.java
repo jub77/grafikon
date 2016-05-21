@@ -2,7 +2,7 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -26,7 +26,7 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
 
     private static final Logger log = LoggerFactory.getLogger(ScriptDialog.class);
 
-    private BiConsumer<Script, Window> executor;
+    private BiFunction<Script, Window, Object> executor;
     private int counter;
 
     public ScriptDialog(java.awt.Window parent, boolean modal) {
@@ -34,7 +34,7 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
         initComponents();
     }
 
-    public void showDialog(Script script, BiConsumer<Script, Window> executor) {
+    public void showDialog(Script script, BiFunction<Script, Window, Object> executor) {
         this.executor = executor;
         this.setScript(script);
         this.setVisible(true);
@@ -106,11 +106,10 @@ public class ScriptDialog extends javax.swing.JDialog implements GuiContextCompo
             Script script = this.getScript();
             if (executor != null) {
                 long time = System.currentTimeMillis();
-                executor.accept(script, this);
-                statusBar.setText(String.format("%d (%dms)", counter, System.currentTimeMillis() - time));
+                Object result = executor.apply(script, this);
+                statusBar.setText(String.format(ResourceLoader.getString("script.message"), counter, System.currentTimeMillis() - time, result));
             }
         } catch (GrafikonException e) {
-            statusBar.setText(String.format("%d", counter));
             log.error("Error creating script.", e);
             String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             GuiComponentUtils.showError(message, this);
