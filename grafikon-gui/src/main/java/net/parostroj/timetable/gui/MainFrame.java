@@ -194,23 +194,23 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // add predefined scripts
         for (ScriptAction sd : model.getScriptsLoader().getScriptActions()) {
-            addScriptAction(sd, ExecuteScriptAction.MODEL_PREFIX);
+            addScriptAction(sd, ExecuteScriptAction.MODEL_PREFIX, scriptsMenuModel);
         }
 
         // add gui scripts
         for (ScriptAction sd : model.getGuiScriptsLoader().getScriptActions()) {
-            addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX);
+            addScriptAction(sd, ExecuteScriptAction.GUI_PREFIX, scriptsMenuGui);
         }
 
         statusBar.setModel(model);
     }
 
-    private void addScriptAction(ScriptAction sd, String type) {
+    private void addScriptAction(ScriptAction sd, String type, JMenu sMenu) {
         JMenuItem item = new JMenuItem();
         item.setAction(executeScriptAction);
         item.setText(sd.getLocalizedName());
         item.setActionCommand(type + sd.getId());
-        scriptsMenu.add(item);
+        sMenu.add(item);
     }
 
     @Override
@@ -325,7 +325,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         javax.swing.JMenuItem oLanguageMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu viewsMenu = new javax.swing.JMenu();
         javax.swing.JMenu specialMenu = new javax.swing.JMenu();
-        scriptsMenu = new javax.swing.JMenu();
+        scriptsMenuModel = new javax.swing.JMenu();
+        scriptsMenuGui = new javax.swing.JMenu();
         javax.swing.JMenu settingsMenu = new javax.swing.JMenu();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
 
@@ -414,12 +415,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         viewsMenu.setText(ResourceLoader.getString("menu.views")); // NOI18N
         menuBar.add(viewsMenu);
 
-        specialMenu.setText(ResourceLoader.getString("menu.special")); // NOI18N
+        specialMenu.setText(ResourceLoader.getString("menu.special.scripts")); // NOI18N
 
         this.addMenuItem(specialMenu, "menu.special.execute.script", executeScriptAction, ""); // NOI18N
         specialMenu.add(new javax.swing.JSeparator());
-        scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
-        specialMenu.add(scriptsMenu);
+        scriptsMenuModel.setText(ResourceLoader.getString("menu.special.predefined.scripts.model")); // NOI18N
+        specialMenu.add(scriptsMenuModel);
+        scriptsMenuGui.setText(ResourceLoader.getString("menu.special.predefined.scripts.gui")); // NOI18N
+        specialMenu.add(scriptsMenuGui);
         specialMenu.add(new javax.swing.JSeparator());
         this.addMenuItem(specialMenu, "menu.special.recalculate", new RecalculateAction(model), null); // NOI18N
         this.addMenuItem(specialMenu, "menu.special.recalculate.stops", new RecalculateStopsAction(model), null); // NOI18N
@@ -450,7 +453,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         // enabled list
         enabled.add(tabbedPane);
-        enabled.add(scriptsMenu);
+        enabled.add(scriptsMenuModel);
+        enabled.add(scriptsMenuGui);
 
         setMinimumSize(new java.awt.Dimension(800, 600));
         setSize(getMinimumSize());
@@ -800,7 +804,8 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane engineCyclesPane;
     private net.parostroj.timetable.gui.panes.TrainsCyclesPane trainUnitCyclesPane;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu scriptsMenu;
+    private javax.swing.JMenu scriptsMenuModel;
+    private javax.swing.JMenu scriptsMenuGui;
     private javax.swing.JCheckBoxMenuItem showGTViewMenuItem;
     private net.parostroj.timetable.gui.StatusBar statusBar;
 }
