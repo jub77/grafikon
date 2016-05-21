@@ -33,6 +33,8 @@ public class LSAttributesItem {
     private static final String LINE_CLASS_KEY = "model.line.class";
     private static final String MODEL_OBJECT_KEY = "model.object";
 
+    private static final String TEXT_TEMPLATE_KEY_PREFIX = "text.template.";
+    private static final String SCRIPT_KEY_PREFIX = "script.";
 
     private String key;
     private List<LSAttributesValue> values;
@@ -95,7 +97,10 @@ public class LSAttributesItem {
             cValue = new LSAttributesValue(((Locale) value).toLanguageTag(), "locale");
         } else if (value instanceof TextTemplate) {
             TextTemplate tt = (TextTemplate) value;
-            cValue = new LSAttributesValue(tt.getTemplate(), "text.template." + tt.getLanguage().name());
+            cValue = new LSAttributesValue(tt.getTemplate(), TEXT_TEMPLATE_KEY_PREFIX + tt.getLanguage().name());
+        } else if (value instanceof Script) {
+            Script script = (Script) value;
+            cValue = new LSAttributesValue(script.getSourceCode(), SCRIPT_KEY_PREFIX + script.getLanguage().name());
         } else if (value instanceof ObjectWithId) {
             Pair<String, String> pair = this.convertToId((ObjectWithId) value);
             cValue = new LSAttributesValue(pair.second, pair.first);
@@ -200,8 +205,10 @@ public class LSAttributesItem {
             return FreightColor.getByKey(value);
         } else if (valueType.equals("locale")) {
             return Locale.forLanguageTag(value);
-        } else if (valueType.startsWith("text.template.")) {
+        } else if (valueType.startsWith(TEXT_TEMPLATE_KEY_PREFIX)) {
             return this.convertTextTemplate(value, valueType);
+        } else if (valueType.startsWith(SCRIPT_KEY_PREFIX)) {
+            return this.convertScript(value, valueType);
         } else if (valueType.startsWith("model.")) {
             return this.convertModelValue(diagram, value, valueType);
         } else if (valueType.startsWith("string.")) {
@@ -219,12 +226,22 @@ public class LSAttributesItem {
     }
 
     private Object convertTextTemplate(String value, String valueType) throws LSException {
-        String languageStr = valueType.substring("text.template.".length());
+        String languageStr = valueType.substring(TEXT_TEMPLATE_KEY_PREFIX.length());
         TextTemplate.Language language = TextTemplate.Language.valueOf(languageStr);
         try {
             return TextTemplate.createTextTemplate(value, language);
         } catch (GrafikonException e) {
             throw new LSException("Cannot convert template: " + e.getMessage(), e);
+        }
+    }
+
+    private Object convertScript(String value, String valueType) throws LSException {
+        String languageStr = valueType.substring(SCRIPT_KEY_PREFIX.length());
+        Script.Language language = Script.Language.valueOf(languageStr);
+        try {
+            return Script.createScript(value, language);
+        } catch (GrafikonException e) {
+            throw new LSException("Cannot convert script: " + e.getMessage(), e);
         }
     }
 
