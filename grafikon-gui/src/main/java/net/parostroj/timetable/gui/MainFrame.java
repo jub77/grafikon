@@ -416,13 +416,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         specialMenu.setText(ResourceLoader.getString("menu.special")); // NOI18N
 
+        this.addMenuItem(specialMenu, "menu.special.execute.script", executeScriptAction, ""); // NOI18N
+        specialMenu.add(new javax.swing.JSeparator());
+        scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
+        specialMenu.add(scriptsMenu);
+        specialMenu.add(new javax.swing.JSeparator());
         this.addMenuItem(specialMenu, "menu.special.recalculate", new RecalculateAction(model), null); // NOI18N
         this.addMenuItem(specialMenu, "menu.special.recalculate.stops", new RecalculateStopsAction(model), null); // NOI18N
         this.addMenuItem(specialMenu, "menu.special.remove.weights", new RemoveWeightsAction(model), null); // NOI18N
-        this.addMenuItem(specialMenu, "menu.special.execute.script", executeScriptAction, ""); // NOI18N
-
-        scriptsMenu.setText(ResourceLoader.getString("menu.special.predefined.scripts")); // NOI18N
-        specialMenu.add(scriptsMenu);
 
         menuBar.add(specialMenu);
 
