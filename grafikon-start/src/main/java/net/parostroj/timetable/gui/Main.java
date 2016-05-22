@@ -21,6 +21,10 @@ public class Main {
     private static final String FORMAT = "%1$tF %1$tT %4$s %3$s %5$s%6$s%n";
 
     static {
+        initializeLogging();
+    }
+
+    public static void initializeLogging() {
         Logger.getLogger("").setLevel(Level.WARNING);
         netParostrojLogger.setLevel(Level.FINE);
         Logger.getLogger("").getHandlers()[0].setLevel(Level.ALL);
@@ -35,6 +39,10 @@ public class Main {
         } catch (IOException e) {
             netParostrojLogger.log(Level.WARNING, "Cannot initialize logging file.", e);
         }
+    }
+
+    public static void setLoggingLevel(Level level) {
+        netParostrojLogger.setLevel(level);
     }
 
     public static void main(final String[] args) throws Exception {
@@ -67,7 +75,7 @@ public class Main {
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(false));
         }
         Level level = Level.parse(AppPreferences.getSection("debug").get("debug.level", "FINEST"));
-        netParostrojLogger.setLevel(level);
+        setLoggingLevel(level);
     }
 
     private static void setLookAndFeel() throws IOException {
