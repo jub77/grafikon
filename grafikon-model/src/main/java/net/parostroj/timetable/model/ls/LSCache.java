@@ -42,7 +42,8 @@ class LSCache<T extends LSVersions> {
                 cacheSave.put(fls.getSaveVersion(), fls.getClass());
             }
         }
-        log.debug("[{}] Latest: {}", clazz.getSimpleName(), getLatestSaveVersion());
+        ModelVersion latest = getLatestSaveVersion();
+        log.debug("[{}] Latest: {}", clazz.getSimpleName(), latest == null ? "<none>" : latest);
     }
 
     public ModelVersion getLatestSaveVersion() {
