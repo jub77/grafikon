@@ -51,7 +51,7 @@ public class ModelUtils {
                 log.warn("Error updating values for current diagram change set.", e);
             }
         }
-        LSFile ls = LSFileFactory.getInstance().createLatestForSave();
+        LSFile ls = LSFileFactory.getInstance().createForSave();
         ls.save(model.getDiagram(), file);
     }
 

@@ -23,7 +23,7 @@ class AbstractLSFactory<T extends LSVersions> {
         lsFileCache = new LSCache<>(cacheType, versionKey);
     }
 
-    public T createLatestForSave() throws LSException {
+    public T createForSave() throws LSException {
         return lsFileCache.createLatestForSave();
     }
 

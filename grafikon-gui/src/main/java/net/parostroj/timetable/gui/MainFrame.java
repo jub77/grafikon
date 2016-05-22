@@ -648,7 +648,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         LSFileFactory f = LSFileFactory.getInstance();
         LSFile fls = null;
         try {
-            fls = f.createLatestForSave();
+            fls = f.createForSave();
         } catch (LSException e) {
             log.warn("Cannot create FileLoadSave", e);
         }
