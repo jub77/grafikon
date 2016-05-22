@@ -7,7 +7,6 @@ package net.parostroj.timetable.model.save;
 
 import java.util.zip.ZipException;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LibraryLoadSave;
 import net.parostroj.timetable.model.ls.ModelVersion;
 import java.io.*;
 import java.util.Arrays;
@@ -21,14 +20,14 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 
 /**
  * Helper class for loading/saving model and other parts.
  *
  * @author jub
  */
-public class LoadSave implements FileLoadSave {
+public class LoadSave implements LSFile {
 
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
@@ -188,11 +187,5 @@ public class LoadSave implements FileLoadSave {
     @Override
     public void setProperty(String key, Object value) {
         // no properties available
-    }
-
-    @Override
-    public LibraryLoadSave getLibraryLoadSave() {
-        // no libray support
-        return null;
     }
 }

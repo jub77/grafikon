@@ -24,14 +24,14 @@ public class LSFileFactory {
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
     private static final LSFileFactory instance = new LSFileFactory();
-    private static final Map<ModelVersion, Class<? extends FileLoadSave>> cacheLoad = new ConcurrentHashMap<ModelVersion, Class<? extends FileLoadSave>>();
-    private static final Map<ModelVersion, Class<? extends FileLoadSave>> cacheSave = new ConcurrentHashMap<ModelVersion, Class<? extends FileLoadSave>>();
+    private static final Map<ModelVersion, Class<? extends LSFile>> cacheLoad = new ConcurrentHashMap<ModelVersion, Class<? extends LSFile>>();
+    private static final Map<ModelVersion, Class<? extends LSFile>> cacheSave = new ConcurrentHashMap<ModelVersion, Class<? extends LSFile>>();
     private static boolean initialized = false;
 
     public static synchronized LSFileFactory getInstance() {
         if (!initialized) {
-            ServiceLoader<FileLoadSave> loader = ServiceLoader.load(FileLoadSave.class);
-            for (FileLoadSave fls : loader) {
+            ServiceLoader<LSFile> loader = ServiceLoader.load(LSFile.class);
+            for (LSFile fls : loader) {
                 List<ModelVersion> versions = fls.getLoadVersions();
                 log.debug("Registered: {}", fls.getClass().getName());
                 for (ModelVersion version : versions) {
@@ -47,18 +47,18 @@ public class LSFileFactory {
         return instance;
     }
 
-    public synchronized FileLoadSave createLatestForSave() throws LSException {
+    public synchronized LSFile createLatestForSave() throws LSException {
         ModelVersion latestVersion = this.getLatestSaveVersion();
         return latestVersion != null ? this.createFLSInstanceForSave(latestVersion) : null;
     }
 
-    public synchronized FileLoadSave createForSave(ModelVersion modelVersion) throws LSException {
+    public synchronized LSFile createForSave(ModelVersion modelVersion) throws LSException {
         return this.createFLSInstanceForSave(modelVersion);
     }
 
     private ModelVersion getLatestSaveVersion() {
-        Map.Entry<ModelVersion, Class<? extends FileLoadSave>> selected = null;
-        for (Map.Entry<ModelVersion, Class<? extends FileLoadSave>> entry : cacheSave.entrySet()) {
+        Map.Entry<ModelVersion, Class<? extends LSFile>> selected = null;
+        for (Map.Entry<ModelVersion, Class<? extends LSFile>> entry : cacheSave.entrySet()) {
             if (selected == null || entry.getKey().compareTo(selected.getKey()) > 0) {
                 selected = entry;
             }
@@ -66,7 +66,7 @@ public class LSFileFactory {
         return selected != null ? selected.getKey() : null;
     }
 
-    public synchronized FileLoadSave createForLoad(ZipInputStream is) throws LSException {
+    public synchronized LSFile createForLoad(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = is.getNextEntry();
             if (entry == null || !entry.getName().equals(METADATA)) {
@@ -83,7 +83,7 @@ public class LSFileFactory {
         }
     }
 
-    public synchronized FileLoadSave createForLoad(File file) throws LSException {
+    public synchronized LSFile createForLoad(File file) throws LSException {
         try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry entry = zipFile.getEntry(METADATA);
             Properties metadata = new Properties();
@@ -100,15 +100,15 @@ public class LSFileFactory {
         }
     }
 
-    public synchronized FileLoadSave createForLoad(ModelVersion modelVersion) throws LSException {
+    public synchronized LSFile createForLoad(ModelVersion modelVersion) throws LSException {
         return this.createFLSInstanceForLoad(modelVersion);
     }
 
-    public synchronized FileLoadSave createForLoad(String modelVersion) throws LSException {
+    public synchronized LSFile createForLoad(String modelVersion) throws LSException {
         return this.createFLSInstanceForLoad(ModelVersion.parseModelVersion(modelVersion));
     }
 
-    private FileLoadSave createFLSInstanceForLoad(Properties metadata) throws LSException {
+    private LSFile createFLSInstanceForLoad(Properties metadata) throws LSException {
         // set model version
         ModelVersion modelVersion = null;
         if (metadata.getProperty(METADATA_KEY_MODEL_VERSION) == null) {
@@ -120,12 +120,12 @@ public class LSFileFactory {
         return this.createFLSInstanceForLoad(modelVersion);
     }
 
-    private FileLoadSave createFLSInstanceForLoad(ModelVersion modelVersion) throws LSException {
+    private LSFile createFLSInstanceForLoad(ModelVersion modelVersion) throws LSException {
         try {
-            Class<? extends FileLoadSave> clazz = cacheLoad.get(modelVersion);
+            Class<? extends LSFile> clazz = cacheLoad.get(modelVersion);
             if (clazz == null)
                 throw new LSException("No FileLoadSave registered for version: " + modelVersion.getVersion());
-            return new FileLoadSaveLoadWrapper(clazz.newInstance());
+            return new LSFileWrapper(clazz.newInstance());
         } catch (InstantiationException ex) {
             throw new LSException(ex);
         } catch (IllegalAccessException ex) {
@@ -133,9 +133,9 @@ public class LSFileFactory {
         }
     }
 
-    private FileLoadSave createFLSInstanceForSave(ModelVersion modelVersion) throws LSException {
+    private LSFile createFLSInstanceForSave(ModelVersion modelVersion) throws LSException {
         try {
-            Class<? extends FileLoadSave> clazz = cacheSave.get(modelVersion);
+            Class<? extends LSFile> clazz = cacheSave.get(modelVersion);
             if (clazz == null)
                 throw new LSException("No FileLoadSave registered for version: " + modelVersion.getVersion());
             return clazz.newInstance();

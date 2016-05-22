@@ -36,7 +36,7 @@ import net.parostroj.timetable.gui.views.EngineCycleDelegate;
 import net.parostroj.timetable.gui.views.TrainUnitCycleDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
@@ -646,7 +646,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // show about dialog
         ResourceBundle aboutBundle = ResourceBundle.getBundle("about");
         LSFileFactory f = LSFileFactory.getInstance();
-        FileLoadSave fls = null;
+        LSFile fls = null;
         try {
             fls = f.createLatestForSave();
         } catch (LSException e) {

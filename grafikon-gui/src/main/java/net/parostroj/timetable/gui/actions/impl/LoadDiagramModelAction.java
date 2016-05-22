@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -41,7 +41,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
         long time = System.currentTimeMillis();
         try {
             try {
-                FileLoadSave ls = LSFileFactory.getInstance().createForLoad(selectedFile);
+                LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
                 context.setAttribute("diagram", ls.load(selectedFile));
             } catch (LSException e) {
                 log.warn("Error loading model.", e);

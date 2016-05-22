@@ -16,7 +16,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -51,7 +51,7 @@ public class ModelUtils {
                 log.warn("Error updating values for current diagram change set.", e);
             }
         }
-        FileLoadSave ls = LSFileFactory.getInstance().createLatestForSave();
+        LSFile ls = LSFileFactory.getInstance().createLatestForSave();
         ls.save(model.getDiagram(), file);
     }
 

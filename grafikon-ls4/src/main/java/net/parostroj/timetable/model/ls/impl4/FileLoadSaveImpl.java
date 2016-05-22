@@ -24,9 +24,8 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LibraryLoadSave;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 /**
@@ -34,7 +33,7 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  *
  * @author jub
  */
-public class FileLoadSaveImpl implements FileLoadSave {
+public class FileLoadSaveImpl implements LSFile {
 
     private static final String METADATA = "metadata.properties";
     private static final String METADATA_KEY_MODEL_VERSION = "model.version";
@@ -300,10 +299,5 @@ public class FileLoadSaveImpl implements FileLoadSave {
     @Override
     public void setProperty(String key, Object value) {
         properties.put(key, value);
-    }
-
-    @Override
-    public LibraryLoadSave getLibraryLoadSave() {
-        return null;
     }
 }

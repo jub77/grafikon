@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.FileLoadSave;
+import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class TemplatesLoader {
                 // create file with template location
                 TrainDiagram diagram = null;
                 try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename()); ZipInputStream is = new ZipInputStream(iStream)) {
-                    FileLoadSave ls = this.getLoadSave(template);
+                    LSFile ls = this.getLoadSave(template);
                     diagram = ls.load(is);
                 } catch (IOException e) {
                     throw new LSException("Error getting model version.", e);
@@ -67,9 +67,9 @@ public class TemplatesLoader {
         return null;
     }
 
-    private FileLoadSave getLoadSave(Template template) throws IOException, LSException {
+    private LSFile getLoadSave(Template template) throws IOException, LSException {
         try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename())) {
-            FileLoadSave ls = LSFileFactory.getInstance().createForLoad(new ZipInputStream(iStream));
+            LSFile ls = LSFileFactory.getInstance().createForLoad(new ZipInputStream(iStream));
             return ls;
         }
     }
