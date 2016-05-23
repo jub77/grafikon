@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 class LSCache<T extends LSVersions> {
 
-    private static final String METADATA = "metadata.properties";
-
     private static final Logger log = LoggerFactory.getLogger(LSCache.class);
 
     private final Map<ModelVersion, Class<? extends LSVersions>> cacheLoad = new ConcurrentHashMap<ModelVersion, Class<? extends LSVersions>>();
@@ -27,10 +25,12 @@ class LSCache<T extends LSVersions> {
 
     private final Class<T> cacheType;
     private final String versionKey;
+    private final String metadataFile;
 
-    public LSCache(Class<T> clazz, String versionKey) {
+    public LSCache(Class<T> clazz, String versionKey, String metadataFile) {
         this.cacheType = clazz;
         this.versionKey = versionKey;
+        this.metadataFile = metadataFile;
         ServiceLoader<T> loader = ServiceLoader.load(clazz);
         for (T fls : loader) {
             List<ModelVersion> versions = fls.getLoadVersions();
@@ -64,8 +64,8 @@ class LSCache<T extends LSVersions> {
     public T createForLoad(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = is.getNextEntry();
-            if (entry == null || !entry.getName().equals(METADATA)) {
-                throw new LSException("Metadata was not the first entry.");
+            if (entry == null || !entry.getName().equals(metadataFile)) {
+                throw new LSException(metadataFile + " was not the first entry.");
             }
             Properties metadata = new Properties();
             if (entry != null) {
@@ -80,7 +80,7 @@ class LSCache<T extends LSVersions> {
 
     public T createForLoad(File file) throws LSException {
         try (ZipFile zipFile = new ZipFile(file)) {
-            ZipEntry entry = zipFile.getEntry(METADATA);
+            ZipEntry entry = zipFile.getEntry(metadataFile);
             Properties metadata = new Properties();
             if (entry != null) {
                 // load metadata

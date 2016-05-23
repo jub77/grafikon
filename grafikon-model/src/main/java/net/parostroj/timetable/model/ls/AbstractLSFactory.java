@@ -10,17 +10,10 @@ import java.util.zip.ZipInputStream;
  */
 class AbstractLSFactory<T extends LSVersions> {
 
-    private final Class<T> cacheType;
-    private final String versionKey;
-    private LSCache<T> lsFileCache;
+    private final LSCache<T> lsFileCache;
 
-    public AbstractLSFactory(Class<T> cacheType, String versionKey) {
-        this.versionKey = versionKey;
-        this.cacheType = cacheType;
-    }
-
-    protected void init() {
-        lsFileCache = new LSCache<>(cacheType, versionKey);
+    public AbstractLSFactory(Class<T> cacheType, String versionKey, String metadataFile) {
+        lsFileCache = new LSCache<>(cacheType, versionKey, metadataFile);
     }
 
     public T createForSave() throws LSException {

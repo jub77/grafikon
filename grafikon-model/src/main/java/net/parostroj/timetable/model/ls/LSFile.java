@@ -11,15 +11,14 @@ import net.parostroj.timetable.model.TrainDiagram;
  *
  * @author jub
  */
-public interface LSFile extends LSVersions {
+public interface LSFile extends LSVersions, LSConfigurable {
+
+    public static final String METADATA_KEY_MODEL_VERSION = "model.version";
+    public static final String METADATA = "metadata.properties";
 
     TrainDiagram load(File file) throws LSException;
 
     TrainDiagram load(ZipInputStream is) throws LSException;
-
-    Object getProperty(String key);
-
-    void setProperty(String key, Object value);
 
     void save(TrainDiagram diagram, File file) throws LSException;
 

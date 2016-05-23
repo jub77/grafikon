@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -33,11 +29,8 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  *
  * @author jub
  */
-public class FileLoadSaveImpl implements LSFile {
+public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
 
-    private static final String METADATA = "metadata.properties";
-    private static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    private static final ModelVersion METADATA_MODEL_VERSION;
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
     private static final String DATA_NET = "net.xml";
@@ -52,49 +45,20 @@ public class FileLoadSaveImpl implements LSFile {
     private static final String DATA_IMAGES = "images/";
     private static final String DATA_ATTACHMENTS = "attachments/";
     private static final String DATA_CHANGES = "changes/";
+
     private static final List<ModelVersion> VERSIONS;
+    private static final ModelVersion CURRENT_VERSION;
 
     static {
-        List<ModelVersion> versions = Arrays.asList(
-                new ModelVersion(4, 0),
-                new ModelVersion(4, 1),
-                new ModelVersion(4, 2),
-                new ModelVersion(4, 3),
-                new ModelVersion(4, 4),
-                new ModelVersion(4, 5),
-                new ModelVersion(4, 6),
-                new ModelVersion(4, 7),
-                new ModelVersion(4, 8),
-                new ModelVersion(4, 9),
-                new ModelVersion(4, 10),
-                new ModelVersion(4, 11),
-                new ModelVersion(4, 12),
-                new ModelVersion(4, 13),
-                new ModelVersion(4, 14),
-                new ModelVersion(4, 15, 0),
-                new ModelVersion(4, 16, 0),
-                new ModelVersion(4, 17, 0),
-                new ModelVersion(4, 17, 1),
-                new ModelVersion(4, 18, 0),
-                new ModelVersion(4, 18, 1),
-                new ModelVersion(4, 18, 2),
-                new ModelVersion(4, 18, 3),
-                new ModelVersion(4, 18, 4),
-                new ModelVersion(4, 19, 0),
-                new ModelVersion(4, 19, 1),
-                new ModelVersion(4, 19, 2),
-                new ModelVersion(4, 20, 0)
-        );
-        VERSIONS = Collections.unmodifiableList(versions);
-        METADATA_MODEL_VERSION = VERSIONS.get(VERSIONS.size() - 1);
+        VERSIONS = getVersions("4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9", "4.10",
+                "4.11", "4.12", "4.13", "4.14", "4.15", "4.16", "4.17", "4.17.1", "4.18", "4.18.1", "4.18.2",
+                "4.18.3", "4.18.4", "4.19", "4.19.1", "4.19.2", "4.20");
+        CURRENT_VERSION = getLatestVersion(VERSIONS);
     }
 
     private final LSSerializer lss;
-    private final Map<String, Object> properties;
-
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
-        properties = new HashMap<>();
     }
 
     @Override
@@ -126,17 +90,8 @@ public class FileLoadSaveImpl implements LSFile {
 
     private Properties createMetadata() {
         Properties metadata = new Properties();
-        metadata.setProperty(METADATA_KEY_MODEL_VERSION, METADATA_MODEL_VERSION.toString());
+        metadata.setProperty(METADATA_KEY_MODEL_VERSION, CURRENT_VERSION.toString());
         return metadata;
-    }
-
-    private ModelVersion checkVersion(Properties props) throws LSException {
-        ModelVersion current = METADATA_MODEL_VERSION;
-        ModelVersion loaded = ModelVersion.parseModelVersion(props.getProperty(METADATA_KEY_MODEL_VERSION));
-        if (current.compareTo(loaded) < 0) {
-            throw new LSException(String.format("Current version [%s] is older than the version of loaded file [%s].", current.toString(), loaded.toString()));
-        }
-        return loaded;
     }
 
     @Override
@@ -152,7 +107,7 @@ public class FileLoadSaveImpl implements LSFile {
                     // check major and minor version (do not allow load newer versions)
                     Properties props = new Properties();
                     props.load(zipInput);
-                    version = checkVersion(props);
+                    version = checkVersion(METADATA_KEY_MODEL_VERSION, props);
                     continue;
                 }
                 if (entry.getName().equals(DATA_TRAIN_DIAGRAM)) {
@@ -288,16 +243,6 @@ public class FileLoadSaveImpl implements LSFile {
 
     @Override
     public ModelVersion getSaveVersion() {
-        return METADATA_MODEL_VERSION;
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return properties.get(key);
-    }
-
-    @Override
-    public void setProperty(String key, Object value) {
-        properties.put(key, value);
+        return CURRENT_VERSION;
     }
 }

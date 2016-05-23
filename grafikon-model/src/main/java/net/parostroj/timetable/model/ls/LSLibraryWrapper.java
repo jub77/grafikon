@@ -51,4 +51,14 @@ class LSLibraryWrapper implements LSLibrary {
     public ModelVersion getSaveVersion() {
         return impl.getSaveVersion();
     }
+
+    @Override
+    public Object getProperty(String key) {
+        return impl.getProperty(key);
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        impl.setProperty(key, value);
+    }
 }

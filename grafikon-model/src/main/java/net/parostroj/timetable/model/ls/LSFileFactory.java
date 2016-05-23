@@ -7,18 +7,15 @@ package net.parostroj.timetable.model.ls;
  */
 public class LSFileFactory extends AbstractLSFactory<LSFile> {
 
-    private static final String METADATA_KEY_MODEL_VERSION = "model.version";
-    private static final LSFileFactory instance = new LSFileFactory();
-    private static boolean initialized = false;
+    private static LSFileFactory instance;
 
     public LSFileFactory() {
-        super(LSFile.class, METADATA_KEY_MODEL_VERSION);
+        super(LSFile.class, LSFile.METADATA_KEY_MODEL_VERSION, LSFile.METADATA);
     }
 
     public static synchronized LSFileFactory getInstance() {
-        if (!initialized) {
-            instance.init();
-            initialized = true;
+        if (instance == null) {
+            instance = new LSFileFactory();
         }
         return instance;
     }
