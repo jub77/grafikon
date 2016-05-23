@@ -302,7 +302,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        OutputTemplate template = new OutputTemplate(IdGenerator.getInstance().getId(), diagram);
+        OutputTemplate template = diagram.getPartFactory().createOutputTemplate(IdGenerator.getInstance().getId());
         template.setName(nameTextField.getText().trim());
         try {
             template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
@@ -357,27 +357,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private OutputTemplate copyTemplate(OutputTemplate template) {
-        OutputTemplate copy = new OutputTemplate(template.getId(), template.getDiagram());
-        try {
-            if (template.getTemplate() != null) {
-                copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
-                        template.getTemplate().getLanguage()));
-            }
-            copy.getAttachments().addAll(template.getAttachments());
-        } catch (GrafikonException e) {
-            log.error("Error creating copy of template.", e);
-        }
-        copy.setName(template.getName());
-        copy.getAttributes().add(template.getAttributes());
-        try {
-            if (template.getScript() != null) {
-                copy.setScript(Script.createScript(template.getScript().getSourceCode(),
-                        template.getScript().getLanguage()));
-            }
-        } catch (GrafikonException e) {
-            log.error("Error creating script.", e);
-        }
-        return copy;
+        return CopyFactory.getInstance(template.getDiagram()).copy(template);
     }
 
     private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {

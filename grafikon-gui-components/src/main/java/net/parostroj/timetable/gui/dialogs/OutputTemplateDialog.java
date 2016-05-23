@@ -339,7 +339,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private OutputTemplate createTempOutputTemplate() {
         try {
             TextTemplate textTemplate = this.convertToTemplate();
-            OutputTemplate outputTemplate = new OutputTemplate("temp_id", this.template.getDiagram());
+            OutputTemplate outputTemplate = this.template.getDiagram().getPartFactory().createOutputTemplate("temp_id");
             outputTemplate.setName(this.template.getName());
             outputTemplate.setTemplate(textTemplate);
             outputTemplate.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());

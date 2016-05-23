@@ -34,7 +34,8 @@ public class OutputTemplateImport extends Import {
         }
 
         // create new output template
-        OutputTemplate outputTemplate = new OutputTemplate(this.getId(importedOutputTemplate), this.getDiagram());
+        OutputTemplate outputTemplate = this.getDiagram().getPartFactory()
+                .createOutputTemplate(this.getId(importedOutputTemplate));
         outputTemplate.setName(importedOutputTemplate.getName());
         outputTemplate.getAttributes().add(new Attributes(importedOutputTemplate.getAttributes()));
         outputTemplate.setTemplate(importedOutputTemplate.getTemplate());

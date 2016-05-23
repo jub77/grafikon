@@ -26,7 +26,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private final Attributes attributes;
     private final ListenerSupport listenerSupport;
 
-    public OutputTemplate(String id, TrainDiagram diagram) {
+    OutputTemplate(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
         listenerSupport = new ListenerSupport();

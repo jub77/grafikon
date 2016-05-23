@@ -126,4 +126,14 @@ public class TrainDiagramPartFactory {
     public FreightNet createFreightNet(String id) {
         return new FreightNet(id, diagram);
     }
+
+    /**
+     * Creates new output template.
+     *
+     * @param id id
+     * @return new output template
+     */
+    public OutputTemplate createOutputTemplate(String id) {
+        return new OutputTemplate(id, diagram);
+    }
 }

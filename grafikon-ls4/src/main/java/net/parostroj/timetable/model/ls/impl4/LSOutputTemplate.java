@@ -120,7 +120,7 @@ public class LSOutputTemplate {
     }
 
     public OutputTemplate createOutputTemplate(TrainDiagram diagram, FileLoadSaveAttachments flsAttachments) throws LSException {
-        OutputTemplate outputTemplate = new OutputTemplate(id, diagram);
+        OutputTemplate outputTemplate = diagram.getPartFactory().createOutputTemplate(id);
         outputTemplate.setName(name);
         if (this.template != null) {
             outputTemplate.setTemplate(this.template.createTextTemplate());
