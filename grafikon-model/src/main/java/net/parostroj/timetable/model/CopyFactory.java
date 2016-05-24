@@ -52,7 +52,7 @@ public class CopyFactory {
         Node copy = diagram == null ? new Node(node.getId(), null, node.getType(), node.getName(), node.getAbbr()) :
             diagram.getPartFactory().createNode(node.getId(), node.getType(), node.getName(), node.getAbbr());
 
-        node.getAttributes().add(node.getAttributes());
+        copy.getAttributes().add(node.getAttributes());
 
         // copy tracks
         for (NodeTrack track : node.getTracks()) {
