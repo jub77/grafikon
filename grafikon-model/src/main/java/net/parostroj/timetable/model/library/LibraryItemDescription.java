@@ -11,4 +11,9 @@ public class LibraryItemDescription {
     public LibraryItemType getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s", type);
+    }
 }

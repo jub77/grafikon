@@ -19,4 +19,9 @@ public class LibraryItem {
     public ObjectWithId getItem() {
         return item;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s -> %s", description, item);
+    }
 }
