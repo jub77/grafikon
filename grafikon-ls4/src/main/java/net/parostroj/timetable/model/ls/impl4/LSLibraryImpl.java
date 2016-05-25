@@ -1,8 +1,10 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -20,6 +22,12 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     static {
         VERSIONS = getVersions("1.0");
         CURRENT_VERSION = getLatestVersion(VERSIONS);
+    }
+
+    private final LSSerializer lss;
+
+    public LSLibraryImpl() throws LSException {
+        lss = new LSSerializer(true);
     }
 
     @Override
@@ -42,7 +50,14 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     }
 
     @Override
-    public void save(Library library, ZipOutputStream os) throws LSException {
+    public void save(Library library, ZipOutputStream zipOutput) throws LSException {
+        try {
+            // save metadata
+            zipOutput.putNextEntry(new ZipEntry(METADATA));
+            this.createMetadata(METADATA_KEY_LIBRARY_VERSION).store(zipOutput, null);
+        } catch (IOException e) {
+            throw new LSException(e);
+        }
     }
 
     @Override

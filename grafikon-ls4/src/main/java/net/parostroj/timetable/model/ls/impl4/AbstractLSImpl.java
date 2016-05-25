@@ -50,4 +50,10 @@ public abstract class AbstractLSImpl implements LSConfigurable, LSVersions {
     protected static ModelVersion getLatestVersion(List<ModelVersion> versions) {
         return versions.get(versions.size() - 1);
     }
+
+    protected Properties createMetadata(String versionKey) {
+        Properties metadata = new Properties();
+        metadata.setProperty(versionKey, getSaveVersion().toString());
+        return metadata;
+    }
 }

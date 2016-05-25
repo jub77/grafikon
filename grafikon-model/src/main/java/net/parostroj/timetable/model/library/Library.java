@@ -73,19 +73,23 @@ public class Library implements AttributesHolder {
     private void stripObjectIdAttributes(AttributesHolder holder, String category) {
         for (String key : ImmutableList.copyOf(holder.getAttributes().getAttributesMap(category).keySet())) {
             Object value = holder.getAttributes().get(category, key);
-            boolean remove = value instanceof ObjectWithId;
-            if (!remove && value instanceof Collection) {
-                for (Object item : (Collection<?>) value) {
-                    if (item instanceof ObjectWithId) {
-                        remove = true;
-                        break;
-                    }
-                }
-            }
-            if (remove) {
+            if (checkIfValueContainsObjectWithId(value)) {
                 log.debug("Removing key {} in category {}", key, category == null ? "<none>" : category);
                 holder.removeAttribute(category, key);
             }
         }
+    }
+
+    private boolean checkIfValueContainsObjectWithId(Object value) {
+        boolean remove = value instanceof ObjectWithId;
+        if (!remove && value instanceof Collection) {
+            remove = ((Collection<?>) value).stream().anyMatch(item -> item instanceof ObjectWithId);
+        }
+        return remove;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Items: %d", items.size());
     }
 }

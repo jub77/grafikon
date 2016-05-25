@@ -57,6 +57,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     private final LSSerializer lss;
+
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
     }
@@ -86,12 +87,6 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
 
     private String createEntryName(String prefix, String suffix, int cnt) {
         return String.format("%s%06d.%s", prefix, cnt, suffix);
-    }
-
-    private Properties createMetadata() {
-        Properties metadata = new Properties();
-        metadata.setProperty(METADATA_KEY_MODEL_VERSION, CURRENT_VERSION.toString());
-        return metadata;
     }
 
     @Override
@@ -163,7 +158,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
         try {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
-            this.createMetadata().store(zipOutput, null);
+            this.createMetadata(METADATA_KEY_MODEL_VERSION).store(zipOutput, null);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
 
             // save train diagram
