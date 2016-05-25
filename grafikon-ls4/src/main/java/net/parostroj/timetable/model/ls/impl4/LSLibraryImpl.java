@@ -42,6 +42,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
 
     @Override
     public void saveItem(LibraryItem item, OutputStream os) throws LSException {
+        lss.save(os, new LSLibraryItem(item));
     }
 
     @Override
@@ -55,9 +56,17 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
             this.createMetadata(METADATA_KEY_LIBRARY_VERSION).store(zipOutput, null);
+            for (LibraryItem item : library) {
+                save(zipOutput, item.getItem().getId() + ".xml", new LSLibraryItem(item));
+            }
         } catch (IOException e) {
             throw new LSException(e);
         }
+    }
+
+    private void save(ZipOutputStream zipOutput, String zipEntryName, Object saved) throws LSException, IOException {
+        zipOutput.putNextEntry(new ZipEntry(zipEntryName));
+        lss.save(zipOutput, saved);
     }
 
     @Override

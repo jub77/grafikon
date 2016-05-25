@@ -17,7 +17,7 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "node")
-@XmlType(propOrder = {"id", "name", "abbr", "type", "attributes", "x", "y", "tracks"})
+@XmlType(name = "node", propOrder = {"id", "name", "abbr", "type", "attributes", "x", "y", "tracks"})
 public class LSNode {
 
     private String id;

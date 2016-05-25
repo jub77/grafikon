@@ -20,7 +20,7 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "line")
-@XmlType(propOrder = {"id", "length", "speed", "from", "to", "attributes", "tracks"})
+@XmlType(name = "line", propOrder = {"id", "length", "speed", "from", "to", "attributes", "tracks"})
 public class LSLine {
 
     private String id;

@@ -19,7 +19,7 @@ import net.parostroj.timetable.model.ls.LSException;
  * @author jub
  */
 @XmlRootElement(name = "output_template")
-@XmlType(propOrder = {"id", "name", "template", "script", "attachments", "attributes"})
+@XmlType(name = "output_template", propOrder = {"id", "name", "template", "script", "attachments", "attributes"})
 public class LSOutputTemplate {
 
     private String id;
