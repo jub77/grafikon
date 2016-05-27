@@ -137,6 +137,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         brakeComboBox.setMaximumRowCount(2);
 
         editColorButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editColorButtonActionPerformed(evt);
             }
@@ -144,6 +145,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         nameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.nametemplate")); // NOI18N
         nameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameTemplateEditBox.setEnabled(nameTemplateCheckBox.isSelected());
             }
@@ -151,6 +153,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         completeNameTemplateCheckBox.setText(ResourceLoader.getString("edit.traintypes.completenametemplate")); // NOI18N
         completeNameTemplateCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cNameTemplateEditBox.setEnabled(completeNameTemplateCheckBox.isSelected());
             }
@@ -158,6 +161,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         trainTypesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         trainTypesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 trainTypesListValueChanged(evt);
             }
@@ -175,6 +179,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         colorLabel.setText("0x000000");
 
         newButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
@@ -183,24 +188,28 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         updateButton.setText(ResourceLoader.getString("button.update")); // NOI18N
         updateButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateButtonActionPerformed(evt);
             }
         });
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
         upButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
         downButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
             }
@@ -387,13 +396,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             nameTemplateCheckBox.setSelected(selected.getTrainNameTemplate() != null);
             nameTemplateEditBox.setEnabled(selected.getTrainNameTemplate() != null);
             nameTemplateEditBox.setTemplate(selected.getTrainNameTemplate() == null ?
-                selected.getTrainDiagram().getTrainsData().getTrainNameTemplate() :
+                selected.getDiagram().getTrainsData().getTrainNameTemplate() :
                 selected.getTrainNameTemplate());
 
             completeNameTemplateCheckBox.setSelected(selected.getTrainCompleteNameTemplate() != null);
             cNameTemplateEditBox.setEnabled(selected.getTrainCompleteNameTemplate() != null);
             cNameTemplateEditBox.setTemplate(selected.getTrainCompleteNameTemplate() == null ?
-                selected.getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
+                selected.getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
                 selected.getTrainCompleteNameTemplate());
             platformNeededCheckBox.setSelected(selected.isPlatform());
             showWeightInfoCheckBox.setSelected(selected.getAttributes().getBool(TrainType.ATTR_SHOW_WEIGHT_INFO));

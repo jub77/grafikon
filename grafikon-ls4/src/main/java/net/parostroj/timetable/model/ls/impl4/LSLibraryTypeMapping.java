@@ -14,6 +14,7 @@ class LSLibraryTypeMapping {
         OUTPUT_DIR_MAPPING.put(LibraryItemType.NODE, "nodes");
         OUTPUT_DIR_MAPPING.put(LibraryItemType.OUTPUT_TEMPLATE, "output_templates");
         OUTPUT_DIR_MAPPING.put(LibraryItemType.ENGINE_CLASS, "engine_classes");
+        OUTPUT_DIR_MAPPING.put(LibraryItemType.TRAIN_TYPE, "train_types");
     }
 
     public static String typeToDirectory(LibraryItemType itemType) {

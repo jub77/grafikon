@@ -7,6 +7,7 @@ import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.TrainType;
 
 public class LibraryItem implements AttributesHolder {
 
@@ -33,11 +34,12 @@ public class LibraryItem implements AttributesHolder {
 
     public String getName() {
         switch (type) {
-        case NODE: return ((Node) object).getName();
-        case OUTPUT_TEMPLATE: return ((OutputTemplate) object).getName();
-        case ENGINE_CLASS: return ((EngineClass) object).getName();
-        default: return null;
+            case NODE: return ((Node) object).getName();
+            case OUTPUT_TEMPLATE: return ((OutputTemplate) object).getName();
+            case ENGINE_CLASS: return ((EngineClass) object).getName();
+            case TRAIN_TYPE: return ((TrainType) object).getAbbr();
         }
+        return null;
     }
 
     public LocalizedString getDescription() {

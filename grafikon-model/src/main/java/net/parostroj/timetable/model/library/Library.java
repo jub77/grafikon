@@ -23,12 +23,18 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     private final LibraryAddHandler addHandler;
     private final LibraryPartFactory factory;
+    private final CopyFactory copyFactory;
 
     Library() {
-        items = new ArrayList<>();
-        attributes = new Attributes();
-        addHandler = new LibraryAddHandler();
-        factory = LibraryPartFactory.getInstance();
+        this(LibraryPartFactory.getInstance(), CopyFactory.getInstance(), new LibraryAddHandler());
+    }
+
+    Library(LibraryPartFactory factory, CopyFactory copyFactory, LibraryAddHandler addHandler) {
+        this.items = new ArrayList<>();
+        this.attributes = new Attributes();
+        this.addHandler = addHandler;
+        this.factory = factory;
+        this.copyFactory = copyFactory;
     }
 
     public Collection<LibraryItem> getItems() {
@@ -41,7 +47,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     public LibraryItem add(OutputTemplate template) {
-        OutputTemplate templateCopy = CopyFactory.getInstance().copy(template, getNewId());
+        OutputTemplate templateCopy = copyFactory.copy(template, getNewId());
         addHandler.stripObjectIdAttributes(templateCopy);
 
         // create item and add it to library
@@ -49,7 +55,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     public LibraryItem add(Node node) {
-        Node nodeCopy = CopyFactory.getInstance().copy(node, getNewId());
+        Node nodeCopy = copyFactory.copy(node, getNewId());
         addHandler.stripObjectIdAttributes(nodeCopy);
         for (NodeTrack track : nodeCopy.getTracks()) {
             addHandler.stripObjectIdAttributes(track);
@@ -60,7 +66,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     public LibraryItem add(EngineClass engineClass) {
-        EngineClass engineClassCopy = CopyFactory.getInstance().copy(engineClass, getNewId());
+        EngineClass engineClassCopy = copyFactory.copy(engineClass, getNewId());
         // TODO replace line classes
 
         return addImpl(engineClassCopy, LibraryItemType.ENGINE_CLASS);

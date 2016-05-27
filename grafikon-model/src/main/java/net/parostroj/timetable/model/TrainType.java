@@ -12,7 +12,8 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class TrainType implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes, Observable {
+public class TrainType
+        implements ObjectWithId, Visitable, AttributesHolder, TrainTypeAttributes, Observable, TrainDiagramPart {
     /** Train diagram. */
     private final TrainDiagram diagram;
     /** Id. */
@@ -57,7 +58,8 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
         return id;
     }
 
-    public TrainDiagram getTrainDiagram() {
+    @Override
+    public TrainDiagram getDiagram() {
         return diagram;
     }
 
@@ -199,7 +201,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      */
     public String formatTrainName(Train train) {
         TextTemplate template = (trainNameTemplate == null) ?
-            getTrainDiagram().getTrainsData().getTrainNameTemplate() :
+            getDiagram().getTrainsData().getTrainNameTemplate() :
             trainNameTemplate;
         return template.evaluate(TextTemplate.getBinding(train));
     }
@@ -212,7 +214,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      */
     public String formatTrainCompleteName(Train train) {
         TextTemplate template = (trainCompleteNameTemplate == null) ?
-            getTrainDiagram().getTrainsData().getTrainCompleteNameTemplate() :
+            getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
             trainCompleteNameTemplate;
         return template.evaluate(TextTemplate.getBinding(train));
     }
@@ -221,6 +223,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * adds listener to train.
      * @param listener listener
      */
+    @Override
     public void addListener(Listener listener) {
         listenerSupport.addListener(listener);
     }
@@ -229,6 +232,7 @@ public class TrainType implements ObjectWithId, Visitable, AttributesHolder, Tra
      * removes listener from train.
      * @param listener listener
      */
+    @Override
     public void removeListener(Listener listener) {
         listenerSupport.removeListener(listener);
     }

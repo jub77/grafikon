@@ -84,4 +84,12 @@ public class CopyFactory {
         }
         return copy;
     }
+
+    public TrainType copy(TrainType trainType, String id) {
+        TrainType copy = new TrainType(id, null);
+        copy.setAbbr(trainType.getAbbr());
+        copy.setDesc(trainType.getDesc());
+        copy.setColor(trainType.getColor());
+        return null;
+    }
 }
