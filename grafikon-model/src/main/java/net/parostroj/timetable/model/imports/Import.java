@@ -40,6 +40,7 @@ public abstract class Import {
 
     private final ImportMatch match;
     private final TrainDiagram diagram;
+    private final Map<String, Object> settings;
 
     protected final boolean overwrite;
 
@@ -52,6 +53,7 @@ public abstract class Import {
         this.diagram = diagram;
         this.errors = new LinkedList<ImportError>();
         this.importedObjects = new HashSet<ObjectWithId>();
+        this.settings = new HashMap<>();
     }
 
     protected ObjectWithId getObjectWithId(ObjectWithId orig) {
@@ -336,5 +338,13 @@ public abstract class Import {
                 return new RouteImport(diagram, match, overwrite);
         }
         return null;
+    }
+
+    public void setProperty(String key, Object value) {
+        this.settings.put(key, value);
+    }
+
+    public Object getProperty(String key) {
+        return this.settings.get(key);
     }
 }
