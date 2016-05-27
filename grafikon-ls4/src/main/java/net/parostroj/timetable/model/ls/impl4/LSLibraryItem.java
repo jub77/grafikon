@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
 
@@ -30,7 +31,8 @@ public class LSLibraryItem {
     public LSLibraryItem(LibraryItem item) {
         type = item.getType().name();
         attributes = new LSAttributes(item.getAttributes());
-        object = item.getType() == LibraryItemType.NODE ? new LSNode((Node) item.getItem()) : new LSOutputTemplate((OutputTemplate) item.getItem());
+        object = item.getType() == LibraryItemType.NODE ? new LSNode((Node) item.getItem())
+                : new LSOutputTemplate((OutputTemplate) item.getItem());
     }
 
     public LSAttributes getAttributes() {
@@ -50,15 +52,17 @@ public class LSLibraryItem {
         this.type = type;
     }
 
-    @XmlElements({
-        @XmlElement(name = "node", type = LSNode.class),
-        @XmlElement(name = "output_template", type = LSOutputTemplate.class)
-    })
+    @XmlElements({ @XmlElement(name = "node", type = LSNode.class),
+            @XmlElement(name = "output_template", type = LSOutputTemplate.class) })
     public Object getObject() {
         return object;
     }
 
     public void setObject(Object object) {
         this.object = object;
+    }
+
+    public LibraryItem createLibraryItem(Library library) {
+        return null;
     }
 }

@@ -3,14 +3,17 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import net.parostroj.timetable.model.EngineClass;
-import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Net;
-import net.parostroj.timetable.model.WeightTableRow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.WeightTableRow;
 
 /**
  * Storage for weight table row.
@@ -28,11 +31,11 @@ public class LSWeightTableRow {
     public LSWeightTableRow() {
     }
 
-    public LSWeightTableRow(WeightTableRow row) {
+    public LSWeightTableRow(WeightTableRow row, Function<LineClass, String> lineClassConvertor) {
         this.speed = row.getSpeed();
         weights = new LinkedList<LSWeightLimit>();
         for (Map.Entry<LineClass, Integer> entry : row.getWeights().entrySet()) {
-            weights.add(new LSWeightLimit(entry.getKey(), entry.getValue()));
+            weights.add(new LSWeightLimit(lineClassConvertor.apply(entry.getKey()), entry.getValue()));
         }
     }
 
@@ -53,15 +56,15 @@ public class LSWeightTableRow {
         this.weights = weights;
     }
 
-    public WeightTableRow createWeightTableRow(Net net, EngineClass engineClass) {
+    public WeightTableRow createWeightTableRow(Function<String, LineClass> lineClassSource, EngineClass engineClass) {
         WeightTableRow row = engineClass.createWeightTableRow(speed);
         if (weights != null) {
             for (LSWeightLimit limit : weights) {
-                LineClass lineClass = net.getLineClasses().getById(limit.getLineClass());
+                LineClass lineClass = lineClassSource.apply(limit.getLineClass());
                 if (lineClass == null) {
                     log.warn("Non-existent line class: {}", limit.getLineClass());
                 } else {
-                    row.setWeightInfo(net.getLineClasses().getById(limit.getLineClass()), limit.getWeight());
+                    row.setWeightInfo(lineClassSource.apply(limit.getLineClass()), limit.getWeight());
                 }
             }
         }

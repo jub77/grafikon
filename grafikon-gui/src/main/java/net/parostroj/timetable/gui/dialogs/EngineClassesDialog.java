@@ -5,8 +5,6 @@
  */
 package net.parostroj.timetable.gui.dialogs;
 
-import java.util.Map;
-
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 
@@ -365,15 +363,8 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
             if (newName != null) {
                 // create new LineClass
-                EngineClass clazz = new EngineClass(IdGenerator.getInstance().getId(), newName);
-                // copy all data
-                for (WeightTableRow row : copiedClazz.getWeightTable()) {
-                    WeightTableRow newRow = clazz.createWeightTableRow(row.getSpeed());
-                    for (Map.Entry<LineClass, Integer> entry : row.getWeights().entrySet()) {
-                        newRow.setWeightInfo(entry.getKey(), entry.getValue());
-                    }
-                    clazz.addWeightTableRow(newRow);
-                }
+                EngineClass clazz = CopyFactory.getInstance(diagram).copy(copiedClazz,
+                        IdGenerator.getInstance().getId());
                 listModel.addWrapper(Wrapper.getWrapper(clazz));
                 nameTextField.setText("");
                 int index = listModel.getIndexOfObject(clazz);

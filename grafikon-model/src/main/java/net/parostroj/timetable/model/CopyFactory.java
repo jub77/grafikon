@@ -1,7 +1,11 @@
 package net.parostroj.timetable.model;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.utils.IdGenerator;
 
 public class CopyFactory {
 
@@ -21,9 +25,9 @@ public class CopyFactory {
         return new CopyFactory(diagram);
     }
 
-    public OutputTemplate copy(OutputTemplate template) {
-        OutputTemplate copy = diagram == null ? new OutputTemplate(template.getId(), null) :
-            diagram.getPartFactory().createOutputTemplate(template.getId());
+    public OutputTemplate copy(OutputTemplate template, String id) {
+        OutputTemplate copy = diagram == null ? new OutputTemplate(id, null) :
+            diagram.getPartFactory().createOutputTemplate(id);
 
         try {
             if (template.getTemplate() != null) {
@@ -48,20 +52,33 @@ public class CopyFactory {
         return copy;
     }
 
-    public Node copy(Node node) {
-        Node copy = diagram == null ? new Node(node.getId(), null, node.getType(), node.getName(), node.getAbbr()) :
-            diagram.getPartFactory().createNode(node.getId(), node.getType(), node.getName(), node.getAbbr());
+    public Node copy(Node node, String id) {
+        Node copy = diagram == null ? new Node(id, null, node.getType(), node.getName(), node.getAbbr()) :
+            diagram.getPartFactory().createNode(id, node.getType(), node.getName(), node.getAbbr());
 
         copy.getAttributes().add(node.getAttributes());
 
         // copy tracks
         for (NodeTrack track : node.getTracks()) {
-            NodeTrack copyTrack = new NodeTrack(track.getId(), track.getNumber());
+            NodeTrack copyTrack = new NodeTrack(IdGenerator.getInstance().getId(), track.getNumber());
             copyTrack.setPlatform(track.isPlatform());
             copyTrack.getAttributes().add(track.getAttributes());
             copy.addTrack(copyTrack);
         }
 
+        return copy;
+    }
+
+    public EngineClass copy(EngineClass engineClass, String id) {
+        EngineClass copy = new EngineClass(id, engineClass.getName());
+        // copy all data
+        for (WeightTableRow row : engineClass.getWeightTable()) {
+            WeightTableRow newRow = copy.createWeightTableRow(row.getSpeed());
+            for (Map.Entry<LineClass, Integer> entry : row.getWeights().entrySet()) {
+                newRow.setWeightInfo(entry.getKey(), entry.getValue());
+            }
+            copy.addWeightTableRow(newRow);
+        }
         return copy;
     }
 }

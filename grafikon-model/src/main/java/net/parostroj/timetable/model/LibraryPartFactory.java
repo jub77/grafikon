@@ -17,4 +17,8 @@ public class LibraryPartFactory {
     public Node createNode(String id, NodeType type, String name, String abbr) {
         return new Node(id, null, type, name, abbr);
     }
+
+    public EngineClass createEngineClass(String id, String name) {
+        return new EngineClass(id, name);
+    }
 }

@@ -7,12 +7,14 @@ import java.util.Iterator;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.CopyFactory;
+import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LibraryPartFactory;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.utils.IdGenerator;
 
 public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
@@ -39,7 +41,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     public LibraryItem add(OutputTemplate template) {
-        OutputTemplate templateCopy = CopyFactory.getInstance().copy(template);
+        OutputTemplate templateCopy = CopyFactory.getInstance().copy(template, getNewId());
         addHandler.stripObjectIdAttributes(templateCopy);
 
         // create item and add it to library
@@ -47,7 +49,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     public LibraryItem add(Node node) {
-        Node nodeCopy = CopyFactory.getInstance().copy(node);
+        Node nodeCopy = CopyFactory.getInstance().copy(node, getNewId());
         addHandler.stripObjectIdAttributes(nodeCopy);
         for (NodeTrack track : nodeCopy.getTracks()) {
             addHandler.stripObjectIdAttributes(track);
@@ -55,6 +57,14 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
         // create item and add it to library
         return addImpl(nodeCopy, LibraryItemType.NODE);
+    }
+
+    public LibraryItem add(EngineClass engineClass) {
+        EngineClass engineClassCopy = CopyFactory.getInstance().copy(engineClass, getNewId());
+        // TODO replace line classes
+
+        return addImpl(engineClassCopy, LibraryItemType.ENGINE_CLASS);
+
     }
 
     public LibraryItem addOutputTemplate(String id, String name) {
@@ -65,10 +75,18 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
         return addImpl(factory.createNode(id, type, name, abbr), LibraryItemType.NODE);
     }
 
+    public LibraryItem addEngineClass(String id, String name) {
+        return addImpl(factory.createEngineClass(id, name), LibraryItemType.ENGINE_CLASS);
+    }
+
     private LibraryItem addImpl(ObjectWithId object, LibraryItemType type) {
         LibraryItem item = new LibraryItem(type, object);
         items.add(item);
         return item;
+    }
+
+    private String getNewId() {
+        return IdGenerator.getInstance().getId();
     }
 
     @Override

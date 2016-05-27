@@ -357,7 +357,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private OutputTemplate copyTemplate(OutputTemplate template) {
-        return CopyFactory.getInstance(template.getDiagram()).copy(template);
+        return CopyFactory.getInstance(template.getDiagram()).copy(template, IdGenerator.getInstance().getId());
     }
 
     private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {
