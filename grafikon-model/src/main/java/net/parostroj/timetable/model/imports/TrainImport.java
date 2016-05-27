@@ -19,8 +19,8 @@ public class TrainImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(TrainImport.class);
 
-    public TrainImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public TrainImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override

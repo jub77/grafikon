@@ -148,7 +148,7 @@ public class ImportAction extends AbstractAction {
                         Set<ObjectWithId> set = map.get(comp);
                         list.addAll(set);
                         imports.put(comp, Import.getInstance(comp, importDialog.getDiagram(),
-                                importDialog.getLibraryDiagram(), importDialog.getImportMatch(),
+                                importDialog.getImportMatch(),
                                 importDialog.getImportOverwrite()));
                     }
                     size = list.size();

@@ -17,8 +17,8 @@ class NodeImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImport.class);
 
-    public NodeImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch importMatch, boolean overwrite) {
-        super(diagram, libraryDiagram, importMatch, overwrite);
+    public NodeImport(TrainDiagram diagram, ImportMatch importMatch, boolean overwrite) {
+        super(diagram, importMatch, overwrite);
     }
 
     @Override

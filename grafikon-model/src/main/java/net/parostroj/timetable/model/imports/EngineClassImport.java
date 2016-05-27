@@ -20,8 +20,8 @@ public class EngineClassImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(EngineClassImport.class);
 
-    public EngineClassImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public EngineClassImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override

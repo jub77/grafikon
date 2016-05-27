@@ -9,8 +9,8 @@ public class OutputTemplateImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(OutputTemplateImport.class);
 
-    public OutputTemplateImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public OutputTemplateImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override

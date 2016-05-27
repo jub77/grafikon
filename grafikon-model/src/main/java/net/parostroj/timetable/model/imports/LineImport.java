@@ -14,8 +14,8 @@ public class LineImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(LineImport.class);
 
-    public LineImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public LineImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override

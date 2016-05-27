@@ -17,8 +17,8 @@ public class RouteImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(RouteImport.class);
 
-    public RouteImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public RouteImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override

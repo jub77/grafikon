@@ -16,8 +16,8 @@ public class GroupImport extends Import {
 
     private static final Logger log = LoggerFactory.getLogger(GroupImport.class);
 
-    public GroupImport(TrainDiagram diagram, TrainDiagram libraryDiagram, ImportMatch match, boolean overwrite) {
-        super(diagram, libraryDiagram, match, overwrite);
+    public GroupImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
+        super(diagram, match, overwrite);
     }
 
     @Override
