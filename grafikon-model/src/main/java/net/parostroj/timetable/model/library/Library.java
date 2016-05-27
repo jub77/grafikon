@@ -1,8 +1,9 @@
 package net.parostroj.timetable.model.library;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.AttributesHolder;
@@ -18,7 +19,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
-    private final Collection<LibraryItem> items;
+    private final Multimap<LibraryItemType, LibraryItem> itemMap;
     private final Attributes attributes;
 
     private final LibraryAddHandler addHandler;
@@ -30,15 +31,15 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     }
 
     Library(LibraryPartFactory factory, CopyFactory copyFactory, LibraryAddHandler addHandler) {
-        this.items = new ArrayList<>();
+        this.itemMap = ArrayListMultimap.create(LibraryItemType.values().length, 5);
         this.attributes = new Attributes();
         this.addHandler = addHandler;
         this.factory = factory;
         this.copyFactory = copyFactory;
     }
 
-    public Collection<LibraryItem> getItems() {
-        return items;
+    public Multimap<LibraryItemType, LibraryItem> getItems() {
+        return itemMap;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     private LibraryItem addImpl(ObjectWithId object, LibraryItemType type) {
         LibraryItem item = new LibraryItem(type, object);
-        items.add(item);
+        itemMap.put(type, item);
         return item;
     }
 
@@ -97,11 +98,11 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     @Override
     public Iterator<LibraryItem> iterator() {
-        return items.iterator();
+        return itemMap.values().iterator();
     }
 
     @Override
     public String toString() {
-        return String.format("Items: %d", items.size());
+        return String.format("Items: %d", itemMap.size());
     }
 }
