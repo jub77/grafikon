@@ -59,7 +59,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
             for (LibraryItem item : library) {
                 this.save(zipOutput, String.format("%s/%s.%s",
                         LSLibraryTypeMapping.typeToDirectory(item.getType()),
-                        item.getItem().getId(),
+                        item.getObject().getId(),
                         "xml"), new LSLibraryItem(item));
             }
         } catch (IOException e) {

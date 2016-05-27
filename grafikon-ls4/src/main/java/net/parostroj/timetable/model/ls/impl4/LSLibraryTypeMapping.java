@@ -13,6 +13,7 @@ class LSLibraryTypeMapping {
         OUTPUT_DIR_MAPPING = EnumHashBiMap.create(LibraryItemType.class);
         OUTPUT_DIR_MAPPING.put(LibraryItemType.NODE, "nodes");
         OUTPUT_DIR_MAPPING.put(LibraryItemType.OUTPUT_TEMPLATE, "output_templates");
+        OUTPUT_DIR_MAPPING.put(LibraryItemType.ENGINE_CLASS, "engine_classes");
     }
 
     public static String typeToDirectory(LibraryItemType itemType) {

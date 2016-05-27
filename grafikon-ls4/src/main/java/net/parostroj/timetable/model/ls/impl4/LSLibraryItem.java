@@ -6,11 +6,11 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
-import net.parostroj.timetable.model.library.LibraryItemType;
 
 /**
  * Storage for library item.
@@ -31,8 +31,11 @@ public class LSLibraryItem {
     public LSLibraryItem(LibraryItem item) {
         type = item.getType().name();
         attributes = new LSAttributes(item.getAttributes());
-        object = item.getType() == LibraryItemType.NODE ? new LSNode((Node) item.getItem())
-                : new LSOutputTemplate((OutputTemplate) item.getItem());
+        switch (item.getType()) {
+            case NODE: object = new LSNode((Node) item.getObject()); break;
+            case OUTPUT_TEMPLATE: object = new LSOutputTemplate((OutputTemplate) item.getObject()); break;
+            case ENGINE_CLASS: object = new LSEngineClass((EngineClass) item.getObject()); break;
+        }
     }
 
     public LSAttributes getAttributes() {
@@ -52,8 +55,11 @@ public class LSLibraryItem {
         this.type = type;
     }
 
-    @XmlElements({ @XmlElement(name = "node", type = LSNode.class),
-            @XmlElement(name = "output_template", type = LSOutputTemplate.class) })
+    @XmlElements({
+        @XmlElement(name = "node", type = LSNode.class),
+        @XmlElement(name = "output_template", type = LSOutputTemplate.class),
+        @XmlElement(name = "engine_class", type = LSEngineClass.class),
+    })
     public Object getObject() {
         return object;
     }

@@ -13,18 +13,18 @@ public class LibraryItem implements AttributesHolder {
     private static final String ATTR_DESCRIPTION = "description";
 
     private final LibraryItemType type;
-    private final ObjectWithId item;
+    private final ObjectWithId object;
 
     private final Attributes attributes;
 
-    LibraryItem(LibraryItemType type, ObjectWithId item) {
+    LibraryItem(LibraryItemType type, ObjectWithId object) {
         this.type = type;
-        this.item = item;
+        this.object = object;
         this.attributes = new Attributes();
     }
 
-    public ObjectWithId getItem() {
-        return item;
+    public ObjectWithId getObject() {
+        return object;
     }
 
     public LibraryItemType getType() {
@@ -33,9 +33,9 @@ public class LibraryItem implements AttributesHolder {
 
     public String getName() {
         switch (type) {
-        case NODE: return ((Node) item).getName();
-        case OUTPUT_TEMPLATE: return ((OutputTemplate) item).getName();
-        case ENGINE_CLASS: return ((EngineClass) item).getName();
+        case NODE: return ((Node) object).getName();
+        case OUTPUT_TEMPLATE: return ((OutputTemplate) object).getName();
+        case ENGINE_CLASS: return ((EngineClass) object).getName();
         default: return null;
         }
     }
@@ -55,6 +55,6 @@ public class LibraryItem implements AttributesHolder {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", type, item);
+        return String.format("%s -> %s", type, object);
     }
 }
