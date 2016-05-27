@@ -66,6 +66,9 @@ public class CopyFactory {
             copy.addTrack(copyTrack);
         }
 
+        // copy location
+        copy.setLocation(new Location(node.getLocation().getX(), node.getLocation().getY()));
+
         return copy;
     }
 
