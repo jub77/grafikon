@@ -59,6 +59,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Cycle: ").append(((TrainsCycle) event.getObject()).getName());
                 if (event.getObject() instanceof OutputTemplate)
                     str.append("    Output template: ").append(((OutputTemplate) event.getObject()).getName());
+                if (event.getObject() instanceof TrainTypeCategory)
+                    str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName());
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);

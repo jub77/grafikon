@@ -96,7 +96,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.companies = new ItemWithIdSetImpl<Company>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.trainTypeCategories = new ItemWithIdListImpl<TrainTypeCategory>();
+        this.trainTypeCategories = new ItemWithIdListImpl<TrainTypeCategory>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new ItemWithIdListImpl<TrainType>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));

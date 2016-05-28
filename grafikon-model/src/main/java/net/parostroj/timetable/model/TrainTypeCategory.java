@@ -6,12 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.ListenerSupport;
+
 /**
  * Category of train types - freight, passenger ...
  *
  * @author jub
  */
-public class TrainTypeCategory implements ObjectWithId {
+public class TrainTypeCategory implements ObjectWithId, Observable {
 
     private String id;
     private String name;
@@ -19,10 +22,13 @@ public class TrainTypeCategory implements ObjectWithId {
 
     private List<PenaltyTableRow> penaltyRows;
 
+    private final ListenerSupport listenerSupport;
+
     public TrainTypeCategory(String id, String name, String key) {
         this.id = id;
         this.key = key;
         this.name = name;
+        this.listenerSupport = new ListenerSupport();
         this.penaltyRows = new ArrayList<>();
     }
 
@@ -102,6 +108,26 @@ public class TrainTypeCategory implements ObjectWithId {
 
     public List<PenaltyTableRow> getPenaltyRows() {
         return Collections.unmodifiableList(penaltyRows);
+    }
+
+    /**
+     * adds listener.
+     *
+     * @param listener listener
+     */
+    @Override
+    public void addListener(Listener listener) {
+        listenerSupport.addListener(listener);
+    }
+
+    /**
+     * removes listener.
+     *
+     * @param listener listener
+     */
+    @Override
+    public void removeListener(Listener listener) {
+        listenerSupport.removeListener(listener);
     }
 
     @Override
