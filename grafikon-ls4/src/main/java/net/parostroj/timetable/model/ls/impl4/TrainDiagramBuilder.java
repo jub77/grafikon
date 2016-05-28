@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,8 +67,8 @@ public class TrainDiagramBuilder {
     }
 
     public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) {
-        PenaltyTable table = lSPenaltyTable.createPenaltyTable();
-        this.diagram.setPenaltyTable(table);
+        List<TrainTypeCategory> categories = lSPenaltyTable.createPenaltyTable();
+        diagram.getTrainTypeCategories().addAll(categories);
     }
 
     public void setNet(LSNet lsNet) throws LSException {

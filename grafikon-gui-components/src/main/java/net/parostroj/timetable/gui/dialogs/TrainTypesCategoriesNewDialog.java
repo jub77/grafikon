@@ -132,7 +132,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
     public void setVisible(TrainDiagram diagram) {
         templateComboBox.removeAllItems();
         templateComboBox.addItem(new Wrapper<TrainTypeCategory>(noneCategory));
-        for (TrainTypeCategory cat : diagram.getPenaltyTable().getTrainTypeCategories()) {
+        for (TrainTypeCategory cat : diagram.getTrainTypeCategories()) {
             templateComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
         }
         templateComboBox.setMaximumRowCount(Math.min(10, templateComboBox.getItemCount()));

@@ -131,7 +131,7 @@ public class LSTrainType {
         type.setColor(Conversions.convertTextToColor(color));
         type.setDesc(desc);
         type.setPlatform(platform);
-        type.setCategory(diagram.getPenaltyTable().getTrainTypeCategoryById(categoryId));
+        type.setCategory(diagram.getTrainTypeCategories().getById(categoryId));
         type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
             trainCompleteNameTemplate.createTextTemplate() : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?

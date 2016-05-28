@@ -129,7 +129,7 @@ public class LSTrainType {
     }
 
     private TrainTypeCategory getCategory(TrainDiagram diagram) {
-        for (TrainTypeCategory cat : diagram.getPenaltyTable().getTrainTypeCategories()) {
+        for (TrainTypeCategory cat : diagram.getTrainTypeCategories()) {
             if (cat.getKey().equals(braking.toLowerCase()))
                 return cat;
         }

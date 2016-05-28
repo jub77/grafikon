@@ -104,18 +104,17 @@ class TimeIntervalCalculation {
      */
     public int computeRunningTime() {
         final Train train = interval.getTrain();
-        TrainDiagram diagram = train.getDiagram();
-        final PenaltyTable penaltyTable = diagram.getPenaltyTable();
+        final TrainDiagram diagram = train.getDiagram();
         PenaltySolver ps = new PenaltySolver() {
 
             @Override
             public int getDecelerationPenalty(int speed) {
-                return penaltyTable.getDecPenalty(train, speed);
+                return PenaltyTable.getDecPenalty(train, speed);
             }
 
             @Override
             public int getAccelerationPenalty(int speed) {
-                return penaltyTable.getAccPenalty(train, speed);
+                return PenaltyTable.getAccPenalty(train, speed);
             }
         };
 

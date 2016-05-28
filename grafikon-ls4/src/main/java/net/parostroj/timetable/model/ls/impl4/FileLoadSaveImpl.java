@@ -164,7 +164,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             // save train diagram
             this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
             // save penalty table
-            this.save(zipOutput, DATA_PENALTY_TABLE, new LSPenaltyTable(diagram.getPenaltyTable()));
+            this.save(zipOutput, DATA_PENALTY_TABLE, new LSPenaltyTable(diagram.getTrainTypeCategories()));
             // save net
             this.save(zipOutput, DATA_NET, new LSNet(diagram.getNet()));
             int cnt = 0;

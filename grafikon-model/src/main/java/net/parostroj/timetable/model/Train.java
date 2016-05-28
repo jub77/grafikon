@@ -805,11 +805,11 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     public int getAccPenalty(int speed) {
-        return diagram.getPenaltyTable().getAccPenalty(this, speed);
+        return PenaltyTable.getAccPenalty(this, speed);
     }
 
     public int getDecPenalty(int speed) {
-        return diagram.getPenaltyTable().getDecPenalty(this, speed);
+        return PenaltyTable.getDecPenalty(this, speed);
     }
 
     /**

@@ -52,26 +52,25 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
         public void addTrainTypeCategory(TrainTypeCategory category) {
             int size = getSize();
-            diagram.getPenaltyTable().addTrainTypeCategory(category);
+            diagram.getTrainTypeCategories().add(category);
             this.fireIntervalAdded(this, size, size);
         }
 
         public void removeTrainTypeCategory(int index) {
             TrainTypeCategory category = getElementAt(index);
-            diagram.getPenaltyTable().removeTrainTypeCategory(category);
+            diagram.getTrainTypeCategories().remove(category);
             this.fireIntervalRemoved(this, index, index);
         }
 
         public void moveTrainTypeCategory(int index1, int index2) {
-            TrainTypeCategory category = getCategories().get(index1);
-            diagram.getPenaltyTable().moveTrainTypeCategory(category, index2);
+            diagram.getTrainTypeCategories().move(index1, index2);
             this.fireContentsChanged(this, index1, index1);
             this.fireContentsChanged(this, index2, index2);
         }
 
         private List<TrainTypeCategory> getCategories() {
             if (diagram != null)
-                return diagram.getPenaltyTable().getTrainTypeCategories();
+                return diagram.getTrainTypeCategories();
             else
                 return Collections.emptyList();
         }
@@ -85,10 +84,11 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         }
 
         private List<PenaltyTableRow> getCurrentRows() {
-            if (diagram != null)
-                return diagram.getPenaltyTable().getPenaltyTableRowsForCategory(getCurrentTrainTypeCategory());
-            else
+            if (diagram != null && getCurrentTrainTypeCategory() != null) {
+                return getCurrentTrainTypeCategory().getPenaltyRows();
+            } else {
                 return Collections.emptyList();
+            }
         }
 
         @Override
@@ -160,14 +160,14 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         public void addPenaltyTableRowForSpeed(int speed) {
             PenaltyTableRow row = new PenaltyTableRow(speed, 0, 0);
             TrainTypeCategory category = getCurrentTrainTypeCategory();
-            diagram.getPenaltyTable().addRowForCategory(category, row);
+            category.addRow(row);
             int index = getCurrentRows().indexOf(row);
             this.fireTableRowsInserted(index, index);
         }
 
         public void removePenaltyTableRow(int index) {
             TrainTypeCategory category = getCurrentTrainTypeCategory();
-            diagram.getPenaltyTable().removeRowForCategory(category, index);
+            category.removeRow(index);
             this.fireTableRowsDeleted(index, index);
         }
     }
@@ -251,6 +251,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
         trainTypeCategoriesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         trainTypeCategoriesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 trainTypeCategoriesListValueChanged(evt);
             }
@@ -258,24 +259,28 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         scrollPane1.setViewportView(trainTypeCategoriesList);
 
         newButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
             }
         });
 
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
         upButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upButtonActionPerformed(evt);
             }
         });
 
         downButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
             }
@@ -288,12 +293,14 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         scrollPane2.setViewportView(weightTable);
 
         newRowButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newRowButtonActionPerformed(evt);
             }
         });
 
         deleteRowButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteRowButtonActionPerformed(evt);
             }
@@ -367,10 +374,10 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
             if (dialog.getTemplateCategory() != null) {
                 TrainTypeCategory template = dialog.getTemplateCategory();
                 // copy
-                List<PenaltyTableRow> tRows = diagram.getPenaltyTable().getPenaltyTableRowsForCategory(template);
+                List<PenaltyTableRow> tRows = template.getPenaltyRows();
                 for (PenaltyTableRow tRow : tRows) {
                     PenaltyTableRow row = new PenaltyTableRow(tRow.getSpeed(), tRow.getAcceleration(), tRow.getDeceleration());
-                    diagram.getPenaltyTable().addRowForCategory(category, row);
+                    category.addRow(row);
                 }
             }
         }

@@ -126,9 +126,9 @@ public abstract class Import {
 
     protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
         if (match == ImportMatch.ID) {
-            return diagram.getPenaltyTable().getTrainTypeCategoryById(origCategory.getId());
+            return diagram.getTrainTypeCategories().getById(origCategory.getId());
         } else {
-            return Iterables.tryFind(diagram.getPenaltyTable().getTrainTypeCategories(),
+            return Iterables.tryFind(diagram.getTrainTypeCategories(),
                     category -> category.getName().equals(origCategory.getName())).orNull();
         }
     }

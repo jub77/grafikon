@@ -51,7 +51,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** Companies */
     private final ItemWithIdSet<Company> companies;
     /** Penalty table. */
-    private PenaltyTable penaltyTable;
+    private final ItemWithIdList<TrainTypeCategory> trainTypeCategories;
 
     private final TrainDiagramPartFactory partFactory;
 
@@ -96,7 +96,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.companies = new ItemWithIdSetImpl<Company>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.penaltyTable = new PenaltyTable(IdGenerator.getInstance().getId());
+        this.trainTypeCategories = new ItemWithIdListImpl<TrainTypeCategory>();
         this.net = new Net(IdGenerator.getInstance().getId(), this);
         this.trainTypes = new ItemWithIdListImpl<TrainType>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
@@ -282,21 +282,12 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return companies;
     }
 
+    public ItemWithIdList<TrainTypeCategory> getTrainTypeCategories() {
+        return trainTypeCategories;
+    }
+
     public TrainsData getTrainsData() {
         return trainsData;
-    }
-
-    public PenaltyTable getPenaltyTable() {
-        return penaltyTable;
-    }
-
-    public void setPenaltyTable(PenaltyTable penaltyTable) {
-        if (this.penaltyTable != penaltyTable) {
-            PenaltyTable oldPenaltyTable = this.penaltyTable;
-            this.penaltyTable = penaltyTable;
-            this.fireEvent(new Event(this,
-                    new AttributeChange(TrainDiagram.ATTR_PENALTY_TABLE, oldPenaltyTable, penaltyTable)));
-        }
     }
 
     @Override

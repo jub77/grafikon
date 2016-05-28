@@ -24,12 +24,12 @@ public class LSTrainTypeCategory {
     public LSTrainTypeCategory() {
     }
 
-    public LSTrainTypeCategory(TrainTypeCategory category, List<PenaltyTableRow> penaltyRows) {
+    public LSTrainTypeCategory(TrainTypeCategory category) {
         this.id = category.getId();
         this.name = category.getName();
         this.key = category.getKey();
         this.rows = new LinkedList<LSPenaltyTableRow>();
-        for (PenaltyTableRow r : penaltyRows) {
+        for (PenaltyTableRow r : category.getPenaltyRows()) {
             rows.add(new LSPenaltyTableRow(r));
         }
     }

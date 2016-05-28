@@ -28,7 +28,7 @@ public class TrainDiagramBuilder {
         lsDiagram.getTrainsData().updateTrainsData(this.diagram.getTrainsData());
         this.diagram.getAttributes().add(attributes);
         // fill penalty table with predefined values
-        LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getPenaltyTable());
+        LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getTrainTypeCategories());
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
             diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
