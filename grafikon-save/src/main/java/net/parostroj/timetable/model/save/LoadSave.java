@@ -49,6 +49,7 @@ public class LoadSave implements LSFile {
         loadFilters.add(new LineTypeLoadFilter());
         loadFilters.add(new WeightFilter());
         loadFilters.add(new RouteFilter());
+        loadFilters.add(new LocalizationFilter());
         saveFilters = new LinkedList<TrainDiagramFilter>();
     }
 

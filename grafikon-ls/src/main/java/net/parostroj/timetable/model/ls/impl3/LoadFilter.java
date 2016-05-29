@@ -45,6 +45,8 @@ public class LoadFilter {
                 type.setAttribute(TrainType.ATTR_SHOW_WEIGHT_INFO, true);
             }
         }
+        // localized strings
+        this.convertToLocalizedStrings(diagram);
     }
 
     private TextTemplate convert(String routeInfo) throws GrafikonException {
@@ -71,5 +73,31 @@ public class LoadFilter {
             }
         }
         return TextTemplate.createTextTemplate(result.toString(), TextTemplate.Language.MVEL);
+    }
+
+    private void convertToLocalizedStrings(TrainDiagram diagram) {
+        // (1) convert comments
+        for (Train train : diagram.getTrains()) {
+            for (TimeInterval interval : train) {
+                String comment = interval.getAttribute(TimeInterval.ATTR_COMMENT, String.class);
+                if (comment != null) {
+                    interval.setAttribute(TimeInterval.ATTR_COMMENT, LocalizedString.fromString(comment));
+                }
+            }
+        }
+        // (2) add display name property to circulation types
+        for (TrainsCycleType circulationType : diagram.getCycleTypes()) {
+            if (!circulationType.isDefaultType() && circulationType.getDisplayName() == null) {
+                circulationType.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME,
+                        LocalizedString.fromString(circulationType.getName()));
+            }
+        }
+        // (3) descriptions of output templates
+        for (OutputTemplate ot : diagram.getOutputTemplates()) {
+            String desc = ot.getAttribute(OutputTemplate.ATTR_DESCRIPTION, String.class);
+            if (desc != null) {
+                ot.setAttribute(OutputTemplate.ATTR_DESCRIPTION, LocalizedString.fromString(desc));
+            }
+        }
     }
 }
