@@ -17,7 +17,9 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.JTextAreaGrey;
 import net.parostroj.timetable.gui.utils.*;
+import net.parostroj.timetable.gui.wrappers.OutputTemplateWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
@@ -54,11 +56,13 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
     private GuiContext context;
 
+    private final WrapperDelegate<OutputTemplate> otWrapperDelegate;
 
     /** Creates new form TextTemplateListDialog */
     public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        otWrapperDelegate = new OutputTemplateWrapperDelegate();
     }
 
     @Override
@@ -74,7 +78,10 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         this.settings = settings;
         this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
         this.locationTextField.setText(this.outputDirectory.getPath());
-        templatesModel = new WrapperListModel<OutputTemplate>(Wrapper.getWrapperList(diagram.getOutputTemplates()), null, false);
+        templatesModel = new WrapperListModel<OutputTemplate>(
+                Wrapper.getWrapperList(diagram.getOutputTemplates(), otWrapperDelegate),
+                null,
+                false);
         ItemList<OutputTemplate> outputTemplates = diagram.getOutputTemplates();
         templatesModel.setObjectListener(new WrapperListModel.ObjectListener<OutputTemplate>() {
             @Override
@@ -294,7 +301,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         OutputTemplate selectedTemplate = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         OutputTemplate template = this.copyTemplate(selectedTemplate);
         template.setName(ObjectsUtil.checkAndTrim(nameTextField.getText()));
-        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template);
+        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template, otWrapperDelegate);
         templatesModel.addWrapper(wrapper);
         nameTextField.setText("");
         templateList.setSelectedValue(wrapper, true);
@@ -310,7 +317,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
             log.error("Error creating template.", e);
         }
         template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, "diagram");
-        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template);
+        Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template, otWrapperDelegate);
         templatesModel.addWrapper(wrapper);
         nameTextField.setText("");
         templateList.setSelectedValue(wrapper, true);
