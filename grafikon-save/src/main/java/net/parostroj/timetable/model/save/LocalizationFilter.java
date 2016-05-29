@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model.save;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TimeInterval;
@@ -11,8 +14,11 @@ import net.parostroj.timetable.model.ls.ModelVersion;
 
 public class LocalizationFilter implements TrainDiagramFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(LocalizationFilter.class);
+
     @Override
     public TrainDiagram filter(TrainDiagram diagram, ModelVersion version) throws LSException {
+        log.debug("Loaded version: {}", version);
         this.convertToLocalizedStrings(diagram);
         return diagram;
     }
