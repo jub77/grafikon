@@ -1,10 +1,9 @@
 package net.parostroj.timetable.actions;
 
-import java.util.UUID;
-
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Checks loaded diagram. Adds missing values and other information.
@@ -58,7 +57,7 @@ public class AfterLoadCheck {
     }
 
     private TrainsCycleType createTrainsCycleType(String name, TrainDiagram diagram) {
-        TrainsCycleType cycleType = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
+        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
         cycleType.setName(name);
         return cycleType;
     }

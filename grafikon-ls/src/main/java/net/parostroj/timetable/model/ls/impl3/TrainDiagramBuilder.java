@@ -1,11 +1,11 @@
 package net.parostroj.timetable.model.ls.impl3;
 
 import java.io.File;
-import java.util.UUID;
 
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Builder for TrainDiagram.
@@ -42,7 +42,7 @@ public class TrainDiagramBuilder {
     }
 
     private TrainsCycleType createTrainsCycleType(String name) {
-        TrainsCycleType cycleType = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
+        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
         cycleType.setName(name);
         return cycleType;
     }

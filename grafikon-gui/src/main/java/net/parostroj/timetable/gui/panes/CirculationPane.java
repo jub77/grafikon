@@ -7,7 +7,6 @@ package net.parostroj.timetable.gui.panes;
 
 import java.awt.Color;
 import java.awt.event.ItemEvent;
-import java.util.UUID;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
@@ -25,6 +24,7 @@ import net.parostroj.timetable.mediator.GTEventsReceiverColleague;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.output2.gt.TrainColorChooser;
+import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.ini4j.Ini;
@@ -109,7 +109,7 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String name = newNameTextField.getText();
         if (!TrainsCycleType.isDefaultType(name)) {
-            TrainsCycleType type = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
+            TrainsCycleType type = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
             type.setName(name);
             type.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.fromString(name));
             diagram.getCycleTypes().add(type);

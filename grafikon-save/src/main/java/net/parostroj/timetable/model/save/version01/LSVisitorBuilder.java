@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.save.LSPenaltyTableHelper;
@@ -51,7 +50,7 @@ public class LSVisitorBuilder implements LSVisitor {
     }
 
     private TrainsCycleType createTrainsCycleType(String name) {
-        TrainsCycleType cycleType = new TrainsCycleType(UUID.randomUUID().toString(), diagram);
+        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
         cycleType.setName(name);
         return cycleType;
     }
@@ -202,6 +201,6 @@ public class LSVisitorBuilder implements LSVisitor {
     }
 
     private String createId() {
-        return UUID.randomUUID().toString();
+        return IdGenerator.getInstance().getId();
     }
 }

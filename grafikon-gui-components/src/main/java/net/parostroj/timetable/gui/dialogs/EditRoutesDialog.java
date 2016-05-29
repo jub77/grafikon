@@ -11,6 +11,7 @@ import net.parostroj.timetable.gui.wrappers.RouteWrapperDelegate;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperListModel;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.utils.IdGenerator;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 import javax.swing.JPanel;
@@ -223,6 +224,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         FormListener() {
         }
 
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == newButton) {
                 EditRoutesDialog.this.newButtonActionPerformed(evt);
@@ -233,6 +235,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
             }
         }
 
+        @Override
         public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
             if (evt.getSource() == routesList) {
                 EditRoutesDialog.this.routesListValueChanged(evt);
@@ -250,7 +253,7 @@ public class EditRoutesDialog extends javax.swing.JDialog {
         nodes.add((Node) fromComboBox.getSelectedItem());
         nodes.addAll(throughNodes);
         nodes.add((Node) toComboBox.getSelectedItem());
-        newRoute = builder.createRoute(UUID.randomUUID().toString(), diagram.getNet(), nodes);
+        newRoute = builder.createRoute(IdGenerator.getInstance().getId(), diagram.getNet(), nodes);
         // do not create route with duplicate nodes
         if (newRoute == null || newRoute.checkDuplicateNodes()) {
             GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.incorrect.values"), this);
