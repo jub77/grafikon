@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TimeInterval;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainsCycleItem;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.utils.AttributeReference;
@@ -25,6 +26,7 @@ public class LocalizationTypeFactory {
         types.add(createTrainCommentsType(diagram));
         types.add(createCirculationItemCommentsType(diagram));
         types.add(createCirculationNamesType(diagram));
+        types.add(createTrainTypeDesc(diagram));
         return types;
     }
 
@@ -83,6 +85,16 @@ public class LocalizationTypeFactory {
                         .map(interval -> AttributeReference.create(interval, TimeInterval.ATTR_COMMENT, LocalizedString.class))
                         .collect(Collectors.toList()),
                 ref -> getTimeIntervalDesc(ref),
+                diagram.getLocales());
+    }
+
+    public LocalizationType<AttributeReference<LocalizedString>> createTrainTypeDesc(TrainDiagram diagram) {
+        return new LocalizationType<>(
+                ResourceLoader.getString("localization.type.train.type.description"),
+                diagram.getTrainTypes().stream()
+                        .map(type -> AttributeReference.create(type, TrainType.ATTR_DESC, LocalizedString.class))
+                        .collect(Collectors.toList()),
+                ref -> ref.get().getDefaultString(),
                 diagram.getLocales());
     }
 
