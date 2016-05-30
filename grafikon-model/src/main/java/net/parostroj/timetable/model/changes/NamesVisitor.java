@@ -79,7 +79,7 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(TrainsCycleType type) {
-        name = type.getName();
+        name = type.getName().getDefaultString();
     }
 
     public String getName() {

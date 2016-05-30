@@ -191,24 +191,20 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public TrainsCycleType getEngineCycleType() {
-        return this.getCycleTypeByNameImpl(TrainsCycleType.ENGINE_CYCLE);
+        return this.getCycleTypeByKey(TrainsCycleType.ENGINE_CYCLE_KEY);
     }
 
     public TrainsCycleType getTrainUnitCycleType() {
-        return this.getCycleTypeByNameImpl(TrainsCycleType.TRAIN_UNIT_CYCLE);
+        return this.getCycleTypeByKey(TrainsCycleType.TRAIN_UNIT_CYCLE_KEY);
     }
 
     public TrainsCycleType getDriverCycleType() {
-        return this.getCycleTypeByNameImpl(TrainsCycleType.DRIVER_CYCLE);
+        return this.getCycleTypeByKey(TrainsCycleType.DRIVER_CYCLE_KEY);
     }
 
-    public TrainsCycleType getDefaultCycleType(String typeName) {
-        return this.getCycleTypeByNameImpl(typeName);
-    }
-
-    private TrainsCycleType getCycleTypeByNameImpl(String typeName) {
+    public TrainsCycleType getCycleTypeByKey(String key) {
         for (TrainsCycleType type : cycleTypes) {
-            if (typeName.equals(type.getName())) {
+            if (key.equals(type.getKey())) {
                 return type;
             }
         }

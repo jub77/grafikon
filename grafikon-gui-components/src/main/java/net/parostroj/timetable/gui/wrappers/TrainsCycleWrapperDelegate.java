@@ -29,7 +29,7 @@ public class TrainsCycleWrapperDelegate extends BasicWrapperDelegate<TrainsCycle
         TrainsCycle cycle = element;
         String str = cycle.getName();
         if (showType) {
-            str = String.format("%s (%s)", cycle.getName(), cycle.getType().getDescriptionText());
+            str = String.format("%s (%s)", cycle.getName(), cycle.getType().getName().translate());
         }
         return str;
     }

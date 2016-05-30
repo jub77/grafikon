@@ -59,8 +59,7 @@ public class LocalizationTypeFactory {
         return new LocalizationType<>(
                 ResourceLoader.getString("localization.type.circulation.type.names"),
                 diagram.getCycleTypes().stream()
-                        .filter(type -> !type.isDefaultType() && type.getDisplayName() != null)
-                        .map(type -> AttributeReference.create(type, TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.class))
+                        .map(type -> AttributeReference.create(type, TrainsCycleType.ATTR_NAME, LocalizedString.class))
                         .collect(Collectors.toList()),
                 ref -> ref.get().getDefaultString(),
                 diagram.getLocales());

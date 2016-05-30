@@ -180,7 +180,7 @@ public class TransformVisitor implements EventVisitor {
     public void visitTrainsCycleTypeEvent(Event event) {
         TrainsCycleType trainsCycleType = (TrainsCycleType) event.getSource();
         change = new DiagramChange(DiagramChange.Type.CYCLE_TYPE, trainsCycleType.getId());
-        change.setObject(trainsCycleType.getName());
+        change.setObject(trainsCycleType.getKey());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }

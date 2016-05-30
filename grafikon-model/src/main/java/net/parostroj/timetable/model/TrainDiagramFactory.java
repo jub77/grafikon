@@ -59,9 +59,9 @@ public class TrainDiagramFactory {
             diagram.setAttribute(TrainDiagram.ATTR_LENGTH_UNIT, LengthUnit.AXLE);
             diagram.setAttribute(TrainDiagram.ATTR_STATION_TRANSFER_TIME, 10);
 
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE, diagram));
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE, diagram));
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE, diagram));
+            diagram.getCycleTypes().add(createDefaultTrainsCycleType(TrainsCycleType.DRIVER_CYCLE_KEY, diagram));
+            diagram.getCycleTypes().add(createDefaultTrainsCycleType(TrainsCycleType.ENGINE_CYCLE_KEY, diagram));
+            diagram.getCycleTypes().add(createDefaultTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE_KEY, diagram));
 
             return diagram;
         } catch (GrafikonException e) {
@@ -70,9 +70,13 @@ public class TrainDiagramFactory {
         }
     }
 
-    private TrainsCycleType createTrainsCycleType(String name, TrainDiagram diagram) {
+    public static TrainsCycleType createDefaultTrainsCycleType(String key, TrainDiagram diagram) {
+        if (!TrainsCycleType.isDefaultType(key)) {
+            throw new IllegalArgumentException("No default key for circulation: " + key);
+        }
         TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-        cycleType.setName(name);
+        cycleType.setKey(key);
+        cycleType.setName(TrainsCycleType.getNameForDefaultType(key));
         return cycleType;
     }
 }

@@ -5,7 +5,6 @@ import java.io.File;
 import net.parostroj.timetable.actions.AfterLoadCheck;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Builder for TrainDiagram.
@@ -31,20 +30,14 @@ public class TrainDiagramBuilder {
         LSPenaltyTableHelper.fillPenaltyTable(this.diagram.getTrainTypeCategories());
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.DRIVER_CYCLE_KEY, diagram));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.ENGINE_CYCLE_KEY, diagram));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE_KEY, diagram));
         }
-    }
-
-    private TrainsCycleType createTrainsCycleType(String name) {
-        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-        cycleType.setName(name);
-        return cycleType;
     }
 
     public void setTrainsData(LSTrainsData lsData) throws LSException {

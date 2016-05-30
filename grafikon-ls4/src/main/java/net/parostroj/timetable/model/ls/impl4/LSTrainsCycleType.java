@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.ls.LSException;
@@ -11,20 +12,20 @@ import net.parostroj.timetable.model.ls.LSException;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "attributes"})
+@XmlType(propOrder = {"id", "name", "key", "attributes"})
 public class LSTrainsCycleType {
 
     private String id;
+    // not used anymore for serialization
     private String name;
-    private String description;
+    private String key;
     private LSAttributes attributes;
 
     public LSTrainsCycleType() {}
 
     public LSTrainsCycleType(TrainsCycleType type) {
         this.id = type.getId();
-        this.name = type.getName();
-        this.description = type.getDescription();
+        this.key = type.getKey();
         this.attributes = new LSAttributes(type.getAttributes());
     }
 
@@ -52,18 +53,21 @@ public class LSTrainsCycleType {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getKey() {
+        return key;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public TrainsCycleType createTrainsCycleType(TrainDiagram diagram) throws LSException {
         TrainsCycleType type = new TrainsCycleType(id, diagram);
-        type.setName(name);
-        type.setDescription(description);
+        type.setKey(key);
+        if (name != null) {
+            type.setKey(name);
+            type.setName(LocalizedString.fromString(name));
+        }
         type.getAttributes().add(attributes.createAttributes(diagram));
         return type;
     }

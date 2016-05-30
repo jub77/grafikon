@@ -54,7 +54,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getObject() instanceof TimetableImage)
                     str.append("    Image: ").append(event.getObject().toString()).append('\n');
                 if (event.getObject() instanceof TrainsCycleType)
-                    str.append("    Cycle type: ").append(((TrainsCycleType) event.getObject()).getName());
+                    str.append("    Cycle type: ").append(((TrainsCycleType) event.getObject()).getName().getDefaultString());
                 if (event.getObject() instanceof TrainsCycle)
                     str.append("    Cycle: ").append(((TrainsCycle) event.getObject()).getName());
                 if (event.getObject() instanceof OutputTemplate)
@@ -252,7 +252,7 @@ public class GTEventOutputVisitor implements EventVisitor {
             if (full) {
                 str.append('\n');
                 str.append("  Name: ").append(trainsCycle.getName()).append('\n');
-                str.append("  Cycle type: ").append(trainsCycle.getType().getName()).append('\n');
+                str.append("  Cycle type: ").append(trainsCycle.getType().getName().getDefaultString()).append('\n');
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange())).append('\n');
@@ -276,7 +276,7 @@ public class GTEventOutputVisitor implements EventVisitor {
         try {
             str.append("TrainsCycleTypeEvent[");
             TrainsCycleType trainsCycleType = (TrainsCycleType) event.getSource();
-            str.append(trainsCycleType.getName());
+            str.append(trainsCycleType.getName().getDefaultString());
             str.append(']');
             if (full) {
                 str.append('\n');

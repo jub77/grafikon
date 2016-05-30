@@ -25,6 +25,7 @@ public class LSTrainType {
 
     private String id;
     private String abbr;
+    // not used anymore for serialization
     private String desc;
     private String color;
     private String categoryId;

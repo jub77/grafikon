@@ -163,11 +163,10 @@ public class LoadFilter {
                 }
             }
         }
-        // (2) add display name property to circulation types
+        // (2) add translations for default types
         for (TrainsCycleType circulationType : diagram.getCycleTypes()) {
-            if (!circulationType.isDefaultType() && circulationType.getDisplayName() == null) {
-                circulationType.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME,
-                        LocalizedString.fromString(circulationType.getName()));
+            if (circulationType.isDefaultType()) {
+                circulationType.setName(TrainsCycleType.getNameForDefaultType(circulationType.getKey()));
             }
         }
         // (3) descriptions of output templates

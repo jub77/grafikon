@@ -8,8 +8,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
-import com.google.common.collect.FluentIterable;
-
+import net.parostroj.timetable.model.LocalizedString.Builder;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
@@ -23,24 +22,23 @@ import net.parostroj.timetable.visitors.Visitable;
  */
 public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitable, TrainsCycleTypeAttributes, Observable {
 
-    public static final String ENGINE_CYCLE = "ENGINE_CYCLE";
-    public static final String DRIVER_CYCLE = "DRIVER_CYCLE";
-    public static final String TRAIN_UNIT_CYCLE = "TRAIN_UNIT_CYCLE";
+    public static final String ENGINE_CYCLE_KEY = "ENGINE_CYCLE";
+    public static final String DRIVER_CYCLE_KEY = "DRIVER_CYCLE";
+    public static final String TRAIN_UNIT_CYCLE_KEY = "TRAIN_UNIT_CYCLE";
 
-    public static boolean isDefaultType(String typeName) {
-        return TrainsCycleType.DRIVER_CYCLE.equals(typeName) ||
-            TrainsCycleType.ENGINE_CYCLE.equals(typeName) ||
-            TrainsCycleType.TRAIN_UNIT_CYCLE.equals(typeName);
+    public static boolean isDefaultType(String key) {
+        return TrainsCycleType.DRIVER_CYCLE_KEY.equals(key) ||
+            TrainsCycleType.ENGINE_CYCLE_KEY.equals(key) ||
+            TrainsCycleType.TRAIN_UNIT_CYCLE_KEY.equals(key);
     }
 
     public static boolean isDefaultType(TrainsCycleType type) {
-        return isDefaultType(type.getName());
+        return isDefaultType(type.getKey());
     }
 
     private final String id;
     private final TrainDiagram diagram;
-    private String name;
-    private String description;
+    private String key;
     private final Attributes attributes;
     private final ItemWithIdSet<TrainsCycle> cycles;
 
@@ -70,48 +68,24 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return diagram;
     }
 
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
 
-    public LocalizedString getDisplayName() {
-        return this.getAttribute(ATTR_DISPLAY_NAME, LocalizedString.class);
-    }
-
-    public LocalizedString getLocalizedName() {
-        if (isDefaultType()) {
-            return LocalizedString.newBuilder(getDescriptionText())
-                    .addAllStringWithLocale(FluentIterable.from(getDiagram().getLocales())
-                            .transform(
-                                    locale -> LocalizedString.newStringWithLocale(getDescriptionText(locale), locale))
-                            .toList())
-                    .build();
-        } else {
-            LocalizedString result = getDisplayName();
-            if (result == null) result = LocalizedString.fromString(getName());
-            return result;
+    public void setKey(String key) {
+        if (!ObjectsUtil.compareWithNull(key, this.key)) {
+            String oldKey = this.key;
+            this.key = key;
+            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_KEY, oldKey, key)));
         }
     }
 
-    public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
-        }
+    public LocalizedString getName() {
+        return attributes.get(ATTR_NAME, LocalizedString.class);
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        if (!ObjectsUtil.compareWithNull(description, this.description)) {
-            String oldDescription = this.description;
-            this.description = description;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESCRIPTION,
-                    oldDescription, description)));
-        }
+    public void setName(LocalizedString name) {
+        attributes.setRemove(ATTR_NAME, name);
     }
 
     @Override
@@ -123,21 +97,22 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
         return cycles;
     }
 
-    public String getDescriptionText() {
-        return getDescriptionText(Locale.getDefault());
+    public static LocalizedString getNameForDefaultType(String key) {
+        List<Locale> locales = Arrays.asList(Locale.forLanguageTag("cs"), Locale.GERMAN, Locale.forLanguageTag("sk"));
+        Builder builder = LocalizedString.newBuilder();
+        for (Locale locale : locales) {
+            String text = getKeyForLocale(key, locale);
+            builder.addStringWithLocale(text, locale);
+        }
+        builder.setDefaultString(getKeyForLocale(key, Locale.ENGLISH));
+        return builder.build();
     }
 
-    public String getDescriptionText(Locale locale) {
-        String text = null;
-        if (isDefaultType()) {
-            ResourceBundle bundle = ResourceBundleUtil.getBundle(
-                    "net.parostroj.timetable.model.cycle_type_texts",
-                    TrainsCycleType.class.getClassLoader(), locale, Locale.ENGLISH);
-            text = bundle.getString(name);
-        } else {
-            LocalizedString displayName = getDisplayName();
-            text = displayName != null ? displayName.translate(locale) : name;
-        }
+    private static String getKeyForLocale(String key, Locale locale) {
+        ResourceBundle bundle = ResourceBundleUtil.getBundle(
+                "net.parostroj.timetable.model.cycle_type_texts",
+                TrainsCycleType.class.getClassLoader(), locale, locale);
+        String text = bundle.getString(key);
         return text;
     }
 
@@ -156,20 +131,32 @@ public class TrainsCycleType implements AttributesHolder, ObjectWithId, Visitabl
     }
 
     public boolean isEngineType() {
-        return ENGINE_CYCLE.equals(this.getName());
+        return ENGINE_CYCLE_KEY.equals(this.getKey());
+    }
+
+    public static boolean isEngineType(TrainsCycleType type) {
+        return type != null && type.isEngineType();
     }
 
     public boolean isTrainUnitType() {
-        return TRAIN_UNIT_CYCLE.equals(this.getName());
+        return TRAIN_UNIT_CYCLE_KEY.equals(this.getKey());
+    }
+
+    public static boolean isTrainUnitType(TrainsCycleType type) {
+        return type != null && type.isTrainUnitType();
     }
 
     public boolean isDriverType() {
-        return DRIVER_CYCLE.equals(this.getName());
+        return DRIVER_CYCLE_KEY.equals(this.getKey());
+    }
+
+    public static boolean isDriverType(TrainsCycleType type) {
+        return type != null && type.isDriverType();
     }
 
     @Override
     public String toString() {
-        return name;
+        return getName().getDefaultString();
     }
 
     @Override

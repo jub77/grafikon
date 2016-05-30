@@ -110,7 +110,7 @@ public class LSTrainsCycle {
         if (cycleType == null) {
             // fallback to name
             for (TrainsCycleType t : diagram.getCycleTypes()) {
-                if (ObjectsUtil.compareWithNull(t.getName(), type)) {
+                if (ObjectsUtil.compareWithNull(t.getKey(), type)) {
                     cycleType = t;
                 }
             }

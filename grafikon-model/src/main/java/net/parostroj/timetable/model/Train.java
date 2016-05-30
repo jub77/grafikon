@@ -329,7 +329,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     }
 
     private void checkRecalculateCycle(TrainsCycle cycle) {
-        if (cycle.getType().getName().equals(TrainsCycleType.ENGINE_CYCLE) && cycle.getAttributes().containsKey(TrainsCycle.ATTR_ENGINE_CLASS)) {
+        if (TrainsCycleType.isEngineType(cycle.getType()) && cycle.getAttributes().containsKey(TrainsCycle.ATTR_ENGINE_CLASS)) {
             this.recalculate();
         }
     }

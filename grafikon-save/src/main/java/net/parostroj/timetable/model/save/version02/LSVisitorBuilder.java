@@ -43,20 +43,14 @@ public class LSVisitorBuilder implements LSVisitor {
         }
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.DRIVER_CYCLE_KEY, diagram));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.ENGINE_CYCLE_KEY, diagram));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE_KEY, diagram));
         }
-    }
-
-    private TrainsCycleType createTrainsCycleType(String name) {
-        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-        cycleType.setName(name);
-        return cycleType;
     }
 
     @Override
@@ -192,7 +186,7 @@ public class LSVisitorBuilder implements LSVisitor {
     public void visit(LSTrainsCycle lsCycle) {
         TrainsCycleType type = null;
         for (TrainsCycleType t : diagram.getCycleTypes()) {
-            if (lsCycle.getType().equals(t.getName())) {
+            if (lsCycle.getType().equals(t.getKey())) {
                 type = t;
             }
         }

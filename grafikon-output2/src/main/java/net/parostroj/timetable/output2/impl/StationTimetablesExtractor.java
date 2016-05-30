@@ -168,7 +168,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemNext != null ? itemNext.getTrain().getName() : null,
                         itemNext != null ? converter.convertIntToXml(itemNext.getStartTime()) : null,
-                        type.getName());
+                        type.getKey());
                 this.updateAdjacent(cycleFromTo, item, itemNext);
                 cycles.add(cycleFromTo);
             }
@@ -180,7 +180,7 @@ public class StationTimetablesExtractor {
                         cycle.getDescription(),
                         itemPrev != null ? itemPrev.getTrain().getName() : null,
                         itemPrev != null ? converter.convertIntToXml(itemPrev.getEndTime()) : null,
-                        type.getName());
+                        type.getKey());
                 this.updateAdjacent(cycleFromTo, item, itemPrev);
                 cycles.add(cycleFromTo);
             }
@@ -214,7 +214,7 @@ public class StationTimetablesExtractor {
                 this.updateAdjacent(cycleFromTo, item, itemPrev);
             }
             if (cycleFromTo != null) {
-                if (type.getName().equals(TrainsCycleType.ENGINE_CYCLE) && isHelperEngine(item)) {
+                if (TrainsCycleType.isEngineType(type) && isHelperEngine(item)) {
                     cycleFromTo.setHelper(true);
                 }
                 cycles.add(cycleFromTo);

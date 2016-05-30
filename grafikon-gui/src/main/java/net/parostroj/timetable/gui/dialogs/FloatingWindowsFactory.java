@@ -172,7 +172,7 @@ public class FloatingWindowsFactory {
 
             @Override
             public void processTrainsCycleEvent(Event event) {
-                if (TrainsCycleType.ENGINE_CYCLE.equals(((TrainsCycle) event.getSource()).getType().getName())) {
+                if (TrainsCycleType.isEngineType(((TrainsCycle) event.getSource()).getType())) {
                     TrainsCycle cycle = (TrainsCycle) event.getSource();
                     for (TrainsCycleItem item : cycle) {
                         panel.updateTrain(item.getTrain());

@@ -110,8 +110,8 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
         String name = newNameTextField.getText();
         if (!TrainsCycleType.isDefaultType(name)) {
             TrainsCycleType type = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-            type.setName(name);
-            type.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.fromString(name));
+            type.setName(LocalizedString.fromString(name));
+            type.setKey(name);
             diagram.getCycleTypes().add(type);
         }
         newNameTextField.setText("");
@@ -125,11 +125,11 @@ public class CirculationPane extends javax.swing.JPanel implements StorableGuiDa
     }
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, type.getName());
+        String name = (String) JOptionPane.showInputDialog(this, "", null, JOptionPane.QUESTION_MESSAGE, null, null, type.getName().getDefaultString());
         name = ObjectsUtil.checkAndTrim(name);
         if (name != null) {
-            type.setName(name);
-            type.setAttribute(TrainsCycleType.ATTR_DISPLAY_NAME, LocalizedString.fromString(name));
+            type.setName(LocalizedString.newBuilder(type.getName()).setDefaultString(name).build());
+            type.setKey(name);
             ((CPModel) typesComboBox.getModel()).refreshSelected();
         }
     }

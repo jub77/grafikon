@@ -1,9 +1,9 @@
 package net.parostroj.timetable.actions;
 
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.TrainDiagramFactory;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.utils.IdGenerator;
 
 /**
  * Checks loaded diagram. Adds missing values and other information.
@@ -46,19 +46,13 @@ public class AfterLoadCheck {
 
         // add default trains cycle types (if already defined - no action)
         if (diagram.getDriverCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.DRIVER_CYCLE, diagram));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.DRIVER_CYCLE_KEY, diagram));
         }
         if (diagram.getEngineCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.ENGINE_CYCLE, diagram));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.ENGINE_CYCLE_KEY, diagram));
         }
         if (diagram.getTrainUnitCycleType() == null) {
-            diagram.getCycleTypes().add(createTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE, diagram));
+            diagram.getCycleTypes().add(TrainDiagramFactory.createDefaultTrainsCycleType(TrainsCycleType.TRAIN_UNIT_CYCLE_KEY, diagram));
         }
-    }
-
-    private TrainsCycleType createTrainsCycleType(String name, TrainDiagram diagram) {
-        TrainsCycleType cycleType = new TrainsCycleType(IdGenerator.getInstance().getId(), diagram);
-        cycleType.setName(name);
-        return cycleType;
     }
 }
