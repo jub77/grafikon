@@ -20,8 +20,6 @@ public class TrainType
     private final String id;
     /** Abbreviation of the type. */
     private String abbr;
-    /** Description of the type. */
-    private String desc;
     /** Color for GT. */
     private Color color;
     /** Category. */
@@ -102,19 +100,15 @@ public class TrainType
     /**
      * @return description of the type
      */
-    public String getDesc() {
-        return desc;
+    public LocalizedString getDesc() {
+        return attributes.get(ATTR_DESC, LocalizedString.class);
     }
 
     /**
      * @param desc description to set
      */
-    public void setDesc(String desc) {
-        if (!ObjectsUtil.compareWithNull(desc, this.desc)) {
-            String oldDesc = this.desc;
-            this.desc = desc;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_DESC, oldDesc, desc)));
-        }
+    public void setDesc(LocalizedString desc) {
+        attributes.setRemove(ATTR_DESC, desc);
     }
 
     /**
@@ -243,7 +237,8 @@ public class TrainType
 
     @Override
     public String toString() {
-        return abbr + " - " + desc;
+        LocalizedString desc = getDesc();
+        return abbr + " - " + (desc == null ? "<none>" : desc.getDefaultString());
     }
 
     /**

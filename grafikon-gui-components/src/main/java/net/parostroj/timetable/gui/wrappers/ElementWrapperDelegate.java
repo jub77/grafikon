@@ -20,7 +20,8 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
         } else if (element instanceof TrainsCycle) {
             return ((TrainsCycle) element).getName();
         } else if (element instanceof TrainType) {
-            return ((TrainType) element).getDesc();
+            LocalizedString desc = ((TrainType) element).getDesc();
+            return desc != null ? desc.translate() : ((TrainType) element).getAbbr();
         } else if (element instanceof TrainTypeCategory) {
             return ((TrainTypeCategory) element).getName();
         } else if (element instanceof TimeInterval) {

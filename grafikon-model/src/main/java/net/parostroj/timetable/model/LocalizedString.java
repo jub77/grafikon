@@ -63,6 +63,13 @@ public class LocalizedString {
     }
 
     /**
+     * @return text translation for default locale
+     */
+    public String translate() {
+        return this.translate(Locale.getDefault());
+    }
+
+    /**
      * @param locale locale
      * @return text for given locale or default text if the locale is not present
      */

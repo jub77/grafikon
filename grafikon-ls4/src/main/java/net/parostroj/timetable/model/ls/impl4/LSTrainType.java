@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
@@ -38,7 +39,6 @@ public class LSTrainType {
     public LSTrainType(TrainType type) {
         this.id = type.getId();
         this.abbr = type.getAbbr();
-        this.desc = type.getDesc();
         this.platform = type.isPlatform();
         Color c = type.getColor();
         this.color = Conversions.convertColorToText(c);
@@ -129,7 +129,9 @@ public class LSTrainType {
         TrainType type = diagram.getPartFactory().createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
-        type.setDesc(desc);
+        if (desc != null) {
+            type.setDesc(LocalizedString.fromString(desc));
+        }
         type.setPlatform(platform);
         type.setCategory(diagram.getTrainTypeCategories().getById(categoryId));
         type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?

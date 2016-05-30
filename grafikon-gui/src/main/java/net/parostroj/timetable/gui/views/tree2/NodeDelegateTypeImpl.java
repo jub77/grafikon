@@ -1,5 +1,6 @@
 package net.parostroj.timetable.gui.views.tree2;
 
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainType;
 
@@ -13,7 +14,8 @@ public class NodeDelegateTypeImpl implements NodeDelegate {
     @Override
     public String getNodeText(TrainTreeNode trainTreeNode) {
         TrainType type = (TrainType) trainTreeNode.getUserObject();
-        return type != null ? type.getDesc() : "-";
+        LocalizedString desc = type != null ? type.getDesc() : null;
+        return type != null ? (desc != null ? desc.translate() : type.getAbbr()) : "-";
     }
 
     @Override

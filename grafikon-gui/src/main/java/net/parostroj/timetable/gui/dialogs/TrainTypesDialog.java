@@ -387,7 +387,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private void updateValuesForTrainType(TrainType selected) {
         if (selected != null) {
             abbrTextField.setText(selected.getAbbr());
-            descTextField.setText(selected.getDesc());
+            descTextField.setText(selected.getDesc().getDefaultString());
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));
             colorLabel.setForeground(selected.getColor());
             TrainTypeCategory category = selected.getCategory();
@@ -471,7 +471,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 return;
             }
             type.setAbbr(abbr);
-            type.setDesc(desc);
+            type.setDesc(LocalizedString.newBuilder(type.getDesc()).setDefaultString(desc).build());
             type.setPlatform(platformNeededCheckBox.isSelected());
             type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
             Color c = Conversions.convertTextToColor(colorLabel.getText());
@@ -535,7 +535,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         TrainDiagramPartFactory factory = diagram.getPartFactory();
         TrainType type = factory.createTrainType(factory.createId());
         type.setAbbr(abbr);
-        type.setDesc(desc);
+        type.setDesc(LocalizedString.fromString(desc));
         type.setPlatform(platformNeededCheckBox.isSelected());
         type.setColor(Conversions.convertTextToColor(colorLabel.getText()));
         TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>) brakeComboBox.getSelectedItem()).getElement();

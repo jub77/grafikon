@@ -34,7 +34,7 @@ public class LSTrainType {
     public LSTrainType(TrainType type) {
         this.id = type.getId();
         this.abbr = type.getAbbr();
-        this.desc = type.getDesc();
+        this.desc = type.getDesc().getDefaultString();
         this.platform = type.isPlatform();
         Color c = type.getColor();
         this.color = Conversions.convertColorToText(c);
@@ -114,7 +114,7 @@ public class LSTrainType {
         TrainType type = diagram.getPartFactory().createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
-        type.setDesc(desc);
+        type.setDesc(LocalizedString.fromString(desc));
         type.setPlatform(platform);
         type.setCategory(this.convertToCategory(diagram));
         try {

@@ -278,7 +278,7 @@ public class ImportAction extends AbstractAction {
         } else if (oid instanceof Node) {
             oidStr = ((Node) oid).getName();
         } else if (oid instanceof TrainType) {
-            oidStr = ((TrainType) oid).getDesc();
+            oidStr = ((TrainType) oid).getDesc().translate();
         } else {
             oidStr = oid.toString();
         }
