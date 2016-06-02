@@ -4,19 +4,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.parostroj.timetable.model.LocalizedString;
 
 /**
  * Custom cycle.
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "type", "attributes", "rows", "next", "company"})
+@XmlType(propOrder = {"id", "name", "description", "type", "typeName", "attributes", "rows", "next", "company"})
 public class CustomCycle {
 
     private String id;
     private String name;
     private String description;
-    private String type;
+    private String typeKey;
+    private LocalizedString typeName;
     private List<Attribute> attributes;
     private List<CustomCycleRow> rows;
     private CustomCycle next;
@@ -48,12 +52,21 @@ public class CustomCycle {
         this.name = name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeKey(String typeKey) {
+        this.typeKey = typeKey;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeKey() {
+        return typeKey;
+    }
+
+    public void setTypeName(LocalizedString typeName) {
+        this.typeName = typeName;
+    }
+
+    @XmlJavaTypeAdapter(type = LString.class, value = LStringAdapter.class)
+    public LocalizedString getTypeName() {
+        return typeName;
     }
 
     @XmlElement(name = "row")
