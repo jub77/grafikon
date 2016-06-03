@@ -127,6 +127,7 @@
                     <archive>
                         <manifest />
                         <manifestEntries>
+                            <Implementation-Title>${project.artifactId}</Implementation-Title>
                             <Implementation-Version>${grafikon.version.complete}</Implementation-Version>
                             <Build-Id>${grafikon.build}</Build-Id>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
