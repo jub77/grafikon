@@ -10,6 +10,11 @@ import com.google.common.collect.ImmutableList;
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.ObjectWithId;
 
+/**
+ * Helper actions for library.
+ *
+ * @author jub
+ */
 class LibraryAddHandler {
 
     private static final Logger log = LoggerFactory.getLogger(LibraryAddHandler.class);

@@ -10,6 +10,7 @@ import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.CopyFactory;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LibraryPartFactory;
+import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
@@ -17,6 +18,11 @@ import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.utils.IdGenerator;
 
+/**
+ * Library of train diagram items, that can be reused.
+ *
+ * @author jub
+ */
 public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     private final Multimap<LibraryItemType, LibraryItem> itemMap;
@@ -71,7 +77,11 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
         // TODO replace line classes
 
         return addImpl(engineClassCopy, LibraryItemType.ENGINE_CLASS);
+    }
 
+    public LibraryItem add(LineClass lineClass) {
+        LineClass lineClassCopy = copyFactory.copy(lineClass, getNewId());
+        return addImpl(lineClassCopy, LibraryItemType.LINE_CLASS);
     }
 
     public LibraryItem addOutputTemplate(String id, String name) {
@@ -84,6 +94,10 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     public LibraryItem addEngineClass(String id, String name) {
         return addImpl(factory.createEngineClass(id, name), LibraryItemType.ENGINE_CLASS);
+    }
+
+    public LibraryItem addLineClass(String id, String name) {
+        return addImpl(factory.createLineClass(id, name), LibraryItemType.LINE_CLASS);
     }
 
     private LibraryItem addImpl(ObjectWithId object, LibraryItemType type) {

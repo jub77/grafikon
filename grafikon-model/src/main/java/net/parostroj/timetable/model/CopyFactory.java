@@ -90,6 +90,11 @@ public class CopyFactory {
         copy.setAbbr(trainType.getAbbr());
         copy.setDesc(trainType.getDesc());
         copy.setColor(trainType.getColor());
-        return null;
+        return copy;
+    }
+
+    public LineClass copy(LineClass lineClass, String id) {
+        LineClass copy = new LineClass(id, lineClass.getName());
+        return copy;
     }
 }

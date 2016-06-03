@@ -1,5 +1,10 @@
 package net.parostroj.timetable.model.library;
 
+/**
+ * Library factory - creates empty new library.
+ *
+ * @author jub
+ */
 public class LibraryFactory {
 
     private LibraryFactory() {}

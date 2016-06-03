@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.library;
 import net.parostroj.timetable.model.Attributes;
 import net.parostroj.timetable.model.AttributesHolder;
 import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
@@ -38,6 +39,7 @@ public class LibraryItem implements AttributesHolder {
             case OUTPUT_TEMPLATE: return ((OutputTemplate) object).getName();
             case ENGINE_CLASS: return ((EngineClass) object).getName();
             case TRAIN_TYPE: return ((TrainType) object).getAbbr();
+            case LINE_CLASS: return ((LineClass) object).getName();
         }
         return null;
     }

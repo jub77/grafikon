@@ -1,5 +1,10 @@
 package net.parostroj.timetable.model;
 
+/**
+ * Factory for creating new train diagram parts that can be stored in the library.
+ *
+ * @author jub
+ */
 public class LibraryPartFactory {
 
     private LibraryPartFactory() {}
@@ -20,5 +25,9 @@ public class LibraryPartFactory {
 
     public EngineClass createEngineClass(String id, String name) {
         return new EngineClass(id, name);
+    }
+
+    public LineClass createLineClass(String id, String name) {
+        return new LineClass(id, name);
     }
 }
