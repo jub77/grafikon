@@ -6,11 +6,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import net.parostroj.timetable.gui.utils.ResourceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.utils.ManifestVersionInfo;
+import net.parostroj.timetable.utils.ManifestVersionInfo.VersionData;
 
 /**
  * About dialog.
@@ -20,22 +26,6 @@ import org.slf4j.LoggerFactory;
 public class AboutDialog extends javax.swing.JDialog {
 
     private static final Logger log = LoggerFactory.getLogger(AboutDialog.class);
-
-    /** Creates new form AboutDialog */
-    public AboutDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-    }
-
-    public AboutDialog(java.awt.Frame parent, boolean modal, String text, Image image) {
-        super(parent, modal);
-        initComponents();
-
-        this.setText(text);
-        ImageIcon icon = new ImageIcon(image);
-        imageLabel.setIcon(icon);
-        pack();
-    }
 
     public AboutDialog(java.awt.Frame parent, boolean modal, String text, URL imageURL, boolean rotated) {
         super(parent, modal);
@@ -69,9 +59,18 @@ public class AboutDialog extends javax.swing.JDialog {
     }
 
     private void initComponents() {
+        javax.swing.JTabbedPane tabs = new javax.swing.JTabbedPane();
+        getContentPane().add(tabs);
+
+        javax.swing.JPanel tabInfo = new javax.swing.JPanel(new java.awt.BorderLayout(5, 5));
+        tabInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        tabs.add(ResourceLoader.getString("aboutdialog.tab.info"), tabInfo); // NOI18N
+
+        javax.swing.JPanel tabVersions = new javax.swing.JPanel(new java.awt.BorderLayout());
+        tabVersions.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        tabs.add(ResourceLoader.getString("aboutdialog.tab.versions"), tabVersions); // NOI18N
+
         javax.swing.JPanel textPanel = new javax.swing.JPanel();
-        javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
-        javax.swing.JButton okButton = new javax.swing.JButton();
         javax.swing.JPanel marginPanel = new javax.swing.JPanel();
         textArea = new javax.swing.JTextArea();
         imageLabel = new javax.swing.JLabel();
@@ -79,14 +78,6 @@ public class AboutDialog extends javax.swing.JDialog {
         setTitle(ResourceLoader.getString("aboutdialog.title")); // NOI18N
 
         textPanel.setLayout(new java.awt.BorderLayout());
-
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        okButton.setText(ResourceLoader.getString("button.ok")); // NOI18N
-        okButton.addActionListener(evt -> this.setVisible(false));
-        buttonPanel.add(okButton);
-
-        textPanel.add(buttonPanel, java.awt.BorderLayout.PAGE_END);
 
         marginPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         marginPanel.setLayout(new java.awt.BorderLayout());
@@ -99,10 +90,30 @@ public class AboutDialog extends javax.swing.JDialog {
 
         textPanel.add(marginPanel, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(textPanel, java.awt.BorderLayout.CENTER);
+        tabInfo.add(textPanel, java.awt.BorderLayout.CENTER);
 
         imageLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        getContentPane().add(imageLabel, java.awt.BorderLayout.LINE_START);
+        tabInfo.add(imageLabel, java.awt.BorderLayout.LINE_START);
+
+        javax.swing.JTextArea versionsTextArea = new javax.swing.JTextArea();
+        versionsTextArea.setBackground(textPanel.getBackground());
+        versionsTextArea.setEditable(false);
+        versionsTextArea.setFont(textArea.getFont());
+        versionsTextArea.setMargin(new java.awt.Insets(5, 5, 5, 5));
+
+        StringBuilder text = new StringBuilder();
+        Map<String, VersionData> versions = new ManifestVersionInfo().getManifestVersions();
+        for (VersionData data : versions.values()) {
+            text.append(data.getTitle()).append(": ").append(data.getVersion()).append("\n");
+        }
+        versionsTextArea.setText(text.toString());
+
+        javax.swing.JPanel marginPanel2 = new javax.swing.JPanel();
+        marginPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        marginPanel2.setLayout(new java.awt.BorderLayout());
+
+        marginPanel2.add(versionsTextArea, java.awt.BorderLayout.CENTER);
+        tabVersions.add(marginPanel2, java.awt.BorderLayout.CENTER);
 
         pack();
     }

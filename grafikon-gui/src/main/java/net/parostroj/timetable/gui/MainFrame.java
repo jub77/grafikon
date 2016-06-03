@@ -447,6 +447,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addMenuItemWithListener(helpMenu, "menu.help.about", evt -> aboutMenuItemActionPerformed(evt), false); // NOI18N
 
+        menuBar.add(Box.createHorizontalGlue());
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
