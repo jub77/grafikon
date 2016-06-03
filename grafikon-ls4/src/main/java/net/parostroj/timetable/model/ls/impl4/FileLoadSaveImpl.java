@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.OutputTemplate;
@@ -30,6 +34,8 @@ import net.parostroj.timetable.model.ls.ModelVersion;
  * @author jub
  */
 public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
+
+    private static final Logger log = LoggerFactory.getLogger(FileLoadSaveImpl.class);
 
     private static final String DATA_TRAIN_DIAGRAM = "train_diagram.xml";
     private static final String DATA_PENALTY_TABLE = "penalty_table.xml";
@@ -57,9 +63,16 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     }
 
     private final LSSerializer lss;
+    private final List<LoadFilter> loadFilters;
 
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
+        loadFilters = new ArrayList<>();
+        loadFilters.add(new LoadFilter4d2());
+        loadFilters.add(new LoadFilter4d7());
+        loadFilters.add(new LoadFilter4d13());
+        loadFilters.add(new LoadFilter4d18());
+        loadFilters.add(new LoadFilter4d19());
     }
 
     @Override
@@ -146,7 +159,10 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                 }
             }
             TrainDiagram trainDiagram = builder.getTrainDiagram();
-            new LoadFilter().checkDiagram(trainDiagram, version);
+            for (LoadFilter filter : loadFilters) {
+                filter.checkDiagram(trainDiagram, version);
+            }
+            log.debug("Loaded version: {}", version);
             return trainDiagram;
         } catch (IOException e) {
             throw new LSException(e);
