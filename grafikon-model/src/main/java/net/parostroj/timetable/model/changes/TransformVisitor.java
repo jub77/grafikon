@@ -215,6 +215,11 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitLineClassEvent(Event event) {
+        // no change recorded
+    }
+
+    @Override
     public void visitOtherEvent(Event event) {
         // no change recorded
     }

@@ -37,6 +37,8 @@ public class EventProcessing {
             visitor.visitOutputTemplateEvent(event);
         } else if (source instanceof FreightNet) {
             visitor.visitFreightNetEvent(event);
+        } else if (source instanceof LineClass) {
+            visitor.visitLineClassEvent(event);
         } else {
             visitor.visitOtherEvent(event);
         }

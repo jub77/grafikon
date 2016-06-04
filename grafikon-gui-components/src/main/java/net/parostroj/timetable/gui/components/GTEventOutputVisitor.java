@@ -347,6 +347,24 @@ public class GTEventOutputVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitLineClassEvent(Event event) {
+        try {
+            LineClass lineClass = (LineClass) event.getSource();
+            str.append("LineClassEvent[");
+            str.append(lineClass.getName());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+            }
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void visitOtherEvent(Event event) {
         try {
             str.append("OtherEvent[");

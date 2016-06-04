@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
@@ -45,6 +46,9 @@ public class LSLibraryItem {
             case TRAIN_TYPE:
                 object = new LSTrainType((TrainType) item.getObject());
                 break;
+            case LINE_CLASS:
+                object = new LSLineClass((LineClass) item.getObject());
+                break;
         }
     }
 
@@ -69,7 +73,8 @@ public class LSLibraryItem {
         @XmlElement(name = "node", type = LSNode.class),
         @XmlElement(name = "output_template", type = LSOutputTemplate.class),
         @XmlElement(name = "engine_class", type = LSEngineClass.class),
-        @XmlElement(name = "train_type", type = LSTrainType.class)
+        @XmlElement(name = "train_type", type = LSTrainType.class),
+        @XmlElement(name = "line_class", type = LSLineClass.class)
     })
     public Object getObject() {
         return object;

@@ -1,5 +1,10 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.Listener;
+import net.parostroj.timetable.model.events.ListenerSupport;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -8,14 +13,17 @@ import net.parostroj.timetable.visitors.Visitable;
  *
  * @author jub
  */
-public class LineClass implements ObjectWithId, Visitable, ItemListObject {
+public class LineClass implements ObjectWithId, Visitable, ItemListObject, Observable, LineClassAttributes {
 
     private final String id;
     private String name;
 
+    private final ListenerSupport listenerSupport;
+
     public LineClass(String id, String name) {
         this.id = id;
         this.name = name;
+        this.listenerSupport = new ListenerSupport();
     }
 
     public String getName() {
@@ -23,7 +31,11 @@ public class LineClass implements ObjectWithId, Visitable, ItemListObject {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!ObjectsUtil.compareWithNull(name, this.name)) {
+            String oldName = this.name;
+            this.name = name;
+            listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, this.name)));
+        }
     }
 
     @Override
@@ -47,5 +59,15 @@ public class LineClass implements ObjectWithId, Visitable, ItemListObject {
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public void addListener(Listener listener) {
+        listenerSupport.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        listenerSupport.removeListener(listener);
     }
 }

@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.*;
 
 import net.parostroj.timetable.model.events.*;
+import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
 import net.parostroj.timetable.visitors.Visitable;
 
@@ -31,9 +32,11 @@ public class EngineClass implements ObjectWithId, Visitable, Observable, EngineC
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        if (!ObjectsUtil.compareWithNull(this.name, name)) {
+            String oldName = this.name;
+            this.name = name;
+            this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
+        }
     }
 
     @Override

@@ -123,6 +123,11 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitLineClassEvent(Event event) {
+        tracked = false;
+    }
+
+    @Override
     public void visitOtherEvent(Event event) {
         tracked = false;
     }

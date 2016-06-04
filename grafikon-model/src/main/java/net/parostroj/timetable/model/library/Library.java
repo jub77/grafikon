@@ -11,11 +11,13 @@ import net.parostroj.timetable.model.CopyFactory;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LibraryPartFactory;
 import net.parostroj.timetable.model.LineClass;
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.NodeTrack;
 import net.parostroj.timetable.model.NodeType;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.utils.IdGenerator;
 
 /**
@@ -75,8 +77,13 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
     public LibraryItem add(EngineClass engineClass) {
         EngineClass engineClassCopy = copyFactory.copy(engineClass, getNewId());
         // TODO replace line classes
-
         return addImpl(engineClassCopy, LibraryItemType.ENGINE_CLASS);
+    }
+
+    public LibraryItem add(TrainType trainType) {
+        TrainType trainTypeCopy = copyFactory.copy(trainType, getNewId());
+        // TODO fix train name template reference
+        return addImpl(trainTypeCopy, LibraryItemType.TRAIN_TYPE);
     }
 
     public LibraryItem add(LineClass lineClass) {
@@ -98,6 +105,10 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
 
     public LibraryItem addLineClass(String id, String name) {
         return addImpl(factory.createLineClass(id, name), LibraryItemType.LINE_CLASS);
+    }
+
+    public LibraryItem addTrainType(String id, LocalizedString desc) {
+        return addImpl(factory.createTrainType(id, desc), LibraryItemType.TRAIN_TYPE);
     }
 
     private LibraryItem addImpl(ObjectWithId object, LibraryItemType type) {

@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.util.*;
 
+import net.parostroj.timetable.model.Observable;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Tuple;
@@ -37,7 +38,7 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         this.itemLists = new LinkedList<>();
         this.netDelegate = new ListenableUndirectedGraph<Node, Line>(Line.class);
         this.lineClasses = new ItemWithIdListImpl<LineClass>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEvent(type, item, newIndex, oldIndex));
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.regions = new ItemWithIdSetImpl<Region>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
         this.listenerSupport = new ListenerSupport();
@@ -175,10 +176,12 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return netDelegate;
     }
 
+    @Override
     public void addListener(Listener listener) {
         this.listenerSupport.addListener(listener);
     }
 
+    @Override
     public void removeListener(Listener listener) {
         this.listenerSupport.removeListener(listener);
     }
@@ -256,15 +259,33 @@ public class Net implements ObjectWithId, Visitable, TrainDiagramPart, Observabl
         return object;
     }
 
-    private void fireCollectionEvent(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+    private void fireEvent(Event.Type type, Object item, Integer newIndex, Integer oldIndex) {
         Event event = new Event(Net.this, type, item, ListData.createData(oldIndex, newIndex));
         Net.this.fireEvent(event);
+    }
+
+    private void fireCollectionEvent(Event.Type type, ItemListObject item, Integer newIndex, Integer oldIndex) {
+        fireEvent(type, item, newIndex, oldIndex);
         switch (type) {
             case ADDED:
                 item.added();
                 break;
             case REMOVED:
                 item.removed();
+                break;
+            default: // nothing
+                break;
+        }
+    }
+
+    protected void fireCollectionEventObservable(Event.Type type, Observable item, Integer newIndex, Integer oldIndex) {
+        fireEvent(type, item, newIndex, oldIndex);
+        switch (type) {
+            case ADDED:
+                item.addListener(listener);
+                break;
+            case REMOVED:
+                item.removeListener(listener);
                 break;
             default: // nothing
                 break;

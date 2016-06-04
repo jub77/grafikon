@@ -60,4 +60,8 @@ public abstract class AbstractEventVisitor implements EventVisitor {
     @Override
     public void visitOtherEvent(Event event) {
     }
+
+    @Override
+    public void visitLineClassEvent(Event event) {
+    }
 }

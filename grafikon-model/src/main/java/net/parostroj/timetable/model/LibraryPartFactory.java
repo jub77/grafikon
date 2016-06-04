@@ -30,4 +30,10 @@ public class LibraryPartFactory {
     public LineClass createLineClass(String id, String name) {
         return new LineClass(id, name);
     }
+
+    public ObjectWithId createTrainType(String id, LocalizedString desc) {
+        TrainType trainType = new TrainType(id, null);
+        trainType.setDesc(desc);
+        return trainType;
+    }
 }

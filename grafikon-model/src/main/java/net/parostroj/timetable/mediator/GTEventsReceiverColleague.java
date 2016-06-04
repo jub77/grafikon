@@ -78,6 +78,11 @@ public class GTEventsReceiverColleague extends AbstractColleague {
             public void visitFreightNetEvent(Event event) {
                 processFreightNetEvent(event);
             }
+
+            @Override
+            public void visitLineClassEvent(Event event) {
+                processLineClassEvent(event);
+            }
         };
     }
 
@@ -116,4 +121,6 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     public void processGTEvent(Event event) {}
 
     public void processGTEventAll(Event event) {}
+
+    public void processLineClassEvent(Event event) {}
 }

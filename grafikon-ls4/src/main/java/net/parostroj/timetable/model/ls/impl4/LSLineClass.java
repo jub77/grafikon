@@ -1,13 +1,15 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.LineClass;
 
 /**
  * Storage for line class.
- * 
+ *
  * @author jub
  */
+@XmlRootElement(name = "line_class")
 @XmlType(propOrder = {"id", "name"})
 public class LSLineClass {
 
@@ -37,7 +39,7 @@ public class LSLineClass {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public LineClass createLineClass() {
         LineClass lineClass = new LineClass(id, name);
         return lineClass;
