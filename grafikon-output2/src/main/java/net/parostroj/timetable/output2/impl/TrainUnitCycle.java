@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.*;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "attributes", "rows", "next", "company"})
+@XmlType(propOrder = {"id", "name", "description", "attributes", "rows", "company"})
 public class TrainUnitCycle {
 
     private String id;
@@ -68,6 +68,7 @@ public class TrainUnitCycle {
     }
 
     @XmlIDREF
+    @XmlAttribute
     public TrainUnitCycle getNext() {
         return next;
     }

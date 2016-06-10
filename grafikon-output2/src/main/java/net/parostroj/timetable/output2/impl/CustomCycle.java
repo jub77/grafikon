@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.LocalizedString;
  *
  * @author jub
  */
-@XmlType(propOrder = {"id", "name", "description", "type", "typeName", "attributes", "rows", "next", "company"})
+@XmlType(propOrder = {"id", "name", "description", "typeKey", "typeName", "attributes", "rows", "company"})
 public class CustomCycle {
 
     private String id;
@@ -90,6 +90,7 @@ public class CustomCycle {
     }
 
     @XmlIDREF
+    @XmlAttribute
     public CustomCycle getNext() {
         return next;
     }
