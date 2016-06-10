@@ -33,8 +33,13 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ScrollPaneConstants;
 
@@ -162,6 +167,26 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         javax.swing.JPanel locationPanel2 = new javax.swing.JPanel();
         locationButton = new javax.swing.JButton();
 
+        templateList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && !templateList.isSelectionEmpty()
+                        && templateList.getSelectedIndices().length == 1) {
+                    editButtonActionPerformed();
+                }
+            }
+        });
+
+        templateList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && !templateList.isSelectionEmpty()
+                        && templateList.getSelectedIndices().length == 1) {
+                    editButtonActionPerformed();
+                }
+            }
+        });
+
         setTitle(ResourceLoader.getString("ot.title")); // NOI18N
 
         buttonPanel.setLayout(new java.awt.BorderLayout());
@@ -193,7 +218,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         downButton.addActionListener(evt -> downButtonActionPerformed(evt));
         controlPanel.add(downButton);
 
-        editButton.addActionListener(evt -> editButtonActionPerformed(evt));
+        editButton.addActionListener(evt -> editButtonActionPerformed());
         controlPanel.add(editButton);
 
         outputButton.setText(ResourceLoader.getString("ot.button.output")); // NOI18N
@@ -324,7 +349,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         this.updateButtons();
     }
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void editButtonActionPerformed() {
         OutputTemplateDialog dialog = new OutputTemplateDialog(this, true, attachmentsChooser, this::outputButtonAction);
         dialog.setLocationRelativeTo(this);
         dialog.registerContext(context);
