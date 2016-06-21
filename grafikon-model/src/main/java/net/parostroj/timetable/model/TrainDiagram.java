@@ -46,6 +46,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     private final ItemWithIdList<TextItem> textItems;
     /** List of output templates. */
     private final ItemWithIdList<OutputTemplate> outputTemplates;
+    /** List of outputs. */
+    private final ItemWithIdList<Output> outputs;
     /** Groups. */
     private final ItemWithIdSet<Group> groups;
     /** Companies */
@@ -92,6 +94,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.outputTemplates = new ItemWithIdListImpl<OutputTemplate>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.outputs = new ItemWithIdListImpl<>(
+                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.groups = new ItemWithIdSetImpl<Group>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
         this.companies = new ItemWithIdSetImpl<Company>(
@@ -126,7 +130,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new NodeValidator(this));
         this.validators.add(new TrainCycleTypeRemoveValidator(this));
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
-                groups, companies, trainTypes, trains, cycleTypes);
+                groups, companies, trainTypes, trains, cycleTypes, outputs);
     }
 
     /**
@@ -271,6 +275,10 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return outputTemplates;
     }
 
+    public ItemWithIdList<Output> getOutputs() {
+        return outputs;
+    }
+
     public ItemWithIdSet<Group> getGroups() {
         return groups;
     }
@@ -407,6 +415,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         }
         for (Company company : companies) {
             company.accept(visitor);
+        }
+        for (Output output : outputs) {
+            output.accept(visitor);
         }
         visitor.visitAfter(this);
     }

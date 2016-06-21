@@ -20,6 +20,11 @@ import net.parostroj.timetable.gui.wrappers.WrapperConversion;
  */
 public class EnumeratedValuesPM<E> extends TextPM implements IEnumeratedValuesPM<E> {
 
+    public EnumeratedValuesPM() {
+        this(new Options<>());
+        this.setRestrictedToOptions(false);
+    }
+
     public EnumeratedValuesPM(Options<E> options) {
         this.setOptions(options);
         this.setRestrictedToOptions(true);

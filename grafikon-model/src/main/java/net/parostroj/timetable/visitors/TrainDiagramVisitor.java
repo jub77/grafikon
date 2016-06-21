@@ -48,4 +48,6 @@ public interface TrainDiagramVisitor {
     public void visit(Region region);
 
     public void visit(Company company);
+
+    public void visit(Output output);
 }

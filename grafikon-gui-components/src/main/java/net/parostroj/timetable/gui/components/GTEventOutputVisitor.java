@@ -61,6 +61,8 @@ public class GTEventOutputVisitor implements EventVisitor {
                     str.append("    Output template: ").append(((OutputTemplate) event.getObject()).getName());
                 if (event.getObject() instanceof TrainTypeCategory)
                     str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName());
+                if (event.getObject() instanceof Output)
+                    str.append("    Output: ").append(((Output) event.getObject()).toString());
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
@@ -312,6 +314,23 @@ public class GTEventOutputVisitor implements EventVisitor {
         try {
             str.append("OutputTemplateEvent[");
             str.append(((OutputTemplate) event.getSource()).getName());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+            }
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visitOutputEvent(Event event) {
+        try {
+            str.append("OutputEvent[");
+            str.append(((Output) event.getSource()).toString());
             str.append(']');
             if (full) {
                 str.append('\n');

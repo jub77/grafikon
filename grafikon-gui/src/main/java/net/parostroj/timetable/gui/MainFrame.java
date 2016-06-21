@@ -29,6 +29,7 @@ import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
 import net.parostroj.timetable.gui.data.OutputSettings;
 import net.parostroj.timetable.gui.dialogs.*;
+import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.utils.*;
 import net.parostroj.timetable.gui.utils.LanguageLoader.LanguagesType;
 import net.parostroj.timetable.gui.views.DriverCycleDelegate;
@@ -409,6 +410,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         actionMenu.add(oLanguageMenuItem);
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", evt -> ouputTemplatesMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", evt -> ouputMenuItemActionPerformed(evt), true); // NOI18N
 
         menuBar.add(actionMenu);
 
@@ -694,9 +696,21 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.registerContext(model.getGuiContext());
         OutputSettings settings = model.getOutputSettings();
         FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
-        dialog.showDialog(model.getDiagram(), chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY),
-                chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES),
-                new Settings(settings.getLocale()));
+        JFileChooser outputChooser = chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
+        dialog.showDialog(model.getDiagram(),
+                outputChooser.getSelectedFile() == null ? outputChooser.getCurrentDirectory()
+                        : outputChooser.getSelectedFile(),
+                chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES), new Settings(settings.getLocale()));
+        dialog.dispose();
+    }
+
+    private void ouputMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        // dialog with outputs
+        EditOutputsDialog dialog = new EditOutputsDialog(this, true);
+        dialog.setPresentationModel(new GenerateOutputPM());
+        dialog.setLocationRelativeTo(this);
+        dialog.registerContext(model.getGuiContext());
+        dialog.showDialog(model.getDiagram());
         dialog.dispose();
     }
 

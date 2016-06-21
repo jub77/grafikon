@@ -138,6 +138,11 @@ public class TrainDiagramBuilder {
         diagram.getOutputTemplates().add(template);
     }
 
+    public void setOutput(LSOutput lsOutput) throws LSException {
+        Output output = lsOutput.createOutput(diagram);
+        diagram.getOutputs().add(output);
+    }
+
     public void setDiagramChangeSet(LSDiagramChangeSet lsChangeSet) {
         diagram.getChangesTracker().addVersion(lsChangeSet.getVersion(), lsChangeSet.getAuthor(), lsChangeSet.getDate());
         for (LSDiagramChange change : lsChangeSet.getChanges()) {

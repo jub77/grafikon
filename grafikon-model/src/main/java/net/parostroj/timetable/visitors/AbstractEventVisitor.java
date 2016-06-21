@@ -54,6 +54,10 @@ public abstract class AbstractEventVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitOutputEvent(Event event) {
+    }
+
+    @Override
     public void visitFreightNetEvent(Event event) {
     }
 

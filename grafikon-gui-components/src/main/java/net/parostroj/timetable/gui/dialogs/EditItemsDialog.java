@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -90,12 +92,18 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         this.updateEnabled();
     }
 
+    public void setMultipleSelection(boolean multiple) {
+        itemList.setSelectionMode(multiple ? javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+                : javax.swing.ListSelectionModel.SINGLE_SELECTION);
+    }
+
     public void updateEnabled() {
         boolean enabled = !itemList.isSelectionEmpty();
-        if (upButton != null) upButton.setEnabled(enabled);
-        if (downButton != null) downButton.setEnabled(enabled);
+        boolean multiple = enabled && itemList.getSelectedIndices().length > 1;
+        if (upButton != null) upButton.setEnabled(enabled && !multiple);
+        if (downButton != null) downButton.setEnabled(enabled && !multiple);
         deleteButton.setEnabled(enabled);
-        if (editButton != null) editButton.setEnabled(enabled);
+        if (editButton != null) editButton.setEnabled(enabled && !multiple);
     }
 
     private void initComponents() {
@@ -126,10 +134,20 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             editButton.addActionListener( evt -> {
                 edit(itemList.getSelectedValue().getElement());
             });
+            itemList.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2 && !itemList.isSelectionEmpty()
+                            && itemList.getSelectedIndices().length == 1) {
+                        edit(itemList.getSelectedValue().getElement());
+                    }
+                }
+            });
         }
 
         itemList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 itemListValueChanged(evt);
             }
@@ -139,8 +157,13 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         newButton.addActionListener(evt -> newButtonActionPerformed(evt));
         deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(panel);
+        panel.setLayout(layout);
+
+        getContentPane().setLayout(new java.awt.BorderLayout());
+        getContentPane().add(panel, java.awt.BorderLayout.CENTER);
+
         ParallelGroup horizontal = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
             .addComponent(newButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
@@ -186,7 +209,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, vertical))
                 .addContainerGap())
         );

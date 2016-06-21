@@ -136,4 +136,14 @@ public class TrainDiagramPartFactory {
     public OutputTemplate createOutputTemplate(String id) {
         return new OutputTemplate(id, diagram);
     }
+
+    /**
+     * Creates new output.
+     *
+     * @param id id
+     * @return new output associated with diagram
+     */
+    public Output createOutput(String id) {
+        return new Output(id);
+    }
 }

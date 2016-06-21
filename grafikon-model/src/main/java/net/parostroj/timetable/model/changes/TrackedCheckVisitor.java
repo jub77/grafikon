@@ -118,6 +118,11 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitOutputEvent(Event event) {
+        tracked = true;
+    }
+
+    @Override
     public void visitEngineClassEvent(Event event) {
         tracked = true;
     }

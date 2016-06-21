@@ -16,6 +16,7 @@ import net.parostroj.timetable.gui.dialogs.SaveImageDialog.Type;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.output2.*;
+import net.parostroj.timetable.output2.Output;
 import net.parostroj.timetable.output2.gt.*;
 import net.parostroj.timetable.utils.Tuple;
 

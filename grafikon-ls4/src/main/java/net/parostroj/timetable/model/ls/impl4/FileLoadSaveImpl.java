@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.EngineClass;
+import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.Route;
 import net.parostroj.timetable.model.TextItem;
@@ -46,6 +47,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     private static final String DATA_TRAINS = "trains/";
     private static final String DATA_TEXT_ITEMS = "text_items/";
     private static final String DATA_OUTPUT_TEMPLATES = "output_templates/";
+    private static final String DATA_OUTPUTS = "outputs/";
     private static final String DATA_ENGINE_CLASSES = "engine_classes/";
     private static final String DATA_TRAINS_CYCLES = "trains_cycles/";
     private static final String DATA_IMAGES = "images/";
@@ -156,6 +158,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                     }
                 } else if (entry.getName().startsWith(DATA_ATTACHMENTS)) {
                     attachments.load(zipInput, entry);
+                } else if (entry.getName().startsWith(DATA_OUTPUTS)) {
+                    builder.setOutput(lss.load(zipInput, LSOutput.class));
                 }
             }
             TrainDiagram trainDiagram = builder.getTrainDiagram();
@@ -227,6 +231,11 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             // save trains cycles
             for (TrainsCycle cycle : diagram.getCycles()) {
                 this.save(zipOutput, this.createEntryName(DATA_TRAINS_CYCLES, "xml", cnt++), new LSTrainsCycle(cycle));
+            }
+            cnt = 0;
+            // save outputs
+            for (Output output : diagram.getOutputs()) {
+                this.save(zipOutput, this.createEntryName(DATA_OUTPUTS, "xml", cnt++), new LSOutput(output));
             }
 
             // save images

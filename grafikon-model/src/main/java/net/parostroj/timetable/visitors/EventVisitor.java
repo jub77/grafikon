@@ -31,6 +31,8 @@ public interface EventVisitor {
 
     public void visitOutputTemplateEvent(Event event);
 
+    public void visitOutputEvent(Event event);
+
     public void visitFreightNetEvent(Event event);
 
     public void visitLineClassEvent(Event event);

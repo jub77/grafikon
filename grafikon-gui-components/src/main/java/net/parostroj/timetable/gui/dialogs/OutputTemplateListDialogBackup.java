@@ -8,7 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.io.File;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.swing.JFileChooser;
 
@@ -30,6 +29,9 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Collections2;
+
 import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -45,13 +47,14 @@ import javax.swing.ScrollPaneConstants;
  *
  * @author jub
  */
-public class OutputTemplateListDialog extends javax.swing.JDialog implements GuiContextComponent {
+public class OutputTemplateListDialogBackup extends javax.swing.JDialog implements GuiContextComponent {
 
-    private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(OutputTemplateListDialogBackup.class);
 
     private TrainDiagram diagram;
     private WrapperListModel<OutputTemplate> templatesModel;
     private File outputDirectory;
+    private JFileChooser chooser;
     private JFileChooser attachmentsChooser;
     private Settings settings;
 
@@ -60,7 +63,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private final WrapperDelegate<OutputTemplate> otWrapperDelegate;
 
     /** Creates new form TextTemplateListDialog */
-    public OutputTemplateListDialog(java.awt.Frame parent, boolean modal) {
+    public OutputTemplateListDialogBackup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         otWrapperDelegate = new OutputTemplateWrapperDelegate();
@@ -72,11 +75,13 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         this.context = context;
     }
 
-    public void showDialog(final TrainDiagram diagram, File outputDirectory, JFileChooser attachmentsChooser, Settings settings) {
+    public void showDialog(final TrainDiagram diagram, JFileChooser chooser, JFileChooser attachmentsChooser, Settings settings) {
         this.diagram = diagram;
+        this.chooser = chooser;
         this.attachmentsChooser = attachmentsChooser;
         this.settings = settings;
-        this.outputDirectory = outputDirectory;
+        this.outputDirectory = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
+        this.locationTextField.setText(this.outputDirectory.getPath());
         templatesModel = new WrapperListModel<OutputTemplate>(
                 Wrapper.getWrapperList(diagram.getOutputTemplates(), otWrapperDelegate),
                 null,
@@ -117,6 +122,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         upButton.setEnabled(selectedCount == 1);
         deleteButton.setEnabled(selectedCount > 0);
         editButton.setEnabled(selectedCount == 1);
+        outputButton.setEnabled(selectedCount > 0);
         copyButton.setEnabled(newName != null && selectedCount == 1);
         // create button
         newButton.setEnabled(newName != null);
@@ -148,10 +154,17 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 1);
         downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 1);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
+        outputButton = new javax.swing.JButton();
+        outputAllButton = new javax.swing.JButton();
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
         templateList = new javax.swing.JList<Wrapper<OutputTemplate>>();
         templateList.setVisibleRowCount(10);
+        javax.swing.JPanel locationPanel = new javax.swing.JPanel();
+        javax.swing.JPanel locationPanel1 = new javax.swing.JPanel();
+        locationTextField = new javax.swing.JTextField();
+        javax.swing.JPanel locationPanel2 = new javax.swing.JPanel();
+        locationButton = new javax.swing.JButton();
 
         templateList.addMouseListener(new MouseAdapter() {
             @Override
@@ -207,6 +220,18 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         editButton.addActionListener(evt -> editButtonActionPerformed());
         controlPanel.add(editButton);
 
+        outputButton.setText(ResourceLoader.getString("ot.button.output")); // NOI18N
+        outputButton.addActionListener(
+                evt -> outputButtonAction(
+                        templateList.isSelectionEmpty() ? null :
+                            Collections2.transform(templatesModel.getIndices(templateList.getSelectedIndices()),
+                        item -> item.getElement())));
+        controlPanel.add(outputButton);
+
+        outputAllButton.setText(ResourceLoader.getString("ot.button.outputall")); // NOI18N
+        outputAllButton.addActionListener(evt -> outputAllButtonActionPerformed(evt));
+        controlPanel.add(outputAllButton);
+
         buttonPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
 
         getContentPane().add(buttonPanel, java.awt.BorderLayout.LINE_END);
@@ -221,6 +246,27 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         listPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(listPanel, java.awt.BorderLayout.CENTER);
+
+        locationPanel.setLayout(new java.awt.BorderLayout());
+
+        locationPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 0));
+        locationPanel1.setLayout(new java.awt.BorderLayout());
+
+        locationTextField.setEditable(false);
+        locationPanel1.add(locationTextField, java.awt.BorderLayout.CENTER);
+
+        locationPanel.add(locationPanel1, java.awt.BorderLayout.CENTER);
+
+        locationPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 5));
+        locationPanel2.setLayout(new java.awt.BorderLayout());
+
+        locationButton.setText(ResourceLoader.getString("button.select")); // NOI18N
+        locationButton.addActionListener(evt -> locationButtonActionPerformed(evt));
+        locationPanel2.add(locationButton, java.awt.BorderLayout.CENTER);
+
+        locationPanel.add(locationPanel2, java.awt.BorderLayout.EAST);
+
+        getContentPane().add(locationPanel, java.awt.BorderLayout.PAGE_START);
 
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setBorder(new EmptyBorder(0, 5, 5, 5));
@@ -317,11 +363,27 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         }
     }
 
+    private void locationButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        int returnValue = chooser.showOpenDialog(getParent());
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            this.outputDirectory = chooser.getSelectedFile();
+            // update text string
+            locationTextField.setText(this.outputDirectory.getPath());
+        }
+    }
+
     private void outputButtonAction(Collection<OutputTemplate> outputTemplates) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
                 outputTemplates);
+        ActionHandler.getInstance().execute(action);
+    }
+
+    private void outputAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        ActionContext c = new ActionContext();
+        c.setLocationComponent(this);
+        OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory, diagram.getOutputTemplates());
         ActionHandler.getInstance().execute(action);
     }
 
@@ -333,7 +395,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         if (!template.getName().equals(fromTemplate.getName())) {
             template.setName(fromTemplate.getName());
         }
-        if (!Objects.equals(template.getTemplate(), fromTemplate.getTemplate())) {
+        if (!Objects.equal(template.getTemplate(), fromTemplate.getTemplate())) {
             template.setTemplate(fromTemplate.getTemplate());
         }
         template.getAttributes().merge(fromTemplate.getAttributes());
@@ -346,8 +408,12 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private javax.swing.JButton copyButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
+    private javax.swing.JButton locationButton;
+    private javax.swing.JTextField locationTextField;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
+    private javax.swing.JButton outputAllButton;
+    private javax.swing.JButton outputButton;
     private javax.swing.JList<Wrapper<OutputTemplate>> templateList;
     private javax.swing.JButton upButton;
     private javax.swing.JTextArea descriptionTextArea;
