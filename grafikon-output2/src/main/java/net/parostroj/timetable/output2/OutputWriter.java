@@ -22,7 +22,7 @@ public class OutputWriter {
 
     public interface ProcessListener {
 
-        public void processed(OutputTemplate template);
+        public void processed(net.parostroj.timetable.model.Output modelOutput);
     }
 
     public interface OutputCollector {
@@ -94,20 +94,20 @@ public class OutputWriter {
     private static final Logger scriptLog = LoggerFactory.getLogger(OUTPUT_SCRIPT_LOG_NAME);
     private static final Logger templateLog = LoggerFactory.getLogger(OUTPUT_TEMPLATE_LOG_NAME);
 
-    private OutputTemplate errorTemplate;
+    private net.parostroj.timetable.model.Output errorOutput;
 
     private final TrainDiagram diagram;
     private final Settings settings;
     private final File outputDirectory;
-    private final Iterable<OutputTemplate> templates;
+    private final Iterable<net.parostroj.timetable.model.Output> modelOutputs;
 
     private ProcessListener listener;
 
-    public OutputWriter(TrainDiagram diagram, Settings settings, File outputDirectory, Iterable<OutputTemplate> templates) {
+    public OutputWriter(TrainDiagram diagram, Settings settings, File outputDirectory, Iterable<net.parostroj.timetable.model.Output> modelOutputs) {
         this.diagram = diagram;
         this.settings = settings;
         this.outputDirectory = outputDirectory;
-        this.templates = templates;
+        this.modelOutputs = modelOutputs;
     }
 
     public void setListener(ProcessListener listener) {
@@ -115,30 +115,31 @@ public class OutputWriter {
     }
 
     public void execute() throws OutputException {
-        if (templates != null) {
-            for (OutputTemplate template : templates) {
+        if (modelOutputs != null) {
+            for (net.parostroj.timetable.model.Output modelOutput : modelOutputs) {
                 try {
                     if (listener != null) {
-                        listener.processed(template);
+                        listener.processed(modelOutput);
                     }
-                    this.generateOutput(template);
+                    this.generateOutput(modelOutput);
                 } catch (Exception e) {
-                    errorTemplate = template;
+                    errorOutput = modelOutput;
                     throw e;
                 }
             }
         }
     }
 
-    public OutputTemplate getErrorTemplate() {
-        return errorTemplate;
+    public net.parostroj.timetable.model.Output getErrorOutput() {
+        return errorOutput;
     }
 
-    private List<OutputSettings> createOutputs(OutputTemplate template) throws OutputException {
+    private List<OutputSettings> createOutputs(net.parostroj.timetable.model.Output modelOutput) throws OutputException {
+        OutputTemplate template = modelOutput.getTemplate();
         List<OutputSettings> result = null;
         if (template.getScript() != null) {
-            final List<OutputSettings> out = new ArrayList<OutputSettings>();
-            Map<String, Object> binding = new HashMap<String, Object>();
+            final List<OutputSettings> out = new ArrayList<>();
+            Map<String, Object> binding = new HashMap<>();
             binding.put("diagram", diagram);
             binding.put("template", template);
             binding.put("log", scriptLog);
@@ -173,14 +174,15 @@ public class OutputWriter {
         return result;
     }
 
-    private void generateOutput(OutputTemplate template) throws OutputException {
+    private void generateOutput(net.parostroj.timetable.model.Output modelOutput) throws OutputException {
+        OutputTemplate template = modelOutput.getTemplate();
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
         OutputFactory factory = OutputFactory.newInstance(template.getOutput());
         factory.setParameter("locale", settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getTemplate();
         OutputResources resources = new TemplateOutputResources(template);
-        List<OutputSettings> outputNames = this.createOutputs(template);
+        List<OutputSettings> outputNames = this.createOutputs(modelOutput);
         if (outputNames == null) {
             this.generateOutput(
                     output,

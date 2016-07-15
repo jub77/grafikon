@@ -68,7 +68,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private ExecuteScriptAction executeScriptAction;
 
     private Map<File, JMenuItem> lastOpened;
-    private final List<Component> enabled = new ArrayList<Component>();
+    private final List<Component> enabled = new ArrayList<>();
     private final VersionInfo versionInfo;
 
     public MainFrame(SplashScreenInfo info) {
@@ -121,7 +121,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void initializeFrame() {
         model = new ApplicationModel();
         provider.setPresentationModel(model);
-        lastOpened = new HashMap<File, JMenuItem>();
+        lastOpened = new HashMap<>();
 
         // set local before anything else
         String loadedLocale = null;
@@ -471,7 +471,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         List<Pair<JRadioButtonMenuItem, Locale>> lItems = languageMenuBuilder.createLanguageMenuItems(ResourceLoader
                 .getString("menu.language.system"), LanguagesType.GUI);
-        BnButtonGroup<Locale> lBGroup = new BnButtonGroup<Locale>();
+        BnButtonGroup<Locale> lBGroup = new BnButtonGroup<>();
         for (Pair<JRadioButtonMenuItem, Locale> item : lItems) {
             languageMenu.add(item.first);
             lBGroup.add(item.first, item.second);
@@ -495,7 +495,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         });
 
         // look and feel
-        BnButtonGroup<String> lafBGroup = new BnButtonGroup<String>();
+        BnButtonGroup<String> lafBGroup = new BnButtonGroup<>();
         for (String key : model.lookAndFeel.getValues()) {
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(model.lookAndFeel.getOptions().get(key));
             lafBGroup.add(item, key);
@@ -634,7 +634,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     private void languagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        ElementSelectionDialog<Locale> dialog = new ElementSelectionDialog<Locale>(GuiComponentUtils
+        ElementSelectionDialog<Locale> dialog = new ElementSelectionDialog<>(GuiComponentUtils
                 .getWindow(this), true);
         dialog.setLocationRelativeTo(this);
 
@@ -707,7 +707,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void ouputMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         // dialog with outputs
         EditOutputsDialog dialog = new EditOutputsDialog(this, true);
-        dialog.setPresentationModel(new GenerateOutputPM());
+        GenerateOutputPM pm = new GenerateOutputPM();
+        pm.init(model.get(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY));
+        dialog.setPresentationModel(pm);
         dialog.setLocationRelativeTo(this);
         dialog.registerContext(model.getGuiContext());
         dialog.showDialog(model.getDiagram());

@@ -63,10 +63,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private final ModelProvider i18nProvider;
 
     private final JFileChooser attachmentChooser;
-    private final Consumer<Collection<OutputTemplate>> templateWriter;
+    private final Consumer<OutputTemplate> templateWriter;
 
     public OutputTemplateDialog(Window parent, boolean modal, JFileChooser attachmentChooser,
-            Consumer<Collection<OutputTemplate>> templateWriter) {
+            Consumer<OutputTemplate> templateWriter) {
         super(parent, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         this.attachmentChooser = attachmentChooser;
         this.templateWriter = templateWriter;
@@ -179,7 +179,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         writeTemplateOutputButton.addActionListener(evt -> {
             OutputTemplate tempTemplate = this.createTempOutputTemplate();
             if (tempTemplate != null) {
-                templateWriter.accept(Collections.singletonList(tempTemplate));
+                templateWriter.accept(tempTemplate);
             }
         });
 
@@ -201,9 +201,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         FlowLayout flowLayout1 = (FlowLayout) verifyPanel.getLayout();
         flowLayout1.setAlignment(FlowLayout.LEFT);
         nameTextField = new javax.swing.JTextField(15);
-        outputComboBox = new javax.swing.JComboBox<String>();
+        outputComboBox = new javax.swing.JComboBox<>();
         outputComboBox.setPrototypeDisplayValue("MMMMMM");
-        outputTypeComboBox = new javax.swing.JComboBox<String>();
+        outputTypeComboBox = new javax.swing.JComboBox<>();
         outputTypeComboBox.setPrototypeDisplayValue("MMMMMMMMMMM");
 
         outputComboBox.addItemListener(new ItemListener() {

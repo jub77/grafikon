@@ -1,8 +1,12 @@
 package net.parostroj.timetable.gui.pm;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import javax.swing.JFileChooser;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.OperationPM;
@@ -11,6 +15,8 @@ import org.beanfabrics.support.Operation;
 import org.beanfabrics.validation.ValidationState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.parostroj.timetable.model.TrainDiagram;
 
 public class GenerateOutputPM extends AbstractPM {
 
@@ -28,9 +34,10 @@ public class GenerateOutputPM extends AbstractPM {
     OperationPM generateAll = new OperationPM();
     OperationPM editPath = new OperationPM();
 
-    // callback for actions
-
+    // callbacks for actions
     private final Map<Action, Supplier<Boolean>> actions;
+
+    private WeakReference<JFileChooser> chooserRef;
 
     public GenerateOutputPM() {
         actions = new EnumMap<>(Action.class);
@@ -62,5 +69,20 @@ public class GenerateOutputPM extends AbstractPM {
 
     public void removeAction(Action actionType) {
         actions.remove(actionType);
+    }
+
+    public void init(TrainDiagram diagram, JFileChooser chooser) {
+        File location = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
+        path.setText(location.getAbsolutePath());
+        chooserRef = new WeakReference<>(chooser);
+    }
+
+    public void writeBack() {
+        if (chooserRef != null && path.isValid()) {
+            JFileChooser chooser = chooserRef.get();
+            if (chooser != null) {
+                chooser.setSelectedFile(new File(path.getText()));
+            }
+        }
     }
 }

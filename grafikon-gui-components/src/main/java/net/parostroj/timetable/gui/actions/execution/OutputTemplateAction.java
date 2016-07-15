@@ -6,6 +6,7 @@ import java.util.*;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.output2.*;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 
@@ -23,10 +24,10 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
 
     private int current;
 
-    public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<OutputTemplate> templates) {
+    public OutputTemplateAction(ActionContext context, TrainDiagram diagram, Settings settings, File outputDirectory, Collection<Output> outputs) {
         super(context);
-        this.outputAction = new OutputWriter(diagram, settings, outputDirectory, templates);
-        this.count = templates.size();
+        this.outputAction = new OutputWriter(diagram, settings, outputDirectory, outputs);
+        this.count = outputs.size();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            GuiComponentUtils.showError(this.outputAction.getErrorTemplate().getName() + ": " + errorMessage, context.getLocationComponent());
+            GuiComponentUtils.showError(this.outputAction.getErrorOutput().getName() + ": " + errorMessage, context.getLocationComponent());
         }
     }
 }

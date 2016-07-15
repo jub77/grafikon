@@ -6,7 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -77,7 +77,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         this.attachmentsChooser = attachmentsChooser;
         this.settings = settings;
         this.outputDirectory = outputDirectory;
-        templatesModel = new WrapperListModel<OutputTemplate>(
+        templatesModel = new WrapperListModel<>(
                 Wrapper.getWrapperList(diagram.getOutputTemplates(), otWrapperDelegate),
                 null,
                 false);
@@ -150,7 +150,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        templateList = new javax.swing.JList<Wrapper<OutputTemplate>>();
+        templateList = new javax.swing.JList<>();
         templateList.setVisibleRowCount(10);
 
         templateList.addMouseListener(new MouseAdapter() {
@@ -317,11 +317,14 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         }
     }
 
-    private void outputButtonAction(Collection<OutputTemplate> outputTemplates) {
+    private void outputButtonAction(OutputTemplate outputTemplate) {
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
+        Output testOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
+        testOutput.setName(LocalizedString.fromString(outputTemplate.getName()));
+        testOutput.setTemplate(outputTemplate);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
-                outputTemplates);
+                Collections.singletonList(testOutput));
         ActionHandler.getInstance().execute(action);
     }
 

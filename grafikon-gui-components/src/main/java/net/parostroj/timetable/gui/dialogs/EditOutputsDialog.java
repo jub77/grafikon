@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 
 import javax.swing.GroupLayout;
@@ -104,6 +106,12 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
                     .addContainerGap())
         );
         generatePanel.setLayout(generatePanelLayout);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                getPresentationModel().writeBack();
+            }
+        });
         pack();
     }
 
