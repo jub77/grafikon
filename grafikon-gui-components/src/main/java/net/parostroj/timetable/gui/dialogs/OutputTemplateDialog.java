@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperDelegate;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.TextTemplate.Language;
 import net.parostroj.timetable.output2.OutputFactory;
@@ -120,6 +122,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         i18nProvider.setPresentationModel(this.createPM(template.getDiagram(), template));
         // setup
         setupPanel.startEditing(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
+        // selection type
+        selectionTypeComboBox.setSelectedItem(Wrapper.getWrapper(this.template.getSelectionType()));
     }
 
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
@@ -251,6 +255,15 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         verifyPanel.add(extensionTextField);
         extensionTextField.setColumns(10);
 
+        selectionTypeComboBox = new JComboBox<>();
+        ModelObjectTypeWrapperDelegate motwd = new ModelObjectTypeWrapperDelegate();
+        selectionTypeComboBox.addItem(Wrapper.getWrapper(null, motwd));
+        for (ModelObjectType type : ModelObjectType.values()) {
+            selectionTypeComboBox.addItem(Wrapper.getWrapper(type, motwd));
+        }
+
+        verifyPanel.add(selectionTypeComboBox);
+
         javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.script"), null, scriptPanel, null); // NOI18N
         scriptPanel.setLayout(new BorderLayout(0, 0));
@@ -321,6 +334,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             description = description.getDefaultString().trim().isEmpty() ? null : description;
             this.template.getAttributes().setRemove(OutputTemplate.ATTR_DESCRIPTION, description);
             this.setVisible(false);
+
+            this.template.setSelectionType((ModelObjectType) ((Wrapper<?>) selectionTypeComboBox.getSelectedItem()).getElement());
 
             // localization
             writeBackLocalization();
@@ -402,4 +417,18 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private ScriptEditBox scriptEditBox;
     private EditLocalizedStringMultilinePanel descriptionTextArea;
     private AttributesPanel setupPanel;
+    private JComboBox<Wrapper<ModelObjectType>> selectionTypeComboBox;
+
+    private static class ModelObjectTypeWrapperDelegate implements WrapperDelegate<ModelObjectType> {
+        @Override
+        public String toString(ModelObjectType element) {
+            // TODO implementation
+            return element != null ? element.getKey() : "<none>";
+        }
+
+        @Override
+        public int compare(ModelObjectType o1, ModelObjectType o2) {
+            return o1 == null ? -1 : (o2 == null ? 1 : o1.compareTo(o2));
+        }
+    }
 }
