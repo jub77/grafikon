@@ -32,7 +32,7 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         listenerSupport = new ListenerSupport();
         this.attributes = new Attributes(
                 (attrs, change) -> listenerSupport.fireEvent(new Event(OutputTemplate.this, change)));
-        this.attachments = new ItemSetImpl<Attachment>((type, item) -> {
+        this.attachments = new ItemSetImpl<>((type, item) -> {
             AttributeChange change = null;
             switch (type) {
                 case ADDED:
@@ -110,6 +110,15 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     public LocalizedString getDescription() {
         return this.getAttribute(ATTR_DESCRIPTION, LocalizedString.class);
+    }
+
+    public ModelObjectType getSelectionType() {
+        String selectionTypeKey = this.getAttribute(ATTR_SELECTION_TYPE, String.class);
+        return selectionTypeKey == null ? null : ModelObjectType.getByKey(selectionTypeKey);
+    }
+
+    public void setSelectionType(ModelObjectType selectionType) {
+        this.getAttributes().setRemove(ATTR_SELECTION_TYPE, selectionType == null ? null : selectionType.getKey());
     }
 
     @Override
