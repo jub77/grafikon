@@ -50,6 +50,11 @@ public enum ModelObjectType {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return key;
+    }
+
     private interface ObjectExtractor {
         Collection<?> extract(TrainDiagram diagram);
     }
