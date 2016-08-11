@@ -72,9 +72,23 @@ public class GenerateOutputPM extends AbstractPM {
     }
 
     public void init(TrainDiagram diagram, JFileChooser chooser) {
-        File location = chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
+        File location = getLocationFromChooser(chooser);
         path.setText(location.getAbsolutePath());
         chooserRef = new WeakReference<>(chooser);
+        setAction(Action.EDIT_PATH, () -> {
+            JFileChooser ch = chooserRef.get();
+            if (ch != null) {
+                int result = ch.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    path.setText(this.getLocationFromChooser(chooser).getAbsolutePath());
+                }
+            }
+            return true;
+        });
+    }
+
+    private File getLocationFromChooser(JFileChooser chooser) {
+        return chooser.getSelectedFile() == null ? chooser.getCurrentDirectory() : chooser.getSelectedFile();
     }
 
     public void writeBack() {
