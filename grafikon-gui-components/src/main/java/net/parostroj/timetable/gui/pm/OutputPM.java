@@ -23,8 +23,11 @@ public class OutputPM extends AbstractPM {
     ITextPM name;
     IEnumeratedValuesPM<OutputTemplate> templates;
     IOperationPM create;
+    IOperationPM writeBack;
+    ModelAttributesPM attributes;
 
     private WeakReference<TrainDiagram> diagramRef;
+    private WeakReference<Output> outputRef;
     private Output newOutput;
 
     public OutputPM() {
@@ -32,11 +35,14 @@ public class OutputPM extends AbstractPM {
         name.setMandatory(true);
         templates = new EnumeratedValuesPM<>();
         create = new OperationPM();
+        writeBack = new OperationPM();
+        attributes = new ModelAttributesPM();
         PMManager.setup(this);
     }
 
     public void initNew(TrainDiagram diagram) {
-        diagramRef = new WeakReference<TrainDiagram>(diagram);
+        diagramRef = new WeakReference<>(diagram);
+        outputRef = null;
         templates.getOptions().clear();
         name.setText("");
         for (OutputTemplate template : diagram.getOutputTemplates()) {
@@ -46,6 +52,14 @@ public class OutputPM extends AbstractPM {
         if (!diagram.getOutputTemplates().isEmpty()) {
             templates.setValue(diagram.getOutputTemplates().get(0));
         }
+    }
+
+    public void init(TrainDiagram diagram, Output output) {
+        diagramRef = new WeakReference<>(diagram);
+        outputRef = new WeakReference<>(output);
+        templates.getOptions().clear();
+        name.setText(output.getName().getDefaultString());
+        attributes.init(output.getSettings(), Output.CATEGORY_SETTINGS);
     }
 
     @Operation(path = "create")
@@ -59,6 +73,17 @@ public class OutputPM extends AbstractPM {
         return true;
     }
 
+    @Operation(path = "writeBack")
+    public boolean operationWriteBack() {
+        Output output = outputRef.get();
+        if (output != null) {
+            output.setName(LocalizedString.fromString(name.getText()));
+            // template cannot be changed
+            output.setSettings(attributes.getFinalAttributes());
+        }
+        return true;
+    }
+
     @Validation(path = "create")
     public boolean canCreate() {
         return !name.isEmpty();
@@ -66,5 +91,9 @@ public class OutputPM extends AbstractPM {
 
     public Output createNewOutput() {
         return newOutput;
+    }
+
+    public Output getEditedOutput() {
+        return outputRef.get();
     }
 }

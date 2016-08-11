@@ -12,6 +12,15 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.beanfabrics.IModelProvider;
+import org.beanfabrics.Link;
+import org.beanfabrics.ModelProvider;
+import org.beanfabrics.ModelSubscriber;
+import org.beanfabrics.Path;
+import org.beanfabrics.View;
+import org.beanfabrics.event.WeakPropertyChangeListener;
+
+import net.parostroj.timetable.gui.pm.ModelAttributesPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.model.Attributes;
@@ -30,10 +39,15 @@ import java.awt.FlowLayout;
  *
  * @author jub
  */
-public class AttributesPanel extends javax.swing.JPanel {
+public class AttributesPanel extends javax.swing.JPanel implements ModelSubscriber, View<ModelAttributesPM> {
 
     private AttributesTableModel attributesTableModel;
     private String category;
+
+    private Link link;
+    private ModelProvider localModelProvider;
+    private WeakPropertyChangeListener listener;
+    private WeakPropertyChangeListener finishedListener;
 
     private static enum Type {
         STRING("String", ""), BOOLEAN("Boolean", false),
@@ -56,6 +70,8 @@ public class AttributesPanel extends javax.swing.JPanel {
     /** Creates new form AttributesPanel */
     public AttributesPanel() {
         initComponents();
+        this.link = new Link(this);
+        this.localModelProvider = new ModelProvider();
         attributesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -65,6 +81,14 @@ public class AttributesPanel extends javax.swing.JPanel {
                 }
             }
         });
+        listener = event -> {
+            Attributes lAttributes = getPresentationModel().getAttributes();
+            String lCategory = getPresentationModel().getCategory();
+            startEditing(lAttributes, lCategory);
+        };
+        finishedListener = event -> {
+            stopEditing();
+        };
     }
 
     public void setCategory(String category) {
@@ -160,7 +184,7 @@ public class AttributesPanel extends javax.swing.JPanel {
             }
         });
 
-        typeComboBox = new JComboBox<Type>();
+        typeComboBox = new JComboBox<>();
         for (Type t : Type.values()) {
             typeComboBox.addItem(t);
         }
@@ -231,7 +255,11 @@ public class AttributesPanel extends javax.swing.JPanel {
     }
 
     public Attributes getAttributes() {
-        return attributesTableModel.getAttributes();
+        return attributesTableModel != null ? attributesTableModel.getAttributes() : null;
+    }
+
+    public void setEnabledAddRemove(boolean enabled) {
+        buttonsPanel.setVisible(enabled);
     }
 
     private javax.swing.JButton addButton;
@@ -241,4 +269,43 @@ public class AttributesPanel extends javax.swing.JPanel {
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
     private JComboBox<Type> typeComboBox;
+
+    @Override
+    public ModelAttributesPM getPresentationModel() {
+        return localModelProvider.getPresentationModel();
+    }
+
+    @Override
+    public void setPresentationModel(ModelAttributesPM pModel) {
+        ModelAttributesPM oldModel = getPresentationModel();
+        if (oldModel != null) {
+            oldModel.removePropertyChangeListener("attributes", listener);
+            oldModel.removePropertyChangeListener("finished", finishedListener);
+        }
+        localModelProvider.setPresentationModel(pModel);
+        if (pModel != null) {
+            pModel.addPropertyChangeListener("attributes", listener);
+            pModel.addPropertyChangeListener("finished", finishedListener);
+        }
+    }
+
+    @Override
+    public IModelProvider getModelProvider() {
+        return this.link.getModelProvider();
+    }
+
+    @Override
+    public void setModelProvider(IModelProvider provider) {
+        this.link.setModelProvider(provider);
+    }
+
+    @Override
+    public Path getPath() {
+        return this.link.getPath();
+    }
+
+    @Override
+    public void setPath(Path path) {
+        this.link.setPath(path);
+    }
 }

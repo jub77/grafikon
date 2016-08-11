@@ -13,7 +13,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
  */
 public class Attributes implements Map<String, Object> {
 
-    private final Set<AttributesListener> listeners = new HashSet<AttributesListener>();
+    private final Set<AttributesListener> listeners = new HashSet<>();
     private final Map<String, Object> values;
     private Map<String, Map<String, Object>> valuesWithCategory;
 
@@ -21,7 +21,7 @@ public class Attributes implements Map<String, Object> {
      * Default constructor.
      */
     public Attributes() {
-        values = new LinkedHashMap<String, Object>();
+        values = new LinkedHashMap<>();
     }
 
     /**
@@ -40,13 +40,13 @@ public class Attributes implements Map<String, Object> {
      * @param attributes copied attributes
      */
     public Attributes(Attributes attributes) {
-        this.values = new LinkedHashMap<String, Object>(attributes.values);
+        this.values = new LinkedHashMap<>(attributes.values);
         // categories ...
         for (String category : attributes.getCategories()) {
             if (valuesWithCategory == null) {
-                valuesWithCategory = new HashMap<String, Map<String,Object>>();
+                valuesWithCategory = new HashMap<>();
             }
-            valuesWithCategory.put(category, new LinkedHashMap<String, Object>(attributes.getMapForCategory(category)));
+            valuesWithCategory.put(category, new LinkedHashMap<>(attributes.getMapForCategory(category)));
         }
     }
 
@@ -173,7 +173,7 @@ public class Attributes implements Map<String, Object> {
 
     public void clear(String category) {
         if (this.mapExistsForCategory(category)) {
-            Set<String> keys = new HashSet<String>(this.getMapForCategory(category).keySet());
+            Set<String> keys = new HashSet<>(this.getMapForCategory(category).keySet());
             for (String key : keys) {
                 this.remove(category, key);
             }
@@ -227,7 +227,7 @@ public class Attributes implements Map<String, Object> {
             return values;
         }
         if (valuesWithCategory == null) {
-            valuesWithCategory = new HashMap<String, Map<String,Object>>();
+            valuesWithCategory = new HashMap<>();
         }
         if (!valuesWithCategory.containsKey(category)) {
             valuesWithCategory.put(category, new LinkedHashMap<String, Object>());
@@ -271,7 +271,7 @@ public class Attributes implements Map<String, Object> {
             }
         }
         // remove deleted
-        for (String name : new LinkedList<String>(toMap.keySet())) {
+        for (String name : new LinkedList<>(toMap.keySet())) {
             if (!fromMap.containsKey(name)) {
                 this.remove(category, name);
             }
@@ -289,6 +289,18 @@ public class Attributes implements Map<String, Object> {
         Map<String, Object> fromMap = from.getAttributesMap(category);
         for (String name : fromMap.keySet()) {
             this.set(category, name, fromMap.get(name));
+        }
+    }
+
+    public void addAttributesMap(Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            this.set(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void addAttributesMap(Map<String, Object> map, String category) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            this.set(category, entry.getKey(), entry.getValue());
         }
     }
 

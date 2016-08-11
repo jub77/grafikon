@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model;
 
+import java.util.Map.Entry;
+import java.util.Objects;
+
 import net.parostroj.timetable.model.events.Event;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.ListenerSupport;
@@ -48,6 +51,42 @@ public class Output implements ObjectWithId, AttributesHolder, OutputAttributes,
 
     public void setName(LocalizedString name) {
         attributes.setRemove(ATTR_NAME, name);
+    }
+
+    /**
+     * @return attributes containing settings category combined from template and this output
+     */
+    public Attributes getSettings() {
+        Attributes combinedAttributes = new Attributes();
+        OutputTemplate ot = getTemplate();
+        if (ot != null) {
+            combinedAttributes.addAttributesMap(ot.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS),
+                    CATEGORY_SETTINGS);
+            combinedAttributes.add(attributes, CATEGORY_SETTINGS);
+        }
+        return combinedAttributes;
+    }
+
+    /**
+     * @param combinedAttributes attributes that should be stored (values that equals values in template are ignored
+     *                  and removed)
+     */
+    public void setSettings(Attributes combinedAttributes) {
+        OutputTemplate ot = getTemplate();
+        // if there is not template ignore all values
+        if (ot != null) {
+            Attributes templateAttributes = ot.getAttributes();
+            for (Entry<String, Object> entry : combinedAttributes.getAttributesMap(CATEGORY_SETTINGS).entrySet()) {
+                String attributeName = entry.getKey();
+                Object attributeValue = entry.getValue();
+                Object templateValue = templateAttributes.get(OutputTemplate.CATEGORY_SETTINGS, attributeName);
+                if (Objects.equals(templateValue, attributeValue)) {
+                    attributes.remove(CATEGORY_SETTINGS, attributeName);
+                } else {
+                    attributes.set(CATEGORY_SETTINGS, attributeName, attributeValue);
+                }
+            }
+        }
     }
 
     @Override

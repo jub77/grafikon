@@ -159,8 +159,11 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         dialog.registerContext(context);
         OutputPM pModel = new OutputPM();
         dialog.setPresentationModel(pModel);
+        pModel.init(element, item);
         dialog.setVisible(true);
         dialog.dispose();
+        // refresh item
+        refresh(item);
     }
 
     @Override
