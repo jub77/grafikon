@@ -42,4 +42,10 @@
         <language>GROOVY</language>
         <location>add_managed_freight.groovy</location>
     </script>
+    <script>
+        <id>copy_output_templates_to_outputs</id>
+        <name>Copy output templates to outputs</name>
+        <language>GROOVY</language>
+        <location>copy_output_templates_to_outputs.groovy</location>
+    </script>
 </scripts>
