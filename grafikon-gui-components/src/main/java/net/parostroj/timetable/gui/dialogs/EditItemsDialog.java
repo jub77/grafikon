@@ -90,6 +90,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             }});
         itemList.setModel(listModel);
         this.updateEnabled();
+        this.itemList.requestFocusInWindow();
     }
 
     public void setMultipleSelection(boolean multiple) {
