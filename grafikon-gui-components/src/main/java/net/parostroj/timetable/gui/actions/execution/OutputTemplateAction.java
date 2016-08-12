@@ -43,7 +43,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
                 this.outputAction.setListener(template -> {
                     current++;
                     if (count > 1) {
-                        setProgressMessage(String.format("%s (%d/%d)", template.getName(), current, count));
+                        setProgressMessage(String.format("%s (%d/%d)", template.getName().translate(), current, count));
                         setWaitProgress(100 * current / count);
                     }
                 });
@@ -65,7 +65,7 @@ public class OutputTemplateAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            GuiComponentUtils.showError(this.outputAction.getErrorOutput().getName() + ": " + errorMessage, context.getLocationComponent());
+            GuiComponentUtils.showError(this.outputAction.getErrorOutput().getName().translate() + ": " + errorMessage, context.getLocationComponent());
         }
     }
 }

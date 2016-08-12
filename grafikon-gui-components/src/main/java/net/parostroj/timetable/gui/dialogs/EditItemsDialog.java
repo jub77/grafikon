@@ -26,7 +26,7 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     protected E element;
-    private WrapperListModel<T> listModel;
+    protected WrapperListModel<T> listModel;
 
     private final boolean move;
     private final boolean edit;
@@ -72,7 +72,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<T>(this.createWrapperList(getList()), null, !move);
+        listModel = new WrapperListModel<>(this.createWrapperList(getList()), null, !move);
         listModel.setObjectListener(new ObjectListener<T>() {
             @Override
             public void added(T object, int index) {
@@ -108,7 +108,7 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
-        itemList = new javax.swing.JList<Wrapper<T>>();
+        itemList = new javax.swing.JList<>();
         if (newByName) {
             nameTextField = new javax.swing.JTextField();
             nameTextField.setColumns(6);
@@ -292,6 +292,14 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     private void itemListValueChanged(javax.swing.event.ListSelectionEvent evt) {
         if (!evt.getValueIsAdjusting())
             this.updateEnabled();
+    }
+
+    protected Collection<T> getSelectedItems() {
+        List<T> result = new ArrayList<>();
+        for (int index : itemList.getSelectedIndices()) {
+            result.add(listModel.getElementAt(index).getElement());
+        }
+        return result;
     }
 
     private javax.swing.JButton deleteButton;

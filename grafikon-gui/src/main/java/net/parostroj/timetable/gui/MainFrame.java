@@ -707,6 +707,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     private void ouputMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         // dialog with outputs
         EditOutputsDialog dialog = new EditOutputsDialog(this, true);
+        dialog.setSettings(new Settings(model.getOutputSettings().getLocale()));
         GenerateOutputPM pm = new GenerateOutputPM();
         pm.init(model.get(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY));
         dialog.setPresentationModel(pm);

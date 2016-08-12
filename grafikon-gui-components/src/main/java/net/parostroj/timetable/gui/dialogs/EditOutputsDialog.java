@@ -20,19 +20,27 @@ import org.beanfabrics.View;
 import org.beanfabrics.swing.BnButton;
 import org.beanfabrics.swing.BnTextField;
 
+import com.google.common.collect.Collections2;
+
 import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.OutputTemplateAction;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
+import net.parostroj.timetable.gui.pm.GenerateOutputPM.Action;
 import net.parostroj.timetable.gui.pm.OutputPM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.output2.OutputWriter.Settings;
 
 public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> implements GuiContextComponent, View<GenerateOutputPM>, ModelSubscriber {
 
     private ModelProvider provider;
     private Link link;
     private GuiContext context;
+    private Settings settings;
 
     public EditOutputsDialog(Window window, boolean modal) {
         super(window, modal, true, true, false);
@@ -178,8 +186,26 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     }
 
     @Override
-    public void setPresentationModel(GenerateOutputPM pModel) {
+    public void setPresentationModel(final GenerateOutputPM pModel) {
+        pModel.setAction(Action.GENERATE, () -> {
+            generateOutputs(pModel, this.getSelectedItems());
+            return true;
+        });
+        pModel.setAction(Action.GENERATE_ALL, () -> {
+            generateOutputs(pModel, Collections2.transform(
+                    listModel.getListOfWrappers(),
+                    wrapper -> wrapper.getElement()));
+            return true;
+        });
         provider.setPresentationModel(pModel);
+    }
+
+    private void generateOutputs(final GenerateOutputPM pModel, Collection<Output> outputs) {
+        ActionContext context = new ActionContext();
+        context.setLocationComponent(this);
+        OutputTemplateAction action = new OutputTemplateAction(context, element,
+                settings, pModel.getLocation(), outputs);
+        ActionHandler.getInstance().execute(action);
     }
 
     @Override
@@ -200,5 +226,9 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     @Override
     public void setPath(Path path) {
         link.setPath(path);
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
     }
 }

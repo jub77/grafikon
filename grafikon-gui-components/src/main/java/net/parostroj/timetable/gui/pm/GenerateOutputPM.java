@@ -99,4 +99,8 @@ public class GenerateOutputPM extends AbstractPM {
             }
         }
     }
+
+    public File getLocation() {
+        return path.getFile();
+    }
 }
