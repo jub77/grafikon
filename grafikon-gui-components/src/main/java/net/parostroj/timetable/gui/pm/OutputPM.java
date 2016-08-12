@@ -17,6 +17,7 @@ import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class OutputPM extends AbstractPM {
 
@@ -34,6 +35,13 @@ public class OutputPM extends AbstractPM {
         name = new TextPM();
         name.setMandatory(true);
         templates = new EnumeratedValuesPM<>();
+        templates.addPropertyChangeListener("text", evt -> {
+            OutputTemplate template = templates.getValue();
+            if (template != null) {
+                String text = template.getDescription().translate();
+                name.setText(ObjectsUtil.getFirstLine(text));
+            }
+        });
         create = new OperationPM();
         writeBack = new OperationPM();
         attributes = new ModelAttributesPM();

@@ -1,8 +1,7 @@
 package net.parostroj.timetable.gui.wrappers;
 
-import java.util.Locale;
-
 import net.parostroj.timetable.model.OutputTemplate;
+import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Delegate for output template.
@@ -20,12 +19,8 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
     public String toString(OutputTemplate element) {
         String text = element.getName();
         if (element.getDescription() != null) {
-            text = element.getDescription().translate(Locale.getDefault());
-            // keep only the first line
-            int index = text.indexOf('\n');
-            if (index != -1) {
-                text = text.substring(0, index);
-            }
+            text = element.getDescription().translate();
+            text = ObjectsUtil.getFirstLine(text);
         }
         return text;
     }

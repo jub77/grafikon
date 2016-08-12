@@ -12,6 +12,21 @@ public class ObjectsUtil {
     }
 
     /**
+     * Returns only first line of the text.
+     *
+     * @param str string
+     * @return first line of the string
+     */
+    public static String getFirstLine(String str) {
+        // keep only the first line
+        int index = str.indexOf('\n');
+        if (index != -1) {
+            str = str.substring(0, index);
+        }
+        return str;
+    }
+
+    /**
      * Checks string and if it is not null, it trims it and transforms empty string to null,
      * otherwise it returns it trimmed.
      *
