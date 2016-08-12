@@ -209,6 +209,14 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     }
 
     @Override
+    protected void selectionChanged(int selectedItemsCount) {
+        GenerateOutputPM pModel = getPresentationModel();
+        if (pModel != null) {
+            pModel.setSelectedCount(selectedItemsCount);
+        }
+    }
+
+    @Override
     public IModelProvider getModelProvider() {
         return link.getModelProvider();
     }

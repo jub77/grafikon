@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import javax.swing.JFileChooser;
 
 import org.beanfabrics.model.AbstractPM;
+import org.beanfabrics.model.IntegerPM;
 import org.beanfabrics.model.OperationPM;
 import org.beanfabrics.model.PMManager;
 import org.beanfabrics.support.Operation;
@@ -33,6 +34,7 @@ public class GenerateOutputPM extends AbstractPM {
     OperationPM generate = new OperationPM();
     OperationPM generateAll = new OperationPM();
     OperationPM editPath = new OperationPM();
+    IntegerPM selectedCount = new IntegerPM();
 
     // callbacks for actions
     private final Map<Action, Supplier<Boolean>> actions;
@@ -42,7 +44,8 @@ public class GenerateOutputPM extends AbstractPM {
     public GenerateOutputPM() {
         actions = new EnumMap<>(Action.class);
         path.setMandatory(true);
-        generate.getValidator().add(() -> path.isValid() ? null : DEFAULT_ERROR);
+        selectedCount.setInteger(0);
+        generate.getValidator().add(() -> path.isValid() && selectedCount.getInteger() > 0 ? null : DEFAULT_ERROR);
         generateAll.getValidator().add(() -> path.isValid() ? null : DEFAULT_ERROR);
         PMManager.setup(this);
     }
@@ -102,5 +105,9 @@ public class GenerateOutputPM extends AbstractPM {
 
     public File getLocation() {
         return path.getFile();
+    }
+
+    public void setSelectedCount(int selectedItemsCount) {
+        selectedCount.setInteger(selectedItemsCount);
     }
 }

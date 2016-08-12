@@ -99,11 +99,13 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
 
     public void updateEnabled() {
         boolean enabled = !itemList.isSelectionEmpty();
-        boolean multiple = enabled && itemList.getSelectedIndices().length > 1;
+        int selectedItemsCount = itemList.getSelectedIndices().length;
+        boolean multiple = enabled && selectedItemsCount > 1;
         if (upButton != null) upButton.setEnabled(enabled && !multiple);
         if (downButton != null) downButton.setEnabled(enabled && !multiple);
         deleteButton.setEnabled(enabled);
         if (editButton != null) editButton.setEnabled(enabled && !multiple);
+        this.selectionChanged(selectedItemsCount);
     }
 
     private void initComponents() {
@@ -301,6 +303,12 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
         }
         return result;
     }
+
+    protected int getSelectionItemsCount() {
+        return itemList.getSelectedIndices().length;
+    }
+
+    protected void selectionChanged(int selectedItemsCount) {}
 
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
