@@ -26,6 +26,7 @@ import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.pm.OutputPM;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import javax.swing.JLabel;
 
 public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSubscriber, GuiContextComponent {
 
@@ -45,12 +46,20 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         GridBagLayout gridBagLayout = new GridBagLayout();
         contentPanel.setLayout(gridBagLayout);
 
+        JLabel nameLabel = new JLabel(ResourceLoader.getString("output.name"));
+        GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+        gbc_lblNewLabel.insets = new Insets(5, 5, 5, 5);
+        gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
+        gbc_lblNewLabel.gridx = 0;
+        gbc_lblNewLabel.gridy = 0;
+        contentPanel.add(nameLabel, gbc_lblNewLabel);
+
         BnTextField nameTextField = new BnTextField();
         GridBagConstraints gbc_nameTextField = new GridBagConstraints();
         gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_nameTextField.weightx = 1.0;
-        gbc_nameTextField.insets = new Insets(5, 5, 5, 5);
-        gbc_nameTextField.gridx = 0;
+        gbc_nameTextField.insets = new Insets(5, 5, 5, 0);
+        gbc_nameTextField.gridx = 1;
         gbc_nameTextField.gridy = 0;
         contentPanel.add(nameTextField, gbc_nameTextField);
         nameTextField.setColumns(10);
@@ -58,7 +67,8 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
-        gbc_attributes.insets = new Insets(0, 5, 5, 5);
+        gbc_attributes.gridwidth = 2;
+        gbc_attributes.insets = new Insets(0, 5, 0, 0);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
         gbc_attributes.gridy = 1;
