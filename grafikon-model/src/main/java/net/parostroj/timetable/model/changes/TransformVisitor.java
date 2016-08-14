@@ -198,7 +198,7 @@ public class TransformVisitor implements EventVisitor {
     public void visitOutputTemplateEvent(Event event) {
         OutputTemplate outputTemplate = (OutputTemplate) event.getSource();
         change = new DiagramChange(DiagramChange.Type.OUTPUT_TEMPLATE, outputTemplate.getId());
-        change.setObject(outputTemplate.getName());
+        change.setObject(outputTemplate.getKey());
         change.setAction(DiagramChange.Action.MODIFIED);
         this.addDescription(event);
     }

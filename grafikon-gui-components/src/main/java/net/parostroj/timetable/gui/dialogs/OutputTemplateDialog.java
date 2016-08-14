@@ -107,7 +107,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         textTemplateEditBox.setTemplate(noTemplate ? null : this.template.getTemplate());
         extensionTextField.setText(!isScript ? this.template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION,
                 String.class) : null);
-        nameTextField.setText(this.template.getName());
+        keyTextField.setText(this.template.getKey());
         outputComboBox.setSelectedItem(this.template.getOutput());
         outputTypeComboBox.setSelectedItem(this.template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, Object.class));
         scriptCheckBox.setSelected(isScript);
@@ -204,7 +204,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         templatePanel.add(verifyPanel, BorderLayout.SOUTH);
         FlowLayout flowLayout1 = (FlowLayout) verifyPanel.getLayout();
         flowLayout1.setAlignment(FlowLayout.LEFT);
-        nameTextField = new javax.swing.JTextField(15);
+        keyTextField = new javax.swing.JTextField(15);
         outputComboBox = new javax.swing.JComboBox<>();
         outputComboBox.setPrototypeDisplayValue("MMMMMM");
         outputTypeComboBox = new javax.swing.JComboBox<>();
@@ -233,7 +233,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             }
         });
 
-        verifyPanel.add(nameTextField);
+        verifyPanel.add(keyTextField);
         verifyPanel.add(outputComboBox);
         verifyPanel.add(outputTypeComboBox);
 
@@ -323,7 +323,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             TextTemplate textTemplate = this.convertToTemplate();
-            this.template.setName(nameTextField.getText().trim());
+            this.template.setKey(keyTextField.getText().trim());
             this.template.setTemplate(textTemplate);
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, outputTypeComboBox.getSelectedItem());
             this.template.setAttribute(OutputTemplate.ATTR_OUTPUT, outputComboBox.getSelectedItem());
@@ -411,7 +411,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private javax.swing.JButton verifyButton;
     private javax.swing.JTextField extensionTextField;
     private javax.swing.JCheckBox scriptCheckBox;
-    private javax.swing.JTextField nameTextField;
+    private javax.swing.JTextField keyTextField;
     private javax.swing.JComboBox<String> outputComboBox;
     private javax.swing.JTabbedPane tabbedPane;
     private ScriptEditBox scriptEditBox;

@@ -95,7 +95,7 @@ public class NamesVisitor implements TrainDiagramVisitor {
 
     @Override
     public void visit(OutputTemplate template) {
-        name = template.getName();
+        name = template.getKey();
     }
 
     @Override

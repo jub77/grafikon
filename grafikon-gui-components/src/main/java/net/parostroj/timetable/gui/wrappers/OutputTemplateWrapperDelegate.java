@@ -12,12 +12,12 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
 
     @Override
     protected String toCompareString(OutputTemplate element) {
-        return element.getName();
+        return element.getKey();
     }
 
     @Override
     public String toString(OutputTemplate element) {
-        String text = element.getName();
+        String text = element.getKey();
         if (element.getDescription() != null) {
             text = element.getDescription().translate();
             text = ObjectsUtil.getFirstLine(text);

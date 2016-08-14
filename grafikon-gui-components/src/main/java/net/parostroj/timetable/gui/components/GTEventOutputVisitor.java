@@ -58,7 +58,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getObject() instanceof TrainsCycle)
                     str.append("    Cycle: ").append(((TrainsCycle) event.getObject()).getName());
                 if (event.getObject() instanceof OutputTemplate)
-                    str.append("    Output template: ").append(((OutputTemplate) event.getObject()).getName());
+                    str.append("    Output template: ").append(((OutputTemplate) event.getObject()).getKey());
                 if (event.getObject() instanceof TrainTypeCategory)
                     str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName());
                 if (event.getObject() instanceof Output)
@@ -313,7 +313,7 @@ public class GTEventOutputVisitor implements EventVisitor {
     public void visitOutputTemplateEvent(Event event) {
         try {
             str.append("OutputTemplateEvent[");
-            str.append(((OutputTemplate) event.getSource()).getName());
+            str.append(((OutputTemplate) event.getSource()).getKey());
             str.append(']');
             if (full) {
                 str.append('\n');

@@ -23,6 +23,7 @@ import net.parostroj.timetable.model.ls.LSException;
 public class LSOutputTemplate {
 
     private String id;
+    // obsolote - loading old saves -> mapped to key
     private String name;
     private LSTextTemplate template;
     private LSScript script;
@@ -53,7 +54,6 @@ public class LSOutputTemplate {
 
     private LSOutputTemplate(OutputTemplate template, BiConsumer<Attachment, List<LSAttachment>> attachmentConverter) {
         this.id = template.getId();
-        this.name = template.getName();
         if (template.getTemplate() != null) {
             this.template = new LSTextTemplate(template.getTemplate());
         }
@@ -121,7 +121,10 @@ public class LSOutputTemplate {
 
     public OutputTemplate createOutputTemplate(TrainDiagram diagram, FileLoadSaveAttachments flsAttachments) throws LSException {
         OutputTemplate outputTemplate = diagram.getPartFactory().createOutputTemplate(id);
-        outputTemplate.setName(name);
+        if (name != null) {
+            // name mapped to key
+            outputTemplate.setKey(name);
+        }
         if (this.template != null) {
             outputTemplate.setTemplate(this.template.createTextTemplate());
         }

@@ -17,7 +17,6 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
     private final String id;
     private final TrainDiagram diagram;
 
-    private String name;
     private TextTemplate template;
     private Script script;
 
@@ -63,16 +62,20 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
         return diagram;
     }
 
-    public void setName(String name) {
-        if (!ObjectsUtil.compareWithNull(name, this.name)) {
-            String oldName = this.name;
-            this.name = name;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, name)));
-        }
+    public LocalizedString getName() {
+        return attributes.get(ATTR_NAME, LocalizedString.class);
     }
 
-    public String getName() {
-        return name;
+    public void setName(LocalizedString name) {
+        attributes.setRemove(ATTR_NAME, name);
+    }
+
+    public String getKey() {
+        return attributes.get(ATTR_KEY, String.class);
+    }
+
+    public void setKey(String key) {
+        attributes.setRemove(ATTR_KEY, key);
     }
 
     public void setTemplate(TextTemplate template) {
@@ -152,6 +155,6 @@ public class OutputTemplate implements ObjectWithId, Visitable, AttributesHolder
 
     @Override
     public String toString() {
-        return name;
+        return getName() != null ? getName().translate() : getKey();
     }
 }

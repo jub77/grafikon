@@ -186,7 +186,7 @@ public class OutputWriter {
         if (outputNames == null) {
             this.generateOutput(
                     output,
-                    this.getFile(null, template.getName(),
+                    this.getFile(null, template.getKey(),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
                     textTemplate, type, null,

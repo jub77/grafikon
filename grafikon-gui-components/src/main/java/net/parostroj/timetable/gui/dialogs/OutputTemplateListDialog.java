@@ -278,7 +278,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private void copyButtonActionPerformed() {
         OutputTemplate selectedTemplate = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
         OutputTemplate template = this.copyTemplate(selectedTemplate);
-        template.setName(ObjectsUtil.checkAndTrim(nameTextField.getText()));
+        template.setKey(ObjectsUtil.checkAndTrim(nameTextField.getText()));
         Wrapper<OutputTemplate> wrapper = Wrapper.getWrapper(template, otWrapperDelegate);
         templatesModel.addWrapper(wrapper);
         nameTextField.setText("");
@@ -288,7 +288,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
         OutputTemplate template = diagram.getPartFactory().createOutputTemplate(IdGenerator.getInstance().getId());
-        template.setName(nameTextField.getText().trim());
+        template.setKey(nameTextField.getText().trim());
         try {
             template.setTemplate(TextTemplate.createTextTemplate("", TextTemplate.Language.GROOVY));
         } catch (GrafikonException e) {
@@ -308,7 +308,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         dialog.registerContext(context);
         // get template
         OutputTemplate template = templatesModel.getIndex(templateList.getSelectedIndex()).getElement();
-        dialog.setTitle(template.getName());
+        dialog.setTitle(template.getKey());
         dialog.showDialog(this.copyTemplate(template));
         if (dialog.getTemplate() != null) {
             this.mergeTemplate(template, dialog.getTemplate());
@@ -321,7 +321,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         ActionContext c = new ActionContext();
         c.setLocationComponent(this);
         Output testOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
-        testOutput.setName(LocalizedString.fromString(outputTemplate.getName()));
+        testOutput.setName(LocalizedString.fromString(outputTemplate.getKey()));
         testOutput.setTemplate(outputTemplate);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
                 Collections.singletonList(testOutput));

@@ -36,7 +36,7 @@ public class ElementWrapperDelegate extends BasicWrapperDelegate<Object> {
         } else if (element instanceof Train) {
             return ((Train) element).getName();
         } else if (element instanceof OutputTemplate) {
-            return ((OutputTemplate)element).getName();
+            return ((OutputTemplate)element).getKey();
         } else if (element instanceof TrainsCycleType) {
             return ((TrainsCycleType)element).getName().translate();
         } else if (element instanceof Group) {

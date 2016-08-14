@@ -13,9 +13,9 @@ public class LibraryPartFactory {
         return new LibraryPartFactory();
     }
 
-    public OutputTemplate createOutputTemplate(String id, String name) {
+    public OutputTemplate createOutputTemplate(String id, String key) {
         OutputTemplate template = new OutputTemplate(id, null);
-        template.setName(name);
+        template.setKey(key);
         return template;
     }
 
