@@ -292,13 +292,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         descriptionPanel.setLayout(new BorderLayout(0, 0));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.description"), null, descriptionPanel, null); // NOI18N
 
-        JScrollPane descriptionScrollPane = new JScrollPane();
-        descriptionPanel.add(descriptionScrollPane);
-
         descriptionTextArea = new EditLocalizedStringMultilinePanel(5, 5);
         // same font as script area
         descriptionTextArea.setFont(scriptEditBox.getScriptFont());
-        descriptionScrollPane.setViewportView(descriptionTextArea);
+        descriptionPanel.add(descriptionTextArea);
 
         scriptCheckBox = new javax.swing.JCheckBox();
         scriptCheckBox.addActionListener(new ActionListener() {
