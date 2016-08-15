@@ -74,9 +74,9 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.partFactory = new TrainDiagramPartFactory(this);
         this.itemLists = new LinkedList<>();
         this.listener = event -> this.fireNestedEvent(event);
-        this.routes = new ItemWithIdSetImpl<Route>(
+        this.routes = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
-        this.trains = new ItemWithIdSetImpl<Train>((type, item) -> {
+        this.trains = new ItemWithIdSetImpl<>((type, item) -> {
             if (type == Event.Type.ADDED) {
                 item.attach();
             } else {
@@ -84,26 +84,26 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
             }
             this.fireCollectionEventObservable(type, item, null, null);
         });
-        this.cycleTypes = new ItemWithIdSetImpl<TrainsCycleType>(
+        this.cycleTypes = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.images = new ItemWithIdSetImpl<TimetableImage>(
+        this.images = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEvent(type, item, null, null));
-        this.engineClasses = new ItemWithIdSetImpl<EngineClass>(
+        this.engineClasses = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
-        this.textItems = new ItemWithIdListImpl<TextItem>(
+        this.textItems = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
-        this.outputTemplates = new ItemWithIdListImpl<OutputTemplate>(
+        this.outputTemplates = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.outputs = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
-        this.groups = new ItemWithIdSetImpl<Group>(
+        this.groups = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.companies = new ItemWithIdSetImpl<Company>(
+        this.companies = new ItemWithIdSetImpl<>(
                 (type, item) -> fireCollectionEventListObject(type, item, null, null));
-        this.trainTypeCategories = new ItemWithIdListImpl<TrainTypeCategory>(
+        this.trainTypeCategories = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.net = new Net(IdGenerator.getInstance().getId(), this);
-        this.trainTypes = new ItemWithIdListImpl<TrainType>(
+        this.trainTypes = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.attributes = new Attributes(
                 (attrs, change) -> fireEvent(new Event(TrainDiagram.this, change)));
@@ -115,7 +115,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.addAllEventListener(changesTracker);
         this.freightNet = partFactory.createFreightNet(IdGenerator.getInstance().getId());
         this.freightNet.addListener(listener);
-        this.validators = new ArrayList<TrainDiagramValidator>();
+        this.validators = new ArrayList<>();
         this.validators.add(new TrainNamesValidator(this));
         this.validators.add(new TrainIntervalsValidator());
         this.validators.add(new LineClassRemoveValidator(this));
@@ -129,6 +129,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         this.validators.add(new RegionRemoveValidator(this));
         this.validators.add(new NodeValidator(this));
         this.validators.add(new TrainCycleTypeRemoveValidator(this));
+        this.validators.add(new OutputTemplateRemoveValidator(this));
         Collections.addAll(itemLists, routes, images, engineClasses, textItems, outputTemplates,
                 groups, companies, trainTypes, trains, cycleTypes, outputs);
     }
@@ -183,7 +184,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     }
 
     public Collection<TrainsCycle> getCycles() {
-        List<TrainsCycle> result = new ArrayList<TrainsCycle>();
+        List<TrainsCycle> result = new ArrayList<>();
         for (TrainsCycleType type : cycleTypes) {
             result.addAll(type.getCycles());
         }
