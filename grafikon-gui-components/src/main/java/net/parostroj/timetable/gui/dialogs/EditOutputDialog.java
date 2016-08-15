@@ -58,7 +58,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         GridBagConstraints gbc_nameTextField = new GridBagConstraints();
         gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_nameTextField.weightx = 1.0;
-        gbc_nameTextField.insets = new Insets(5, 5, 5, 0);
+        gbc_nameTextField.insets = new Insets(5, 5, 5, 5);
         gbc_nameTextField.gridx = 1;
         gbc_nameTextField.gridy = 0;
         contentPanel.add(nameTextField, gbc_nameTextField);
@@ -68,7 +68,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         attributesPanel.setEnabledAddRemove(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
         gbc_attributes.gridwidth = 2;
-        gbc_attributes.insets = new Insets(0, 5, 0, 0);
+        gbc_attributes.insets = new Insets(0, 5, 0, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
         gbc_attributes.gridy = 1;
