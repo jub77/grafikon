@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,7 +27,12 @@ import net.parostroj.timetable.gui.GuiContext;
 import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.pm.OutputPM;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.gui.utils.GuiIcon;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.OutputTemplate;
+
 import javax.swing.JLabel;
 
 public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSubscriber, GuiContextComponent {
@@ -44,12 +51,14 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0 };
+        gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
         contentPanel.setLayout(gridBagLayout);
 
         JLabel nameLabel = new JLabel(ResourceLoader.getString("output.name"));
         GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
         gbc_lblNewLabel.insets = new Insets(5, 5, 5, 5);
-        gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
+        gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
         gbc_lblNewLabel.gridx = 0;
         gbc_lblNewLabel.gridy = 0;
         contentPanel.add(nameLabel, gbc_lblNewLabel);
@@ -68,7 +77,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         attributesPanel.setEnabledAddRemove(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
         gbc_attributes.gridwidth = 2;
-        gbc_attributes.insets = new Insets(0, 5, 0, 5);
+        gbc_attributes.insets = new Insets(0, 5, 5, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
         gbc_attributes.gridy = 1;
@@ -100,6 +109,28 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         attributesPanel.setModelProvider(provider);
         attributesPanel.setPath(new Path("attributes"));
 
+        JPanel panel = new JPanel();
+        GridBagConstraints gbc_panel = new GridBagConstraints();
+        gbc_panel.weightx = 1.0;
+        gbc_panel.gridwidth = 2;
+        gbc_panel.insets = new Insets(0, 5, 0, 5);
+        gbc_panel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_panel.gridx = 0;
+        gbc_panel.gridy = 2;
+        contentPanel.add(panel, gbc_panel);
+        panel.setLayout(new BorderLayout(0, 0));
+
+        BnTextField selectionTextField = new BnTextField();
+        panel.add(selectionTextField, BorderLayout.CENTER);
+        selectionTextField.setColumns(10);
+        selectionTextField.setModelProvider(provider);
+        selectionTextField.setPath(new Path("selection"));
+
+        BnButton selectionButton = GuiComponentUtils.createBnButton(GuiIcon.EDIT, 2);
+        panel.add(selectionButton, BorderLayout.EAST);
+        selectionButton.setModelProvider(provider);
+        selectionButton.setPath(new Path("editSelection"));
+
         pack();
     }
 
@@ -129,8 +160,24 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
     }
 
     @Override
-    public void setPresentationModel(OutputPM pModel) {
+    public void setPresentationModel(final OutputPM pModel) {
         provider.setPresentationModel(pModel);
+        pModel.setOperationEditSelection(() -> {
+            Collection<? extends ObjectWithId> currentSelection = pModel.getSelection();
+            ElementSelectionDialog<ObjectWithId> dialog = new ElementSelectionDialog<>(this, true);
+            OutputTemplate template = pModel.getEditedOutput().getTemplate();
+            Collection<ObjectWithId> collection = template.getSelectionType().extract(template.getDiagram(),
+                    ObjectWithId.class);
+            dialog.setLocationRelativeTo(this);
+            List<ObjectWithId> newSelection = dialog.selectElements(collection, currentSelection);
+            if (newSelection != null) {
+                if (newSelection.isEmpty()) {
+                    newSelection = null;
+                }
+                pModel.updateSelection(newSelection);
+            }
+            return true;
+        });
     }
 
     @Override

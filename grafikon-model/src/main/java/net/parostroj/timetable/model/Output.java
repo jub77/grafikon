@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model;
 
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -51,6 +52,14 @@ public class Output implements ObjectWithId, AttributesHolder, OutputAttributes,
 
     public void setName(LocalizedString name) {
         attributes.setRemove(ATTR_NAME, name);
+    }
+
+    public Collection<ObjectWithId> getSelection() {
+        return attributes.getAsCollection(ATTR_SELECTION, ObjectWithId.class);
+    }
+
+    public void setSelection(Collection<? extends ObjectWithId> selection) {
+        attributes.setRemove(ATTR_SELECTION, selection);
     }
 
     /**
