@@ -51,8 +51,8 @@ public abstract class Import {
         this.match = match;
         this.overwrite = overwrite;
         this.diagram = diagram;
-        this.errors = new LinkedList<ImportError>();
-        this.importedObjects = new HashSet<ObjectWithId>();
+        this.errors = new LinkedList<>();
+        this.importedObjects = new HashSet<>();
         this.settings = new HashMap<>();
     }
 
@@ -239,7 +239,7 @@ public abstract class Import {
             return diagram.getOutputTemplates().getById(origTemplate.getId());
         else {
             return diagram.getOutputTemplates()
-                    .find(template -> template.getName().equals(origTemplate.getName()));
+                    .find(template -> template.getKey().equals(origTemplate.getKey()));
         }
     }
 
@@ -271,8 +271,8 @@ public abstract class Import {
     }
 
     protected void clean() {
-        errors = new LinkedList<ImportError>();
-        importedObjects = new HashSet<ObjectWithId>();
+        errors = new LinkedList<>();
+        importedObjects = new HashSet<>();
     }
 
     public void importObjects(Collection<? extends ObjectWithId> objects) {
