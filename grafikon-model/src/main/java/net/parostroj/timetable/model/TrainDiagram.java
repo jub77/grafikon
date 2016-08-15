@@ -45,7 +45,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
     /** List of text items. */
     private final ItemWithIdList<TextItem> textItems;
     /** List of output templates. */
-    private final ItemWithIdList<OutputTemplate> outputTemplates;
+    private final ItemWithIdSet<OutputTemplate> outputTemplates;
     /** List of outputs. */
     private final ItemWithIdList<Output> outputs;
     /** Groups. */
@@ -92,8 +92,8 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
                 (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.textItems = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
-        this.outputTemplates = new ItemWithIdListImpl<>(
-                (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
+        this.outputTemplates = new ItemWithIdSetImpl<>(
+                (type, item) -> fireCollectionEventObservable(type, item, null, null));
         this.outputs = new ItemWithIdListImpl<>(
                 (type, item, newIndex, oldIndex) -> fireCollectionEventObservable(type, item, newIndex, oldIndex));
         this.groups = new ItemWithIdSetImpl<>(
@@ -272,7 +272,7 @@ public class TrainDiagram implements AttributesHolder, ObjectWithId, Visitable, 
         return textItems;
     }
 
-    public ItemWithIdList<OutputTemplate> getOutputTemplates() {
+    public ItemWithIdSet<OutputTemplate> getOutputTemplates() {
         return outputTemplates;
     }
 

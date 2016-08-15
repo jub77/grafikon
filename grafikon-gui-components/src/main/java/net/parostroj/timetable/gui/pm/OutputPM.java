@@ -74,7 +74,7 @@ public class OutputPM extends AbstractPM {
             templates.addValue(template, text);
         }
         if (!diagram.getOutputTemplates().isEmpty()) {
-            templates.setValue(diagram.getOutputTemplates().get(0));
+            templates.setValue(diagram.getOutputTemplates().iterator().next());
         }
     }
 

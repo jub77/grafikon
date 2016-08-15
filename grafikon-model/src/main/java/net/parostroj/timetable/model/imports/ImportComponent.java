@@ -43,7 +43,7 @@ public enum ImportComponent {
     public Set<ObjectWithId> getObjects(TrainDiagram diagram) {
         if (diagram == null)
             return Collections.emptySet();
-        Set<ObjectWithId> map = new LinkedHashSet<ObjectWithId>();
+        Set<ObjectWithId> map = new LinkedHashSet<>();
         switch (this) {
             case COMPANIES:
                 map.addAll(diagram.getCompanies());
@@ -93,7 +93,8 @@ public enum ImportComponent {
     }
 
     public boolean sorted() {
-        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES || this == ENGINE_CLASSES;
+        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES
+                || this == ENGINE_CLASSES || this == OUTPUT_TEMPLATES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {

@@ -33,7 +33,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     }
 
     public WrapperListModel(boolean sorted) {
-        this.list = new ArrayList<Wrapper<T>>();
+        this.list = new ArrayList<>();
         this.sorted = sorted;
     }
 
@@ -129,7 +129,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     public void refreshAll() {
         this.sort(list);
         if (list.size() > 0) {
-            this.fireIntervalAdded(this, 0, list.size() - 1);
+            this.fireContentsChanged(this, 0, list.size() - 1);
         }
     }
 
@@ -216,7 +216,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     }
 
     public void initializeSet() {
-        this.set = new HashSet<T>();
+        this.set = new HashSet<>();
         for (Wrapper<T> w : list) {
             this.set.add(w.getElement());
         }

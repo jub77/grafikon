@@ -76,15 +76,12 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         this.attachmentsChooser = attachmentsChooser;
         this.settings = settings;
         this.outputDirectory = outputDirectory;
-        templatesModel = new WrapperListModel<>(
-                Wrapper.getWrapperList(diagram.getOutputTemplates(), otWrapperDelegate),
-                null,
-                false);
-        ItemList<OutputTemplate> outputTemplates = diagram.getOutputTemplates();
+        templatesModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getOutputTemplates(), otWrapperDelegate));
+        ItemSet<OutputTemplate> outputTemplates = diagram.getOutputTemplates();
         templatesModel.setObjectListener(new WrapperListModel.ObjectListener<OutputTemplate>() {
             @Override
             public void added(OutputTemplate object, int index) {
-                outputTemplates.add(index, object);
+                outputTemplates.add(object);
             }
 
             @Override
@@ -94,7 +91,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
             @Override
             public void moved(OutputTemplate object, int fromIndex, int toIndex) {
-                outputTemplates.move(fromIndex, toIndex);
             }
         });
         templateList.setModel(templatesModel);
@@ -112,8 +108,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private void updateButtons() {
         String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
         int selectedCount = templateList.getSelectedIndices().length;
-        downButton.setEnabled(selectedCount == 1);
-        upButton.setEnabled(selectedCount == 1);
         deleteButton.setEnabled(selectedCount > 0);
         editButton.setEnabled(selectedCount == 1);
         copyButton.setEnabled(newName != null && selectedCount == 1);
@@ -122,7 +116,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
         // description
         if (selectedCount == 1) {
-            updateDescription(templatesModel.getIndex(templateList.getSelectedIndex()).getElement().getDescription());
+            updateDescription(templateList.getSelectedValue().getElement().getDescription());
         } else {
             updateDescription(null);
         }
@@ -144,8 +138,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 1);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 1);
         copyButton = GuiComponentUtils.createButton(GuiIcon.COPY, 1);
-        upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 1);
-        downButton = GuiComponentUtils.createButton(GuiIcon.GO_DOWN, 1);
         editButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 1);
         javax.swing.JPanel listPanel = new javax.swing.JPanel();
         javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
@@ -197,12 +189,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         copyButton.addActionListener(evt -> copyButtonActionPerformed());
         controlPanel.add(copyButton);
 
-        upButton.addActionListener(evt -> upButtonActionPerformed(evt));
-        controlPanel.add(upButton);
-
-        downButton.addActionListener(evt -> downButtonActionPerformed(evt));
-        controlPanel.add(downButton);
-
         editButton.addActionListener(evt -> editButtonActionPerformed());
         controlPanel.add(editButton);
 
@@ -214,7 +200,11 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         listPanel.setLayout(new java.awt.BorderLayout());
 
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        templateList.addListSelectionListener(evt -> updateButtons());
+        templateList.addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting()) {
+                updateButtons();
+            }
+        });
         scrollPane.setViewportView(templateList);
 
         listPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -240,22 +230,6 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
 
         pack();
         this.setMinimumSize(this.getSize());
-    }
-
-    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        int index = templateList.getSelectedIndex();
-        if (index != -1 && index != (templatesModel.getSize() - 1)) {
-            templatesModel.moveIndexDown(index);
-            templateList.setSelectedIndex(index + 1);
-        }
-    }
-
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        int index = templateList.getSelectedIndex();
-        if (index != -1 && index != 0) {
-            templatesModel.moveIndexUp(index);
-            templateList.setSelectedIndex(index - 1);
-        }
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -313,6 +287,9 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
             this.mergeTemplate(template, dialog.getTemplate());
             // update description
             updateDescription(template.getDescription());
+            Wrapper<OutputTemplate> selectedValue = templateList.getSelectedValue();
+            templatesModel.refreshAll();
+            templateList.setSelectedValue(selectedValue, true);
         }
     }
 
@@ -343,11 +320,9 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton copyButton;
-    private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;
     private javax.swing.JList<Wrapper<OutputTemplate>> templateList;
-    private javax.swing.JButton upButton;
     private javax.swing.JTextArea descriptionTextArea;
 }
