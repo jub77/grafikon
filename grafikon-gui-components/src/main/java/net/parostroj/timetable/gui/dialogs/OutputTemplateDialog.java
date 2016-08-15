@@ -262,6 +262,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             selectionTypeComboBox.addItem(Wrapper.getWrapper(type, motwd));
         }
 
+        JLabel selectionLabel = new JLabel(ResourceLoader.getString("ot.selection.type") + ":");
+        verifyPanel.add(selectionLabel);
+
         verifyPanel.add(selectionTypeComboBox);
 
         javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
@@ -274,8 +277,9 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         scriptEditBox.setRows(15);
         scriptEditBox.setColumns(60);
 
-        EditLocalizedStringListAddRemovePanel localizePanel = new EditLocalizedStringListAddRemovePanel(
-                new Path("this"), i18nProvider, 5, false);
+        EditLocalizedStringListAddRemovePanel<AttributeReference<LocalizedString>> localizePanel = new EditLocalizedStringListAddRemovePanel<>(5, false);
+        localizePanel.setModelProvider(i18nProvider);
+        localizePanel.setPath(new Path("this"));
         localizePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.localization"), null, localizePanel, null); // NOI18N
 

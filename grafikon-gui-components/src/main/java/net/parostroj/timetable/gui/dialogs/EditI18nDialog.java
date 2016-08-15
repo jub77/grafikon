@@ -24,6 +24,7 @@ import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.AttributeReference;
+import net.parostroj.timetable.utils.Reference;
 
 public class EditI18nDialog extends JDialog implements GuiContextComponent {
 
@@ -36,7 +37,10 @@ public class EditI18nDialog extends JDialog implements GuiContextComponent {
         contentPanel.setLayout(new BorderLayout(5, 5));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        contentPanel.add(new EditLocalizedStringListPanel(new Path("selected"), provider, 5), BorderLayout.CENTER);
+        EditLocalizedStringListPanel<Reference<LocalizedString>> lsPanel = new EditLocalizedStringListPanel<>(5);
+        lsPanel.setModelProvider(provider);
+        lsPanel.setPath(new Path("selected"));
+        contentPanel.add(lsPanel, BorderLayout.CENTER);
 
         BnComboBox comboBox = new BnComboBox();
         comboBox.setModelProvider(provider);

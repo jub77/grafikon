@@ -37,7 +37,10 @@ public class EditI18nAttributesDialog extends JDialog implements GuiContextCompo
         contentPanel.setLayout(new BorderLayout(5, 5));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        contentPanel.add(new EditLocalizedStringListAddRemovePanel(new Path("this"), provider, 5, false), BorderLayout.CENTER);
+        EditLocalizedStringListAddRemovePanel<AttributeReference<LocalizedString>> lsPanel = new EditLocalizedStringListAddRemovePanel<>(5, false);
+        lsPanel.setModelProvider(provider);
+        lsPanel.setPath(new Path("this"));
+        contentPanel.add(lsPanel, BorderLayout.CENTER);
 
         JPanel panel = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panel.getLayout();
