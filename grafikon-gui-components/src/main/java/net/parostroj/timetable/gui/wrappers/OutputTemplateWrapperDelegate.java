@@ -1,7 +1,6 @@
 package net.parostroj.timetable.gui.wrappers;
 
 import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.utils.ObjectsUtil;
 
 /**
  * Delegate for output template.
@@ -18,9 +17,8 @@ public class OutputTemplateWrapperDelegate extends BasicWrapperDelegate<OutputTe
     @Override
     public String toString(OutputTemplate element) {
         String text = element.getKey();
-        if (element.getDescription() != null) {
-            text = element.getDescription().translate();
-            text = ObjectsUtil.getFirstLine(text);
+        if (element.getName() != null) {
+            text = element.getName().translate();
         }
         return text;
     }
