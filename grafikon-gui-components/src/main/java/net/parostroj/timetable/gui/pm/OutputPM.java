@@ -42,6 +42,7 @@ public class OutputPM extends AbstractPM {
                 name.setText(text);
             }
         });
+        templates.setMandatory(true);
         create = new OperationPM();
         writeBack = new OperationPM();
         attributes = new ModelAttributesPM();
@@ -94,7 +95,7 @@ public class OutputPM extends AbstractPM {
 
     @Validation(path = "create")
     public boolean canCreate() {
-        return !name.isEmpty();
+        return !name.isEmpty() && !templates.isEmpty();
     }
 
     public Output createNewOutput() {
