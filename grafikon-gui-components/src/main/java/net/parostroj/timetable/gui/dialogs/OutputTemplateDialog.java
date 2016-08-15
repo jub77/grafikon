@@ -33,6 +33,7 @@ import net.parostroj.timetable.gui.GuiContextComponent;
 import net.parostroj.timetable.gui.components.AttributesPanel;
 import net.parostroj.timetable.gui.components.EditLocalizedStringListAddRemovePanel;
 import net.parostroj.timetable.gui.components.EditLocalizedStringMultilinePanel;
+import net.parostroj.timetable.gui.components.EditLocalizedStringPanel;
 import net.parostroj.timetable.gui.components.ScriptEditBox;
 import net.parostroj.timetable.gui.pm.ARLocalizedStringListPM;
 import net.parostroj.timetable.gui.pm.LocalizationTypeFactory;
@@ -63,6 +64,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private OutputTemplate resultTemplate;
 
     private final ModelProvider i18nProvider;
+    private final ModelProvider nameProvider;
 
     private final JFileChooser attachmentChooser;
     private final Consumer<OutputTemplate> templateWriter;
@@ -73,6 +75,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         this.attachmentChooser = attachmentChooser;
         this.templateWriter = templateWriter;
         this.i18nProvider = new ModelProvider();
+        this.nameProvider = new ModelProvider();
         initComponents();
         init();
     }
@@ -124,6 +127,10 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         setupPanel.startEditing(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
         // selection type
         selectionTypeComboBox.setSelectedItem(Wrapper.getWrapper(this.template.getSelectionType()));
+        LocalizedStringPM namePM = new LocalizedStringPM();
+        LocalizedString name = template.getName() == null ? name = LocalizedString.fromString("") : template.getName();
+        namePM.init(name, template.getDiagram().getLocales());
+        nameProvider.setPresentationModel(namePM);
     }
 
     private ARLocalizedStringListPM<AttributeReference<LocalizedString>> createPM(TrainDiagram diagram, AttributesHolder holder) {
@@ -287,6 +294,17 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         setupPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         tabbedPane.addTab(ResourceLoader.getString("ot.tab.setup"), null, setupPanel, null);
 
+        JPanel namePanel = new JPanel();
+        namePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        namePanel.setLayout(new BorderLayout(0, 0));
+        tabbedPane.addTab(ResourceLoader.getString("ot.name"), null, namePanel, null); // NOI18N
+
+        EditLocalizedStringPanel nameEditPanel = new EditLocalizedStringPanel(5);
+        nameEditPanel.setModelProvider(nameProvider);
+        nameEditPanel.setPath(new Path("this"));
+
+        namePanel.add(nameEditPanel, BorderLayout.CENTER);
+
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         descriptionPanel.setLayout(new BorderLayout(0, 0));
@@ -344,6 +362,8 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             // setup
             setupPanel.stopEditing();
 
+            this.template.setName(getNameLocalizedString());
+
             this.resultTemplate = this.template;
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
@@ -371,12 +391,22 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_I18N);
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
             outputTemplate.getAttachments().addAll(template.getAttachments());
+            outputTemplate.setName(getNameLocalizedString());
             return outputTemplate;
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
             GuiComponentUtils.showError(e.getMessage(), this);
             return null;
         }
+    }
+
+    private LocalizedString getNameLocalizedString() {
+        LocalizedStringPM lsPM = nameProvider.getPresentationModel();
+        LocalizedString name = lsPM.getCurrentEdit().get();
+        if (ObjectsUtil.isEmpty(name.getDefaultString())) {
+            name = null;
+        }
+        return name;
     }
 
     private void writeBackLocalization() {

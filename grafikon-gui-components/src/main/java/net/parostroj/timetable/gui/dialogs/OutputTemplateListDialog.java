@@ -8,7 +8,6 @@ package net.parostroj.timetable.gui.dialogs;
 import java.io.File;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.swing.JFileChooser;
 
@@ -333,12 +332,9 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
     }
 
     private void mergeTemplate(OutputTemplate template, OutputTemplate fromTemplate) {
-        if (!template.getName().equals(fromTemplate.getName())) {
-            template.setName(fromTemplate.getName());
-        }
-        if (!Objects.equals(template.getTemplate(), fromTemplate.getTemplate())) {
-            template.setTemplate(fromTemplate.getTemplate());
-        }
+        template.setKey(fromTemplate.getKey());
+        template.setName(fromTemplate.getName());
+        template.setTemplate(fromTemplate.getTemplate());
         template.getAttributes().merge(fromTemplate.getAttributes());
         template.setScript(fromTemplate.getScript());
         template.getAttachments().replaceAll(fromTemplate.getAttachments());
