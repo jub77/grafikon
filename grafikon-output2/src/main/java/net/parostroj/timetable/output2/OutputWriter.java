@@ -146,6 +146,7 @@ public class OutputWriter {
             binding.put("settings", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
             binding.put("localization", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
             binding.put("locale", settings.getLocale());
+            binding.put("selection", modelOutput.getSelection());
             binding.put("outputs", new OutputCollector() {
                 @Override
                 public void add(String name, Map<String, Object> context) {
@@ -190,12 +191,12 @@ public class OutputWriter {
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
                     textTemplate, type, null,
-                    this.updateContext(template, null), resources, null);
+                    this.updateContext(modelOutput, template, null), resources, null);
         } else {
             for(OutputSettings outputName : outputNames) {
                 this.generateOutput(output, this.getFile(outputName.directory, outputName.name), textTemplate,
                         type, outputName.params,
-                        this.updateContext(template, outputName.context), resources, outputName.encoding);
+                        this.updateContext(modelOutput, template, outputName.context), resources, outputName.encoding);
             }
         }
     }
@@ -224,10 +225,12 @@ public class OutputWriter {
         output.write(params);
     }
 
-    private Map<String, Object> updateContext(OutputTemplate outputTemplate, Map<String, Object> context) {
+    private Map<String, Object> updateContext(net.parostroj.timetable.model.Output modelOutput,
+            OutputTemplate outputTemplate, Map<String, Object> context) {
         if (context == null) context = new HashMap<>();
         context.put("settings", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), templateLog, "settings"));
         context.put("localization", new WrapperLogMap<>(outputTemplate.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), templateLog, "localization"));
+        context.put("selection", modelOutput.getSelection());
         return context;
     }
 
