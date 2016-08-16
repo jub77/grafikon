@@ -145,7 +145,7 @@ public class OutputWriter {
             binding.put("log", scriptLog);
             binding.put("settings", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
             binding.put("localization", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
-            binding.put("locale", settings.getLocale());
+            binding.put("locale", modelOutput.getLocale() != null ? modelOutput.getLocale() : settings.getLocale());
             binding.put("selection", modelOutput.getSelection());
             binding.put("outputs", new OutputCollector() {
                 @Override
@@ -179,7 +179,7 @@ public class OutputWriter {
         OutputTemplate template = modelOutput.getTemplate();
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
         OutputFactory factory = OutputFactory.newInstance(template.getOutput());
-        factory.setParameter("locale", settings.getLocale());
+        factory.setParameter("locale", modelOutput.getLocale() != null? modelOutput.getLocale() : settings.getLocale());
         Output output = factory.createOutput(type);
         TextTemplate textTemplate = template.getTemplate();
         OutputResources resources = new TemplateOutputResources(template);

@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -60,6 +61,14 @@ public class Output implements ObjectWithId, AttributesHolder, OutputAttributes,
 
     public void setSelection(Collection<? extends ObjectWithId> selection) {
         attributes.setRemove(ATTR_SELECTION, selection);
+    }
+
+    public Locale getLocale() {
+        return attributes.get(ATTR_LOCALE, Locale.class);
+    }
+
+    public void setLocale(Locale locale) {
+        attributes.setRemove(ATTR_LOCALE, locale);
     }
 
     /**

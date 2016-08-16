@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.pm;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -36,17 +38,20 @@ public class GenerateOutputPM extends AbstractPM {
     OperationPM editPath = new OperationPM();
     IntegerPM selectedCount = new IntegerPM();
 
+    private final Collection<Locale> locales;
+
     // callbacks for actions
     private final Map<Action, Supplier<Boolean>> actions;
 
     private WeakReference<JFileChooser> chooserRef;
 
-    public GenerateOutputPM() {
+    public GenerateOutputPM(Collection<Locale> locales) {
         actions = new EnumMap<>(Action.class);
         path.setMandatory(true);
         selectedCount.setInteger(0);
         generate.getValidator().add(() -> path.isValid() && selectedCount.getInteger() > 0 ? null : DEFAULT_ERROR);
         generateAll.getValidator().add(() -> path.isValid() ? null : DEFAULT_ERROR);
+        this.locales = locales;
         PMManager.setup(this);
     }
 
@@ -109,5 +114,9 @@ public class GenerateOutputPM extends AbstractPM {
 
     public void setSelectedCount(int selectedItemsCount) {
         selectedCount.setInteger(selectedItemsCount);
+    }
+
+    public Collection<Locale> getLocales() {
+        return locales;
     }
 }

@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.pm;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
 import org.beanfabrics.model.AbstractPM;
 import org.beanfabrics.model.BooleanPM;
@@ -35,13 +36,14 @@ public class OutputPM extends AbstractPM {
     ITextPM selection;
     IBooleanPM selectionEnabled;
     ModelAttributesPM attributes;
+    final IEnumeratedValuesPM<Locale> locale;
 
     private WeakReference<TrainDiagram> diagramRef;
     private WeakReference<Output> outputRef;
     private Output newOutput;
     private Collection<? extends ObjectWithId> selectionItems;
 
-    public OutputPM() {
+    public OutputPM(Collection<Locale> locales) {
         name = new TextPM();
         name.setMandatory(true);
         templates = new EnumeratedValuesPM<>();
@@ -61,6 +63,8 @@ public class OutputPM extends AbstractPM {
         editSelection = new OperationPM();
         attributes = new ModelAttributesPM();
         selectionEnabled = new BooleanPM();
+        locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
+                locales, l -> l.getDisplayName(l)), "-");
         PMManager.setup(this);
     }
 
@@ -76,6 +80,7 @@ public class OutputPM extends AbstractPM {
         if (!diagram.getOutputTemplates().isEmpty()) {
             templates.setValue(diagram.getOutputTemplates().iterator().next());
         }
+        locale.setValue(null);
     }
 
     public void init(TrainDiagram diagram, Output output) {
@@ -91,6 +96,7 @@ public class OutputPM extends AbstractPM {
             this.updateSelection(output.getSelection());
             this.selectionEnabled.setBoolean(true);
         }
+        locale.setValue(output.getLocale());
     }
 
     public void updateSelection(Collection<? extends ObjectWithId> selectionItems) {
@@ -109,6 +115,7 @@ public class OutputPM extends AbstractPM {
             newOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
             newOutput.setName(LocalizedString.fromString(name.getText()));
             newOutput.setTemplate(templates.getValue());
+            newOutput.setLocale(locale.getValue());
         }
         return true;
     }
@@ -121,6 +128,7 @@ public class OutputPM extends AbstractPM {
             // template cannot be changed
             output.setSettings(attributes.getFinalAttributes());
             output.setSelection(selectionItems);
+            output.setLocale(locale.getValue());
         }
         return true;
     }

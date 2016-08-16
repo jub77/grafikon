@@ -21,6 +21,7 @@ import org.beanfabrics.ModelSubscriber;
 import org.beanfabrics.Path;
 import org.beanfabrics.View;
 import org.beanfabrics.swing.BnButton;
+import org.beanfabrics.swing.BnComboBox;
 import org.beanfabrics.swing.BnTextField;
 
 import net.parostroj.timetable.gui.GuiContext;
@@ -51,27 +52,46 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0 };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0 };
         gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
         contentPanel.setLayout(gridBagLayout);
 
         JLabel nameLabel = new JLabel(ResourceLoader.getString("output.name"));
-        GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-        gbc_lblNewLabel.insets = new Insets(5, 5, 5, 5);
-        gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
-        gbc_lblNewLabel.gridx = 0;
-        gbc_lblNewLabel.gridy = 0;
-        contentPanel.add(nameLabel, gbc_lblNewLabel);
+        GridBagConstraints gbc_lblNameLabel = new GridBagConstraints();
+        gbc_lblNameLabel.insets = new Insets(5, 5, 5, 5);
+        gbc_lblNameLabel.anchor = GridBagConstraints.WEST;
+        gbc_lblNameLabel.gridx = 0;
+        gbc_lblNameLabel.gridy = 0;
+        contentPanel.add(nameLabel, gbc_lblNameLabel);
 
         BnTextField nameTextField = new BnTextField();
         GridBagConstraints gbc_nameTextField = new GridBagConstraints();
         gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_nameTextField.weightx = 1.0;
-        gbc_nameTextField.insets = new Insets(5, 5, 5, 5);
+        gbc_nameTextField.insets = new Insets(5, 0, 5, 5);
         gbc_nameTextField.gridx = 1;
         gbc_nameTextField.gridy = 0;
         contentPanel.add(nameTextField, gbc_nameTextField);
         nameTextField.setColumns(10);
+
+        JLabel lblLocaleLabel = new JLabel(ResourceLoader.getString("output.locale"));
+        GridBagConstraints gbc_lblLocaleLabel = new GridBagConstraints();
+        gbc_lblLocaleLabel.anchor = GridBagConstraints.WEST;
+        gbc_lblLocaleLabel.insets = new Insets(0, 5, 5, 5);
+        gbc_lblLocaleLabel.gridx = 0;
+        gbc_lblLocaleLabel.gridy = 1;
+        contentPanel.add(lblLocaleLabel, gbc_lblLocaleLabel);
+
+        BnComboBox localeComboBox = new BnComboBox();
+        GridBagConstraints gbc_localeComboBox = new GridBagConstraints();
+        gbc_localeComboBox.weightx = 1.0;
+        gbc_localeComboBox.insets = new Insets(0, 0, 5, 5);
+        gbc_localeComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_localeComboBox.gridx = 1;
+        gbc_localeComboBox.gridy = 1;
+        contentPanel.add(localeComboBox, gbc_localeComboBox);
+        localeComboBox.setModelProvider(provider);
+        localeComboBox.setPath(new Path("locale"));
 
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
@@ -80,7 +100,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_attributes.insets = new Insets(0, 5, 5, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
-        gbc_attributes.gridy = 1;
+        gbc_attributes.gridy = 2;
         gbc_attributes.weightx = 1.0;
         gbc_attributes.weighty = 1.0;
         contentPanel.add(attributesPanel, gbc_attributes);
@@ -116,7 +136,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_panel.insets = new Insets(0, 5, 0, 5);
         gbc_panel.fill = GridBagConstraints.HORIZONTAL;
         gbc_panel.gridx = 0;
-        gbc_panel.gridy = 2;
+        gbc_panel.gridy = 3;
         contentPanel.add(panel, gbc_panel);
         panel.setLayout(new BorderLayout(0, 0));
 
