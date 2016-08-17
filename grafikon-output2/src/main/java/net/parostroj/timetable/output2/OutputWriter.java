@@ -141,11 +141,12 @@ public class OutputWriter {
             final List<OutputSettings> out = new ArrayList<>();
             Map<String, Object> binding = new HashMap<>();
             binding.put("diagram", diagram);
-            binding.put("template", template);
+            binding.put("output", modelOutput);
             binding.put("log", scriptLog);
             binding.put("settings", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
             binding.put("localization", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
             binding.put("locale", modelOutput.getLocale() != null ? modelOutput.getLocale() : settings.getLocale());
+            binding.put("key", getOutputKey(modelOutput));
             binding.put("selection", modelOutput.getSelection());
             binding.put("outputs", new OutputCollector() {
                 @Override
@@ -175,6 +176,10 @@ public class OutputWriter {
         return result;
     }
 
+    private String getOutputKey(net.parostroj.timetable.model.Output modelOutput) {
+        return modelOutput.getKey() != null ? modelOutput.getKey() : modelOutput.getTemplate().getKey();
+    }
+
     private void generateOutput(net.parostroj.timetable.model.Output modelOutput) throws OutputException {
         OutputTemplate template = modelOutput.getTemplate();
         String type = template.getAttribute(OutputTemplate.ATTR_OUTPUT_TYPE, String.class);
@@ -187,7 +192,7 @@ public class OutputWriter {
         if (outputNames == null) {
             this.generateOutput(
                     output,
-                    this.getFile(null, template.getKey(),
+                    this.getFile(null, getOutputKey(modelOutput),
                             template.getAttributes().get(OutputTemplate.ATTR_OUTPUT_EXTENSION, String.class),
                             factory.getType()),
                     textTemplate, type, null,
