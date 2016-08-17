@@ -71,6 +71,14 @@ public class Output implements ObjectWithId, AttributesHolder, OutputAttributes,
         attributes.setRemove(ATTR_LOCALE, locale);
     }
 
+    public String getKey() {
+        return attributes.get(ATTR_KEY, String.class);
+    }
+
+    public void setKey(String key) {
+        attributes.setRemove(ATTR_KEY, key);
+    }
+
     /**
      * @return attributes containing settings category combined from template and this output
      */
