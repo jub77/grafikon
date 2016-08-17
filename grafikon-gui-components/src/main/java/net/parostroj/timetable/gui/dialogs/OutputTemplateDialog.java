@@ -392,6 +392,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
             outputTemplate.getAttributes().merge(template.getAttributes(), OutputTemplate.CATEGORY_SETTINGS);
             outputTemplate.getAttachments().addAll(template.getAttachments());
             outputTemplate.setName(getNameLocalizedString());
+            outputTemplate.setKey(keyTextField.getText().trim());
             return outputTemplate;
         } catch (GrafikonException e) {
             log.error(e.getMessage(), e);
