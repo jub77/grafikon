@@ -1,8 +1,10 @@
 package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.beanfabrics.model.AbstractPM;
@@ -99,12 +101,16 @@ public class OutputPM extends AbstractPM {
         outputRef = null;
         templates.getOptions().clear();
         name.setText("");
+        List<Wrapper<OutputTemplate>> wrappers = new ArrayList<>();
         for (OutputTemplate template : diagram.getOutputTemplates()) {
-            String text = Wrapper.getWrapper(template).toString();
-            templates.addValue(template, text);
+            wrappers.add(Wrapper.getWrapper(template));
         }
-        if (!diagram.getOutputTemplates().isEmpty()) {
-            templates.setValue(diagram.getOutputTemplates().iterator().next());
+        Collections.sort(wrappers);
+        for (Wrapper<OutputTemplate> wrapper : wrappers) {
+            templates.addValue(wrapper.getElement(), wrapper.toString());
+        }
+        if (!wrappers.isEmpty()) {
+            templates.setValue(wrappers.get(0).getElement());
         }
         locale.setValue(null);
     }
