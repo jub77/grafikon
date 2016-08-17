@@ -37,6 +37,7 @@ public class OutputPM extends AbstractPM {
     IBooleanPM selectionEnabled;
     ModelAttributesPM attributes;
     final IEnumeratedValuesPM<Locale> locale;
+    final ITextPM key;
 
     private WeakReference<TrainDiagram> diagramRef;
     private WeakReference<Output> outputRef;
@@ -44,6 +45,8 @@ public class OutputPM extends AbstractPM {
     private Collection<? extends ObjectWithId> selectionItems;
 
     public OutputPM(Collection<Locale> locales) {
+        key = new TextPM();
+        key.setMandatory(true);
         name = new TextPM();
         name.setMandatory(true);
         templates = new EnumeratedValuesPM<>();
@@ -53,6 +56,7 @@ public class OutputPM extends AbstractPM {
                 LocalizedString localizedName = template.getName();
                 String text = localizedName != null ? localizedName.translate() : template.getKey();
                 name.setText(text);
+                key.setText(getUniqueKey(template));
             }
         });
         templates.setMandatory(true);
@@ -66,6 +70,28 @@ public class OutputPM extends AbstractPM {
         locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
                 locales, l -> l.getDisplayName(l)), "-");
         PMManager.setup(this);
+    }
+
+    private String getUniqueKey(OutputTemplate template) {
+        TrainDiagram diagram = diagramRef.get();
+        String key = template.getKey();
+        if (diagram != null) {
+            String originalKey = key;
+            int counter = 0;
+            while (!checkUnique(key, diagram)) {
+                key = String.format("%s_%d", originalKey, ++counter);
+            }
+        }
+        return key;
+    }
+
+    private boolean checkUnique(String key, TrainDiagram diagram) {
+        for (Output output : diagram.getOutputs()) {
+            if (key.equals(output.getKey())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void initNew(TrainDiagram diagram) {
@@ -97,6 +123,7 @@ public class OutputPM extends AbstractPM {
             this.selectionEnabled.setBoolean(true);
         }
         locale.setValue(output.getLocale());
+        key.setText(output.getKey());
     }
 
     public void updateSelection(Collection<? extends ObjectWithId> selectionItems) {
@@ -116,6 +143,7 @@ public class OutputPM extends AbstractPM {
             newOutput.setName(LocalizedString.fromString(name.getText()));
             newOutput.setTemplate(templates.getValue());
             newOutput.setLocale(locale.getValue());
+            newOutput.setKey(key.getText());
         }
         return true;
     }
@@ -129,13 +157,19 @@ public class OutputPM extends AbstractPM {
             output.setSettings(attributes.getFinalAttributes());
             output.setSelection(selectionItems);
             output.setLocale(locale.getValue());
+            output.setKey(key.getText());
         }
         return true;
     }
 
     @Validation(path = "create")
     public boolean canCreate() {
-        return !name.isEmpty() && !templates.isEmpty();
+        return !name.isEmpty() && !templates.isEmpty() && !key.isEmpty();
+    }
+
+    @Validation(path = "writeBack")
+    public boolean canWriteBack() {
+        return !name.isEmpty() && !key.isEmpty();
     }
 
     @Validation(path = "editSelection")

@@ -52,7 +52,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0 };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
         gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
         contentPanel.setLayout(gridBagLayout);
 
@@ -93,6 +93,24 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         localeComboBox.setModelProvider(provider);
         localeComboBox.setPath(new Path("locale"));
 
+        JLabel lblKeyLabel = new JLabel(ResourceLoader.getString("output.key"));
+        GridBagConstraints gbc_lblKeyLabel = new GridBagConstraints();
+        gbc_lblKeyLabel.insets = new Insets(0, 5, 5, 5);
+        gbc_lblKeyLabel.anchor = GridBagConstraints.WEST;
+        gbc_lblKeyLabel.gridx = 0;
+        gbc_lblKeyLabel.gridy = 2;
+        contentPanel.add(lblKeyLabel, gbc_lblKeyLabel);
+
+        BnTextField keyTextField = new BnTextField();
+        GridBagConstraints gbc_keyTextField = new GridBagConstraints();
+        gbc_keyTextField.insets = new Insets(0, 0, 5, 5);
+        gbc_keyTextField.fill = GridBagConstraints.HORIZONTAL;
+        gbc_keyTextField.gridx = 1;
+        gbc_keyTextField.gridy = 2;
+        contentPanel.add(keyTextField, gbc_keyTextField);
+        keyTextField.setModelProvider(provider);
+        keyTextField.setPath(new Path("key"));
+
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
@@ -100,7 +118,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_attributes.insets = new Insets(0, 5, 5, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
-        gbc_attributes.gridy = 2;
+        gbc_attributes.gridy = 3;
         gbc_attributes.weightx = 1.0;
         gbc_attributes.weighty = 1.0;
         contentPanel.add(attributesPanel, gbc_attributes);
@@ -136,7 +154,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_panel.insets = new Insets(0, 5, 0, 5);
         gbc_panel.fill = GridBagConstraints.HORIZONTAL;
         gbc_panel.gridx = 0;
-        gbc_panel.gridy = 3;
+        gbc_panel.gridy = 4;
         contentPanel.add(panel, gbc_panel);
         panel.setLayout(new BorderLayout(0, 0));
 
