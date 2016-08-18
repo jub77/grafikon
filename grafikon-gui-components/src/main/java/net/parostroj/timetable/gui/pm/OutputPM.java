@@ -19,6 +19,7 @@ import org.beanfabrics.model.TextPM;
 import org.beanfabrics.support.Operation;
 import org.beanfabrics.support.Validation;
 
+import net.parostroj.timetable.gui.components.AttributesNameTranslation;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.LocalizedString;
@@ -123,7 +124,9 @@ public class OutputPM extends AbstractPM {
         outputRef = new WeakReference<>(output);
         templates.getOptions().clear();
         name.init(output.getName(), modelLocales);
-        attributes.init(output.getSettings(), Output.CATEGORY_SETTINGS);
+        attributes.init(output.getSettings(),
+                Output.CATEGORY_SETTINGS,
+                new AttributesNameTranslation(output.getTemplate().getAttributes(), OutputTemplate.CATEGORY_I18N));
         if (output.getTemplate().getSelectionType() == null) {
             this.selection.setText("");
             this.selectionEnabled.setBoolean(false);

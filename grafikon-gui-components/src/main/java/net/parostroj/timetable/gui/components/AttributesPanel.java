@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import java.awt.FlowLayout;
+import java.util.function.Function;
 
 /**
  * Panel with table with attributes.
@@ -43,6 +44,7 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
 
     private AttributesTableModel attributesTableModel;
     private String category;
+    private Function<String, String> nameTranslation;
 
     private Link link;
     private ModelProvider localModelProvider;
@@ -82,8 +84,10 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
             }
         });
         listener = event -> {
-            Attributes lAttributes = getPresentationModel().getAttributes();
-            String lCategory = getPresentationModel().getCategory();
+            ModelAttributesPM pm = getPresentationModel();
+            Attributes lAttributes = pm.getAttributes();
+            String lCategory = pm.getCategory();
+            nameTranslation = pm.getNameTranslation();
             startEditing(lAttributes, lCategory);
         };
         finishedListener = event -> {
@@ -230,6 +234,7 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
 
     public void startEditing(Attributes attributes) {
         attributesTableModel = new AttributesTableModel(category);
+        attributesTableModel.setNameTranslation(nameTranslation);
         attributesTableModel.startEditing(attributes);
         attributesTable.setModel(attributesTableModel);
         this.updateColumns();

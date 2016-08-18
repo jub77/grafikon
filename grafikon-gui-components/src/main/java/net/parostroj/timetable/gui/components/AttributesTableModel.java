@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.components;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -20,6 +21,7 @@ public class AttributesTableModel extends AbstractTableModel {
     private AttributesListener listener;
     private List<String> userNames;
     private final String category;
+    private Function<String, String> nameTranslation;
 
     public AttributesTableModel(String category) {
         this.category = category;
@@ -65,9 +67,13 @@ public class AttributesTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         String name = userNames.get(rowIndex);
+        String displayName = name;
+        if (nameTranslation != null) {
+            displayName = nameTranslation.apply(name);
+        }
         switch (columnIndex) {
             case 0:
-                return name;
+                return displayName;
             case 2:
                 return attributes.get(category, name);
             default:
@@ -88,7 +94,7 @@ public class AttributesTableModel extends AbstractTableModel {
         if (this.attributes != null)
             throw new IllegalStateException("Already editing");
         this.attributes = attributes;
-        this.userNames = new LinkedList<String>(attributes.getAttributesMap(category).keySet());
+        this.userNames = new LinkedList<>(attributes.getAttributesMap(category).keySet());
         this.listener = (attrs, change) -> {
             if (change.getNewValue() != null) {
                 addAttribute(change.getName());
@@ -126,5 +132,9 @@ public class AttributesTableModel extends AbstractTableModel {
 
     public List<String> getUserNames() {
         return userNames;
+    }
+
+    public void setNameTranslation(Function<String, String> nameTranslation) {
+        this.nameTranslation = nameTranslation;
     }
 }
