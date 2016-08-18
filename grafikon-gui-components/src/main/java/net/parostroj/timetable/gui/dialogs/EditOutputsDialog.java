@@ -30,7 +30,10 @@ import net.parostroj.timetable.gui.actions.execution.OutputTemplateAction;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM;
 import net.parostroj.timetable.gui.pm.GenerateOutputPM.Action;
 import net.parostroj.timetable.gui.pm.OutputPM;
+import net.parostroj.timetable.gui.utils.OutputTypeUtil;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
+import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.gui.wrappers.WrapperDelegateAdapter;
 import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
@@ -238,5 +241,11 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     public void setSettings(Settings settings) {
         this.settings = settings;
+    }
+
+    @Override
+    protected Wrapper<Output> createWrapper(Output item) {
+        return Wrapper.getWrapper(item, new WrapperDelegateAdapter<>(element -> String.format("%s: %s",
+                OutputTypeUtil.convertOutputType(element.getTemplate()), element.getName().translate())));
     }
 }
