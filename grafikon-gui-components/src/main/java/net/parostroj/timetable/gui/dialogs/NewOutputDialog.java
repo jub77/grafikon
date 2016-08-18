@@ -71,7 +71,7 @@ public class NewOutputDialog extends JDialog implements View<OutputPM>, ModelSub
 
         BnTextField nameTextField = new BnTextField();
         nameTextField.setModelProvider(provider);
-        nameTextField.setPath(new Path("name"));
+        nameTextField.setPath(new Path("name.stringWithCurrentLocale"));
         GridBagConstraints nameSelectConstraints = new GridBagConstraints();
         nameSelectConstraints.weightx = 1.0;
         nameSelectConstraints.insets = new Insets(5, 0, 5, 5);

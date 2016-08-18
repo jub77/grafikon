@@ -39,19 +39,21 @@ public class GenerateOutputPM extends AbstractPM {
     IntegerPM selectedCount = new IntegerPM();
 
     private final Collection<Locale> locales;
+    private final Collection<Locale> modelLocales;
 
     // callbacks for actions
     private final Map<Action, Supplier<Boolean>> actions;
 
     private WeakReference<JFileChooser> chooserRef;
 
-    public GenerateOutputPM(Collection<Locale> locales) {
+    public GenerateOutputPM(Collection<Locale> locales, Collection<Locale> modelLocales) {
         actions = new EnumMap<>(Action.class);
         path.setMandatory(true);
         selectedCount.setInteger(0);
         generate.getValidator().add(() -> path.isValid() && selectedCount.getInteger() > 0 ? null : DEFAULT_ERROR);
         generateAll.getValidator().add(() -> path.isValid() ? null : DEFAULT_ERROR);
         this.locales = locales;
+        this.modelLocales = modelLocales;
         PMManager.setup(this);
     }
 
@@ -118,5 +120,9 @@ public class GenerateOutputPM extends AbstractPM {
 
     public Collection<Locale> getLocales() {
         return locales;
+    }
+
+    public Collection<Locale> getModelLocales() {
+        return modelLocales;
     }
 }

@@ -100,4 +100,8 @@ public class LocalizedStringPM extends AbstractPM {
         StringWithLocalePM selected = strings.getSelection().getFirst();
         return selected != null ? selected.string : null;
     }
+
+    public boolean isEmpty() {
+        return string.isEmpty();
+    }
 }

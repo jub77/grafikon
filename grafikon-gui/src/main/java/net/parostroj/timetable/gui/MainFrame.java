@@ -708,7 +708,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // dialog with outputs
         EditOutputsDialog dialog = new EditOutputsDialog(this, true);
         dialog.setSettings(new Settings(model.getOutputSettings().getLocale()));
-        GenerateOutputPM pm = new GenerateOutputPM(model.getLanguageLoader().getAvailableLocales());
+        GenerateOutputPM pm = new GenerateOutputPM(model.getLanguageLoader().getAvailableLocales(), model.getDiagram().getLocales());
         pm.init(model.get(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY));
         dialog.setPresentationModel(pm);
         dialog.setLocationRelativeTo(this);

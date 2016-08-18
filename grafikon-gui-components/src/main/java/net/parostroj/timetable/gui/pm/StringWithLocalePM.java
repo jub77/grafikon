@@ -35,4 +35,8 @@ public class StringWithLocalePM extends AbstractPM {
         String text = ObjectsUtil.checkAndTrim(string.getText());
         return text != null ? LocalizedString.newStringWithLocale(text, usedLocale) : null;
     }
+
+    public Locale getUsedLocale() {
+        return usedLocale;
+    }
 }

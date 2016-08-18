@@ -53,10 +53,19 @@ public class LocalizedString {
      * @return text for given locale or <code>null</null> if the locale is not present
      */
     public String getLocalizedString(final Locale locale) {
+        StringWithLocale stringWithLocale = this.getLocalizedStringWithLocale(locale);
+        return stringWithLocale == null ? null : stringWithLocale.getString();
+    }
+
+    /**
+     * @param locale locale
+     * @return string with locale or <code>null</code> if the locale is not present
+     */
+    public StringWithLocale getLocalizedStringWithLocale(final Locale locale) {
         Locale languageLocale = getOnlyLanguageLocale(locale);
         for (StringWithLocale localizedString : localizedStrings) {
             if (languageLocale.equals(localizedString.getLocale())) {
-                return localizedString.getString();
+                return localizedString;
             }
         }
         return null;

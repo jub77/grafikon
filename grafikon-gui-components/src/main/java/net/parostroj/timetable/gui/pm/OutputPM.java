@@ -30,7 +30,7 @@ import net.parostroj.timetable.utils.IdGenerator;
 
 public class OutputPM extends AbstractPM {
 
-    ITextPM name;
+    LocalizedStringDefaultPM name;
     IEnumeratedValuesPM<OutputTemplate> templates;
     IOperationPM create;
     IOperationPM writeBack;
@@ -45,19 +45,21 @@ public class OutputPM extends AbstractPM {
     private WeakReference<Output> outputRef;
     private Output newOutput;
     private Collection<? extends ObjectWithId> selectionItems;
+    private Collection<Locale> modelLocales;
 
-    public OutputPM(Collection<Locale> locales) {
+    public OutputPM(Collection<Locale> locales, Collection<Locale> modelLocales) {
         key = new TextPM();
         key.setMandatory(true);
-        name = new TextPM();
-        name.setMandatory(true);
+        name = new LocalizedStringDefaultPM();
         templates = new EnumeratedValuesPM<>();
         templates.addPropertyChangeListener("text", evt -> {
             OutputTemplate template = templates.getValue();
             if (template != null) {
-                LocalizedString localizedName = template.getName();
-                String text = localizedName != null ? localizedName.translate() : template.getKey();
-                name.setText(text);
+                LocalizedString lName = template.getName();
+                if (lName == null) {
+                    lName = LocalizedString.fromString(template.getKey());
+                }
+                name.init(lName, modelLocales);
                 key.setText(getUniqueKey(template));
             }
         });
@@ -71,6 +73,7 @@ public class OutputPM extends AbstractPM {
         selectionEnabled = new BooleanPM();
         locale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
                 locales, l -> l.getDisplayName(l)), "-");
+        this.modelLocales = modelLocales;
         PMManager.setup(this);
     }
 
@@ -100,7 +103,7 @@ public class OutputPM extends AbstractPM {
         diagramRef = new WeakReference<>(diagram);
         outputRef = null;
         templates.getOptions().clear();
-        name.setText("");
+        name.init(null, null);
         List<Wrapper<OutputTemplate>> wrappers = new ArrayList<>();
         for (OutputTemplate template : diagram.getOutputTemplates()) {
             wrappers.add(Wrapper.getWrapper(template));
@@ -119,7 +122,7 @@ public class OutputPM extends AbstractPM {
         diagramRef = new WeakReference<>(diagram);
         outputRef = new WeakReference<>(output);
         templates.getOptions().clear();
-        name.setText(output.getName().getDefaultString());
+        name.init(output.getName(), modelLocales);
         attributes.init(output.getSettings(), Output.CATEGORY_SETTINGS);
         if (output.getTemplate().getSelectionType() == null) {
             this.selection.setText("");
@@ -146,7 +149,7 @@ public class OutputPM extends AbstractPM {
         TrainDiagram diagram = diagramRef != null ? diagramRef.get() : null;
         if (diagram != null) {
             newOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
-            newOutput.setName(LocalizedString.fromString(name.getText()));
+            newOutput.setName(name.getCurrentEdit().get());
             newOutput.setTemplate(templates.getValue());
             newOutput.setLocale(locale.getValue());
             newOutput.setKey(key.getText());
@@ -158,7 +161,7 @@ public class OutputPM extends AbstractPM {
     public boolean operationWriteBack() {
         Output output = outputRef.get();
         if (output != null) {
-            output.setName(LocalizedString.fromString(name.getText()));
+            output.setName(name.getCurrentEdit().get());
             // template cannot be changed
             output.setSettings(attributes.getFinalAttributes());
             output.setSelection(selectionItems);

@@ -154,7 +154,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     @Override
     protected Output createNew(String name) {
         NewOutputDialog dialog = new NewOutputDialog(this, true);
-        OutputPM pModel = new OutputPM(getPresentationModel().getLocales());
+        OutputPM pModel = new OutputPM(getPresentationModel().getLocales(), getPresentationModel().getModelLocales());
         pModel.initNew(element);
         dialog.setPresentationModel(pModel);
         dialog.setLocationRelativeTo(this);
@@ -168,7 +168,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         EditOutputDialog dialog = new EditOutputDialog(this, true);
         dialog.setLocationRelativeTo(this);
         dialog.registerContext(context);
-        OutputPM pModel = new OutputPM(getPresentationModel().getLocales());
+        OutputPM pModel = new OutputPM(getPresentationModel().getLocales(), getPresentationModel().getModelLocales());
         dialog.setPresentationModel(pModel);
         pModel.init(element, item);
         dialog.setVisible(true);

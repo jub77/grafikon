@@ -52,8 +52,6 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
-        gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
         contentPanel.setLayout(gridBagLayout);
 
         JLabel nameLabel = new JLabel(ResourceLoader.getString("output.name"));
@@ -68,11 +66,18 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         GridBagConstraints gbc_nameTextField = new GridBagConstraints();
         gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_nameTextField.weightx = 1.0;
-        gbc_nameTextField.insets = new Insets(5, 0, 5, 5);
+        gbc_nameTextField.insets = new Insets(5, 0, 5, 0);
         gbc_nameTextField.gridx = 1;
         gbc_nameTextField.gridy = 0;
         contentPanel.add(nameTextField, gbc_nameTextField);
         nameTextField.setColumns(10);
+
+        JButton editNameButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
+        GridBagConstraints gbc_editNameButton = new GridBagConstraints();
+        gbc_editNameButton.insets = new Insets(5, 0, 5, 5);
+        gbc_editNameButton.gridx = 2;
+        gbc_editNameButton.gridy = 0;
+        contentPanel.add(editNameButton, gbc_editNameButton);
 
         JLabel lblLocaleLabel = new JLabel(ResourceLoader.getString("output.locale"));
         GridBagConstraints gbc_lblLocaleLabel = new GridBagConstraints();
@@ -89,6 +94,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_localeComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_localeComboBox.gridx = 1;
         gbc_localeComboBox.gridy = 1;
+        gbc_localeComboBox.gridwidth = 2;
         contentPanel.add(localeComboBox, gbc_localeComboBox);
         localeComboBox.setModelProvider(provider);
         localeComboBox.setPath(new Path("locale"));
@@ -107,6 +113,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         gbc_keyTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_keyTextField.gridx = 1;
         gbc_keyTextField.gridy = 2;
+        gbc_keyTextField.gridwidth = 2;
         contentPanel.add(keyTextField, gbc_keyTextField);
         keyTextField.setModelProvider(provider);
         keyTextField.setPath(new Path("key"));
@@ -114,7 +121,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
-        gbc_attributes.gridwidth = 2;
+        gbc_attributes.gridwidth = 3;
         gbc_attributes.insets = new Insets(0, 5, 5, 5);
         gbc_attributes.fill = GridBagConstraints.BOTH;
         gbc_attributes.gridx = 0;
@@ -142,7 +149,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         cancelButton.addActionListener(closeListener);
 
         nameTextField.setModelProvider(provider);
-        nameTextField.setPath(new Path("name"));
+        nameTextField.setPath(new Path("name.stringWithCurrentLocale"));
 
         attributesPanel.setModelProvider(provider);
         attributesPanel.setPath(new Path("attributes"));
@@ -150,7 +157,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         JPanel panel = new JPanel();
         GridBagConstraints gbc_panel = new GridBagConstraints();
         gbc_panel.weightx = 1.0;
-        gbc_panel.gridwidth = 2;
+        gbc_panel.gridwidth = 3;
         gbc_panel.insets = new Insets(0, 5, 0, 5);
         gbc_panel.fill = GridBagConstraints.HORIZONTAL;
         gbc_panel.gridx = 0;
@@ -168,6 +175,15 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         panel.add(selectionButton, BorderLayout.EAST);
         selectionButton.setModelProvider(provider);
         selectionButton.setPath(new Path("editSelection"));
+
+        editNameButton.addActionListener(evt -> {
+            EditLocalizedStringDialog editNameDialog = new EditLocalizedStringDialog(window, true);
+            editNameDialog.setLocationRelativeTo(EditOutputDialog.this);
+            editNameDialog.setModelProvider(provider);
+            editNameDialog.setPath(new Path("name"));
+            editNameDialog.pack();
+            editNameDialog.setVisible(true);
+        });
 
         pack();
     }
