@@ -123,7 +123,7 @@ public class Attributes implements Map<String, Object> {
 
     public <T> Collection<T> getAsCollection(String name, Class<T> clazz, Collection<T> defaultValue) {
         Object object = this.get(null, name, Object.class, defaultValue);
-        if (object != null && !(object instanceof List)) {
+        if (object != null && !(object instanceof Collection)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
         return ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
