@@ -19,7 +19,7 @@ public class SelectionHelper {
 
     public static List<Route> getRoutes(OutputParams params, TrainDiagram diagram, List<Train> trains) {
         if (params.paramExistWithValue("routes")) {
-            return ObjectsUtil.copyToList(params.getParamValue("routes", List.class), Route.class);
+            return ObjectsUtil.copyToList(params.getParamValue("routes", Collection.class), Route.class);
         } else {
             RoutesExtractor extractor = new RoutesExtractor(diagram);
             TrainsCycle cycle = getDriverCycle(params);
@@ -42,21 +42,21 @@ public class SelectionHelper {
 
     public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
-            List<?> trains = params.getParamValue("trains", List.class);
+            Collection<?> trains = params.getParamValue("trains", Collection.class);
             return ObjectsUtil.copyToList(trains, Train.class);
         } else if (params.paramExistWithValue("station")) {
             Node station = params.getParamValue("station", Node.class);
             return Lists.newArrayList(TrainsHelper.filterAndSortByNode(diagram.getTrains(), station));
         } else if (params.paramExistWithValue("driver_cycle")) {
             TrainsCycle cycle = (TrainsCycle) params.getParam("driver_cycle").getValue();
-            List<Train> trains = new LinkedList<Train>();
+            List<Train> trains = new LinkedList<>();
             for (TrainsCycleItem item : cycle) {
                 trains.add(item.getTrain());
             }
             return trains;
         } else if (params.paramExistWithValue("routes")) {
-            List<Route> routes = ObjectsUtil.copyToList(params.getParamValue("routes", List.class), Route.class);
-            Set<Train> trains = new HashSet<Train>();
+            Collection<Route> routes = ObjectsUtil.copyToList(params.getParamValue("routes", Collection.class), Route.class);
+            Set<Train> trains = new HashSet<>();
             for (Route route : routes) {
                 for (Line line : route.getLines()) {
                     for (Track track : line.getTracks()) {
@@ -66,31 +66,31 @@ public class SelectionHelper {
                     }
                 }
             }
-            ElementSort<Train> s = new ElementSort<Train>(
+            ElementSort<Train> s = new ElementSort<>(
                     new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
             return s.sort(trains);
         } else {
-            ElementSort<Train> s = new ElementSort<Train>(
+            ElementSort<Train> s = new ElementSort<>(
                     new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
             return s.sort(diagram.getTrains());
         }
     }
 
     public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
-        List<?> cycles = params.getParamValue("cycles", List.class);
+        Collection<?> cycles = params.getParamValue("cycles", Collection.class);
         if (cycles != null) {
             return ObjectsUtil.copyToList(cycles, TrainsCycle.class);
         }
-        ElementSort<TrainsCycle> s = new ElementSort<TrainsCycle>(new TrainsCycleComparator());
+        ElementSort<TrainsCycle> s = new ElementSort<>(new TrainsCycleComparator());
         return s.sort(getCycleByType(diagram, type));
     }
 
     public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
-        List<?> nodes = params.getParamValue("stations", List.class);
+        Collection<?> nodes = params.getParamValue("stations", Collection.class);
         if (nodes != null) {
             return ObjectsUtil.copyToList(nodes, Node.class);
         }
-        ElementSort<Node> s = new ElementSort<Node>(new NodeComparator(),
+        ElementSort<Node> s = new ElementSort<>(new NodeComparator(),
                 node -> node.getType().isStation() || node.getType().isStop());
         return s.sort(diagram.getNet().getNodes());
     }
@@ -100,7 +100,7 @@ public class SelectionHelper {
             return new ArrayList<>(type.getCycles());
         } else {
             // collect all non-default
-            List<TrainsCycle> result = new LinkedList<TrainsCycle>();
+            List<TrainsCycle> result = new LinkedList<>();
             for (TrainsCycleType aType : diagram.getCycleTypes()) {
                 if (!TrainsCycleType.isDefaultType(aType))
                     result.addAll(aType.getCycles());

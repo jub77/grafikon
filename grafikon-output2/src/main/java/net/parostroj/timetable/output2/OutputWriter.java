@@ -143,7 +143,7 @@ public class OutputWriter {
             binding.put("diagram", diagram);
             binding.put("output", modelOutput);
             binding.put("log", scriptLog);
-            binding.put("settings", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
+            binding.put("settings", new WrapperLogMap<>(modelOutput.getSettings().getAttributesMap(OutputTemplate.CATEGORY_SETTINGS), scriptLog, "settings"));
             binding.put("localization", new WrapperLogMap<>(template.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N), scriptLog, "localization"));
             binding.put("locale", modelOutput.getLocale() != null ? modelOutput.getLocale() : settings.getLocale());
             binding.put("key", getOutputKey(modelOutput));
