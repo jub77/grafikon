@@ -126,7 +126,9 @@ public class Attributes implements Map<String, Object> {
         if (object != null && !(object instanceof Collection)) {
             throw new ClassCastException("Wrong type: " + object.getClass());
         }
-        return ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
+        return object instanceof List
+                ? ObjectsUtil.checkedList((List<?>) object, clazz)
+                : ObjectsUtil.checkedCollection((Collection<?>) object, clazz);
     }
 
     public <T> List<T> getAsList(String name, Class<T> clazz) {
