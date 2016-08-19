@@ -43,7 +43,9 @@ public class SelectionHelper {
     public static List<Train> selectTrains(OutputParams params, TrainDiagram diagram) {
         if (params.paramExistWithValue("trains")) {
             Collection<?> trains = params.getParamValue("trains", Collection.class);
-            return ObjectsUtil.copyToList(trains, Train.class);
+            ElementSort<Train> s = new ElementSort<>(
+                    new TrainComparator(diagram.getTrainsData().getTrainSortPattern()));
+            return s.sort(ObjectsUtil.copyToList(trains, Train.class));
         } else if (params.paramExistWithValue("station")) {
             Node station = params.getParamValue("station", Node.class);
             return Lists.newArrayList(TrainsHelper.filterAndSortByNode(diagram.getTrains(), station));
@@ -77,22 +79,20 @@ public class SelectionHelper {
     }
 
     public static List<TrainsCycle> selectCycles(OutputParams params, TrainDiagram diagram, TrainsCycleType type) {
-        Collection<?> cycles = params.getParamValue("cycles", Collection.class);
-        if (cycles != null) {
-            return ObjectsUtil.copyToList(cycles, TrainsCycle.class);
-        }
+        Collection<TrainsCycle> cycles = params.paramExistWithValue("cycles")
+                ? ObjectsUtil.copyToList(params.getParamValue("cycles", Collection.class), TrainsCycle.class)
+                : getCycleByType(diagram, type);
         ElementSort<TrainsCycle> s = new ElementSort<>(new TrainsCycleComparator());
-        return s.sort(getCycleByType(diagram, type));
+        return s.sort(cycles);
     }
 
     public static List<Node> selectNodes(OutputParams params, TrainDiagram diagram) {
-        Collection<?> nodes = params.getParamValue("stations", Collection.class);
-        if (nodes != null) {
-            return ObjectsUtil.copyToList(nodes, Node.class);
-        }
+        Collection<Node> nodes = params.paramExistWithValue("stations")
+                ? ObjectsUtil.copyToList(params.getParamValue("stations", Collection.class), Node.class)
+                : diagram.getNet().getNodes();
         ElementSort<Node> s = new ElementSort<>(new NodeComparator(),
                 node -> node.getType().isStation() || node.getType().isStop());
-        return s.sort(diagram.getNet().getNodes());
+        return s.sort(nodes);
     }
 
     private static List<TrainsCycle> getCycleByType(TrainDiagram diagram, TrainsCycleType type) {
