@@ -249,7 +249,9 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
             item = this.createNew(null);
         }
         if (item != null) {
-            listModel.addWrapper(createWrapper(item));
+            Wrapper<T> newWrapper = createWrapper(item);
+            listModel.addWrapper(newWrapper);
+            itemList.setSelectedValue(newWrapper, true);
         }
     }
 
