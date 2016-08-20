@@ -258,17 +258,24 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (!itemList.isSelectionEmpty()) {
-            int selected = itemList.getSelectedIndex();
-            if (!this.deleteAllowed(listModel.getIndex(selected).getElement())) {
-                GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
-                return;
+        int[] indices = itemList.getSelectedIndices();
+        if (indices.length > 0) {
+            for (int index : indices) {
+                if (!this.deleteAllowed(listModel.getIndex(index).getElement())) {
+                    GuiComponentUtils.showError(ResourceLoader.getString("dialog.error.delete.in.use"), this);
+                    return;
+                }
             }
-            listModel.removeIndex(selected);
-            if (selected >= listModel.getSize()) {
-                selected--;
+            int cnt = 0;
+            for (int index : indices) {
+                listModel.removeIndex(index - (cnt++));
             }
-            itemList.setSelectedIndex(selected);
+            int index = indices[0];
+            if (index > listModel.getSize() - 1) {
+                itemList.setSelectedIndex(listModel.getSize() - 1);
+            } else {
+                itemList.setSelectedIndex(index);
+            }
         }
     }
 
