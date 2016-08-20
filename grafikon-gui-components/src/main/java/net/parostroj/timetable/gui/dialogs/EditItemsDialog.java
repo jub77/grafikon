@@ -67,7 +67,9 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
     }
 
     protected void refreshAll() {
+        Wrapper<T> selectedValue = itemList.getSelectedValue();
         listModel.refreshAll();
+        itemList.setSelectedValue(selectedValue, true);
     }
 
     public void updateValues() {
