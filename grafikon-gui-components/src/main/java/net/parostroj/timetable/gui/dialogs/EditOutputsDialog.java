@@ -34,6 +34,7 @@ import net.parostroj.timetable.gui.utils.OutputTypeUtil;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.gui.wrappers.WrapperDelegateAdapter;
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.Output;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
@@ -46,7 +47,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
     private Settings settings;
 
     public EditOutputsDialog(Window window, boolean modal) {
-        super(window, modal, true, true, false);
+        super(window, modal, false, true, false);
 
         this.setMultipleSelection(true);
 
@@ -133,7 +134,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     @Override
     protected void add(Output item, int index) {
-        element.getOutputs().add(index, item);
+        element.getOutputs().add(item);
     }
 
     @Override
@@ -143,7 +144,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
 
     @Override
     protected void move(Output item, int oldIndex, int newIndex) {
-        element.getOutputs().move(oldIndex, newIndex);
+        throw new IllegalStateException("Move not allowed");
     }
 
     @Override
@@ -168,13 +169,16 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         EditOutputDialog dialog = new EditOutputDialog(this, true);
         dialog.setLocationRelativeTo(this);
         dialog.registerContext(context);
+        LocalizedString oldName = item.getName();
         OutputPM pModel = new OutputPM(getPresentationModel().getLocales(), getPresentationModel().getModelLocales());
         dialog.setPresentationModel(pModel);
         pModel.init(element, item);
         dialog.setVisible(true);
         dialog.dispose();
-        // refresh item
-        refresh(item);
+        // refresh item(s)
+        if (!oldName.equals(item.getName())) {
+            refreshAll();
+        }
     }
 
     @Override
