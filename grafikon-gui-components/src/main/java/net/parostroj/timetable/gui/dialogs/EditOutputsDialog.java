@@ -161,7 +161,7 @@ public class EditOutputsDialog extends EditItemsDialog<Output, TrainDiagram> imp
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         dialog.dispose();
-        return pModel.createNewOutput();
+        return pModel.getNewOutput();
     }
 
     @Override

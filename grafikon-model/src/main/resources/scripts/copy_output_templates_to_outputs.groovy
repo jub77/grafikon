@@ -11,7 +11,7 @@ def outputs = []
 for (template in diagram.outputTemplates) {
     def output = diagram.partFactory.createOutput(IdGenerator.instance.id)
     def name = template.name
-    output.name = name == null ? LocalizedString.fromString(template.key) : name 
+    output.name = name == null ? LocalizedString.fromString(template.key) : LocalizedString.fromString(name.translate())
     output.template = template
     output.key = template.key
     outputs.add(output)
