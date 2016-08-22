@@ -1,5 +1,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -144,6 +146,14 @@ abstract public class EditItemsDialog<T, E> extends javax.swing.JDialog {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2 && !itemList.isSelectionEmpty()
                             && itemList.getSelectedIndices().length == 1) {
+                        edit(itemList.getSelectedValue().getElement());
+                    }
+                }
+            });
+            itemList.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && itemList.getSelectedIndices().length == 1) {
                         edit(itemList.getSelectedValue().getElement());
                     }
                 }
