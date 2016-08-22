@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import org.beanfabrics.IModelProvider;
 import org.beanfabrics.Link;
@@ -251,12 +252,22 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
     }
 
     private void updateColumns() {
-        TableColumn nameColumn = attributesTable.getColumnModel().getColumn(0);
-        nameColumn.setMaxWidth(200);
-        nameColumn.setPreferredWidth(100);
-        TableColumn typeColumn = attributesTable.getColumnModel().getColumn(1);
-        typeColumn.setMaxWidth(100);
-        typeColumn.setPreferredWidth(100);
+        TableColumnModel columnModel = attributesTable.getColumnModel();
+        int viewIndex = attributesTable.convertColumnIndexToView(1);
+        if (showType && viewIndex == -1) {
+            columnModel.addColumn(new TableColumn(1));
+        } else if (!showType && viewIndex != -1) {
+            TableColumn typeColumn = columnModel.getColumn(viewIndex);
+            attributesTable.removeColumn(typeColumn);
+        }
+        TableColumn nameColumn = columnModel.getColumn(attributesTable.convertColumnIndexToView(0));
+        nameColumn.setMaxWidth(showType ? 200 : 300);
+        nameColumn.setPreferredWidth(showType ? 100 : 200);
+        if (showType) {
+            TableColumn typeColumn = columnModel.getColumn(attributesTable.convertColumnIndexToView(1));
+            typeColumn.setMaxWidth(100);
+            typeColumn.setPreferredWidth(100);
+        }
     }
 
     public Attributes getAttributes() {
@@ -267,6 +278,11 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
         buttonsPanel.setVisible(enabled);
     }
 
+    public void setShowType(boolean showType) {
+        this.showType = showType;
+        this.updateColumns();
+    }
+
     private javax.swing.JButton addButton;
     private javax.swing.JTable attributesTable;
     private javax.swing.JPanel buttonsPanel;
@@ -274,6 +290,7 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
     private javax.swing.JButton removeButton;
     private javax.swing.JScrollPane scrollPane;
     private JComboBox<Type> typeComboBox;
+    private boolean showType = true;
 
     @Override
     public ModelAttributesPM getPresentationModel() {

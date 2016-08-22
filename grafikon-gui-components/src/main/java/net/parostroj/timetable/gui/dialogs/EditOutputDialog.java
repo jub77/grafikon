@@ -120,6 +120,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
 
         AttributesPanel attributesPanel = new AttributesPanel();
         attributesPanel.setEnabledAddRemove(false);
+        attributesPanel.setShowType(false);
         GridBagConstraints gbc_attributes = new GridBagConstraints();
         gbc_attributes.gridwidth = 3;
         gbc_attributes.insets = new Insets(0, 5, 5, 5);
