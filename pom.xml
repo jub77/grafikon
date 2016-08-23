@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.parostroj</groupId>
     <artifactId>grafikon</artifactId>
-    <version>1.2.0-beta-1</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>grafikon</name>
 
@@ -33,8 +33,8 @@
         <guava.version>19.0</guava.version>
         <beanfabrics.version>1.4.2</beanfabrics.version>
         <xml-apis.version>1.3.04</xml-apis.version>
-        <grafikon.jnlp.version>dev</grafikon.jnlp.version>
-        <grafikon.version.base>1.2.0-beta</grafikon.version.base>
+        <grafikon.jnlp.version>1.2</grafikon.jnlp.version>
+        <grafikon.version.base>1.2.0</grafikon.version.base>
     </properties>
 
     <profiles>
@@ -47,7 +47,7 @@
             </activation>
             <properties>
                 <grafikon.version.short>${grafikon.version.base}</grafikon.version.short>
-                <grafikon.version>${grafikon.version.base}-1</grafikon.version>
+                <grafikon.version>${grafikon.version.base}</grafikon.version>
                 <grafikon.build>${git.commit.id.describe}-${git.build.time}</grafikon.build>
                 <grafikon.timestamp>${git.commit.time}</grafikon.timestamp>
                 <grafikon.id>${git.commit.id.describe}</grafikon.id>
