@@ -15,7 +15,7 @@ Examples of gtm files with timetables can be found here: [gtm_examples.zip](http
 
 ## Webstart
 ### Release
-http://jub.parostroj.net/grafikon/1.1/grafikon.jnlp
+http://jub.parostroj.net/grafikon/1.2/grafikon.jnlp
 ### Development
 http://jub.parostroj.net/grafikon/dev/grafikon.jnlp
 
