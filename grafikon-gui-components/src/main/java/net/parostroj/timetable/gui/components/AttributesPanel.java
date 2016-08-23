@@ -246,6 +246,10 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
 
     public Attributes stopEditing() {
         if (attributesTableModel != null) {
+            TableCellEditor editor = attributesTable.getCellEditor();
+            if (editor != null) {
+                editor.stopCellEditing();
+            }
             Attributes attributes = attributesTableModel.stopEditing();
             attributesTableModel = null;
             attributesTable.setModel(new DefaultTableModel());
