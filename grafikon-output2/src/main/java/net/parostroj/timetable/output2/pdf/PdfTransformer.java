@@ -47,13 +47,17 @@ public class PdfTransformer {
         }
     }
 
-    private FopFactory getFopFactory(URIResolver resolver) throws OutputException {
+    public static FopFactory createFopFactory() throws OutputException {
+        return getFopFactory(null);
+    }
+
+    private static FopFactory getFopFactory(URIResolver resolver) throws OutputException {
         try {
             // base uri is empty
             URI baseURI = new URI("");
             FopConfParser parser = new FopConfParser(
-                    ResourceHelper.getStream("fop/fop-cfg.xml", this.getClass().getClassLoader()),
-                    EnvironmentalProfileFactory.createRestrictedIO(baseURI, this.convertResolver(resolver)));
+                    ResourceHelper.getStream("fop/fop-cfg.xml", PdfTransformer.class.getClassLoader()),
+                    EnvironmentalProfileFactory.createRestrictedIO(baseURI, convertResolver(resolver)));
             FopFactory fopFactory = parser.getFopFactoryBuilder().build();
             fopFactory.getFontManager().disableFontCache();
             return fopFactory;
@@ -62,7 +66,7 @@ public class PdfTransformer {
         }
     }
 
-    private ResourceResolver convertResolver(URIResolver uriResolver) {
+    private static ResourceResolver convertResolver(URIResolver uriResolver) {
         return new ResourceResolver() {
             @Override
             public Resource getResource(URI uri) throws IOException {
