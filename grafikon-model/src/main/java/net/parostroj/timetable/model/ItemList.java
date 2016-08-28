@@ -3,6 +3,7 @@ package net.parostroj.timetable.model;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
 public interface ItemList<T> extends List<T> {
@@ -19,5 +20,9 @@ public interface ItemList<T> extends List<T> {
 
     default T find(Predicate<T> predicate) {
         return Iterables.tryFind(this, predicate::test).orNull();
+    }
+
+    default List<T> findAll(Predicate<T> predicate) {
+        return FluentIterable.from(this).filter(predicate::test).toList();
     }
 }
