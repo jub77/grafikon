@@ -83,8 +83,8 @@ abstract public class GTDrawBase implements GTDraw {
     protected final Collection<GTDraw.Listener> listeners;
 
     // caching
-    private final Map<String, Rectangle> stringBounds = new HashMap<String, Rectangle>();
-    private final Map<Node, String> nodeStrings = new HashMap<Node, String>();
+    private final Map<String, Rectangle> stringBounds = new HashMap<>();
+    private final Map<Node, String> nodeStrings = new HashMap<>();
 
     public GTDrawBase(GTDrawSettings config, Route route, TrainRegionCollector collector,
             Predicate<TimeInterval> intervalFilter, TrainColorChooser chooser, HighlightedTrains highlightedTrains) {
@@ -94,7 +94,7 @@ abstract public class GTDrawBase implements GTDraw {
         this.trainColorChooser = chooser;
         this.hTrains = highlightedTrains;
         this.trainRegionCollector = collector;
-        this.listeners = new ArrayList<GTDraw.Listener>(1);
+        this.listeners = new ArrayList<>(1);
 
         // start and end time
         startTime = config.get(GTDrawSettings.Key.START_TIME, Integer.class);
@@ -130,7 +130,7 @@ abstract public class GTDrawBase implements GTDraw {
             }
             this.paintHours(g);
             this.paintStations(g);
-            g.setColor(Color.BLACK);
+            g.setColor(Color.black);
             this.paintTrains(g);
             this.paintHoursTexts(g);
             if (!config.isOption(GTDrawSettings.Key.DISABLE_STATION_NAMES)) {
@@ -266,6 +266,7 @@ abstract public class GTDrawBase implements GTDraw {
         int textWidth = DrawUtils.getStringWidth(g, text);
         int shiftX = (width - textWidth) / 2;
         int shiftY = fi.descent;
+        g.setColor(Color.black);
         g.drawString(text, this.borderX + shiftX, y - shiftY);
         // restore font
         g.setFont(currentFont);
@@ -415,7 +416,7 @@ abstract public class GTDrawBase implements GTDraw {
                 }
             }
         }
-        g.setColor(Color.BLACK);
+        g.setColor(Color.black);
     }
 
     protected void paintTrainOnLineWithInterval(Graphics2D g, boolean paintTrainName, boolean paintMinutes,
@@ -597,7 +598,7 @@ abstract public class GTDrawBase implements GTDraw {
         Tuple<Point2D> points = orientationDelegate.getDigitPoints(line, dSize);
         Point2D startP = points.first;
         Point2D endP = points.second;
-        g.setColor(Color.BLACK);
+        g.setColor(Color.black);
         TimeConverter c = this.getTimeConverter(interval);
         if (interval.getFrom().getType() != NodeType.SIGNAL) {
             int xp = (int) startP.getX();
