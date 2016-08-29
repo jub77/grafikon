@@ -251,7 +251,8 @@ abstract public class GTDrawBase implements GTDraw {
         g.setFont(currentFont.deriveFont(Font.BOLD, fontSize * TITLE_FONT_SIZE_RATIO));
         FontInfo fi = DrawUtils.createFontInfo(g);
         Dimension configSize = config.get(GTDrawSettings.Key.SIZE, Dimension.class);
-        int width = configSize.width - 2 * borderX;
+        // substract two M width - for pdf/svg (width doesn't match real width)
+        int width = configSize.width - 2 * borderX - 2 * getMSize(g).width;
         int y = this.borderY + fi.height;
 
         Object titleObject = config.get(GTDrawSettings.Key.TITLE_TEXT, Object.class);
