@@ -55,7 +55,7 @@ public class LSRegion {
         Region region = diagram.getPartFactory().createRegion(id);
         // expected value -> null (for compatibility before version 4.18.2)
         region.setName(name);
-        region.getAttributes().add(attributes.createAttributes(diagram));
+        region.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         return region;
     }
 }

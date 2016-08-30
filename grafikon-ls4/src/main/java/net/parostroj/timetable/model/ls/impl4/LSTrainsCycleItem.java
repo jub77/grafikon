@@ -82,7 +82,7 @@ public class LSTrainsCycleItem {
         TrainsCycleItem item = new TrainsCycleItem(cycle, modelTrain,
                 LocalizedString.fromString(comment), modelTrain.getIntervalById(from), modelTrain.getIntervalById(to));
         if (attributes != null) {
-            item.getAttributes().add(attributes.createAttributes(diagram));
+            item.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         }
         return item;
     }

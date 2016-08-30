@@ -38,7 +38,7 @@ public class LSLine {
         this.from = line.getFrom().getId();
         this.to = line.getTo().getId();
         this.attributes = new LSAttributes(line.getAttributes());
-        this.tracks = new LinkedList<LSLineTrack>();
+        this.tracks = new LinkedList<>();
         for (LineTrack track : line.getTracks()) {
             this.tracks.add(new LSLineTrack(track));
         }
@@ -113,7 +113,7 @@ public class LSLine {
             speed = null;
         }
         Line line = diagram.getPartFactory().createLine(id, length, fromNode, toNode, speed);
-        line.getAttributes().add(attributes.createAttributes(diagram));
+        line.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         // tracks
         if (this.tracks != null)
             for (LSLineTrack lsLineTrack : this.tracks) {

@@ -23,12 +23,12 @@ public class TrainDiagramBuilder {
 
     public TrainDiagramBuilder(LSTrainDiagram lsDiagram, FileLoadSaveAttachments flsAttachments) throws LSException {
         this.flsAttachments = flsAttachments;
-        circulationSequenceMap = new HashMap<String, String>();
+        circulationSequenceMap = new HashMap<>();
         // trains data
         this.diagram = new TrainDiagram(lsDiagram.getId());
         lsDiagram.getTrainsData().updateTrainsData(this.diagram.getTrainsData());
         // attributes
-        Attributes attributes = lsDiagram.getAttributes().createAttributes(this.diagram);
+        Attributes attributes = lsDiagram.getAttributes().createAttributes(diagram::getObjectById);
         this.diagram.getAttributes().add(attributes);
         trackChanges = lsDiagram.isChangesTracking();
         // circulation types
@@ -106,7 +106,7 @@ public class TrainDiagramBuilder {
             TimeInterval iFrom = from.getIntervalById(lsConnection.getIntervalFrom());
             TimeInterval iTo = to.getIntervalById(lsConnection.getIntervalTo());
             FNConnection connection = diagram.getFreightNet().addConnection(iFrom, iTo);
-            connection.merge(lsConnection.getAttributes().createAttributes(diagram));
+            connection.merge(lsConnection.getAttributes().createAttributes(diagram::getObjectById));
         }
     }
 

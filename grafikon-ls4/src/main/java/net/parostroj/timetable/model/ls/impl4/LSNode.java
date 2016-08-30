@@ -37,7 +37,7 @@ public class LSNode {
         this.type = node.getType().toString();
         this.x = node.getLocation().getX();
         this.y = node.getLocation().getY();
-        this.tracks = new LinkedList<LSNodeTrack>();
+        this.tracks = new LinkedList<>();
         for (NodeTrack track : node.getTracks()) {
             this.tracks.add(new LSNodeTrack(track));
         }
@@ -114,7 +114,7 @@ public class LSNode {
 
     public Node createNode(TrainDiagram diagram) throws LSException {
         Node node = diagram.getPartFactory().createNode(id, NodeType.fromString(type), name, abbr);
-        node.getAttributes().add(attributes.createAttributes(diagram));
+        node.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         node.setLocation(new Location(x, y));
         // tracks
         if (this.tracks != null) {

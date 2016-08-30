@@ -1,5 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.function.Function;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
@@ -9,10 +11,13 @@ import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
+import net.parostroj.timetable.model.library.LibraryItemType;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for library item.
@@ -84,7 +89,28 @@ public class LSLibraryItem {
         this.object = object;
     }
 
-    public LibraryItem createLibraryItem(Library library) {
-        return null;
+    public LibraryItem createLibraryItem(Library library) throws LSException {
+        LibraryItemType type = LibraryItemType.valueOf(getType());
+        ObjectWithId object = null;
+        // TODO add methods to LS... objects specifically for library instead of diagram
+        switch (type) {
+            case ENGINE_CLASS:
+                object = ((LSEngineClass) getObject()).createEngineClass((Function<String, LineClass>) null);
+                break;
+            case LINE_CLASS:
+                object = ((LSLineClass) getObject()).createLineClass();
+                break;
+            case NODE:
+                object = ((LSNode) getObject()).createNode(null);
+                break;
+            case OUTPUT_TEMPLATE:
+                object = ((LSOutputTemplate) getObject()).createOutputTemplate(null);
+                break;
+            case TRAIN_TYPE:
+                return ((LSTrainType) getObject()).createTrainType(library);
+        }
+        LibraryItem item = library.add(object);
+        // TODO add missing attributes
+        return item;
     }
 }

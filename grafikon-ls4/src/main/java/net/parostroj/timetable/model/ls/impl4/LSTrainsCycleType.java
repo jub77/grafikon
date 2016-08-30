@@ -68,7 +68,7 @@ public class LSTrainsCycleType {
             type.setKey(name);
             type.setName(LocalizedString.fromString(name));
         }
-        type.getAttributes().add(attributes.createAttributes(diagram));
+        type.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         return type;
     }
 }

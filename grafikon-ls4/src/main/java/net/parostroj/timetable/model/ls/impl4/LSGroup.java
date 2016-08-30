@@ -55,7 +55,7 @@ public class LSGroup {
         Group group = diagram.getPartFactory().createGroup(id);
         // expected value -> null (for compatibility before version 4.18.2)
         group.setName(name);
-        group.getAttributes().add(attributes.createAttributes(diagram));
+        group.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         return group;
     }
 }

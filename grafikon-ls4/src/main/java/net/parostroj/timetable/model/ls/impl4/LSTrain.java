@@ -53,7 +53,7 @@ public class LSTrain {
         this.attributes = new LSAttributes(train.getAttributes());
 
         // create route parts ...
-        route = new LinkedList<Object>();
+        route = new LinkedList<>();
         for (TimeInterval interval : train.getTimeIntervalList()) {
             Object part = null;
             if (interval.isLineOwner()) {
@@ -156,7 +156,7 @@ public class LSTrain {
     public Train createTrain(TrainDiagram diagram) throws LSException {
         Train train = diagram.getPartFactory().createTrain(id);
         train.setNumber(number);
-        train.getAttributes().add(attributes.createAttributes(diagram));
+        train.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         train.setDescription(desc);
         train.setTopSpeed(topSpeed);
         train.setType(diagram.getTrainTypes().getById(type));
@@ -168,12 +168,12 @@ public class LSTrain {
 	                LSTrainRoutePartNode nodePart = (LSTrainRoutePartNode)routePart;
 	                Node node = diagram.getNet().getNodeById(nodePart.getNodeId());
 	                NodeTrack nodeTrack = node.getTrackById(nodePart.getTrackId());
-	                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram));
+	                builder.addNode(nodePart.getIntervalId(), node, nodeTrack, nodePart.getStop(), nodePart.getAttributes().createAttributes(diagram::getObjectById));
 	            } else {
 	                LSTrainRoutePartLine linePart = (LSTrainRoutePartLine)routePart;
 	                Line line = diagram.getNet().getLineById(linePart.getLineId());
 	                LineTrack lineTrack = line.getTrackById(linePart.getTrackId());
-	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram));
+	                builder.addLine(linePart.getIntervalId(), line, lineTrack, linePart.getSpeed(), linePart.getAddedTime() != null ? linePart.getAddedTime() : 0, linePart.getAttributes().createAttributes(diagram::getObjectById));
 	            }
 	        }
         }

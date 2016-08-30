@@ -1,6 +1,8 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.library.Library;
+import net.parostroj.timetable.model.library.LibraryItem;
 
 import java.awt.Color;
 
@@ -128,20 +130,31 @@ public class LSTrainType {
 
     public TrainType createTrainType(TrainDiagram diagram) throws LSException {
         TrainType type = diagram.getPartFactory().createTrainType(id);
+        fillInTrainType(type);
+        type.setCategory(diagram.getTrainTypeCategories().getById(categoryId));
+        if (attributes != null) {
+            type.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        }
+        return type;
+    }
+
+    public LibraryItem createTrainType(Library library) throws LSException {
+        LibraryItem item = library.addTrainType(id, null);
+        fillInTrainType((TrainType) item.getObject());
+        // TODO add missing category and attributes
+        return item;
+    }
+
+    private void fillInTrainType(TrainType type) throws LSException {
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
         if (desc != null) {
             type.setDesc(LocalizedString.fromString(desc));
         }
         type.setPlatform(platform);
-        type.setCategory(diagram.getTrainTypeCategories().getById(categoryId));
         type.setTrainCompleteNameTemplate(trainCompleteNameTemplate != null ?
             trainCompleteNameTemplate.createTextTemplate() : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?
             trainNameTemplate.createTextTemplate() : null);
-        if (attributes != null) {
-            type.getAttributes().add(attributes.createAttributes(diagram));
-        }
-        return type;
     }
 }

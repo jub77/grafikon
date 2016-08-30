@@ -31,7 +31,7 @@ public class LibraryPartFactory {
         return new LineClass(id, name);
     }
 
-    public ObjectWithId createTrainType(String id, LocalizedString desc) {
+    public TrainType createTrainType(String id, LocalizedString desc) {
         TrainType trainType = new TrainType(id, null);
         trainType.setDesc(desc);
         return trainType;

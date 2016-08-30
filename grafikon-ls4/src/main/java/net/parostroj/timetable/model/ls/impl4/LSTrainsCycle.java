@@ -41,7 +41,7 @@ public class LSTrainsCycle {
         if (cycle.isPartOfSequence()) {
             next = cycle.getNext().getId();
         }
-        this.items = new LinkedList<LSTrainsCycleItem>();
+        this.items = new LinkedList<>();
         for (TrainsCycleItem item : cycle) {
             items.add(new LSTrainsCycleItem(item));
         }
@@ -116,7 +116,7 @@ public class LSTrainsCycle {
             }
         }
         TrainsCycle cycle = new TrainsCycle(id, diagram, name, description, cycleType);
-        cycle.getAttributes().add(attributes.createAttributes(diagram));
+        cycle.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         if (this.items != null) {
             for (LSTrainsCycleItem item : this.items) {
                 cycle.addItem(item.createTrainsCycleItem(cycle, diagram));

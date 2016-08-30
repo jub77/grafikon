@@ -4,17 +4,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.parostroj.timetable.model.library.Library;
+import net.parostroj.timetable.model.library.LibraryFactory;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSLibrary;
 import net.parostroj.timetable.model.ls.ModelVersion;
 
 public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
+
+    private static final Logger log = LoggerFactory.getLogger(LSLibraryImpl.class);
 
     private static final ModelVersion CURRENT_VERSION;
     private static final List<ModelVersion> VERSIONS;
@@ -74,6 +81,26 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
 
     @Override
     public Library load(ZipInputStream is) throws LSException {
-        return null;
+        try {
+            ZipEntry entry = null;
+            ModelVersion version = null;
+            Library library = LibraryFactory.getInstance().createLibrary();
+            while ((entry = is.getNextEntry()) != null) {
+                if (entry.getName().equals(METADATA)) {
+                    // check major and minor version (do not allow load newer versions)
+                    Properties props = new Properties();
+                    props.load(is);
+                    version = checkVersion(METADATA_KEY_LIBRARY_VERSION, props);
+                    continue;
+                }
+                LSLibraryItem lsItem = lss.load(is, LSLibraryItem.class);
+                LibraryItem item = lsItem.createLibraryItem(library);
+                System.out.println(item);
+            }
+            log.debug("Loaded version: {}", version);
+            return library;
+        } catch (IOException e) {
+            throw new LSException(e);
+        }
     }
 }

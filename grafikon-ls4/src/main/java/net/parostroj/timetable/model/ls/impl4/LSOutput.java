@@ -45,7 +45,7 @@ public class LSOutput {
 
     public Output createOutput(TrainDiagram diagram) throws LSException {
         Output output = diagram.getPartFactory().createOutput(id);
-        output.getAttributes().add(attributes.createAttributes(diagram));
+        output.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
         return output;
     }
 }

@@ -1,12 +1,13 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.*;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.parostroj.timetable.model.Attributes;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.ls.LSException;
 
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class LSAttributes {
     }
 
     public LSAttributes(Attributes attributes, String... ignore) {
-        this.attributes = new LinkedList<LSAttributesItem>();
+        this.attributes = new LinkedList<>();
         Set<String> ignoreMap = this.getMap(ignore);
         this.addAttributes(attributes.getAttributesMap(), null, ignoreMap);
         for (String category : attributes.getCategories()) {
@@ -51,7 +52,7 @@ public class LSAttributes {
         if (ignore.length == 0) {
             return Collections.<String>emptySet();
         } else {
-            return new HashSet<String>(Arrays.asList(ignore));
+            return new HashSet<>(Arrays.asList(ignore));
         }
     }
 
@@ -68,11 +69,11 @@ public class LSAttributes {
         return this.createAttributes(null);
     }
 
-    public Attributes createAttributes(TrainDiagram diagram) throws LSException {
+    public Attributes createAttributes(Function<String, ObjectWithId> mapping) throws LSException {
         Attributes lAttributes = new Attributes();
         if (this.attributes != null) {
             for (LSAttributesItem lItem : this.attributes) {
-                Object value = lItem.convertValue(diagram);
+                Object value = lItem.convertValue(mapping);
                 if (value != null) {
                     lAttributes.set(lItem.getCategory(), lItem.getKey(), value);
                 } else {

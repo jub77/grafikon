@@ -1,6 +1,7 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import java.util.*;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -134,7 +135,7 @@ public class LSAttributesItem {
     @XmlElement(name = "value")
     public List<LSAttributesValue> getValues() {
         if (values == null) {
-            values = new ArrayList<LSAttributesValue>();
+            values = new ArrayList<>();
         }
         return values;
     }
@@ -151,22 +152,22 @@ public class LSAttributesItem {
         this.category = category;
     }
 
-    public Object convertValue(TrainDiagram diagram) throws LSException {
+    public Object convertValue(Function<String, ObjectWithId> mapping) throws LSException {
         if (SET_KEY.equals(type) || LIST_KEY.equals(type)) {
             Collection<Object> result = null;
             if (type.equals(SET_KEY)) {
-                result = new HashSet<Object>();
+                result = new HashSet<>();
             } else {
-                result = new ArrayList<Object>();
+                result = new ArrayList<>();
             }
             for (LSAttributesValue value : getValues()) {
-                result.add(convertSimpleValue(diagram, value.getValue(), value.getType()));
+                result.add(convertSimpleValue(mapping, value.getValue(), value.getType()));
             }
             return result;
         } else if (LOCALIZED_STRING_KEY.equals(type)) {
             LocalizedString.Builder builder = LocalizedString.newBuilder();
             for (LSAttributesValue value : getValues()) {
-                Object lString = convertSimpleValue(diagram, value.getValue(), value.getType());
+                Object lString = convertSimpleValue(mapping, value.getValue(), value.getType());
                 if (lString instanceof String) {
                     builder.setDefaultString((String) lString);
                 } else if (lString instanceof StringWithLocale) {
@@ -176,11 +177,11 @@ public class LSAttributesItem {
             return builder.build();
         } else {
             LSAttributesValue value = getValues().isEmpty() ? null : getValues().get(0);
-            return value == null ? null : convertSimpleValue(diagram, value.getValue(), value.getType() == null ? type : value.getType());
+            return value == null ? null : convertSimpleValue(mapping, value.getValue(), value.getType() == null ? type : value.getType());
         }
     }
 
-    private Object convertSimpleValue(TrainDiagram diagram, String value, String valueType) throws LSException {
+    private Object convertSimpleValue(Function<String, ObjectWithId> mapping, String value, String valueType) throws LSException {
         if (valueType == null) {
             return null;
         } else if (valueType.equals("string")) {
@@ -210,7 +211,7 @@ public class LSAttributesItem {
         } else if (valueType.startsWith(SCRIPT_KEY_PREFIX)) {
             return this.convertScript(value, valueType);
         } else if (valueType.startsWith("model.")) {
-            return this.convertModelValue(diagram, value, valueType);
+            return this.convertModelValue(mapping, value, valueType);
         } else if (valueType.startsWith("string.")) {
             return this.convertToStringWithLocale(value, valueType);
         } else {
@@ -245,17 +246,14 @@ public class LSAttributesItem {
         }
     }
 
-    private Object convertModelValue(TrainDiagram diagram, String value, String valueType) {
-        if (diagram == null) {
-            log.warn("Cannot convert model value without diagram.");
+    private Object convertModelValue(Function<String, ObjectWithId> mapping, String value, String valueType) {
+        if (mapping == null) {
+            log.warn("Cannot convert model value without id mapping.");
             return null;
         } else {
-            if (valueType.equals(ENGINE_CLASS_KEY)) {
-                return diagram.getEngineClasses().getById(value);
-            } else if (valueType.equals(LINE_CLASS_KEY)) {
-                return diagram.getNet().getLineClasses().getById(value);
-            } else if (valueType.equals(MODEL_OBJECT_KEY)) {
-                return diagram.getObjectById(value);
+            if (valueType.equals(ENGINE_CLASS_KEY)
+                    || valueType.equals(LINE_CLASS_KEY) || valueType.equals(MODEL_OBJECT_KEY)) {
+                return mapping.apply(value);
             } else {
                 log.warn("Not recognized model type: {}", valueType);
                 return null;
@@ -276,7 +274,7 @@ public class LSAttributesItem {
             lKey = MODEL_OBJECT_KEY;
             lValue = object.getId();
         }
-        return new Pair<String, String>(lKey, lValue);
+        return new Pair<>(lKey, lValue);
     }
 
     @Override
