@@ -23,9 +23,9 @@ import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
 import net.parostroj.timetable.gui.dialogs.ImportDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.imports.Import;
 import net.parostroj.timetable.model.imports.Import.ImportError;
 import net.parostroj.timetable.model.imports.ImportComponent;
+import net.parostroj.timetable.model.imports.TrainDiagramPartImport;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public class ImportAction extends AbstractAction {
         ModelAction importAction = new EventDispatchAfterModelAction(context) {
 
             private static final int CHUNK_SIZE = 10;
-            private final Map<ImportComponent, Import> imports = new EnumMap<ImportComponent, Import>(ImportComponent.class);
+            private TrainDiagramPartImport imports;
             private int size;
             private final CyclicBarrier barrier = new CyclicBarrier(2);
 
@@ -143,13 +143,11 @@ public class ImportAction extends AbstractAction {
                 long time = System.currentTimeMillis();
                 try {
                     Map<ImportComponent, Set<ObjectWithId>> map = importDialog.getSelectedItems();
-                    List<ObjectWithId> list = new LinkedList<ObjectWithId>();
+                    List<ObjectWithId> list = new LinkedList<>();
+                    imports = new TrainDiagramPartImport(importDialog.getDiagram(), importDialog.getImportMatch(), importDialog.getImportOverwrite());
                     for (ImportComponent comp : components) {
                         Set<ObjectWithId> set = map.get(comp);
                         list.addAll(set);
-                        imports.put(comp, Import.getInstance(comp, importDialog.getDiagram(),
-                                importDialog.getImportMatch(),
-                                importDialog.getImportOverwrite()));
                     }
                     size = list.size();
                     if (size == 0) {
@@ -170,9 +168,9 @@ public class ImportAction extends AbstractAction {
                     }
                     // import new objects
                     Process<ObjectWithId> importProcess = item -> {
-                        Import i = imports.get(ImportComponent.getByComponentClass(item.getClass()));
+                        ImportComponent i = ImportComponent.getByComponentClass(item.getClass());
                         if (i != null) {
-                            ObjectWithId imported = i.importObject(item);
+                            ObjectWithId imported = imports.importPart(item);
                             processImportedObject(imported);
                         } else {
                             log.warn("No import for class {}", item.getClass().getName());
@@ -186,14 +184,14 @@ public class ImportAction extends AbstractAction {
             }
 
             private void processItems(Iterable<? extends ObjectWithId> list, Process<ObjectWithId> importProcess) {
-                List<ObjectWithId> batch = new LinkedList<ObjectWithId>();
+                List<ObjectWithId> batch = new LinkedList<>();
                 int cnt = 0;
                 for (ObjectWithId o : list) {
                     batch.add(o);
                     if (++cnt == CHUNK_SIZE) {
                         processChunk(batch, importProcess);
                         cnt = 0;
-                        batch = new LinkedList<ObjectWithId>();
+                        batch = new LinkedList<>();
                     }
                 }
                 if (batch.size() > 0) {
@@ -229,10 +227,9 @@ public class ImportAction extends AbstractAction {
                 if (cancelled) {
                     return;
                 }
-                List<ImportError> errors = new LinkedList<ImportError>();
+                List<ImportError> errors = new LinkedList<>();
                 for (ImportComponent comp : components) {
-                    Import i = imports.get(comp);
-                    errors.addAll(i.getErrors());
+                    errors.addAll(imports.getErrors(comp));
                 }
 
                 // create string ...
