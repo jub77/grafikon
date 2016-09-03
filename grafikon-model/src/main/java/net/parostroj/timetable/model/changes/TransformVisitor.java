@@ -219,8 +219,10 @@ public class TransformVisitor implements EventVisitor {
         change.setObject(engineClass.getName());
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
-        if (event.getObject() instanceof WeightTableRow)
-            change.addDescription(new DiagramChangeDescription(desc));
+        if (event.getObject() instanceof WeightTableRow) {
+            int speed = ((WeightTableRow) event.getObject()).getSpeed();
+            change.addDescription(new DiagramChangeDescription(desc, new Parameter(Integer.toString(speed))));
+        }
     }
 
     @Override
@@ -231,7 +233,8 @@ public class TransformVisitor implements EventVisitor {
         change.setAction(DiagramChange.Action.MODIFIED);
         String desc = this.addDescription(event);
         if (event.getObject() instanceof PenaltyTableRow) {
-            change.addDescription(new DiagramChangeDescription(desc));
+            int speed = ((PenaltyTableRow) event.getObject()).getSpeed();
+            change.addDescription(new DiagramChangeDescription(desc, new Parameter(Integer.toString(speed))));
         }
     }
 
