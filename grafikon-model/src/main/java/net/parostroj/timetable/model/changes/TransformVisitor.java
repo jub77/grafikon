@@ -224,6 +224,18 @@ public class TransformVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitTrainTypeCategoryEvent(Event event) {
+        TrainTypeCategory category = (TrainTypeCategory) event.getSource();
+        change = new DiagramChange(DiagramChange.Type.TRAIN_TYPE_CATEGORY, category.getId());
+        change.setObject(category.getName().getDefaultString());
+        change.setAction(DiagramChange.Action.MODIFIED);
+        String desc = this.addDescription(event);
+        if (event.getObject() instanceof PenaltyTableRow) {
+            change.addDescription(new DiagramChangeDescription(desc));
+        }
+    }
+
+    @Override
     public void visitLineClassEvent(Event event) {
         // no change recorded
     }

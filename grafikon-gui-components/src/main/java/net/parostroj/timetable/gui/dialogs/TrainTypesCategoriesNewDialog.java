@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -26,11 +27,14 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
     private TrainTypeCategory newCategory;
     private TrainTypeCategory templateCategory;
 
-    private final TrainTypeCategory noneCategory = new TrainTypeCategory(null, ResourceLoader.getString("new.traintypes.categories.template.none"), null);
+    private final TrainTypeCategory noneCategory;
 
     public TrainTypesCategoriesNewDialog(Window owner) {
         super(owner, ModalityType.APPLICATION_MODAL);
         getContentPane().setLayout(new BorderLayout(0, 0));
+
+        noneCategory = new TrainTypeCategory(null);
+        noneCategory.setName(LocalizedString.fromString(ResourceLoader.getString("new.traintypes.categories.template.none")));
 
         JPanel okCancelPanel = new JPanel();
         getContentPane().add(okCancelPanel, BorderLayout.SOUTH);
@@ -68,7 +72,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         gbc_templateLabel.gridy = 0;
         panel.add(templateLabel, gbc_templateLabel);
 
-        templateComboBox = new JComboBox<Wrapper<TrainTypeCategory>>();
+        templateComboBox = new JComboBox<>();
         GridBagConstraints gbc_templateComboBox = new GridBagConstraints();
         gbc_templateComboBox.insets = new Insets(0, 0, 5, 0);
         gbc_templateComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -101,7 +105,7 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         gbc_keyLabel.gridy = 2;
         panel.add(keyLabel, gbc_keyLabel);
 
-        keyTextField = new JComboBox<String>();
+        keyTextField = new JComboBox<>();
         keyTextField.addItem("passenger");
         keyTextField.addItem("freight");
         keyTextField.setEditable(true);
@@ -120,7 +124,9 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
         if (name.equals("") || key.equals("")) {
             return false;
         } else {
-            newCategory = new TrainTypeCategory(IdGenerator.getInstance().getId(), name, key);
+            newCategory = new TrainTypeCategory(IdGenerator.getInstance().getId());
+            newCategory.setKey(key);
+            newCategory.setName(LocalizedString.fromString(name));
             TrainTypeCategory template = (TrainTypeCategory) ((Wrapper<?>) templateComboBox.getSelectedItem()).getElement();
             if (template != noneCategory) {
                 templateCategory = template;
@@ -131,9 +137,9 @@ public class TrainTypesCategoriesNewDialog extends javax.swing.JDialog {
 
     public void setVisible(TrainDiagram diagram) {
         templateComboBox.removeAllItems();
-        templateComboBox.addItem(new Wrapper<TrainTypeCategory>(noneCategory));
+        templateComboBox.addItem(new Wrapper<>(noneCategory));
         for (TrainTypeCategory cat : diagram.getTrainTypeCategories()) {
-            templateComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
+            templateComboBox.addItem(new Wrapper<>(cat));
         }
         templateComboBox.setMaximumRowCount(Math.min(10, templateComboBox.getItemCount()));
         nameTextField.setText("");

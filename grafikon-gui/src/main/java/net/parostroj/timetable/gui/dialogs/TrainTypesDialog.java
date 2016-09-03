@@ -39,7 +39,13 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private static final Logger log = LoggerFactory.getLogger(TrainTypesDialog.class);
 
-    private static final TrainTypeCategory NONE_CATEGORY = new TrainTypeCategory(null, "-", "-");
+    private static final TrainTypeCategory NONE_CATEGORY;
+
+    static {
+        NONE_CATEGORY = new TrainTypeCategory(null);
+        NONE_CATEGORY.setKey("-");
+        NONE_CATEGORY.setName(LocalizedString.fromString("-"));
+    }
 
     private TrainDiagram diagram;
     private WrapperListModel<TrainType> typesModel;
@@ -69,7 +75,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // fill train type jlist
-        typesModel = new WrapperListModel<TrainType>(Wrapper.getWrapperList(diagram.getTrainTypes()), null, false);
+        typesModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getTrainTypes()), null, false);
         typesModel.setObjectListener(new ObjectListener<TrainType>() {
             @Override
             public void added(TrainType object, int index) {
@@ -90,9 +96,9 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         brakeComboBox.removeAllItems();
         if (diagram != null) {
             for (TrainTypeCategory cat : diagram.getTrainTypeCategories()) {
-                brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(cat));
+                brakeComboBox.addItem(new Wrapper<>(cat));
             }
-            brakeComboBox.addItem(new Wrapper<TrainTypeCategory>(NONE_CATEGORY));
+            brakeComboBox.addItem(new Wrapper<>(NONE_CATEGORY));
             brakeComboBox.setMaximumRowCount(brakeComboBox.getItemCount());
         }
         this.updateValuesForTrainType(null);
@@ -111,7 +117,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         abbrTextField = new javax.swing.JTextField();
-        brakeComboBox = new javax.swing.JComboBox<Wrapper<TrainTypeCategory>>();
+        brakeComboBox = new javax.swing.JComboBox<>();
         editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 0);
         descTextField = new javax.swing.JTextField();
         nameTemplateCheckBox = new javax.swing.JCheckBox();
@@ -120,7 +126,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         cNameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         javax.swing.JScrollPane jScrollPane = new javax.swing.JScrollPane();
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        trainTypesList = new javax.swing.JList<Wrapper<TrainType>>();
+        trainTypesList = new javax.swing.JList<>();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
@@ -228,7 +234,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
 
         showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
 
-        lineTypeComboBox = new javax.swing.JComboBox<Wrapper<LineType>>();
+        lineTypeComboBox = new javax.swing.JComboBox<>();
 
         lineWidthTextField = new javax.swing.JTextField();
         lineWidthTextField.setColumns(4);
@@ -391,7 +397,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));
             colorLabel.setForeground(selected.getColor());
             TrainTypeCategory category = selected.getCategory();
-            brakeComboBox.setSelectedItem(new Wrapper<TrainTypeCategory>(category != null ? category : NONE_CATEGORY));
+            brakeComboBox.setSelectedItem(new Wrapper<>(category != null ? category : NONE_CATEGORY));
 
             nameTemplateCheckBox.setSelected(selected.getTrainNameTemplate() != null);
             nameTemplateEditBox.setEnabled(selected.getTrainNameTemplate() != null);

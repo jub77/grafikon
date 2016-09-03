@@ -9,6 +9,7 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
@@ -51,8 +52,8 @@ public class LSPenaltyTableHelper {
      */
     public static void fillPenaltyTable(List<TrainTypeCategory> categories) {
         // passenger and freight categories
-        TrainTypeCategory pCat = new TrainTypeCategory(IdGenerator.getInstance().getId(), "passenger", "passenger");
-        TrainTypeCategory fCat = new TrainTypeCategory(IdGenerator.getInstance().getId(), "freight", "freight");
+        TrainTypeCategory pCat = createCategory("passenger");
+        TrainTypeCategory fCat = createCategory("freight");
         categories.add(pCat);
         categories.add(fCat);
         for (LSPenaltyTableItem item : getLSPenaltyTable().getItemList()) {
@@ -60,5 +61,12 @@ public class LSPenaltyTableHelper {
             // upper limit decreased by one - backward compatibility with new implementation
             cat.addRow(new PenaltyTableRow(item.getUpperLimit() - 1, item.getSpeedingPenalty(), item.getBrakingPenalty()));
         }
+    }
+
+    private static TrainTypeCategory createCategory(String type) {
+        TrainTypeCategory category = new TrainTypeCategory(IdGenerator.getInstance().getId());
+        category.setKey(type);
+        category.setName(LocalizedString.fromString(type));
+        return category;
     }
 }

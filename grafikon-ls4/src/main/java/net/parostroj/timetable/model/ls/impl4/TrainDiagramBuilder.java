@@ -59,12 +59,12 @@ public class TrainDiagramBuilder {
         lsData.updateTrainsData(this.diagram.getTrainsData());
     }
 
-    public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) {
+    public void setPenaltyTable(LSPenaltyTable lSPenaltyTable) throws LSException {
         List<TrainTypeCategory> categories = lSPenaltyTable.createPenaltyTable();
         diagram.getTrainTypeCategories().addAll(categories);
     }
 
-    public void setTrainTypeCategory(LSTrainTypeCategory lsCategory) {
+    public void setTrainTypeCategory(LSTrainTypeCategory lsCategory) throws LSException {
         diagram.getTrainTypeCategories().add(lsCategory.createTrainTypeCategory());
     }
 

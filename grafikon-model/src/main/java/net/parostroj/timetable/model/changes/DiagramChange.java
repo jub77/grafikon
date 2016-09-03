@@ -20,7 +20,7 @@ public class DiagramChange {
         TRAINS_CYCLE("trains_cycle"), ENGINE_CLASS("engine_class"),
         LINE_CLASS("line_class"), ROUTE("route"), OUTPUT_TEMPLATE("output_template"), OUTPUT("output"),
         CYCLE_TYPE("cycle_type"), GROUP("group"), FREIGHT_NET("freight_net"), REGION("region"),
-        COMPANY("company");
+        COMPANY("company"), TRAIN_TYPE_CATEGORY("train_type_category");
 
         private String key;
 
@@ -120,7 +120,7 @@ public class DiagramChange {
 
     public void addDescription(DiagramChangeDescription description) {
         if (descriptions == null)
-            descriptions = new LinkedList<DiagramChangeDescription>();
+            descriptions = new LinkedList<>();
         descriptions.add(description);
     }
 

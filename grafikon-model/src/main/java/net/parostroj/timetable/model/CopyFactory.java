@@ -75,7 +75,7 @@ public class CopyFactory {
     }
 
     public TrainType copy(TrainType trainType, String id) {
-        TrainType copy = new TrainType(id, null);
+        TrainType copy = partFactory.createTrainType(id);
         copy.setAbbr(trainType.getAbbr());
         copy.setDesc(trainType.getDesc());
         copy.setColor(trainType.getColor());
@@ -88,7 +88,9 @@ public class CopyFactory {
     }
 
     public ObjectWithId copy(TrainTypeCategory category, String id) {
-        TrainTypeCategory copy = new TrainTypeCategory(id, category.getName(), category.getKey());
+        TrainTypeCategory copy = new TrainTypeCategory(id);
+        copy.setKey(category.getKey());
+        copy.setName(category.getName());
 
         for (PenaltyTableRow row : category.getPenaltyRows()) {
             copy.addRow(new PenaltyTableRow(row.getSpeed(), row.getAcceleration(), row.getDeceleration()));

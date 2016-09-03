@@ -128,6 +128,11 @@ public class TrackedCheckVisitor implements EventVisitor {
     }
 
     @Override
+    public void visitTrainTypeCategoryEvent(Event event) {
+        tracked = true;
+    }
+
+    @Override
     public void visitLineClassEvent(Event event) {
         tracked = false;
     }

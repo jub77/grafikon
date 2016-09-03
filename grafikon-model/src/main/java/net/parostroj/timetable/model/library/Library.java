@@ -123,7 +123,7 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
             } else if (!(category instanceof TrainTypeCategory)) {
                 throw new IllegalArgumentException("Wrong type of category: " + category);
             }
-            trainTypeCopy.setCategory((TrainTypeCategory) category);
+            trainTypeCopy.setCategory   ((TrainTypeCategory) category);
         }
         return addImpl(trainTypeCopy, LibraryItemType.TRAIN_TYPE);
     }
@@ -160,8 +160,10 @@ public class Library implements AttributesHolder, Iterable<LibraryItem> {
         return addImpl(type, LibraryItemType.TRAIN_TYPE);
     }
 
-    public LibraryItem addTrainTypeCategory(String id, String name, String key) {
-        TrainTypeCategory category = factory.createTrainTypeCategory(id, name, key);
+    public LibraryItem addTrainTypeCategory(String id, LocalizedString name, String key) {
+        TrainTypeCategory category = factory.createTrainTypeCategory(id);
+        category.setKey(key);
+        category.setName(name);
         return addImpl(category, LibraryItemType.TRAIN_TYPE_CATEGORY);
     }
 

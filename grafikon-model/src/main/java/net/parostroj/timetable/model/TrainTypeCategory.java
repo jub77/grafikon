@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.parostroj.timetable.model.events.Event;
+import net.parostroj.timetable.model.events.ListData;
 import net.parostroj.timetable.model.events.Listener;
 import net.parostroj.timetable.model.events.ListenerSupport;
 
@@ -14,43 +16,48 @@ import net.parostroj.timetable.model.events.ListenerSupport;
  *
  * @author jub
  */
-public class TrainTypeCategory implements ObjectWithId, Observable {
+public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHolder, TrainTypeCategoryAttributes {
 
-    private String id;
-    private String name;
-    private String key;
+    private final String id;
+
+    private final Attributes attributes;
 
     private List<PenaltyTableRow> penaltyRows;
 
     private final ListenerSupport listenerSupport;
 
-    public TrainTypeCategory(String id, String name, String key) {
+    public TrainTypeCategory(String id) {
         this.id = id;
-        this.key = key;
-        this.name = name;
-        this.listenerSupport = new ListenerSupport();
         this.penaltyRows = new ArrayList<>();
+        this.listenerSupport = new ListenerSupport();
+        this.attributes = new Attributes(
+                (attrs, change) -> listenerSupport.fireEvent(new Event(TrainTypeCategory.this, change)));
     }
 
     public String getKey() {
-        return key;
+        return attributes.get(ATTR_KEY, String.class);
     }
 
     public void setKey(String key) {
-        this.key = key;
+        attributes.setRemove(ATTR_KEY, key);
     }
 
-    public String getName() {
-        return name;
+    public LocalizedString getName() {
+        return attributes.get(ATTR_NAME, LocalizedString.class);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(LocalizedString name) {
+        attributes.setRemove(ATTR_NAME, name);;
     }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public Attributes getAttributes() {
+        return attributes;
     }
 
     public void addRow(PenaltyTableRow row) {
@@ -60,23 +67,34 @@ public class TrainTypeCategory implements ObjectWithId, Observable {
             if (row.getSpeed() < currentRow.getSpeed()) {
                 i.previous();
                 i.add(row);
+                listenerSupport.fireEvent(new Event(this, Event.Type.ADDED, row));
+                return;
+            } else if (row.getSpeed() == currentRow.getSpeed()) {
+                i.set(row);
+                listenerSupport.fireEvent(new Event(this, Event.Type.REPLACED, row, ListData.createData(currentRow, row)));
                 return;
             }
         }
         penaltyRows.add(row);
+        listenerSupport.fireEvent(new Event(this, Event.Type.ADDED, row));
     }
 
-    public void removeRowForSpeed(int speed) {
+    public PenaltyTableRow removeRowForSpeed(int speed) {
         for (Iterator<PenaltyTableRow> i = penaltyRows.iterator(); i.hasNext();) {
             PenaltyTableRow row = i.next();
             if (row.getSpeed() == speed) {
                 i.remove();
+                listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, row));
+                return row;
             }
         }
+        return null;
     }
 
     public PenaltyTableRow removeRow(int position) {
-        return penaltyRows.remove(position);
+        PenaltyTableRow row = penaltyRows.remove(position);
+        listenerSupport.fireEvent(new Event(this, Event.Type.REMOVED, row));
+        return row;
     }
 
     public PenaltyTableRow getRowForSpeed(int speed) {
@@ -132,6 +150,6 @@ public class TrainTypeCategory implements ObjectWithId, Observable {
 
     @Override
     public String toString() {
-        return name + "<" + key + ">";
+        return getName().translate() + "<" + getKey() + ">";
     }
 }

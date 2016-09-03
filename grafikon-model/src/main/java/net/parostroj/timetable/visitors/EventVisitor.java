@@ -9,33 +9,35 @@ import net.parostroj.timetable.model.events.*;
  */
 public interface EventVisitor {
 
-    public void visitDiagramEvent(Event event);
+    void visitDiagramEvent(Event event);
 
-    public void visitNetEvent(Event event);
+    void visitNetEvent(Event event);
 
-    public void visitNodeEvent(Event event);
+    void visitNodeEvent(Event event);
 
-    public void visitLineEvent(Event event);
+    void visitLineEvent(Event event);
 
-    public void visitTrainEvent(Event event);
+    void visitTrainEvent(Event event);
 
-    public void visitTrainTypeEvent(Event event);
+    void visitTrainTypeEvent(Event event);
 
-    public void visitTrainsCycleEvent(Event event);
+    void visitTrainsCycleEvent(Event event);
 
-    public void visitTrainsCycleTypeEvent(Event event);
+    void visitTrainsCycleTypeEvent(Event event);
 
-    public void visitTextItemEvent(Event event);
+    void visitTextItemEvent(Event event);
 
-    public void visitEngineClassEvent(Event event);
+    void visitEngineClassEvent(Event event);
 
-    public void visitOutputTemplateEvent(Event event);
+    void visitOutputTemplateEvent(Event event);
 
-    public void visitOutputEvent(Event event);
+    void visitOutputEvent(Event event);
 
-    public void visitFreightNetEvent(Event event);
+    void visitFreightNetEvent(Event event);
 
-    public void visitLineClassEvent(Event event);
+    void visitLineClassEvent(Event event);
 
-    public void visitOtherEvent(Event event);
+    void visitOtherEvent(Event event);
+
+    void visitTrainTypeCategoryEvent(Event event);
 }

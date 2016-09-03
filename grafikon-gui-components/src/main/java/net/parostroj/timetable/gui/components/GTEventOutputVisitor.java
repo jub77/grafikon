@@ -60,7 +60,7 @@ public class GTEventOutputVisitor implements EventVisitor {
                 if (event.getObject() instanceof OutputTemplate)
                     str.append("    Output template: ").append(((OutputTemplate) event.getObject()).getKey());
                 if (event.getObject() instanceof TrainTypeCategory)
-                    str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName());
+                    str.append("    Train type category: ").append(((TrainTypeCategory) event.getObject()).getName().getDefaultString());
                 if (event.getObject() instanceof Output)
                     str.append("    Output: ").append(((Output) event.getObject()).toString());
             }
@@ -377,6 +377,28 @@ public class GTEventOutputVisitor implements EventVisitor {
                 str.append("  Type: ").append(event.getType().toString()).append('\n');
                 if (event.getAttributeChange() != null)
                     str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+            }
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void visitTrainTypeCategoryEvent(Event event) {
+        try {
+            TrainTypeCategory category = (TrainTypeCategory) event.getSource();
+            str.append("TrainTypeCategoryEvent[");
+            str.append(category.getName().getDefaultString());
+            str.append(']');
+            if (full) {
+                str.append('\n');
+                str.append("  Type: ").append(event.getType().toString()).append('\n');
+                if (event.getAttributeChange() != null)
+                    str.append("    Attribute: ").append(this.convertAttribute(event.getAttributeChange()));
+                if (event.getObject() instanceof PenaltyTableRow) {
+                    str.append("    Table action type: ").append(event.getType().toString()).append('\n');
+                    str.append("    Penalty table row speed: ").append(Integer.toString(((PenaltyTableRow) event.getObject()).getSpeed()));
+                }
             }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);

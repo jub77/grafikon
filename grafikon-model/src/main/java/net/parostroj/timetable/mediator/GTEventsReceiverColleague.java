@@ -88,6 +88,11 @@ public class GTEventsReceiverColleague extends AbstractColleague {
             public void visitLineClassEvent(Event event) {
                 processLineClassEvent(event);
             }
+
+            @Override
+            public void visitTrainTypeCategoryEvent(Event event) {
+                processTrainTypeCategoryEvent(event);
+            }
         };
     }
 
@@ -128,4 +133,6 @@ public class GTEventsReceiverColleague extends AbstractColleague {
     public void processGTEventAll(Event event) {}
 
     public void processLineClassEvent(Event event) {}
+
+    public void processTrainTypeCategoryEvent(Event event) {}
 }

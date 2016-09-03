@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.TrainTypeCategory;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for penalty table.
@@ -40,7 +41,7 @@ public class LSPenaltyTable {
         this.categories = categories;
     }
 
-    public List<TrainTypeCategory> createPenaltyTable() {
+    public List<TrainTypeCategory> createPenaltyTable() throws LSException {
         List<TrainTypeCategory> table = new ArrayList<>();
         if (this.categories != null) {
             for (LSTrainTypeCategory lsCategory : this.categories) {

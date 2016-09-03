@@ -6,8 +6,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
+import net.parostroj.timetable.model.ls.LSException;
 
 /**
  * Storage for train type category.
@@ -15,25 +18,25 @@ import net.parostroj.timetable.model.TrainTypeCategory;
  * @author jub
  */
 @XmlRootElement(name = "train_type_category")
-@XmlType(propOrder = {"id", "name", "key", "rows"})
+@XmlType(name = "train_type_category", propOrder = {"id", "name", "key", "rows", "attributes"})
 public class LSTrainTypeCategory {
 
     private String id;
     private String name;
     private String key;
     private List<LSPenaltyTableRow> rows;
+    private LSAttributes attributes;
 
     public LSTrainTypeCategory() {
     }
 
     public LSTrainTypeCategory(TrainTypeCategory category) {
         this.id = category.getId();
-        this.name = category.getName();
-        this.key = category.getKey();
         this.rows = new LinkedList<>();
         for (PenaltyTableRow r : category.getPenaltyRows()) {
             rows.add(new LSPenaltyTableRow(r));
         }
+        this.attributes = new LSAttributes(category.getAttributes());
     }
 
     public String getKey() {
@@ -70,12 +73,29 @@ public class LSTrainTypeCategory {
         this.name = name;
     }
 
-    public TrainTypeCategory createTrainTypeCategory() {
-        TrainTypeCategory category = new TrainTypeCategory(id, name, key);
+    public LSAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(LSAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    public TrainTypeCategory createTrainTypeCategory() throws LSException {
+        TrainTypeCategory category = new TrainTypeCategory(id);
         if (getRows() != null)
             for (LSPenaltyTableRow lsRow : getRows()) {
                 category.addRow(lsRow.createPenaltyTableRow());
             }
+        if (name != null) {
+            category.setName(LocalizedString.fromString(name));
+        }
+        if (key != null) {
+            category.setKey(key);
+        }
+        if (attributes != null) {
+            category.getAttributes().add(attributes.createAttributes());
+        }
         return category;
     }
 }

@@ -35,7 +35,7 @@ public class LibraryPartFactory implements PartFactory {
         return new TrainType(id, null);
     }
 
-    public TrainTypeCategory createTrainTypeCategory(String id, String name, String key) {
-        return new TrainTypeCategory(id, name, key);
+    public TrainTypeCategory createTrainTypeCategory(String id) {
+        return new TrainTypeCategory(id);
     }
 }

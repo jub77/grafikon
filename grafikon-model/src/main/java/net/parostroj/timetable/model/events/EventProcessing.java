@@ -41,6 +41,8 @@ public class EventProcessing {
             visitor.visitLineClassEvent(event);
         } else if (source instanceof Output) {
             visitor.visitOutputEvent(event);
+        } else if (source instanceof TrainTypeCategory) {
+            visitor.visitTrainTypeCategoryEvent(event);
         } else {
             visitor.visitOtherEvent(event);
         }
