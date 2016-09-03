@@ -93,7 +93,7 @@ public class CopyFactory {
         copy.setName(category.getName());
 
         for (PenaltyTableRow row : category.getPenaltyRows()) {
-            copy.addRow(new PenaltyTableRow(row.getSpeed(), row.getAcceleration(), row.getDeceleration()));
+            copy.addRow(copy.createPenaltyTableRow(row.getSpeed(), row.getAcceleration(), row.getDeceleration()));
         }
 
         return copy;

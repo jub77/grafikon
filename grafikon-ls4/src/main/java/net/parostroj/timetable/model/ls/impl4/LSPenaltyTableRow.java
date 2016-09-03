@@ -2,6 +2,7 @@ package net.parostroj.timetable.model.ls.impl4;
 
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.PenaltyTableRow;
+import net.parostroj.timetable.model.TrainTypeCategory;
 
 /**
  * Storage for penalty table row.
@@ -47,8 +48,8 @@ public class LSPenaltyTableRow {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-    
-    public PenaltyTableRow createPenaltyTableRow() {
-        return new PenaltyTableRow(speed, acceleration, deceleration);
+
+    public PenaltyTableRow createPenaltyTableRow(TrainTypeCategory category) {
+        return category.createPenaltyTableRow(speed, acceleration, deceleration);
     }
 }

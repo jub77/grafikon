@@ -60,6 +60,10 @@ public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHo
         return attributes;
     }
 
+    public PenaltyTableRow createPenaltyTableRow(int speed, int acceleration, int deceleration) {
+        return new PenaltyTableRow(this, speed, acceleration, deceleration);
+    }
+
     public void addRow(PenaltyTableRow row) {
         ListIterator<PenaltyTableRow> i = penaltyRows.listIterator();
         while (i.hasNext()) {
@@ -126,6 +130,10 @@ public class TrainTypeCategory implements ObjectWithId, Observable, AttributesHo
 
     public List<PenaltyTableRow> getPenaltyRows() {
         return Collections.unmodifiableList(penaltyRows);
+    }
+
+    protected void fireEvent(Event event) {
+        listenerSupport.fireEvent(event);
     }
 
     /**

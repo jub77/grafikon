@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.events.AttributeChange;
+import net.parostroj.timetable.model.events.Event;
+
 /**
  * Penalty table row.
  *
@@ -7,13 +10,15 @@ package net.parostroj.timetable.model;
  */
 public class PenaltyTableRow {
 
-    public static final PenaltyTableRow ZERO_ROW = new PenaltyTableRow(0, 0, 0);
+    public static final PenaltyTableRow ZERO_ROW = new PenaltyTableRow(null, 0, 0, 0);
 
-    private int speed;
+    private final TrainTypeCategory category;
+    private final int speed;
     private int deceleration;
     private int acceleration;
 
-    public PenaltyTableRow(int speed, int acceleration, int deceleration) {
+    PenaltyTableRow(TrainTypeCategory category, int speed, int acceleration, int deceleration) {
+        this.category = category;
         this.speed = speed;
         this.deceleration = deceleration;
         this.acceleration = acceleration;
@@ -24,7 +29,10 @@ public class PenaltyTableRow {
     }
 
     public void setAcceleration(int acceleration) {
-        this.acceleration = acceleration;
+        if (this.acceleration != acceleration) {
+            this.acceleration = acceleration;
+            category.fireEvent(new Event(category, this, new AttributeChange("penalty.info", null, null)));
+        }
     }
 
     public int getDeceleration() {
@@ -32,15 +40,14 @@ public class PenaltyTableRow {
     }
 
     public void setDeceleration(int deceleration) {
-        this.deceleration = deceleration;
+        if (this.deceleration != deceleration) {
+            this.deceleration = deceleration;
+            category.fireEvent(new Event(category, this, new AttributeChange("penalty.info", null, null)));
+        }
     }
 
     public int getSpeed() {
         return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 
     @Override

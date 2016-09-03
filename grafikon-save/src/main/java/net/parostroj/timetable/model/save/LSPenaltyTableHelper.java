@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.IdGenerator;
 
@@ -59,7 +58,7 @@ public class LSPenaltyTableHelper {
         for (LSPenaltyTableItem item : getLSPenaltyTable().getItemList()) {
             TrainTypeCategory cat = item.getType() == LSSBType.FREIGHT ? fCat : pCat;
             // upper limit decreased by one - backward compatibility with new implementation
-            cat.addRow(new PenaltyTableRow(item.getUpperLimit() - 1, item.getSpeedingPenalty(), item.getBrakingPenalty()));
+            cat.addRow(cat.createPenaltyTableRow(item.getUpperLimit() - 1, item.getSpeedingPenalty(), item.getBrakingPenalty()));
         }
     }
 

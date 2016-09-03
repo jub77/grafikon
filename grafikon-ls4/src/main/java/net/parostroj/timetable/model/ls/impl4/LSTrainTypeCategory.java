@@ -85,7 +85,7 @@ public class LSTrainTypeCategory {
         TrainTypeCategory category = new TrainTypeCategory(id);
         if (getRows() != null)
             for (LSPenaltyTableRow lsRow : getRows()) {
-                category.addRow(lsRow.createPenaltyTableRow());
+                category.addRow(lsRow.createPenaltyTableRow(category));
             }
         if (name != null) {
             category.setName(LocalizedString.fromString(name));

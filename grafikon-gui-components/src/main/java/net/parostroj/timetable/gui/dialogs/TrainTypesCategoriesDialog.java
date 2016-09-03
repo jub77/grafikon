@@ -158,8 +158,8 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
         }
 
         public void addPenaltyTableRowForSpeed(int speed) {
-            PenaltyTableRow row = new PenaltyTableRow(speed, 0, 0);
             TrainTypeCategory category = getCurrentTrainTypeCategory();
+            PenaltyTableRow row = category.createPenaltyTableRow(speed, 0, 0);
             category.addRow(row);
             int index = getCurrentRows().indexOf(row);
             this.fireTableRowsInserted(index, index);
@@ -237,7 +237,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        trainTypeCategoriesList = new javax.swing.JList<TrainTypeCategory>();
+        trainTypeCategoriesList = new javax.swing.JList<>();
         newButton = GuiComponentUtils.createButton(GuiIcon.ADD, 2);
         deleteButton = GuiComponentUtils.createButton(GuiIcon.REMOVE, 2);
         upButton = GuiComponentUtils.createButton(GuiIcon.GO_UP, 2);
@@ -376,7 +376,7 @@ public class TrainTypesCategoriesDialog extends javax.swing.JDialog {
                 // copy
                 List<PenaltyTableRow> tRows = template.getPenaltyRows();
                 for (PenaltyTableRow tRow : tRows) {
-                    PenaltyTableRow row = new PenaltyTableRow(tRow.getSpeed(), tRow.getAcceleration(), tRow.getDeceleration());
+                    PenaltyTableRow row = category.createPenaltyTableRow(tRow.getSpeed(), tRow.getAcceleration(), tRow.getDeceleration());
                     category.addRow(row);
                 }
             }
