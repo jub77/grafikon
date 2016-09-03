@@ -13,7 +13,7 @@ public class ImportComponentWrapperDelegate implements WrapperDelegate<ImportCom
     @Override
     public String toString(ImportComponent element) {
         ImportComponent component = element;
-        return ResourceLoader.getString(component.getKey());
+        return ResourceLoader.getString("import." + component.getKey());
     }
 
     @Override

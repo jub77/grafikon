@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryFactory;
 import net.parostroj.timetable.model.library.LibraryItem;
+import net.parostroj.timetable.model.library.LibraryItemType;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSLibrary;
 import net.parostroj.timetable.model.ls.ModelVersion;
@@ -63,11 +64,13 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
             // save metadata
             zipOutput.putNextEntry(new ZipEntry(METADATA));
             this.createMetadata(METADATA_KEY_LIBRARY_VERSION).store(zipOutput, null);
-            for (LibraryItem item : library) {
-                this.save(zipOutput, String.format("%s/%s.%s",
-                        LSLibraryTypeMapping.typeToDirectory(item.getType()),
-                        item.getObject().getId(),
-                        "xml"), new LSLibraryItem(item));
+            for (LibraryItemType itemType : LibraryItemType.values()) {
+                for (LibraryItem item : library.getItems().get(itemType)) {
+                    this.save(zipOutput, String.format("%s/%s.%s",
+                            LSLibraryTypeMapping.typeToDirectory(item.getType()),
+                            item.getObject().getId(),
+                            "xml"), new LSLibraryItem(item));
+                }
             }
         } catch (IOException e) {
             throw new LSException(e);
@@ -94,8 +97,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
                     continue;
                 }
                 LSLibraryItem lsItem = lss.load(is, LSLibraryItem.class);
-                LibraryItem item = lsItem.createLibraryItem(library);
-                System.out.println(item);
+                lsItem.createLibraryItem(library);
             }
             log.debug("Loaded version: {}", version);
             return library;

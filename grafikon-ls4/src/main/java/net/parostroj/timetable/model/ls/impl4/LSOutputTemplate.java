@@ -3,14 +3,16 @@ package net.parostroj.timetable.model.ls.impl4;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.Attachment;
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.PartFactory;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -115,12 +117,12 @@ public class LSOutputTemplate {
         this.attributes = attributes;
     }
 
-    public OutputTemplate createOutputTemplate(TrainDiagram diagram) throws LSException {
-        return this.createOutputTemplate(diagram, null);
+    public OutputTemplate createOutputTemplate(PartFactory partFactory, Function<String, ObjectWithId> mapping) throws LSException {
+        return this.createOutputTemplate(partFactory, mapping, null);
     }
 
-    public OutputTemplate createOutputTemplate(TrainDiagram diagram, FileLoadSaveAttachments flsAttachments) throws LSException {
-        OutputTemplate outputTemplate = diagram.getPartFactory().createOutputTemplate(id);
+    public OutputTemplate createOutputTemplate(PartFactory partFactory, Function<String, ObjectWithId> mapping, FileLoadSaveAttachments flsAttachments) throws LSException {
+        OutputTemplate outputTemplate = partFactory.createOutputTemplate(id);
         if (name != null) {
             // name mapped to key
             outputTemplate.setKey(name);
@@ -131,7 +133,7 @@ public class LSOutputTemplate {
         if (this.script != null) {
             outputTemplate.setScript(this.script.createScript());
         }
-        outputTemplate.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+        outputTemplate.getAttributes().add(attributes.createAttributes(mapping));
         // process attachments
         if (attachments != null) {
             for (LSAttachment attachment : attachments) {

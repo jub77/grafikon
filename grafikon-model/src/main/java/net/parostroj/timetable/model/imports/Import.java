@@ -125,6 +125,9 @@ public abstract class Import {
     }
 
     protected TrainTypeCategory getTrainTypeCategory(TrainTypeCategory origCategory) {
+        if (origCategory == null) {
+            return null;
+        }
         if (match == ImportMatch.ID) {
             return diagram.getTrainTypeCategories().getById(origCategory.getId());
         } else {
@@ -336,8 +339,10 @@ public abstract class Import {
                 return new LineImport(diagram, match, overwrite);
             case ROUTES:
                 return new RouteImport(diagram, match, overwrite);
+            case TRAIN_TYPE_CATEGORIES:
+                return new TrainTypeCategoryImport(diagram, match, overwrite);
         }
-        return null;
+        throw new IllegalArgumentException("No import for component type: " + components);
     }
 
     public void setProperty(String key, Object value) {

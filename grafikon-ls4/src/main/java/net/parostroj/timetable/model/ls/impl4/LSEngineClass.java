@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.EngineClass;
 import net.parostroj.timetable.model.LineClass;
-import net.parostroj.timetable.model.Net;
 import net.parostroj.timetable.model.WeightTableRow;
 
 /**
@@ -30,15 +29,11 @@ public class LSEngineClass {
     }
 
     public LSEngineClass(EngineClass engineClass) {
-        this(engineClass, lineClass -> lineClass.getId());
-    }
-
-    public LSEngineClass(EngineClass engineClass, Function<LineClass, String> lineClassConvertor) {
         this.id = engineClass.getId();
         this.name = engineClass.getName();
-        this.rows = new LinkedList<LSWeightTableRow>();
+        this.rows = new LinkedList<>();
         for (WeightTableRow row : engineClass.getWeightTable()) {
-            this.rows.add(new LSWeightTableRow(row, lineClassConvertor));
+            this.rows.add(new LSWeightTableRow(row));
         }
     }
 
@@ -68,15 +63,11 @@ public class LSEngineClass {
         this.rows = rows;
     }
 
-    public EngineClass createEngineClass(Net net) {
-        return createEngineClass(lineClassId -> net.getLineClasses().getById(lineClassId));
-    }
-
-    public EngineClass createEngineClass(Function<String, LineClass> lineClassSource) {
+    public EngineClass createEngineClass(Function<String, LineClass> lineClassMapping) {
         EngineClass ec = new EngineClass(id, name);
         if (this.rows != null) {
             for (LSWeightTableRow lsRow : this.rows) {
-                ec.addWeightTableRow(lsRow.createWeightTableRow(lineClassSource, ec));
+                ec.addWeightTableRow(lsRow.createWeightTableRow(lineClassMapping, ec));
             }
         }
         return ec;

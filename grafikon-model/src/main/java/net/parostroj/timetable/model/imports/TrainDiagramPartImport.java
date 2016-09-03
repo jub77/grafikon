@@ -38,6 +38,9 @@ public class TrainDiagramPartImport {
 
     private Import getImportPart(ObjectWithId object) {
         ImportComponent component = ImportComponent.getByComponentClass(object.getClass());
+        if (component == null) {
+            throw new IllegalArgumentException("Unknown type of object for import: " + object.getClass().getName());
+        }
         if (!imports.containsKey(component)) {
             Import importPart = Import.getInstance(component, diagram, match, overwrite);
             imports.put(component, importPart);

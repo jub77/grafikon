@@ -10,19 +10,20 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public enum ImportComponent {
-    COMPANIES("import.companies", Company.class),
-    REGIONS("import.regions", Region.class),
-    NODES("import.stations", Node.class),
-    LINE_CLASSES("import.line_classes", LineClass.class),
-    LINES("import.lines", Line.class),
-    ROUTES("import.routes", Route.class),
-    TRAIN_TYPES("import.train_types", TrainType.class),
-    ENGINE_CLASSES("import.engine_classes", EngineClass.class),
-    GROUPS("import.groups", Group.class),
-    TRAINS("import.trains", Train.class),
-    TRAINS_CYCLE_TYPES("import.cycle_types", TrainsCycleType.class),
-    TRAINS_CYCLES("import.cycles", TrainsCycle.class),
-    OUTPUT_TEMPLATES("import.output_templates", OutputTemplate.class);
+    COMPANIES("companies", Company.class),
+    REGIONS("regions", Region.class),
+    NODES("stations", Node.class),
+    LINE_CLASSES("line_classes", LineClass.class),
+    LINES("lines", Line.class),
+    ROUTES("routes", Route.class),
+    TRAIN_TYPE_CATEGORIES("train_type_categories", TrainTypeCategory.class),
+    TRAIN_TYPES("train_types", TrainType.class),
+    ENGINE_CLASSES("engine_classes", EngineClass.class),
+    GROUPS("groups", Group.class),
+    TRAINS("trains", Train.class),
+    TRAINS_CYCLE_TYPES("cycle_types", TrainsCycleType.class),
+    TRAINS_CYCLES("cycles", TrainsCycle.class),
+    OUTPUT_TEMPLATES("output_templates", OutputTemplate.class);
 
     private String key;
     private Class<?> clazz;
@@ -88,13 +89,15 @@ public enum ImportComponent {
             case ROUTES:
                 map.addAll(diagram.getRoutes());
                 break;
+            case TRAIN_TYPE_CATEGORIES:
+                map.addAll(diagram.getTrainTypeCategories());
         }
         return map;
     }
 
     public boolean sorted() {
         return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES
-                || this == ENGINE_CLASSES || this == OUTPUT_TEMPLATES;
+                || this == ENGINE_CLASSES || this == OUTPUT_TEMPLATES || this == TRAIN_TYPE_CATEGORIES;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {

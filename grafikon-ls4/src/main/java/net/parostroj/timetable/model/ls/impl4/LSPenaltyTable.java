@@ -24,7 +24,7 @@ public class LSPenaltyTable {
     }
 
     public LSPenaltyTable(List<TrainTypeCategory> categoryList) {
-        this.categories = new LinkedList<LSTrainTypeCategory>();
+        this.categories = new LinkedList<>();
         for (TrainTypeCategory category : categoryList) {
             this.categories.add(new LSTrainTypeCategory(category));
         }
@@ -46,10 +46,6 @@ public class LSPenaltyTable {
             for (LSTrainTypeCategory lsCategory : this.categories) {
                 TrainTypeCategory category = lsCategory.createTrainTypeCategory();
                 table.add(category);
-                if (lsCategory.getRows() != null)
-                    for (LSPenaltyTableRow lsRow : lsCategory.getRows()) {
-                        category.addRow(lsRow.createPenaltyTableRow());
-                    }
             }
         }
         return table;

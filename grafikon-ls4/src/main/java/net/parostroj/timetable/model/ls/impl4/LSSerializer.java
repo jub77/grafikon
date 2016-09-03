@@ -36,7 +36,7 @@ public class LSSerializer {
                 LSImage.class, LSTrainsData.class, LSEngineClass.class,
                 LSPenaltyTable.class, LSTextItem.class, LSDiagramChangeSet.class,
                 LSOutputTemplate.class, LSFreightNet.class, LSLibraryItem.class,
-                LSOutput.class
+                LSOutput.class, LSTrainTypeCategory.class
             });
         }
         return context_i;

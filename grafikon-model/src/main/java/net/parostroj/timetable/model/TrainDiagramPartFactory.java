@@ -2,7 +2,7 @@ package net.parostroj.timetable.model;
 
 import net.parostroj.timetable.utils.IdGenerator;
 
-public class TrainDiagramPartFactory {
+public class TrainDiagramPartFactory implements PartFactory {
 
     private final TrainDiagram diagram;
 
@@ -133,6 +133,7 @@ public class TrainDiagramPartFactory {
      * @param id id
      * @return new output template
      */
+    @Override
     public OutputTemplate createOutputTemplate(String id) {
         return new OutputTemplate(id, diagram);
     }

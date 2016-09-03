@@ -64,6 +64,10 @@ public class TrainDiagramBuilder {
         diagram.getTrainTypeCategories().addAll(categories);
     }
 
+    public void setTrainTypeCategory(LSTrainTypeCategory lsCategory) {
+        diagram.getTrainTypeCategories().add(lsCategory.createTrainTypeCategory());
+    }
+
     public void setNet(LSNet lsNet) throws LSException {
         Net net = lsNet.createNet(this.diagram);
         this.diagram.setNet(net);
@@ -82,7 +86,7 @@ public class TrainDiagramBuilder {
         // create nodes ...
         if (lsNet.getNodes() != null) {
             for (LSNode lsNode : lsNet.getNodes()) {
-                Node node = lsNode.createNode(diagram);
+                Node node = lsNode.createNode(diagram.getPartFactory(), diagram::getObjectById);
                 net.addNode(node);
             }
         }
@@ -120,7 +124,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setTrainType(LSTrainType lsType) throws LSException {
-        TrainType type = lsType.createTrainType(diagram);
+        TrainType type = lsType.createTrainType(diagram.getPartFactory(), diagram::getObjectById, diagram.getTrainTypeCategories()::getById);
         TrainType foundTrainType = null;
         if ((foundTrainType = diagram.getTrainTypes().getById(type.getId())) != null) {
             diagram.getTrainTypes().remove(foundTrainType);
@@ -134,7 +138,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setOutputTemplate(LSOutputTemplate lsOutputTemplate) throws LSException {
-        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram, flsAttachments);
+        OutputTemplate template = lsOutputTemplate.createOutputTemplate(diagram.getPartFactory(), diagram::getObjectById, flsAttachments);
         diagram.getOutputTemplates().add(template);
     }
 
@@ -160,7 +164,7 @@ public class TrainDiagramBuilder {
     }
 
     public void setEngineClass(LSEngineClass lsEngineClass) {
-        EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet());
+        EngineClass ec = lsEngineClass.createEngineClass(diagram.getNet().getLineClasses()::getById);
         EngineClass foundEc = null;
         if ((foundEc = diagram.getEngineClasses().getById(ec.getId())) != null) {
             diagram.getEngineClasses().remove(foundEc);

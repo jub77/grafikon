@@ -23,6 +23,7 @@ import net.parostroj.timetable.model.TimetableImage;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.model.TrainsCycle;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
 import net.parostroj.timetable.model.ls.LSFile;
@@ -44,6 +45,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     private static final String FREIGHT_NET = "freight_net.xml";
     private static final String DATA_ROUTES = "routes/";
     private static final String DATA_TRAIN_TYPES = "train_types/";
+    private static final String DATA_TRAIN_TYPE_CATEGORIES = "train_type_categories/";
     private static final String DATA_TRAINS = "trains/";
     private static final String DATA_TEXT_ITEMS = "text_items/";
     private static final String DATA_OUTPUT_TEMPLATES = "output_templates/";
@@ -60,7 +62,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
     static {
         VERSIONS = getVersions("4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9", "4.10",
                 "4.11", "4.12", "4.13", "4.14", "4.15", "4.16", "4.17", "4.17.1", "4.18", "4.18.1", "4.18.2",
-                "4.18.3", "4.18.4", "4.19", "4.19.1", "4.19.2", "4.20");
+                "4.18.3", "4.18.4", "4.19", "4.19.1", "4.19.2", "4.20", "4.21");
         CURRENT_VERSION = getLatestVersion(VERSIONS);
     }
 
@@ -134,6 +136,8 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
                     builder.setNet(lss.load(zipInput, LSNet.class));
                 } else if (entry.getName().startsWith(DATA_ROUTES)) {
                     builder.setRoute(lss.load(zipInput, LSRoute.class));
+                } else if (entry.getName().startsWith(DATA_TRAIN_TYPE_CATEGORIES)) {
+                    builder.setTrainTypeCategory(lss.load(zipInput, LSTrainTypeCategory.class));
                 } else if (entry.getName().startsWith(DATA_TRAIN_TYPES)) {
                     builder.setTrainType(lss.load(zipInput, LSTrainType.class));
                 } else if (entry.getName().startsWith(DATA_TEXT_ITEMS)) {
@@ -183,11 +187,14 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
 
             // save train diagram
             this.save(zipOutput, DATA_TRAIN_DIAGRAM, new LSTrainDiagram(diagram));
-            // save penalty table
-            this.save(zipOutput, DATA_PENALTY_TABLE, new LSPenaltyTable(diagram.getTrainTypeCategories()));
             // save net
             this.save(zipOutput, DATA_NET, new LSNet(diagram.getNet()));
             int cnt = 0;
+            // save train type categories
+            for (TrainTypeCategory category : diagram.getTrainTypeCategories()) {
+                this.save(zipOutput, this.createEntryName(DATA_TRAIN_TYPE_CATEGORIES, "xml", cnt++), new LSTrainTypeCategory(category));
+            }
+            cnt = 0;
             // save routes
             for (Route route : diagram.getRoutes()) {
                 this.save(zipOutput, this.createEntryName(DATA_ROUTES, "xml", cnt++), new LSRoute(route));

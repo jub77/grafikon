@@ -1,24 +1,23 @@
 package net.parostroj.timetable.model;
 
+import net.parostroj.timetable.model.library.Library;
+
 /**
  * Factory for creating new train diagram parts that can be stored in the library.
  *
  * @author jub
  */
-public class LibraryPartFactory {
+public class LibraryPartFactory implements PartFactory {
 
-    private LibraryPartFactory() {}
-
-    public static LibraryPartFactory getInstance() {
-        return new LibraryPartFactory();
+    public LibraryPartFactory(Library library) {
     }
 
-    public OutputTemplate createOutputTemplate(String id, String key) {
-        OutputTemplate template = new OutputTemplate(id, null);
-        template.setKey(key);
-        return template;
+    @Override
+    public OutputTemplate createOutputTemplate(String id) {
+        return new OutputTemplate(id, null);
     }
 
+    @Override
     public Node createNode(String id, NodeType type, String name, String abbr) {
         return new Node(id, null, type, name, abbr);
     }
@@ -31,9 +30,12 @@ public class LibraryPartFactory {
         return new LineClass(id, name);
     }
 
-    public TrainType createTrainType(String id, LocalizedString desc) {
-        TrainType trainType = new TrainType(id, null);
-        trainType.setDesc(desc);
-        return trainType;
+    @Override
+    public TrainType createTrainType(String id) {
+        return new TrainType(id, null);
+    }
+
+    public TrainTypeCategory createTrainTypeCategory(String id, String name, String key) {
+        return new TrainTypeCategory(id, name, key);
     }
 }

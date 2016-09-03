@@ -153,7 +153,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     public void updateValues() {
         // update list of available classes ...
-        listModel = new WrapperListModel<EngineClass>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, true);
+        listModel = new WrapperListModel<>(Wrapper.getWrapperList(diagram.getEngineClasses()), null, true);
         listModel.setObjectListener(new ObjectListener<EngineClass>() {
             @Override
             public void added(EngineClass object, int index) {
@@ -196,7 +196,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        engineClassesList = new javax.swing.JList<Wrapper<EngineClass>>();
+        engineClassesList = new javax.swing.JList<>();
         nameTextField = new javax.swing.JTextField();
         nameTextField.setColumns(8);
         nameTextField.getDocument().addDocumentListener(new ChangeDocumentListener() {
@@ -363,7 +363,7 @@ public class EngineClassesDialog extends javax.swing.JDialog {
             String newName = ObjectsUtil.checkAndTrim(nameTextField.getText());
             if (newName != null) {
                 // create new LineClass
-                EngineClass clazz = CopyFactory.getInstance(diagram).copy(copiedClazz,
+                EngineClass clazz = new CopyFactory(diagram.getPartFactory()).copy(copiedClazz,
                         IdGenerator.getInstance().getId());
                 listModel.addWrapper(Wrapper.getWrapper(clazz));
                 nameTextField.setText("");

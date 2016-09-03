@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
 
 public class LibraryItem implements AttributesHolder {
 
@@ -40,6 +41,7 @@ public class LibraryItem implements AttributesHolder {
             case ENGINE_CLASS: return ((EngineClass) object).getName();
             case TRAIN_TYPE: return ((TrainType) object).getAbbr();
             case LINE_CLASS: return ((LineClass) object).getName();
+            case TRAIN_TYPE_CATEGORY: return ((TrainTypeCategory) object).getKey();
         }
         return null;
     }

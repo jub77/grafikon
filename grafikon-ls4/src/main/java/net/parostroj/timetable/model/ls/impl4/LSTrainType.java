@@ -1,17 +1,18 @@
 package net.parostroj.timetable.model.ls.impl4;
 
 import net.parostroj.timetable.model.TrainType;
-import net.parostroj.timetable.model.library.Library;
-import net.parostroj.timetable.model.library.LibraryItem;
+import net.parostroj.timetable.model.TrainTypeCategory;
 
 import java.awt.Color;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import net.parostroj.timetable.model.LocalizedString;
-import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.PartFactory;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.utils.Conversions;
 
@@ -128,24 +129,9 @@ public class LSTrainType {
         this.attributes = attributes;
     }
 
-    public TrainType createTrainType(TrainDiagram diagram) throws LSException {
-        TrainType type = diagram.getPartFactory().createTrainType(id);
-        fillInTrainType(type);
-        type.setCategory(diagram.getTrainTypeCategories().getById(categoryId));
-        if (attributes != null) {
-            type.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
-        }
-        return type;
-    }
-
-    public LibraryItem createTrainType(Library library) throws LSException {
-        LibraryItem item = library.addTrainType(id, null);
-        fillInTrainType((TrainType) item.getObject());
-        // TODO add missing category and attributes
-        return item;
-    }
-
-    private void fillInTrainType(TrainType type) throws LSException {
+    public TrainType createTrainType(PartFactory partFactory, Function<String, ObjectWithId> mapping,
+            Function<String, TrainTypeCategory> categoryMapping) throws LSException {
+        TrainType type = partFactory.createTrainType(id);
         type.setAbbr(abbr);
         type.setColor(Conversions.convertTextToColor(color));
         if (desc != null) {
@@ -156,5 +142,10 @@ public class LSTrainType {
             trainCompleteNameTemplate.createTextTemplate() : null);
         type.setTrainNameTemplate(trainNameTemplate != null ?
             trainNameTemplate.createTextTemplate() : null);
+        type.setCategory(categoryMapping.apply(categoryId));
+        if (attributes != null) {
+            type.getAttributes().add(attributes.createAttributes(mapping));
+        }
+        return type;
     }
 }

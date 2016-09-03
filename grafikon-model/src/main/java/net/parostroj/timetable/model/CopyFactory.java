@@ -11,24 +11,14 @@ public class CopyFactory {
 
     private static final Logger log = LoggerFactory.getLogger(CopyFactory.class);
 
-    private final TrainDiagram diagram;
+    private final PartFactory partFactory;
 
-    private CopyFactory(TrainDiagram diagram) {
-        this.diagram = diagram;
-    }
-
-    public static CopyFactory getInstance() {
-        return new CopyFactory(null);
-    }
-
-    public static CopyFactory getInstance(TrainDiagram diagram) {
-        return new CopyFactory(diagram);
+    public CopyFactory(PartFactory partFactory) {
+        this.partFactory = partFactory;
     }
 
     public OutputTemplate copy(OutputTemplate template, String id) {
-        OutputTemplate copy = diagram == null ? new OutputTemplate(id, null) :
-            diagram.getPartFactory().createOutputTemplate(id);
-
+        OutputTemplate copy = partFactory.createOutputTemplate(id);
         try {
             if (template.getTemplate() != null) {
                 copy.setTemplate(TextTemplate.createTextTemplate(template.getTemplate().getTemplate(),
@@ -53,8 +43,7 @@ public class CopyFactory {
     }
 
     public Node copy(Node node, String id) {
-        Node copy = diagram == null ? new Node(id, null, node.getType(), node.getName(), node.getAbbr()) :
-            diagram.getPartFactory().createNode(id, node.getType(), node.getName(), node.getAbbr());
+        Node copy = partFactory.createNode(id, node.getType(), node.getName(), node.getAbbr());
 
         copy.getAttributes().add(node.getAttributes());
 
@@ -95,6 +84,16 @@ public class CopyFactory {
 
     public LineClass copy(LineClass lineClass, String id) {
         LineClass copy = new LineClass(id, lineClass.getName());
+        return copy;
+    }
+
+    public ObjectWithId copy(TrainTypeCategory category, String id) {
+        TrainTypeCategory copy = new TrainTypeCategory(id, category.getName(), category.getKey());
+
+        for (PenaltyTableRow row : category.getPenaltyRows()) {
+            copy.addRow(new PenaltyTableRow(row.getSpeed(), row.getAcceleration(), row.getDeceleration()));
+        }
+
         return copy;
     }
 }

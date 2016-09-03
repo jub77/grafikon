@@ -1,8 +1,11 @@
 package net.parostroj.timetable.model.ls.impl4;
 
+import java.util.function.Function;
+
 import javax.xml.bind.annotation.XmlType;
+
+import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.Track;
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -50,8 +53,8 @@ abstract public class LSTrack {
         this.number = number;
     }
 
-    protected void addValuesTrack(TrainDiagram diagram, Track track) throws LSException {
-        track.getAttributes().add(attributes.createAttributes(diagram::getObjectById));
+    protected void addValuesTrack(Function<String, ObjectWithId> mapping, Track track) throws LSException {
+        track.getAttributes().add(attributes.createAttributes(mapping));
         track.setNumber(number);
     }
 }

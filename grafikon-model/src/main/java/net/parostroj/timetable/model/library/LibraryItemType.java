@@ -5,6 +5,7 @@ import net.parostroj.timetable.model.LineClass;
 import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
 
 /**
  * Types of items that can shared in the library.
@@ -12,8 +13,9 @@ import net.parostroj.timetable.model.TrainType;
  * @author jub
  */
 public enum LibraryItemType {
-    NODE(Node.class), OUTPUT_TEMPLATE(OutputTemplate.class), ENGINE_CLASS(EngineClass.class),
-    TRAIN_TYPE(TrainType.class), LINE_CLASS(LineClass.class);
+    LINE_CLASS(LineClass.class), ENGINE_CLASS(EngineClass.class),
+    TRAIN_TYPE_CATEGORY(TrainTypeCategory.class), TRAIN_TYPE(TrainType.class),
+    NODE(Node.class), OUTPUT_TEMPLATE(OutputTemplate.class);
 
     private Class<?> clazz;
 
@@ -31,6 +33,6 @@ public enum LibraryItemType {
                 return type;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Unknow class for library item: " + clazz.getName());
     }
 }

@@ -31,11 +31,11 @@ public class LSWeightTableRow {
     public LSWeightTableRow() {
     }
 
-    public LSWeightTableRow(WeightTableRow row, Function<LineClass, String> lineClassConvertor) {
+    public LSWeightTableRow(WeightTableRow row) {
         this.speed = row.getSpeed();
-        weights = new LinkedList<LSWeightLimit>();
+        weights = new LinkedList<>();
         for (Map.Entry<LineClass, Integer> entry : row.getWeights().entrySet()) {
-            weights.add(new LSWeightLimit(lineClassConvertor.apply(entry.getKey()), entry.getValue()));
+            weights.add(new LSWeightLimit(entry.getKey().getId(), entry.getValue()));
         }
     }
 

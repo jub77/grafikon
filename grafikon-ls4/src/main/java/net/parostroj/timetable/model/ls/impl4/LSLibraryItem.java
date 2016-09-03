@@ -1,7 +1,5 @@
 package net.parostroj.timetable.model.ls.impl4;
 
-import java.util.function.Function;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
@@ -14,6 +12,7 @@ import net.parostroj.timetable.model.Node;
 import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
+import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
@@ -46,13 +45,16 @@ public class LSLibraryItem {
                 object = new LSOutputTemplate((OutputTemplate) item.getObject());
                 break;
             case ENGINE_CLASS:
-                object = new LSEngineClass((EngineClass) item.getObject(), lineClass -> lineClass.getName());
+                object = new LSEngineClass((EngineClass) item.getObject());
                 break;
             case TRAIN_TYPE:
                 object = new LSTrainType((TrainType) item.getObject());
                 break;
             case LINE_CLASS:
                 object = new LSLineClass((LineClass) item.getObject());
+                break;
+            case TRAIN_TYPE_CATEGORY:
+                object = new LSTrainTypeCategory((TrainTypeCategory) item.getObject());
                 break;
         }
     }
@@ -79,7 +81,8 @@ public class LSLibraryItem {
         @XmlElement(name = "output_template", type = LSOutputTemplate.class),
         @XmlElement(name = "engine_class", type = LSEngineClass.class),
         @XmlElement(name = "train_type", type = LSTrainType.class),
-        @XmlElement(name = "line_class", type = LSLineClass.class)
+        @XmlElement(name = "line_class", type = LSLineClass.class),
+        @XmlElement(name = "train_type_category", type = LSTrainTypeCategory.class)
     })
     public Object getObject() {
         return object;
@@ -92,25 +95,35 @@ public class LSLibraryItem {
     public LibraryItem createLibraryItem(Library library) throws LSException {
         LibraryItemType type = LibraryItemType.valueOf(getType());
         ObjectWithId object = null;
-        // TODO add methods to LS... objects specifically for library instead of diagram
         switch (type) {
             case ENGINE_CLASS:
-                object = ((LSEngineClass) getObject()).createEngineClass((Function<String, LineClass>) null);
+                object = ((LSEngineClass) getObject()).createEngineClass(id -> {
+                    ObjectWithId foundObject = library.getObjectById(id);
+                    return foundObject instanceof LineClass ? (LineClass) foundObject : null;
+                });
                 break;
             case LINE_CLASS:
                 object = ((LSLineClass) getObject()).createLineClass();
                 break;
             case NODE:
-                object = ((LSNode) getObject()).createNode(null);
+                object = ((LSNode) getObject()).createNode(library.getPartFactory(), library::getObjectById);
                 break;
             case OUTPUT_TEMPLATE:
-                object = ((LSOutputTemplate) getObject()).createOutputTemplate(null);
+                object = ((LSOutputTemplate) getObject()).createOutputTemplate(library.getPartFactory(), library::getObjectById);
                 break;
             case TRAIN_TYPE:
-                return ((LSTrainType) getObject()).createTrainType(library);
+                object = ((LSTrainType) getObject()).createTrainType(library.getPartFactory(), library::getObjectById,
+                        id -> {
+                            ObjectWithId foundObject = library.getObjectById(id);
+                            return foundObject instanceof TrainTypeCategory ? (TrainTypeCategory) foundObject : null;
+                        });
+                break;
+            case TRAIN_TYPE_CATEGORY:
+                object = ((LSTrainTypeCategory) getObject()).createTrainTypeCategory();
+                break;
         }
-        LibraryItem item = library.add(object);
-        // TODO add missing attributes
+        LibraryItem item = library.addObject(object);
+        item.getAttributes().add(this.getAttributes().createAttributes(library::getObjectById));
         return item;
     }
 }

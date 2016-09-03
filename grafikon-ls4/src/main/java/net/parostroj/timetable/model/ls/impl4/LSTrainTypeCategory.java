@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import net.parostroj.timetable.model.PenaltyTableRow;
 import net.parostroj.timetable.model.TrainTypeCategory;
@@ -13,6 +14,7 @@ import net.parostroj.timetable.model.TrainTypeCategory;
  *
  * @author jub
  */
+@XmlRootElement(name = "train_type_category")
 @XmlType(propOrder = {"id", "name", "key", "rows"})
 public class LSTrainTypeCategory {
 
@@ -28,7 +30,7 @@ public class LSTrainTypeCategory {
         this.id = category.getId();
         this.name = category.getName();
         this.key = category.getKey();
-        this.rows = new LinkedList<LSPenaltyTableRow>();
+        this.rows = new LinkedList<>();
         for (PenaltyTableRow r : category.getPenaltyRows()) {
             rows.add(new LSPenaltyTableRow(r));
         }
@@ -69,6 +71,11 @@ public class LSTrainTypeCategory {
     }
 
     public TrainTypeCategory createTrainTypeCategory() {
-        return new TrainTypeCategory(id, name, key);
+        TrainTypeCategory category = new TrainTypeCategory(id, name, key);
+        if (getRows() != null)
+            for (LSPenaltyTableRow lsRow : getRows()) {
+                category.addRow(lsRow.createPenaltyTableRow());
+            }
+        return category;
     }
 }
