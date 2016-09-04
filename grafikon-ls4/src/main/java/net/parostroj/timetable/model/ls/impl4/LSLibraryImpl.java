@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.parostroj.timetable.model.library.Library;
-import net.parostroj.timetable.model.library.LibraryFactory;
+import net.parostroj.timetable.model.library.LibraryBuilder;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
 import net.parostroj.timetable.model.ls.LSException;
@@ -87,7 +87,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
         try {
             ZipEntry entry = null;
             ModelVersion version = null;
-            Library library = LibraryFactory.getInstance().createLibrary();
+            LibraryBuilder libraryBuilder = new LibraryBuilder();
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
@@ -97,10 +97,10 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
                     continue;
                 }
                 LSLibraryItem lsItem = lss.load(is, LSLibraryItem.class);
-                lsItem.createLibraryItem(library);
+                lsItem.createLibraryItem(libraryBuilder);
             }
             log.debug("Loaded version: {}", version);
-            return library;
+            return libraryBuilder.build();
         } catch (IOException e) {
             throw new LSException(e);
         }

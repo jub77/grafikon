@@ -13,7 +13,7 @@ import net.parostroj.timetable.model.ObjectWithId;
 import net.parostroj.timetable.model.OutputTemplate;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
-import net.parostroj.timetable.model.library.Library;
+import net.parostroj.timetable.model.library.LibraryBuilder;
 import net.parostroj.timetable.model.library.LibraryItem;
 import net.parostroj.timetable.model.library.LibraryItemType;
 import net.parostroj.timetable.model.ls.LSException;
@@ -92,13 +92,13 @@ public class LSLibraryItem {
         this.object = object;
     }
 
-    public LibraryItem createLibraryItem(Library library) throws LSException {
+    public LibraryItem createLibraryItem(LibraryBuilder libraryBuilder) throws LSException {
         LibraryItemType type = LibraryItemType.valueOf(getType());
         ObjectWithId object = null;
         switch (type) {
             case ENGINE_CLASS:
                 object = ((LSEngineClass) getObject()).createEngineClass(id -> {
-                    ObjectWithId foundObject = library.getObjectById(id);
+                    ObjectWithId foundObject = libraryBuilder.getObjectById(id);
                     return foundObject instanceof LineClass ? (LineClass) foundObject : null;
                 });
                 break;
@@ -106,15 +106,15 @@ public class LSLibraryItem {
                 object = ((LSLineClass) getObject()).createLineClass();
                 break;
             case NODE:
-                object = ((LSNode) getObject()).createNode(library.getPartFactory(), library::getObjectById);
+                object = ((LSNode) getObject()).createNode(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById);
                 break;
             case OUTPUT_TEMPLATE:
-                object = ((LSOutputTemplate) getObject()).createOutputTemplate(library.getPartFactory(), library::getObjectById);
+                object = ((LSOutputTemplate) getObject()).createOutputTemplate(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById);
                 break;
             case TRAIN_TYPE:
-                object = ((LSTrainType) getObject()).createTrainType(library.getPartFactory(), library::getObjectById,
+                object = ((LSTrainType) getObject()).createTrainType(libraryBuilder.getPartFactory(), libraryBuilder::getObjectById,
                         id -> {
-                            ObjectWithId foundObject = library.getObjectById(id);
+                            ObjectWithId foundObject = libraryBuilder.getObjectById(id);
                             return foundObject instanceof TrainTypeCategory ? (TrainTypeCategory) foundObject : null;
                         });
                 break;
@@ -122,8 +122,8 @@ public class LSLibraryItem {
                 object = ((LSTrainTypeCategory) getObject()).createTrainTypeCategory();
                 break;
         }
-        LibraryItem item = library.addObject(object);
-        item.getAttributes().add(this.getAttributes().createAttributes(library::getObjectById));
+        LibraryItem item = libraryBuilder.addObject(object);
+        item.getAttributes().add(this.getAttributes().createAttributes(libraryBuilder::getObjectById));
         return item;
     }
 }
