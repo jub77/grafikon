@@ -1,5 +1,8 @@
 package net.parostroj.timetable.model.library;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.common.collect.ImmutableList;
 
 import net.parostroj.timetable.model.CopyFactory;
@@ -43,12 +46,11 @@ public class LibraryBuilder {
         }
     }
 
-    private boolean finished;
-    private Library library;
     private final Config config;
     private final LibraryAddHandler addHandler;
     private final LibraryPartFactory factory;
     private final CopyFactory copyFactory;
+    private final Map<String, LibraryItem> items;
 
     public LibraryBuilder() {
         this(new Config());
@@ -56,10 +58,10 @@ public class LibraryBuilder {
 
     public LibraryBuilder(Config config) {
         this.config = config;
-        this.library = config.getLibraryFactory().createLibrary();
         this.addHandler = new LibraryAddHandler();
-        this.factory = new LibraryPartFactory(library);
+        this.factory = new LibraryPartFactory();
         this.copyFactory = new CopyFactory(factory);
+        this.items = new LinkedHashMap<>();
     }
     public LibraryItem addObject(ObjectWithId object) {
         return this.addImpl(object, LibraryItemType.getByItemClass(object.getClass()));
@@ -104,7 +106,7 @@ public class LibraryBuilder {
             for (LineClass origLineClass : ImmutableList.copyOf(row.getWeights().keySet())) {
                 Integer weight = row.getWeight(origLineClass);
                 row.removeWeightInfo(origLineClass);
-                ObjectWithId currentLineClass = library.getObjectById(origLineClass.getId());
+                ObjectWithId currentLineClass = this.getObjectById(origLineClass.getId());
                 if (currentLineClass == null || !(currentLineClass instanceof LineClass)) {
                     if (config.isAddMissing()) {
                         // TODO add in case of missing
@@ -122,7 +124,7 @@ public class LibraryBuilder {
         TrainType trainTypeCopy = copyFactory.copy(trainType, trainType.getId());
         // TODO fix train name template reference
         if (trainType.getCategory() != null) {
-            ObjectWithId category = library.getObjectById(trainType.getCategory().getId());
+            ObjectWithId category = this.getObjectById(trainType.getCategory().getId());
             if (category == null) {
                 if (config.isAddMissing()) {
                     LibraryItem categoryItem = this.importTrainTypeCategory(trainType.getCategory());
@@ -179,12 +181,13 @@ public class LibraryBuilder {
 
     private LibraryItem addImpl(ObjectWithId object, LibraryItemType type) {
         LibraryItem item = new LibraryItem(type, object);
-        library.itemMap.put(type, item);
+        items.put(object.getId(), item);
         return item;
     }
 
     public ObjectWithId getObjectById(String id) {
-        return library.getObjectById(id);
+        LibraryItem item = items.get(id);
+        return item == null ? null : item.getObject();
     }
 
     public PartFactory getPartFactory() {
@@ -192,12 +195,10 @@ public class LibraryBuilder {
     }
 
     public Library build() {
-        if (finished) {
-            throw new IllegalStateException("Library already built");
+        Library library = config.getLibraryFactory().createLibrary();
+        for (LibraryItem item : items.values()) {
+            library.itemMap.put(item.getType(), item);
         }
-        finished = true;
-        Library newLibrary = library;
-        library = null;
-        return newLibrary;
+        return library;
     }
 }

@@ -1,16 +1,11 @@
 package net.parostroj.timetable.model;
 
-import net.parostroj.timetable.model.library.Library;
-
 /**
  * Factory for creating new train diagram parts that can be stored in the library.
  *
  * @author jub
  */
 public class LibraryPartFactory implements PartFactory {
-
-    public LibraryPartFactory(Library library) {
-    }
 
     @Override
     public OutputTemplate createOutputTemplate(String id) {
