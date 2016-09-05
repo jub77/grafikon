@@ -107,12 +107,15 @@ public class LibraryBuilder {
                 Integer weight = row.getWeight(origLineClass);
                 row.removeWeightInfo(origLineClass);
                 ObjectWithId currentLineClass = this.getObjectById(origLineClass.getId());
-                if (currentLineClass == null || !(currentLineClass instanceof LineClass)) {
+                if (currentLineClass == null) {
                     if (config.isAddMissing()) {
-                        // TODO add in case of missing
+                        LibraryItem lineClassItem = this.importLineClass(origLineClass);
+                        currentLineClass = lineClassItem.getObject();
                     } else {
                         throw new IllegalArgumentException("Line class missing from library: " + origLineClass);
                     }
+                } else if (!(currentLineClass instanceof LineClass)) {
+                    throw new IllegalArgumentException("Wrong type of line class: " + origLineClass);
                 }
                 row.setWeightInfo((LineClass) currentLineClass, weight);
             }
