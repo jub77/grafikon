@@ -24,7 +24,7 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
 
     private Set<T> set;
     private List<Wrapper<T>> list;
-    private final boolean sorted;
+    private boolean sorted;
     private Wrapper<T> selectedItem;
     private ObjectListener<T> listener;
 
@@ -223,8 +223,8 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
     }
 
     public void setListOfWrappers(List<Wrapper<T>> list) {
-        if (list.size() > 0) {
-            this.fireIntervalRemoved(this, 0, list.size() - 1);
+        if (this.list.size() > 0) {
+            this.fireIntervalRemoved(this, 0, this.list.size() - 1);
         }
         this.list = list;
         this.set = null;
@@ -254,6 +254,11 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
         return null;
     }
 
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
+        clear();
+    }
+
     public void clear() {
         int size = list.size();
         list.clear();
@@ -272,6 +277,10 @@ public class WrapperListModel<T> extends AbstractListModel<Wrapper<T>> implement
 
     public boolean isEmpty() {
         return list.isEmpty();
+    }
+
+    public boolean isSorted() {
+        return sorted;
     }
 
     @Override
