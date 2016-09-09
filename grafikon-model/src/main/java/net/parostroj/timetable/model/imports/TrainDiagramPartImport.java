@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.imports;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -11,10 +12,10 @@ import net.parostroj.timetable.model.imports.Import.ImportError;
 
 public class TrainDiagramPartImport {
 
-    private Map<ImportComponent, Import> imports;
-    private TrainDiagram diagram;
-    private ImportMatch match;
-    private boolean overwrite;
+    private final Map<ImportComponent, Import> imports;
+    private final TrainDiagram diagram;
+    private final ImportMatch match;
+    private final boolean overwrite;
 
     public TrainDiagramPartImport(TrainDiagram diagram, ImportMatch match, boolean overwrite) {
         this.diagram = diagram;
@@ -34,6 +35,10 @@ public class TrainDiagramPartImport {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    public Collection<ImportComponent> getImportComponents() {
+        return imports.keySet();
     }
 
     private Import getImportPart(ObjectWithId object) {

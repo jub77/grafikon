@@ -3,6 +3,7 @@ package net.parostroj.timetable.model.imports;
 import java.util.*;
 
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.library.LibraryItemType;
 
 /**
  * Export/Import components.
@@ -10,27 +11,35 @@ import net.parostroj.timetable.model.*;
  * @author jub
  */
 public enum ImportComponent {
-    COMPANIES("companies", Company.class),
-    REGIONS("regions", Region.class),
-    NODES("stations", Node.class),
-    LINE_CLASSES("line_classes", LineClass.class),
-    LINES("lines", Line.class),
-    ROUTES("routes", Route.class),
-    TRAIN_TYPE_CATEGORIES("train_type_categories", TrainTypeCategory.class),
-    TRAIN_TYPES("train_types", TrainType.class),
-    ENGINE_CLASSES("engine_classes", EngineClass.class),
-    GROUPS("groups", Group.class),
-    TRAINS("trains", Train.class),
-    TRAINS_CYCLE_TYPES("cycle_types", TrainsCycleType.class),
-    TRAINS_CYCLES("cycles", TrainsCycle.class),
-    OUTPUT_TEMPLATES("output_templates", OutputTemplate.class);
+    COMPANIES("companies", Company.class, true),
+    REGIONS("regions", Region.class, true),
+    NODES("stations", Node.class, true, LibraryItemType.NODE),
+    LINE_CLASSES("line_classes", LineClass.class, false, LibraryItemType.LINE_CLASS),
+    LINES("lines", Line.class, true),
+    ROUTES("routes", Route.class, true),
+    TRAIN_TYPE_CATEGORIES("train_type_categories", TrainTypeCategory.class, true, LibraryItemType.TRAIN_TYPE_CATEGORY),
+    TRAIN_TYPES("train_types", TrainType.class, false, LibraryItemType.TRAIN_TYPE),
+    ENGINE_CLASSES("engine_classes", EngineClass.class, true, LibraryItemType.ENGINE_CLASS),
+    GROUPS("groups", Group.class, true),
+    TRAINS("trains", Train.class, true),
+    TRAINS_CYCLE_TYPES("cycle_types", TrainsCycleType.class, false),
+    TRAINS_CYCLES("cycles", TrainsCycle.class, true),
+    OUTPUT_TEMPLATES("output_templates", OutputTemplate.class, true, LibraryItemType.OUTPUT_TEMPLATE);
 
     private String key;
     private Class<?> clazz;
+    private boolean sorted;
+    private LibraryItemType libraryItemType;
 
-    private ImportComponent(String key, Class<?> clazz) {
+    private ImportComponent(String key, Class<?> clazz, boolean sorted) {
+        this(key, clazz, sorted, null);
+    }
+
+    private ImportComponent(String key, Class<?> clazz, boolean sorted, LibraryItemType libraryItemType) {
         this.key = key;
         this.clazz = clazz;
+        this.libraryItemType = libraryItemType;
+        this.sorted = sorted;
     }
 
     public String getKey() {
@@ -39,6 +48,10 @@ public enum ImportComponent {
 
     public Class<?> getComponentClass() {
         return clazz;
+    }
+
+    public LibraryItemType getLibraryItemType() {
+        return libraryItemType;
     }
 
     public Set<ObjectWithId> getObjects(TrainDiagram diagram) {
@@ -95,9 +108,8 @@ public enum ImportComponent {
         return map;
     }
 
-    public boolean sorted() {
-        return this == NODES || this == TRAINS || this == TRAINS_CYCLES || this == LINES || this == ROUTES
-                || this == ENGINE_CLASSES || this == OUTPUT_TEMPLATES || this == TRAIN_TYPE_CATEGORIES;
+    public boolean isSorted() {
+        return sorted;
     }
 
     public static ImportComponent getByComponentClass(Class<?> clazz) {

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -19,8 +20,9 @@ import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
 import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
+import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
+import net.parostroj.timetable.gui.dialogs.ExportImportSelectionDialog;
 import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
-import net.parostroj.timetable.gui.dialogs.ImportDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.imports.Import.ImportError;
@@ -65,17 +67,15 @@ public class ImportAction extends AbstractAction {
 
     private static final Logger log = LoggerFactory.getLogger(ImportAction.class);
 
-    private final ImportDialog importDialog;
+    private final ExportImportSelectionDialog importDialog;
     private final GroupChooserFromToDialog groupDialog;
     private final ApplicationModel model;
     private final boolean trainImport;
-    private final Collection<ImportComponent> components;
 
     public ImportAction(ApplicationModel model, Frame frame, boolean trainImport) {
         this.model = model;
         this.trainImport = trainImport;
-        this.components = trainImport ? Collections.singleton(ImportComponent.TRAINS) : Arrays.asList(ImportComponent.values());
-        this.importDialog = new ImportDialog(frame, true, trainImport ? Collections.singleton(ImportComponent.TRAINS) : null);
+        this.importDialog = new ExportImportSelectionDialog(frame, true);
         this.groupDialog = trainImport ? new GroupChooserFromToDialog() : null;
     }
 
@@ -116,10 +116,16 @@ public class ImportAction extends AbstractAction {
                     }
                 }
                 if (diagram != null && !cancelled) {
-                    importDialog.setTrainDiagrams(model.getDiagram(), diagram, filter);
+                    ExportImportSelectionSource source;
+                    if (trainImport) {
+                        source = ExportImportSelectionSource.fromDiagramSingleTypeWithFilter(diagram, ImportComponent.TRAINS, filter::apply);
+                    } else {
+                        source = ExportImportSelectionSource.fromDiagramToDiagram(diagram);
+                    }
+                    importDialog.setSelectionSource(source);
                     importDialog.setLocationRelativeTo(parent);
                     importDialog.setVisible(true);
-                    cancelled = !importDialog.isSelected();
+                    cancelled = importDialog.isCancelled();
                 }
                 context.setAttribute("cancelled", cancelled);
             }
@@ -142,13 +148,9 @@ public class ImportAction extends AbstractAction {
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis();
                 try {
-                    Map<ImportComponent, Set<ObjectWithId>> map = importDialog.getSelectedItems();
-                    List<ObjectWithId> list = new LinkedList<>();
-                    imports = new TrainDiagramPartImport(importDialog.getDiagram(), importDialog.getImportMatch(), importDialog.getImportOverwrite());
-                    for (ImportComponent comp : components) {
-                        Set<ObjectWithId> set = map.get(comp);
-                        list.addAll(set);
-                    }
+                    Map<ImportComponent, Collection<ObjectWithId>> map = importDialog.getSelection();
+                    imports = new TrainDiagramPartImport(model.getDiagram(), importDialog.getImportMatch(), importDialog.getImportOverwrite());
+                    List<ObjectWithId> list = map.values().stream().sequential().flatMap(item -> item.stream().sequential()).collect(Collectors.toList());
                     size = list.size();
                     if (size == 0) {
                         return;
@@ -223,12 +225,12 @@ public class ImportAction extends AbstractAction {
             @Override
             protected void eventDispatchActionAfter() {
                 boolean cancelled = (Boolean) context.getAttribute("cancelled");
-                importDialog.clear();
+                importDialog.setSelectionSource(ExportImportSelectionSource.empty());
                 if (cancelled) {
                     return;
                 }
                 List<ImportError> errors = new LinkedList<>();
-                for (ImportComponent comp : components) {
+                for (ImportComponent comp : imports.getImportComponents()) {
                     errors.addAll(imports.getErrors(comp));
                 }
 

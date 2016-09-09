@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.components;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  */
 public class ElementSelectionPanel<T> extends javax.swing.JPanel {
 
+    private static final String LIST_PROTOTYPE_VALUE = "mmmmmmmmmmmmmmmmmmmmmm";
+    private static final int LIST_DEFAULT_ROW_COUNT = 15;
+
     private final WrapperListModel<T> leftListModel;
     private final WrapperListModel<T> rightListModel;
 
@@ -32,9 +36,14 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
     }
 
     public ElementSelectionPanel(boolean leftSorted, boolean rightSorted) {
-        leftListModel = new WrapperListModel<T>(leftSorted);
-        rightListModel = new WrapperListModel<T>(rightSorted);
+        leftListModel = new WrapperListModel<>(leftSorted);
+        rightListModel = new WrapperListModel<>(rightSorted);
         initComponents();
+    }
+
+    public void setSorted(boolean leftSorted, boolean rightSorted) {
+        leftListModel.setSorted(leftSorted);
+        rightListModel.setSorted(rightSorted);
     }
 
     public WrapperListModel<T> getNotSelected() {
@@ -45,12 +54,16 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
         return rightListModel;
     }
 
-    public void setListForSelection(List<Wrapper<T>> list) {
-        leftListModel.setListOfWrappers(list);
-        rightListModel.setListOfWrappers(new ArrayList<Wrapper<T>>());
+    public void setListForSelection(Collection<Wrapper<T>> notSelected) {
+        this.setListsForSelection(notSelected, null);
     }
 
-    public void addSelected(List<Wrapper<T>> selectedList) {
+    public void setListsForSelection(Collection<Wrapper<T>> notSelected, Collection<Wrapper<T>> selected) {
+        leftListModel.setListOfWrappers(new ArrayList<>(notSelected));
+        rightListModel.setListOfWrappers(selected == null ? new ArrayList<>() : new ArrayList<>(selected));
+    }
+
+    public void addSelected(Collection<Wrapper<T>> selectedList) {
         for (Wrapper<T> wrapper : selectedList) {
             addSelected(wrapper);
         }
@@ -62,7 +75,11 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
     }
 
     public List<Wrapper<T>> getSelectedList() {
-        return rightListModel.getListOfWrappers();
+        return new ArrayList<>(rightListModel.getListOfWrappers());
+    }
+
+    public List<Wrapper<T>> getNotSelectedList() {
+        return new ArrayList<>(leftListModel.getListOfWrappers());
     }
 
     public void clear() {
@@ -72,36 +89,28 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
 
     private void initComponents() {
         javax.swing.JScrollPane scrollPane1 = new javax.swing.JScrollPane();
-        leftList = new javax.swing.JList<Wrapper<T>>();
+        leftList = new javax.swing.JList<>();
         moveRightButton = GuiComponentUtils.createButton(GuiIcon.DARROW_RIGHT, 2);
         moveLeftButton = GuiComponentUtils.createButton(GuiIcon.DARROW_LEFT, 2);
         javax.swing.JScrollPane scrollPane2 = new javax.swing.JScrollPane();
-        rightList = new javax.swing.JList<Wrapper<T>>();
+        rightList = new javax.swing.JList<>();
 
         scrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         leftList.setModel(leftListModel);
-        leftList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmm"));
+        leftList.setPrototypeCellValue(Wrapper.getPrototypeWrapper(LIST_PROTOTYPE_VALUE));
         scrollPane1.setViewportView(leftList);
 
-        moveRightButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moveRightButtonActionPerformed(evt);
-            }
-        });
+        moveRightButton.addActionListener(evt -> moveRightButtonActionPerformed(evt));
 
-        moveLeftButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moveLeftButtonActionPerformed(evt);
-            }
-        });
+        moveLeftButton.addActionListener(evt -> moveLeftButtonActionPerformed(evt));
 
         scrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         rightList.setModel(rightListModel);
-        rightList.setPrototypeCellValue(Wrapper.getPrototypeWrapper("mmmmmmmmmmmmmmmmmmmm"));
+        rightList.setPrototypeCellValue(Wrapper.getPrototypeWrapper(LIST_PROTOTYPE_VALUE));
         scrollPane2.setViewportView(rightList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -126,13 +135,17 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
                 .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
         );
+
+        leftList.setVisibleRowCount(LIST_DEFAULT_ROW_COUNT);
+        rightList.setVisibleRowCount(LIST_DEFAULT_ROW_COUNT);
+
         this.setLayout(layout);
     }
 
     private void moveLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get selected elements and move them
         int[] values = rightList.getSelectedIndices();
-        List<Wrapper<T>> toBeRemoved = new LinkedList<Wrapper<T>>();
+        List<Wrapper<T>> toBeRemoved = new LinkedList<>();
         for (int ind : values) {
             Wrapper<T> wrapper = rightListModel.getIndex(ind);
             toBeRemoved.add(wrapper);
@@ -146,7 +159,7 @@ public class ElementSelectionPanel<T> extends javax.swing.JPanel {
     private void moveRightButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // get selected elements and move them
         int[] values = leftList.getSelectedIndices();
-        List<Wrapper<T>> toBeRemoved = new LinkedList<Wrapper<T>>();
+        List<Wrapper<T>> toBeRemoved = new LinkedList<>();
         for (int ind : values) {
             Wrapper<T> wrapper = leftListModel.getIndex(ind);
             toBeRemoved.add(wrapper);
