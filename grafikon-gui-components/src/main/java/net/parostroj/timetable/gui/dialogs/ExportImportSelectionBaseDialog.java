@@ -2,6 +2,9 @@ package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,10 +39,18 @@ public class ExportImportSelectionBaseDialog extends JDialog {
         JButton cancelButton = new JButton(ResourceLoader.getString("button.cancel"));
         exportImportSelectionPanel.getRightPanel().add(cancelButton);
 
-        cancelButton.addActionListener(event -> {
+        ActionListener closeAction = event -> {
             setSelectionSource(ExportImportSelectionSource.empty());
             cancelled = true;
             setVisible(false);
+        };
+        cancelButton.addActionListener(closeAction);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeAction.actionPerformed(null);
+            }
         });
 
         exportImportSelectionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -49,7 +60,9 @@ public class ExportImportSelectionBaseDialog extends JDialog {
 
     @Override
     public void setVisible(boolean b) {
-        cancelled = false;
+        if (b) {
+            cancelled = false;
+        }
         super.setVisible(b);
     }
 
