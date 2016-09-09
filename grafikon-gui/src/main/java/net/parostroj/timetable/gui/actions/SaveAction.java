@@ -11,6 +11,7 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.ApplicationModelEvent;
 import net.parostroj.timetable.gui.ApplicationModelEventType;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -64,13 +65,15 @@ public class SaveAction extends AbstractAction {
             return;
         }
         // saving train diagram
-        JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-        int retVal = xmlFileChooser.showSaveDialog(parent);
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            model.setOpenedFile(xmlFileChooser.getSelectedFile());
-            ActionContext c = new ActionContext(parent);
-            ModelAction action = getSaveModelAction(c, xmlFileChooser.getSelectedFile(), parent, model);
-            ActionHandler.getInstance().execute(action);
+        try (CloseableFileChooser gtmFileChooser = FileChooserFactory.getInstance()
+                .getFileChooser(FileChooserFactory.Type.GTM)) {
+            int retVal = gtmFileChooser.showSaveDialog(parent);
+            if (retVal == JFileChooser.APPROVE_OPTION) {
+                model.setOpenedFile(gtmFileChooser.getSelectedFile());
+                ActionContext c = new ActionContext(parent);
+                ModelAction action = getSaveModelAction(c, gtmFileChooser.getSelectedFile(), parent, model);
+                ActionHandler.getInstance().execute(action);
+            }
         }
     }
 

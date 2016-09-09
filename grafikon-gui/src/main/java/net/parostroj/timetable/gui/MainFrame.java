@@ -24,6 +24,7 @@ import net.parostroj.timetable.gui.actions.*;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.ActionHandler;
 import net.parostroj.timetable.gui.actions.execution.ModelAction;
+import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.components.BnButtonGroup;
@@ -96,9 +97,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // preload file dialogs
         info.setText(getInfoText("Preloading dialogs..."));
         FileChooserFactory fcf = FileChooserFactory.getInstance();
-        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
-        fcf.getFileChooser(FileChooserFactory.Type.OUTPUT);
-        fcf.getFileChooser(FileChooserFactory.Type.GTM);
+        fcf.initialize();
     }
 
     private String getInfoText(String txt) {
@@ -364,8 +363,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(new javax.swing.JSeparator());
 
-        this.addMenuItem(fileMenu, "menu.file.exportimport", new ImportAction(model, this, false), null); // NOI18N
-        this.addMenuItem(fileMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true), null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.exportimport", new ImportAction(model, this, false, true), null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true, false), null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.library.export", null, null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
 
@@ -696,12 +696,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.registerContext(model.getGuiContext());
         OutputSettings settings = model.getOutputSettings();
         FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
-        JFileChooser outputChooser = chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
-        dialog.showDialog(model.getDiagram(),
-                outputChooser.getSelectedFile() == null ? outputChooser.getCurrentDirectory()
-                        : outputChooser.getSelectedFile(),
-                chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES), new Settings(settings.getLocale()));
-        dialog.dispose();
+        try (CloseableFileChooser outputChooser = chooserFactory
+                .getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY);
+                CloseableFileChooser allChooser = chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES)) {
+            dialog.showDialog(model.getDiagram(), outputChooser.getSelectedFile() == null
+                    ? outputChooser.getCurrentDirectory() : outputChooser.getSelectedFile(), allChooser,
+                    new Settings(settings.getLocale()));
+            dialog.dispose();
+        }
     }
 
     private void ouputMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -709,12 +711,14 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         EditOutputsDialog dialog = new EditOutputsDialog(this, true);
         dialog.setSettings(new Settings(model.getOutputSettings().getLocale()));
         GenerateOutputPM pm = new GenerateOutputPM(model.getLanguageLoader().getAvailableLocales(), model.getDiagram().getLocales());
-        pm.init(model.get(), FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY));
-        dialog.setPresentationModel(pm);
-        dialog.setLocationRelativeTo(this);
-        dialog.registerContext(model.getGuiContext());
-        dialog.showDialog(model.getDiagram());
-        dialog.dispose();
+        try (CloseableFileChooser chooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY)) {
+            pm.init(model.get(), chooser);
+            dialog.setPresentationModel(pm);
+            dialog.setLocationRelativeTo(this);
+            dialog.registerContext(model.getGuiContext());
+            dialog.showDialog(model.getDiagram());
+            dialog.dispose();
+        }
     }
 
     public void cleanUpBeforeApplicationEnd() {
@@ -784,6 +788,9 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         model.lookAndFeel.setValue(laf);
 
         showGTViewMenuItem.setSelected(AppPreferences.getSection(prefs, "trains").get("show.gtview", Boolean.class, true));
+
+        // load preferences for last file chooser directories
+        FileChooserFactory.getInstance().loadFromPreferences(prefs);
 
         trainsPane.loadFromPreferences(prefs);
         floatingDialogsList.loadFromPreferences(prefs);

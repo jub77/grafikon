@@ -61,12 +61,14 @@ public class ModelUtils {
         } else {
             int result = JOptionPane.showConfirmDialog(parent, ResourceLoader.getString("model.not.saved.question"),ResourceLoader.getString("model.not.saved"),JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION && model.getOpenedFile() == null) {
-                JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-                int retVal = xmlFileChooser.showSaveDialog(parent);
-                if (retVal == JFileChooser.APPROVE_OPTION) {
-                    model.setOpenedFile(xmlFileChooser.getSelectedFile());
-                } else {
-                    result = JOptionPane.CANCEL_OPTION;
+                try (CloseableFileChooser modelFileChooser = FileChooserFactory.getInstance()
+                        .getFileChooser(FileChooserFactory.Type.GTM)) {
+                    int retVal = modelFileChooser.showSaveDialog(parent);
+                    if (retVal == JFileChooser.APPROVE_OPTION) {
+                        model.setOpenedFile(modelFileChooser.getSelectedFile());
+                    } else {
+                        result = JOptionPane.CANCEL_OPTION;
+                    }
                 }
             }
             return result;
@@ -76,9 +78,9 @@ public class ModelUtils {
     public static List<? extends Object> selectAllElements(TrainDiagram diagram, ElementType type) {
         switch (type) {
             case NODE:
-                return new ArrayList<Node>(diagram.getNet().getNodes());
+                return new ArrayList<>(diagram.getNet().getNodes());
             case LINE:
-                return new ArrayList<Line>(diagram.getNet().getLines());
+                return new ArrayList<>(diagram.getNet().getLines());
             case TRAIN_UNIT_CYCLE:
                 return ImmutableList.copyOf(diagram.getTrainUnitCycleType().getCycles());
             case ENGINE_CYCLE:
@@ -88,7 +90,7 @@ public class ModelUtils {
             case TRAIN:
                 return new ArrayList<>(diagram.getTrains());
             case ROUTE:
-                List<Route> routes = new LinkedList<Route>();
+                List<Route> routes = new LinkedList<>();
                 for (Route r : diagram.getRoutes()) {
                     if (r.isNetPart()) {
                         routes.add(r);
@@ -96,7 +98,7 @@ public class ModelUtils {
                 }
                 return routes;
             case CUSTOM_CYCLE:
-                List<TrainsCycle> cycles = new LinkedList<TrainsCycle>();
+                List<TrainsCycle> cycles = new LinkedList<>();
                 for (TrainsCycleType cycleType : diagram.getCycleTypes()) {
                     if (!cycleType.isDefaultType()) {
                         cycles.addAll(cycleType.getCycles());

@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.actions.impl;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import net.parostroj.timetable.utils.ResourceLoader;
 
@@ -11,45 +12,47 @@ import net.parostroj.timetable.utils.ResourceLoader;
  *
  * @author jub
  */
-public class ApprovedFileChooser extends JFileChooser {
+public class ApprovedFileChooser extends CloseableFileChooser {
 
-    private String suffix;
-    private String description;
+    private boolean approve;
 
-    public ApprovedFileChooser(String description, String suffix) {
-        this.setSuffix(description, suffix);
+    public ApprovedFileChooser() {
+        this.approve = true;
+    }
+
+    public void setApprove(boolean approve) {
+        this.approve = approve;
+    }
+
+    public boolean isApprove() {
+        return approve;
     }
 
     @Override
     public void approveSelection() {
-        if (getDialogType() == JFileChooser.SAVE_DIALOG) {
-            if (!this.getSelectedFile().getName().toLowerCase().endsWith("." + suffix)) {
-                this.setSelectedFile(new File(this.getSelectedFile().getAbsolutePath() + "." + suffix));
+        if (approve) {
+            if (getDialogType() == JFileChooser.SAVE_DIALOG) {
+                checkAndFixExtension();
             }
-        }
-        if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
-            int result = JOptionPane.showConfirmDialog(this,
-                    String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()),
-                    ResourceLoader.getString("savedialog.overwrite.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-            if (result != JOptionPane.YES_OPTION) {
-                return;
+            if ((getDialogType() == JFileChooser.SAVE_DIALOG) && getSelectedFile().exists()) {
+                int result = JOptionPane.showConfirmDialog(this,
+                        String.format(ResourceLoader.getString("savedialog.overwrite.text"), getSelectedFile()),
+                        ResourceLoader.getString("savedialog.overwrite.confirmation"),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (result != JOptionPane.YES_OPTION) {
+                    return;
+                }
             }
         }
         super.approveSelection();
     }
 
-    public void setSuffix(String description, String suffix) {
-        // do not change existing one, if it is the same
-        if (suffix.equals(this.suffix))
-            return;
-        this.suffix = suffix;
-        this.description = description;
-        // file extension filter
-        this.resetChoosableFileFilters();
-        this.setFileFilter(new FileNameExtensionFilter(description, suffix));
-    }
-
-    public void setSuffix(String suffix) {
-        this.setSuffix(this.description, suffix);
+    private void checkAndFixExtension() {
+        FileFilter filter = getFileFilter();
+        String suffix = filter instanceof FileNameExtensionFilter
+                ? ((FileNameExtensionFilter) filter).getExtensions()[0] : null;
+        if (suffix != null && !this.getSelectedFile().getName().toLowerCase().endsWith("." + suffix)) {
+            this.setSelectedFile(new File(this.getSelectedFile().getAbsolutePath() + "." + suffix));
+        }
     }
 }

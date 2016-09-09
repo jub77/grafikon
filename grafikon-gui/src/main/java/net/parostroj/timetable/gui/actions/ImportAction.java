@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import net.parostroj.timetable.filters.ModelPredicates;
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
 import net.parostroj.timetable.gui.actions.impl.Process;
@@ -71,10 +72,12 @@ public class ImportAction extends AbstractAction {
     private final GroupChooserFromToDialog groupDialog;
     private final ApplicationModel model;
     private final boolean trainImport;
+    private final boolean supportLibrary;
 
-    public ImportAction(ApplicationModel model, Frame frame, boolean trainImport) {
+    public ImportAction(ApplicationModel model, Frame frame, boolean trainImport, boolean supportLibrary) {
         this.model = model;
         this.trainImport = trainImport;
+        this.supportLibrary = supportLibrary;
         this.importDialog = new ExportImportSelectionDialog(frame, true);
         this.groupDialog = trainImport ? new GroupChooserFromToDialog() : null;
     }
@@ -82,20 +85,24 @@ public class ImportAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent event) {
         final Component parent = GuiComponentUtils.getTopLevelComponent(event.getSource());
-        // select imported model
-        final JFileChooser xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-        final int retVal = xmlFileChooser.showOpenDialog(parent);
 
         ActionContext context = new ActionContext(parent);
         ActionHandler handler = ActionHandler.getInstance();
 
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-            final File selectedFile = xmlFileChooser.getSelectedFile();
-            ModelAction loadAction = new LoadDiagramModelAction(context, selectedFile, parent, xmlFileChooser);
-            handler.execute(loadAction);
-        } else {
-            // skip the rest
-            return;
+        // select imported model
+        try (CloseableFileChooser gtmFileChooser = FileChooserFactory.getInstance()
+                .getFileChooser(supportLibrary ? FileChooserFactory.Type.GTM_GTML : FileChooserFactory.Type.GTM)) {
+            final int retVal = gtmFileChooser.showOpenDialog(parent);
+
+
+            if (retVal == JFileChooser.APPROVE_OPTION) {
+                final File selectedFile = gtmFileChooser.getSelectedFile();
+                ModelAction loadAction = new LoadDiagramModelAction(context, selectedFile, parent, gtmFileChooser);
+                handler.execute(loadAction);
+            } else {
+                // skip the rest
+                return;
+            }
         }
 
         handler.execute(new EventDispatchModelAction(context) {

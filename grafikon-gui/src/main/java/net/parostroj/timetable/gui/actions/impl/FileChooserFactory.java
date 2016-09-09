@@ -1,16 +1,21 @@
 package net.parostroj.timetable.gui.actions.impl;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
-
-import net.parostroj.timetable.gui.AppPreferences;
-import net.parostroj.timetable.utils.ResourceLoader;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ini4j.Ini;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ini4j.Profile.Section;
+
+import net.parostroj.timetable.gui.AppPreferences;
+import net.parostroj.timetable.gui.StorableGuiData;
+import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
  * File chooser factory. Instances of the same type are shared, so do not use
@@ -18,114 +23,143 @@ import org.slf4j.LoggerFactory;
  *
  * @author jub
  */
-public class FileChooserFactory {
+public class FileChooserFactory implements StorableGuiData {
 
     public enum Type {
-        OUTPUT, GTM, OUTPUT_DIRECTORY, TEMPLATE, ALL_FILES;
+        GTM("last.directory.model"),
+        OUTPUT_DIRECTORY("last.directory.html.dir", true),
+        ALL_FILES("last.directory.all.files"),
+        GTML("last.directory.model"),
+        GTM_GTML("last.directory.model");
+
+        private boolean directoryOnly;
+        private String key;
+
+        private Type(String key) {
+            this(key, false);
+        }
+
+        private Type(String key, boolean directoryOnly) {
+            this.key = key;
+            this.directoryOnly = directoryOnly;
+        }
+
+        public boolean isDirectoryOnly() {
+            return directoryOnly;
+        }
+
+        public String getKey() {
+            return key;
+        }
     }
 
-    public static final String FILE_EXTENSION = "gtm";
+    private class Configuration {
+
+        private final Type type;
+        private final boolean directoryOnly;
+        private final FileNameExtensionFilter filter;
+
+        public Configuration(Type type, String description, String... extensions) {
+            this.type = type;
+            this.directoryOnly = false;
+            this.filter = new FileNameExtensionFilter(description, extensions);
+        }
+
+        public Configuration(Type type, boolean directoryOnly) {
+            this.type = type;
+            this.directoryOnly = directoryOnly;
+            this.filter = null;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public void initializeChooser(ApprovedFileChooser chooser) {
+            File location = locations.get(type.getKey());
+            // switch to directory selection to remove selected file (setSelected(null) does not work)
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (location != null) {
+                chooser.setCurrentDirectory(location);
+            }
+            chooser.setFileSelectionMode(directoryOnly ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
+            if (filter != null) {
+                chooser.addChoosableFileFilter(filter);
+                chooser.setFileFilter(filter);
+            }
+        }
+
+        public void cleanUpChooser(ApprovedFileChooser chooser) {
+            File location = chooser.getCurrentDirectory();
+            locations.put(type.getKey(), location);
+            if (filter != null) {
+                chooser.removeChoosableFileFilter(filter);
+            }
+        }
+    }
+
     private static final FileChooserFactory INSTANCE = new FileChooserFactory();
-    private static final Logger log = LoggerFactory.getLogger(FileChooserFactory.class);
-    private JFileChooser outputFileChooserInstance;
-    private JFileChooser gtmFileChooserInstance;
-    private JFileChooser outputDirectoryFileChooserInstance;
-    private JFileChooser templateFileChooserInstance;
-    private JFileChooser allFileChooserInstance;
+
+    private ApprovedFileChooser chooser;
+    private Map<Type, Configuration> configurations;
+    private Map<String, File> locations;
+
+    private FileChooserFactory() {
+        configurations = new EnumMap<>(Type.class);
+        this.addConfiguration(new Configuration(Type.ALL_FILES, false));
+        this.addConfiguration(new Configuration(Type.OUTPUT_DIRECTORY, true));
+        this.addConfiguration(new Configuration(Type.GTM, ResourceLoader.getString("file.gtm"), "gtm"));
+        this.addConfiguration(new Configuration(Type.GTML, ResourceLoader.getString("file.gtml"), "gtml"));
+        this.addConfiguration(new Configuration(Type.GTM_GTML, ResourceLoader.getString("file.gtm.gtml"), "gtm","gtml"));
+        locations = new HashMap<>();
+    }
+
+    private void addConfiguration(Configuration config) {
+        configurations.put(config.getType(), config);
+    }
 
     public static FileChooserFactory getInstance() {
         return INSTANCE;
     }
 
-    public JFileChooser getFileChooser(Type type) {
-        switch (type) {
-            case OUTPUT_DIRECTORY:
-                if (outputDirectoryFileChooserInstance == null) {
-                    outputDirectoryFileChooserInstance = new JFileChooser();
-                    outputDirectoryFileChooserInstance.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    // last directory
-                    try {
-                        String lastDir = AppPreferences.getSection("main").get("last.directory.html.dir");
-                        if (lastDir != null) {
-                            outputDirectoryFileChooserInstance.setCurrentDirectory(new File(lastDir));
-                        }
-                    } catch (IOException e) {
-                        log.warn("Cannot get last directory from preferences.", e);
-                    }
-                }
-                return outputDirectoryFileChooserInstance;
-            case OUTPUT:
-                if (outputFileChooserInstance == null) {
-                    outputFileChooserInstance = new ApprovedFileChooser(ResourceLoader.getString("output.html"), "html");
-                    setLastDirectory(outputFileChooserInstance, "last.directory.output");
-                }
-                return outputFileChooserInstance;
-            case TEMPLATE:
-                if (templateFileChooserInstance == null) {
-                    templateFileChooserInstance = new ApprovedFileChooser(ResourceLoader.getString("output.template"), "gsp");
-                    setLastDirectory(templateFileChooserInstance, "last.directory.template");
-                }
-                return templateFileChooserInstance;
-            case GTM:
-                if (gtmFileChooserInstance == null) {
-                    gtmFileChooserInstance = new ApprovedFileChooser(ResourceLoader.getString("files.description"), FILE_EXTENSION);
-                    setLastDirectory(gtmFileChooserInstance, "last.directory.model");
-                }
-                return gtmFileChooserInstance;
-            case ALL_FILES:
-                if (allFileChooserInstance == null) {
-                    allFileChooserInstance = new JFileChooser();
-                    setLastDirectory(allFileChooserInstance, "last.directory.all.files");
-                }
-                return allFileChooserInstance;
+    public CloseableFileChooser getFileChooser(Type type) {
+        if (chooser == null) {
+            chooser = new ApprovedFileChooser();
         }
-        return null;
+        Configuration config = configurations.get(type);
+        config.initializeChooser(chooser);
+        chooser.setCloseAction(chooser -> {
+            config.cleanUpChooser((ApprovedFileChooser) chooser);
+        });
+        return chooser;
     }
 
-    public JFileChooser getFileChooser(Type type, String suffix) {
-        JFileChooser fileChooser = this.getFileChooser(type);
-        if (fileChooser instanceof ApprovedFileChooser) {
-            ApprovedFileChooser aFileChooser = (ApprovedFileChooser)fileChooser;
-            aFileChooser.setSuffix(suffix);
-        }
-        return fileChooser;
-    }
-
-    public JFileChooser getFileChooser(Type type, String suffix, String description) {
-        JFileChooser fileChooser = this.getFileChooser(type);
-        if (fileChooser instanceof ApprovedFileChooser) {
-            ApprovedFileChooser aFileChooser = (ApprovedFileChooser)fileChooser;
-            aFileChooser.setSuffix(description, suffix);
-        }
-        return fileChooser;
-    }
-
-    private void setLastDirectory(JFileChooser chooser, String key) {
-        // last directory
-        try {
-            Ini.Section section = AppPreferences.getSection("main");
-            String lastDir = section.get(key);
-            if (lastDir != null) {
-                chooser.setCurrentDirectory(new File(lastDir));
-            }
-        } catch (IOException e) {
-            log.warn("Cannot get last directory from preferences.", e);
-        }
-
-    }
-
-    public void saveToPreferences(Ini prefs) {
+    @Override
+    public Section saveToPreferences(Ini prefs) {
         Ini.Section section = AppPreferences.getSection(prefs, "main");
-        section.put("last.directory.model",
-                this.getFileChooser(Type.GTM).getCurrentDirectory().getAbsolutePath());
-        section.put("last.directory.template",
-                this.getFileChooser(Type.TEMPLATE).getCurrentDirectory().getAbsolutePath());
-        section.put("last.directory.output",
-                this.getFileChooser(Type.OUTPUT).getCurrentDirectory().getAbsolutePath());
-        section.put("last.directory.all.files",
-                this.getFileChooser(Type.ALL_FILES).getCurrentDirectory().getAbsolutePath());
-        JFileChooser dChooser = this.getFileChooser(Type.OUTPUT_DIRECTORY);
-        File oDir = dChooser.getSelectedFile() == null ? dChooser.getCurrentDirectory() : dChooser.getSelectedFile();
-        section.put("last.directory.html.dir", oDir.getAbsolutePath());
+        for (String key : locations.keySet()) {
+            section.put(key, locations.get(key).getAbsolutePath());
+        }
+        return section;
+    }
+
+    @Override
+    public Section loadFromPreferences(Ini prefs) {
+        Ini.Section section = AppPreferences.getSection(prefs, "main");
+        Set<String> keys = new HashSet<>();
+        for (Type type : Type.values()) {
+            keys.add(type.getKey());
+        }
+        for (String key : keys) {
+            String value = section.get(key);
+            if (value != null) {
+                locations.put(key, new File(value));
+            }
+        }
+        return section;
+    }
+
+    public void initialize() {
+        chooser = new ApprovedFileChooser();
     }
 }

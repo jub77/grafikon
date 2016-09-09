@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.gui.actions.execution.*;
+import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
 import net.parostroj.timetable.gui.dialogs.NewModelDialog;
@@ -76,7 +77,6 @@ public class NewOpenAction extends AbstractAction {
 
         ModelAction openAction = new CombinedModelAction(context) {
 
-            private JFileChooser xmlFileChooser;
             private int retVal;
             private TrainDiagram diagram;
             private String errorMessage;
@@ -86,10 +86,12 @@ public class NewOpenAction extends AbstractAction {
             @Override
             protected void eventDispatchActionBefore() {
                 if (preselectedFile == null) {
-                    xmlFileChooser = FileChooserFactory.getInstance().getFileChooser(FileChooserFactory.Type.GTM);
-                    retVal = xmlFileChooser.showOpenDialog(parent);
-                    if (retVal == JFileChooser.APPROVE_OPTION) {
-                        selectedFile = xmlFileChooser.getSelectedFile();
+                    try (CloseableFileChooser modelFileChooser = FileChooserFactory.getInstance()
+                            .getFileChooser(FileChooserFactory.Type.GTM)) {
+                        retVal = modelFileChooser.showOpenDialog(parent);
+                        if (retVal == JFileChooser.APPROVE_OPTION) {
+                            selectedFile = modelFileChooser.getSelectedFile();
+                        }
                     }
                 } else {
                     selectedFile = preselectedFile;
