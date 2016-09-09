@@ -18,6 +18,7 @@ import net.parostroj.timetable.gui.actions.execution.*;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
+import net.parostroj.timetable.gui.actions.impl.LoadLibraryModelAction;
 import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
@@ -29,6 +30,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.imports.Import.ImportError;
 import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.model.imports.TrainDiagramPartImport;
+import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -97,7 +99,9 @@ public class ImportAction extends AbstractAction {
 
             if (retVal == JFileChooser.APPROVE_OPTION) {
                 final File selectedFile = gtmFileChooser.getSelectedFile();
-                ModelAction loadAction = new LoadDiagramModelAction(context, selectedFile, parent, gtmFileChooser);
+                ModelAction loadAction = selectedFile.getName().endsWith(".gtm") ?
+                        new LoadDiagramModelAction(context, selectedFile, parent) :
+                            new LoadLibraryModelAction(context, selectedFile, parent);
                 handler.execute(loadAction);
             } else {
                 // skip the rest
@@ -110,6 +114,7 @@ public class ImportAction extends AbstractAction {
             @Override
             protected void eventDispatchAction() {
                 TrainDiagram diagram = (TrainDiagram) context.getAttribute("diagram");
+                Library library = (Library) context.getAttribute("library");
                 boolean cancelled = false;
                 Predicate<ObjectWithId> filter = null;
                 if (trainImport) {
@@ -122,12 +127,14 @@ public class ImportAction extends AbstractAction {
                         cancelled = !groupDialog.isSelected();
                     }
                 }
-                if (diagram != null && !cancelled) {
+                if ((diagram != null || library != null) && !cancelled) {
                     ExportImportSelectionSource source;
                     if (trainImport) {
                         source = ExportImportSelectionSource.fromDiagramSingleTypeWithFilter(diagram, ImportComponent.TRAINS, filter::apply);
                     } else {
-                        source = ExportImportSelectionSource.fromDiagramToDiagram(diagram);
+                        source = diagram != null ?
+                                ExportImportSelectionSource.fromDiagramToDiagram(diagram) :
+                                    ExportImportSelectionSource.fromLibraryToDiagram(library);
                     }
                     importDialog.setSelectionSource(source);
                     importDialog.setLocationRelativeTo(parent);

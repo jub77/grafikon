@@ -2,7 +2,9 @@ package net.parostroj.timetable.gui.actions.impl;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,20 +12,20 @@ import org.slf4j.LoggerFactory;
 import net.parostroj.timetable.gui.actions.execution.ActionContext;
 import net.parostroj.timetable.gui.actions.execution.EventDispatchAfterModelAction;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.ls.LSLibrary;
+import net.parostroj.timetable.model.ls.LSLibraryFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
-public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
+public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
 
-    private static final Logger log = LoggerFactory.getLogger(LoadDiagramModelAction.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadLibraryModelAction.class);
 
     private final File selectedFile;
     private final Component parent;
     private String errorMessage;
 
-    public LoadDiagramModelAction(ActionContext context, File selectedFile, Component parent) {
+    public LoadLibraryModelAction(ActionContext context, File selectedFile, Component parent) {
         super(context);
         this.selectedFile = selectedFile;
         this.parent = parent;
@@ -31,13 +33,15 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
 
     @Override
     protected void backgroundAction() {
-        setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
+        setWaitMessage(ResourceLoader.getString("wait.message.loadlibrary"));
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
         try {
             try {
-                LSFile ls = LSFileFactory.getInstance().createForLoad(selectedFile);
-                context.setAttribute("diagram", ls.load(selectedFile));
+                LSLibrary ls = LSLibraryFactory.getInstance().createForLoad(selectedFile);
+                try (ZipInputStream stream = new ZipInputStream(new FileInputStream(selectedFile))) {
+                    context.setAttribute("library", ls.load(stream));
+                }
             } catch (LSException e) {
                 log.warn("Error loading model.", e);
                 if (e.getCause() instanceof FileNotFoundException) {
