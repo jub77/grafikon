@@ -83,6 +83,7 @@ public class FileChooserFactory implements StorableGuiData {
                 chooser.setCurrentDirectory(location);
             }
             chooser.setFileSelectionMode(directoryOnly ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
+            chooser.setSelectedFile(null);
             if (filter != null) {
                 chooser.addChoosableFileFilter(filter);
                 chooser.setFileFilter(filter);

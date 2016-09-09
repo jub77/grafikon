@@ -67,6 +67,13 @@ public class SaveAction extends AbstractAction {
         // saving train diagram
         try (CloseableFileChooser gtmFileChooser = FileChooserFactory.getInstance()
                 .getFileChooser(FileChooserFactory.Type.GTM)) {
+            if (model.getOpenedFile() != null) {
+                gtmFileChooser.cancelSelection();
+                File cDir = gtmFileChooser.getCurrentDirectory();
+                gtmFileChooser.setSelectedFile(null);
+                File nFile = new File(cDir, model.getOpenedFile().getName());
+                gtmFileChooser.setSelectedFile(nFile);
+            }
             int retVal = gtmFileChooser.showSaveDialog(parent);
             if (retVal == JFileChooser.APPROVE_OPTION) {
                 model.setOpenedFile(gtmFileChooser.getSelectedFile());
