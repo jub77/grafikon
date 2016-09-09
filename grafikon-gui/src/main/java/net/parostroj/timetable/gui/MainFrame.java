@@ -365,7 +365,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addMenuItem(fileMenu, "menu.file.exportimport", new ImportAction(model, this, false, true), null); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true, false), null); // NOI18N
-        this.addMenuItem(fileMenu, "menu.file.library.export", null, null); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.library.export", new ExportAction(model, this), null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
 

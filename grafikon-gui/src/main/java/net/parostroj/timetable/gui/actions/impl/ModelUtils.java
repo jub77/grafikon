@@ -2,11 +2,14 @@ package net.parostroj.timetable.gui.actions.impl;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,9 +19,12 @@ import net.parostroj.timetable.gui.ApplicationModel;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.changes.ChangesTracker;
 import net.parostroj.timetable.model.changes.DiagramChangeSet;
+import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.ls.LSLibrary;
+import net.parostroj.timetable.model.ls.LSLibraryFactory;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -53,6 +59,13 @@ public class ModelUtils {
         }
         LSFile ls = LSFileFactory.getInstance().createForSave();
         ls.save(model.getDiagram(), file);
+    }
+
+    public static void saveLibraryData(final Library library, File file) throws LSException, IOException {
+        LSLibrary ls = LSLibraryFactory.getInstance().createForSave();
+        try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
+            ls.save(library, os);
+        }
     }
 
     public static int checkModelChangedContinue(ApplicationModel model, Component parent) {
