@@ -119,9 +119,11 @@ public class ExportImportSelectionPanel extends JPanel {
         selectionMap.clear();
         for (ImportComponent type : source.getTypes()) {
             Collection<ObjectWithId> elements = source.getElementsForType(type);
-            Selection selection = new Selection(type, Wrapper.getWrapperList(elements), new ArrayList<>());
-            selectionMap.put(type, selection);
-            typeComboBox.addItem(Wrapper.getWrapper(type));
+            if (!elements.isEmpty()) {
+                Selection selection = new Selection(type, Wrapper.getWrapperList(elements), new ArrayList<>());
+                selectionMap.put(type, selection);
+                typeComboBox.addItem(Wrapper.getWrapper(type));
+            }
         }
         typeComboBox.setMaximumRowCount(source.getTypes().size());
     }
