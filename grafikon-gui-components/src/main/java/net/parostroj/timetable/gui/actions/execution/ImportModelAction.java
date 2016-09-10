@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -103,12 +104,12 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             }
             if (trainImportConfig != null && trainImportConfig.isRemoveExisting()) {
                 // remove existing trains in group
-                Process<ObjectWithId> deleteProcess = item -> diagram.getTrains().remove(item);
+                Consumer<ObjectWithId> deleteProcess = item -> diagram.getTrains().remove(item);
                 Iterable<Train> filteredTrains = Iterables.filter(diagram.getTrains(), ModelPredicates.inGroup(trainImportConfig.getToGroup()));
                 processItems(filteredTrains, deleteProcess);
             }
             // import new objects
-            Process<ObjectWithId> importProcess = item -> {
+            Consumer<ObjectWithId> importProcess = item -> {
                 ImportComponent i = ImportComponent.getByComponentClass(item.getClass());
                 if (i != null) {
                     ObjectWithId imported = imports.importPart(item);
@@ -124,7 +125,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         }
     }
 
-    private void processItems(Iterable<? extends ObjectWithId> list, Process<ObjectWithId> importProcess) {
+    private void processItems(Iterable<? extends ObjectWithId> list, Consumer<ObjectWithId> importProcess) {
         List<ObjectWithId> batch = new LinkedList<>();
         int cnt = 0;
         for (ObjectWithId o : list) {
@@ -140,11 +141,11 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         }
     }
 
-    private void processChunk(final Collection<ObjectWithId> objects, final Process<ObjectWithId> action) {
+    private void processChunk(final Collection<ObjectWithId> objects, final Consumer<ObjectWithId> action) {
         GuiComponentUtils.runLaterInEDT(() -> {
             try {
                 for (ObjectWithId o : objects) {
-                    action.apply(o);
+                    action.accept(o);
                 }
             } finally {
                 try {
