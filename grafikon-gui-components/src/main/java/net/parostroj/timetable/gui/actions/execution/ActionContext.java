@@ -36,7 +36,7 @@ public class ActionContext {
         this.state = WaitDialogState.HIDE;
         this.delay = DEFAULT_DELAY;
         this.showProgress = false;
-        this.attributes = new HashMap<String, Object>();
+        this.attributes = new HashMap<>();
     }
 
     public ActionContext(Component locationComponent) {
@@ -106,6 +106,10 @@ public class ActionContext {
 
     public Object getAttribute(String name) {
         return attributes.get(name);
+    }
+
+    public <T> T getAttribute(String name, Class<T> clazz) {
+        return clazz.cast(getAttribute(name));
     }
 
     public Object removeAttribute(String name) {

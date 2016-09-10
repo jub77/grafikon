@@ -1,4 +1,4 @@
-package net.parostroj.timetable.gui.actions.impl;
+package net.parostroj.timetable.gui.actions.execution;
 
 import net.parostroj.timetable.model.ObjectWithId;
 

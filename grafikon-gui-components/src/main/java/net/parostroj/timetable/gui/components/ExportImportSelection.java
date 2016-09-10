@@ -21,8 +21,8 @@ public class ExportImportSelection {
         return objects;
     }
 
-    public void setObjects(Map<ImportComponent, Collection<ObjectWithId>> selection) {
-        this.objects = selection;
+    public void setObjects(Map<ImportComponent, Collection<ObjectWithId>> objects) {
+        this.objects = objects;
     }
 
     public boolean isImportOverwrite() {
