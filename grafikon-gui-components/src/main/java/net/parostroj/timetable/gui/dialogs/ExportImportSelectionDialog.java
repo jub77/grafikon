@@ -3,6 +3,7 @@ package net.parostroj.timetable.gui.dialogs;
 import java.awt.Window;
 import javax.swing.JLabel;
 
+import net.parostroj.timetable.gui.components.ExportImportSelection;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.gui.wrappers.Wrapper;
 import net.parostroj.timetable.model.imports.ImportMatch;
@@ -41,7 +42,15 @@ public class ExportImportSelectionDialog extends ExportImportSelectionBaseDialog
         return (ImportMatch) ((Wrapper<?>) matchComboBox.getSelectedItem()).getElement();
     }
 
-    public boolean getImportOverwrite() {
+    public boolean isImportOverwrite() {
         return overwriteCheckBox.isSelected();
+    }
+
+    @Override
+    public ExportImportSelection getSelection() {
+        ExportImportSelection selection = super.getSelection();
+        selection.setImportMatch(getImportMatch());
+        selection.setImportOverwrite(isImportOverwrite());
+        return selection;
     }
 }

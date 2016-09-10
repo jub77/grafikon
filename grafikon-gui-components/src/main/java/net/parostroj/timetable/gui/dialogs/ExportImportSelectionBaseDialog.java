@@ -5,19 +5,16 @@ import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Collection;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
-import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
+import net.parostroj.timetable.gui.components.ExportImportSelection;
 import net.parostroj.timetable.gui.components.ExportImportSelectionPanel;
+import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.imports.ImportComponent;
 
 public class ExportImportSelectionBaseDialog extends JDialog {
 
@@ -70,7 +67,7 @@ public class ExportImportSelectionBaseDialog extends JDialog {
         exportImportSelectionPanel.setSelectionSource(source);
     }
 
-    public Map<ImportComponent, Collection<ObjectWithId>> getSelection() {
+    public ExportImportSelection getSelection() {
         return exportImportSelectionPanel.getSelection();
     }
 

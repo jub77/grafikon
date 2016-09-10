@@ -128,12 +128,12 @@ public class ExportImportSelectionPanel extends JPanel {
         typeComboBox.setMaximumRowCount(source.getTypes().size());
     }
 
-    public Map<ImportComponent, Collection<ObjectWithId>> getSelection() {
+    public ExportImportSelection getSelection() {
         // force write back
         this.writeBackToSelection();
         // return map of collections of objects
-        return Maps.filterValues(
+        return new ExportImportSelection(Maps.filterValues(
                 Maps.transformValues(selectionMap, value -> Lists.transform(value.selected, item -> item.getElement())),
-                item -> item.size() > 0);
+                item -> item.size() > 0));
     }
 }

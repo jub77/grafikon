@@ -22,6 +22,7 @@ import net.parostroj.timetable.gui.actions.impl.LoadLibraryModelAction;
 import net.parostroj.timetable.gui.actions.impl.Process;
 import net.parostroj.timetable.gui.commands.CommandException;
 import net.parostroj.timetable.gui.commands.DeleteTrainCommand;
+import net.parostroj.timetable.gui.components.ExportImportSelection;
 import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
 import net.parostroj.timetable.gui.dialogs.ExportImportSelectionDialog;
 import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
@@ -162,8 +163,9 @@ public class ImportAction extends AbstractAction {
                 setWaitDialogVisible(true);
                 long time = System.currentTimeMillis();
                 try {
-                    Map<ImportComponent, Collection<ObjectWithId>> map = importDialog.getSelection();
-                    imports = new TrainDiagramPartImport(model.getDiagram(), importDialog.getImportMatch(), importDialog.getImportOverwrite());
+                    ExportImportSelection selection = importDialog.getSelection();
+                    Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjects();
+                    imports = new TrainDiagramPartImport(model.getDiagram(), selection.getImportMatch(), selection.isImportOverwrite());
                     List<ObjectWithId> list = map.values().stream().sequential().flatMap(item -> item.stream().sequential()).collect(Collectors.toList());
                     size = list.size();
                     if (size == 0) {

@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Collection;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -21,11 +19,10 @@ import net.parostroj.timetable.gui.actions.execution.ModelAction;
 import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
 import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
 import net.parostroj.timetable.gui.actions.impl.ModelUtils;
+import net.parostroj.timetable.gui.components.ExportImportSelection;
 import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
 import net.parostroj.timetable.gui.dialogs.ExportImportSelectionBaseDialog;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.ObjectWithId;
-import net.parostroj.timetable.model.imports.ImportComponent;
 import net.parostroj.timetable.model.library.Library;
 import net.parostroj.timetable.model.library.LibraryBuilder;
 import net.parostroj.timetable.model.ls.LSException;
@@ -74,9 +71,9 @@ public class ExportAction extends AbstractAction {
         }
     }
 
-    private Library createLibrary(Map<ImportComponent, Collection<ObjectWithId>> map) {
+    private Library createLibrary(ExportImportSelection selection) {
         LibraryBuilder libBuilder = new LibraryBuilder(new LibraryBuilder.Config().setAddMissing(true));
-        map.values().stream().flatMap(item -> item.stream()).forEach(object -> libBuilder.importObject(object));
+        selection.getObjects().values().stream().flatMap(item -> item.stream()).forEach(object -> libBuilder.importObject(object));
         return libBuilder.build();
     }
 
