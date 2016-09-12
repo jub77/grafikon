@@ -87,9 +87,10 @@ public class ImportAction extends AbstractAction {
 
             if (retVal == JFileChooser.APPROVE_OPTION) {
                 final File selectedFile = gtmFileChooser.getSelectedFile();
+                context.setAttribute("file", selectedFile);
                 ModelAction loadAction = selectedFile.getName().endsWith(".gtm") ?
-                        new LoadDiagramModelAction(context, selectedFile, parent) :
-                            new LoadLibraryModelAction(context, selectedFile, parent);
+                        new LoadDiagramModelAction(context) :
+                            new LoadLibraryModelAction(context);
                 handler.execute(loadAction);
             } else {
                 // skip the rest
@@ -140,6 +141,6 @@ public class ImportAction extends AbstractAction {
             }
         });
 
-        handler.execute(new ImportModelAction(context, parent));
+        handler.execute(new ImportModelAction(context));
     }
 }

@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.actions.execution;
 
-import java.awt.Component;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,15 +70,13 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         }
     }
 
-    private final Component parent;
     private static final int CHUNK_SIZE = 10;
     private TrainDiagramPartImport imports;
     private int size;
     private final CyclicBarrier barrier = new CyclicBarrier(2);
 
-    public ImportModelAction(ActionContext context, Component parent) {
+    public ImportModelAction(ActionContext context) {
         super(context);
-        this.parent = parent;
     }
 
     @Override
@@ -188,7 +185,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
                 }
                 message.append(getText(error));
             }
-            JOptionPane.showConfirmDialog(parent, message,
+            JOptionPane.showConfirmDialog(getActionContext().getLocationComponent(), message,
                     ResourceLoader.getString("import.warning.title"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
         }

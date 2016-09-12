@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.actions.impl;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,18 +20,15 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
 
     private static final Logger log = LoggerFactory.getLogger(LoadLibraryModelAction.class);
 
-    private final File selectedFile;
-    private final Component parent;
     private String errorMessage;
 
-    public LoadLibraryModelAction(ActionContext context, File selectedFile, Component parent) {
+    public LoadLibraryModelAction(ActionContext context) {
         super(context);
-        this.selectedFile = selectedFile;
-        this.parent = parent;
     }
 
     @Override
     protected void backgroundAction() {
+        File selectedFile = (File) getActionContext().getAttribute("file");
         setWaitMessage(ResourceLoader.getString("wait.message.loadlibrary"));
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
@@ -62,8 +58,8 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            String text = errorMessage + " " + selectedFile;
-            GuiComponentUtils.showError(text, parent);
+            String text = errorMessage + " " + getActionContext().getAttribute("file");
+            GuiComponentUtils.showError(text, getActionContext().getLocationComponent());
         }
     }
 }
