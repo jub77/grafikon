@@ -34,7 +34,6 @@ import net.parostroj.timetable.model.imports.Import.ImportError;
  * <br>
  * Context attributes:
  * <ul>
- * <li>cancelled: boolean</li>
  * <li>diagramImport: TrainDiagram</li>
  * <li>trainImport: TrainImportConfig</li>
  * <li>selection: ExportImportSelection</li>
@@ -81,10 +80,6 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     @Override
     protected void backgroundAction() {
-        boolean cancelled = (Boolean) context.getAttribute("cancelled");
-        if (cancelled) {
-            return;
-        }
         setWaitMessage(ResourceLoader.getString("wait.message.import"));
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
@@ -161,8 +156,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
 
     @Override
     protected void eventDispatchActionAfter() {
-        boolean cancelled = (Boolean) context.getAttribute("cancelled");
-        if (cancelled) {
+        if (context.isCancelled()) {
             return;
         }
         List<ImportError> errors = new LinkedList<>();

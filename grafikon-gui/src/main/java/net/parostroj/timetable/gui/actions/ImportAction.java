@@ -82,7 +82,7 @@ public class ImportAction extends AbstractAction {
                     }
                 }
                 context.setAttribute("trainFilter", filter);
-                context.setAttribute("cancelled", cancelled);
+                context.setCancelled(cancelled);
                 if (trainImport) {
                     context.setAttribute("trainImport", new ImportModelAction.TrainImportConfig(groupDialog.isRemoveExistingTrains(),
                             groupDialog.getSelectedFrom(), groupDialog.getSelectedTo()));
