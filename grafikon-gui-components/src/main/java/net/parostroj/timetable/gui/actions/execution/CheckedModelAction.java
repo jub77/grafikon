@@ -8,8 +8,6 @@ package net.parostroj.timetable.gui.actions.execution;
  */
 public abstract class CheckedModelAction extends AbstractModelAction {
 
-    public static final String CANCELLED_ATTRIBUTE = "cancelled";
-
     public CheckedModelAction(ActionContext context) {
         super(context);
     }
@@ -23,8 +21,7 @@ public abstract class CheckedModelAction extends AbstractModelAction {
     }
 
     protected boolean check() {
-        Boolean cancelled = context.getAttribute(CANCELLED_ATTRIBUTE, Boolean.class);
-        return !Boolean.TRUE.equals(cancelled);
+        return !getActionContext().isCancelled();
     }
 
     protected abstract void action();

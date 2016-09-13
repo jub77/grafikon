@@ -19,6 +19,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
     private static final Logger log = LoggerFactory.getLogger(LoadDiagramModelAction.class);
 
     private String errorMessage;
+    private File selectedFile;
 
     public LoadDiagramModelAction(ActionContext context) {
         super(context);
@@ -26,7 +27,11 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
 
     @Override
     protected void backgroundAction() {
-        File selectedFile = (File) getActionContext().getAttribute("file");
+        selectedFile = (File) getActionContext().getAttribute("diagramFile");
+        if (selectedFile == null) {
+            // skip
+            return;
+        }
         setWaitMessage(ResourceLoader.getString("wait.message.loadmodel"));
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
@@ -54,7 +59,7 @@ public class LoadDiagramModelAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            String text = errorMessage + " " + getActionContext().getAttribute("file");
+            String text = errorMessage + " " + selectedFile;
             GuiComponentUtils.showError(text, getActionContext().getLocationComponent());
         }
     }

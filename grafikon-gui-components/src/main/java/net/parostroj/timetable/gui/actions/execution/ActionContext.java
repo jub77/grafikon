@@ -30,6 +30,7 @@ public class ActionContext {
     private boolean showProgress;
     private int progress;
     private String progressDescription;
+    private boolean cancelled;
 
     public ActionContext() {
         this.support = new PropertyChangeSupport(this);
@@ -37,6 +38,7 @@ public class ActionContext {
         this.delay = DEFAULT_DELAY;
         this.showProgress = false;
         this.attributes = new HashMap<>();
+        this.cancelled = false;
     }
 
     public ActionContext(Component locationComponent) {
@@ -118,6 +120,18 @@ public class ActionContext {
 
     public void setAttribute(String name, Object value) {
         this.attributes.put(name, value);
+    }
+
+    public boolean hasAttribute(String name) {
+        return this.attributes.containsKey(name);
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
     }
 
     private void fireEventInEDT(final String name, final Object oldValue, final Object newValue) {

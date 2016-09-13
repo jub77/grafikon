@@ -35,7 +35,7 @@ import net.parostroj.timetable.model.imports.Import.ImportError;
  * Context attributes:
  * <ul>
  * <li>cancelled: boolean</li>
- * <li>diagram: TrainDiagram</li>
+ * <li>diagramImport: TrainDiagram</li>
  * <li>trainImport: TrainImportConfig</li>
  * <li>selection: ExportImportSelection</li>
  * </ul>
@@ -90,7 +90,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
         long time = System.currentTimeMillis();
         try {
             ExportImportSelection selection = context.getAttribute("selection", ExportImportSelection.class);
-            TrainDiagram diagram = context.getAttribute("diagram", TrainDiagram.class);
+            TrainDiagram diagram = context.getAttribute("diagramImport", TrainDiagram.class);
             TrainImportConfig trainImportConfig = context.getAttribute("trainImport", TrainImportConfig.class);
             Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjects();
             imports = new TrainDiagramPartImport(diagram, selection.getImportMatch(), selection.isImportOverwrite());

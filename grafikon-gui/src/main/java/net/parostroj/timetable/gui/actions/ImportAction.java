@@ -3,29 +3,31 @@ package net.parostroj.timetable.gui.actions;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
-
-import net.parostroj.timetable.gui.ApplicationModel;
-import net.parostroj.timetable.gui.actions.execution.*;
-import net.parostroj.timetable.gui.actions.impl.CloseableFileChooser;
-import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
-import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
-import net.parostroj.timetable.gui.actions.impl.LoadLibraryModelAction;
-import net.parostroj.timetable.gui.components.ExportImportSelectionSource;
-import net.parostroj.timetable.gui.dialogs.ExportImportSelectionDialog;
-import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
-import net.parostroj.timetable.gui.utils.GuiComponentUtils;
-import net.parostroj.timetable.model.*;
-import net.parostroj.timetable.model.imports.ImportComponent;
-import net.parostroj.timetable.model.library.Library;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+
+import net.parostroj.timetable.gui.ApplicationModel;
+import net.parostroj.timetable.gui.actions.execution.ActionContext;
+import net.parostroj.timetable.gui.actions.execution.ActionHandler;
+import net.parostroj.timetable.gui.actions.execution.EventDispatchModelAction;
+import net.parostroj.timetable.gui.actions.execution.ImportModelAction;
+import net.parostroj.timetable.gui.actions.impl.FileChooserFactory;
+import net.parostroj.timetable.gui.actions.impl.ImportSelectionModelAction;
+import net.parostroj.timetable.gui.actions.impl.ImportSelectionModelAction.TrainGroupFilter;
+import net.parostroj.timetable.gui.actions.impl.LoadDiagramModelAction;
+import net.parostroj.timetable.gui.actions.impl.LoadLibraryModelAction;
+import net.parostroj.timetable.gui.actions.impl.OpenFileModelAction;
+import net.parostroj.timetable.gui.actions.impl.SelectLoadAction;
+import net.parostroj.timetable.gui.dialogs.GroupChooserFromToDialog;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
+import net.parostroj.timetable.model.Group;
+import net.parostroj.timetable.model.ObjectWithId;
+import net.parostroj.timetable.model.TrainDiagram;
 
 /**
  * Import action.
@@ -34,31 +36,8 @@ import com.google.common.base.Predicate;
  */
 public class ImportAction extends AbstractAction {
 
-    private final class TrainOidFilter implements Predicate<ObjectWithId> {
-        private final Group group;
-
-        private TrainOidFilter(Group group) {
-            this.group = group;
-        }
-
-        @Override
-        public boolean apply(ObjectWithId item) {
-            if (item instanceof Train) {
-                Group foundGroup = ((Train) item).getAttributes().get("group", Group.class);
-                if (group == null) {
-                    return foundGroup == null;
-                } else {
-                    return group.equals(foundGroup);
-                }
-            } else {
-                return true;
-            }
-        }
-    }
-
     static final Logger log = LoggerFactory.getLogger(ImportAction.class);
 
-    private final ExportImportSelectionDialog importDialog;
     private final GroupChooserFromToDialog groupDialog;
     private final ApplicationModel model;
     private final boolean trainImport;
@@ -68,7 +47,6 @@ public class ImportAction extends AbstractAction {
         this.model = model;
         this.trainImport = trainImport;
         this.supportLibrary = supportLibrary;
-        this.importDialog = new ExportImportSelectionDialog(frame, true);
         this.groupDialog = trainImport ? new GroupChooserFromToDialog() : null;
     }
 
@@ -79,32 +57,18 @@ public class ImportAction extends AbstractAction {
         ActionContext context = new ActionContext(parent);
         ActionHandler handler = ActionHandler.getInstance();
 
-        // select imported model
-        try (CloseableFileChooser gtmFileChooser = FileChooserFactory.getInstance()
-                .getFileChooser(supportLibrary ? FileChooserFactory.Type.GTM_GTML : FileChooserFactory.Type.GTM)) {
-            final int retVal = gtmFileChooser.showOpenDialog(parent);
+        context.setAttribute("fileType", supportLibrary ? FileChooserFactory.Type.GTM_GTML : FileChooserFactory.Type.GTM);
+        context.setAttribute("diagramImport", model.getDiagram());
 
-
-            if (retVal == JFileChooser.APPROVE_OPTION) {
-                final File selectedFile = gtmFileChooser.getSelectedFile();
-                context.setAttribute("file", selectedFile);
-                ModelAction loadAction = selectedFile.getName().endsWith(".gtm") ?
-                        new LoadDiagramModelAction(context) :
-                            new LoadLibraryModelAction(context);
-                handler.execute(loadAction);
-            } else {
-                // skip the rest
-                return;
-            }
-        }
-
-
+        handler.execute(new OpenFileModelAction(context));
+        handler.execute(new SelectLoadAction(context));
+        handler.execute(new LoadDiagramModelAction(context));
+        handler.execute(new LoadLibraryModelAction(context));
         handler.execute(new EventDispatchModelAction(context) {
 
             @Override
             protected void eventDispatchAction() {
                 TrainDiagram diagram = (TrainDiagram) context.getAttribute("diagram");
-                Library library = (Library) context.getAttribute("library");
                 boolean cancelled = false;
                 Predicate<ObjectWithId> filter = null;
                 if (trainImport) {
@@ -112,35 +76,21 @@ public class ImportAction extends AbstractAction {
                     groupDialog.showDialog(diagram, null, model.getDiagram(), null);
                     if (groupDialog.isSelected()) {
                         final Group group = groupDialog.getSelectedFrom();
-                        filter = new TrainOidFilter(group);
+                        filter = new TrainGroupFilter(group);
                     } else {
                         cancelled = !groupDialog.isSelected();
                     }
                 }
-                if ((diagram != null || library != null) && !cancelled) {
-                    ExportImportSelectionSource source;
-                    if (trainImport) {
-                        source = ExportImportSelectionSource.fromDiagramSingleTypeWithFilter(diagram, ImportComponent.TRAINS, filter::apply);
-                    } else {
-                        source = diagram != null ?
-                                ExportImportSelectionSource.fromDiagramToDiagram(diagram) :
-                                    ExportImportSelectionSource.fromLibraryToDiagram(library);
-                    }
-                    importDialog.setSelectionSource(source);
-                    importDialog.setLocationRelativeTo(parent);
-                    importDialog.setVisible(true);
-                    cancelled = importDialog.isCancelled();
-                }
+                context.setAttribute("trainFilter", filter);
                 context.setAttribute("cancelled", cancelled);
-                context.setAttribute("selection", importDialog.getSelection());
                 if (trainImport) {
                     context.setAttribute("trainImport", new ImportModelAction.TrainImportConfig(groupDialog.isRemoveExistingTrains(),
                             groupDialog.getSelectedFrom(), groupDialog.getSelectedTo()));
                 }
-                context.setAttribute("diagram", model.getDiagram());
             }
         });
 
+        handler.execute(new ImportSelectionModelAction(context));
         handler.execute(new ImportModelAction(context));
     }
 }

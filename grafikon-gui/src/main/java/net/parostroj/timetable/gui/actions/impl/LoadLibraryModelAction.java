@@ -21,6 +21,7 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
     private static final Logger log = LoggerFactory.getLogger(LoadLibraryModelAction.class);
 
     private String errorMessage;
+    private File selectedFile;
 
     public LoadLibraryModelAction(ActionContext context) {
         super(context);
@@ -28,7 +29,11 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
 
     @Override
     protected void backgroundAction() {
-        File selectedFile = (File) getActionContext().getAttribute("file");
+        selectedFile = (File) getActionContext().getAttribute("libraryFile");
+        if (selectedFile == null) {
+            // skip
+            return;
+        }
         setWaitMessage(ResourceLoader.getString("wait.message.loadlibrary"));
         setWaitDialogVisible(true);
         long time = System.currentTimeMillis();
@@ -58,7 +63,7 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
     @Override
     protected void eventDispatchActionAfter() {
         if (errorMessage != null) {
-            String text = errorMessage + " " + getActionContext().getAttribute("file");
+            String text = errorMessage + " " + selectedFile;
             GuiComponentUtils.showError(text, getActionContext().getLocationComponent());
         }
     }
