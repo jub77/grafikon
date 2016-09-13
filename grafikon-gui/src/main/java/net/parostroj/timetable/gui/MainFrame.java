@@ -411,6 +411,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", evt -> ouputTemplatesMenuItemActionPerformed(evt), true); // NOI18N
         this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", evt -> ouputMenuItemActionPerformed(evt), true); // NOI18N
+        this.addMenuItem(actionMenu, "menu.action.outputs.import.replace", new ImportReplaceOutputTemplatesAction(model), null); // NOI18N
 
         menuBar.add(actionMenu);
 

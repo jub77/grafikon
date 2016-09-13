@@ -87,7 +87,7 @@ public class ImportModelAction extends EventDispatchAfterModelAction {
             ExportImportSelection selection = context.getAttribute("selection", ExportImportSelection.class);
             TrainDiagram diagram = context.getAttribute("diagramImport", TrainDiagram.class);
             TrainImportConfig trainImportConfig = context.getAttribute("trainImport", TrainImportConfig.class);
-            Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjects();
+            Map<ImportComponent, Collection<ObjectWithId>> map = selection.getObjectMap();
             imports = new TrainDiagramPartImport(diagram, selection.getImportMatch(), selection.isImportOverwrite());
             List<ObjectWithId> list = map.values().stream().sequential().flatMap(item -> item.stream().sequential()).collect(Collectors.toList());
             size = list.size();
