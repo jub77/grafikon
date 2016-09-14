@@ -99,7 +99,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
                 LSLibraryItem lsItem = lss.load(is, LSLibraryItem.class);
                 lsItem.createLibraryItem(libraryBuilder);
             }
-            log.debug("Loaded version: {}", version);
+            log.debug("Loaded version: {}", version != null ? version : "<missing>");
             return libraryBuilder.build();
         } catch (IOException e) {
             throw new LSException(e);

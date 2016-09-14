@@ -170,7 +170,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             for (LoadFilter filter : loadFilters) {
                 filter.checkDiagram(trainDiagram, version);
             }
-            log.debug("Loaded version: {}", version);
+            log.debug("Loaded version: {}", version != null ? version : "<missing>");
             return trainDiagram;
         } catch (IOException e) {
             throw new LSException(e);

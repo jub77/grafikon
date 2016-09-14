@@ -20,8 +20,8 @@ class LSCache<T extends LSVersions> {
 
     private static final Logger log = LoggerFactory.getLogger(LSCache.class);
 
-    private final Map<ModelVersion, Class<? extends LSVersions>> cacheLoad = new ConcurrentHashMap<ModelVersion, Class<? extends LSVersions>>();
-    private final Map<ModelVersion, Class<? extends LSVersions>> cacheSave = new ConcurrentHashMap<ModelVersion, Class<? extends LSVersions>>();
+    private final Map<ModelVersion, Class<? extends LSVersions>> cacheLoad = new ConcurrentHashMap<>();
+    private final Map<ModelVersion, Class<? extends LSVersions>> cacheSave = new ConcurrentHashMap<>();
 
     private final Class<T> cacheType;
     private final String versionKey;
@@ -103,7 +103,7 @@ class LSCache<T extends LSVersions> {
         try {
             Class<? extends LSVersions> clazz = cacheSave.get(modelVersion);
             if (clazz == null)
-                throw new LSException("No FileLoadSave registered for version: " + modelVersion.getVersion());
+                throw new LSException("No LS registered for version: " + modelVersion.getVersion());
             return cacheType.cast(clazz.newInstance());
         } catch (InstantiationException ex) {
             throw new LSException(ex);
@@ -126,9 +126,10 @@ class LSCache<T extends LSVersions> {
 
     private T createInstanceForLoad(ModelVersion modelVersion) throws LSException {
         try {
+            log.debug("Getting LS for version: {}", modelVersion);
             Class<? extends LSVersions> clazz = cacheLoad.get(modelVersion);
             if (clazz == null)
-                throw new LSException("No FileLoadSave registered for version: " + modelVersion.getVersion());
+                throw new LSException("No LS registered for version: " + modelVersion.getVersion());
             return cacheType.cast(clazz.newInstance());
         } catch (InstantiationException ex) {
             throw new LSException(ex);
