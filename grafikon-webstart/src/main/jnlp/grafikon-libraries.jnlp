@@ -52,6 +52,9 @@
         <jar href="beanfabrics-core-${beanfabrics.version}.jar" download="eager"/>
         <jar href="beanfabrics-swing-${beanfabrics.version}.jar" download="eager"/>
         <jar href="xml-apis-ext-${xml-apis.version}.jar" download="eager"/>
+        <jar href="proxy-vole-${proxy-vole.version}.jar" download="eager"/>
+        <jar href="jna-${jna.version}.jar" download="eager"/>
+        <jar href="jna-platform-${jna.version}.jar" download="eager"/>
     </resources>
     <component-desc/>
 </jnlp>

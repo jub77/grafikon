@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.util.*;
 
 import javax.script.ScriptEngineManager;
@@ -51,6 +52,8 @@ import org.beanfabrics.Path;
 import org.ini4j.Ini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.markusbernhardt.proxy.ProxySearch;
 
 /**
  * Main frame for the application.
@@ -98,6 +101,10 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         info.setText(getInfoText("Preloading dialogs..."));
         FileChooserFactory fcf = FileChooserFactory.getInstance();
         fcf.initialize();
+
+        // init proxy selector
+        ProxySearch search = ProxySearch.getDefaultProxySearch();
+        ProxySelector.setDefault(search.getProxySelector());
     }
 
     private String getInfoText(String txt) {

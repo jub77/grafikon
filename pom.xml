@@ -33,6 +33,8 @@
         <guava.version>19.0</guava.version>
         <beanfabrics.version>1.4.2</beanfabrics.version>
         <xml-apis.version>1.3.04</xml-apis.version>
+        <proxy-vole.version>1.0.2</proxy-vole.version>
+        <jna.version>4.2.2</jna.version>
         <grafikon.jnlp.version>dev</grafikon.jnlp.version>
         <grafikon.version.base>1.3.0-alfa</grafikon.version.base>
     </properties>
@@ -315,6 +317,11 @@
                         <groupId>xml-apis</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.markusbernhardt</groupId>
+                <artifactId>proxy-vole</artifactId>
+                <version>${proxy-vole.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.parostroj</groupId>
