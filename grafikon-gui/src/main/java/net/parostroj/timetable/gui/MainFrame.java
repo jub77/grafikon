@@ -370,8 +370,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.add(new javax.swing.JSeparator());
 
-        this.addMenuItem(fileMenu, "menu.file.exportimport", new ImportAction(model, this, false, true), null); // NOI18N
-        this.addMenuItem(fileMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true, false), null); // NOI18N
+        javax.swing.JMenu importMenu = new javax.swing.JMenu(ResourceLoader.getString("menu.file.importmenu")); // NOI18N
+        fileMenu.add(importMenu);
+
+        this.addMenuItem(importMenu, "menu.file.exportimport", new ImportAction(model, this, false, true), null); // NOI18N
+        this.addMenuItem(importMenu, "menu.file.exportimport.trains", new ImportAction(model, this, true, false), null); // NOI18N
+        this.addMenuItem(importMenu, "menu.file.outputs.import.replace", new ImportReplaceOutputTemplatesAction(model), null); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.library.export", new ExportAction(model, this), null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
@@ -418,7 +422,6 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         this.addMenuItemWithListener(actionMenu, "menu.action.user.output.templates", evt -> ouputTemplatesMenuItemActionPerformed(evt), true); // NOI18N
         this.addMenuItemWithListener(actionMenu, "menu.action.user.outputs", evt -> ouputMenuItemActionPerformed(evt), true); // NOI18N
-        this.addMenuItem(actionMenu, "menu.action.outputs.import.replace", new ImportReplaceOutputTemplatesAction(model), null); // NOI18N
 
         menuBar.add(actionMenu);
 
