@@ -11,7 +11,7 @@
     <name>grafikon-webstart</name>
 
     <build>
-        <finalName>grafikon-${grafikon.version.complete}</finalName>
+        <finalName>grafikon-${grafikon.version}+${grafikon.id}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

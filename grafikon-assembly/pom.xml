@@ -11,7 +11,7 @@
     <name>grafikon-assembly</name>
 
     <properties>
-        <assembly.name>grafikon-${grafikon.version.complete}</assembly.name>
+        <assembly.name>grafikon-${grafikon.version}+${grafikon.id}</assembly.name>
     </properties>
 
     <build>
