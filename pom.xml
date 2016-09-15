@@ -50,10 +50,10 @@
             <properties>
                 <grafikon.version.short>${grafikon.version.base}</grafikon.version.short>
                 <grafikon.version>${grafikon.version.base}-${grafikon.timestamp}</grafikon.version>
-                <grafikon.build>${git.commit.id.describe}-${git.build.time}</grafikon.build>
+                <grafikon.build>${git.build.time}-${git.commit.id.describe}</grafikon.build>
                 <grafikon.timestamp>${git.commit.time}</grafikon.timestamp>
                 <grafikon.id>${git.commit.id.describe}</grafikon.id>
-                <grafikon.version.complete>${grafikon.version}+${grafikon.id}</grafikon.version.complete>
+                <grafikon.version.complete>${grafikon.version}+${grafikon.build}</grafikon.version.complete>
                 <grafikon.user.name>${git.build.user.name}</grafikon.user.name>
             </properties>
         </profile>
