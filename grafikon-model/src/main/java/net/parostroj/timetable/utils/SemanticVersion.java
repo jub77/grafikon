@@ -55,32 +55,32 @@ public class SemanticVersion {
         return build;
     }
 
-    public String getBaseVersion() {
+    public String toBaseVersionString() {
         return String.format("%d.%d.%d", major, minor, patch);
     }
 
-    public String getVersion() {
+    public String toVersionString() {
         if (prerelease != null) {
-            StringBuilder builder = new StringBuilder(getBaseVersion());
+            StringBuilder builder = new StringBuilder(toBaseVersionString());
             builder.append('-').append(prerelease);
             return builder.toString();
         } else {
-            return getBaseVersion();
+            return toBaseVersionString();
         }
     }
 
-    public String getCompleteVersion() {
+    public String toCompleteVersionString() {
         if (build != null) {
-            StringBuilder builder = new StringBuilder(getVersion());
+            StringBuilder builder = new StringBuilder(toVersionString());
             builder.append('+').append(build);
             return builder.toString();
         } else {
-            return getVersion();
+            return toVersionString();
         }
     }
 
     @Override
     public String toString() {
-        return getCompleteVersion();
+        return toCompleteVersionString();
     }
 }

@@ -77,7 +77,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
-        log.debug("Version: {}", getVersion(VersionInfo.Type.FULL));
+        log.debug("Version: {}", versionInfo.getVersion().toCompleteVersionString());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -109,11 +109,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s\n%s", getVersion(VersionInfo.Type.NORMAL), txt);
-    }
-
-    private String getVersion(VersionInfo.Type type) {
-    	return versionInfo.getVersion(type);
+        return String.format("%s\n%s", versionInfo.getVersion().toVersionString(), txt);
     }
 
     public MainFrame() {
@@ -289,7 +285,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = getVersion(VersionInfo.Type.NORMAL);
+        String version = versionInfo.getVersion().toVersionString();
         if (version != null) {
             title += " (" + version + ")";
         }
@@ -668,7 +664,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot create FileLoadSave", e);
         }
         AboutDialog dialog = new AboutDialog(this, true,
-                String.format(aboutBundle.getString("text"), getVersion(VersionInfo.Type.FULL), fls == null ? "-" : fls.getSaveVersion()),
+                String.format(aboutBundle.getString("text"), versionInfo.getVersion().toCompleteVersionString(), fls == null ? "-" : fls.getSaveVersion()),
                 getClass().getResource(aboutBundle.getString("image")), true);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);

@@ -36,8 +36,11 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
         context.setAttribute("diagramImport", model.getDiagram());
 
-        String version = new VersionInfo().getVersion(VersionInfo.Type.SHORT);
-        context.setAttribute("libraryUrl", String.format("http://jub.parostroj.net/grafikon/library/%s/%s", version, TEMPLATE));
+        String version = new VersionInfo().getVersion().toBaseVersionString();
+        String url = String.format("http://jub.parostroj.net/grafikon/library/%s/%s", version, TEMPLATE);
+        context.setAttribute("libraryUrl", url);
+
+        log.debug("Loading library: {}", url);
 
         handler.execute(new LoadLibraryUrlModelAction(context));
         handler.execute(new OutputTemplateSelectionModelAction(context));

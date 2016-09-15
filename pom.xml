@@ -48,7 +48,6 @@
                 </file>
             </activation>
             <properties>
-                <grafikon.version.short>${grafikon.version.base}</grafikon.version.short>
                 <grafikon.version>${grafikon.version.base}-${grafikon.timestamp}</grafikon.version>
                 <grafikon.build>${git.build.time}-${git.commit.id.describe}</grafikon.build>
                 <grafikon.timestamp>${git.commit.time}</grafikon.timestamp>
