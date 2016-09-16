@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlRootElement(name="train")
+@XmlRootElement(name="trains")
 @XmlType(propOrder={"routeLengthUnit", "routes", "routeNumbers", "routeStations", "validity", "cycle", "trainTimetables", "texts"})
 public class TrainTimetables {
 
@@ -60,7 +60,7 @@ public class TrainTimetables {
     @XmlElement(name="route")
     public List<NetPartRouteInfo> getRoutes() {
         if (routes == null)
-            routes = new LinkedList<NetPartRouteInfo>();
+            routes = new LinkedList<>();
         return routes;
     }
 
