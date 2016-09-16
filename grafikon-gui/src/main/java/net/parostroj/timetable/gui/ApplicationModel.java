@@ -10,6 +10,7 @@ import org.beanfabrics.model.PMManager;
 import org.ini4j.Ini;
 
 import net.parostroj.timetable.actions.scripts.ScriptsLoader;
+import net.parostroj.timetable.gui.actions.UrlConstants;
 import net.parostroj.timetable.gui.actions.impl.OutputCategory;
 import net.parostroj.timetable.gui.commands.Command;
 import net.parostroj.timetable.gui.commands.CommandException;
@@ -27,6 +28,8 @@ import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 import net.parostroj.timetable.utils.Reference;
 import net.parostroj.timetable.utils.ResourceLoader;
+import net.parostroj.timetable.utils.SemanticVersion;
+import net.parostroj.timetable.utils.VersionInfo;
 
 /**
  * Application model.
@@ -52,6 +55,7 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     private final ScriptsLoader psLoader;
     private final ScriptsLoader guiPsLoader;
     private final LanguageLoader languageLoader;
+    private final SemanticVersion currentVersion;
 
     final IEnumeratedValuesPM<Locale> locale;
     final IEnumeratedValuesPM<String> lookAndFeel;
@@ -62,29 +66,30 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
      * Default constructor.
      */
     public ApplicationModel() {
+        currentVersion = new VersionInfo().getVersion();
         guiContext = new GuiContextImpl();
         languageLoader = LanguageLoader.getInstance();
-        listeners = new HashSet<ApplicationModelListener>();
+        listeners = new HashSet<>();
         mediator = new Mediator();
         collegue = new TrainDiagramCollegue();
         mediator.addColleague(collegue);
         mediator.addColleague(new ApplicationModelColleague(this));
-        outputTemplates = new HashMap<String, File>();
+        outputTemplates = new HashMap<>();
         programSettings = new ProgramSettings();
         outputSettings = new OutputSettings();
-        lastOpenedFiles = new LinkedList<File>();
+        lastOpenedFiles = new LinkedList<>();
         psLoader = ScriptsLoader.newDefaultScriptsLoader();
         guiPsLoader = ScriptsLoader.newScriptsLoader("gui_scripts");
         List<Locale> guiLocales = languageLoader.getLocales(LanguagesType.GUI);
         final Map<Locale, String> localeMap = languageLoader.createMap(guiLocales, "system");
-        locale = new EnumeratedValuesPM<Locale>(localeMap);
+        locale = new EnumeratedValuesPM<>(localeMap);
         final Map<String, String> lookAndFeelMap = getLookAndFeelMap();
-        lookAndFeel = new EnumeratedValuesPM<String>(lookAndFeelMap);
+        lookAndFeel = new EnumeratedValuesPM<>(lookAndFeelMap);
         PMManager.setup(this);
     }
 
     private Map<String, String> getLookAndFeelMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         map.put("system", ResourceLoader.getString("menu.lookandfeel.system"));
         for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
             map.put(laf.getClassName(), laf.getName());
@@ -363,5 +368,13 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
 
     public LanguageLoader getLanguageLoader() {
         return languageLoader;
+    }
+
+    public String getLibraryBaseUrl() {
+        return String.format(UrlConstants.LIBRARY_URL, currentVersion.toBaseVersionString());
+    }
+
+    public String getTemplatesBaseUrl() {
+        return String.format(UrlConstants.TEMPLATES_URL, currentVersion.toBaseVersionString());
     }
 }

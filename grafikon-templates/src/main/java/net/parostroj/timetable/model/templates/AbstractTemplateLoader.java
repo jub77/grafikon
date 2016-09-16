@@ -31,13 +31,11 @@ abstract class AbstractTemplateLoader implements TemplateLoader {
                 JAXBContext context = JAXBContext.newInstance(TemplateList.class);
                 Unmarshaller u = context.createUnmarshaller();
                 templateList = (TemplateList) u.unmarshal(is);
-                log.debug("Loaded list of templates.");
+                log.debug("Loaded list of templates: {}", this);
             } catch (JAXBException e) {
-                log.error("Cannot load list of templates.", e);
-                throw new LSException(e.getMessage(), e);
+                throw new LSException("Cannot deserialize list of templates: " + e.getMessage(), e);
             } catch (IOException e) {
-                log.error("Error reading/closing template file.", e);
-                throw new LSException(e.getMessage(), e);
+                throw new LSException("Error reading list of templates: " + e.getMessage(), e);
             }
         }
         return templateList.getTemplates();
@@ -55,7 +53,7 @@ abstract class AbstractTemplateLoader implements TemplateLoader {
                     LSFile ls = LSFileFactory.getInstance().createForLoad(is);
                     diagram = ls.load(is);
                 } catch (IOException e) {
-                    throw new LSException("Error getting model version.", e);
+                    throw new LSException("Error loading template: " + e.getMessage(), e);
                 }
                 return diagram;
             }

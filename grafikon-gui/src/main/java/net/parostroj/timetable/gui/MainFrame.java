@@ -14,7 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.ProxySelector;
+import java.net.URL;
 import java.util.*;
 
 import javax.script.ScriptEngineManager;
@@ -359,6 +361,13 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         TemplateLoader loader = TemplateLoader.getDefault();
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this, loader), "new", false, null); // NOI18N
+        try {
+            this.addMenuItem(fileMenu, "menu.file.new.default.url",
+                    new NewOpenAction(model, this, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()))),
+                    "new", false, null); // NOI18N
+        } catch (MalformedURLException mue) {
+            log.warn(mue.getMessage(), mue);
+        }
 
         fileMenu.add(new javax.swing.JSeparator());
 

@@ -15,7 +15,6 @@ import net.parostroj.timetable.gui.actions.execution.ImportModelAction;
 import net.parostroj.timetable.gui.actions.impl.CopyTemplatesToOutputsModelAction;
 import net.parostroj.timetable.gui.actions.impl.LoadLibraryUrlModelAction;
 import net.parostroj.timetable.gui.actions.impl.OutputTemplateSelectionModelAction;
-import net.parostroj.timetable.utils.VersionInfo;
 
 public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
@@ -36,10 +35,8 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
         context.setAttribute("diagramImport", model.getDiagram());
 
-        String version = new VersionInfo().getVersion().toBaseVersionString();
-        String url = String.format("http://jub.parostroj.net/grafikon/library/%s/%s", version, TEMPLATE);
+        String url = model.getLibraryBaseUrl() + "/" + TEMPLATE;
         context.setAttribute("libraryUrl", url);
-
         log.debug("Loading library: {}", url);
 
         handler.execute(new LoadLibraryUrlModelAction(context));

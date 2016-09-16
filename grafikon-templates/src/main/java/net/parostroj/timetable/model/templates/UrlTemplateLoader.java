@@ -32,4 +32,9 @@ class UrlTemplateLoader extends AbstractTemplateLoader {
     protected InputStream getTemplate(Template template) throws IOException {
         return new URL(baseUrl.toString() + "/" + template.getFilename()).openStream();
     }
+
+    @Override
+    public String toString() {
+        return "Url: " + baseUrl;
+    }
 }

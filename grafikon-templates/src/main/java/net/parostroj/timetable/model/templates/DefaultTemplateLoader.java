@@ -22,4 +22,9 @@ class DefaultTemplateLoader extends AbstractTemplateLoader {
     protected InputStream getTemplate(Template template) throws IOException {
         return DefaultTemplateLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename());
     }
+
+    @Override
+    public String toString() {
+        return "Default";
+    }
 }
