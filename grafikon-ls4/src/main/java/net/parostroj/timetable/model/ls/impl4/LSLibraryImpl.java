@@ -55,7 +55,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
 
     @Override
     public LibraryItem loadItem(InputStream is) throws LSException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LSLibraryImpl extends AbstractLSImpl implements LSLibrary {
     public Library load(ZipInputStream is) throws LSException {
         try {
             ZipEntry entry = null;
-            ModelVersion version = null;
+            ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
             LibraryBuilder libraryBuilder = new LibraryBuilder();
             while ((entry = is.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {

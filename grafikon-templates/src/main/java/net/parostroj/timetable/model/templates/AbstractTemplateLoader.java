@@ -4,58 +4,55 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipInputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import net.parostroj.timetable.model.TrainDiagram;
-import net.parostroj.timetable.model.ls.LSFile;
-import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFileFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Class for loading model templates. It also returns list of available
- * templates.
- *
- * @author jub
- */
-public class TemplatesLoader {
+import net.parostroj.timetable.model.TrainDiagram;
+import net.parostroj.timetable.model.ls.LSException;
+import net.parostroj.timetable.model.ls.LSFile;
+import net.parostroj.timetable.model.ls.LSFileFactory;
 
-    private static final Logger log = LoggerFactory.getLogger(TemplatesLoader.class);
+abstract class AbstractTemplateLoader implements TemplateLoader {
 
-    private static final String TEMPLATE_LIST_FILE = "/templates/list.xml";
-    private static final String TEMPLATES_LOCATION = "/templates/";
-    private static TemplateList templateList;
+    private static final Logger log = LoggerFactory.getLogger(AbstractTemplateLoader.class);
 
-    public static synchronized List<Template> getTemplates() {
+    private TemplateList templateList;
+
+    @Override
+    public List<Template> getTemplates() throws LSException {
         if (templateList == null) {
             // load template list
-            try (InputStream is = TemplatesLoader.class.getResourceAsStream(TEMPLATE_LIST_FILE)) {
+            try (InputStream is = getTemplateList()) {
                 JAXBContext context = JAXBContext.newInstance(TemplateList.class);
                 Unmarshaller u = context.createUnmarshaller();
                 templateList = (TemplateList) u.unmarshal(is);
                 log.debug("Loaded list of templates.");
             } catch (JAXBException e) {
                 log.error("Cannot load list of templates.", e);
-                // empty template list
-                templateList = new TemplateList();
+                throw new LSException(e.getMessage(), e);
             } catch (IOException e) {
                 log.error("Error reading/closing template file.", e);
-                // empty template list
-                templateList = new TemplateList();
+                throw new LSException(e.getMessage(), e);
             }
         }
         return templateList.getTemplates();
     }
 
+    abstract protected InputStream getTemplateList() throws IOException;
+
+    @Override
     public TrainDiagram getTemplate(String name) throws LSException {
         for (Template template : getTemplates()) {
             if (template.getName().equals(name)) {
                 // create file with template location
                 TrainDiagram diagram = null;
-                try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename()); ZipInputStream is = new ZipInputStream(iStream)) {
-                    LSFile ls = this.getLoadSave(template);
+                try (InputStream iStream = getTemplate(template); ZipInputStream is = new ZipInputStream(iStream)) {
+                    LSFile ls = LSFileFactory.getInstance().createForLoad(is);
                     diagram = ls.load(is);
                 } catch (IOException e) {
                     throw new LSException("Error getting model version.", e);
@@ -67,10 +64,5 @@ public class TemplatesLoader {
         return null;
     }
 
-    private LSFile getLoadSave(Template template) throws IOException, LSException {
-        try (InputStream iStream = TemplatesLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename())) {
-            LSFile ls = LSFileFactory.getInstance().createForLoad(new ZipInputStream(iStream));
-            return ls;
-        }
-    }
+    abstract protected InputStream getTemplate(Template template) throws IOException;
 }

@@ -24,6 +24,7 @@ import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 import org.slf4j.Logger;
@@ -39,14 +40,17 @@ public class NewOpenAction extends AbstractAction {
     private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
     private final ApplicationModel model;
 
+    private TemplateLoader templateLoader;
+
     /**
      * creates a new instance
      *
      * @param model application model
      * @param owner frame
      */
-    public NewOpenAction(ApplicationModel model, Frame owner) {
+    public NewOpenAction(ApplicationModel model, Frame owner, TemplateLoader templateLoader) {
         this.model = model;
+        this.templateLoader = templateLoader;
     }
 
     @Override
@@ -175,12 +179,19 @@ public class NewOpenAction extends AbstractAction {
 
             @Override
             protected void eventDispatchAction() {
-                // create new model
-                NewModelDialog newModelDialog = new NewModelDialog((Window) parent, true);
-                newModelDialog.setLocationRelativeTo(parent);
-                Callable<TrainDiagram> diagramCreator = newModelDialog.showDialog();
-                newModelDialog.dispose();
-                context.setAttribute("diagramCreator", diagramCreator);
+                try {
+                    // create new model
+                    NewModelDialog newModelDialog = new NewModelDialog((Window) parent, true);
+                    newModelDialog.setLocationRelativeTo(parent);
+                    Callable<TrainDiagram> diagramCreator = newModelDialog.showDialog(templateLoader);
+                    newModelDialog.dispose();
+                    context.setAttribute("diagramCreator", diagramCreator);
+                } catch (LSException error) {
+                    log.warn("Cannot load template.", error);
+                    JOptionPane.showMessageDialog(parent, error.getMessage(),
+                            ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+                    context.setCancelled(true);
+                }
             }
         };
         ModelAction createAction = new EventDispatchAfterModelAction(context) {

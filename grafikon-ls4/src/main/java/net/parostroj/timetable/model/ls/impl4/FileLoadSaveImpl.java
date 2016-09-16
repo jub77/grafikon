@@ -113,7 +113,7 @@ public class FileLoadSaveImpl extends AbstractLSImpl implements LSFile {
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
             FileLoadSaveAttachments attachments = new FileLoadSaveAttachments(DATA_ATTACHMENTS);
-            ModelVersion version = null;
+            ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
             while ((entry = zipInput.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)

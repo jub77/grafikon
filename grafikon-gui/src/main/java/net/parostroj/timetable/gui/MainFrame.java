@@ -42,6 +42,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.Pair;
 import net.parostroj.timetable.utils.ResourceLoader;
@@ -255,7 +256,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         GuiComponentUtils.runLaterInEDT(() -> {
             JMenuItem openItem = null;
             if (!lastOpened.containsKey(file)) {
-                openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this));
+                openItem = new JMenuItem(new NewOpenAction(model, MainFrame.this, null));
                 openItem.setText("x " + file.getName());
                 openItem.setActionCommand("open:" + file.getAbsoluteFile());
                 lastOpened.put(file, openItem);
@@ -356,11 +357,12 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this), "new", false, null); // NOI18N
+        TemplateLoader loader = TemplateLoader.getDefault();
+        this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this, loader), "new", false, null); // NOI18N
 
         fileMenu.add(new javax.swing.JSeparator());
 
-        this.addMenuItem(fileMenu, "menu.file.open", new NewOpenAction(model, this), "open", false, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
+        this.addMenuItem(fileMenu, "menu.file.open", new NewOpenAction(model, this, null), "open", false, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.save", new SaveAction(model), "save", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
         this.addMenuItem(fileMenu, "menu.file.saveas", new SaveAction(model), "save_as", true, javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK)); // NOI18N
 
@@ -813,7 +815,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
     }
 
     public void forceLoad(File file) {
-        NewOpenAction action = new NewOpenAction(model, this);
+        NewOpenAction action = new NewOpenAction(model, this, null);
         action.actionPerformed(new ActionEvent(this, 0, "open:" + file.getAbsolutePath()));
     }
 

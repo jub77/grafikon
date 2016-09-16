@@ -3,7 +3,9 @@ package net.parostroj.timetable.model.ls.impl3;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.*;
 import net.parostroj.timetable.model.*;
@@ -36,8 +38,11 @@ public class FileLoadSaveImpl implements LSFile {
         VERSIONS = Collections.unmodifiableList(Arrays.asList(new ModelVersion(3, 0), new ModelVersion(3, 1)));
     }
 
+    private final Map<String, Object> properties;
+
     public FileLoadSaveImpl() throws LSException {
         lss = new LSSerializer(true);
+        properties = new HashMap<>();
     }
 
     @Override
@@ -88,7 +93,7 @@ public class FileLoadSaveImpl implements LSFile {
             ZipEntry entry = null;
             TrainDiagramBuilder builder = null;
             FileLoadSaveImages loadImages = new FileLoadSaveImages(DATA_IMAGES);
-            ModelVersion version = null;
+            ModelVersion version = (ModelVersion) properties.get(VERSION_PROPERTY);
             while ((entry = zipInput.getNextEntry()) != null) {
                 if (entry.getName().equals(METADATA)) {
                     // check major and minor version (do not allow load newer versions)
@@ -195,11 +200,11 @@ public class FileLoadSaveImpl implements LSFile {
 
     @Override
     public Object getProperty(String key) {
-        return null;
+        return properties.get(key);
     }
 
     @Override
     public void setProperty(String key, Object value) {
-        // no properties available
+        properties.put(key, value);
     }
 }

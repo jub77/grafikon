@@ -7,7 +7,7 @@ import net.parostroj.timetable.model.Scale;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.templates.Template;
-import net.parostroj.timetable.model.templates.TemplatesLoader;
+import net.parostroj.timetable.model.templates.TemplateLoader;
 
 import org.beanfabrics.model.*;
 import org.beanfabrics.support.Operation;
@@ -23,7 +23,7 @@ public class NewModelPM extends AbstractPM {
     private static final double SELECTION_MAX_TIME_SCALE = 10.0;
     private static final double TIME_SCALE_STEP = 0.5;
 
-    final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<Scale>(EnumeratedValuesPM.createValueMap(
+    final IEnumeratedValuesPM<Scale> scale = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(
             Scale.getPredefined(), i -> i.getName()));
     final BigDecimalPM timeScale = new BigDecimalPM();
     final IEnumeratedValuesPM<Template> template;
@@ -32,9 +32,13 @@ public class NewModelPM extends AbstractPM {
 
     private Callable<TrainDiagram> createTask;
 
-    public NewModelPM() {
+    private TemplateLoader templateLoader;
+
+    public NewModelPM(TemplateLoader templateLoader) throws LSException {
+        this.templateLoader = templateLoader;
+
         // time scale
-        Options<BigDecimal> options = new Options<BigDecimal>();
+        Options<BigDecimal> options = new Options<>();
         IFormat<BigDecimal> format = timeScale.getFormat();
         for (double d = MIN_TIME_SCALE; d <= SELECTION_MAX_TIME_SCALE; d += TIME_SCALE_STEP) {
             BigDecimal bigDecimal = BigDecimal.valueOf(d);
@@ -49,7 +53,7 @@ public class NewModelPM extends AbstractPM {
         });
         timeScale.setBigDecimal(BigDecimal.valueOf(INIT_TIME_SCALE));
         // templates
-        template = new EnumeratedValuesPM<Template>(EnumeratedValuesPM.createValueMap(TemplatesLoader.getTemplates(),
+        template = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(templateLoader.getTemplates(),
                 i -> i.getName()));
         // setup
         PMManager.setup(this);
@@ -73,7 +77,7 @@ public class NewModelPM extends AbstractPM {
 
             @Override
             public TrainDiagram call() throws LSException {
-                TrainDiagram diagram = (new TemplatesLoader()).getTemplate(templateName);
+                TrainDiagram diagram = templateLoader.getTemplate(templateName);
                 diagram.setAttribute(TrainDiagram.ATTR_SCALE, scaleValue);
                 diagram.setAttribute(TrainDiagram.ATTR_TIME_SCALE, timeScaleValue);
                 return diagram;

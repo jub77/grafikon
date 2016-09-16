@@ -121,20 +121,34 @@ class LSCache<T extends LSVersions> {
             modelVersion = ModelVersion.parseModelVersion(metadata.getProperty(versionKey));
         }
 
-        return this.createInstanceForLoad(modelVersion);
+        T instance = this.createInstanceForLoad(modelVersion);
+        if (instance instanceof LSConfigurable) {
+            ((LSConfigurable) instance).setProperty(LSConfigurable.VERSION_PROPERTY, modelVersion);
+        }
+        return instance;
     }
 
     private T createInstanceForLoad(ModelVersion modelVersion) throws LSException {
         try {
-            log.debug("Getting LS for version: {}", modelVersion);
             Class<? extends LSVersions> clazz = cacheLoad.get(modelVersion);
             if (clazz == null)
                 throw new LSException("No LS registered for version: " + modelVersion.getVersion());
-            return cacheType.cast(clazz.newInstance());
+            T instance = cacheType.cast(clazz.newInstance());
+            List<ModelVersion> versions = instance.getLoadVersions();
+            logVersions(modelVersion, versions);
+            return instance;
         } catch (InstantiationException ex) {
             throw new LSException(ex);
         } catch (IllegalAccessException ex) {
             throw new LSException(ex);
+        }
+    }
+
+    private void logVersions(ModelVersion modelVersion, List<ModelVersion> versions) {
+        if (versions.size() == 1) {
+            log.debug("Getting LS for version: {} [{}]", modelVersion, versions.get(0));
+        } else {
+            log.debug("Getting LS for version: {} [{}-{}]", modelVersion, versions.get(0), versions.get(versions.size() - 1));
         }
     }
 }

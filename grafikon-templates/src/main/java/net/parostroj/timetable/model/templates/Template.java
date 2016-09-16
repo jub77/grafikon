@@ -4,12 +4,12 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Template information.
- * 
+ *
  * @author jub
  */
 @XmlType(propOrder = {"name", "filename"})
 public class Template {
-    
+
     private String name;
     private String filename;
 
@@ -27,5 +27,10 @@ public class Template {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", name, filename);
     }
 }
