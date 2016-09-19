@@ -299,6 +299,7 @@ public class OutputTemplateListDialog extends javax.swing.JDialog implements Gui
         Output testOutput = diagram.getPartFactory().createOutput(IdGenerator.getInstance().getId());
         testOutput.setName(LocalizedString.fromString(outputTemplate.getKey()));
         testOutput.setTemplate(outputTemplate);
+        log.debug("Writing template {} to {}", testOutput.getName().getDefaultString(), outputDirectory);
         OutputTemplateAction action = new OutputTemplateAction(c, diagram, settings, outputDirectory,
                 Collections.singletonList(testOutput));
         ActionHandler.getInstance().execute(action);
