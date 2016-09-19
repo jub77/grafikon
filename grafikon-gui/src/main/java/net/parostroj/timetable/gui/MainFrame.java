@@ -715,11 +715,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         dialog.registerContext(model.getGuiContext());
         OutputSettings settings = model.getOutputSettings();
         FileChooserFactory chooserFactory = FileChooserFactory.getInstance();
-        File outputDirectory = null;
-        try (CloseableFileChooser outputChooser = chooserFactory.getFileChooser(FileChooserFactory.Type.OUTPUT_DIRECTORY)) {
-            outputDirectory = outputChooser.getSelectedFile() == null
-                    ? outputChooser.getCurrentDirectory() : outputChooser.getSelectedFile();
-        }
+        File outputDirectory = chooserFactory.getLocation(FileChooserFactory.Type.OUTPUT_DIRECTORY);
         try (CloseableFileChooser allChooser = chooserFactory.getFileChooser(FileChooserFactory.Type.ALL_FILES)) {
             dialog.showDialog(model.getDiagram(), outputDirectory, allChooser, new Settings(settings.getLocale()));
             dialog.dispose();

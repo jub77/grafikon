@@ -138,6 +138,14 @@ public class FileChooserFactory implements StorableGuiData {
         return chooser;
     }
 
+    public File getLocation(Type type) {
+        File file = locations.get(type.getKey());
+        if (file == null) {
+            file = new File(".");
+        }
+        return file;
+    }
+
     @Override
     public Section saveToPreferences(Ini prefs) {
         Ini.Section section = AppPreferences.getSection(prefs, "main");
