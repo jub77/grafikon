@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author jub
  */
-@XmlType(propOrder={"name", "completeName", "diesel", "electric" , "routeInfo", 
+@XmlType(propOrder={"name", "completeName", "diesel", "electric", "categoryKey", "routeInfo",
     "engineDescription", "controlled", "weightData", "lengthData", "rows"})
 public class TrainTimetable {
 
@@ -18,6 +18,7 @@ public class TrainTimetable {
     private String completeName;
     private Boolean diesel;
     private Boolean electric;
+    private String categoryKey;
     private List<RouteInfoPart> routeInfo;
     private String engineDescription;
     private Boolean controlled;
@@ -114,5 +115,13 @@ public class TrainTimetable {
 
     public void setElectric(Boolean electric) {
         this.electric = electric;
+    }
+
+    public String getCategoryKey() {
+        return categoryKey;
+    }
+
+    public void setCategoryKey(String categoryKey) {
+        this.categoryKey = categoryKey;
     }
 }

@@ -30,11 +30,11 @@ public class TrainTimetablesExtractor {
         this.routes = routes;
         this.cycle = cycle;
         this.locale = locale;
-        this.cachedRoutePositions = new HashMap<Pair<Line, Node>, Double>();
+        this.cachedRoutePositions = new HashMap<>();
     }
 
     public TrainTimetables getTrainTimetables() {
-        List<TrainTimetable> result = new LinkedList<TrainTimetable>();
+        List<TrainTimetable> result = new LinkedList<>();
         List<Text> texts = null;
 
         // trains
@@ -47,7 +47,7 @@ public class TrainTimetablesExtractor {
             Text text = this.createText(item);
             if (text != null) {
                 if (texts == null) {
-                    texts = new LinkedList<Text>();
+                    texts = new LinkedList<>();
                 }
                 texts.add(text);
             }
@@ -86,6 +86,9 @@ public class TrainTimetablesExtractor {
         timetable.setCompleteName(train.getCompleteName());
         this.extractRouteInfo(train, timetable);
         this.extractDieselElectric(train, timetable);
+        if (train.getType() != null && train.getType().getCategory() != null) {
+            timetable.setCategoryKey(train.getType().getCategory().getKey());
+        }
         if (train.oneLineHasAttribute(Line.ATTR_CONTROLLED, Boolean.TRUE))
             timetable.setControlled(true);
         WeightDataExtractor wex = new WeightDataExtractor(train, diagram.getTrainUnitCycleType());
@@ -229,7 +232,7 @@ public class TrainTimetablesExtractor {
             if (nodeI.isFirst() && nodeI.isFreight()) {
                 List<FreightDst> freightDests = diagram.getFreightNet().getFreightToNodes(nodeI);
                 if (!freightDests.isEmpty()) {
-                    ArrayList<FreightDstInfo> fl = new ArrayList<FreightDstInfo>(freightDests.size());
+                    ArrayList<FreightDstInfo> fl = new ArrayList<>(freightDests.size());
                     for (FreightDst dst : freightDests) {
                         fl.add(FreightDstInfo.convert(dst));
                     }
@@ -281,19 +284,19 @@ public class TrainTimetablesExtractor {
         if (over.isEmpty()) {
             return null;
         } else {
-            List<Train> tTrains = new ArrayList<Train>(over.size());
+            List<Train> tTrains = new ArrayList<>(over.size());
             for (TimeInterval ti : over) {
                 if (!tTrains.contains(ti.getTrain()))
                     tTrains.add(ti.getTrain());
             }
-            ElementSort<Train> s = new ElementSort<Train>(new TrainComparator(
+            ElementSort<Train> s = new ElementSort<>(new TrainComparator(
                     node.getDiagram().getTrainsData().getTrainSortPattern()));
             tTrains = s.sort(tTrains);
-            List<String> result = new LinkedList<String>();
+            List<String> result = new LinkedList<>();
             for (Train t : tTrains) {
                 result.add(t.getName());
             }
-            return new Pair<Boolean, List<String>>(!first, result);
+            return new Pair<>(!first, result);
         }
     }
 
@@ -307,7 +310,7 @@ public class TrainTimetablesExtractor {
     }
 
     private Double getRoutePosition(Line line, Node node) {
-        Pair<Line, Node> pair = new Pair<Line, Node>(line, node);
+        Pair<Line, Node> pair = new Pair<>(line, node);
         Double position = null;
         if (!cachedRoutePositions.containsKey(pair)) {
             position = computeRoutePosition(pair);
