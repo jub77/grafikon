@@ -1,9 +1,12 @@
 package net.parostroj.timetable.gui.actions.impl;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
+import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,9 +104,9 @@ public class FileChooserFactory implements StorableGuiData {
 
     private static final FileChooserFactory INSTANCE = new FileChooserFactory();
 
-    private ApprovedFileChooser chooser;
-    private Map<Type, Configuration> configurations;
-    private Map<String, File> locations;
+    private final ChooserPool pool;
+    private final Map<Type, Configuration> configurations;
+    private final Map<String, File> locations;
 
     private FileChooserFactory() {
         configurations = new EnumMap<>(Type.class);
@@ -113,6 +116,7 @@ public class FileChooserFactory implements StorableGuiData {
         this.addConfiguration(new Configuration(Type.GTML, ResourceLoader.getString("file.gtml"), "gtml"));
         this.addConfiguration(new Configuration(Type.GTM_GTML, ResourceLoader.getString("file.gtm.gtml"), "gtm","gtml"));
         locations = new HashMap<>();
+        pool = new ChooserPool();
     }
 
     private void addConfiguration(Configuration config) {
@@ -124,13 +128,12 @@ public class FileChooserFactory implements StorableGuiData {
     }
 
     public CloseableFileChooser getFileChooser(Type type) {
-        if (chooser == null) {
-            chooser = new ApprovedFileChooser();
-        }
+        final ApprovedFileChooser chooser = pool.getChooser();
         Configuration config = configurations.get(type);
         config.initializeChooser(chooser);
-        chooser.setCloseAction(chooser -> {
-            config.cleanUpChooser((ApprovedFileChooser) chooser);
+        chooser.setCloseAction(ch -> {
+            config.cleanUpChooser((ApprovedFileChooser) ch);
+            pool.returnChooser((ApprovedFileChooser) ch);
         });
         return chooser;
     }
@@ -160,7 +163,33 @@ public class FileChooserFactory implements StorableGuiData {
         return section;
     }
 
+    private static class ChooserPool {
+
+        private final int CAPACITY = 3;
+
+        private Deque<SoftReference<ApprovedFileChooser>> choosers;
+
+        public ChooserPool() {
+            choosers = new LinkedList<>();
+        }
+
+        public ApprovedFileChooser getChooser() {
+            ApprovedFileChooser chooser = choosers.isEmpty() ? null : choosers.pop().get();
+            if (chooser == null) {
+                chooser = new ApprovedFileChooser();
+            }
+            return chooser;
+        }
+
+        public void returnChooser(ApprovedFileChooser chooser) {
+            if (choosers.size() < CAPACITY) {
+                choosers.push(new SoftReference<>(chooser));
+            }
+        }
+    }
+
     public void initialize() {
-        chooser = new ApprovedFileChooser();
+        ApprovedFileChooser chooser = pool.getChooser();
+        pool.returnChooser(chooser);
     }
 }
