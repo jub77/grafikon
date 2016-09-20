@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
  */
 public class ElementSelectionListPanel<T> extends JPanel {
 
-    private static final int VISIBLE_ROW_COUNT = 8;
+    private static final int VISIBLE_ROW_COUNT = 16;
 
     private WrapperListModel<T> items;
 
