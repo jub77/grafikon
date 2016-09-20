@@ -2,6 +2,8 @@ package net.parostroj.timetable.gui.pm;
 
 import java.text.CollationKey;
 import java.text.Collator;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 import org.beanfabrics.Path;
 import org.beanfabrics.event.ElementsDeselectedEvent;
@@ -159,5 +161,10 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         if (pm != null) {
             list.remove(pm);
         }
+    }
+
+    public T getRef(Predicate<T> predicate) {
+        return StreamSupport.stream(list.spliterator(), false).map(pm -> pm.localizedStringRef).filter(predicate)
+                .findAny().orElse(null);
     }
 }

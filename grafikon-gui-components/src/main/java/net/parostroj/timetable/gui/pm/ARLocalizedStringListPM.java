@@ -126,4 +126,23 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
     public void setSorted(boolean sorted) {
         localized.setSorted(sorted);
     }
+
+    public void addLocalizedString(String key, LocalizedString lString) {
+        T newRef = type.createNew(key);
+        newRef.set(lString);
+        localized.addReference(newRef);
+    }
+
+    public void removeLocalizedString(String key) {
+        T foundRef = localized.getRef(ref -> ref.getName().equals(key));
+        if (foundRef != null) {
+            type.addToRemove(foundRef);
+            localized.removeReference(foundRef);
+        }
+    }
+
+    public T getLocalizedString(String key) {
+        return localized.getRef(ref -> ref.getName().equals(key));
+    }
 }
+
