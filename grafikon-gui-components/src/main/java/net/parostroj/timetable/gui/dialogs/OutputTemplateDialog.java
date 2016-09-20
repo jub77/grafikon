@@ -24,7 +24,6 @@ import net.parostroj.timetable.utils.ObjectsUtil;
 
 import org.beanfabrics.ModelProvider;
 import org.beanfabrics.Path;
-import org.beanfabrics.model.PresentationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,6 +174,25 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
 
         JPanel leftPanel = new JPanel();
         controlPanel.add(leftPanel, BorderLayout.WEST);
+
+        JButton importTextsButton = new JButton(ResourceLoader.getString("ot.button.import.texts")); // NOI18N
+        importTextsButton.addActionListener(event -> {
+            ElementSelectionListDialog<OutputTemplate> dialog = new ElementSelectionListDialog<>(this, true);
+            dialog.setLocationRelativeTo(this);
+            Collection<OutputTemplate> selection = dialog.selectElements(template.getDiagram().getOutputTemplates());
+            if (selection != null && !selection.isEmpty()) {
+                ARLocalizedStringListPM<?> i18nModel = getI18nModel();
+                for (OutputTemplate ot : selection) {
+                    Map<String, Object> i18nMap = ot.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N);
+                    for (Map.Entry<String, Object> entry : i18nMap.entrySet()) {
+                        if (i18nModel.getLocalizedString(entry.getKey()) == null) {
+                            i18nModel.addLocalizedString(entry.getKey(), (LocalizedString) entry.getValue());
+                        }
+                    }
+                }
+            }
+        });
+        leftPanel.add(importTextsButton);
 
         JButton attachmentsButton = new JButton(ResourceLoader.getString("ot.button.attachments")); // NOI18N
         leftPanel.add(attachmentsButton);
@@ -411,10 +429,14 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     }
 
     private void writeBackLocalization() {
-        PresentationModel pm = this.i18nProvider.getPresentationModel();
+        ARLocalizedStringListPM<?> pm = getI18nModel();
         if (pm != null) {
-            ((ARLocalizedStringListPM<?>) pm).ok();
+            pm.ok();
         }
+    }
+
+    private ARLocalizedStringListPM<?> getI18nModel() {
+        return this.i18nProvider.getPresentationModel();
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
