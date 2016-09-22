@@ -106,8 +106,18 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         fcf.initialize();
 
         // init proxy selector
-        ProxySearch search = ProxySearch.getDefaultProxySearch();
-        ProxySelector.setDefault(search.getProxySelector());
+        try {
+            Class.forName("javax.jnlp.ServiceManager");
+            // JNLP service manager does exists - running from webstart
+            // do not set proxy-vole (it is preventing url connections from webstart)
+            log.debug("Running as webstart");
+        } catch (Exception e) {
+            // JNLP service manager does not exist - running from desktop
+            // setting up proxy-vole (for proxy.pac scripts)
+            log.debug("Running from desktop");
+            ProxySearch search = ProxySearch.getDefaultProxySearch();
+            ProxySelector.setDefault(search.getProxySelector());
+        }
     }
 
     private String getInfoText(String txt) {
