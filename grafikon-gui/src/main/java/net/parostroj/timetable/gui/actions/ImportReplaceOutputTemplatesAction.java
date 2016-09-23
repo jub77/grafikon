@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.actions;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -19,6 +18,7 @@ import net.parostroj.timetable.gui.actions.impl.LoadLibraryModelAction;
 import net.parostroj.timetable.gui.actions.impl.OpenFileModelAction;
 import net.parostroj.timetable.gui.actions.impl.OutputTemplateSelectionModelAction;
 import net.parostroj.timetable.gui.actions.impl.SelectLoadAction;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 
 public class ImportReplaceOutputTemplatesAction extends AbstractAction {
 
@@ -33,7 +33,7 @@ public class ImportReplaceOutputTemplatesAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         ActionHandler handler = ActionHandler.getInstance();
-        ActionContext context = new ActionContext((Component) e.getSource());
+        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(e.getSource()));
 
         context.setAttribute("fileType", FileChooserFactory.Type.GTM_GTML);
         context.setAttribute("diagramImport", model.getDiagram());

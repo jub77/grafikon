@@ -62,7 +62,7 @@ public class ExecuteScriptAction extends AbstractAction {
                 id = e.getActionCommand().substring(GUI_PREFIX.length());
                 loader = model.getGuiScriptsLoader();
             }
-            predefinedExecution(loader, (Component) e.getSource(), id);
+            predefinedExecution(loader, GuiComponentUtils.getTopLevelComponent(e.getSource()), id);
         }
     }
 
@@ -101,7 +101,7 @@ public class ExecuteScriptAction extends AbstractAction {
         return (selectedScript, parent) -> {
             lastScript = selectedScript;
             // binding
-            Map<String, Object> binding = new HashMap<String, Object>();
+            Map<String, Object> binding = new HashMap<>();
             binding.put("diagram", model.getDiagram());
             CharArrayWriter output = new CharArrayWriter();
             binding.put("output", new PrintWriter(output));

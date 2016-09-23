@@ -1,6 +1,5 @@
 package net.parostroj.timetable.gui.actions;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -15,6 +14,7 @@ import net.parostroj.timetable.gui.actions.execution.ImportModelAction;
 import net.parostroj.timetable.gui.actions.impl.CopyTemplatesToOutputsModelAction;
 import net.parostroj.timetable.gui.actions.impl.LoadLibraryUrlModelAction;
 import net.parostroj.timetable.gui.actions.impl.OutputTemplateSelectionModelAction;
+import net.parostroj.timetable.gui.utils.GuiComponentUtils;
 
 public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
 
@@ -31,7 +31,7 @@ public class ImportReplaceOutputTemplatesUrlAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         ActionHandler handler = ActionHandler.getInstance();
-        ActionContext context = new ActionContext((Component) e.getSource());
+        ActionContext context = new ActionContext(GuiComponentUtils.getTopLevelComponent(e.getSource()));
 
         context.setAttribute("diagramImport", model.getDiagram());
 
