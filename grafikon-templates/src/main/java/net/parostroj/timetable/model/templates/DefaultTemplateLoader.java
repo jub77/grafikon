@@ -8,7 +8,11 @@ import java.io.InputStream;
  *
  * @author jub
  */
-class DefaultTemplateLoader extends AbstractTemplateLoader {
+class DefaultTemplateLoader<T> extends AbstractTemplateLoader<T> {
+
+    public DefaultTemplateLoader(LoadDelegate<T> loadDelegate) {
+        super(loadDelegate);
+    }
 
     private static final String TEMPLATE_LIST_FILE = "/templates/list.xml";
     private static final String TEMPLATES_LOCATION = "/templates/";

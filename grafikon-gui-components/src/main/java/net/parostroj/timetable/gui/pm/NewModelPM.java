@@ -32,9 +32,9 @@ public class NewModelPM extends AbstractPM {
 
     private Callable<TrainDiagram> createTask;
 
-    private TemplateLoader templateLoader;
+    private TemplateLoader<TrainDiagram> templateLoader;
 
-    public NewModelPM(TemplateLoader templateLoader) throws LSException {
+    public NewModelPM(TemplateLoader<TrainDiagram> templateLoader) throws LSException {
         this.templateLoader = templateLoader;
 
         // time scale

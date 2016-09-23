@@ -35,7 +35,7 @@ public class NewModelDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public Callable<TrainDiagram> showDialog(TemplateLoader templateLoader) throws LSException {
+    public Callable<TrainDiagram> showDialog(TemplateLoader<TrainDiagram> templateLoader) throws LSException {
         NewModelPM newModel = new NewModelPM(templateLoader);
         newModel.init();
         provider.setPresentationModel(newModel);

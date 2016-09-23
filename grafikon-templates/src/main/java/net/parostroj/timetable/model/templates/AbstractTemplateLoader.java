@@ -12,16 +12,18 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
-import net.parostroj.timetable.model.ls.LSFile;
-import net.parostroj.timetable.model.ls.LSFileFactory;
 
-abstract class AbstractTemplateLoader implements TemplateLoader {
+abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractTemplateLoader.class);
 
     private TemplateList templateList;
+    private LoadDelegate<T> loadDelegate;
+
+    public AbstractTemplateLoader(LoadDelegate<T> loadDelegate) {
+        this.loadDelegate = loadDelegate;
+    }
 
     @Override
     public List<Template> getTemplates() throws LSException {
@@ -44,19 +46,18 @@ abstract class AbstractTemplateLoader implements TemplateLoader {
     abstract protected InputStream getTemplateList() throws IOException;
 
     @Override
-    public TrainDiagram loadTemplate(Template template) throws LSException {
+    public T loadTemplate(Template template) throws LSException {
         if (!templateList.getTemplates().contains(template)) {
             throw new IllegalArgumentException("Template does not belong to this loader: " + template);
         }
         // create file with template location
-        TrainDiagram diagram = null;
+        T instance = null;
         try (InputStream iStream = getTemplateStream(template); ZipInputStream is = new ZipInputStream(iStream)) {
-            LSFile ls = LSFileFactory.getInstance().createForLoad(is);
-            diagram = ls.load(is);
+            instance = loadDelegate.load(is);
         } catch (IOException e) {
             throw new LSException("Error loading template: " + e.getMessage(), e);
         }
-        return diagram;
+        return instance;
     }
 
     abstract protected InputStream getTemplateStream(Template template) throws IOException;

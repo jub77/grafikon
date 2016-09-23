@@ -3,7 +3,6 @@ package net.parostroj.timetable.model.templates;
 import java.net.URL;
 import java.util.List;
 
-import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.LSException;
 
 /**
@@ -12,17 +11,17 @@ import net.parostroj.timetable.model.ls.LSException;
  *
  * @author jub
  */
-public interface TemplateLoader {
+public interface TemplateLoader<T> {
 
     public List<Template> getTemplates() throws LSException;
 
-    public TrainDiagram loadTemplate(Template template) throws LSException;
+    public T loadTemplate(Template template) throws LSException;
 
-    public static TemplateLoader getDefault() {
-        return new DefaultTemplateLoader();
+    public static <T> TemplateLoader<T> getDefault(Class<T> clazz) {
+        return new DefaultTemplateLoader<>(LoadDelegate.createForClass(clazz));
     }
 
-    public static TemplateLoader getFromUrl(URL url) {
-        return new UrlTemplateLoader(url);
+    public static <T> TemplateLoader<T> getFromUrl(URL url, Class<T> clazz) {
+        return new UrlTemplateLoader<>(url, LoadDelegate.createForClass(clazz));
     }
 }

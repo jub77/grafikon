@@ -9,13 +9,14 @@ import java.net.URL;
  *
  * @author jub
  */
-class UrlTemplateLoader extends AbstractTemplateLoader {
+class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
 
     private static final String TEMPLATE_LIST_FILE = "templates.xml";
 
     private final URL baseUrl;
 
-    public UrlTemplateLoader(URL baseUrl) {
+    public UrlTemplateLoader(URL baseUrl, LoadDelegate<T> loadDelegate) {
+        super(loadDelegate);
         this.baseUrl = baseUrl;
     }
 

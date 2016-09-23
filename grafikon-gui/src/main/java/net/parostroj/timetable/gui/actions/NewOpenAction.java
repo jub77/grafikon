@@ -40,7 +40,7 @@ public class NewOpenAction extends AbstractAction {
     private static final Logger log = LoggerFactory.getLogger(NewOpenAction.class);
     private final ApplicationModel model;
 
-    private TemplateLoader templateLoader;
+    private TemplateLoader<TrainDiagram> templateLoader;
 
     /**
      * creates a new instance
@@ -48,7 +48,7 @@ public class NewOpenAction extends AbstractAction {
      * @param model application model
      * @param owner frame
      */
-    public NewOpenAction(ApplicationModel model, Frame owner, TemplateLoader templateLoader) {
+    public NewOpenAction(ApplicationModel model, Frame owner, TemplateLoader<TrainDiagram> templateLoader) {
         this.model = model;
         this.templateLoader = templateLoader;
     }

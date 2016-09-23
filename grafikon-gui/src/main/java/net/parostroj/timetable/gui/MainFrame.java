@@ -371,11 +371,11 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
         fileMenu.setText(ResourceLoader.getString("menu.file")); // NOI18N
 
-        TemplateLoader loader = TemplateLoader.getDefault();
+        TemplateLoader<TrainDiagram> loader = TemplateLoader.getDefault(TrainDiagram.class);
         this.addMenuItem(fileMenu, "menu.file.new", new NewOpenAction(model, this, loader), "new", false, null); // NOI18N
         try {
             this.addMenuItem(fileMenu, "menu.file.new.default.url",
-                    new NewOpenAction(model, this, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()))),
+                    new NewOpenAction(model, this, TemplateLoader.getFromUrl(new URL(model.getTemplatesBaseUrl()), TrainDiagram.class)),
                     "new", false, null); // NOI18N
         } catch (MalformedURLException mue) {
             log.warn(mue.getMessage(), mue);
