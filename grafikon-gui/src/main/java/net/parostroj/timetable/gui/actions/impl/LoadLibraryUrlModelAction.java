@@ -62,6 +62,7 @@ public class LoadLibraryUrlModelAction extends EventDispatchAfterModelAction {
         if (errorMessage != null) {
             String text = errorMessage + " " + url;
             GuiComponentUtils.showError(text, getActionContext().getLocationComponent());
+            context.setCancelled(true);
         }
     }
 }

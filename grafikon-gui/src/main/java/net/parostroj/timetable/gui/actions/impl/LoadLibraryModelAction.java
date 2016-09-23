@@ -65,6 +65,7 @@ public class LoadLibraryModelAction extends EventDispatchAfterModelAction {
         if (errorMessage != null) {
             String text = errorMessage + " " + selectedFile;
             GuiComponentUtils.showError(text, getActionContext().getLocationComponent());
+            context.setCancelled(true);
         }
     }
 }
