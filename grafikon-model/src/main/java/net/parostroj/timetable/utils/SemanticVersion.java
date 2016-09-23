@@ -55,32 +55,39 @@ public class SemanticVersion {
         return build;
     }
 
-    public String toBaseVersionString() {
+    public String toBaseString() {
         return String.format("%d.%d.%d", major, minor, patch);
     }
 
-    public String toVersionString() {
-        if (prerelease != null) {
-            StringBuilder builder = new StringBuilder(toBaseVersionString());
-            builder.append('-').append(prerelease);
-            return builder.toString();
-        } else {
-            return toBaseVersionString();
-        }
+    /**
+     * @return in case of patch is zero, it return major.minor otherwise it returns major.minor.patch
+     */
+    public String toSimplifiedBaseString() {
+        return patch == 0 ? toMajorMinorString() : toBaseString();
     }
 
-    public String toCompleteVersionString() {
-        if (build != null) {
-            StringBuilder builder = new StringBuilder(toVersionString());
-            builder.append('+').append(build);
-            return builder.toString();
-        } else {
-            return toVersionString();
-        }
+    public String toMajorMinorString() {
+        return String.format("%d.%d", major, minor);
     }
 
     @Override
     public String toString() {
-        return toCompleteVersionString();
+        if (prerelease != null) {
+            StringBuilder builder = new StringBuilder(toBaseString());
+            builder.append('-').append(prerelease);
+            return builder.toString();
+        } else {
+            return toBaseString();
+        }
+    }
+
+    public String toCompleteString() {
+        if (build != null) {
+            StringBuilder builder = new StringBuilder(toString());
+            builder.append('+').append(build);
+            return builder.toString();
+        } else {
+            return toString();
+        }
     }
 }

@@ -371,10 +371,10 @@ public class ApplicationModel extends AbstractPM implements StorableGuiData, Ref
     }
 
     public String getLibraryBaseUrl() {
-        return String.format(UrlConstants.LIBRARY_URL, currentVersion.toBaseVersionString());
+        return String.format(UrlConstants.LIBRARY_URL, currentVersion.toMajorMinorString());
     }
 
     public String getTemplatesBaseUrl() {
-        return String.format(UrlConstants.TEMPLATES_URL, currentVersion.toBaseVersionString());
+        return String.format(UrlConstants.TEMPLATES_URL, currentVersion.toMajorMinorString());
     }
 }

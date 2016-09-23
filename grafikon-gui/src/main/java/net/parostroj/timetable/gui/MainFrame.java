@@ -81,7 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     public MainFrame(SplashScreenInfo info) {
         versionInfo = new VersionInfo();
-        log.debug("Version: {}", versionInfo.getVersion().toCompleteVersionString());
+        log.debug("Version: {}", versionInfo.getVersion().toCompleteString());
         this.initAndPreload(info);
         info.setText(getInfoText("Starting Grafikon..."));
         this.initializeFrame();
@@ -124,7 +124,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getInfoText(String txt) {
         log.debug(txt);
-        return String.format("%s\n%s", versionInfo.getVersion().toVersionString(), txt);
+        return String.format("%s\n%s", versionInfo.getVersion().toString(), txt);
     }
 
     public MainFrame() {
@@ -300,7 +300,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
 
     private String getTitleString(boolean b) {
         String title = FRAME_TITLE;
-        String version = versionInfo.getVersion().toVersionString();
+        String version = versionInfo.getVersion().toString();
         if (version != null) {
             title += " (" + version + ")";
         }
@@ -687,7 +687,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
             log.warn("Cannot create FileLoadSave", e);
         }
         AboutDialog dialog = new AboutDialog(this, true,
-                String.format(aboutBundle.getString("text"), versionInfo.getVersion().toCompleteVersionString(), fls == null ? "-" : fls.getSaveVersion()),
+                String.format(aboutBundle.getString("text"), versionInfo.getVersion().toCompleteString(), fls == null ? "-" : fls.getSaveVersion()),
                 getClass().getResource(aboutBundle.getString("image")), true);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
