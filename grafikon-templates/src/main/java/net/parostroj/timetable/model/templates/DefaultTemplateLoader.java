@@ -23,7 +23,7 @@ class DefaultTemplateLoader<T> extends AbstractTemplateLoader<T> {
     private static final String TEMPLATES_LOCATION = "/templates/";
 
     @Override
-    protected InputStream getTemplateList() throws IOException {
+    protected InputStream getTemplateListStream() throws IOException {
         return DefaultTemplateLoader.class.getResourceAsStream(TEMPLATE_LIST_FILE);
     }
 

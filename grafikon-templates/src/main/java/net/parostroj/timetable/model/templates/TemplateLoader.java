@@ -1,7 +1,6 @@
 package net.parostroj.timetable.model.templates;
 
 import java.net.URL;
-import java.util.List;
 
 import net.parostroj.timetable.model.ls.LSException;
 
@@ -13,7 +12,7 @@ import net.parostroj.timetable.model.ls.LSException;
  */
 public interface TemplateLoader<T> {
 
-    public List<Template> getTemplates() throws LSException;
+    public TemplateList getTemplateList() throws LSException;
 
     public T loadTemplate(Template template) throws LSException;
 

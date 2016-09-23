@@ -2,7 +2,6 @@ package net.parostroj.timetable.model.templates;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.bind.JAXBContext;
@@ -26,10 +25,10 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
     }
 
     @Override
-    public List<Template> getTemplates() throws LSException {
+    public TemplateList getTemplateList() throws LSException {
         if (templateList == null) {
             // load template list
-            try (InputStream is = getTemplateList()) {
+            try (InputStream is = getTemplateListStream()) {
                 JAXBContext context = JAXBContext.newInstance(TemplateList.class);
                 Unmarshaller u = context.createUnmarshaller();
                 templateList = (TemplateList) u.unmarshal(is);
@@ -40,15 +39,16 @@ abstract class AbstractTemplateLoader<T> implements TemplateLoader<T> {
                 throw new LSException("Error reading list of templates: " + e.getMessage(), e);
             }
         }
-        return templateList.getTemplates();
+        return templateList;
     }
 
-    abstract protected InputStream getTemplateList() throws IOException;
+    abstract protected InputStream getTemplateListStream() throws IOException;
 
     @Override
     public T loadTemplate(Template template) throws LSException {
-        if (!templateList.getTemplates().contains(template)) {
-            throw new IllegalArgumentException("Template does not belong to this loader: " + template);
+        // if no filename is defined - return null
+        if (template.getFilename() == null) {
+            return null;
         }
         // create file with template location
         T instance = null;

@@ -53,7 +53,7 @@ public class NewModelPM extends AbstractPM {
         });
         timeScale.setBigDecimal(BigDecimal.valueOf(INIT_TIME_SCALE));
         // templates
-        template = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(templateLoader.getTemplates(),
+        template = new EnumeratedValuesPM<>(EnumeratedValuesPM.createValueMap(templateLoader.getTemplateList().getTemplates(),
                 i -> i.getName().translate()));
         // setup
         PMManager.setup(this);

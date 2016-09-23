@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.collect.FluentIterable;
 
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
 
+@XmlType(propOrder = {"defaultString", "localizedStrings"})
 public class LString {
 
     private String defaultString;

@@ -25,7 +25,7 @@ class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
     }
 
     @Override
-    protected InputStream getTemplateList() throws IOException {
+    protected InputStream getTemplateListStream() throws IOException {
         return new URL(baseUrl.toString() + "/" + TEMPLATE_LIST_FILE).openStream();
     }
 
