@@ -19,7 +19,7 @@ class DefaultTemplateLoader extends AbstractTemplateLoader {
     }
 
     @Override
-    protected InputStream getTemplate(Template template) throws IOException {
+    protected InputStream getTemplateStream(Template template) throws IOException {
         return DefaultTemplateLoader.class.getResourceAsStream(TEMPLATES_LOCATION + template.getFilename());
     }
 

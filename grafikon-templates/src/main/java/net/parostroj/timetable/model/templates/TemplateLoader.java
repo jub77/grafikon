@@ -16,7 +16,7 @@ public interface TemplateLoader {
 
     public List<Template> getTemplates() throws LSException;
 
-    public TrainDiagram getTemplate(String name) throws LSException;
+    public TrainDiagram loadTemplate(Template template) throws LSException;
 
     public static TemplateLoader getDefault() {
         return new DefaultTemplateLoader();

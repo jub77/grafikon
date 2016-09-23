@@ -29,7 +29,7 @@ class UrlTemplateLoader extends AbstractTemplateLoader {
     }
 
     @Override
-    protected InputStream getTemplate(Template template) throws IOException {
+    protected InputStream getTemplateStream(Template template) throws IOException {
         return new URL(baseUrl.toString() + "/" + template.getFilename()).openStream();
     }
 
