@@ -238,6 +238,10 @@ public class LocalizedString {
         return new StringWithLocaleImpl(string, locale);
     }
 
+    public static StringWithLocale newStringWithLocale(String string, String locale) {
+        return newStringWithLocale(string, Locale.forLanguageTag(locale));
+    }
+
     public static Locale getOnlyLanguageLocale(Locale locale) {
         if (locale.getCountry() == null) {
             return locale;

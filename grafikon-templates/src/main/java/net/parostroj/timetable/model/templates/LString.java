@@ -50,7 +50,7 @@ public class LString {
         return LocalizedString.newBuilder(getDefaultString())
                 .addAllStringWithLocale(FluentIterable
                         .from(getLocalizedStrings())
-                        .transform(ls -> LocalizedString.newStringWithLocale(null, null))
+                        .transform(ls -> LocalizedString.newStringWithLocale(ls.getValue(), ls.getLang()))
                         .toList())
                 .build();
     }
