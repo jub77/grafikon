@@ -4,35 +4,41 @@
         <id>czech</id>
         <filename>czech.gtm</filename>
         <name>
-            <default>Česká</default>
+            <default>Czech</default>
+            <localized lang="cs">Česká</localized>
         </name>
     </template>
     <template>
         <id>slovak</id>
         <filename>slovak.gtm</filename>
         <name>
-            <default>Slovenská</default>
+            <default>Slovak</default>
+            <localized lang="cs">Slovenská</localized>
         </name>
     </template>
     <template>
         <id>polish</id>
         <filename>polish.gtm</filename>
         <name>
-            <default>Polski</default>
-        </name>
-    </template>
-    <template>
-        <id>empty_classic</id>
-        <filename>empty_classic.gtm</filename>
-        <name>
-            <default>- (classic)</default>
+            <default>Polish</default>
+            <localized lang="cs">Polská</localized>
+            <localized lang="pl">Polski</localized>
         </name>
     </template>
     <template>
         <id>empty</id>
         <filename>empty.gtm</filename>
         <name>
-            <default>-</default>
+            <default>Empty</default>
+            <localized lang="cs">Prázdná</localized>
+        </name>
+    </template>
+    <template>
+        <id>empty_classic</id>
+        <filename>empty_classic.gtm</filename>
+        <name>
+            <default>Empty (classic)</default>
+            <localized lang="cs">Prázdná (klasická)</localized>
         </name>
     </template>
 </template_list>
