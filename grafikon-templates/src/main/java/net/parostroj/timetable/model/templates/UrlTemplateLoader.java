@@ -14,10 +14,16 @@ class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
     private static final String TEMPLATE_LIST_FILE = "templates.xml";
 
     private final URL baseUrl;
+    private final String templateListFile;
 
     public UrlTemplateLoader(URL baseUrl, LoadDelegate<T> loadDelegate) {
+        this(baseUrl, TEMPLATE_LIST_FILE, loadDelegate);
+    }
+
+    public UrlTemplateLoader(URL baseUrl, String templateListFile, LoadDelegate<T> loadDelegate) {
         super(loadDelegate);
         this.baseUrl = baseUrl;
+        this.templateListFile = templateListFile;
     }
 
     public URL getBaseUrl() {
@@ -26,7 +32,7 @@ class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
 
     @Override
     protected InputStream getTemplateListStream() throws IOException {
-        return new URL(baseUrl.toString() + "/" + TEMPLATE_LIST_FILE).openStream();
+        return new URL(baseUrl.toString() + "/" + templateListFile).openStream();
     }
 
     @Override

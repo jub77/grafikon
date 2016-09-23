@@ -23,4 +23,8 @@ public interface TemplateLoader<T> {
     public static <T> TemplateLoader<T> getFromUrl(URL url, Class<T> clazz) {
         return new UrlTemplateLoader<>(url, LoadDelegate.createForClass(clazz));
     }
+
+    public static <T> TemplateLoader<T> getFromUrl(URL url, String templateListFile, Class<T> clazz) {
+        return new UrlTemplateLoader<>(url, templateListFile, LoadDelegate.createForClass(clazz));
+    }
 }
