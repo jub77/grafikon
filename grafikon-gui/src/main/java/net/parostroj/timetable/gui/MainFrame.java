@@ -44,6 +44,7 @@ import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.ls.LSFile;
 import net.parostroj.timetable.model.ls.LSException;
 import net.parostroj.timetable.model.ls.LSFileFactory;
+import net.parostroj.timetable.model.ls.LSLibraryFactory;
 import net.parostroj.timetable.model.templates.TemplateLoader;
 import net.parostroj.timetable.output2.OutputWriter.Settings;
 import net.parostroj.timetable.utils.Pair;
@@ -91,6 +92,7 @@ public class MainFrame extends javax.swing.JFrame implements ApplicationModelLis
         // preload FileLoadSave
         info.setText(getInfoText("Registering LS..."));
         LSFileFactory.getInstance();
+        LSLibraryFactory.getInstance();
 
         // initialize groovy
         info.setText(getInfoText("Initializing Groovy..."));

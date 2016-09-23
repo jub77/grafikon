@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template_list>
     <template>
-        <name>Česká</name>
+        <id>czech</id>
         <filename>czech.gtm</filename>
+        <name>
+            <default>Česká</default>
+        </name>
     </template>
     <template>
-        <name>Slovenská</name>
+        <id>slovak</id>
         <filename>slovak.gtm</filename>
+        <name>
+            <default>Slovenská</default>
+        </name>
     </template>
     <template>
-        <name>Polski</name>
+        <id>polish</id>
         <filename>polish.gtm</filename>
+        <name>
+            <default>Polski</default>
+        </name>
     </template>
     <template>
-        <name>- (classic)</name>
+        <id>empty_classic</id>
         <filename>empty_classic.gtm</filename>
+        <name>
+            <default>- (classic)</default>
+        </name>
     </template>
     <template>
-        <name>-</name>
+        <id>empty</id>
         <filename>empty.gtm</filename>
+        <name>
+            <default>-</default>
+        </name>
     </template>
 </template_list>
