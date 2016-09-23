@@ -93,6 +93,11 @@ public class LocalizedString {
                 String.join(",", Iterables.transform(localizedStrings, item -> item.getLocale().toLanguageTag())));
     }
 
+    public String toCompleteString() {
+        return String.format("i18n:%s[%s]", defaultString, String.join(",", Iterables.transform(localizedStrings,
+                item -> String.format("%s=%s", item.getLocale().toLanguageTag(), item.getString()))));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof LocalizedString)) return false;
