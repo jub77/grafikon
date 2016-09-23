@@ -18,7 +18,7 @@ public interface TemplateLoader<T> {
     public T loadTemplate(Template template) throws LSException;
 
     public static <T> TemplateLoader<T> getDefault(Class<T> clazz) {
-        return new DefaultTemplateLoader<>(LoadDelegate.createForClass(clazz));
+        return new DefaultTemplateLoader<>(LoadDelegate.createForClass(clazz), clazz);
     }
 
     public static <T> TemplateLoader<T> getFromUrl(URL url, Class<T> clazz) {

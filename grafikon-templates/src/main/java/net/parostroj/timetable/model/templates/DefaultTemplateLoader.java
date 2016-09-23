@@ -3,6 +3,8 @@ package net.parostroj.timetable.model.templates;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.parostroj.timetable.model.TrainDiagram;
+
 /**
  * Class for loading default model templates.
  *
@@ -10,8 +12,11 @@ import java.io.InputStream;
  */
 class DefaultTemplateLoader<T> extends AbstractTemplateLoader<T> {
 
-    public DefaultTemplateLoader(LoadDelegate<T> loadDelegate) {
+    public DefaultTemplateLoader(LoadDelegate<T> loadDelegate, Class<T> clazz) {
         super(loadDelegate);
+        if (!TrainDiagram.class.equals(clazz)) {
+            throw new IllegalArgumentException("There is only train diagram default loader available");
+        }
     }
 
     private static final String TEMPLATE_LIST_FILE = "/templates/list.xml";
