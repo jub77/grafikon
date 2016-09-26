@@ -42,6 +42,6 @@ class UrlTemplateLoader<T> extends AbstractTemplateLoader<T> {
 
     @Override
     public String toString() {
-        return "Url: " + baseUrl;
+        return String.format("Url[%s]", baseUrl);
     }
 }
