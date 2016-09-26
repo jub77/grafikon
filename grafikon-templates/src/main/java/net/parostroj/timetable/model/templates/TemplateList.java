@@ -1,5 +1,6 @@
 package net.parostroj.timetable.model.templates;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -51,6 +52,9 @@ public class TemplateList {
 
     @XmlElement(name = "template")
     public List<Template> getTemplates() {
+        if (templates == null) {
+            templates = new ArrayList<>();
+        }
         return templates;
     }
 
@@ -60,6 +64,9 @@ public class TemplateList {
 
     @XmlElement(name = "category")
     public List<TemplateList> getCategories() {
+        if (categories == null) {
+            categories = new ArrayList<>();
+        }
         return categories;
     }
 
