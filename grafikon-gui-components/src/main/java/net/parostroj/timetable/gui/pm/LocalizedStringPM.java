@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.pm;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -63,6 +64,14 @@ public class LocalizedStringPM extends AbstractPM {
     }
 
     public LolizationEditResult init(LocalizedString string, Collection<Locale> availableLocales) {
+        return this.initImpl(string, availableLocales, true);
+    }
+
+    public void init(LocalizedString string) {
+        this.initImpl(string, Collections.emptyList(), false);
+    }
+
+    private LolizationEditResult initImpl(LocalizedString string, Collection<Locale> availableLocales, boolean editable) {
         if (currentResult != null) {
             currentResult.finishBuild();
             currentResult = null;
@@ -74,7 +83,7 @@ public class LocalizedStringPM extends AbstractPM {
             return null;
         }
         this.string.setEditable(true);
-        currentResult = new EditResultImpl();
+        currentResult = editable ? new EditResultImpl() : null;
         Collection<Locale> stringLocales = string.getLocales();
 
         Set<Locale> locales = new HashSet<>(availableLocales);
@@ -103,5 +112,9 @@ public class LocalizedStringPM extends AbstractPM {
 
     public boolean isEmpty() {
         return string.isEmpty();
+    }
+
+    public boolean isEditable() {
+        return currentResult != null;
     }
 }

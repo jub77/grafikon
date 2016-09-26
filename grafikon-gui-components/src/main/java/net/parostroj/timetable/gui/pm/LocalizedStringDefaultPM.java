@@ -31,9 +31,19 @@ public class LocalizedStringDefaultPM extends LocalizedStringPM {
     }
 
     @Override
+    public void init(LocalizedString string) {
+        super.init(string);
+        this.addListenerToCurrentLocaleString(string);
+    }
+
+    @Override
     public LolizationEditResult init(LocalizedString string, Collection<Locale> availableLocales) {
         LolizationEditResult result = super.init(string, availableLocales);
+        addListenerToCurrentLocaleString(string);
+        return result;
+    }
 
+    private void addListenerToCurrentLocaleString(LocalizedString string) {
         if (string != null) {
             defaultStringIsCurrent = true;
 
@@ -50,12 +60,9 @@ public class LocalizedStringDefaultPM extends LocalizedStringPM {
                     break;
                 }
             }
-
             this.stringWithCurrentLocale.setText(string.translate());
         } else {
             this.stringWithCurrentLocale.setText("");
         }
-
-        return result;
     }
 }
