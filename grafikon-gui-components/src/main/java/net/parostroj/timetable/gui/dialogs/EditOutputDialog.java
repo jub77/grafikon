@@ -150,7 +150,7 @@ public class EditOutputDialog extends JDialog implements View<OutputPM>, ModelSu
         cancelButton.addActionListener(closeListener);
 
         nameTextField.setModelProvider(provider);
-        nameTextField.setPath(new Path("name.stringWithCurrentLocale"));
+        nameTextField.setPath(new Path("name.current"));
 
         attributesPanel.setModelProvider(provider);
         attributesPanel.setPath(new Path("attributes"));

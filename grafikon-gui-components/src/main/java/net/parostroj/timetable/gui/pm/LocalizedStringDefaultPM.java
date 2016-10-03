@@ -16,15 +16,15 @@ import net.parostroj.timetable.model.LocalizedString;
  */
 public class LocalizedStringDefaultPM extends LocalizedStringPM {
 
-    final ITextPM stringWithCurrentLocale;
+    final ITextPM current;
     private boolean defaultStringIsCurrent;
 
     public LocalizedStringDefaultPM() {
-        stringWithCurrentLocale = new TextPM();
-        stringWithCurrentLocale.setEditable(false);
+        current = new TextPM();
+        current.setEditable(false);
         string.addPropertyChangeListener("text", evt -> {
             if (defaultStringIsCurrent) {
-                stringWithCurrentLocale.setText(string.getText());
+                current.setText(string.getText());
             }
         });
         PMManager.setup(this);
@@ -53,16 +53,16 @@ public class LocalizedStringDefaultPM extends LocalizedStringPM {
                     defaultStringIsCurrent = false;
                     stringPM.string.addPropertyChangeListener("text", evt -> {
                         defaultStringIsCurrent = stringPM.string.isEmpty();
-                        stringWithCurrentLocale.setText(defaultStringIsCurrent ?
+                        current.setText(defaultStringIsCurrent ?
                                 this.string.getText() :
                                 stringPM.string.getText());
                     });
                     break;
                 }
             }
-            this.stringWithCurrentLocale.setText(string.translate());
+            this.current.setText(string.translate());
         } else {
-            this.stringWithCurrentLocale.setText("");
+            this.current.setText("");
         }
     }
 }
