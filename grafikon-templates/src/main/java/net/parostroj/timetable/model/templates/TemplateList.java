@@ -1,7 +1,11 @@
 package net.parostroj.timetable.model.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -72,5 +76,17 @@ public class TemplateList {
 
     public void setCategories(List<TemplateList> categories) {
         this.categories = categories;
+    }
+
+    public Stream<Template> toTemplateStream() {
+        Stream<Template> stream = getTemplates().stream();
+        for (TemplateList category : getCategories()) {
+            stream = Stream.concat(stream, category.toTemplateStream());
+        }
+        return stream;
+    }
+
+    public Collection<Template> toTemplateCollection() {
+        return toTemplateStream().collect(Collectors.toList());
     }
 }
