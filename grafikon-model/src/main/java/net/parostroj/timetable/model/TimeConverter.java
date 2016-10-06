@@ -308,11 +308,13 @@ public class TimeConverter {
                 thm = this.normalizeNumber(values[0], values[1], values[2], values[3]);
                 break;
             default:
-                thm = new Tuple<Integer>(0, 0);
+                thm = null;
                 break;
         }
 
-        time = this.parse(String.format("%d:%d" + decimalBuilder.toString(), thm.first, thm.second));
+        if (thm != null) {
+            time = this.parse(String.format("%d:%d" + decimalBuilder.toString(), thm.first, thm.second));
+        }
 
         // normalize time before return
         if (time == -1)
@@ -340,7 +342,7 @@ public class TimeConverter {
                 h -= 24;
             }
         }
-        return new Tuple<Integer>(h, m);
+        return new Tuple<>(h, m);
     }
 
     /**
