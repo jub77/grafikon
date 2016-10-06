@@ -2,13 +2,19 @@ package net.parostroj.timetable.gui.pm;
 
 import java.lang.ref.WeakReference;
 
+import org.beanfabrics.model.AbstractPM;
+import org.beanfabrics.model.BooleanPM;
+import org.beanfabrics.model.OperationPM;
+import org.beanfabrics.model.PMManager;
+import org.beanfabrics.model.TextPM;
+import org.beanfabrics.support.Operation;
+import org.beanfabrics.support.Validation;
+import org.beanfabrics.validation.ValidationState;
+
 import net.parostroj.timetable.actions.TrainBuilder;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.IdGenerator;
-
-import org.beanfabrics.model.*;
-import org.beanfabrics.support.Operation;
 
 public class CopyTrainPM extends AbstractPM implements IPM<Train> {
 
@@ -21,11 +27,14 @@ public class CopyTrainPM extends AbstractPM implements IPM<Train> {
     final OperationPM ok = new OperationPM();
 
     public CopyTrainPM() {
+        time.setMandatory(true);
+        number.setMandatory(true);
         PMManager.setup(this);
     }
 
+    @Override
     public void init(Train train) {
-        this.trainRef = new WeakReference<Train>(train);
+        this.trainRef = new WeakReference<>(train);
 
         time.setConverter(train.getDiagram().getTimeConverter());
         number.setText(train.getNumber());
@@ -51,6 +60,11 @@ public class CopyTrainPM extends AbstractPM implements IPM<Train> {
             // add train to diagram
             diagram.getTrains().add(newTrain);
         }
+    }
+
+    @Validation(path = "ok")
+    public ValidationState hasValidData() {
+        return this.getValidationState();
     }
 
     @Operation(path = "ok")
