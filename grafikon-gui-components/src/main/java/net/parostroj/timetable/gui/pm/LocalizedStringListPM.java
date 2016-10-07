@@ -17,7 +17,7 @@ import org.beanfabrics.model.TextPM;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.Reference;
 
-public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends AbstractPM {
+public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends AbstractPM implements IPM<LocalizationType<T>> {
 
     private final class LStringPM extends TextPM {
 
@@ -88,6 +88,7 @@ public class LocalizedStringListPM<T extends Reference<LocalizedString>> extends
         PMManager.setup(this);
     }
 
+    @Override
     public void init(LocalizationType<T> type) {
         this.init(type, null);
     }

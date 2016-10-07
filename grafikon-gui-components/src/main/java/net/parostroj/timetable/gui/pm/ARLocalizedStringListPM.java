@@ -11,7 +11,7 @@ import org.beanfabrics.support.Validation;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.AttributeReference;
 
-public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedString>> extends AbstractPM {
+public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedString>> extends AbstractPM implements IPM<ARLocalizationType<T>> {
 
     final LocalizedStringListPM<T> localized;
     final TextPM newKey;
@@ -39,6 +39,7 @@ public class ARLocalizedStringListPM<T extends AttributeReference<LocalizedStrin
         PMManager.setup(this);
     }
 
+    @Override
     public void init(ARLocalizationType<T> type) {
         this.type = type;
         this.init(type, null);

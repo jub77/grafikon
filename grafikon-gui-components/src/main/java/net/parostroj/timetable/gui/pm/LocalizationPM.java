@@ -9,7 +9,7 @@ import org.beanfabrics.support.Operation;
 import net.parostroj.timetable.model.LocalizedString;
 import net.parostroj.timetable.utils.Reference;
 
-public class LocalizationPM<T extends Reference<LocalizedString>> extends AbstractPM {
+public class LocalizationPM<T extends Reference<LocalizedString>> extends AbstractPM implements IPM<LocalizationContext<T>> {
 
     final IEnumeratedValuesPM<LocalizationType<T>> types;
     final LocalizedStringListPM<T> selected;
@@ -31,6 +31,7 @@ public class LocalizationPM<T extends Reference<LocalizedString>> extends Abstra
         PMManager.setup(this);
     }
 
+    @Override
     public void init(LocalizationContext<T> context) {
         this.context = context;
         for (LocalizationType<T> type : context) {

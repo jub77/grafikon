@@ -14,7 +14,7 @@ import net.parostroj.timetable.model.LocalizedString;
  *
  * @author jub
  */
-public class LocalizedStringDefaultPM extends LocalizedStringPM {
+public class LocalizedStringDefaultPM extends LocalizedStringPM implements IPM<LocalizedString> {
 
     final ITextPM current;
     private boolean defaultStringIsCurrent;

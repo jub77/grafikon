@@ -24,7 +24,7 @@ import net.parostroj.timetable.model.LocalizedString.StringWithLocale;
  *
  * @author jub
  */
-public class LocalizedStringPM extends AbstractPM {
+public class LocalizedStringPM extends AbstractPM implements IPM<LocalizedString> {
 
     private class EditResultImpl implements LolizationEditResult {
 
@@ -67,6 +67,7 @@ public class LocalizedStringPM extends AbstractPM {
         return this.initImpl(string, availableLocales, true);
     }
 
+    @Override
     public void init(LocalizedString string) {
         this.initImpl(string, Collections.emptyList(), false);
     }
