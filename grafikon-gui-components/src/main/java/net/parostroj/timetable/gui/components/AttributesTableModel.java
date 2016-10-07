@@ -77,7 +77,8 @@ public class AttributesTableModel extends AbstractTableModel {
             case 2:
                 return attributes.get(category, name);
             default:
-                return attributes.get(category, name).getClass().getSimpleName();
+            Object object = attributes.get(category, name);
+            return object != null ? object.getClass().getSimpleName() : null;
         }
     }
 

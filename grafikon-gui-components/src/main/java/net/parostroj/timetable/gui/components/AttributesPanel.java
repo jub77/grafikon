@@ -115,7 +115,8 @@ public class AttributesPanel extends javax.swing.JPanel implements ModelSubscrib
                 editingClass = null;
                 int modelColumn = convertColumnIndexToModel(column);
                 if (modelColumn == 2) {
-                    Class<?> rowClass = getModel().getValueAt(row, modelColumn).getClass();
+                    Object value = getModel().getValueAt(row, modelColumn);
+                    Class<?> rowClass = value != null ? value.getClass() : String.class;
                     if (Number.class.isAssignableFrom(rowClass)) {
                         rowClass = String.class;
                     }
