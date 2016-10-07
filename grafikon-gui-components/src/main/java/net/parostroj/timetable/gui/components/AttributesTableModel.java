@@ -2,6 +2,7 @@ package net.parostroj.timetable.gui.components;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.swing.table.AbstractTableModel;
@@ -97,10 +98,12 @@ public class AttributesTableModel extends AbstractTableModel {
         this.attributes = attributes;
         this.userNames = new LinkedList<>(attributes.getAttributesMap(category).keySet());
         this.listener = (attrs, change) -> {
-            if (change.getNewValue() != null) {
-                addAttribute(change.getName());
-            } else {
-                removeAttribute(change.getName());
+            if (Objects.equals(change.getCategory(), category)) {
+                if (change.getNewValue() != null) {
+                    addAttribute(change.getName());
+                } else {
+                    removeAttribute(change.getName());
+                }
             }
         };
         this.attributes.addListener(listener);
