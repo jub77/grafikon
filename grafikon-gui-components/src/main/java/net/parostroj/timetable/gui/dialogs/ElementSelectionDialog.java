@@ -63,7 +63,7 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     }
 
     private List<T> getElements(List<Wrapper<T>> wList) {
-        List<T> elements = new LinkedList<T>();
+        List<T> elements = new LinkedList<>();
         for (Wrapper<T> w : wList) {
             elements.add(w.getElement());
         }
@@ -71,7 +71,7 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
     }
 
     private void initComponents() {
-        elementSelectionPanel = new net.parostroj.timetable.gui.components.ElementSelectionPanel<T>();
+        elementSelectionPanel = new net.parostroj.timetable.gui.components.ElementSelectionPanel<>();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
 
@@ -122,6 +122,10 @@ public class ElementSelectionDialog<T> extends javax.swing.JDialog {
 
     protected List<Wrapper<T>> wrapElements(Iterable<? extends T> elements) {
         return Wrapper.getWrapperList(elements);
+    }
+
+    public void setSorted(boolean leftSorted, boolean rightSorted) {
+        elementSelectionPanel.setSorted(leftSorted, rightSorted);
     }
 
     private javax.swing.JButton cancelButton;

@@ -177,20 +177,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
 
         JButton importTextsButton = new JButton(ResourceLoader.getString("ot.button.import.texts")); // NOI18N
         importTextsButton.addActionListener(event -> {
-            ElementSelectionListDialog<OutputTemplate> dialog = new ElementSelectionListDialog<>(this, true);
-            dialog.setLocationRelativeTo(this);
-            Collection<OutputTemplate> selection = dialog.selectElements(template.getDiagram().getOutputTemplates());
-            if (selection != null && !selection.isEmpty()) {
-                ARLocalizedStringListPM<?> i18nModel = getI18nModel();
-                for (OutputTemplate ot : selection) {
-                    Map<String, Object> i18nMap = ot.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N);
-                    for (Map.Entry<String, Object> entry : i18nMap.entrySet()) {
-                        if (i18nModel.getLocalizedString(entry.getKey()) == null) {
-                            i18nModel.addLocalizedString(entry.getKey(), (LocalizedString) entry.getValue());
-                        }
-                    }
-                }
-            }
+            importTextFromTemplate();
         });
         leftPanel.add(importTextsButton);
 
@@ -355,6 +342,36 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         scriptEditBox.addComponentToEditBox(scriptCheckBox);
 
         pack();
+    }
+
+    private void importTextFromTemplate() {
+        ElementSelectionListDialog<OutputTemplate> dialog = new ElementSelectionListDialog<>(this, true);
+        dialog.setLocationRelativeTo(this);
+        Collection<OutputTemplate> selection = dialog.selectElements(template.getDiagram().getOutputTemplates());
+        if (selection != null && !selection.isEmpty()) {
+            Map<String, LocalizedString> strings = new HashMap<>();
+            ARLocalizedStringListPM<?> i18nModel = getI18nModel();
+            for (OutputTemplate ot : selection) {
+                Map<String, Object> i18nMap = ot.getAttributes().getAttributesMap(OutputTemplate.CATEGORY_I18N);
+                for (Map.Entry<String, Object> entry : i18nMap.entrySet()) {
+                    if (i18nModel.getLocalizedString(entry.getKey()) == null) {
+                        strings.put(entry.getKey(), (LocalizedString) entry.getValue());
+                    }
+                }
+            }
+            if (!strings.isEmpty()) {
+                // select and insert selected
+                ElementSelectionDialog<String> stringDialog = new ElementSelectionDialog<>(this, true);
+                stringDialog.setSorted(true, true);
+                stringDialog.setLocationRelativeTo(this);
+                List<String> selectedStrings = stringDialog.selectElements(strings.keySet());
+                if (selectedStrings != null && !selectedStrings.isEmpty()) {
+                    for (String key : selectedStrings) {
+                        i18nModel.addLocalizedString(key, strings.get(key));
+                    }
+                }
+            }
+        }
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
