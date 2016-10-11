@@ -493,8 +493,7 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
     private static class ModelObjectTypeWrapperDelegate implements WrapperDelegate<ModelObjectType> {
         @Override
         public String toString(ModelObjectType element) {
-            // TODO implementation
-            return element != null ? element.getKey() : "<none>";
+            return element != null ? element.getText() : "-";
         }
 
         @Override

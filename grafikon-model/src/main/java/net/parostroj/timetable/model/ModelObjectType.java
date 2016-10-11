@@ -1,8 +1,10 @@
 package net.parostroj.timetable.model;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import net.parostroj.timetable.utils.ObjectsUtil;
+import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 /**
  * Type of objects in model (e.g. for selection).
@@ -53,6 +55,14 @@ public enum ModelObjectType {
     @Override
     public String toString() {
         return key;
+    }
+
+    public String getText() {
+        return getText(Locale.getDefault());
+    }
+
+    public String getText(Locale locale) {
+        return ResourceBundleUtil.getBundle("net.parostroj.timetable.model.model_object_type_texts", ModelObjectType.class.getClassLoader(), locale, Locale.ENGLISH).getString(key);
     }
 
     private interface ObjectExtractor {
