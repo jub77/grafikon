@@ -186,6 +186,12 @@ public class ScriptEditBox extends javax.swing.JPanel {
         return searchDialog;
     }
 
+    public void closeSearchDialog() {
+        if (searchDialog != null && searchDialog.isVisible()) {
+            searchDialog.setVisible(false);
+        }
+    }
+
     private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             scriptTextArea.setSyntaxEditingStyle(HIGHLIGHT.get(evt.getItem()));

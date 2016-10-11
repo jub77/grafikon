@@ -38,7 +38,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
     private static final Map<Language, String> HIGHLIGHT;
 
     static {
-        Map<Language, String> h = new EnumMap<Language, String>(Language.class);
+        Map<Language, String> h = new EnumMap<>(Language.class);
         h.put(Language.GROOVY, SyntaxConstants.SYNTAX_STYLE_JSP);
         h.put(Language.MVEL, SyntaxConstants.SYNTAX_STYLE_HTML);
         h.put(Language.PLAIN, SyntaxConstants.SYNTAX_STYLE_HTML);
@@ -143,7 +143,7 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
 
     private void initComponents() {
         panel = new javax.swing.JPanel();
-        languageComboBox = new javax.swing.JComboBox<Language>();
+        languageComboBox = new javax.swing.JComboBox<>();
         scrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         templateTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
 
@@ -192,6 +192,12 @@ public class TextTemplateEditBox2 extends javax.swing.JPanel {
             });
         }
         return searchDialog;
+    }
+
+    public void closeSearchDialog() {
+        if (searchDialog != null && searchDialog.isVisible()) {
+            searchDialog.setVisible(false);
+        }
     }
 
     private void languageComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {

@@ -200,6 +200,14 @@ public class OutputTemplateDialog extends javax.swing.JDialog implements GuiCont
         });
 
         tabbedPane = new javax.swing.JTabbedPane(javax.swing.JTabbedPane.TOP);
+        tabbedPane.addChangeListener(e -> {
+            if (scriptEditBox != null) {
+                scriptEditBox.closeSearchDialog();
+            }
+            if (textTemplateEditBox != null) {
+                textTemplateEditBox.closeSearchDialog();
+            }
+        });
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
         javax.swing.JPanel templatePanel = new javax.swing.JPanel();
