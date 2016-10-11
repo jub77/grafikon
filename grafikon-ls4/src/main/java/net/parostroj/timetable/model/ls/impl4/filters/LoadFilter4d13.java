@@ -1,7 +1,8 @@
-package net.parostroj.timetable.model.ls.impl4;
+package net.parostroj.timetable.model.ls.impl4.filters;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.impl4.LoadFilter;
 import net.parostroj.timetable.model.units.LengthUnit;
 import net.parostroj.timetable.model.units.SpeedUnit;
 

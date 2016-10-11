@@ -1,4 +1,4 @@
-package net.parostroj.timetable.model.ls.impl4;
+package net.parostroj.timetable.model.ls.impl4.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +9,7 @@ import net.parostroj.timetable.model.TextTemplate;
 import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.impl4.LoadFilter;
 import net.parostroj.timetable.utils.ObjectsUtil;
 
 public class LoadFilter4d2 implements LoadFilter {

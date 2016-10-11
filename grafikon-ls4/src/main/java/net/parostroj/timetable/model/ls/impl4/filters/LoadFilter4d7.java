@@ -1,8 +1,9 @@
-package net.parostroj.timetable.model.ls.impl4;
+package net.parostroj.timetable.model.ls.impl4.filters;
 
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.impl4.LoadFilter;
 
 public class LoadFilter4d7 implements LoadFilter {
 

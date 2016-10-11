@@ -76,6 +76,11 @@ public class SettingsDialog extends javax.swing.JDialog {
             lengthUnitComboBox.addItem(unit);
         }
 
+        rlUnitComboBox.addItem(NO_UNIT);
+        for (LengthUnit unit : LengthUnit.getScaleDependent()) {
+            rlUnitComboBox.addItem(unit);
+        }
+
         unitComboBox.addItem(NO_UNIT);
         speedUnitComboBox.addItem(NO_UNIT);
         for (LengthUnit unit : LengthUnit.values()) {
@@ -138,8 +143,8 @@ public class SettingsDialog extends javax.swing.JDialog {
             // route length
             Double routeLengthRatio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
             rlRatioTextField.setText(routeLengthRatio != null ? routeLengthRatio.toString() : "");
-            String routeLengthUnit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class);
-            rlUnitTextField.setText(routeLengthUnit != null ? routeLengthUnit : "");
+            LengthUnit lUnitRoute = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, LengthUnit.class);
+            rlUnitComboBox.setSelectedItem(lUnitRoute != null ? lUnitRoute : NO_UNIT);
 
             // weight -> length conversion
             loadedWeightEditBox.setValueInUnit(new BigDecimal(diagram.getAttribute(TrainDiagram.ATTR_WEIGHT_PER_AXLE, Integer.class)), WeightUnit.KG);
@@ -226,7 +231,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel14 = new javax.swing.JLabel();
         rlRatioTextField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
-        rlUnitTextField = new javax.swing.JTextField();
+        rlUnitComboBox = new javax.swing.JComboBox<>();
         javax.swing.JPanel weightPerAxlePanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel7 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel8 = new javax.swing.JLabel();
@@ -393,8 +398,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         jLabel13.setText(ResourceLoader.getString("modelinfo.route.length.unit") + ":"); // NOI18N
         routeLengthPanel.add(jLabel13);
 
-        rlUnitTextField.setColumns(5);
-        routeLengthPanel.add(rlUnitTextField);
+        routeLengthPanel.add(rlUnitComboBox);
 
         GridBagConstraints gridBagConstraints_3 = new java.awt.GridBagConstraints();
         gridBagConstraints_3.insets = new Insets(0, 0, 5, 0);
@@ -684,7 +688,8 @@ public class SettingsDialog extends javax.swing.JDialog {
         } catch (NumberFormatException e) {
             log.warn("Cannot convert route length ratio to double.", e);
         }
-        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, ObjectsUtil.checkAndTrim(rlUnitTextField.getText()));
+        Object routeUnitObject = rlUnitComboBox.getSelectedItem();
+        diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, routeUnitObject == NO_UNIT ? null : routeUnitObject);
 
         // time range
         Tuple<Integer> timeRange = this.getTimeRange();
@@ -737,7 +742,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> ratioComboBox;
     private javax.swing.JComboBox<String> roundingComboBox;
     private javax.swing.JTextField rlRatioTextField;
-    private javax.swing.JTextField rlUnitTextField;
+    private javax.swing.JComboBox<Object> rlUnitComboBox;
     private javax.swing.JComboBox<Scale> scaleComboBox;
     private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
     private javax.swing.JComboBox<String> sortComboBox;

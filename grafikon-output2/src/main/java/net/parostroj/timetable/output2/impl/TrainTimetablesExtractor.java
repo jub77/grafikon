@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableSet;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -60,7 +59,7 @@ public class TrainTimetablesExtractor {
         timetables.setRoutes(RoutesExtractor.convert(routes, diagram));
 
         // route length unit
-        String unit = ObjectsUtil.checkAndTrim(diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, String.class));
+        LengthUnit unit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, LengthUnit.class);
         if (unit != null) {
             timetables.setRouteLengthUnit(unit);
         }

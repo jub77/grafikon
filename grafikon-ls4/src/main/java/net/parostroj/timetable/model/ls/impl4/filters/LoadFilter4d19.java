@@ -1,4 +1,4 @@
-package net.parostroj.timetable.model.ls.impl4;
+package net.parostroj.timetable.model.ls.impl4.filters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import net.parostroj.timetable.model.Train;
 import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.model.TrainsCycleType;
 import net.parostroj.timetable.model.ls.ModelVersion;
+import net.parostroj.timetable.model.ls.impl4.LoadFilter;
 
 public class LoadFilter4d19 implements LoadFilter {
 

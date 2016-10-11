@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import net.parostroj.timetable.model.units.LengthUnit;
+
 /**
  * Root element for train timetables.
  *
@@ -15,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder={"routeLengthUnit", "routes", "routeNumbers", "routeStations", "validity", "cycle", "trainTimetables", "texts"})
 public class TrainTimetables {
 
-    private String routeLengthUnit;
+    private LengthUnit routeLengthUnit;
     private List<NetPartRouteInfo> routes;
     private String routeNumbers;
     private String routeStations;
@@ -49,11 +51,11 @@ public class TrainTimetables {
         this.texts = texts;
     }
 
-    public String getRouteLengthUnit() {
+    public LengthUnit getRouteLengthUnit() {
         return routeLengthUnit;
     }
 
-    public void setRouteLengthUnit(String routeLengthUnit) {
+    public void setRouteLengthUnit(LengthUnit routeLengthUnit) {
         this.routeLengthUnit = routeLengthUnit;
     }
 
