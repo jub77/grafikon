@@ -6,6 +6,7 @@ import java.util.*;
 import net.parostroj.timetable.actions.ConvertComparator;
 import net.parostroj.timetable.actions.ElementSort;
 import net.parostroj.timetable.model.*;
+import net.parostroj.timetable.model.units.UnitUtil;
 
 /**
  * Extracts routes from list of trains.
@@ -19,7 +20,7 @@ public class RoutesExtractor {
 
     public RoutesExtractor(TrainDiagram diagram) {
         this.diagram = diagram;
-        routeMap = new HashMap<Line, Route>();
+        routeMap = new HashMap<>();
         for (Route route : diagram.getRoutes()) {
             if (route.isNetPart()) {
                 for (RouteSegment<?> seg : route.getSegments()) {
@@ -45,12 +46,12 @@ public class RoutesExtractor {
                 Route route = routeMap.get(i.getOwnerAsLine());
                 if (route != null) {
                     if (routes == null)
-                        routes = new HashSet<Route>();
+                        routes = new HashSet<>();
                     routes.add(route);
                 }
             }
         }
-        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<Route>(routes);
+        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<>(routes);
     }
 
     /**
@@ -65,11 +66,11 @@ public class RoutesExtractor {
             Route route = routeMap.get(line);
             if (route != null) {
                 if (routes == null)
-                    routes = new HashSet<Route>();
+                    routes = new HashSet<>();
                 routes.add(route);
             }
         }
-        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<Route>(routes);
+        return (routes == null) ? Collections.<Route>emptyList() : new ArrayList<>(routes);
     }
 
     /**
@@ -101,7 +102,7 @@ public class RoutesExtractor {
      * @return set of lines
      */
     public Set<Line> getLinesForCycle(TrainsCycle cycle) {
-        Set<Line> lines = new HashSet<Line>();
+        Set<Line> lines = new HashSet<>();
         for (TrainsCycleItem item : cycle.getItems()) {
             for (TimeInterval i : item.getIntervals()) {
                 if (i.isLineOwner())
@@ -120,11 +121,9 @@ public class RoutesExtractor {
      */
     public static List<NetPartRouteInfo> convert(Collection<Route> routes, TrainDiagram diagram) {
         if (routes != null && !routes.isEmpty()) {
-            List<NetPartRouteInfo> infos = new LinkedList<NetPartRouteInfo>();
+            List<NetPartRouteInfo> infos = new LinkedList<>();
             // get ratio ...
-            Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
-            if (ratio == null)
-                ratio = 1.0;
+            double ratio = UnitUtil.getRouteLengthRatio(diagram);
             for (Route route : routes) {
                 NetPartRouteInfo info = new NetPartRouteInfo();
                 info.setName(route.getName());
@@ -135,7 +134,7 @@ public class RoutesExtractor {
                         RouteSegmentInfo rsInfo = new RouteSegmentInfo();
                         rsInfo.setName(node.getName());
                         rsInfo.setType(node.getType().getKey());
-                        rsInfo.setDistance(ratio * length);
+                        rsInfo.setDistance(UnitUtil.convertRouteLenght(length, diagram, ratio));
                         info.getSegments().add(rsInfo);
                     } else {
                         Line line = seg.asLine();
@@ -145,7 +144,7 @@ public class RoutesExtractor {
                 infos.add(info);
             }
             // sort by route name
-            ElementSort<NetPartRouteInfo> sort = new ElementSort<NetPartRouteInfo>(
+            ElementSort<NetPartRouteInfo> sort = new ElementSort<>(
                     new ConvertComparator<>(Collator.getInstance(), e -> e.getName()));
             return sort.sort(infos);
         } else {

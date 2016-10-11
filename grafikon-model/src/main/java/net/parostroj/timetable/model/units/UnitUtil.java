@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.text.NumberFormatter;
 
+import net.parostroj.timetable.model.TrainDiagram;
 import net.parostroj.timetable.utils.ResourceBundleUtil;
 
 import org.slf4j.Logger;
@@ -55,6 +56,21 @@ public class UnitUtil {
             log.error(e.getMessage(), e);
             return "-";
         }
+    }
+
+    public static double getRouteLengthRatio(TrainDiagram diagram) {
+        Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
+        int scaleRatio = diagram.getScale().getRatio();
+        return ratio == null ? scaleRatio : ratio * scaleRatio;
+    }
+
+    public static double convertRouteLenght(double length, TrainDiagram diagram, double ratio) {
+        double result = length * ratio;
+        LengthUnit lengthUnit = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, LengthUnit.class);
+        if (lengthUnit != null) {
+            result = lengthUnit.convertFrom(BigDecimal.valueOf(result), LengthUnit.MM).doubleValue();
+        }
+        return result;
     }
 
     static String getText(String key, Locale locale) {

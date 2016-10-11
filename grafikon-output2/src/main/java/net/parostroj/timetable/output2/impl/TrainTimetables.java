@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.parostroj.timetable.model.units.LengthUnit;
 
@@ -51,6 +52,7 @@ public class TrainTimetables {
         this.texts = texts;
     }
 
+    @XmlJavaTypeAdapter(LengthUnitAdapter.class)
     public LengthUnit getRouteLengthUnit() {
         return routeLengthUnit;
     }

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import net.parostroj.timetable.actions.*;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.LengthUnit;
+import net.parostroj.timetable.model.units.UnitUtil;
 import net.parostroj.timetable.utils.Pair;
 
 /**
@@ -343,15 +344,14 @@ public class TrainTimetablesExtractor {
             // compute distance
             long length = 0;
             for (RouteSegment<?> seg : foundRoute.getSegments()) {
-                if (seg.asNode() == pair.second)
+                if (seg.asNode() == pair.second) {
                     break;
-                else if (seg.asLine() != null)
+                } else if (seg.asLine() != null) {
                     length += seg.asLine().getLength();
+                }
             }
-            Double ratio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
-            if (ratio == null)
-                ratio = 1.0;
-            return ratio * length;
+            double ratio = UnitUtil.getRouteLengthRatio(diagram);
+            return UnitUtil.convertRouteLenght(length, diagram, ratio);
         } else
             return null;
     }
