@@ -222,6 +222,7 @@ public class TrainDiagramBuilder {
         if (diagram == null) {
             throw new IllegalStateException("Diagram already created");
         }
+        this.finishCirculationSequences();
         // after load check
         (new AfterLoadCheck()).check(diagram);
         // tracking of changes has to be enabled at the end, otherwise
@@ -231,7 +232,6 @@ public class TrainDiagramBuilder {
             diagram.getChangesTracker().addVersion(null, null, null);
             diagram.getChangesTracker().setLastAsCurrent();
         }
-        this.finishCirculationSequences();
         TrainDiagram retValue = diagram;
         diagram = null;
         return retValue;
