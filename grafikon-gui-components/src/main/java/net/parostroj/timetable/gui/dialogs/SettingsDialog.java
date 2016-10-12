@@ -14,10 +14,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import net.parostroj.timetable.gui.components.NumberTextField;
 import net.parostroj.timetable.gui.utils.ResourceLoader;
 import net.parostroj.timetable.model.*;
 import net.parostroj.timetable.model.units.*;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.TimeUtil;
 import net.parostroj.timetable.utils.Tuple;
 
@@ -142,7 +142,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
             // route length
             Double routeLengthRatio = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, Double.class);
-            rlRatioTextField.setText(routeLengthRatio != null ? routeLengthRatio.toString() : "");
+            rlRatioTextField.setNumberValue(routeLengthRatio != null ? BigDecimal.valueOf(routeLengthRatio) : null);
             LengthUnit lUnitRoute = diagram.getAttribute(TrainDiagram.ATTR_ROUTE_LENGTH_UNIT, LengthUnit.class);
             rlUnitComboBox.setSelectedItem(lUnitRoute != null ? lUnitRoute : NO_UNIT);
 
@@ -229,7 +229,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         javax.swing.JPanel routeLengthPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel12 = new javax.swing.JLabel();
         javax.swing.JLabel jLabel14 = new javax.swing.JLabel();
-        rlRatioTextField = new javax.swing.JTextField();
+        rlRatioTextField = new NumberTextField();
         javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
         rlUnitComboBox = new javax.swing.JComboBox<>();
         javax.swing.JPanel weightPerAxlePanel = new javax.swing.JPanel();
@@ -680,10 +680,8 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // route length
         try {
-            Double rlRatio = null;
-            if (!ObjectsUtil.isEmpty(rlRatioTextField.getText())) {
-                rlRatio = Double.valueOf(rlRatioTextField.getText());
-            }
+            BigDecimal bdRlRation = rlRatioTextField.getNumberValue();
+            Double rlRatio = bdRlRation == null ? null : bdRlRation.doubleValue();
             diagram.getAttributes().setRemove(TrainDiagram.ATTR_ROUTE_LENGTH_RATIO, rlRatio);
         } catch (NumberFormatException e) {
             log.warn("Cannot convert route length ratio to double.", e);
@@ -741,7 +739,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox<String> ratioComboBox;
     private javax.swing.JComboBox<String> roundingComboBox;
-    private javax.swing.JTextField rlRatioTextField;
+    private NumberTextField rlRatioTextField;
     private javax.swing.JComboBox<Object> rlUnitComboBox;
     private javax.swing.JComboBox<Scale> scaleComboBox;
     private net.parostroj.timetable.gui.components.ScriptEditBox scriptEditBox;
