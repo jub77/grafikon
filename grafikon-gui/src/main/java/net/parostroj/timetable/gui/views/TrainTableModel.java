@@ -296,8 +296,13 @@ class TrainTableModel extends AbstractTableModel {
                     time = -1;
                 }
                 if (time >= 0) {
+                    boolean originalIsFreight = interval.isFreight();
                     train.changeStopTime(interval, time);
-                    this.fireTableRowsUpdated(rowIndex - 1, lastRow);
+                    int firstRow = rowIndex - 1;
+                    if (interval.isFreight() != originalIsFreight) {
+                        firstRow = 0;
+                    }
+                    this.fireTableRowsUpdated(firstRow, lastRow);
                 }
                 break;
             case SPEED_LIMIT:
