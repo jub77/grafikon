@@ -6,6 +6,8 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 
 import javax.swing.Box;
@@ -46,10 +48,14 @@ public class SettingsDialog extends javax.swing.JDialog {
     private boolean recalculate;
     private TrainDiagram diagram;
 
+    private DecimalFormat format;
+
     /** Creates new form SettingsDialog */
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+        format = new DecimalFormat("#0.0");
 
         recalculate = false;
 
@@ -97,7 +103,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         // set some values for speed
         for (double d = 1.0; d <= 10.0 ;) {
-            ratioComboBox.addItem(Double.toString(d));
+            ratioComboBox.addItem(format.format(d));
             d += 0.5;
         }
 
@@ -115,7 +121,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         if (diagram != null) {
             // set original values ...
             scaleComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_SCALE, Object.class));
-            ratioComboBox.setSelectedItem(diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class).toString());
+            ratioComboBox.setSelectedItem(format.format(diagram.getAttribute(TrainDiagram.ATTR_TIME_SCALE, Double.class)));
 
             // sorting
             TrainsData trainsData = diagram.getTrainsData();
@@ -590,8 +596,8 @@ public class SettingsDialog extends javax.swing.JDialog {
         // set ratio
         double sp = 1.0;
         try {
-            sp = Double.parseDouble((String)ratioComboBox.getSelectedItem());
-        } catch (NumberFormatException ex) {
+            sp = format.parse((String) ratioComboBox.getSelectedItem()).doubleValue();
+        } catch (ParseException ex) {
             JOptionPane.showMessageDialog(this.getParent(), ResourceLoader.getString("dialog.error.badratio"),
                     ResourceLoader.getString("dialog.error.title"), JOptionPane.ERROR_MESSAGE);
             log.debug("Cannot covert ratio.", ex);
