@@ -187,30 +187,18 @@ public class TrainType
         }
     }
 
-    /**
-     * formats the train name according to template.
-     *
-     * @param train train
-     * @return formatted train name
-     */
-    public String formatTrainName(Train train) {
+    public TextTemplate getFinalNameTemplate() {
         TextTemplate template = (trainNameTemplate == null) ?
             getDiagram().getTrainsData().getTrainNameTemplate() :
             trainNameTemplate;
-        return template.evaluate(TextTemplate.getBinding(train));
+        return template;
     }
 
-    /**
-     * formats the train complete name according to template.
-     *
-     * @param train train
-     * @return formatted complete train name
-     */
-    public String formatTrainCompleteName(Train train) {
+    public TextTemplate getFinalCompleteNameTemplate() {
         TextTemplate template = (trainCompleteNameTemplate == null) ?
             getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
             trainCompleteNameTemplate;
-        return template.evaluate(TextTemplate.getBinding(train));
+        return template;
     }
 
     /**

@@ -36,10 +36,6 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private final ListMultimap<TrainsCycleType, TrainsCycleItem> cycles;
     /* Attributes of the train. */
     private final Attributes attributes;
-    /* cached data */
-    private final CachedValue<String> _cachedName;
-    private final CachedValue<String> _cachedCompleteName;
-    private Map<String, Object> _cachedBinding;
     private final ListenerSupport listenerSupport;
     private boolean attached;
 
@@ -52,6 +48,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     private final Collection<TimeInterval> nodeIntervalsView;
     private final Collection<TimeInterval> lineIntervalsView;
     private final List<TimeInterval> timeIntervalsView;
+    private final TrainNameDelegate nameDelegate;
 
     /**
      * Constructor.
@@ -62,9 +59,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     Train(String id, TrainDiagram diagram) {
         this.id = id;
         this.diagram = diagram;
+        this.nameDelegate = new TrainNameDelegate(this);
         _cachedCycles = new TrainCachedCycles();
-        _cachedName = new CachedValue<String>();
-        _cachedCompleteName = new CachedValue<String>();
         timeIntervalList = new TimeIntervalList();
         nodeIntervalsView = Collections.unmodifiableCollection(
                 Collections2.filter(timeIntervalList, ModelPredicates::nodeInterval));
@@ -149,52 +145,21 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return name of the train depending on the pattern
      */
     public String getName() {
-        if (!_cachedName.isCached()) {
-            this.refreshName();
-        }
-        return _cachedName.getValue();
-    }
-
-    private String getNameImpl() {
-        return type != null ? type.formatTrainName(this) : number;
+        return nameDelegate.getName();
     }
 
     /**
      * @return complete name of the train depending on the pattern
      */
     public String getCompleteName() {
-        if (!_cachedCompleteName.isCached()) {
-            this.refreshCompleteName();
-        }
-        return _cachedCompleteName.getValue();
-    }
-
-    private String getCompleteNameImpl() {
-        return type != null ? type.formatTrainCompleteName(this) : number;
-    }
-
-    private void refreshName() {
-        String oldName = _cachedName.getValue();
-        String newName = this.getNameImpl();
-        if (_cachedName.set(newName)) {
-            this.fireEvent(new Event(this, new AttributeChange(ATTR_NAME, oldName, newName)));
-        }
-    }
-
-    private void refreshCompleteName() {
-        String oldName = _cachedCompleteName.getValue();
-        String newName = this.getCompleteNameImpl();
-        if (_cachedCompleteName.set(newName)) {
-            this.fireEvent(new Event(this, new AttributeChange(ATTR_COMPLETE_NAME, oldName, newName)));
-        }
+        return nameDelegate.getCompleteName();
     }
 
     /**
      * clears cached train names.
      */
     public void refreshCachedNames() {
-        refreshName();
-        refreshCompleteName();
+        nameDelegate.refreshCachedNames();
     }
 
     /**
@@ -370,7 +335,7 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      * @return set of train with conflicts with this train
      */
     public Set<Train> getConflictingTrains() {
-        ReferenceHolder<Set<Train>> conflictsRef = new ReferenceHolder<Set<Train>>();
+        ReferenceHolder<Set<Train>> conflictsRef = new ReferenceHolder<>();
         for (TimeInterval interval : timeIntervalList) {
             this.addOverlappingTrains(interval, conflictsRef);
         }
@@ -1068,17 +1033,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return timeIntervalList.iterator();
     }
 
-    /**
-     * @return binding for template
-     */
     Map<String,Object> createTemplateBinding() {
-        if (_cachedBinding == null) {
-            _cachedBinding = new HashMap<String, Object>();
-            _cachedBinding.put("train", this);
-            _cachedBinding.put("stations", new Stations());
-        }
-        _cachedBinding.put("type", this.getType());
-        return _cachedBinding;
+        return nameDelegate.createTemplateBinding();
     }
 
     /**
@@ -1089,27 +1045,5 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
     @Override
     public void accept(TrainDiagramVisitor visitor) {
         visitor.visit(this);
-    }
-
-    /**
-     * Wrapper for accessing stations for text templates.
-     */
-    public class Stations {
-
-        public Node getAt(int index) {
-            return timeIntervalList.get(index * 2).getOwnerAsNode();
-        }
-
-        public Node get(int index) {
-            return getAt(index);
-        }
-
-        public Node getFirst() {
-            return getFirstInterval().getOwnerAsNode();
-        }
-
-        public Node getLast() {
-            return getLastInterval().getOwnerAsNode();
-        }
     }
 }
