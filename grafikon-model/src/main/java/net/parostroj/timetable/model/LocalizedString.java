@@ -3,13 +3,11 @@ package net.parostroj.timetable.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * Localized string. It contains default text for not recognized locale and collection of text and
@@ -17,42 +15,30 @@ import com.google.common.collect.Iterables;
  *
  * @author jub
  */
-public class LocalizedString {
-
-    private final String defaultString;
-    private final Collection<StringWithLocale> localizedStrings;
-
-    private LocalizedString(String defaultString, List<StringWithLocale> localizedStrings) {
-        this.defaultString = defaultString;
-        this.localizedStrings = localizedStrings;
-    }
+public interface LocalizedString {
 
     /**
      * @return default text
      */
-    public String getDefaultString() {
-        return defaultString;
-    }
+    String getDefaultString();
 
     /**
      * @return collection of text and locale pairs
      */
-    public Collection<StringWithLocale> getLocalizedStrings() {
-        return localizedStrings;
-    }
+    Collection<StringWithLocale> getLocalizedStrings();
 
     /**
      * @return collection of locales of this string
      */
-    public Collection<Locale> getLocales() {
-        return FluentIterable.from(localizedStrings).transform(str -> str.getLocale()).toList();
+    default Collection<Locale> getLocales() {
+        return FluentIterable.from(getLocalizedStrings()).transform(str -> str.getLocale()).toList();
     }
 
     /**
      * @param locale locale
      * @return text for given locale or <code>null</null> if the locale is not present
      */
-    public String getLocalizedString(final Locale locale) {
+    default String getLocalizedString(final Locale locale) {
         StringWithLocale stringWithLocale = this.getLocalizedStringWithLocale(locale);
         return stringWithLocale == null ? null : stringWithLocale.getString();
     }
@@ -61,9 +47,9 @@ public class LocalizedString {
      * @param locale locale
      * @return string with locale or <code>null</code> if the locale is not present
      */
-    public StringWithLocale getLocalizedStringWithLocale(final Locale locale) {
+    default StringWithLocale getLocalizedStringWithLocale(final Locale locale) {
         Locale languageLocale = getOnlyLanguageLocale(locale);
-        for (StringWithLocale localizedString : localizedStrings) {
+        for (StringWithLocale localizedString : getLocalizedStrings()) {
             if (languageLocale.equals(localizedString.getLocale())) {
                 return localizedString;
             }
@@ -74,7 +60,7 @@ public class LocalizedString {
     /**
      * @return text translation for default locale
      */
-    public String translate() {
+    default String translate() {
         return this.translate(Locale.getDefault());
     }
 
@@ -82,75 +68,28 @@ public class LocalizedString {
      * @param locale locale
      * @return text for given locale or default text if the locale is not present
      */
-    public String translate(Locale locale) {
+    default String translate(Locale locale) {
         String translatedString = this.getLocalizedString(locale);
-        return translatedString == null ? defaultString : translatedString;
+        return translatedString == null ? getDefaultString() : translatedString;
     }
 
-    @Override
-    public String toString() {
-        return String.format("i18n:%s[%s]", defaultString,
-                String.join(",", Iterables.transform(localizedStrings, item -> item.getLocale().toLanguageTag())));
-    }
 
-    public String toCompleteString() {
-        return String.format("i18n:%s[%s]", defaultString, String.join(",", Iterables.transform(localizedStrings,
-                item -> String.format("%s=%s", item.getLocale().toLanguageTag(), item.getString()))));
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof LocalizedString)) return false;
-        LocalizedString ls = (LocalizedString) obj;
-        if (!defaultString.equals(ls.defaultString)) return false;
-        Iterator<StringWithLocale> i = localizedStrings.iterator();
-        Iterator<StringWithLocale> li = ls.localizedStrings.iterator();
-        while (i.hasNext() && li.hasNext()) {
-            if (!i.next().equals(li.next())) return false;
-        }
-        return !i.hasNext() && !li.hasNext();
+    default String toCompleteString() {
+        return toString();
     }
 
     /**
      * Text and locale pair.
      */
-    public interface StringWithLocale {
+    interface StringWithLocale {
         String getString();
         Locale getLocale();
-    }
-
-    final static class StringWithLocaleImpl implements StringWithLocale {
-
-        private final String string;
-        private final Locale locale;
-
-        public StringWithLocaleImpl(String string, Locale locale) {
-            this.string = string;
-            this.locale = locale;
-        }
-
-        @Override
-        public String getString() {
-            return string;
-        }
-
-        @Override
-        public Locale getLocale() {
-            return locale;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof StringWithLocale)) return false;
-            StringWithLocale str = (StringWithLocale) obj;
-            return locale.equals(str.getLocale()) && string.equals(str.getString());
-        }
     }
 
     /**
      * Builder for localized string.
      */
-    public static class Builder {
+    static class Builder {
 
         private String defaultString;
         private List<StringWithLocale> strings;
@@ -192,7 +131,7 @@ public class LocalizedString {
             if (strings == null) {
                 strings = new ArrayList<>();
             }
-            strings.add(new StringWithLocaleImpl(string, getOnlyLanguageLocale(locale)));
+            strings.add(new LocalizedStringImpl.StringWithLocaleImpl(string, getOnlyLanguageLocale(locale)));
         }
 
         public LocalizedString build() {
@@ -200,7 +139,7 @@ public class LocalizedString {
                 throw new IllegalStateException("Default string missing");
             }
             // sort by language
-            return new LocalizedString(defaultString,
+            return new LocalizedStringImpl(defaultString,
                     ImmutableList.copyOf(getSortedStrings()));
         }
 
@@ -214,11 +153,11 @@ public class LocalizedString {
         }
     }
 
-    public static Builder newBuilder() {
+    static Builder newBuilder() {
         return new Builder();
     }
 
-    public static Builder newBuilder(LocalizedString localizedString) {
+    static Builder newBuilder(LocalizedString localizedString) {
         Builder builder = new Builder();
         if (localizedString != null) {
             builder.setDefaultString(localizedString.getDefaultString())
@@ -227,11 +166,11 @@ public class LocalizedString {
         return builder;
     }
 
-    public static Builder newBuilder(String defaultString) {
+    static Builder newBuilder(String defaultString) {
         return new Builder().setDefaultString(defaultString);
     }
 
-    public static LocalizedString fromString(String text) {
+    static LocalizedString fromString(String text) {
         if (text == null) {
             return null;
         } else {
@@ -239,15 +178,15 @@ public class LocalizedString {
         }
     }
 
-    public static StringWithLocale newStringWithLocale(String string, Locale locale) {
-        return new StringWithLocaleImpl(string, locale);
+    static StringWithLocale newStringWithLocale(String string, Locale locale) {
+        return new LocalizedStringImpl.StringWithLocaleImpl(string, locale);
     }
 
-    public static StringWithLocale newStringWithLocale(String string, String locale) {
+    static StringWithLocale newStringWithLocale(String string, String locale) {
         return newStringWithLocale(string, Locale.forLanguageTag(locale));
     }
 
-    public static Locale getOnlyLanguageLocale(Locale locale) {
+    static Locale getOnlyLanguageLocale(Locale locale) {
         if (locale.getCountry() == null) {
             return locale;
         } else {
