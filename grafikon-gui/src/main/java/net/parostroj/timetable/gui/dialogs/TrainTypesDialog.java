@@ -6,6 +6,7 @@
 package net.parostroj.timetable.gui.dialogs;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import javax.swing.GroupLayout;
@@ -15,12 +16,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.DocumentListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.parostroj.timetable.gui.components.ChangeDocumentListener;
 import net.parostroj.timetable.gui.components.LocalizedStringField;
 import net.parostroj.timetable.gui.pm.LocalizedStringDefaultPM;
 import net.parostroj.timetable.gui.utils.GuiComponentUtils;
@@ -39,7 +38,6 @@ import net.parostroj.timetable.model.TrainDiagramPartFactory;
 import net.parostroj.timetable.model.TrainType;
 import net.parostroj.timetable.model.TrainTypeCategory;
 import net.parostroj.timetable.utils.Conversions;
-import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.utils.ResourceLoader;
 
 /**
@@ -120,27 +118,31 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-        LocalizedStringDefaultPM model = abbrTextField.getPresentationModel();
-        String abbr = model != null ? model.getDefaultString().trim() : "";
-        String desc = descTextField.getText().trim();
+        LocalizedStringDefaultPM abbrModel = abbrTextField.getPresentationModel();
+        LocalizedStringDefaultPM descModel = descTextField.getPresentationModel();
+        String abbr = abbrModel != null ? abbrModel.getDefaultString().trim() : "";
+        String desc = descModel != null ? descModel.getDefaultString().trim() : "";
         boolean enabledValues = !(abbr.equals("") || desc.equals(""));
         newButton.setEnabled(enabledValues);
         updateButton.setEnabled(enabledValues && enabled);
     }
 
     private void initComponents() {
+        PropertyChangeListener propListener = evt -> {
+            setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
+        };
         abbrTextField = new LocalizedStringField();
         LocalizedStringDefaultPM abbrPm = new LocalizedStringDefaultPM();
         abbrPm.init(LocalizedString.fromString(""));
         abbrTextField.setPresentationModel(abbrPm);
-
-        abbrPm.getDefault().addPropertyChangeListener("text", evt -> {
-            setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
-        });
-
+        abbrPm.getDefault().addPropertyChangeListener("text", propListener);
         brakeComboBox = new javax.swing.JComboBox<>();
         editColorButton = GuiComponentUtils.createButton(GuiIcon.EDIT, 2);
-        descTextField = new javax.swing.JTextField();
+        descTextField = new LocalizedStringField();
+        LocalizedStringDefaultPM descPm = new LocalizedStringDefaultPM();
+        descPm.init(LocalizedString.fromString(""));
+        descTextField.setPresentationModel(descPm);
+        descPm.getDefault().addPropertyChangeListener("text", propListener);
         nameTemplateCheckBox = new javax.swing.JCheckBox();
         nameTemplateEditBox = new net.parostroj.timetable.gui.components.TextTemplateEditBox();
         completeNameTemplateCheckBox = new javax.swing.JCheckBox();
@@ -243,14 +245,6 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         });
 
         platformNeededCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.platform.needed"));
-
-        DocumentListener listener = new ChangeDocumentListener() {
-            @Override
-            protected void change() {
-                setComponentsEnabled(trainTypesList.getSelectedIndex() != -1);
-            }
-        };
-        descTextField.getDocument().addDocumentListener(listener);
 
         showWeightInfoCheckBox = new javax.swing.JCheckBox(ResourceLoader.getString("edit.traintypes.show.weight.info"));
 
@@ -413,7 +407,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private void updateValuesForTrainType(TrainType selected) {
         if (selected != null) {
             abbrTextField.getPresentationModel().init(selected.getLocalizedAbbr(), diagram.getLocales());
-            descTextField.setText(selected.getDesc().getDefaultString());
+            descTextField.getPresentationModel().init(selected.getDesc(), diagram.getLocales());
             colorLabel.setText(Conversions.convertColorToText(selected.getColor()));
             colorLabel.setForeground(selected.getColor());
             TrainTypeCategory category = selected.getCategory();
@@ -440,7 +434,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
             lineLengthTextField.setText(Integer.toString(this.convertDoubleValueToPercent(selected, TrainType.ATTR_LINE_LENGTH)));
         } else {
             abbrTextField.getPresentationModel().init(LocalizedString.fromString(""), diagram.getLocales());
-            descTextField.setText("");
+            descTextField.getPresentationModel().init(LocalizedString.fromString(""), diagram.getLocales());
             colorLabel.setText("0x000000");
             colorLabel.setForeground(Color.BLACK);
             brakeComboBox.setSelectedItem(NONE_CATEGORY);
@@ -490,14 +484,14 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         TrainType type = typesModel.getIndex(trainTypesList.getSelectedIndex()).getElement();
         if (type != null) {
             LocalizedString abbr = abbrTextField.getPresentationModel().getCurrentEdit().get();
-            String desc = ObjectsUtil.checkAndTrim(descTextField.getText());
+            LocalizedString desc = descTextField.getPresentationModel().getCurrentEdit().get();
             // check values ....
             if (abbr == null || desc == null) {
                 this.showErrorDialog("dialog.error.missingvalues");
                 return;
             }
             type.setLocalizedAbbr(abbr);
-            type.setDesc(LocalizedString.newBuilder(type.getDesc()).setDefaultString(desc).build());
+            type.setDesc(desc);
             type.setPlatform(platformNeededCheckBox.isSelected());
             type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
             Color c = Conversions.convertTextToColor(colorLabel.getText());
@@ -552,7 +546,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // test values
         LocalizedString abbr = abbrTextField.getPresentationModel().getCurrentEdit().get();
-        String desc = ObjectsUtil.checkAndTrim(descTextField.getText());
+        LocalizedString desc = descTextField.getPresentationModel().getCurrentEdit().get();
         // check values ....
         if (abbr == null || desc == null) {
             this.showErrorDialog("dialog.error.missingvalues");
@@ -561,7 +555,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         TrainDiagramPartFactory factory = diagram.getPartFactory();
         TrainType type = factory.createTrainType(factory.createId());
         type.setLocalizedAbbr(abbr);
-        type.setDesc(LocalizedString.fromString(desc));
+        type.setDesc(desc);
         type.setPlatform(platformNeededCheckBox.isSelected());
         type.setColor(Conversions.convertTextToColor(colorLabel.getText()));
         TrainTypeCategory category = (TrainTypeCategory) ((Wrapper<?>) brakeComboBox.getSelectedItem()).getElement();
@@ -636,7 +630,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox completeNameTemplateCheckBox;
     private javax.swing.JCheckBox platformNeededCheckBox;
     private javax.swing.JButton deleteButton;
-    private javax.swing.JTextField descTextField;
+    private LocalizedStringField descTextField;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editColorButton;
     private javax.swing.JCheckBox nameTemplateCheckBox;
