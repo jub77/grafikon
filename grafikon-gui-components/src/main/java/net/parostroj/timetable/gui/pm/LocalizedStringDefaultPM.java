@@ -39,7 +39,7 @@ public class LocalizedStringDefaultPM extends LocalizedStringPM implements IPM<L
     @Override
     public LolizationEditResult init(LocalizedString string, Collection<Locale> availableLocales) {
         LolizationEditResult result = super.init(string, availableLocales);
-        addListenerToCurrentLocaleString(string);
+        this.addListenerToCurrentLocaleString(string);
         return result;
     }
 
@@ -50,7 +50,7 @@ public class LocalizedStringDefaultPM extends LocalizedStringPM implements IPM<L
             Locale defaultLocale = LocalizedString.getOnlyLanguageLocale(Locale.getDefault());
             for (StringWithLocalePM stringPM : strings) {
                 if (defaultLocale.equals(stringPM.getUsedLocale())) {
-                    defaultStringIsCurrent = false;
+                    defaultStringIsCurrent = stringPM.string.isEmpty();
                     stringPM.string.addPropertyChangeListener("text", evt -> {
                         defaultStringIsCurrent = stringPM.string.isEmpty();
                         current.setText(defaultStringIsCurrent ?

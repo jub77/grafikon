@@ -111,8 +111,16 @@ public class LocalizedStringPM extends AbstractPM implements IPM<LocalizedString
         return selected != null ? selected.string : null;
     }
 
+    public ITextPM getDefault() {
+        return string;
+    }
+
     public boolean isEmpty() {
         return string.isEmpty();
+    }
+
+    public String getDefaultString() {
+        return string.getText();
     }
 
     public boolean isEditable() {
