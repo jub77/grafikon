@@ -112,7 +112,7 @@ public class LSTrainType {
 
     public TrainType createTrainType(TrainDiagram diagram) throws LSException {
         TrainType type = diagram.getPartFactory().createTrainType(id);
-        type.setAbbr(abbr);
+        type.setLocalizedAbbr(LocalizedString.fromString(abbr));
         type.setColor(Conversions.convertTextToColor(color));
         type.setDesc(LocalizedString.fromString(desc));
         type.setPlatform(platform);

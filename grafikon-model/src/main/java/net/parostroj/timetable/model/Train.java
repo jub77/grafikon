@@ -18,6 +18,8 @@ import com.google.common.collect.*;
 public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAttributes,
         TrainDiagramPart, Iterable<TimeInterval>, Observable {
 
+    public enum NameType { NORMAL, COMPLETE }
+
     /** Train diagram reference. */
     private final TrainDiagram diagram;
     /** ID. */
@@ -153,6 +155,14 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
      */
     public String getCompleteName() {
         return nameDelegate.getCompleteName();
+    }
+
+    /**
+     * @param nameType type of the name
+     * @return translated name of specified type
+     */
+    public TranslatedString getName(NameType nameType) {
+        return nameDelegate.getName(nameType);
     }
 
     /**
@@ -1033,8 +1043,8 @@ public class Train implements AttributesHolder, ObjectWithId, Visitable, TrainAt
         return timeIntervalList.iterator();
     }
 
-    Map<String,Object> createTemplateBinding() {
-        return nameDelegate.createTemplateBinding();
+    TrainNameDelegate getNameDelegate() {
+        return nameDelegate;
     }
 
     /**

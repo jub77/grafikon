@@ -476,7 +476,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
                 this.showErrorDialog("dialog.error.missingvalues");
                 return;
             }
-            type.setAbbr(abbr);
+            type.setLocalizedAbbr(LocalizedString.fromString(abbr));
             type.setDesc(LocalizedString.newBuilder(type.getDesc()).setDefaultString(desc).build());
             type.setPlatform(platformNeededCheckBox.isSelected());
             type.getAttributes().setBool(TrainType.ATTR_SHOW_WEIGHT_INFO, showWeightInfoCheckBox.isSelected());
@@ -540,7 +540,7 @@ public class TrainTypesDialog extends javax.swing.JDialog {
         }
         TrainDiagramPartFactory factory = diagram.getPartFactory();
         TrainType type = factory.createTrainType(factory.createId());
-        type.setAbbr(abbr);
+        type.setLocalizedAbbr(LocalizedString.fromString(abbr));
         type.setDesc(LocalizedString.fromString(desc));
         type.setPlatform(platformNeededCheckBox.isSelected());
         type.setColor(Conversions.convertTextToColor(colorLabel.getText()));

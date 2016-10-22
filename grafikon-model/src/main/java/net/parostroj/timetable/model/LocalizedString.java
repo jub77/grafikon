@@ -15,21 +15,14 @@ import com.google.common.collect.ImmutableList;
  *
  * @author jub
  */
-public interface LocalizedString {
-
-    /**
-     * @return default text
-     */
-    String getDefaultString();
+public interface LocalizedString extends TranslatedString {
 
     /**
      * @return collection of text and locale pairs
      */
     Collection<StringWithLocale> getLocalizedStrings();
 
-    /**
-     * @return collection of locales of this string
-     */
+    @Override
     default Collection<Locale> getLocales() {
         return FluentIterable.from(getLocalizedStrings()).transform(str -> str.getLocale()).toList();
     }
@@ -57,17 +50,7 @@ public interface LocalizedString {
         return null;
     }
 
-    /**
-     * @return text translation for default locale
-     */
-    default String translate() {
-        return this.translate(Locale.getDefault());
-    }
-
-    /**
-     * @param locale locale
-     * @return text for given locale or default text if the locale is not present
-     */
+    @Override
     default String translate(Locale locale) {
         String translatedString = this.getLocalizedString(locale);
         return translatedString == null ? getDefaultString() : translatedString;

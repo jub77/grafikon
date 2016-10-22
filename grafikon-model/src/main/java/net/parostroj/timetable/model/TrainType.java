@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.awt.Color;
 
+import net.parostroj.timetable.model.Train.NameType;
 import net.parostroj.timetable.model.events.*;
 import net.parostroj.timetable.utils.ObjectsUtil;
 import net.parostroj.timetable.visitors.TrainDiagramVisitor;
@@ -18,8 +19,6 @@ public class TrainType
     private final TrainDiagram diagram;
     /** Id. */
     private final String id;
-    /** Abbreviation of the type. */
-    private String abbr;
     /** Color for GT. */
     private Color color;
     /** Category. */
@@ -62,21 +61,25 @@ public class TrainType
     }
 
     /**
-     * @return the abbreviation
+     * @return the abbreviation (default string of localized abbreviation - backward compatibility)
      */
     public String getAbbr() {
-        return abbr;
+        return attributes.get(ATTR_ABBR, LocalizedString.class).getDefaultString();
+    }
+
+
+    /**
+     * @return localized abbreviation
+     */
+    public LocalizedString getLocalizedAbbr() {
+        return attributes.get(ATTR_ABBR, LocalizedString.class);
     }
 
     /**
-     * @param abbr the abbreviation to set
+     * @param abbr localized abbreviation to be set
      */
-    public void setAbbr(String abbr) {
-        if (!ObjectsUtil.compareWithNull(abbr, this.abbr)) {
-            String oldAbbr = this.abbr;
-            this.abbr = abbr;
-            this.listenerSupport.fireEvent(new Event(this, new AttributeChange(ATTR_ABBR, oldAbbr, abbr)));
-        }
+    public void setLocalizedAbbr(LocalizedString abbr) {
+        attributes.setRemove(ATTR_ABBR, abbr);
     }
 
     /**
@@ -187,18 +190,18 @@ public class TrainType
         }
     }
 
-    public TextTemplate getFinalNameTemplate() {
-        TextTemplate template = (trainNameTemplate == null) ?
-            getDiagram().getTrainsData().getTrainNameTemplate() :
-            trainNameTemplate;
-        return template;
-    }
-
-    public TextTemplate getFinalCompleteNameTemplate() {
-        TextTemplate template = (trainCompleteNameTemplate == null) ?
-            getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
-            trainCompleteNameTemplate;
-        return template;
+    public TextTemplate getNameTemplate(NameType nameType) {
+        if (nameType == NameType.COMPLETE) {
+            TextTemplate template = (trainCompleteNameTemplate == null) ?
+                    getDiagram().getTrainsData().getTrainCompleteNameTemplate() :
+                        trainCompleteNameTemplate;
+                    return template;
+        } else {
+            TextTemplate template = (trainNameTemplate == null) ?
+                    getDiagram().getTrainsData().getTrainNameTemplate() :
+                        trainNameTemplate;
+                    return template;
+        }
     }
 
     /**
@@ -226,7 +229,7 @@ public class TrainType
     @Override
     public String toString() {
         LocalizedString desc = getDesc();
-        return abbr + " - " + (desc == null ? "<none>" : desc.getDefaultString());
+        return getAbbr() + " - " + (desc == null ? "<none>" : desc.getDefaultString());
     }
 
     /**

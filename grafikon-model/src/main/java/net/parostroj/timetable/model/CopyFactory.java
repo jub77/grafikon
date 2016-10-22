@@ -76,7 +76,7 @@ public class CopyFactory {
 
     public TrainType copy(TrainType trainType, String id) {
         TrainType copy = partFactory.createTrainType(id);
-        copy.setAbbr(trainType.getAbbr());
+        copy.setLocalizedAbbr(trainType.getLocalizedAbbr());
         copy.setDesc(trainType.getDesc());
         copy.setColor(trainType.getColor());
         return copy;

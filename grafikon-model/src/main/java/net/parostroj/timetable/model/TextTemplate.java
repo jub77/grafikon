@@ -2,6 +2,7 @@ package net.parostroj.timetable.model;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -42,13 +43,17 @@ public abstract class TextTemplate {
     public abstract Language getLanguage();
 
     public static Map<String, Object> getBinding(String key, Object value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(key, value);
         return map;
     }
 
     public static Map<String, Object> getBinding(Train train) {
-        return train.createTemplateBinding();
+        return train.getNameDelegate().createTemplateBinding();
+    }
+
+    public static Map<String, Object> getBinding(Train train, Locale locale) {
+        return train.getNameDelegate().createTemplateBinding(locale);
     }
 
     public static TextTemplate createTextTemplate(String template, Language language) throws GrafikonException {

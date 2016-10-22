@@ -27,6 +27,7 @@ import net.parostroj.timetable.utils.Conversions;
 public class LSTrainType {
 
     private String id;
+    // not used anymore for serialization - backward compatibility
     private String abbr;
     // not used anymore for serialization
     private String desc;
@@ -42,7 +43,6 @@ public class LSTrainType {
 
     public LSTrainType(TrainType type) {
         this.id = type.getId();
-        this.abbr = type.getAbbr();
         this.platform = type.isPlatform();
         Color c = type.getColor();
         this.color = Conversions.convertColorToText(c);
@@ -132,7 +132,9 @@ public class LSTrainType {
     public TrainType createTrainType(PartFactory partFactory, Function<String, ObjectWithId> mapping,
             Function<String, TrainTypeCategory> categoryMapping) throws LSException {
         TrainType type = partFactory.createTrainType(id);
-        type.setAbbr(abbr);
+        if (abbr != null) {
+            type.setLocalizedAbbr(LocalizedString.fromString(abbr));
+        }
         type.setColor(Conversions.convertTextToColor(color));
         if (desc != null) {
             type.setDesc(LocalizedString.fromString(desc));
