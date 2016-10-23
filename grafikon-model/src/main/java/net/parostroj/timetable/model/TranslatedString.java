@@ -35,4 +35,12 @@ public interface TranslatedString {
      * @return text for given locale or default text if the locale is not present
      */
     String translate(Locale locale);
+
+    /**
+     * @param languageTag locale (tag)
+     * @return text for given locale of default text if the locale is not present
+     */
+    default String translate(String languageTag) {
+        return translate(Locale.forLanguageTag(languageTag));
+    }
 }

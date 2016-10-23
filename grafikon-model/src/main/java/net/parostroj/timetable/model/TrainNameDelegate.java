@@ -103,7 +103,7 @@ class TrainNameDelegate {
             _cachedBinding.put("stations", new Stations());
         }
         _cachedBinding.put("type", train.getType());
-        _cachedBinding.put("locale", locale);
+        _cachedBinding.put("locale", locale != null ? locale.toLanguageTag() : null);
         return _cachedBinding;
     }
 
