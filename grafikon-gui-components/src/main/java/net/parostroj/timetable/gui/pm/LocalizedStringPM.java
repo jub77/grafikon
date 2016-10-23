@@ -40,7 +40,7 @@ public class LocalizedStringPM extends AbstractPM implements IPM<LocalizedString
         }
 
         public LocalizedString build() {
-            Builder builder = LocalizedString.newBuilder(string.getText());
+            Builder builder = LocalizedString.newBuilder(string.getText().trim());
             for (StringWithLocalePM swl : strings) {
                 StringWithLocale stringWithLocale = swl.build();
                 if (stringWithLocale != null) {
